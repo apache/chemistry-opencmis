@@ -1217,4 +1217,1055 @@
     </propertyIntegerDefinition>
 </cmisra:type>
 
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+    <id>audioFile</id>
+    <localName>Audio File</localName>
+    <localNamespace>ns</localNamespace>
+    <parentId>cmis:document</parentId>
+    <displayName>Audio File</displayName>
+    <queryName>AUDIO_FILE</queryName>
+    <description>Audio Content (compressed or uncompressed)</description>
+    <baseId>cmis:document</baseId>
+    <creatable>true</creatable>
+    <fileable>true</fileable>
+    <queryable>true</queryable>
+    <fulltextIndexed>true</fulltextIndexed>
+    <includedInSupertypeQuery>true</includedInSupertypeQuery>
+    <controllablePolicy>false</controllablePolicy>
+    <controllableACL>true</controllableACL>
+    <versionable>false</versionable>
+    <contentStreamAllowed>notallowed</contentStreamAllowed>
+    <propertyStringDefinition>
+        <id>artist</id>
+        <localName>Artist</localName>
+        <displayName>Artist</displayName>
+        <queryName>ARTIST</queryName>
+        <description>Artist</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>album</id>
+        <localName>Album</localName>
+        <displayName>Album</displayName>
+        <queryName>ALBUM</queryName>
+        <description>title</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>title</id>
+        <localName>Title</localName>
+        <displayName>Title</displayName>
+        <queryName>TITLE</queryName>
+        <description>Title</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>comment</id>
+        <localName>Comment</localName>
+        <displayName>Comment</displayName>
+        <queryName>COMMENT</queryName>
+        <description>Comment</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>genre</id>
+        <localName>Genre</localName>
+        <displayName>Genre</displayName>
+        <queryName>GENRE</queryName>
+        <description>Genre</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>length</id>
+        <localName>Length</localName>
+        <displayName>Length</displayName>
+        <queryName>LENGTH</queryName>
+        <description>Length in seconds</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>track</id>
+        <localName>Track</localName>
+        <displayName>Track</displayName>
+        <queryName>TRACK</queryName>
+        <description>Track in album</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>year</id>
+        <localName>Year</localName>
+        <displayName>Year</displayName>
+        <queryName>YEAR</queryName>
+        <description>release date of albun</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>composer</id>
+        <localName>Composer</localName>
+        <displayName>Composer</displayName>
+        <queryName>COMPOSER</queryName>
+        <description>Composer</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>discNo</id>
+        <localName>Disc Number</localName>
+        <displayName>Disc Number</displayName>
+        <queryName>DISC_NUMBER</queryName>
+        <description>number of disc / total discs</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>audioFormat</id>
+        <localName>Audio Format</localName>
+        <displayName>Audio Format</displayName>
+        <queryName>AUDIO_FORMAT</queryName>
+        <description>Audio Format / compression scheme</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>sampleRate</id>
+        <localName>Sample Rate</localName>
+        <displayName>Sample Rate</displayName>
+        <queryName>SAMPLE_RATE</queryName>
+        <description>Sample Rate</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>audioChannelType</id>
+        <localName>Audio Channel Type</localName>
+        <displayName>Audio Channel Type</displayName>
+        <queryName>AUDIO_CHANNEL_TYPE</queryName>
+        <description>audio channel type</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+        <choice displayName="Mono">
+            <value>Mono</value>
+        </choice>
+        <choice displayName="Stereo">
+            <value>Stereo</value>
+        </choice>
+        <choice displayName="5.1">
+            <value>5.1</value>
+        </choice>
+        <choice displayName="7.1">
+            <value>7.1</value>
+        </choice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>noChannels</id>
+        <localName>Number Channels</localName>
+        <displayName>Number Channels</displayName>
+        <queryName>NUMBER_CHANNELS</queryName>
+        <description>number of audio channels</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>compressorVersion</id>
+        <localName>Compressor Version</localName>
+        <displayName>Compressor Version</displayName>
+        <queryName>COMPRESSOR_VERSION</queryName>
+        <description>version description of compressor</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+</cmisra:type>
+
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+    <id>pdfDocument</id>
+    <localName>PDF Document</localName>
+    <localNamespace>ns</localNamespace>
+    <parentId>cmis:document</parentId>
+    <displayName>PDF Document</displayName>
+    <queryName>PDF_DOCUMENT</queryName>
+    <description>Document of type PDF</description>
+    <baseId>cmis:document</baseId>
+    <creatable>true</creatable>
+    <fileable>true</fileable>
+    <queryable>true</queryable>
+    <fulltextIndexed>true</fulltextIndexed>
+    <includedInSupertypeQuery>true</includedInSupertypeQuery>
+    <controllablePolicy>false</controllablePolicy>
+    <controllableACL>true</controllableACL>
+    <versionable>false</versionable>
+    <contentStreamAllowed>notallowed</contentStreamAllowed>
+    <propertyIntegerDefinition>
+        <id>noPages</id>
+        <localName>No Pages</localName>
+        <displayName>No Pages</displayName>
+        <queryName>NO_PAGES</queryName>
+        <description>number of pages in document</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>title</id>
+        <localName>Title</localName>
+        <displayName>Title</displayName>
+        <queryName>TITLE</queryName>
+        <description>titel of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>author</id>
+        <localName>Author</localName>
+        <displayName>Author</displayName>
+        <queryName>AUTHOR</queryName>
+        <description>author of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>creator</id>
+        <localName>Creator</localName>
+        <displayName>Creator</displayName>
+        <queryName>CREATOR</queryName>
+        <description>creator of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>keywords</id>
+        <localName>Keywords</localName>
+        <displayName>Keywords</displayName>
+        <queryName>KEYWORDS</queryName>
+        <description>keywords of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>multi</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>producer</id>
+        <localName>Producer</localName>
+        <displayName>Producer</displayName>
+        <queryName>PRODUCER</queryName>
+        <description>producer of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>subject</id>
+        <localName>Subject</localName>
+        <displayName>Subject</displayName>
+        <queryName>SUBJECT</queryName>
+        <description>subject of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyDateTimeDefinition>
+        <id>createdDate</id>
+        <localName>Created Date</localName>
+        <displayName>Created Date</displayName>
+        <queryName>CREATED_DATE</queryName>
+        <description>creation date of document</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+    <propertyDateTimeDefinition>
+        <id>modifiedDate</id>
+        <localName>Modified Date</localName>
+        <displayName>Modified Date</displayName>
+        <queryName>MODIFIED_DATE</queryName>
+        <description>date of last modification</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+    <propertyStringDefinition>
+        <id>trapped</id>
+        <localName>Trapped</localName>
+        <displayName>Trapped</displayName>
+        <queryName>TRAPPED</queryName>
+        <description>trapped</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+</cmisra:type>
+
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+    <id>officeDocument</id>
+    <localName>Office Document</localName>
+    <localNamespace>ns</localNamespace>
+    <parentId>cmis:document</parentId>
+    <displayName>Office Document</displayName>
+    <queryName>OFFICE_DOCUMENT</queryName>
+    <description>Document of type Office</description>
+    <baseId>cmis:document</baseId>
+    <creatable>true</creatable>
+    <fileable>true</fileable>
+    <queryable>true</queryable>
+    <fulltextIndexed>true</fulltextIndexed>
+    <includedInSupertypeQuery>true</includedInSupertypeQuery>
+    <controllablePolicy>false</controllablePolicy>
+    <controllableACL>true</controllableACL>
+    <versionable>false</versionable>
+    <contentStreamAllowed>notallowed</contentStreamAllowed>
+    <propertyStringDefinition>
+        <id>applicationName</id>
+        <localName>Application Name</localName>
+        <displayName>Application Name</displayName>
+        <queryName>APPLICATION_NAME</queryName>
+        <description>Application Name</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>applicationVersion</id>
+        <localName>Application Version</localName>
+        <displayName>Application Version</displayName>
+        <queryName>APPLICATION_VERSION</queryName>
+        <description>Application Version</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>author</id>
+        <localName>Author</localName>
+        <displayName>Author</displayName>
+        <queryName>AUTHOR</queryName>
+        <description>Author</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>category</id>
+        <localName>Category</localName>
+        <displayName>Category</displayName>
+        <queryName>CATEGORY</queryName>
+        <description>Category</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>contentStatus</id>
+        <localName>Content Status</localName>
+        <displayName>Content Status</displayName>
+        <queryName>CONTENT_STATUS</queryName>
+        <description>Content Status</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>comments</id>
+        <localName>Comments</localName>
+        <displayName>Comments</displayName>
+        <queryName>COMMENTS</queryName>
+        <description>Comments</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>company</id>
+        <localName>Company</localName>
+        <displayName>Company</displayName>
+        <queryName>COMPANY</queryName>
+        <description>Company</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>keywords</id>
+        <localName>Keywords</localName>
+        <displayName>Keywords</displayName>
+        <queryName>KEYWORDS</queryName>
+        <description>Keywords</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>multi</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>lastAuthor</id>
+        <localName>Last Author</localName>
+        <displayName>Last Author</displayName>
+        <queryName>LAST_AUTHOR</queryName>
+        <description>Last Author</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>manager</id>
+        <localName>Manager</localName>
+        <displayName>Manager</displayName>
+        <queryName>MANAGER</queryName>
+        <description>Manager</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>notes</id>
+        <localName>Notes</localName>
+        <displayName>Notes</displayName>
+        <queryName>NOTES</queryName>
+        <description>Notes</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>presentationFormat</id>
+        <localName>Presentation Format</localName>
+        <displayName>Presentation Format</displayName>
+        <queryName>PRESENTATION_FORMAT</queryName>
+        <description>Presentation Format</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>revisionNumber</id>
+        <localName>Revision Number</localName>
+        <displayName>Revision Number</displayName>
+        <queryName>REVISION_NUMBER</queryName>
+        <description>Revision Number</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>template</id>
+        <localName>Template</localName>
+        <displayName>Template</displayName>
+        <queryName>TEMPLATE</queryName>
+        <description>Template</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>vsersion</id>
+        <localName>Version</localName>
+        <displayName>Version</displayName>
+        <queryName>VERSION</queryName>
+        <description>Version</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>characterCount</id>
+        <localName>Character Count</localName>
+        <displayName>Character Count</displayName>
+        <queryName>CHARACTER_COUNT</queryName>
+        <description>Character Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>characterCountWithSpaces</id>
+        <localName>Character Count With Spaces</localName>
+        <displayName>Character Count With Spaces</displayName>
+        <queryName>CHARACTER_COUNT_WITH_SPACES</queryName>
+        <description>Character Count With Spaces</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>wordCount</id>
+        <localName>Word Count</localName>
+        <displayName>Word Count</displayName>
+        <queryName>WORD_COUNT</queryName>
+        <description>Word Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>lineCount</id>
+        <localName>Line Count</localName>
+        <displayName>Line Count</displayName>
+        <queryName>LINE_COUNT</queryName>
+        <description>Line Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>pageCount</id>
+        <localName>Page Count</localName>
+        <displayName>Page Count</displayName>
+        <queryName>PAGE_COUNT</queryName>
+        <description>Page Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>slideCount</id>
+        <localName>Slide Count</localName>
+        <displayName>Slide Count</displayName>
+        <queryName>SLIDE_COUNT</queryName>
+        <description>Slide Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>paragraphCount</id>
+        <localName>Paragraph Count</localName>
+        <displayName>Paragraph Count</displayName>
+        <queryName>PARAGRAPH_COUNT</queryName>
+        <description>Paragraph Count</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>totalTime</id>
+        <localName>Total Time</localName>
+        <displayName>Total Time</displayName>
+        <queryName>TOTAL_TIME</queryName>
+        <description>Total Time</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>editTime</id>
+        <localName>Edit Time</localName>
+        <displayName>Edit Time</displayName>
+        <queryName>EDIT_TIME</queryName>
+        <description>Edit Time</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyDateTimeDefinition>
+        <id>creationDate</id>
+        <localName>Creation Date</localName>
+        <displayName>Creation Date</displayName>
+        <queryName>CREATION_DATE</queryName>
+        <description>Creation Date</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+    <propertyDateTimeDefinition>
+        <id>lastSaveDate</id>
+        <localName>Last Save Date</localName>
+        <displayName>Last Save Date</displayName>
+        <queryName>LAST_SAVE_DATE</queryName>
+        <description>Last Save Date</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+    <propertyStringDefinition>
+        <id>lastPrinted</id>
+        <localName>Last Printed</localName>
+        <displayName>Last Printed</displayName>
+        <queryName>LAST_PRINTED</queryName>
+        <description>Last Printed</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+</cmisra:type>
+
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+    <id>emailDocument</id>
+    <localName>Email Document</localName>
+    <localNamespace>ns</localNamespace>
+    <parentId>cmis:document</parentId>
+    <displayName>Email Document</displayName>
+    <queryName>EMAIL_DOCUMENT</queryName>
+    <description>Document of type Email</description>
+    <baseId>cmis:document</baseId>
+    <creatable>true</creatable>
+    <fileable>true</fileable>
+    <queryable>true</queryable>
+    <fulltextIndexed>true</fulltextIndexed>
+    <includedInSupertypeQuery>true</includedInSupertypeQuery>
+    <controllablePolicy>false</controllablePolicy>
+    <controllableACL>true</controllableACL>
+    <versionable>false</versionable>
+    <contentStreamAllowed>notallowed</contentStreamAllowed>
+    <propertyStringDefinition>
+        <id>from</id>
+        <localName>From</localName>
+        <displayName>From</displayName>
+        <queryName>FROM</queryName>
+        <description>sender of message</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>to</id>
+        <localName>To</localName>
+        <displayName>To</displayName>
+        <queryName>TO</queryName>
+        <description>recipients of message</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>multi</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>cc</id>
+        <localName>Cc</localName>
+        <displayName>Cc</displayName>
+        <queryName>CC</queryName>
+        <description>carbon copy recipients of message</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>multi</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>bcc</id>
+        <localName>Bcc</localName>
+        <displayName>Bcc</displayName>
+        <queryName>BCC</queryName>
+        <description>blind carbon copy recipients of message</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>multi</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>subject</id>
+        <localName>Subject</localName>
+        <displayName>Subject</displayName>
+        <queryName>SUBJECT</queryName>
+        <description>subjet of message</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>messageRecipientAddress</id>
+        <localName>Message Recipient Address</localName>
+        <displayName>Message Recipient Address</displayName>
+        <queryName>MESSAGE_RECIPIENT_ADDRESS</queryName>
+        <description>Message Recipient Address</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyDateTimeDefinition>
+        <id>creationDate</id>
+        <localName>Creation Date</localName>
+        <displayName>Creation Date</displayName>
+        <queryName>CREATION_DATE</queryName>
+        <description>Creation Date</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+    <propertyDateTimeDefinition>
+        <id>lastSaveDate</id>
+        <localName>Last Save Date</localName>
+        <displayName>Last Save Date</displayName>
+        <queryName>LAST_SAVE_DATE</queryName>
+        <description>Last Save Date</description>
+        <localNamespace></localNamespace>
+        <propertyType>datetime</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyDateTimeDefinition>
+</cmisra:type>
 </chem:typeDefinitions>
