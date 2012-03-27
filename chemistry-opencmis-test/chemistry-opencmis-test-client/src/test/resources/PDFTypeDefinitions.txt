@@ -1,0 +1,15 @@
+#PDF type definition
+document
+pdfDocument
+PDF Document
+Document of type PDF
+    No Pages
+    Title
+    Author
+    Creator
+    Keywords
+    Producer
+    Subject
+    Created Date
+    Modified Date
+    Trapped

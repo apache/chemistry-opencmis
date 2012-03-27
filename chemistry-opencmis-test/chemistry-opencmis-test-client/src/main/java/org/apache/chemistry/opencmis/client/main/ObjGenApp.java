@@ -33,6 +33,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
+import org.apache.chemistry.opencmis.client.filecopy.FileCopier;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -209,6 +210,8 @@ public class ObjGenApp {
             createFiles(options);
         } else if (options.valueOf(fCmd).equals("CopyFiles")) {
             transferFiles(options);
+        } else if (options.valueOf(fCmd).equals("CopyFilesTest")) { // undocumented
+            transferFilesTest(options);
         } else {
             System.out.println("Unknown cmd: " + options.valueOf(fCmd));
             usage(parser);
@@ -542,11 +545,18 @@ public class ObjGenApp {
         String fileName = options.valueOf(fLocalFile);
         String dirName = options.valueOf(fLocalDir);
         String repoId = options.valueOf(fRepoId);
+        String folderId = options.valueOf(fRootFolder);
+        String name = fileName;
         
         if ((null == fileName || fileName.length() == 0) && (null == dirName || dirName.length() == 0)) {
             System.out.println("Error: You either have to provide a --file or a --dir option to copy file(s).");
             return;
         }
+        
+        // if no file name is provided there must be a directory
+        if (null == name || name.length() == 0)
+            name = dirName;
+        
         if (null == fRepoId || repoId.length() == 0) {
             System.out.println("Error: You have to provide a repository id");
             return;
@@ -555,13 +565,27 @@ public class ObjGenApp {
         System.out.println("Repository id is: " + repoId);
         System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
         
+        
         Map<String, String> parameters = getConnectionParameters(getBinding(), repoId);
-        System.out.println("TODO: Not implemented.");
-//        FileCopy fc = new FileCopy();
-//        fc.connect(parameters);
-//        fc.copyFileToRepository(fileName);
+        FileCopier fc = new FileCopier();
+        fc.connect(parameters);
+        fc.copyRecursive(name, folderId);
     }
         
+    private void transferFilesTest(OptionSet options) {
+        String fileName = options.valueOf(fLocalFile);
+        
+        if ((null == fileName || fileName.length() == 0)) {
+            System.out.println("Error: You either have to provide a --file option to test metadata extraction.");
+            return;
+        }
+        
+        System.out.println("Testing metadata extraction: ");
+        
+        FileCopier fc = new FileCopier();
+        fc.listMetadata(fileName);
+    }
+
     private Map<String, String> getConnectionParameters(String binding, String repoId) {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(SessionParameter.REPOSITORY_ID, repoId);

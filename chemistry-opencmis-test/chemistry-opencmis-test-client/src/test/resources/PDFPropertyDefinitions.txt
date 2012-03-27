@@ -1,0 +1,60 @@
+#PDF properties file
+integer
+No Pages
+noPages
+number of pages in document
+single, readwrite, optional
+
+string
+Title
+title
+titel of document
+single, readwrite, optional
+
+string
+Author
+author
+author of document
+single, readwrite, optional
+
+string
+Creator
+creator
+creator of document
+single, readwrite, optional
+
+string
+Keywords
+keywords
+keywords of document
+multi, readwrite, optional
+
+string
+Producer
+producer
+producer of document
+single, readwrite, optional
+
+string
+Subject
+subject
+subject of document
+single, readwrite, optional
+
+datetime
+Created Date
+createdDate
+creation date of document
+single, readwrite, optional
+
+datetime
+Modified Date
+modifiedDate
+date of last modification
+single, readwrite, optional
+
+string
+Trapped
+trapped
+trapped
+single, readwrite, optional

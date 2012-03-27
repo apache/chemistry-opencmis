@@ -1,0 +1,48 @@
+#Email properties file
+string
+Message Recipient Address
+messageRecipientAddress
+Message Recipient Address
+single, readwrite, optional
+
+string
+From
+from
+sender of message
+single, readwrite, optional
+
+string
+To
+to
+recipients of message
+multi, readwrite, optional
+
+string
+Cc
+cc
+carbon copy recipients of message
+multi, readwrite, optional
+
+string
+Bcc
+bcc
+blind carbon copy recipients of message
+multi, readwrite, optional
+
+string
+Subject
+subject
+subjet of message
+single, readwrite, optional
+
+datetime
+Creation Date
+creationDate
+Creation Date
+single, readwrite, optional
+
+datetime
+Last Save Date
+lastSaveDate
+Last Save Date
+single, readwrite, optional

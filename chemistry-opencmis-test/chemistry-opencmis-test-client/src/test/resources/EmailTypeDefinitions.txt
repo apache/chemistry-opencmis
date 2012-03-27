@@ -1,0 +1,13 @@
+#Email type definition
+document
+emailDocument
+Email Document
+Document of type Email
+    From
+    To
+    Cc
+    Bcc
+    Subject
+    Message Recipient Address
+    Creation Date
+    Last Save Date
