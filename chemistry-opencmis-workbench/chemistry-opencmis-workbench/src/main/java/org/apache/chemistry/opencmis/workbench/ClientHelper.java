@@ -117,8 +117,28 @@ public class ClientHelper {
             exceptionName = ((CmisBaseException) ex).getExceptionName();
         }
 
-        JOptionPane.showMessageDialog(parent, exceptionName + ":\n" + ex.getMessage(), "Error",
-                JOptionPane.ERROR_MESSAGE);
+        StringBuilder sb = new StringBuilder(ex.getMessage());
+
+        int width = 80;
+        while (sb.length() > width) {
+            int p = width;
+
+            int x = sb.indexOf(" ", p);
+            if (x < 0 || x > p + 10) {
+                x = sb.indexOf("/", p);
+            }
+            if (x < 0 || x > p + 10) {
+                x = sb.indexOf(":", p);
+            }
+            if (x < 0 || x > p + 10) {
+                x = p;
+            }
+
+            sb.insert(x, '\n');
+            width = x + 80;
+        }
+
+        JOptionPane.showMessageDialog(parent, exceptionName + ":\n" + sb, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public static boolean isMacOSX() {
