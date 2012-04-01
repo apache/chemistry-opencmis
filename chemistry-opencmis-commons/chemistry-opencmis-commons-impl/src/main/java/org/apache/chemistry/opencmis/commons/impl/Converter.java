@@ -2634,9 +2634,9 @@ public final class Converter {
             Node child = children.item(i);
 
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                CmisExtensionElement cimsChild = convertDomToCmisExtensionElement(child);
-                if (cimsChild != null) {
-                    cmisChildren.add(cimsChild);
+                CmisExtensionElement cmisChild = convertDomToCmisExtensionElement(child);
+                if (cmisChild != null) {
+                    cmisChildren.add(cmisChild);
                 }
             } else if (child.getNodeType() == Node.TEXT_NODE) {
                 value.append(child.getNodeValue());
@@ -2648,7 +2648,12 @@ public final class Converter {
             attributes = new HashMap<String, String>();
             for (int i = 0; i < node.getAttributes().getLength(); i++) {
                 Node attrNode = node.getAttributes().item(i);
+                
+                String attrNamespace = attrNode.getNamespaceURI();
+                
+                if (attrNamespace == null || attrNamespace.equals(namespace)) { 
                 attributes.put(attrNode.getLocalName(), attrNode.getNodeValue());
+                }
             }
         }
 
