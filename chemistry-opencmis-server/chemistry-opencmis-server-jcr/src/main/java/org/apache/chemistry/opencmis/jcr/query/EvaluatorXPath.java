@@ -206,7 +206,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
 
     @Override
     public XPathBuilder contains(XPathBuilder op1, XPathBuilder op2) {
-        return new FunctionBuilder("jcr:contains", ".", op2);
+        return new ContainsBuilder(op2);
     }
 
     @Override
@@ -252,6 +252,31 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
     @Override
     public XPathBuilder col(String name) {
         return new ColRefBuilder(name);
+    }
+
+    @Override
+    public XPathBuilder textAnd(List<XPathBuilder> ops) {
+        return new TextOpBuilder(ops, " ");
+    }
+
+    @Override
+    public XPathBuilder textOr(List<XPathBuilder> ops) {
+        return new TextOpBuilder(ops, " OR ");
+    }
+
+    @Override
+    public XPathBuilder textMinus(String text) {
+        return new TextMinusBuilder(text);
+    }
+
+    @Override
+    public XPathBuilder textWord(String word) {
+        return new TextWordBuilder(word);
+    }
+
+    @Override
+    public XPathBuilder textPhrase(String phrase) {
+        return new TextPhraseBuilder(phrase);
     }
 
     //------------------------------------------< protected >---
@@ -416,28 +441,17 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
 
     private static class FunctionBuilder extends PrimitiveBuilder {
         private final String function;
-        private String op1Str;
         private final XPathBuilder op1;
         private final XPathBuilder op2;
 
-        private FunctionBuilder(String function, String op1Str, XPathBuilder op1, XPathBuilder op2) {
+        private FunctionBuilder(String function, XPathBuilder op1, XPathBuilder op2) {
             this.function = function;
-            this.op1Str = op1Str;
             this.op1 = op1;
             this.op2 = op2;
         }
 
-        public FunctionBuilder(String function, XPathBuilder op1, XPathBuilder op2) {
-            this(function, null, op1, op2);
-        }
-
         public FunctionBuilder(String function, XPathBuilder op1) {
-            this(function, null, op1, null);
-        }
-
-        public FunctionBuilder(String function, String op1, XPathBuilder op2) {
-            this(function, op1, null, op2);
-
+            this(function, op1, null);
         }
 
         public FunctionBuilder(XPathBuilder op1) {
@@ -445,15 +459,95 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
 
         public String xPath() {
-            if (op1Str == null) {
-                op1Str = op1.xPath();
-            }
-
             return function == null
-                    ? op1Str
-                    : function + "(" + op1Str + (op2 == null ? "" : ", " + op2.xPath()) + ")";
+                ? op1.xPath()
+                : function + "(" + op1.xPath() + (op2 == null ? "" : ", " + op2.xPath()) + ")";
         }
-
     }
 
+    private static class ContainsBuilder extends PrimitiveBuilder {
+        private final XPathBuilder op;
+
+        public ContainsBuilder(XPathBuilder op) {
+            this.op = op;
+        }
+
+        public String xPath() {
+            return "jcr:contains(jcr:content, '" + op.xPath() + "')";
+        }
+    }
+
+    private static class TextOpBuilder extends PrimitiveBuilder {
+        private final List<XPathBuilder> ops;
+        private final String relOp;
+
+        public TextOpBuilder(List<XPathBuilder> ops, String relOp) {
+            this.ops = ops;   
+            this.relOp = relOp;
+        }
+
+        public String xPath() {
+            StringBuilder sb = new StringBuilder();
+            String sep = "";
+            for (XPathBuilder op: ops) {
+                sb.append(sep).append(op.xPath());
+                sep = relOp;
+            }
+
+            return sb.toString();
+        }
+    }
+    
+    private static class TextMinusBuilder extends PrimitiveBuilder {
+        private final String text;
+
+        public TextMinusBuilder(String text) {
+            this.text = text;
+        }
+
+        public String xPath() {
+            return "-" + escape(text);
+        }
+    }
+    
+    private static class TextWordBuilder extends PrimitiveBuilder {
+        private final String word;
+
+        public TextWordBuilder(String word) {
+            this.word = word;
+        }
+
+        public String xPath() {
+            return escape(word);
+        }
+    }
+
+    private static class TextPhraseBuilder extends PrimitiveBuilder {
+        private final String phrase;
+
+        public TextPhraseBuilder(String phrase) {
+            this.phrase = phrase;
+        }
+
+        public String xPath() {
+            return "\"" + escape(phrase.substring(1, phrase.length() - 1)) + "\"";
+        }
+    }
+
+    /**
+     * Within the searchexp literal instances of single quote ('), double quote (")
+     * and hyphen (-) must be escaped with a backslash (\). Backslash itself must
+     * therefore also be escaped, ending up as double backslash (\\).
+     */
+    private static String escape(String s) {
+        if (s == null) {
+            return "";
+        }
+
+        s = s.replaceAll("'", "\\'");
+        s = s.replaceAll("\"", "\\\"");
+        s = s.replaceAll("-", "\\-");
+        s = s.replaceAll("\\\\", "\\\\\\\\");
+        return s;
+    }
 }

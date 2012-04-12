@@ -145,4 +145,23 @@ public abstract class EvaluatorBase<T> implements Evaluator<T> {
         throw new CmisNotSupportedException("Not supported in query: column name " + name);
     }
 
+    public T textAnd(List<T> ops) {
+        throw new CmisNotSupportedException("Not supported in query: text and");
+    }
+
+    public T textOr(List<T> ops) {
+        throw new CmisNotSupportedException("Not supported in query: text or");
+    }
+
+    public T textMinus(String text) {
+        throw new CmisNotSupportedException("Not supported in query: text minus");
+    }
+
+    public T textWord(String word) {
+        throw new CmisNotSupportedException("Not supported in query: text word");
+    }
+
+    public T textPhrase(String phrase) {
+        throw new CmisNotSupportedException("Not supported in query: text phrase");
+    }
 }

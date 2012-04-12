@@ -83,49 +83,49 @@ public class QueryTranslatorTest {
     @Test
     public void testQueryTranslator() {
         assertEquals(
-            "/jcr:root//element(*,jcr:document)",
-            queryTranslator.translateToXPath("select * from cmis:document"));
+                "/jcr:root//element(*,jcr:document)",
+                queryTranslator.translateToXPath("select * from cmis:document"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo']",
-            queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion='foo'"));
+                "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo']",
+                queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion='foo'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[jcr:like(@jcr:isLatestVersion, 'foo')]",
-            queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion LIKE 'foo'"));
+                "/jcr:root//element(*,jcr:document)[jcr:like(@jcr:isLatestVersion, 'foo')]",
+                queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion LIKE 'foo'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[not(jcr:like(@jcr:isLatestVersion, 'foo'))]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where cmis:isLatestVersion NOT LIKE 'foo'"));
+                "/jcr:root//element(*,jcr:document)[not(jcr:like(@jcr:isLatestVersion, 'foo'))]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:isLatestVersion NOT LIKE 'foo'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo' and @jcr:name != 'baz']",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where cmis:isLatestVersion='foo' AND cmis:name<>'baz'"));
+                "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo' and @jcr:name != 'baz']",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:isLatestVersion='foo' AND cmis:name<>'baz'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[not((@jcr:isLatestVersion > 'foo' or @jcr:name < 1.0))]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where NOT (cmis:isLatestVersion>'foo' OR cmis:name< 1.0)"));
+                "/jcr:root//element(*,jcr:document)[not((@jcr:isLatestVersion > 'foo' or @jcr:name < 1.0))]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where NOT (cmis:isLatestVersion>'foo' OR cmis:name< 1.0)"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[(@jcr:name = 'foo' or @jcr:objectId = 'baz' and @jcr:createdBy = 'bar')]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where cmis:name = 'foo' or cmis:objectId = 'baz' " +
-                    "and cmis:createdBy = 'bar'"));
+                "/jcr:root//element(*,jcr:document)[(@jcr:name = 'foo' or @jcr:objectId = 'baz' and @jcr:createdBy = 'bar')]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:name = 'foo' or cmis:objectId = 'baz' " +
+                                "and cmis:createdBy = 'bar'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[(@jcr:name = 'foo' and @jcr:objectId = 'baz' or @jcr:createdBy = 'bar')]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where cmis:name = 'foo' and cmis:objectId = 'baz' " +
-                    "or cmis:createdBy = 'bar'"));
+                "/jcr:root//element(*,jcr:document)[(@jcr:name = 'foo' and @jcr:objectId = 'baz' or @jcr:createdBy = 'bar')]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:name = 'foo' and cmis:objectId = 'baz' " +
+                                "or cmis:createdBy = 'bar'"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:name = 'foo' and (@jcr:objectId = 'baz' or @jcr:createdBy = 'bar')]",
-            queryTranslator.translateToXPath(
-                "select * from cmis:document where cmis:name = 'foo' and (cmis:objectId = 'baz' " +
-                "or cmis:createdBy = 'bar')"));
+                "/jcr:root//element(*,jcr:document)[@jcr:name = 'foo' and (@jcr:objectId = 'baz' or @jcr:createdBy = 'bar')]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:name = 'foo' and (cmis:objectId = 'baz' " +
+                                "or cmis:createdBy = 'bar')"));
 
         assertEquals(
                 "/jcr:root/jcr:folderId/element(*,jcr:document)",
@@ -133,58 +133,78 @@ public class QueryTranslatorTest {
                         "select * from cmis:document where IN_FOLDER('folderId')"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)",
-            queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_FOLDER('folderId')))"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)",
+                queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_FOLDER('folderId')))"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId//element(*,jcr:document)",
-            queryTranslator.translateToXPath("select * from cmis:document where IN_TREE('folderId')"));
+                "/jcr:root/jcr:folderId//element(*,jcr:document)",
+                queryTranslator.translateToXPath("select * from cmis:document where IN_TREE('folderId')"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId//element(*,jcr:document)",
-            queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_TREE('folderId')))"));
+                "/jcr:root/jcr:folderId//element(*,jcr:document)",
+                queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_TREE('folderId')))"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:name <= 1]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where IN_FOLDER('folderId') AND cmis:name <= 1"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:name <= 1]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where IN_FOLDER('folderId') AND cmis:name <= 1"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:name >= 'name' and @jcr:name = true]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where IN_TREE('folderId') AND cmis:name >= 'name' " +
-                    "AND cmis:name = TRUE"));
+                "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:name >= 'name' and @jcr:name = true]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where IN_TREE('folderId') AND cmis:name >= 'name' " +
+                                "AND cmis:name = TRUE"));
 
         GregorianCalendar date = new GregorianCalendar();
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)[not(@jcr:creationDate = xs:dateTime('" +
-                    ISO8601.format(date) + "'))]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where NOT(NOT IN_FOLDER('folderId') OR cmis:creationDate = TIMESTAMP '" +
-                    CalendarHelper.toString(date) + "')"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)[not(@jcr:creationDate = xs:dateTime('" +
+                        ISO8601.format(date) + "'))]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where NOT(NOT IN_FOLDER('folderId') OR cmis:creationDate = TIMESTAMP '" +
+                                CalendarHelper.toString(date) + "')"));
 
-// TODO: adjust to full text parser
-//        assertEquals(
-//            "/jcr:root//element(*,jcr:document)[jcr:contains(., '\u4E2D\u6587')]",
-//            queryTranslator.translateToXPath("select * from cmis:document where contains('\u4E2D\u6587')"));
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, '\u4E2D\u6587')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('\u4E2D\u6587')"));
+
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, 'foo bar')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('foo AND bar')"));
+
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, 'foo OR bar')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('foo OR bar')"));
+
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, 'foo -bar')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('foo -bar')"));
+
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, 'foo \"bar phrase\"')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('foo \"bar phrase\"')"));
+
+        assertEquals(
+                "/jcr:root//element(*,jcr:document)[jcr:contains(jcr:content, 'foo -\"bar phrase\"')]",
+                queryTranslator.translateToXPath("select * from cmis:document where contains('foo -\"bar phrase\"')"));
+
     }
 
     @Test
     public void testQueryWithOrderBy() {
         assertEquals(
-            "/jcr:root//element(*,jcr:document)order by @jcr:name ascending",
-            queryTranslator.translateToXPath("select * from cmis:document order by cmis:name"));
+                "/jcr:root//element(*,jcr:document)order by @jcr:name ascending",
+                queryTranslator.translateToXPath("select * from cmis:document order by cmis:name"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo']order by @jcr:name descending",
-            queryTranslator.translateToXPath(
-                "select * from cmis:document where cmis:isLatestVersion='foo' order by cmis:name desc"));
+                "/jcr:root//element(*,jcr:document)[@jcr:isLatestVersion = 'foo']order by @jcr:name descending",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:isLatestVersion='foo' order by cmis:name desc"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[jcr:like(@jcr:isLatestVersion, 'foo')]order by @jcr:name ascending," +
-                "@jcr:objectId descending",
-            queryTranslator.translateToXPath(
-                "select * from cmis:document where cmis:isLatestVersion LIKE 'foo' order by cmis:name asc, cmis:objectId desc"));
+                "/jcr:root//element(*,jcr:document)[jcr:like(@jcr:isLatestVersion, 'foo')]order by @jcr:name ascending," +
+                        "@jcr:objectId descending",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where cmis:isLatestVersion LIKE 'foo' order by cmis:name asc, cmis:objectId desc"));
     }
 
     @Test
@@ -192,75 +212,75 @@ public class QueryTranslatorTest {
         jcrTypeCondition = "@jcr:primaryType = nt:base";
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:primaryType = nt:base]",
-            queryTranslator.translateToXPath("select * from cmis:document"));
+                "/jcr:root//element(*,jcr:document)[@jcr:primaryType = nt:base]",
+                queryTranslator.translateToXPath("select * from cmis:document"));
 
         assertEquals(
-            "/jcr:root//element(*,jcr:document)[@jcr:primaryType = nt:base and @jcr:isLatestVersion = 'foo']",
-            queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion='foo'"));
+                "/jcr:root//element(*,jcr:document)[@jcr:primaryType = nt:base and @jcr:isLatestVersion = 'foo']",
+                queryTranslator.translateToXPath("select * from cmis:document where cmis:isLatestVersion='foo'"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base]",
-            queryTranslator.translateToXPath("select * from cmis:document where IN_FOLDER('folderId')"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base]",
+                queryTranslator.translateToXPath("select * from cmis:document where IN_FOLDER('folderId')"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base]",
-            queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_FOLDER('folderId')))"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base]",
+                queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_FOLDER('folderId')))"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:primaryType = nt:base]",
-            queryTranslator.translateToXPath("select * from cmis:document where IN_TREE('folderId')"));
+                "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:primaryType = nt:base]",
+                queryTranslator.translateToXPath("select * from cmis:document where IN_TREE('folderId')"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:primaryType = nt:base]",
-            queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_TREE('folderId')))"));
+                "/jcr:root/jcr:folderId//element(*,jcr:document)[@jcr:primaryType = nt:base]",
+                queryTranslator.translateToXPath("select * from cmis:document where not(not(IN_TREE('folderId')))"));
 
         assertEquals(
-            "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base and @jcr:name <= 1]",
-            queryTranslator.translateToXPath(
-                    "select * from cmis:document where IN_FOLDER('folderId') AND cmis:name <= 1"));
+                "/jcr:root/jcr:folderId/element(*,jcr:document)[@jcr:primaryType = nt:base and @jcr:name <= 1]",
+                queryTranslator.translateToXPath(
+                        "select * from cmis:document where IN_FOLDER('folderId') AND cmis:name <= 1"));
     }
 
     @Test
     public void testQueryTranslatorQueryTooSpecific() {
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where NOT IN_FOLDER('folderId')");
+                    "select * from cmis:document where NOT IN_FOLDER('folderId')");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }
 
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where NOT(NOT IN_FOLDER('folderId') AND cmis:name = 'name')");
+                    "select * from cmis:document where NOT(NOT IN_FOLDER('folderId') AND cmis:name = 'name')");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }
 
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where IN_FOLDER('folderId') OR cmis:name = 'name'");
+                    "select * from cmis:document where IN_FOLDER('folderId') OR cmis:name = 'name'");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }
 
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where NOT(IN_FOLDER('folderId') AND cmis:name = 'name')");
+                    "select * from cmis:document where NOT(IN_FOLDER('folderId') AND cmis:name = 'name')");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }
 
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where IN_FOLDER('folder1Id') OR IN_TREE('folder2Id')");
+                    "select * from cmis:document where IN_FOLDER('folder1Id') OR IN_TREE('folder2Id')");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }
 
         try {
             queryTranslator.translateToXPath(
-                "select * from cmis:document where IN_FOLDER('folder1Id') AND NOT IN_TREE('folder2Id')");
+                    "select * from cmis:document where IN_FOLDER('folder1Id') AND NOT IN_TREE('folder2Id')");
             fail();
         }
         catch (CmisInvalidArgumentException expected) { }

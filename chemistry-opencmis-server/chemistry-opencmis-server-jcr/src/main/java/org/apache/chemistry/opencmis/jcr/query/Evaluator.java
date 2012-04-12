@@ -116,4 +116,19 @@ public interface Evaluator<T> {
 
     /** Handle {@link org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer#COL} nodes */
     T col(String name);
+
+    /** Handle {@link org.apache.chemistry.opencmis.server.support.query.TextSearchLexer#TEXT_AND} */
+    T textAnd(List<T> ops);
+
+    /** Handle {@link org.apache.chemistry.opencmis.server.support.query.TextSearchLexer#TEXT_OR} */
+    T textOr(List<T> ops);
+
+    /** Handle {@link org.apache.chemistry.opencmis.server.support.query.TextSearchLexer#TEXT_MINUS} */
+    T textMinus(String text);
+
+    /** Handle {@link org.apache.chemistry.opencmis.server.support.query.TextSearchLexer#TEXT_SEARCH_WORD_LIT} */
+    T textWord(String word);
+
+    /** Handle {@link org.apache.chemistry.opencmis.server.support.query.TextSearchLexer#TEXT_SEARCH_PHRASE_STRING_LIT} */
+    T textPhrase(String phrase);
 }

@@ -286,29 +286,43 @@ public class ParseTreeWalker<T> implements PredicateWalkerBase {
         return evaluator.col(node.getChild(0).getText());
     }
 
-    private T walkTextAnd(Evaluator<T> evaluator2, Tree node) {
-        // TODO Auto-generated method stub
-        return null;
+    private T walkTextAnd(Evaluator<T> evaluator, Tree node) {
+        List<T> terms = new ArrayList<T>();
+        for (Tree term: getChildrenAsList(node)) {
+            terms.add(walkExprTextSearch(evaluator, term));
+        }
+
+        return evaluator.textAnd(terms);
     }
     
-    private T walkTextOr(Evaluator<T> evaluator2, Tree node) {
-        // TODO Auto-generated method stub
-        return null;
+    private T walkTextOr(Evaluator<T> evaluator, Tree node) {
+        List<T> terms = new ArrayList<T>();
+        for (Tree term: getChildrenAsList(node)) {
+            terms.add(walkExprTextSearch(evaluator, term));
+        }
+
+        return evaluator.textOr(terms);
     }
     
-    private T walkTextMinus(Evaluator<T> evaluator2, Tree node) {
-        // TODO Auto-generated method stub
-        return null;
+    private T walkTextMinus(Evaluator<T> evaluator, Tree node) {
+        return evaluator.textMinus(node.getChild(0).getText());
     }
     
-    private T walkTextWord(Evaluator<T> evaluator2, Tree node) {
-        // TODO Auto-generated method stub
-        return null;
+    private T walkTextWord(Evaluator<T> evaluator, Tree node) {
+        return evaluator.textWord(node.getText());
     }
     
-    private T walkTextPhrase(Evaluator<T> evaluator2, Tree node) {
-        // TODO Auto-generated method stub
-        return null;
+    private T walkTextPhrase(Evaluator<T> evaluator, Tree node) {
+        return evaluator.textPhrase(node.getText());
+    }
+
+    private static List<Tree> getChildrenAsList(Tree node) {
+        List<Tree> res = new ArrayList<Tree>(node.getChildCount());
+        for (int i=0; i<node.getChildCount(); i++) {
+            Tree childNode =  node.getChild(i);
+            res.add(childNode);
+        }
+        return res;
     }
 
 }
