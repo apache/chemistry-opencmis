@@ -176,7 +176,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
                 sb.append("&lt;");
                 break;
             case '>':
-                sb.append("&lt;");
+                sb.append("&gt;");
                 break;
             default:
                 sb.append(c);
