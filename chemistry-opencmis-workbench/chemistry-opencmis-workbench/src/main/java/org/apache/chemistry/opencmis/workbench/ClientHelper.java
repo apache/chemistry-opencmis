@@ -117,7 +117,7 @@ public class ClientHelper {
             exceptionName = ((CmisBaseException) ex).getExceptionName();
         }
 
-        StringBuilder sb = new StringBuilder(ex.getMessage());
+        StringBuilder sb = new StringBuilder(ex.getMessage() == null ? "null" : ex.getMessage());
 
         int width = 80;
         while (sb.length() > width) {
