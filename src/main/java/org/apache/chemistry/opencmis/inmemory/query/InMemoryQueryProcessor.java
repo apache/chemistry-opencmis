@@ -661,7 +661,14 @@ public class InMemoryQueryProcessor {
         }
         case DATETIME:
             // parse date from string
-            GregorianCalendar dt = CalendarHelper.fromString((String) rVal); // will throw exception if not parsable
+            GregorianCalendar dt;
+            
+            if (rVal instanceof String)
+                dt = CalendarHelper.fromString((String) rVal); // will throw exception if not parsable
+            else if (rVal instanceof GregorianCalendar)
+                dt = (GregorianCalendar) rVal;
+            else
+                throw new IllegalArgumentException("Unsupported date type " + rVal);
             // LOG.debug("left:" +
             // CalendarHelper.toString((GregorianCalendar)lValue) +
             // " right: " +
