@@ -63,18 +63,30 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
         return propId;
     }
 
-    public Object convertValue(String key, PropertyDefinition<?> propDef, final String strValue) {
+    public Object convertValue(String key, PropertyDefinition<?> propDef, String strValue) {
         Object value = null;
         PropertyType pt = propDef.getPropertyType();
         
         if (null == pt)
             value = null;
-        else {
+        else if (null != strValue && strValue.length() > 0) {
+            // Tika has a bug and sometimes fails to parse MP3 tags, then generates '\0' in String
+            // see https://issues.apache.org/jira/browse/TIKA-887
+            int lastIllegalPos = -1;
+            for (int i=0; i<strValue.length(); i++) {
+              int c = strValue.codePointAt(i);
+              if (Character.isISOControl(c))
+                  lastIllegalPos = i;                  
+            }
+            if (lastIllegalPos >= 0)
+                strValue = strValue.substring(lastIllegalPos+1); // use remaining part after illegal char
+
             switch (pt) {
             case STRING:
             case HTML:
             case URI:
             case ID:
+                
                 if (propDef.getCardinality() == Cardinality.SINGLE)
                     value = strValue;
                 else {
