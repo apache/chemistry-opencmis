@@ -39,6 +39,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.details.DetailsTabs;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -307,7 +308,14 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(true);
                 toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(model.supportsRelationships());
 
-                setTitle(WINDOW_TITLE + " - " + clientSession.getSession().getRepositoryInfo().getName());
+                Object user = clientSession.getSessionParameters().get(SessionParameter.USER);
+                if (user != null) {
+                    user = " - (" + user.toString() + ")";
+                } else {
+                    user = "";
+                }
+
+                setTitle(WINDOW_TITLE + user + " - " + clientSession.getSession().getRepositoryInfo().getName());
             } catch (Exception ex) {
                 toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(false);
                 toolbarButton[BUTTON_TYPES].setEnabled(false);
