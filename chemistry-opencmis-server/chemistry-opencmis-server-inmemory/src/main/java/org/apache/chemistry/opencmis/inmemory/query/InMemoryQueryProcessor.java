@@ -55,7 +55,6 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyUtil;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
-import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
@@ -660,20 +659,12 @@ public class InMemoryQueryProcessor {
             break;
         }
         case DATETIME:
-            // parse date from string
-            GregorianCalendar dt;
-            
-            if (rVal instanceof String)
-                dt = CalendarHelper.fromString((String) rVal); // will throw exception if not parsable
-            else if (rVal instanceof GregorianCalendar)
-                dt = (GregorianCalendar) rVal;
-            else
-                throw new IllegalArgumentException("Unsupported date type " + rVal);
-            // LOG.debug("left:" +
-            // CalendarHelper.toString((GregorianCalendar)lValue) +
-            // " right: " +
-            // CalendarHelper.toString((GregorianCalendar)rVal));
-            return ((GregorianCalendar) lValue).compareTo(dt);
+            if (rVal instanceof GregorianCalendar) {
+                return ((GregorianCalendar) lValue).compareTo((GregorianCalendar) rVal);
+            } else {
+                throwIncompatibleTypesException(lValue, rVal);
+            }
+            break;
         case DECIMAL: {
             Double lDoubleValue = ((BigDecimal) lValue).doubleValue();
             if (rVal instanceof Double) {

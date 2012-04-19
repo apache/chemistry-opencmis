@@ -350,11 +350,6 @@ literal returns [Object value]:
         {
             String s = $TIME_LIT.text;
             s = s!= null ? s.substring(s.indexOf('\'') + 1, s.length() - 1) : null;
-            try {
-                // $value = CalendarHelper.fromString(s);
-            } catch (IllegalArgumentException e) {
-                throw new UnwantedTokenException(Token.INVALID_TOKEN_TYPE, input);
-            }
         }
     | BOOL_LIT
         {
