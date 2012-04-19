@@ -107,7 +107,7 @@ public class FileCopier {
             // extract metadata: first get a parser
             MetadataParser parser = CFG.getParser(mimeType);
             if (null == parser) {
-                properties.put(PropertyIds.NAME, f.getName());
+                properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
                 properties.put(PropertyIds.OBJECT_TYPE_ID, CFG.getDefaultDocumentType());
             } else {
                 parser.reset();
@@ -139,7 +139,8 @@ public class FileCopier {
             ContentStream contentStream = session.getObjectFactory().createContentStream(fileName,
                     length, mimeType, is);
             if (!properties.containsKey(PropertyIds.NAME))
-                properties.put(PropertyIds.NAME, f.getName());
+                properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
+            LOG.debug("uploading document with content lenth: " + contentStream.getLength());
             Document doc = parentFolder.createDocument(properties, contentStream, VersioningState.NONE);
             id = doc.getId();
             LOG.info("New document created with id: " + id + ", name: " +  properties.get(PropertyIds.NAME) + " in folder: " + parentFolder.getId());
@@ -167,7 +168,7 @@ public class FileCopier {
             parentFolder = (Folder) session.getObject(parentFolderId);
         Map<String, Object> properties = new HashMap<String, Object>();
         File f = new File(fileName);
-        properties.put(PropertyIds.NAME, f.getName());
+        properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
         properties.put(PropertyIds.OBJECT_TYPE_ID, CFG.getDefaultFolderType());
         try {
             Folder folder = parentFolder.createFolder(properties);

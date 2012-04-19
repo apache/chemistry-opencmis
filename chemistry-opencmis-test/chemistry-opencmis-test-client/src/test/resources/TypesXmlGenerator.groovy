@@ -215,7 +215,7 @@ def genTypeDef (name, id, descr, typeKind, parentType, props) {
 	outFile.println("    <controllableACL>true</controllableACL>")
     if (typeKind == "document") {
         outFile.println("    <versionable>false</versionable>")
-        outFile.println("    <contentStreamAllowed>notallowed</contentStreamAllowed>")
+        outFile.println("    <contentStreamAllowed>allowed</contentStreamAllowed>")
     }
     if (props != null)
         props.each { 

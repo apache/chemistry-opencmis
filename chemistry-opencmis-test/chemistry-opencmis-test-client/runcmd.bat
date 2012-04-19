@@ -23,5 +23,7 @@ set JAVA_HOME=d:\Java\jdk1.6.0_22-x64
 set PATH=%JAVA_HOME%\bin
 call cp.bat
 java -Dorg.apache.chemistry.opencmis.binding.atompub.url=http://localhost:8080/inmemory/atom ^
--Dorg.apache.chemistry.opencmis.binding.spi.type=atompub -cp %CP% ^
-org.apache.chemistry.opencmis.client.main.ObjGenApp %*
+-Dorg.apache.chemistry.opencmis.binding.spi.type=atompub ^
+-Dorg.apache.chemistry.opencmis.user=jens ^
+-Dorg.apache.chemistry.opencmis.password=dummy ^
+-cp %CP% org.apache.chemistry.opencmis.client.main.ObjGenApp %*
