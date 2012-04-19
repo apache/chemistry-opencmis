@@ -122,7 +122,7 @@ public class FormDataWriter {
     }
 
     private void addAcesParameters(Acl acl, String principalControl, String permissionControl) {
-        if (acl == null || acl.getAces() != null) {
+        if (acl == null || acl.getAces() == null) {
             return;
         }
 
