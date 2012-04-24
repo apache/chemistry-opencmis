@@ -848,6 +848,29 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
+     * Retrieves the ACL of an object.
+     */
+    public Acl getAclInternal(String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            ExtensionsData extension) {
+
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+        }
+
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
+
+        return convert(acl.getACL(), null);
+    }
+
+    /**
      * Updates the ACL of an object.
      */
     protected AtomAcl updateAcl(String repositoryId, String objectId, Acl acl, AclPropagation aclPropagation) {

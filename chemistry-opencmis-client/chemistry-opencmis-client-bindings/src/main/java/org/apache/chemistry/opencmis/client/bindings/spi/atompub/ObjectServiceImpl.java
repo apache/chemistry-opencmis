@@ -690,18 +690,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             return;
         }
 
-        Acl originalAces = null;
-
-        // walk through the entry and find the current ACL
-        for (AtomElement element : entry.getElements()) {
-            if (element.getObject() instanceof CmisObjectType) {
-                // extract current ACL
-                CmisObjectType object = (CmisObjectType) element.getObject();
-                originalAces = convert(object.getAcl(), object.isExactACL());
-
-                break;
-            }
-        }
+        Acl originalAces = getAclInternal(repositoryId, entry.getId(), Boolean.FALSE, null);
 
         if (originalAces != null) {
             // merge and update ACL
