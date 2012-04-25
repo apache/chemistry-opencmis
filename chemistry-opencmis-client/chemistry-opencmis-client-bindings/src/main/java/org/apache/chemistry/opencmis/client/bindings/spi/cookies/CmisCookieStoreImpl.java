@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,9 +116,11 @@ class CmisCookieStoreImpl implements Serializable {
     }
 
     private void cleanCookieList(List<CmisHttpCookie> cookies) {
-        for (CmisHttpCookie cookie : cookies) {
+        Iterator<CmisHttpCookie> iter = cookies.iterator();
+        while (iter.hasNext()) {
+            CmisHttpCookie cookie = iter.next();
             if (cookie.hasExpired()) {
-                cookies.remove(cookie);
+                iter.remove();
             }
         }
     }
