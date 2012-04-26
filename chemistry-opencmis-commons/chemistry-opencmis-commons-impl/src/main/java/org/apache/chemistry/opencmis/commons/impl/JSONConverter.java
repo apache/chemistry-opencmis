@@ -579,7 +579,7 @@ public class JSONConverter {
             result = new PropertyDecimalDefinitionImpl();
             ((PropertyDecimalDefinitionImpl) result).setMinValue(getDecimal(json, JSON_PROPERTY_TYPE_MIN_VALUE));
             ((PropertyDecimalDefinitionImpl) result).setMaxValue(getDecimal(json, JSON_PROPERTY_TYPE_MAX_VALUE));
-            ((PropertyDecimalDefinitionImpl) result).setPrecision(getEnum(json, JSON_PROPERTY_TYPE_PRECISION,
+            ((PropertyDecimalDefinitionImpl) result).setPrecision(getIntEnum(json, JSON_PROPERTY_TYPE_PRECISION,
                     DecimalPrecision.class));
             ((PropertyDecimalDefinitionImpl) result).setChoices(convertChoicesDecimal(json
                     .get(JSON_PROPERTY_TYPE_CHOICE)));
@@ -2393,6 +2393,25 @@ public class JSONConverter {
 
         try {
             Method m = clazz.getMethod("fromValue", String.class);
+            return (T) m.invoke(null, value);
+        } catch (Exception e) {
+            if (e instanceof IllegalArgumentException) {
+                return null;
+            } else {
+                throw new CmisRuntimeException("Could not parse enum value!", e);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Enum<T>> T getIntEnum(Map<String, Object> json, String key, Class<T> clazz) {
+        BigInteger value = getInteger(json, key);
+        if (value == null) {
+            return null;
+        }
+
+        try {
+            Method m = clazz.getMethod("fromValue", BigInteger.class);
             return (T) m.invoke(null, value);
         } catch (Exception e) {
             if (e instanceof IllegalArgumentException) {
