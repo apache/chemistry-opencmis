@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     private boolean sendBasicAuth;
     private boolean sendUsernameToken;
     private CmisCookieManager cookieManager;
+    private Map<String, List<String>> fixedHeaders = new HashMap<String, List<String>>();
 
     @Override
     public void setSession(BindingSession session) {
@@ -62,11 +64,6 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         if (isTrue(SessionParameter.COOKIES)) {
             cookieManager = new CmisCookieManager();
         }
-    }
-
-    @Override
-    public Map<String, List<String>> getHTTPHeaders(String url) {
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
 
         // authentication
         if (sendBasicAuth) {
@@ -76,7 +73,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
             // if no user is set, don't set basic auth header
             if (user != null) {
-                result.put("Authorization", createBasicAuthHeaderValue(user, password));
+                fixedHeaders.put("Authorization", createBasicAuthHeaderValue(user, password));
             }
 
             // get proxy user and password
@@ -85,9 +82,37 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
             // if no proxy user is set, don't set basic auth header
             if (proxyUser != null) {
-                result.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
+                fixedHeaders.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
             }
         }
+
+        // other headers
+        int x = 0;
+        Object headerParam;
+        while ((headerParam = getSession().get(SessionParameter.HEADER + "." + x)) != null) {
+            String header = headerParam.toString();
+            int colon = header.indexOf(':');
+            if (colon > -1) {
+                String key = header.substring(0, colon).trim();
+                if (key.length() > 0) {
+                    String value = header.substring(colon + 1).trim();
+                    List<String> values = fixedHeaders.get(key);
+                    if (values == null) {
+                        fixedHeaders.put(key, Collections.singletonList(value));
+                    } else {
+                        List<String> newValues = new ArrayList<String>(values);
+                        newValues.add(value);
+                        fixedHeaders.put(key, newValues);
+                    }
+                }
+            }
+            x++;
+        }
+    }
+
+    @Override
+    public Map<String, List<String>> getHTTPHeaders(String url) {
+        Map<String, List<String>> result = new HashMap<String, List<String>>(fixedHeaders);
 
         // cookies
         if (cookieManager != null) {
@@ -174,6 +199,14 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         }
 
         return null;
+    }
+
+    /**
+     * Returns the HTTP headers that are sent with all requests. The returned
+     * map is mutable but not synchronized!
+     */
+    protected Map<String, List<String>> getFixedHeaders() {
+        return fixedHeaders;
     }
 
     /**

@@ -82,6 +82,8 @@ public final class SessionParameter {
     public static final String CLIENT_COMPRESSION = "org.apache.chemistry.opencmis.binding.clientcompression";
 
     public static final String COOKIES = "org.apache.chemistry.opencmis.binding.cookies";
+    
+    public static final String HEADER = "org.apache.chemistry.opencmis.binding.header";
 
     public static final String CONNECT_TIMEOUT = "org.apache.chemistry.opencmis.binding.connecttimeout";
     public static final String READ_TIMEOUT = "org.apache.chemistry.opencmis.binding.readtimeout";
