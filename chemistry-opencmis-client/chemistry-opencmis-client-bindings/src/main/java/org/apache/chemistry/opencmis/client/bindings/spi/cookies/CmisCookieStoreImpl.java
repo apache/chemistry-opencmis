@@ -96,16 +96,26 @@ class CmisCookieStoreImpl implements Serializable {
         for (URI u : uris) {
             // exclude the given URI
             if (!u.equals(uri)) {
+                boolean secure = false;
+                String scheme = u.getScheme();
+                if (scheme != null) {
+                    secure = scheme.toLowerCase().startsWith("https");
+                }
+
                 List<CmisHttpCookie> listCookie = storeMap.get(u);
-                for (CmisHttpCookie cookie : listCookie) {
+                Iterator<CmisHttpCookie> iter = listCookie.iterator();
+                while (iter.hasNext()) {
+                    CmisHttpCookie cookie = iter.next();
                     if (CmisHttpCookie.domainMatches(cookie.getDomain(), uri.getHost())) {
                         if (cookie.hasExpired()) {
-                            listCookie.remove(cookie);
+                            iter.remove();
                             if (listCookie.isEmpty()) {
                                 storeMap.remove(u);
                             }
                         } else if (!(cookie.hasExpired() || cookies.contains(cookie))) {
-                            cookies.add(cookie);
+                            if (!cookie.getSecure() || secure) {
+                                cookies.add(cookie);
+                            }
                         }
                     }
                 }
@@ -129,9 +139,11 @@ class CmisCookieStoreImpl implements Serializable {
         List<CmisHttpCookie> cookies = new ArrayList<CmisHttpCookie>();
         Collection<ArrayList<CmisHttpCookie>> values = storeMap.values();
         for (ArrayList<CmisHttpCookie> list : values) {
-            for (CmisHttpCookie cookie : list) {
+            Iterator<CmisHttpCookie> iter = list.iterator();
+            while (iter.hasNext()) {
+                CmisHttpCookie cookie = iter.next();
                 if (cookie.hasExpired()) {
-                    list.remove(cookie); // eliminate expired cookies
+                    iter.remove(); // eliminate expired cookies
                 } else if (!cookies.contains(cookie)) {
                     cookies.add(cookie);
                 }
