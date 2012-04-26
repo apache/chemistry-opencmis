@@ -96,7 +96,7 @@ public class CreateBigDocument extends AbstractSessionTest {
 
             // create and fetch the document
             ObjectId id = session.createDocument(properties, testFolder, contentStream, versioningState);
-            Document doc = (Document) session.getObject(id);
+            Document doc = (Document) session.getObject(id, SELECT_ALL_NO_CACHE_OC);
 
             // check the new document
             addResult(checkObject(session, doc, getAllProperties(doc), "New document object spec compliance"));

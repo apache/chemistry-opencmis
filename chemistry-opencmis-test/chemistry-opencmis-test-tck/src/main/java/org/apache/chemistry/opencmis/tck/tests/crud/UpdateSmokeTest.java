@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -69,7 +70,9 @@ public class UpdateSmokeTest extends AbstractSessionTest {
             boolean checkedout = false;
             DocumentTypeDefinition type = (DocumentTypeDefinition) doc1.getType();
             PropertyDefinition<?> namePropDef = type.getPropertyDefinitions().get(PropertyIds.NAME);
-            if (namePropDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
+            if (namePropDef.getUpdatability() == Updatability.WHENCHECKEDOUT
+                    || (!doc1.getAllowableActions().getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES) && Boolean.TRUE
+                            .equals(type.isVersionable()))) {
                 workDoc = (Document) session.getObject(doc1.checkOut(), SELECT_ALL_NO_CACHE_OC);
                 checkedout = true;
             }
@@ -95,13 +98,16 @@ public class UpdateSmokeTest extends AbstractSessionTest {
                         "updateProperties without property changes returned an error: " + e.getMessage(), e, false));
             }
 
+            // delete
+            if (!workDoc.getId().equals(doc2.getId())) {
+                deleteObject(doc2);
+            }
+
             // cancel a possible check out
             if (checkedout) {
                 workDoc.cancelCheckOut();
             }
 
-            // delete
-            deleteObject(doc2);
             if (!doc1.getId().equals(doc2.getId())) {
                 if (exists(doc1)) {
                     deleteObject(doc1);
