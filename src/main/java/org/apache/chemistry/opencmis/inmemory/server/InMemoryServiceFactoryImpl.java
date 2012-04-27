@@ -77,15 +77,17 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private boolean fUseOverrideCtx = false;
     private StoreManager storeManager; // singleton root of everything
     private CleanManager cleanManager = null;
-    
+
     private File tempDir;
     private int memoryThreshold;
-    
+    private long maxSize;
 
     @Override
     public void init(Map<String, String> parameters) {
         LOG.info("Initializing in-memory repository...");
 
+        System.out.println(parameters);
+        
         inMemoryServiceParameters = parameters;
         String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
         if (null != overrideCtx) {
@@ -105,9 +107,17 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         String tempDirStr = parameters.get(ConfigConstants.TEMP_DIR);
         tempDir = (tempDirStr == null ? super.getTempDirectory() : new File(tempDirStr));
-        
+
         String memoryThresholdStr = parameters.get(ConfigConstants.MEMORY_THRESHOLD);
-        memoryThreshold = (memoryThresholdStr == null ? super.getMemoryThreshold(): Integer.parseInt(memoryThresholdStr));
+        memoryThreshold = (memoryThresholdStr == null ? super.getMemoryThreshold() : Integer
+                .parseInt(memoryThresholdStr));
+        
+        String maxSizeStr = parameters.get(ConfigConstants.MAX_SIZE);
+        maxSize = (maxSizeStr == null ? super.getMaxSize() : Long.parseLong(maxSizeStr));
+
+        System.out.println("maxSizeStr > " + maxSizeStr);
+        System.out.println("super.getMaxSize() > " + super.getMaxSize());
+        System.out.println("content > " + tempDir + " / " + memoryThreshold + " / " +  maxSize);
         
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
@@ -166,8 +176,12 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     public int getMemoryThreshold() {
         return memoryThreshold;
     }
-    
-    
+
+    @Override
+    public long getMaxSize() {
+        return maxSize;
+    }
+
     @Override
     public void destroy() {
         if (null != cleanManager) {
@@ -311,11 +325,15 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
             public File getTempDirectory() {
 
-                return null;
+                return tempDir;
             }
 
             public int getMemoryThreshold() {
-                return 0;
+                return memoryThreshold;
+            }
+
+            public long getMaxSize() {
+                return maxSize;
             }
         }
 

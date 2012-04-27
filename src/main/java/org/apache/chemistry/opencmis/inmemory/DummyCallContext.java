@@ -89,4 +89,8 @@ public class DummyCallContext implements CallContext {
     public int getMemoryThreshold() {
         return 4 * 1024 * 1024;
     }
+
+    public long getMaxSize() {
+        return 4 * 1024 * 1024 * 1024;
+    }
 }
