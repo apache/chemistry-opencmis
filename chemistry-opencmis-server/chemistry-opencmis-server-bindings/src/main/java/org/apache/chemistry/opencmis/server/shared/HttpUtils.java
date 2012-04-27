@@ -45,7 +45,7 @@ public class HttpUtils {
      */
     public static CallContext createContext(HttpServletRequest request, HttpServletResponse response,
             ServletContext servletContext, String binding, CallContextHandler callContextHandler, File tempDir,
-            int memoryThreshold) {
+            int memoryThreshold, long maxSize) {
         String[] pathFragments = splitPath(request);
 
         String repositoryId = null;
@@ -70,9 +70,10 @@ public class HttpUtils {
         context.put(CallContext.HTTP_SERVLET_REQUEST, request);
         context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
 
-        // temp files
+        // content
         context.put(CallContext.TEMP_DIR, tempDir);
         context.put(CallContext.MEMORY_THRESHOLD, memoryThreshold);
+        context.put(CallContext.MAX_SIZE, maxSize);
 
         // decode range
         String rangeHeader = request.getHeader("Range");

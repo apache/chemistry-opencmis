@@ -145,5 +145,9 @@ public abstract class AbstractLocalService {
         public int getMemoryThreshold() {
             return 0;
         }
+
+        public long getMaxSize() {
+            return -1;
+        }
     }
 }

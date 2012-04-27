@@ -49,4 +49,11 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     public int getMemoryThreshold() {
         return 4 * 1024 * 1024;
     }
+
+    /**
+     * Returns a max size of 4 GiB.
+     */
+    public long getMaxSize() {
+        return (long) 4 * 1024 * 1024 * 1024;
+    }
 }

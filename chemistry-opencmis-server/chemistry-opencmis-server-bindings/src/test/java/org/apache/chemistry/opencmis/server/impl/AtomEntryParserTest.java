@@ -39,6 +39,7 @@ import org.junit.Test;
 public class AtomEntryParserTest {
 
     private static final int THRESHOLD = 4 * 1024 * 1024;
+    private static final int MAX_SIZE = -1;
 
     private static final String CMIS_ENTRY_CONTENT = "This is my content!";
     private static final String CMIS_ENTRY = "<?xml version='1.0' encoding='utf-8'?>"
@@ -171,7 +172,8 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomTitle() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), null, THRESHOLD);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), null,
+                THRESHOLD, MAX_SIZE);
 
         assertNotNull(aep);
         assertNotNull(aep.getObject());
@@ -187,7 +189,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testNullStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD);
+        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD, MAX_SIZE);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -198,7 +200,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testEmptyStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD, MAX_SIZE);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -208,7 +210,7 @@ public class AtomEntryParserTest {
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD, MAX_SIZE);
         ContentStream contentStream = aep.getContentStream();
 
         assertNotNull(contentStream);

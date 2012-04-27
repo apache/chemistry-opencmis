@@ -53,7 +53,8 @@ public class VersioningService {
     public static void checkOut(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold());
+        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
+                context.getMaxSize());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 

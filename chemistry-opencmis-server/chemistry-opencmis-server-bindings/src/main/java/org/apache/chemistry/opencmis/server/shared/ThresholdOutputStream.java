@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+
 /**
  * An OutputStream that stores the data in main memory until it reaches a
  * threshold. If the threshold is passed the data is written to a temporary
@@ -39,29 +41,53 @@ import java.io.OutputStream;
  * InputStream isn't required!
  */
 public class ThresholdOutputStream extends OutputStream {
-    private static final int MAX_GROW = 10 * 1024 * 1024;
-    private static final int DEFAULT_THRESHOLD = 4 * 1024 * 1024;
+    private static final int MAX_GROW = 10 * 1024 * 1024; // 10 MiB
+    private static final int DEFAULT_THRESHOLD = 4 * 1024 * 1024; // 4 MiB
 
     private File tempDir;
     private int memoryThreshold;
+    private long maxSize;
 
     private byte[] buf = null;
     private int bufSize = 0;
-    private long size;
+    private long size = 0;
     private File tempFile;
     private OutputStream tmpStream;
 
-    public ThresholdOutputStream(File tempDir, int memoryThreshold) {
-        this(64 * 1024, tempDir, memoryThreshold);
+    /**
+     * Constructor.
+     * 
+     * @param tempDir
+     *            temp directory
+     * @param memoryThreshold
+     *            memory threshold in bytes
+     * @param maxSize
+     *            max size of the content in bytes (-1 to disable the check)
+     */
+    public ThresholdOutputStream(File tempDir, int memoryThreshold, long maxSize) {
+        this(64 * 1024, tempDir, memoryThreshold, maxSize);
     }
 
-    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold) {
+    /**
+     * Constructor.
+     * 
+     * @param initSize
+     *            initial internal buffer size
+     * @param tempDir
+     *            temp directory
+     * @param memoryThreshold
+     *            memory threshold in bytes
+     * @param maxSize
+     *            max size of the content in bytes (-1 to disable the check)
+     */
+    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxSize) {
         if (initSize < 0) {
             throw new IllegalArgumentException("Negative initial size: " + initSize);
         }
 
         this.tempDir = tempDir;
         this.memoryThreshold = (memoryThreshold < 0 ? DEFAULT_THRESHOLD : memoryThreshold);
+        this.maxSize = maxSize;
 
         buf = new byte[initSize];
     }
@@ -104,34 +130,59 @@ public class ThresholdOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] buffer, int offset, int len) throws IOException {
-        if (len == 0) {
-            return;
-        }
+        try {
+            if (len == 0) {
+                return;
+            }
 
-        expand(len);
-        System.arraycopy(buffer, offset, buf, bufSize, len);
-        bufSize += len;
-        size += len;
+            if ((maxSize > -1) && (size + len > maxSize)) {
+                destroy();
+                throw new CmisConstraintException("Content too big!");
+            }
+
+            expand(len);
+            System.arraycopy(buffer, offset, buf, bufSize, len);
+            bufSize += len;
+            size += len;
+        } catch (IOException ioe) {
+            destroy();
+            throw ioe;
+        }
     }
 
     @Override
     public void write(int oneByte) throws IOException {
-        if (bufSize == buf.length) {
-            expand(1);
-        }
+        try {
+            if ((maxSize > -1) && (size + 1 > maxSize)) {
+                destroy();
+                throw new CmisConstraintException("Content too big!");
+            }
 
-        buf[bufSize++] = (byte) oneByte;
-        size++;
+            if (bufSize == buf.length) {
+                expand(1);
+            }
+
+            buf[bufSize++] = (byte) oneByte;
+            size++;
+        } catch (IOException ioe) {
+            destroy();
+            throw ioe;
+        }
     }
 
     @Override
     public void flush() throws IOException {
         if (tmpStream != null) {
-            if (bufSize > 0) {
-                tmpStream.write(buf, 0, bufSize);
-                bufSize = 0;
+            try {
+                if (bufSize > 0) {
+                    tmpStream.write(buf, 0, bufSize);
+                    bufSize = 0;
+                }
+                tmpStream.flush();
+            } catch (IOException ioe) {
+                destroy();
+                throw ioe;
             }
-            tmpStream.flush();
         }
     }
 

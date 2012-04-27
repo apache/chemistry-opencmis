@@ -27,6 +27,7 @@ public class ConfigConstants {
     public static final String OVERRIDE_CALL_CONTEXT = "InMemoryServer.OverrideCallContext";
     public static final String MEMORY_THRESHOLD = "InMemoryServer.MemoryThreshold";
     public static final String TEMP_DIR = "InMemoryServer.TempDir";
+    public static final String MAX_SIZE = "InMemoryServer.MaxSize";
 
     // Helper constants that allow to fill a repository with data on
     // initialization

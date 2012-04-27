@@ -47,7 +47,7 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private BigInteger size;
     private InputStream stream;
 
-    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold)
+    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold, long maxSize)
             throws Exception {
         super(request);
 
@@ -93,7 +93,7 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
                     contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
                             .getContentType());
 
-                    ThresholdOutputStream os = new ThresholdOutputStream(tempDir, memoryThreshold);
+                    ThresholdOutputStream os = new ThresholdOutputStream(tempDir, memoryThreshold, maxSize);
 
                     try {
                         byte[] buffer = new byte[64 * 1024];

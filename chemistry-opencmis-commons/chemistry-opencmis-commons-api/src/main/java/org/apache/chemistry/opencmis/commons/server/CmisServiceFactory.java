@@ -23,6 +23,8 @@ package org.apache.chemistry.opencmis.commons.server;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+
 /**
  * Factory for {@link CmisService} objects.
  */
@@ -63,4 +65,12 @@ public interface CmisServiceFactory {
      * @see CmisServiceFactory#getTempDirectory()
      */
     int getMemoryThreshold();
+
+    /**
+     * Returns the maximal content size in bytes. If a client provides content
+     * bigger than that, {@link CmisConstraintException} is thrown.
+     * 
+     * @return the max size in bytes or -1 to disable the size check
+     */
+    long getMaxSize();
 }

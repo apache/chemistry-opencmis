@@ -84,6 +84,10 @@ public class CallContextImpl implements CallContext {
         return (Integer) get(MEMORY_THRESHOLD);
     }
 
+    public long getMaxSize() {
+        return (Long) get(MAX_SIZE);
+    }
+
     /**
      * Adds a parameter.
      */

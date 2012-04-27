@@ -111,7 +111,7 @@ public class PolicyService {
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold());
+                context.getMemoryThreshold(), context.getMaxSize());
 
         // execute
         service.applyPolicy(repositoryId, parser.getId(), objectId, null);
