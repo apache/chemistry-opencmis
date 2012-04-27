@@ -87,7 +87,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         LOG.info("Initializing in-memory repository...");
 
         System.out.println(parameters);
-        
+
         inMemoryServiceParameters = parameters;
         String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
         if (null != overrideCtx) {
@@ -111,14 +111,10 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         String memoryThresholdStr = parameters.get(ConfigConstants.MEMORY_THRESHOLD);
         memoryThreshold = (memoryThresholdStr == null ? super.getMemoryThreshold() : Integer
                 .parseInt(memoryThresholdStr));
-        
+
         String maxContentSizeStr = parameters.get(ConfigConstants.MAX_CONTENT_SIZE);
         maxContentSize = (maxContentSizeStr == null ? super.getMaxContentSize() : Long.parseLong(maxContentSizeStr));
 
-        System.out.println("maxSizeStr > " + maxContentSizeStr);
-        System.out.println("super.getMaxSize() > " + super.getMaxContentSize());
-        System.out.println("content > " + tempDir + " / " + memoryThreshold + " / " +  maxContentSize);
-        
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
 
