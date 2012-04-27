@@ -80,7 +80,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     private File tempDir;
     private int memoryThreshold;
-    private long maxSize;
+    private long maxContentSize;
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -112,12 +112,12 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         memoryThreshold = (memoryThresholdStr == null ? super.getMemoryThreshold() : Integer
                 .parseInt(memoryThresholdStr));
         
-        String maxSizeStr = parameters.get(ConfigConstants.MAX_SIZE);
-        maxSize = (maxSizeStr == null ? super.getMaxSize() : Long.parseLong(maxSizeStr));
+        String maxContentSizeStr = parameters.get(ConfigConstants.MAX_CONTENT_SIZE);
+        maxContentSize = (maxContentSizeStr == null ? super.getMaxContentSize() : Long.parseLong(maxContentSizeStr));
 
-        System.out.println("maxSizeStr > " + maxSizeStr);
-        System.out.println("super.getMaxSize() > " + super.getMaxSize());
-        System.out.println("content > " + tempDir + " / " + memoryThreshold + " / " +  maxSize);
+        System.out.println("maxSizeStr > " + maxContentSizeStr);
+        System.out.println("super.getMaxSize() > " + super.getMaxContentSize());
+        System.out.println("content > " + tempDir + " / " + memoryThreshold + " / " +  maxContentSize);
         
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
@@ -178,8 +178,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     }
 
     @Override
-    public long getMaxSize() {
-        return maxSize;
+    public long getMaxContentSize() {
+        return maxContentSize;
     }
 
     @Override
@@ -332,8 +332,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                 return memoryThreshold;
             }
 
-            public long getMaxSize() {
-                return maxSize;
+            public long getMaxContentSize() {
+                return maxContentSize;
             }
         }
 
