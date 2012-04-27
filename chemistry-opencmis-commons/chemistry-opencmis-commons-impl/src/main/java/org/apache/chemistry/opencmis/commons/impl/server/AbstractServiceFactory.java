@@ -53,7 +53,7 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     /**
      * Returns a max size of 4 GiB.
      */
-    public long getMaxSize() {
+    public long getMaxContentSize() {
         return (long) 4 * 1024 * 1024 * 1024;
     }
 }

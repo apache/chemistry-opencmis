@@ -75,7 +75,7 @@ public class AtomEntryParser {
 
     private File tempDir;
     private int memoryThreshold;
-    private long maxSize;
+    private long maxContentSize;
 
     private ObjectData object;
     private ContentStreamImpl atomContentStream;
@@ -84,17 +84,17 @@ public class AtomEntryParser {
     /**
      * Constructor.
      */
-    public AtomEntryParser(File tempDir, int memoryThreshold, long maxSize) {
+    public AtomEntryParser(File tempDir, int memoryThreshold, long maxContentSize) {
         this.tempDir = tempDir;
         this.memoryThreshold = memoryThreshold;
-        this.maxSize = maxSize;
+        this.maxContentSize = maxContentSize;
     }
 
     /**
      * Constructor that immediately parses the given stream.
      */
-    public AtomEntryParser(InputStream stream, File tempDir, int memoryThreshold, long maxSize) throws Exception {
-        this(tempDir, memoryThreshold, maxSize);
+    public AtomEntryParser(InputStream stream, File tempDir, int memoryThreshold, long maxContentSize) throws Exception {
+        this(tempDir, memoryThreshold, maxContentSize);
         parse(stream);
     }
 
@@ -385,7 +385,7 @@ public class AtomEntryParser {
      * Parses a tag that contains base64 encoded content.
      */
     private ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
-        ThresholdOutputStream bufferStream = new ThresholdOutputStream(tempDir, memoryThreshold, maxSize);
+        ThresholdOutputStream bufferStream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize);
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         next(parser);

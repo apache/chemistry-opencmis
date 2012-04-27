@@ -72,5 +72,5 @@ public interface CmisServiceFactory {
      * 
      * @return the max size in bytes or -1 to disable the size check
      */
-    long getMaxSize();
+    long getMaxContentSize();
 }

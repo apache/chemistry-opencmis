@@ -90,7 +90,7 @@ public class DummyCallContext implements CallContext {
         return 4 * 1024 * 1024;
     }
 
-    public long getMaxSize() {
+    public long getMaxContentSize() {
         return 4 * 1024 * 1024 * 1024;
     }
 }

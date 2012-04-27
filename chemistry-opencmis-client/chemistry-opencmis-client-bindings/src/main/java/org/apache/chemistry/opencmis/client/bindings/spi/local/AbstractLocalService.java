@@ -146,7 +146,7 @@ public abstract class AbstractLocalService {
             return 0;
         }
 
-        public long getMaxSize() {
+        public long getMaxContentSize() {
             return -1;
         }
     }

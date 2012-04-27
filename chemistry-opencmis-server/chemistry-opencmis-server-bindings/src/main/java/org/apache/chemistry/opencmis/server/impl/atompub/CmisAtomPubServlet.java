@@ -94,7 +94,7 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private File tempDir;
     private int memoryThreshold;
-    private long maxSize;
+    private long maxContentSize;
 
     private Dispatcher dispatcher;
     private CallContextHandler callContextHandler;
@@ -120,7 +120,7 @@ public class CmisAtomPubServlet extends HttpServlet {
 
         tempDir = factory.getTempDirectory();
         memoryThreshold = factory.getMemoryThreshold();
-        maxSize = factory.getMaxSize();
+        maxContentSize = factory.getMaxContentSize();
 
         // initialize the dispatcher
         dispatcher = new Dispatcher();
@@ -176,7 +176,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    callContextHandler, tempDir, memoryThreshold, maxSize);
+                    callContextHandler, tempDir, memoryThreshold, maxContentSize);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

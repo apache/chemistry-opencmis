@@ -54,7 +54,7 @@ public class VersioningService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxSize());
+                context.getMaxContentSize());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 

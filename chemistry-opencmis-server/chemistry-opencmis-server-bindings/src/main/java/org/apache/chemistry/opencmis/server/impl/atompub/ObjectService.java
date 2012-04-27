@@ -82,7 +82,7 @@ public final class ObjectService {
                 VersioningState.class);
 
         AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxSize());
+                context.getMaxContentSize());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 
@@ -139,7 +139,7 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxSize());
+                context.getMemoryThreshold(), context.getMaxContentSize());
 
         // execute
         String newObjectId = service.createRelationship(repositoryId, parser.getProperties(), parser.getPolicyIds(),
@@ -450,7 +450,7 @@ public final class ObjectService {
         Boolean major = getBooleanParameter(request, Constants.PARAM_MAJOR);
 
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxSize());
+                context.getMemoryThreshold(), context.getMaxContentSize());
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);

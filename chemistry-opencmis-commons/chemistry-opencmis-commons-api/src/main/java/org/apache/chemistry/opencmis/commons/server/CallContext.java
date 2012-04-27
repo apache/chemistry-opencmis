@@ -46,7 +46,7 @@ public interface CallContext {
 
     String TEMP_DIR = "tempDir";
     String MEMORY_THRESHOLD = "memoryThreshold";
-    String MAX_SIZE = "maxSize";
+    String MAX_CONTENT_SIZE = "maxContentSize";
 
     /**
      * Returns the binding. Usually it returns
@@ -113,5 +113,5 @@ public interface CallContext {
     /**
      * Returns the may size of content.
      */
-    long getMaxSize();
+    long getMaxContentSize();
 }

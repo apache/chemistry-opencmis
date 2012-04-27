@@ -46,7 +46,7 @@ public class ThresholdOutputStream extends OutputStream {
 
     private File tempDir;
     private int memoryThreshold;
-    private long maxSize;
+    private long maxContentSize;
 
     private byte[] buf = null;
     private int bufSize = 0;
@@ -61,11 +61,11 @@ public class ThresholdOutputStream extends OutputStream {
      *            temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
-     * @param maxSize
+     * @param maxContentSize
      *            max size of the content in bytes (-1 to disable the check)
      */
-    public ThresholdOutputStream(File tempDir, int memoryThreshold, long maxSize) {
-        this(64 * 1024, tempDir, memoryThreshold, maxSize);
+    public ThresholdOutputStream(File tempDir, int memoryThreshold, long maxContentSize) {
+        this(64 * 1024, tempDir, memoryThreshold, maxContentSize);
     }
 
     /**
@@ -77,17 +77,17 @@ public class ThresholdOutputStream extends OutputStream {
      *            temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
-     * @param maxSize
+     * @param maxContentSize
      *            max size of the content in bytes (-1 to disable the check)
      */
-    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxSize) {
+    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize) {
         if (initSize < 0) {
             throw new IllegalArgumentException("Negative initial size: " + initSize);
         }
 
         this.tempDir = tempDir;
         this.memoryThreshold = (memoryThreshold < 0 ? DEFAULT_THRESHOLD : memoryThreshold);
-        this.maxSize = maxSize;
+        this.maxContentSize = maxContentSize;
 
         buf = new byte[initSize];
     }
@@ -135,7 +135,7 @@ public class ThresholdOutputStream extends OutputStream {
                 return;
             }
 
-            if ((maxSize > -1) && (size + len > maxSize)) {
+            if ((maxContentSize > -1) && (size + len > maxContentSize)) {
                 destroy();
                 throw new CmisConstraintException("Content too big!");
             }
@@ -153,7 +153,7 @@ public class ThresholdOutputStream extends OutputStream {
     @Override
     public void write(int oneByte) throws IOException {
         try {
-            if ((maxSize > -1) && (size + 1 > maxSize)) {
+            if ((maxContentSize > -1) && (size + 1 > maxContentSize)) {
                 destroy();
                 throw new CmisConstraintException("Content too big!");
             }

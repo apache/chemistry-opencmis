@@ -126,7 +126,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
     private File tempDir;
     private int memoryThreshold;
-    private long maxSize;
+    private long maxContentSize;
 
     private Dispatcher repositoryDispatcher;
     private Dispatcher rootDispatcher;
@@ -153,7 +153,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
         tempDir = factory.getTempDirectory();
         memoryThreshold = factory.getMemoryThreshold();
-        maxSize = factory.getMaxSize();
+        maxContentSize = factory.getMaxContentSize();
 
         // initialize the dispatchers
         repositoryDispatcher = new Dispatcher(false);
@@ -246,7 +246,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    callContextHandler, tempDir, memoryThreshold, maxSize);
+                    callContextHandler, tempDir, memoryThreshold, maxContentSize);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -349,7 +349,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                 }
             } else if (METHOD_POST.equals(method)) {
                 POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request, tempDir,
-                        memoryThreshold, maxSize);
+                        memoryThreshold, maxContentSize);
 
                 String cmisaction = getStringParameter(postRequest, Constants.CONTROL_CMISACTION);
                 String objectId = getStringParameter(postRequest, Constants.CONTROL_OBJECT_ID);
