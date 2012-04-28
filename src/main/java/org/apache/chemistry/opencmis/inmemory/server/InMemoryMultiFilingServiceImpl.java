@@ -29,12 +29,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl {
 
-    private static final Log LOG = LogFactory.getLog(InMemoryMultiFilingServiceImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryMultiFilingServiceImpl.class.getName());
 
     final AtomLinkInfoProvider fAtomLinkProvider;
 

@@ -49,8 +49,8 @@ import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +64,7 @@ import org.junit.Test;
  */
 public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
 
-    private static final Log log = LogFactory.getLog(RepositoryServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(RepositoryServiceTest.class);
     private static final String REPOSITORY_ID = "UnitTestRepository";
     private static final String TYPE_ID_MUTABILITY = "BookTypeAddedLater";
     private static final String PROPERTY_ID_TITLE = "Title";

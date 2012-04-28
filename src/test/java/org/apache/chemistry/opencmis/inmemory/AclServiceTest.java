@@ -40,15 +40,15 @@ import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSy
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AclServiceTest extends AbstractServiceTest {
 
-    private static final Log LOG = LogFactory.getLog(AclServiceTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AclServiceTest.class);
     private ObjectCreator fCreator;
     private static final String DOCUMENT_NAME = "DocumentWithAcl";
     private static final String FOLDER_NAME = "FolderWithAcl";

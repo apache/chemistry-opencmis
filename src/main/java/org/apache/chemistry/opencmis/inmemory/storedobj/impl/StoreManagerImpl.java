@@ -63,8 +63,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * factory to create objects that are stored in the InMemory store
@@ -73,7 +73,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StoreManagerImpl implements StoreManager {
 
-    private static final Log LOG = LogFactory.getLog(StoreManagerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoreManagerImpl.class);
 
     private static final String CMIS_READ = "cmis:read";
     private static final String CMIS_WRITE = "cmis:write";

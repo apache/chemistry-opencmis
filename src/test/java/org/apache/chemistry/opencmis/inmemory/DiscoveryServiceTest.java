@@ -28,14 +28,14 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class DiscoveryServiceTest extends AbstractServiceTest {
 
-    private static final Log log = LogFactory.getLog(DiscoveryServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DiscoveryServiceTest.class);
     private static final String TEST_FOLDER_TYPE_ID = ObjectServiceTest.TEST_FOLDER_TYPE_ID;
     private static final String TEST_DOCUMENT_TYPE_ID = ObjectServiceTest.TEST_DOCUMENT_TYPE_ID;
     private static final String TEST_FOLDER_STRING_PROP_ID = ObjectServiceTest.TEST_FOLDER_STRING_PROP_ID;

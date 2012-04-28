@@ -32,8 +32,8 @@ import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * InMemory Stored Document A document is a stored object that has a path and
@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
-    private static final Log LOG = LogFactory.getLog(AbstractSingleFilingImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleFilingImpl.class.getName());
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package

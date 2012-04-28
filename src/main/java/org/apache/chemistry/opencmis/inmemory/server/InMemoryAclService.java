@@ -27,12 +27,12 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
-    private static final Log LOG = LogFactory.getLog(InMemoryAclService.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryAclService.class.getName());
     final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryAclService(StoreManager storeManager) {
