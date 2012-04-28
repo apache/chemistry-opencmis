@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class TestParserTextSearch extends AbstractParserTest{
 
-    //private static final Log log = LogFactory.getLog(TestParserTextSearch.class);
+    //private static final Logger log = LoggerFactory.getLogger(TestParserTextSearch.class);
 
     @Before
     public void setUp() {

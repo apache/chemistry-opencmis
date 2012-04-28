@@ -58,12 +58,12 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningServicePort;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPortProvider {
 
-    private static final Log log = LogFactory.getLog(AbstractPortProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractPortProvider.class);
 
     public static final String CMIS_NAMESPACE = "http://docs.oasis-open.org/ns/cmis/ws/200908/";
 

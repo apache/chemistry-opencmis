@@ -32,8 +32,8 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
@@ -45,7 +45,7 @@ import com.drew.metadata.jpeg.JpegDirectory;
 
 public class PropertyMapperExif extends AbstractPropertyMapper {
 
-    private static final Log LOG = LogFactory.getLog(PropertyMapperExif.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyMapperExif.class.getName());
     private static String EXIF_DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
 
     private Map<String, String> propMapExif = new HashMap<String, String> (); // tag to property id
@@ -242,7 +242,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                             cal = new GregorianCalendar();
                             cal.setTime(date);
                         } catch (ParseException e) {
-                            LOG.error(e);
+                            LOG.error(e.toString(), e);
                             throw new MapperException("Unrecognized date format in EXIF date tag: " + src + " for tag: " + tag + " expected: yyyy:MM:dd HH:mm:ss");
                         }
                         res = cal;                     

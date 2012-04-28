@@ -45,8 +45,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ import java.util.Map;
  * Type Manager.
  */
 public class JcrTypeManager implements TypeManager { 
-    private static final Log log = LogFactory.getLog(JcrTypeManager.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrTypeManager.class);
 
     public static final String DOCUMENT_TYPE_ID = "cmis:document";
     public static final String FOLDER_TYPE_ID = "cmis:folder";

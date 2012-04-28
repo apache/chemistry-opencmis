@@ -34,15 +34,15 @@ import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class QueryTypesTest extends AbstractQueryTest {
 
-    private static final Log LOG = LogFactory.getLog(QueryTypesTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueryTypesTest.class);
     private TypeManagerImpl tm;
     private TestPredicateWalker pw;
 

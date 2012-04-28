@@ -34,15 +34,15 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.apache.chemistry.opencmis.util.content.loremipsum.LoremIpsum;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class LoremIpsumTest {
 
-    private static final Log LOG = LogFactory.getLog(LoremIpsumTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoremIpsumTest.class);
 
     String sample = "One two three four five six. Seven eight nine ten eleven twelve. "
 		+ "\n\n"

@@ -61,12 +61,12 @@ options {
 package org.apache.chemistry.opencmis.server.support.query;
 
 import java.math.BigDecimal;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 }
 
 @members {
-    private static Log LOG = LogFactory.getLog(CmisQueryWalker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisQueryWalker.class);
 
     private QueryObject queryObj;
     private Tree wherePredicateTree;

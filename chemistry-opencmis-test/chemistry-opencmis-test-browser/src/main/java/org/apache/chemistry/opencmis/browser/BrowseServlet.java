@@ -46,8 +46,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -57,7 +57,7 @@ public class BrowseServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory.getLog(BrowseServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowseServlet.class);
 
     private static final String CONTEXT_PREFIX = "{ctx}";
     private static final String PARAM_URL = "url";

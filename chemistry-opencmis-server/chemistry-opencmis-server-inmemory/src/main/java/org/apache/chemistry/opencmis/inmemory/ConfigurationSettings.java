@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationSettings {
 
-    private static final Log LOG = LogFactory.getLog(ConfigurationSettings.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationSettings.class.getName());
 
     private static ConfigurationSettings singleInstance;
 

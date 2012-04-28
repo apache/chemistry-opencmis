@@ -23,8 +23,8 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a repository factory without back-end for test purposes.
@@ -37,7 +37,7 @@ public class DummyServicesFactory extends AbstractServiceFactory {
     private static final String REPOSITORY_NAME = "repository.name";
     private static final String REPOSITORY_NAME_DEFAULT = "Test Repository";
 
-    private static final Log LOG = LogFactory.getLog(DummyServicesFactory.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DummyServicesFactory.class.getName());
 
     private DummyService service;
     private String id;

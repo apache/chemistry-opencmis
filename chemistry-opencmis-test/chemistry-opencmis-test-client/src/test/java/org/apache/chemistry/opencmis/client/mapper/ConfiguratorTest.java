@@ -28,15 +28,15 @@ import java.util.Properties;
 import org.apache.chemistry.opencmis.client.parser.MetadataParser;
 import org.apache.chemistry.opencmis.client.parser.MetadataParserExif;
 import org.apache.chemistry.opencmis.client.parser.MetadataParserTika;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ConfiguratorTest {
 
-    private static final Log LOG = LogFactory.getLog(ConfiguratorTest.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ConfiguratorTest.class.getName());
     Properties properties;
     
     @Before

@@ -26,8 +26,8 @@ import org.apache.chemistry.opencmis.client.mapper.MapperException;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
@@ -42,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MetadataParserTika extends AbstractMetadataParser {
 
-    private static final Log LOG = LogFactory.getLog(MetadataParserTika.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MetadataParserTika.class.getName());
 
     public MetadataParserTika() {        
     }
@@ -79,7 +79,7 @@ public class MetadataParserTika extends AbstractMetadataParser {
             }
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException("Extracting metadata failed for file " + f.getAbsolutePath(), e);
         }
     }    
@@ -99,7 +99,7 @@ public class MetadataParserTika extends AbstractMetadataParser {
             }
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException("Extracting metadata failed, file not found: " + f.getAbsolutePath(), e);
         }
     } 

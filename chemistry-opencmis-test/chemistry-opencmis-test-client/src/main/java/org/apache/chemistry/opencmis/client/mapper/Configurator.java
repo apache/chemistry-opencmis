@@ -26,12 +26,12 @@ import java.util.Properties;
 
 import org.apache.chemistry.opencmis.client.parser.MetadataParser;
 import org.apache.chemistry.opencmis.client.parser.MetadataParserTika;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Configurator {
 
-    private static final Log LOG = LogFactory.getLog(Configurator.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Configurator.class.getName());
     
     private static Configurator INSTANCE;
     static final String PREFIX = "mapping.contentType";
@@ -102,7 +102,7 @@ public class Configurator {
             try {
                 properties.load (in);
             } catch (IOException e) {
-                LOG.error(e);
+                LOG.error(e.toString(), e);
                 e.printStackTrace();
                 throw new MapperException("Could not load file mapping.properties as resource", e);
             } 
@@ -198,15 +198,15 @@ public class Configurator {
         try {
             obj = Class.forName(className).newInstance();
         } catch (InstantiationException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load metadata parser, cannot instantiate " + className, e);
         } catch (IllegalAccessException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load metadata parser, cannot access " + className, e);
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load metadata parser, class not found: " + className, e);
         }
@@ -229,15 +229,15 @@ public class Configurator {
         try {
             obj = Class.forName(className).newInstance();
         } catch (InstantiationException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load mapping configuration, cannot instantiate " + className, e);
         } catch (IllegalAccessException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load mapping configuration, cannot access " + className, e);
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
             throw new MapperException(
                     "Illegal class to load mapping configuration, class not found: " + className, e);
         }

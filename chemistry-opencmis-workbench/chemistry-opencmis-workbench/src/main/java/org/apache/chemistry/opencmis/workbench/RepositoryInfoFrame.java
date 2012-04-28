@@ -112,7 +112,7 @@ public class RepositoryInfoFrame extends JFrame {
             if (repInfo.getCapabilities() != null) {
                 RepositoryCapabilities cap = repInfo.getCapabilities();
 
-                addLine("Capabilities", true).setText("");
+                addLine("Capabilities:", true).setText("");
 
                 addYesNoLabel("Get descendants supported:").setValue(is(cap.isGetDescendantsSupported()));
                 addYesNoLabel("Get folder tree supported:").setValue(is(cap.isGetFolderTreeSupported()));

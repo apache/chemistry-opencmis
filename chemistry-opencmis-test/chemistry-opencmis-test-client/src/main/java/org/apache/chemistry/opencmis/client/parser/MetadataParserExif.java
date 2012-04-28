@@ -25,8 +25,8 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.mapper.MapperException;
 import org.apache.chemistry.opencmis.client.mapper.PropertyMapperExif;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -42,7 +42,7 @@ import com.drew.metadata.Tag;
  */
 public class MetadataParserExif extends AbstractMetadataParser  {
 
-    private static final Log LOG = LogFactory.getLog(MetadataParserExif.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MetadataParserExif.class.getName());
     
     public void extractMetadata(File f, TypeDefinition td) throws MapperException {
         
@@ -68,7 +68,7 @@ public class MetadataParserExif extends AbstractMetadataParser  {
             Map<String, Object> props = ((PropertyMapperExif)mapper).getMappedProperties();
             cmisProperties.putAll(props);
         } catch (ImageProcessingException e) {            
-            LOG.error(e);
+            LOG.error(e.toString(), e);
         }
 
     }

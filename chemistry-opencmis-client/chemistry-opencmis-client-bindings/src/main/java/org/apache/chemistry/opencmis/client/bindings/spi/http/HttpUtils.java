@@ -43,15 +43,15 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HTTP helper methods.
  */
 public class HttpUtils {
 
-    private static final Log log = LogFactory.getLog(HttpUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
     private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 

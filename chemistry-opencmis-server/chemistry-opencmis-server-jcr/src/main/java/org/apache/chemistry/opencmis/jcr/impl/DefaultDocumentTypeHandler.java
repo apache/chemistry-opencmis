@@ -35,8 +35,8 @@ import org.apache.chemistry.opencmis.jcr.JcrVersion;
 import org.apache.chemistry.opencmis.jcr.JcrVersionBase;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.type.JcrDocumentTypeHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -53,7 +53,7 @@ import java.io.IOException;
  */
 public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implements JcrDocumentTypeHandler {
 
-    private static final Log log = LogFactory.getLog(JcrFolder.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrFolder.class);
 
     public String getTypeId() {
         return BaseTypeId.CMIS_DOCUMENT.value();

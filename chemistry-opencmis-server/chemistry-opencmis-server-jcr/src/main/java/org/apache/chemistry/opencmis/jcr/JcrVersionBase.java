@@ -29,8 +29,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -47,7 +47,7 @@ import java.util.Set;
  * JCR <code>Node</code>. 
  */
 public abstract class JcrVersionBase extends JcrDocument {
-    private static final Log log = LogFactory.getLog(JcrVersionBase.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrVersionBase.class);
 
     protected JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);

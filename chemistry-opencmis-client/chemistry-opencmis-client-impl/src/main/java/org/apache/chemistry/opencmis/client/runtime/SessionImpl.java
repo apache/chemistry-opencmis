@@ -88,7 +88,7 @@ public class SessionImpl implements Session {
         CREATE_UPDATABILITY.add(Updatability.READWRITE);
     }
 
-    // private static Log log = LogFactory.getLog(SessionImpl.class);
+    // private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 

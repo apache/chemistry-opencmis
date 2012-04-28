@@ -26,15 +26,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.bindings.cache.Cache;
 import org.apache.chemistry.opencmis.client.bindings.cache.CacheLevel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default cache implementation.
  */
 public class CacheImpl implements Cache {
 
-    private static final Log log = LogFactory.getLog(CacheImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CacheImpl.class);
 
     private static final long serialVersionUID = 1L;
 

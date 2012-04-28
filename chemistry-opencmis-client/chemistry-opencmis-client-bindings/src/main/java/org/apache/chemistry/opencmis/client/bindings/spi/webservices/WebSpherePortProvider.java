@@ -49,8 +49,8 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RelationshipService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.VersioningService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -58,7 +58,7 @@ import org.w3c.dom.Element;
  * headers.
  */
 public class WebSpherePortProvider extends AbstractPortProvider {
-    private static final Log log = LogFactory.getLog(WebSpherePortProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(WebSpherePortProvider.class);
 
     /**
      * Creates a port object.

@@ -51,8 +51,8 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.util.content.fractal.FractalGenerator;
 import org.apache.chemistry.opencmis.util.content.loremipsum.LoremIpsum;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple helper class for the tests that generates a sample folder hierarchy
@@ -63,7 +63,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ObjectGenerator {
 
-    private static final Log log = LogFactory.getLog(ObjectGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(ObjectGenerator.class);
     private final BindingsObjectFactory fFactory;
     NavigationService fNavSvc;
     ObjectService fObjSvc;

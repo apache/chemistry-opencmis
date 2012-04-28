@@ -56,12 +56,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoggingFilter implements Filter {
 
-    private static final Log log = LogFactory.getLog(LoggingFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
     private static int REQUEST_NO = 0;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
     private String logDir;

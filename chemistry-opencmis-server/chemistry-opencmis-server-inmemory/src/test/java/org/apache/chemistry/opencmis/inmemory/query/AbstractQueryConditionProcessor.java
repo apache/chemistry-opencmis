@@ -41,12 +41,12 @@ import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_Cmi
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.StringUtil;
 import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractQueryConditionProcessor implements QueryConditionProcessor {
 
-    private static final Log LOG = LogFactory.getLog(ProcessQueryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessQueryTest.class);
     
     public abstract void onStartProcessing(Tree whereNode);
     public abstract void onStopProcessing();

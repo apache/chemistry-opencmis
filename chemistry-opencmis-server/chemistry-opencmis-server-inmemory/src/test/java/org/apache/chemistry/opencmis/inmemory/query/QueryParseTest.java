@@ -41,14 +41,14 @@ import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 public class QueryParseTest extends AbstractQueryTest {
 
-    private static final Log LOG = LogFactory.getLog(QueryParseTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueryParseTest.class);
 
     @Before
     public void setUp() {

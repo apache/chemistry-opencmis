@@ -65,8 +65,8 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefiniti
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +77,7 @@ import org.junit.Test;
 
 public class ObjectServiceTest extends AbstractServiceTest {
 
-    private static final Log log = LogFactory.getLog(ObjectServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ObjectServiceTest.class);
     public static final String TEST_FOLDER_TYPE_ID = "MyFolderType";
     public static final String TEST_DOCUMENT_TYPE_ID = "MyDocumentType";
     public static final String TEST_DOC_TYPE_WITH_DEFAULTS_ID = "DocumentTypeWithDefault";

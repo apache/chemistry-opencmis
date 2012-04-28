@@ -24,8 +24,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Call Context handler that handles basic authentication.
@@ -52,7 +52,7 @@ public class BasicAuthCallContextHandler implements CallContextHandler, Serializ
 
             String credentials = null;
             try {
-                credentials = new String(Base64.decodeBase64(authHeader.substring(x + 1).getBytes("ISO-8859-1")),
+                credentials = new String(Base64.decode(authHeader.substring(x + 1).getBytes("ISO-8859-1")),
                         "ISO-8859-1");
             } catch (Exception e) {
                 return result;

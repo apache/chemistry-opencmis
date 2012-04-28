@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
  * JCR <code>Node</code>.
  */
 public class JcrPrivateWorkingCopy extends JcrVersionBase {
-    private static final Log log = LogFactory.getLog(JcrPrivateWorkingCopy.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrPrivateWorkingCopy.class);
 
     /**
      * Name of a private working copy

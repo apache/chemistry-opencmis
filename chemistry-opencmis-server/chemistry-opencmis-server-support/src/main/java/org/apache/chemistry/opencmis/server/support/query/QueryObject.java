@@ -31,8 +31,8 @@ import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class QueryObject {
 
-    private static final Log LOG = LogFactory.getLog(QueryObject.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueryObject.class);
 
     // For error handling see:
     // http://www.antlr.org/pipermail/antlr-interest/2008-April/027600.html

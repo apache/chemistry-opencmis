@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.util.repository;
 
 import java.util.LinkedList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple utility class for time logging Note: NOT thread safe!
@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class TimeLogger {
-    private static final Log LOG = LogFactory.getLog(TimeLogger.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimeLogger.class);
 
     private static class TimeRecord {
         public long fStart;

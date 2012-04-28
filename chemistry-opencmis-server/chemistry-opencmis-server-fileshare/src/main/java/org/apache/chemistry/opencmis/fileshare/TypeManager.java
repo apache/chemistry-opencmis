@@ -54,8 +54,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Type Manager.
@@ -68,7 +68,7 @@ public class TypeManager {
 
     private static final String NAMESPACE = "http://opencmis.org/fileshare";
 
-    private static final Log log = LogFactory.getLog(TypeManager.class);
+    private static final Logger log = LoggerFactory.getLogger(TypeManager.class);
 
     private Map<String, TypeDefinitionContainerImpl> types;
     private List<TypeDefinitionContainer> typesList;

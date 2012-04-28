@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.jcr;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,7 +31,7 @@ import javax.jcr.RepositoryException;
  * Utility class for mapping JCR paths to CMIS paths
  */
 public class PathManager {
-    private static final Log log = LogFactory.getLog(PathManager.class);
+    private static final Logger log = LoggerFactory.getLogger(PathManager.class);
 
     /**
      * Identifier of the root folder

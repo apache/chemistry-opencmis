@@ -331,7 +331,7 @@ public class LoginDialog extends JDialog {
         boolean browser = (bc == 'b');
         bindingAtomButton = new JRadioButton("AtomPub", atom);
         bindingWebServicesButton = new JRadioButton("Web Services", ws);
-        bindingBrowserButton = new JRadioButton("Browser (experimental)", browser);
+        bindingBrowserButton = new JRadioButton("Browser", browser);
         ButtonGroup bindingGroup = new ButtonGroup();
         bindingGroup.add(bindingAtomButton);
         bindingGroup.add(bindingWebServicesButton);

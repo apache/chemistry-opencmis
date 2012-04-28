@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cookie Manager.
@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 public class CmisCookieManager implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Log LOG = LogFactory.getLog(CmisCookieManager.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisCookieManager.class.getName());
 
     private static final String VERSION_ZERO_HEADER = "Set-cookie";
     private static final String VERSION_ONE_HEADER = "Set-cookie2";

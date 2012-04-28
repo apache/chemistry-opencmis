@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 
 public abstract class AbstractMetadataParser implements MetadataParser {
     
-    // private static final Log LOG = LogFactory.getLog(AbstractMetadataParser.class.getName());
+    // private static final Logger LOG = LoggerFactory.getLogger(AbstractMetadataParser.class.getName());
 
     protected Map<String, Object> cmisProperties;
     protected PropertyMapper mapper = null;

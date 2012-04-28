@@ -40,15 +40,15 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AclPermissionsTest extends AbstractServiceTest  {
 
-	private static Log LOG = LogFactory.getLog(AclPermissionsTest.class);
+	private static Logger LOG = LoggerFactory.getLogger(AclPermissionsTest.class);
 	private static final BigInteger MINUS_ONE = BigInteger.valueOf(-1L);
 	
     protected ObjectCreator fCreator;

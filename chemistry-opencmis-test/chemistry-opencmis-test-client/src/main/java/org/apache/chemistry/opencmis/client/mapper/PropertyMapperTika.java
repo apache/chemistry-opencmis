@@ -34,12 +34,12 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertyMapperTika extends AbstractPropertyMapper {
 
-    private static final Log LOG = LogFactory.getLog(PropertyMapperTika.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyMapperTika.class.getName());
     
     private Map<String, String> propMapTags = new HashMap<String, String> (); // tag to property id
     private Map<String, String> tokenizerMap = new HashMap<String, String> (); // tag to tokenizer regexp
@@ -144,7 +144,7 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
                     }
                 } catch (ParseException e) {
                     LOG.error("Could not parse date: " + strValue + " (check date format");
-                    LOG.error(e);
+                    LOG.error(e.toString(), e);
                     value = null;
                     e.printStackTrace();
                 }

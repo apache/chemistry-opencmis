@@ -39,13 +39,13 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.tika.Tika;
     
 public class FileCopier {
     
-    private static final Log LOG = LogFactory.getLog(FileCopier.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FileCopier.class.getName());
     // initialize configurator to get parsers and property mappings
     private static final Configurator CFG = Configurator.getInstance(); 
     
@@ -81,7 +81,7 @@ public class FileCopier {
                 copyFileToRepository(fileOrDir.getAbsolutePath(), folderId);
             }            
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
         } finally {  
         }
     }
@@ -151,7 +151,7 @@ public class FileCopier {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    LOG.error(e);
+                    LOG.error(e.toString(), e);
                 }
             }
             LOG.debug("Conversion and transfer done.");    
@@ -231,7 +231,7 @@ public class FileCopier {
         try {
             new FileCopier().listMetadata(fileName);            
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.toString(), e);
         } finally {
         }
         LOG.debug("Extraction done.");    

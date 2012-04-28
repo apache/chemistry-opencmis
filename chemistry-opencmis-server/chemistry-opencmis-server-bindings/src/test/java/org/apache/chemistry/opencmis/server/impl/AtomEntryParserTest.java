@@ -29,8 +29,8 @@ import java.io.ByteArrayOutputStream;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
 /**
@@ -55,7 +55,7 @@ public class AtomEntryParserTest {
             + "    <cmis:propertyId propertyDefinitionId=\"cmis:objectTypeId\">"
             + "      <cmis:value>cmis:document</cmis:value>" + "    </cmis:propertyId>" + "  </cmis:properties>"
             + "</cmisra:object>" + "<cmisra:content>" + "  <cmisra:mediatype>text/plain</cmisra:mediatype>"
-            + "  <cmisra:base64>" + Base64.encodeBase64String(CMIS_ENTRY_CONTENT.getBytes()) + "</cmisra:base64>"
+            + "  <cmisra:base64>" + Base64.encodeBytes(CMIS_ENTRY_CONTENT.getBytes()) + "</cmisra:base64>"
             + "</cmisra:content>" + "</atom:entry>";
 
     private static final String ATOM_ENTRY_TEXT_CONTENT = "This is plain text!";
@@ -120,7 +120,7 @@ public class AtomEntryParserTest {
             + "    <cmis:propertyId propertyDefinitionId=\"cmis:objectTypeId\">"
             + "      <cmis:value>cmis:document</cmis:value>" + "    </cmis:propertyId>" + "  </cmis:properties>"
             + "</cmisra:object>" + "<atom:content type=\"application/something\">"
-            + Base64.encodeBase64String(ATOM_ENTRY_BASE64_CONTENT.getBytes()) + "</atom:content>" + "</atom:entry>";
+            + Base64.encodeBytes(ATOM_ENTRY_BASE64_CONTENT.getBytes()) + "</atom:content>" + "</atom:entry>";
 
     private static final String ATOM_ENTRY_NAME = "<?xml version='1.0' encoding='utf-8'?>"
             + "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:cmis=\"http://docs.oasis-open.org/ns/cmis/core/200908/\" xmlns:cmisra=\"http://docs.oasis-open.org/ns/cmis/restatom/200908/\">"

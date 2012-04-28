@@ -37,12 +37,12 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
-    private static final Log LOG = LogFactory.getLog(InMemoryDiscoveryServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryDiscoveryServiceImpl.class);
 
     final AtomLinkInfoProvider fAtomLinkProvider;
     final InMemoryNavigationServiceImpl fNavigationService; // real implementation of
