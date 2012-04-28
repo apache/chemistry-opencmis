@@ -57,7 +57,11 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     ContentStream getContentStream(String streamId);
 
     /**
-     * Sets a new content stream for the document.
+     * Sets a new content stream for the document and refreshes this object
+     * afterwards. If the repository created a new version, this new document is
+     * returned. Otherwise the current document is returned.
+     * 
+     * @return the updated document
      */
     Document setContentStream(ContentStream contentStream, boolean overwrite);
 
@@ -67,7 +71,11 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh);
 
     /**
-     * Removes the current content stream from the document.
+     * Removes the current content stream from the document and refreshes this
+     * object afterwards. If the repository created a new version, this new
+     * document is returned. Otherwise the current document is returned.
+     * 
+     * @return the updated document
      */
     Document deleteContentStream();
 
@@ -82,7 +90,7 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Checks out the document and returns the object id of the PWC (private
      * working copy).
      * 
-     * @return PWC id
+     * @return PWC object id
      */
     ObjectId checkOut(); // returns the PWC id
 

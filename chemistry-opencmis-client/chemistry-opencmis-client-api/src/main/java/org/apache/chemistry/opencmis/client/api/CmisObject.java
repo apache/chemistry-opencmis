@@ -64,26 +64,28 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     void delete(boolean allVersions);
 
     /**
-     * Updates the properties that are provided.
+     * Updates the provided properties and refreshes this object afterwards. If
+     * the repository created a new object, for example a new version, this new
+     * object is returned. Otherwise the current object is returned.
      * 
      * @param properties
      *            the properties to update
      * 
-     * @return the updated object (a repository might have created a new object)
+     * @return the updated object
      */
     CmisObject updateProperties(Map<String, ?> properties);
 
     /**
-     * Updates the properties that are provided.
+     * Updates the provided properties. If the repository created a new object,
+     * for example a new version, the object id of the new object is returned.
+     * Otherwise the object id of the current object is returned.
      * 
      * @param properties
      *            the properties to update
      * @param refresh
      *            indicates if the object should be refresh after the update
      * 
-     * @return the object id of the updated object (a repository might have
-     *         created a new object)
-     * 
+     * @return the object id of the updated object
      */
     ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
@@ -97,12 +99,12 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     // policy service
 
     /**
-     * Applies policies to this object.
+     * Applies the provided policies and refreshes this object afterwards.
      */
     void applyPolicy(ObjectId... policyIds);
 
     /**
-     * Remove policies from this object.
+     * Remove the provided policies and refreshes this object afterwards.
      */
     void removePolicy(ObjectId... policyIds);
 
@@ -114,19 +116,19 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     // ACL service
 
     /**
-     * Adds and removes ACEs to the object.
+     * Adds and removes ACEs to the object and refreshes this object afterwards.
      * 
      * @return the new ACL of this object
      */
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
     /**
-     * Adds ACEs to the object.
+     * Adds ACEs to the objec tand refreshes this object afterwards.
      */
     Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
     /**
-     * Removes ACEs to the object.
+     * Removes ACEs to the object and refreshes this object afterwards.
      */
     Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
 
