@@ -38,4 +38,20 @@ for i in *.jar; do
   WCP="$i:${WCP}"
 done
 
-exec $JAVA -classpath $WCP org.apache.chemistry.opencmis.workbench.Workbench &
+
+JAVA_OPTS="-Djava.net.useSystemProxies=true"
+
+if [ -n "$http_proxy" ]; then
+  HTTP_PROXY_HOST=$(echo $http_proxy | sed 's/http:\/\/\(.*\):.*/\1/')
+  HTTP_PROXY_PORT=$(echo $http_proxy | sed 's/http:\/\/.*:\(.*\)/\1/')
+  JAVA_OPTS="$JAVA_OPTS -Dhttp.proxyHost=$HTTP_PROXY_HOST -Dhttp.proxyPort=$HTTP_PROXY_PORT"
+fi
+
+if [ -n "$https_proxy" ]; then
+  HTTPS_PROXY_HOST=$(echo $https_proxy | sed 's/http:\/\/\(.*\):.*/\1/')
+  HTTPS_PROXY_PORT=$(echo $https_proxy | sed 's/http:\/\/.*:\(.*\)/\1/')
+  JAVA_OPTS="$JAVA_OPTS -Dhttps.proxyHost=$HTTPS_PROXY_HOST -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
+fi
+
+
+exec $JAVA $JAVA_OPTS -classpath $WCP org.apache.chemistry.opencmis.workbench.Workbench &
