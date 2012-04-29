@@ -534,8 +534,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         AtomBase parseResult = parser.getResults();
 
         if (!clazz.isInstance(parseResult)) {
-            throw new CmisConnectionException("Unexpected document! Received "
-                    + (parseResult == null ? "something unknown" : parseResult.getType()) + "!");
+            throw new CmisConnectionException("Unexpected document! Received: "
+                    + (parseResult == null ? "something unknown" : parseResult.getType()));
         }
 
         return (T) parseResult;

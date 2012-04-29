@@ -18,31 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+public class HtmlDoc extends AtomBase {
 
-/**
- * Base type for Atom repsonses.
- */
-public abstract class AtomBase implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+	@Override
+	public String getType() {
+		return "HTML document";
+	}
 
-    private final List<AtomElement> elements = new ArrayList<AtomElement>();
-
-    protected AtomBase() {
-    }
-
-    public abstract String getType();
-
-    public List<AtomElement> getElements() {
-        return elements;
-    }
-
-    public void addElement(AtomElement element) {
-        if (element != null) {
-            elements.add(element);
-        }
-    }
 }

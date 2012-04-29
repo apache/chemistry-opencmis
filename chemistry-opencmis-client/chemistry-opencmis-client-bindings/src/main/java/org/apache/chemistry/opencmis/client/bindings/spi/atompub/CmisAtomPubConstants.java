@@ -75,6 +75,9 @@ public final class CmisAtomPubConstants {
     // ACL
     public static final String TAG_ACL = "acl";
 
+    // HTML
+    public static final String TAG_HTML = "html";
+
     // links
     public static final String LINK_REL = "rel";
     public static final String LINK_HREF = "href";

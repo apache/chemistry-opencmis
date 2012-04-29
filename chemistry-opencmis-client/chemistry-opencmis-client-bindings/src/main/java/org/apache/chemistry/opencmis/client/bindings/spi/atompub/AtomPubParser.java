@@ -34,6 +34,7 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_FEED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_HTML;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_LINK;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_NUM_ITEMS;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_OBJECT;
@@ -65,6 +66,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.HtmlDoc;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -136,6 +138,9 @@ public class AtomPubParser {
                             parseResult = parseServiceDoc(parser);
                             break;
                         }
+                    } else if (TAG_HTML.equalsIgnoreCase(name.getLocalPart())) {
+                        parseResult = new HtmlDoc();
+                        break;
                     }
                 }
 
