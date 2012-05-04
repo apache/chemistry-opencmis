@@ -242,6 +242,12 @@ public class ThresholdOutputStream extends OutputStream {
          * <code>null</code> is the data is stored in memory.
          */
         File getTemporaryFile();
+
+        /**
+         * Returns content as a byte array if the data is stored in memory.
+         * Returns <code>null</code> is the data is stored in a file.
+         */
+        byte[] getBytes();
     }
 
     /**
@@ -257,6 +263,10 @@ public class ThresholdOutputStream extends OutputStream {
 
         public File getTemporaryFile() {
             return null;
+        }
+
+        public byte[] getBytes() {
+            return buf;
         }
 
         @Override
@@ -333,6 +343,10 @@ public class ThresholdOutputStream extends OutputStream {
 
         public File getTemporaryFile() {
             return tempFile;
+        }
+
+        public byte[] getBytes() {
+            return null;
         }
 
         @Override
