@@ -41,9 +41,11 @@ import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
 public class ClientSession {
@@ -215,9 +217,18 @@ public class ClientSession {
     }
 
     private void createOperationContexts() {
+
+        RepositoryInfo repositoryInfo = getSession().getRepositoryInfo();
+
+        String supportsAcl = "true";
+        if (repositoryInfo != null && repositoryInfo.getCapabilities() != null
+                && repositoryInfo.getCapabilities().getAclCapability() == CapabilityAcl.NONE) {
+            supportsAcl = "false";
+        }
+
         // object operation context
         setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.FILTER, "*");
-        setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_ACLS, "true");
+        setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_ACLS, supportsAcl);
         setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_ALLOWABLE_ACTIONS, "true");
         setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_POLICIES, "true");
         setDefault(OBJECT_PREFIX, sessionParameters, ClientOperationContext.INCLUDE_RELATIONSHIPS,
