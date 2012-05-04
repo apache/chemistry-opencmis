@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base type for Atom repsonses.
+ * Base type for Atom responses.
  */
 public abstract class AtomBase implements Serializable {
 
