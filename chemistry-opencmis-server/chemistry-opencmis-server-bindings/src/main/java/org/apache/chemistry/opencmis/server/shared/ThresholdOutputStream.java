@@ -332,6 +332,7 @@ public class ThresholdOutputStream extends OutputStream {
     private class InternalTempFileInputStream extends FilterInputStream implements ThresholdInputStream {
 
         private boolean isDeleted = false;
+        private boolean isClosed = false;
 
         public InternalTempFileInputStream() throws FileNotFoundException {
             super(new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold));
@@ -356,10 +357,18 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public int read() throws IOException {
+            if (isClosed) {
+                return -1;
+            }
+
             int b = super.read();
 
             if (b == -1 && !isDeleted) {
-                super.close();
+                try {
+                    super.close();
+                    isClosed = true;
+                } catch (Exception e) {
+                }
                 isDeleted = tempFile.delete();
             }
 
@@ -373,10 +382,18 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
+            if (isClosed) {
+                return -1;
+            }
+
             int n = super.read(b, off, len);
 
             if (n == -1 && !isDeleted) {
-                super.close();
+                try {
+                    super.close();
+                    isClosed = true;
+                } catch (Exception e) {
+                }
                 isDeleted = tempFile.delete();
             }
 
@@ -385,8 +402,15 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public void close() throws IOException {
+            if (!isClosed) {
+                try {
+                    super.close();
+                    isClosed = true;
+                } catch (Exception e) {
+                }
+            }
+
             if (!isDeleted) {
-                super.close();
                 isDeleted = tempFile.delete();
             }
         }
