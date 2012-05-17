@@ -62,7 +62,7 @@ public class CreateFolderDialog extends CreateDialog {
         typeBox.setSelectedIndex(0);
         createRow("Type:", typeBox, 1);
 
-        JButton createButton = new JButton("Create Folder");
+        JButton createButton = new JButton("Create Folder", ClientHelper.getIcon("newfolder.png"));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

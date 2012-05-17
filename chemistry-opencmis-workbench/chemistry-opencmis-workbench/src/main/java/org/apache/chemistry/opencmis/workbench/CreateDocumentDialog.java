@@ -223,7 +223,7 @@ public class CreateDocumentDialog extends CreateDialog {
         verifyAfterUploadButton = new JCheckBox("Verify content after upload");
         createRow("", verifyAfterUploadButton, 6);
 
-        JButton createButton = new JButton("Create Document");
+        JButton createButton = new JButton("Create Document", ClientHelper.getIcon("newdocument.png"));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

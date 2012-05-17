@@ -223,7 +223,7 @@ public class TckDialog {
             mainPanel.add(configPanel, BorderLayout.LINE_END);
             add(mainPanel, BorderLayout.CENTER);
 
-            final JButton runButton = new JButton("Run TCK");
+            final JButton runButton = new JButton("Run TCK", ClientHelper.getIcon("tck.png"));
             runButton.setDefaultCapable(true);
             runButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {

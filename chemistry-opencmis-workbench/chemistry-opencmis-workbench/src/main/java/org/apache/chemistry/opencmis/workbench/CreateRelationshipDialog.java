@@ -73,7 +73,7 @@ public class CreateRelationshipDialog extends CreateDialog {
         targetIdField = new JTextField(60);
         createRow("Target Id:", targetIdField, 3);
 
-        JButton createButton = new JButton("Create Relationship");
+        JButton createButton = new JButton("Create Relationship", ClientHelper.getIcon("newrelationship.png"));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

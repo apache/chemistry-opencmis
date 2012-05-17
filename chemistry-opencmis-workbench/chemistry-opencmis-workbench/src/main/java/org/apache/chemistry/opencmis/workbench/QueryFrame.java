@@ -18,10 +18,11 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -29,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -44,7 +46,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.text.NumberFormatter;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -66,12 +71,25 @@ public class QueryFrame extends JFrame {
     private static final String WINDOW_TITLE = "CMIS Query";
     private static final String DEFAULT_QUERY = "SELECT * FROM cmis:document";
 
+    private static final String[] QUERY_SNIPPETS = new String[] { //
+    "SELECT * FROM cmis:document", //
+            "SELECT * FROM cmis:folder", //
+            "SELECT cmis:objectId, cmis:name, SCORE() AS score FROM cmis:document WHERE CONTAINS('?')", //
+            "WHERE cmis:name LIKE '%'", //
+            "WHERE ? IN (?, ?, ?)", //
+            "WHERE IN_FOLDER('?')", //
+            "WHERE IN_TREE('?')", //
+            "WHERE ? = TIMESTAMP 'YYYY-MM-DDThh:mm:ss.sss[Z|+hh:mm|-hh:mm]'", //
+            "WHERE '?' = ANY ?", //
+            "ORDER BY cmis:name", //
+            "ORDER BY cmis:creationDate" };
+
     private final ClientModel model;
 
     private JTextArea queryText;
     private JFormattedTextField maxHitsField;
     private JCheckBox searchAllVersionsCheckBox;
-    private JTable resultsTable;
+    private ResultTable resultsTable;
     private JLabel queryTimeLabel;
 
     public QueryFrame(ClientModel model) {
@@ -90,30 +108,19 @@ public class QueryFrame extends JFrame {
 
         // input
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.LINE_AXIS));
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
 
+        // query text area
         queryText = new JTextArea(DEFAULT_QUERY, 5, 60);
+        queryText.setLineWrap(true);
+        queryText.setPreferredSize(new Dimension(Short.MAX_VALUE, queryText.getPreferredSize().height));
         inputPanel.add(queryText);
 
         JPanel inputPanel2 = new JPanel();
-        inputPanel2.setPreferredSize(new Dimension(160, 100));
-        inputPanel2.setMaximumSize(inputPanel.getPreferredSize());
-        inputPanel2.setLayout(new GridBagLayout());
+        inputPanel2.setLayout(new BorderLayout());
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        JButton queryButton = new JButton("Query");
-        queryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                doQuery();
-            }
-        });
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        inputPanel2.add(queryButton, c);
+        // buttons
+        JPanel buttonPanel = new JPanel();
 
         maxHitsField = new JFormattedTextField(new NumberFormatter());
         maxHitsField.setValue(Integer.valueOf(100));
@@ -122,34 +129,59 @@ public class QueryFrame extends JFrame {
         JLabel maxHitsLabel = new JLabel("Max hits:");
         maxHitsLabel.setLabelFor(maxHitsField);
 
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        inputPanel2.add(maxHitsLabel, c);
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        inputPanel2.add(maxHitsField, c);
+        buttonPanel.add(maxHitsLabel);
+        buttonPanel.add(maxHitsField);
 
         searchAllVersionsCheckBox = new JCheckBox("search all versions", false);
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 2;
-        inputPanel2.add(searchAllVersionsCheckBox, c);
+        buttonPanel.add(searchAllVersionsCheckBox);
 
-        queryTimeLabel = new JLabel("(-- hits in -- seconds)");
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 2;
-        inputPanel2.add(queryTimeLabel, c);
+        JButton queryButton = new JButton("Query", ClientHelper.getIcon("query.png"));
+        queryButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doQuery();
+            }
+        });
 
+        buttonPanel.add(queryButton);
+
+        inputPanel2.add(buttonPanel, BorderLayout.LINE_END);
+
+        // snippets
+        final JPopupMenu snippetsPopup = new JPopupMenu();
+        for (final String s : QUERY_SNIPPETS) {
+            JMenuItem menuItem = new JMenuItem(s);
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    queryText.insert(s, queryText.getCaretPosition());
+                }
+            });
+            snippetsPopup.add(menuItem);
+        }
+
+        final JButton snippetButton = new JButton("Query Snippets", ClientHelper.getIcon("paste.png"));
+        snippetButton.setFocusPainted(true);
+        snippetButton.setBorderPainted(false);
+        snippetButton.setContentAreaFilled(false);
+        snippetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                snippetsPopup.show(snippetButton, 0, snippetButton.getHeight());
+            }
+        });
+
+        inputPanel2.add(snippetButton, BorderLayout.LINE_START);
+
+        // query time label
+        queryTimeLabel = new JLabel("");
+        queryTimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        inputPanel2.add(queryTimeLabel, BorderLayout.CENTER);
+
+        inputPanel2.setMaximumSize(new Dimension(Short.MAX_VALUE, inputPanel2.getPreferredSize().height));
         inputPanel.add(inputPanel2);
 
         // table
-        resultsTable = new JTable();
-        resultsTable.setDefaultRenderer(ObjectIdImpl.class, new IdRenderer());
-        resultsTable.setFillsViewportHeight(true);
-        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        resultsTable = new ResultTable();
 
         final JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Copy to clipboard");
@@ -207,9 +239,9 @@ public class QueryFrame extends JFrame {
         add(new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputPanel, new JScrollPane(resultsTable)));
 
         getRootPane().setDefaultButton(queryButton);
-        
+
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
-        
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
 
@@ -247,7 +279,7 @@ public class QueryFrame extends JFrame {
                     if (PropertyIds.OBJECT_ID.equals(prop.getId()) && (prop.getFirstValue() != null)) {
                         rtm.setValue(row, prop.getQueryName(), new ObjectIdImpl(prop.getFirstValue().toString()));
                     } else {
-                        rtm.setValue(row, prop.getQueryName(), prop.getFirstValue());
+                        rtm.setValue(row, prop.getQueryName(), prop.getValues());
                     }
                 }
 
@@ -257,7 +289,7 @@ public class QueryFrame extends JFrame {
 
             long stopTime = System.currentTimeMillis();
             float time = ((float) (stopTime - startTime)) / 1000f;
-            queryTimeLabel.setText("(" + row + " hits in " + time + " seconds)");
+            queryTimeLabel.setText(" " + row + " hits (" + time + " seconds)");
 
             resultsTable.setModel(rtm);
         } catch (Exception ex) {
@@ -276,6 +308,7 @@ public class QueryFrame extends JFrame {
         private int rowCount = 0;
         private final Map<String, Integer> columnMapping = new HashMap<String, Integer>();
         private final Map<Integer, Map<Integer, Object>> data = new HashMap<Integer, Map<Integer, Object>>();
+        private final Map<Integer, Map<Integer, List<?>>> multivalue = new HashMap<Integer, Map<Integer, List<?>>>();
         private final Map<Integer, Class<?>> columnClass = new HashMap<Integer, Class<?>>();
 
         public ResultTableModel() {
@@ -297,7 +330,7 @@ public class QueryFrame extends JFrame {
             return rowCount;
         }
 
-        public void setValue(int rowIndex, String queryName, Object value) {
+        public void setValue(final int rowIndex, final String queryName, Object value) {
             Integer col = columnMapping.get(queryName);
             if (col == null) {
                 col = columnMapping.size();
@@ -306,6 +339,24 @@ public class QueryFrame extends JFrame {
 
             if (value == null) {
                 return;
+            }
+
+            if (value instanceof List<?>) {
+                List<?> values = (List<?>) value;
+                if (values.size() == 0) {
+                    return;
+                }
+
+                value = values.get(0);
+
+                if (values.size() > 1) {
+                    Map<Integer, List<?>> mvrow = multivalue.get(rowIndex);
+                    if (mvrow == null) {
+                        mvrow = new HashMap<Integer, List<?>>();
+                        multivalue.put(rowIndex, mvrow);
+                    }
+                    mvrow.put(col, values);
+                }
             }
 
             if (value instanceof GregorianCalendar) {
@@ -332,6 +383,15 @@ public class QueryFrame extends JFrame {
             return row.get(columnIndex);
         }
 
+        public List<?> getMultiValueAt(int rowIndex, int columnIndex) {
+            Map<Integer, List<?>> row = multivalue.get(rowIndex);
+            if (row == null) {
+                return null;
+            }
+
+            return row.get(columnIndex);
+        }
+
         @Override
         public String getColumnName(int column) {
             for (Map.Entry<String, Integer> e : columnMapping.entrySet()) {
@@ -351,6 +411,77 @@ public class QueryFrame extends JFrame {
             }
 
             return String.class;
+        }
+    }
+
+    static class ResultTable extends JTable {
+
+        private static final long serialVersionUID = 1L;
+
+        public ResultTable() {
+            super();
+
+            setDefaultRenderer(ObjectIdImpl.class, new IdRenderer());
+            setFillsViewportHeight(true);
+            setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        }
+
+        @Override
+        public String getToolTipText(final MouseEvent e) {
+            String result = null;
+
+            Point p = e.getPoint();
+            int rowIndex = rowAtPoint(p);
+            int columnIndex = convertColumnIndexToModel(columnAtPoint(p));
+
+            final ResultTableModel model = (ResultTableModel) getModel();
+
+            final List<?> values = model.getMultiValueAt(rowIndex, columnIndex);
+            if (values != null) {
+                StringBuilder sb = new StringBuilder();
+
+                for (Object value : values) {
+                    if (sb.length() == 0) {
+                        sb.append("<html>");
+                    } else {
+                        sb.append("<br>");
+                    }
+                    sb.append(value.toString());
+                }
+
+                result = sb.toString();
+            } else {
+                final Object value = model.getValueAt(rowIndex, columnIndex);
+                if (value != null) {
+                    result = value.toString();
+                }
+            }
+
+            return result;
+        }
+
+        @Override
+        public Component prepareRenderer(final TableCellRenderer renderer, final int rowIndex, final int columnIndex) {
+            final Component prepareRenderer = super.prepareRenderer(renderer, rowIndex, columnIndex);
+            final TableColumn column = getColumnModel().getColumn(columnIndex);
+
+            final int currentWidth = column.getPreferredWidth();
+            if (currentWidth < 200) {
+                int width = prepareRenderer.getPreferredSize().width;
+                if (currentWidth < width) {
+                    if (width < 50) {
+                        width = 50;
+                    } else if (width > 200) {
+                        width = 200;
+                    }
+
+                    if (width != currentWidth) {
+                        column.setPreferredWidth(width);
+                    }
+                }
+            }
+
+            return prepareRenderer;
         }
     }
 }
