@@ -451,6 +451,18 @@ public class QueryParseTest extends AbstractQueryTest {
     }
 
     @Test
+    public void whereTestTokensAfterStatement() {
+    	String statement = "SELECT p1 FROM MyType WHERE p1 LIKE 'abc*' IN_FOLDER('def')";
+    	try {
+            checkTreeWhere(statement);    		
+    	} catch (Exception e) {
+    		LOG.debug("Exception is: " + e);
+    		assertTrue(e instanceof CmisInvalidArgumentException);
+    		assertTrue(e.getMessage().contains("illegal tokens after end"));
+    	}
+    }
+
+    @Test
     public void whereTestNotLike() {
         String statement = "SELECT p1 FROM MyType WHERE p1 NOT LIKE 'abc*'";
         checkTreeWhere(statement);

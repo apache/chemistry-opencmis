@@ -596,6 +596,10 @@ public class TestParserStrict extends AbstractParserTest{
         testParser("folder_predicate","IN_TREE('ID123')" , " (IN_TREE 'ID123')");
     }
 
+    @Test
+    public void folder_predicate() throws Exception {
+        testParser("search_condition", "id456 LIKE 'Foo%' AND IN_FOLDER('abc')", "(AND (LIKE 'id456' 'Foo%') (IN_FOLDER 'abc')");
+    }
 
 //    text_search_predicate:
 //    "CONTAINS('foo')" -> (CONTAINS 'foo')

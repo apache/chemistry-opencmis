@@ -54,7 +54,10 @@ public class QueryUtil {
         query_return parsedStatement = parser.query();
         if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
+        } else if ( tokens.index()!=tokens.size() ) {
+            throw new  CmisInvalidArgumentException("Query String has illegal tokens after end of statement: " + tokens.get(tokens.index()));
         }
+        
         parserTree = (CommonTree) parsedStatement.getTree();
 
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
