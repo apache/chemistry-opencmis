@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.inmemory;
 public class NameValidator {
 
     public static final String ERROR_ILLEGAL_ID = "Id contains illegal characters, allowed are 'a'..'z', 'A'..'Z', '0'..'9', '-', '_'";
-    public static final String ERROR_ILLEGAL_NAME = "Name contains illegal characters, allowed are 'a'..'z', 'A'..'Z', '0'..'9', '-', '_', '.', ' '";
+    public static final String ERROR_ILLEGAL_NAME = "Name contains illegal characters, not allowed are '/', '\\', ':', '\"', '*'. '?', '<','>', '|'";
 
     // Utility class
     private NameValidator() {
@@ -59,8 +59,8 @@ public class NameValidator {
     }
 
     /**
-     * check whether id contains only valid characters Allowed are 'a'..'z',
-     * 'A'..'Z', '0'..'9', '.', '-', ' ', '_';
+     * check whether id contains only valid characters. Not allowed are '/', 
+     * '\\', ':', '\"', '*'. '?', '<','>', '|'"
      *
      * @param s
      *            string to verify
@@ -71,8 +71,8 @@ public class NameValidator {
         }
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (c == '\\' || c == '/' || c == '\'' || c == '\"' || c == ':' || c == '*' || 
-                    c == '?' ||c == '<' || c == '>' && c == '|')
+            if (c == '\\' || c == '/' || c == '\"' || c == ':' || c == '*' || 
+                    c == '?' || c == '<' || c == '>' && c == '|')
                 return false;
         }
         return true;

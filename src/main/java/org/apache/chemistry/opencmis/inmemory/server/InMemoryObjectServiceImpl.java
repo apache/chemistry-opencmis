@@ -741,7 +741,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check name syntax
         if (!NameValidator.isValidName(name)) {
-            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME + " Name is: " + name);
         }
 
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
@@ -817,8 +817,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // check name syntax
-        if (!NameValidator.isValidId(folderName)) {
-            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+        if (!NameValidator.isValidName(folderName)) {
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME  + " Name is: " + folderName);
         }
 
 
