@@ -91,9 +91,6 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         try {
             fObjStore.lock();
             String name = so.getName();
-            if (!NameValidator.isValidId(name)) {
-                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
-            }
 
             boolean hasChild;
             hasChild = hasChild(name);

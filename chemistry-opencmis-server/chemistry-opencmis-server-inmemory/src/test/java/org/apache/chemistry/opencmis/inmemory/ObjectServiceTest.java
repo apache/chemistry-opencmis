@@ -145,7 +145,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
         // test create a document with an illegal name, should fail:
         try {
-            Properties props = createDocumentProperties("abc ()", DOCUMENT_TYPE_ID);
+            Properties props = createDocumentProperties("abc (:*)", DOCUMENT_TYPE_ID);
             fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
                     null, null);
             fail("Creating  document with an illegal name should fail.");
