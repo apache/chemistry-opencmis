@@ -143,6 +143,11 @@
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>          
+        </dependency>
         <!-- copy the dependencies from the server bindings here, because mvn eclipse ignores them from a .war -->
         <dependency>
             <groupId>commons-fileupload</groupId>
