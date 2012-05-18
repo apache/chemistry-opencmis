@@ -240,7 +240,8 @@ public class ObjGenApp {
             System.out.println("Usage:");
             parser.printHelpOn(System.out);
             System.out.println();
-            System.out.println("Command is one of [CreateDocument, CreateFolder, FillRepository, RepositoryInfo, CreateFiles]");
+            System.out.println("Command is one of [CreateDocument, CreateFolder, FillRepository, RepositoryInfo, CreateFiles, " +
+            		"CopyFiles, CopyFilesTest]");
             System.out.println("JVM system properties: " + PROP_ATOMPUB_URL + ", " + PROP_WS_URL + ", " + PROP_BROWSER_URL);
             System.out.println("                       " + PROP_USER + ", " + PROP_PASSWORD);
             System.out.println();
@@ -557,7 +558,7 @@ public class ObjGenApp {
         if (null == name || name.length() == 0)
             name = dirName;
         
-        if (null == fRepoId || repoId.length() == 0) {
+        if (null == repoId || repoId.length() == 0) {
             System.out.println("Error: You have to provide a repository id");
             return;
         }
@@ -594,7 +595,7 @@ public class ObjGenApp {
         if (binding.equals(BindingType.ATOMPUB.value())) {
             parameters.put(SessionParameter.ATOMPUB_URL, getAtomPubUrl());
             filLoginParams(parameters, getUser(), getPassword());
-        } if (binding.equals(BindingType.WEBSERVICES.value())) {
+        } else if (binding.equals(BindingType.WEBSERVICES.value())) {
             fillWSParameters(parameters, getWsUrl(), isPrefix(getWsUrl()), getUser(), getPassword());
         } else if (binding.equals(BindingType.BROWSER.value())) {
             parameters.put(SessionParameter.BROWSER_URL, getBrowserUrl());
