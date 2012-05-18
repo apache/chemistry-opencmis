@@ -227,7 +227,7 @@ public final class CmisAtomPubConstants {
     public static final String TAG_OBJECT_ACL = "acl";
     public static final String TAG_OBJECT_EXACT_ACL = "exactACL";
     public static final String TAG_OBJECT_POLICY_IDS = "policyIds";
-    public static final String TAG_OBJECT_RENDITIONS = "renditions";
+    public static final String TAG_OBJECT_RENDITION = "rendition";
     
     public static final Set<String> OBJECT_KEYS = new HashSet<String>();
     static {
@@ -238,7 +238,7 @@ public final class CmisAtomPubConstants {
         OBJECT_KEYS.add(TAG_OBJECT_ACL);
         OBJECT_KEYS.add(TAG_OBJECT_EXACT_ACL);
         OBJECT_KEYS.add(TAG_OBJECT_POLICY_IDS);
-        OBJECT_KEYS.add(TAG_OBJECT_RENDITIONS);
+        OBJECT_KEYS.add(TAG_OBJECT_RENDITION);
     }
     
     
