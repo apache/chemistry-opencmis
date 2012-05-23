@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <!--
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+        applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT
+        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions
+        and limitations under the License.
+    -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.apache.chemistry.opencmis</groupId>
+		<artifactId>chemistry-opencmis</artifactId>
+		<version>0.8.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>chemistry-opencmis-android-client</artifactId>
+	<name>OpenCMIS Android Client</name>
+	<packaging>jar</packaging>
+
+	<properties>
+		<parentBasedir>../../</parentBasedir>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+		    <plugin>
+                 <artifactId>maven-antrun-plugin</artifactId>
+                 <version>1.5</version>
+                 <executions>
+                     <execution>
+                         <phase>generate-resources</phase>
+                         <configuration>
+                             <target>
+                          		<property name="gendir" value="${project.build.directory}/opencmis-core" />
+
+								<property name="basedir" value="${maven.basedir}" />
+                                <property name="commons-api" value="${basedir}/../../chemistry-opencmis-commons/chemistry-opencmis-commons-api" />
+                                <property name="commons-impl" value="${basedir}/../../chemistry-opencmis-commons/chemistry-opencmis-commons-impl" />
+                                <property name="client-bindings" value="${basedir}/../../chemistry-opencmis-client/chemistry-opencmis-client-bindings" />
+                                <property name="client-api" value="${basedir}/../../chemistry-opencmis-client/chemistry-opencmis-client-api" />
+                                <property name="client-impl" value="${basedir}/../../chemistry-opencmis-client/chemistry-opencmis-client-impl" />
+
+                                <property name="sourcefiles" value="src/main/java" />
+                                 
+								<copy todir="${gendir}">
+									<fileset dir="${commons-api}/${sourcefiles}">
+										<include name="**/*.java" />
+									</fileset>
+								</copy>
+                                
+                           		<copy todir="${gendir}">
+									<fileset dir="${commons-impl}/${sourcefiles}">
+										<include name="**/*.java" />
+										<exclude name="**/tube/**" />
+										<exclude name="**/jaxb/**" />
+										<exclude name="**/impl/JaxBHelper.*" />
+										<exclude name="**/impl/Converter.*" />
+									</fileset>
+								</copy>
+                                
+                            	<copy todir="${gendir}">
+									<fileset dir="${client-bindings}/${sourcefiles}">
+										<include name="**/*.java" />
+										<exclude name="**/spi/local/**" />
+										<exclude name="**/spi/webservices/**" />
+										<exclude name="**/spi/atompub/**" />
+									</fileset>
+								</copy>                            
+                                
+                            	<copy todir="${gendir}">
+									<fileset dir="${client-api}/${sourcefiles}">
+										<include name="**/*.java" />
+									</fileset>
+								</copy>                            
+                                
+                            	<copy todir="${gendir}">
+									<fileset dir="${client-impl}/${sourcefiles}">
+										<include name="**/*.java" />
+										<exclude name="**/osgi/**" />
+									</fileset>
+								</copy>                                   
+                             </target>
+                         </configuration>
+                         <goals>
+                             <goal>run</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+            </plugin>
+            <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+    			        <configuration>
+    			            <sources>
+   								<source>${project.build.directory}/opencmis-core</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

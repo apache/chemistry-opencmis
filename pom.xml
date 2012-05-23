@@ -166,6 +166,13 @@
                 <role>committer</role>
             </roles>
         </developer>
+		<developer>
+            <name>Jean Marie Pascal</name>
+            <id>jmpascal</id>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
     </developers>
 
 
@@ -194,6 +201,7 @@
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-client</module>
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
         <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
+		<module>chemistry-opencmis-android/chemistry-opencmis-android-client</module>
         <module>chemistry-opencmis-dist</module>
   </modules>
 
