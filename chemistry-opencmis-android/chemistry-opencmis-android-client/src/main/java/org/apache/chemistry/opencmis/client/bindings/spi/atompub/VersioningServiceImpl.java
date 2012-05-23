@@ -126,6 +126,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         delete(new UrlBuilder(link));
     }
 
+    @SuppressWarnings("unused")
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -203,7 +204,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
                 } else if (element.getObject() instanceof ObjectData) {
                     // extract current ACL
-                    // TODO
+                    // TODO Update This part for Android.
                     object = (ObjectDataImpl) element.getObject();
                     // originalAces = convert(object.getAcl(),
                     // object.isExactACL());

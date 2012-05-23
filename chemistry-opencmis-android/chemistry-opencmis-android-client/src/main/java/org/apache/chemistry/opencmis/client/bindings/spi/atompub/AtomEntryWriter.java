@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_DEFINITION_ID;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_ID;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_TITLE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_UPDATED;
@@ -25,16 +26,12 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_BASE64;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_MEDIATYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
-
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_VALUE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY_STATEMENT;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_DEFINITION_ID;
-
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_VALUE;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -200,8 +197,9 @@ public class AtomEntryWriter {
 
         writer.startTag(Constants.NAMESPACE_CMIS, "permission");
 
-        // TODO Implements 
-        //writeTag(writer, Constants.NAMESPACE_CMIS, "direct", acl.getAces().get(0).)
+        // TODO Implements
+        // writeTag(writer, Constants.NAMESPACE_CMIS, "direct",
+        // acl.getAces().get(0).)
 
         writer.endTag(Constants.NAMESPACE_CMIS, "permission");
 
@@ -253,11 +251,12 @@ public class AtomEntryWriter {
         if (object.getProperties() != null) {
             writer.startTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
             writeProperties(writer, object.getProperties().getPropertyList());
-            
-            if (object.getProperties().getExtensions() != null && object.getProperties().getExtensions().isEmpty() == false){
-            	writeExtensions(writer, object.getProperties().getExtensions());
+
+            if (object.getProperties().getExtensions() != null
+                    && object.getProperties().getExtensions().isEmpty() == false) {
+                writeExtensions(writer, object.getProperties().getExtensions());
             }
-            
+
             writer.endTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
         }
         writer.endTag(Constants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
@@ -289,24 +288,24 @@ public class AtomEntryWriter {
         writeValues(writer, prop.getValues());
         writer.endTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
     }
-    
-    private static void writeExtensions(XmlSerializer writer, List<CmisExtensionElement> extensions) throws Exception{
-    	for (CmisExtensionElement cmisExtensionElement : extensions) {
-    		writer.startTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
-    		writeAttributes(writer, cmisExtensionElement.getAttributes());
-    		if (cmisExtensionElement.getChildren() != null && cmisExtensionElement.getChildren().isEmpty() == false){
-    			writeExtensions(writer, cmisExtensionElement.getChildren());
-    		} else if (cmisExtensionElement.getValue() != null){
-    			writer.text(cmisExtensionElement.getValue());
-    		}
+
+    private static void writeExtensions(XmlSerializer writer, List<CmisExtensionElement> extensions) throws Exception {
+        for (CmisExtensionElement cmisExtensionElement : extensions) {
+            writer.startTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
+            writeAttributes(writer, cmisExtensionElement.getAttributes());
+            if (cmisExtensionElement.getChildren() != null && cmisExtensionElement.getChildren().isEmpty() == false) {
+                writeExtensions(writer, cmisExtensionElement.getChildren());
+            } else if (cmisExtensionElement.getValue() != null) {
+                writer.text(cmisExtensionElement.getValue());
+            }
             writer.endTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
-		}
+        }
     }
-    
-    private static void writeAttributes(XmlSerializer writer,  Map<String, String> values) throws Exception{
-    	for (Map.Entry<String, String> value : values.entrySet()) {
+
+    private static void writeAttributes(XmlSerializer writer, Map<String, String> values) throws Exception {
+        for (Map.Entry<String, String> value : values.entrySet()) {
             writer.attribute(null, value.getKey(), value.getValue());
-		}
+        }
     }
 
     private static void writeValues(XmlSerializer writer, List<?> values) throws Exception {

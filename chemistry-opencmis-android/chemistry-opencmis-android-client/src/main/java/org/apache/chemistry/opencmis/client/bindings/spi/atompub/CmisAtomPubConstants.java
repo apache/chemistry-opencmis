@@ -62,8 +62,8 @@ public final class CmisAtomPubConstants {
 
     public static final String ATTR_DOCUMENT_TYPE = "cmisTypeDocumentDefinitionType";
     public static final String ATTR_FOLDER_TYPE = "cmisTypeFolderDefinitionType";
-    public static final String ATTR_RELATIONSHIP_TYPE = "cmisTypeRelationshipDefinitionType"; 
-    public static final String ATTR_POLICY_TYPE = "cmisTypePolicyDefinitionType"; 
+    public static final String ATTR_RELATIONSHIP_TYPE = "cmisTypeRelationshipDefinitionType";
+    public static final String ATTR_POLICY_TYPE = "cmisTypePolicyDefinitionType";
 
     // allowable actions
     public static final String TAG_ALLOWABLEACTIONS = "allowableActions";
@@ -76,8 +76,8 @@ public final class CmisAtomPubConstants {
     public static final String LINK_HREF = "href";
     public static final String LINK_TYPE = "type";
     public static final String CONTENT_SRC = "src";
-    
-    //Android Parser Specific
+
+    // Android Parser Specific
     public static final String TAG_PROPERTY = "property";
     public static final String ATTR__PROPERTY_ID = "id";
     public static final String ATTR_PROPERTY_LOCALNAME = "localName";
@@ -87,7 +87,6 @@ public final class CmisAtomPubConstants {
     public static final String ATTR_PROPERTY_DATATYPE = "type";
     public static final String ATTR_PROPERTY_CARDINALITY = "cardinality";
 
-    
     public static final String TAG_REPINFO_ID = "repositoryId";
     public static final String TAG_REPINFO_NAME = "repositoryName";
     public static final String TAG_REPINFO_DESCRIPTION = "repositoryDescription";
@@ -106,8 +105,7 @@ public final class CmisAtomPubConstants {
     public static final String TAG_REPINFO_CHANGES_ON_TYPE = "changesOnType";
     public static final String TAG_REPINFO_PRINCIPAL_ANONYMOUS = "principalAnonymous";
     public static final String TAG_REPINFO_PRINCIPAL_ANYONE = "principalAnyone";
-    
-    
+
     public static final Set<String> REPINFO_KEYS = new HashSet<String>();
     static {
         REPINFO_KEYS.add(TAG_REPINFO_ID);
@@ -129,8 +127,7 @@ public final class CmisAtomPubConstants {
         REPINFO_KEYS.add(TAG_REPINFO_PRINCIPAL_ANONYMOUS);
         REPINFO_KEYS.add(TAG_REPINFO_PRINCIPAL_ANYONE);
     }
-    
-    
+
     public static final String TAG_ACLCAP_ACL_PROPAGATION = "propagation";
     public static final String TAG_ACLCAP_SUPPORTED_PERMISSIONS = "supportedPermissions";
     public static final String TAG_ACLCAP_PERMISSIONS = "permissions";
@@ -141,7 +138,6 @@ public final class CmisAtomPubConstants {
     public static final String TAG_ACLCAP_MAPPING_PERMISSION = "permission";
     public static final String TAG_ACLCAP_DIRECT = "direct";
 
-    
     public static final String TAG_CAP_CONTENT_STREAM_UPDATES = "capabilityContentStreamUpdatability";
     public static final String TAG_CAP_CHANGES = "capabilityChanges";
     public static final String TAG_CAP_RENDITIONS = "capabilityRenditions";
@@ -156,7 +152,7 @@ public final class CmisAtomPubConstants {
     public static final String TAG_CAP_QUERY = "capabilityQuery";
     public static final String TAG_CAP_JOIN = "capabilityJoin";
     public static final String TAG_CAP_ACL = "capabilityACL";
-    
+
     public static final String ATTR_PROPERTY_TYPE_ID = "id";
     public static final String ATTR_PROPERTY_DEFINITION_ID = "propertyDefinitionId";
     public static final String ATTR_PROPERTY_TYPE_LOCALNAME = "localName";
@@ -172,13 +168,13 @@ public final class CmisAtomPubConstants {
     public static final String ATTR_PROPERTY_TYPE_QUERYABLE = "queryable";
     public static final String ATTR_PROPERTY_TYPE_ORDERABLE = "orderable";
     public static final String ATTR_PROPERTY_TYPE_OPENCHOICE = "openChoice";
-    
+
     public static final String ATTR_PROPERTY_TYPE_MAX_LENGTH = "maxLength";
     public static final String ATTR_PROPERTY_TYPE_MIN_VALUE = "minValue";
     public static final String ATTR_PROPERTY_TYPE_MAX_VALUE = "maxValue";
     public static final String ATTR_PROPERTY_TYPE_PRECISION = "precision";
     public static final String ATTR_PROPERTY_TYPE_RESOLUTION = "resolution";
-    
+
     public static final String TAG_RENDITION = "rendition";
     public static final String TAG_RENDITION_STREAM_ID = "streamId";
     public static final String TAG_RENDITION_MIMETYPE = "mimeType";
@@ -188,12 +184,10 @@ public final class CmisAtomPubConstants {
     public static final String TAG_RENDITION_HEIGHT = "height";
     public static final String TAG_RENDITION_WIDTH = "width";
     public static final String TAG_RENDITION_DOCUMENT_ID = "renditionDocumentId";
-    
 
     public static final String TAG_ACE_PRINCIPAL = "principal";
     public static final String TAG_ACE_PRINCIPAL_ID = "principalId";
     public static final String TAG_ACE_DIRECT = "direct";
-
 
     public static final String TYPE_ID = "id";
     public static final String TYPE_LOCALNAME = "localName";
@@ -214,12 +208,10 @@ public final class CmisAtomPubConstants {
     public static final String TYPE_CONTENTSTREAM_ALLOWED = "contentStreamAllowed"; // document
     public static final String TYPE_VERSIONABLE = "versionable"; // document
 
-
     public static final String TAG_VALUE = "value";
     public static final String TAG_QUERY = "query";
     public static final String TAG_QUERY_STATEMENT = "statement";
 
-    
     public static final String TAG_OBJECT_PROPERTIES = "properties";
     public static final String TAG_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
     public static final String TAG_OBJECT_RELATIONSHIPS = "relationships";
@@ -228,7 +220,7 @@ public final class CmisAtomPubConstants {
     public static final String TAG_OBJECT_EXACT_ACL = "exactACL";
     public static final String TAG_OBJECT_POLICY_IDS = "policyIds";
     public static final String TAG_OBJECT_RENDITION = "rendition";
-    
+
     public static final Set<String> OBJECT_KEYS = new HashSet<String>();
     static {
         OBJECT_KEYS.add(TAG_OBJECT_PROPERTIES);
@@ -240,6 +232,5 @@ public final class CmisAtomPubConstants {
         OBJECT_KEYS.add(TAG_OBJECT_POLICY_IDS);
         OBJECT_KEYS.add(TAG_OBJECT_RENDITION);
     }
-    
-    
+
 }

@@ -855,7 +855,6 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         UrlBuilder aclUrl = new UrlBuilder(link);
         aclUrl.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
-
         // update
         HttpUtils.Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new HttpUtils.Output() {
             public void write(OutputStream out) throws Exception {

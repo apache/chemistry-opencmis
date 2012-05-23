@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.spi.AclService;
  * ACL Service AtomPub client.
  */
 public class AclServiceImpl extends AbstractAtomPubService implements AclService {
-    
+
     /**
      * Constructor.
      */
@@ -61,8 +61,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         return result;
     }
 
-    public Acl getAcl(String repositoryId, String objectId,
-            Boolean onlyBasicPermissions, ExtensionsData extension) {
+    public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
 
         // find the link
         String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);

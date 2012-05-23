@@ -106,7 +106,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        //TODO
+        // TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         String mediaType = null;
@@ -157,7 +157,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-		//TODO
+        // TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
@@ -208,7 +208,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        //TODO
+        // TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
@@ -256,7 +256,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-		//TODO
+        // TODO
         // object.setPolicyIds(convertPolicyIds(policies));
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
@@ -298,7 +298,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         // set up object and writer
         ObjectDataImpl object = new ObjectDataImpl();
         object.setProperties(properties);
-        //TODO
+        // TODO
         // object.setPolicyIds(convertPolicyIds(policies));
 
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);

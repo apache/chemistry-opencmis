@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -128,8 +127,8 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         final Map<String, String> queryParameters = new HashMap<String, String>(6);
         queryParameters.put(CmisAtomPubConstants.TAG_QUERY_STATEMENT, statement);
         queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions.toString());
-        queryParameters.put(Constants.PARAM_ALL_VERSIONS,  searchAllVersions.toString());
-        queryParameters.put(Constants.PARAM_RELATIONSHIPS,  includeRelationships.toString());
+        queryParameters.put(Constants.PARAM_ALL_VERSIONS, searchAllVersions.toString());
+        queryParameters.put(Constants.PARAM_RELATIONSHIPS, includeRelationships.toString());
         queryParameters.put(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         queryParameters.put(Constants.PARAM_MAX_ITEMS, maxItems.toString());
         queryParameters.put(Constants.PARAM_SKIP_COUNT, skipCount.toString());
