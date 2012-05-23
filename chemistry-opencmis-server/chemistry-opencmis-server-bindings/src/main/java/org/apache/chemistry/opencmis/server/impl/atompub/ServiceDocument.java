@@ -31,9 +31,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 
 /**
  * Service document class.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class ServiceDocument extends AtomDocumentBase {
 
@@ -47,6 +44,7 @@ public class ServiceDocument extends AtomDocumentBase {
         writeNamespace(Constants.NAMESPACE_ATOM);
         writeNamespace(Constants.NAMESPACE_CMIS);
         writeNamespace(Constants.NAMESPACE_RESTATOM);
+        writeAllCustomNamespace();
     }
 
     public void endServiceDocument() throws XMLStreamException {

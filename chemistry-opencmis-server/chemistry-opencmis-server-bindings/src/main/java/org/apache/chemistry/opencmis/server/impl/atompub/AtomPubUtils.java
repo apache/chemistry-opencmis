@@ -25,6 +25,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
@@ -40,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.NamespaceDefinitions;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 
@@ -114,6 +116,18 @@ public final class AtomPubUtils {
         }
 
         return url;
+    }
+
+    // -------------------------------------------------------------------------
+    // --- namespaces ---
+    // -------------------------------------------------------------------------
+
+    public static Map<String, String> getNamespaces(Object obj) {
+        if (obj instanceof NamespaceDefinitions) {
+            return ((NamespaceDefinitions) obj).getNamespaces();
+        }
+
+        return null;
     }
 
     // -------------------------------------------------------------------------
@@ -204,11 +218,10 @@ public final class AtomPubUtils {
 
         if (info.getRenditionInfos() != null) {
             for (RenditionInfo ri : info.getRenditionInfos()) {
-                UrlBuilder rurl = compileUrlBuilder(baseUrl, RESOURCE_CONTENT,
-                        info.getId());
+                UrlBuilder rurl = compileUrlBuilder(baseUrl, RESOURCE_CONTENT, info.getId());
                 rurl.addParameter(Constants.PARAM_STREAM_ID, ri.getId());
-                entry.writeAlternateLink(rurl.toString(), ri.getContenType(),
-                        ri.getKind(), ri.getTitle(), ri.getLength());
+                entry.writeAlternateLink(rurl.toString(), ri.getContenType(), ri.getKind(), ri.getTitle(),
+                        ri.getLength());
             }
         }
 
@@ -247,7 +260,7 @@ public final class AtomPubUtils {
 
     /**
      * Writes the a object entry in a content changes list.
-     *
+     * 
      * Content changes objects need special treatment because some of them could
      * have been deleted and an object info cannot be generated.
      */

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -87,7 +88,7 @@ public class VersioningService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -117,7 +118,7 @@ public class VersioningService {
 
         // write XML
         AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream());
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
         feed.startFeed(true);
 
         // write basic Atom feed elements

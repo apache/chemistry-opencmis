@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.OutputStream;
+import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -38,16 +39,24 @@ public abstract class XMLDocumentBase {
     public static final String PREFIX_XSI = "xsi";
 
     private XMLStreamWriter writer;
+    private Map<String, String> namespaces;
 
     /**
      * Sets the namespaces for the document.
      */
-    public void setNamespaces() throws XMLStreamException {
+    public void setNamespaces(Map<String, String> namespaces) throws XMLStreamException {
         writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
         writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
         writer.setPrefix(PREFIX_APP, Constants.NAMESPACE_APP);
         writer.setPrefix(PREFIX_XSI, Constants.NAMESPACE_XSI);
+
+        if (namespaces != null) {
+            this.namespaces = namespaces;
+            for (Map.Entry<String, String> ns : namespaces.entrySet()) {
+                writer.setPrefix(ns.getKey(), ns.getValue());
+            }
+        }
     }
 
     /**
@@ -58,16 +67,27 @@ public abstract class XMLDocumentBase {
     }
 
     /**
+     * Writes custom namespace declaration to the current tag.
+     */
+    public void writeAllCustomNamespace() throws XMLStreamException {
+        if (namespaces != null) {
+            for (Map.Entry<String, String> ns : namespaces.entrySet()) {
+                writer.writeNamespace(ns.getKey(), ns.getValue());
+            }
+        }
+    }
+
+    /**
      * Starts the document and sets the namespaces.
      */
-    public void startDocument(OutputStream out) throws XMLStreamException {
+    public void startDocument(OutputStream out, Map<String, String> namespaces) throws XMLStreamException {
         // create a writer
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         writer = factory.createXMLStreamWriter(out, "UTF-8");
 
         // start the document
         writer.writeStartDocument("UTF-8", "1.0");
-        setNamespaces();
+        setNamespaces(namespaces);
     }
 
     /**

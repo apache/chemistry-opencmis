@@ -61,6 +61,7 @@ public class AtomFeed extends AtomDocumentBase {
             writeNamespace(Constants.NAMESPACE_CMIS);
             writeNamespace(Constants.NAMESPACE_RESTATOM);
             writeNamespace(Constants.NAMESPACE_APP);
+            writeAllCustomNamespace();
         }
     }
 

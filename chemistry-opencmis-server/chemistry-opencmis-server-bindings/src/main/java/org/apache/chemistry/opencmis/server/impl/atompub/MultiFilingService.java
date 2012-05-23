@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -92,7 +93,7 @@ public class MultiFilingService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -132,7 +133,7 @@ public class MultiFilingService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }

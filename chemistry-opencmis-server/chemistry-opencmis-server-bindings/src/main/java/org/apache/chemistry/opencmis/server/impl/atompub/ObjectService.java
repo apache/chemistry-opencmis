@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
@@ -127,7 +128,7 @@ public final class ObjectService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -164,7 +165,7 @@ public final class ObjectService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -322,7 +323,7 @@ public final class ObjectService {
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -363,7 +364,7 @@ public final class ObjectService {
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }
@@ -486,7 +487,7 @@ public final class ObjectService {
 
         // write XML
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
         entry.endDocument();
     }

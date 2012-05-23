@@ -35,6 +35,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.TYP
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeTypeEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -99,7 +100,7 @@ public final class RepositoryService {
         // write XML
         ServiceDocument serviceDoc = new ServiceDocument();
 
-        serviceDoc.startDocument(response.getOutputStream());
+        serviceDoc.startDocument(response.getOutputStream(), getNamespaces(service));
         serviceDoc.startServiceDocument();
 
         if (infoDataList != null) {
@@ -271,7 +272,7 @@ public final class RepositoryService {
         response.setContentType(Constants.MEDIATYPE_FEED);
 
         AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream());
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
         feed.startFeed(true);
 
         // write basic Atom feed elements
@@ -352,7 +353,7 @@ public final class RepositoryService {
         response.setContentType(Constants.MEDIATYPE_FEED);
 
         AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream());
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
         feed.startFeed(true);
 
         // write basic Atom feed elements
@@ -412,7 +413,7 @@ public final class RepositoryService {
         response.setContentType(Constants.MEDIATYPE_ENTRY);
 
         AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream());
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
         writeTypeEntry(entry, type, null, repositoryId, compileBaseUrl(request, repositoryId), true);
         entry.endDocument();
     }

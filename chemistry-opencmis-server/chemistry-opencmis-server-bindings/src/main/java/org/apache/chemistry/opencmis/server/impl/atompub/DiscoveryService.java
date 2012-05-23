@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RES
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeContentChangesObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -156,7 +157,7 @@ public class DiscoveryService {
 
         // write XML
         AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream());
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
         feed.startFeed(true);
 
         // write basic Atom feed elements
@@ -238,7 +239,7 @@ public class DiscoveryService {
 
         // write XML
         AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream());
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
         feed.startFeed(true);
 
         // write basic Atom feed elements
