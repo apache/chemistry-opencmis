@@ -276,7 +276,7 @@ public final class RepositoryService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(typeId, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, numItems);
+        feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, numItems);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -357,7 +357,7 @@ public final class RepositoryService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(typeId, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, null);
+        feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

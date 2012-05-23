@@ -162,7 +162,7 @@ public class DiscoveryService {
 
         // write basic Atom feed elements
         GregorianCalendar now = new GregorianCalendar();
-        feed.writeFeedElements("query", "", "Query", now, null, results.getNumItems());
+        feed.writeFeedElements("query", null, "", "Query", now, null, results.getNumItems());
 
         // write links
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
@@ -244,7 +244,7 @@ public class DiscoveryService {
 
         // write basic Atom feed elements
         GregorianCalendar now = new GregorianCalendar();
-        feed.writeFeedElements("contentChanges", "", "Content Change", now, null, changes.getNumItems());
+        feed.writeFeedElements("contentChanges", null, "", "Content Change", now, null, changes.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

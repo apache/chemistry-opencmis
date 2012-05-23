@@ -79,8 +79,8 @@ public class PolicyService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
-                objectInfo.getLastModificationDate(), null, null);
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
+                objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

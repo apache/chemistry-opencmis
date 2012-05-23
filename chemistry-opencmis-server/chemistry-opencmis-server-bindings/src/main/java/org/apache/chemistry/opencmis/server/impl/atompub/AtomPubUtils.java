@@ -310,8 +310,8 @@ public final class AtomPubUtils {
         feed.startFeed(false);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
-                folderInfo.getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
 
         // write links
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
@@ -388,7 +388,8 @@ public final class AtomPubUtils {
         feed.startFeed(false);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(type.getId(), TYPE_AUTHOR, type.getDisplayName(), new GregorianCalendar(), null, null);
+        feed.writeFeedElements(type.getId(), null, TYPE_AUTHOR, type.getDisplayName(), new GregorianCalendar(), null,
+                null);
 
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
 

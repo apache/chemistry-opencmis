@@ -36,6 +36,13 @@ public interface ObjectInfo {
     String getId();
 
     /**
+     * Returns an id for the atom:id tag. This id must comply with the Atom
+     * specification. If this method returns <code>null</code>, OpenCMIS
+     * generates a valid id.
+     */
+    String getAtomId();
+
+    /**
      * Returns the object name.
      */
     String getName();

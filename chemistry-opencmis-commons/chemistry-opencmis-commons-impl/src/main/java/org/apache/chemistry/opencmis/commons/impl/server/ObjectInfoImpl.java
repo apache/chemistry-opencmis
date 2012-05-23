@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 public class ObjectInfoImpl implements ObjectInfo {
 
     private String id;
+    private String atomId;
     private String name;
     private String createdBy;
     private GregorianCalendar creationDate;
@@ -70,6 +71,14 @@ public class ObjectInfoImpl implements ObjectInfo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getAtomId() {
+        return atomId;
+    }
+
+    public void setAtomId(String atomId) {
+        this.atomId = atomId;
     }
 
     public String getName() {

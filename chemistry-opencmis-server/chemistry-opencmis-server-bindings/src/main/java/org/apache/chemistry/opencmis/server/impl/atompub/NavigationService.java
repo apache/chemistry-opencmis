@@ -112,8 +112,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
-                folderInfo.getLastModificationDate(), null, children.getNumItems());
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                folderInfo.getName(), folderInfo.getLastModificationDate(), null, children.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -229,8 +229,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
-                folderInfo.getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -304,8 +304,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
-                folderInfo.getLastModificationDate(), null, null);
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -379,8 +379,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
-                objectInfo.getLastModificationDate(), null, null);
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
+                objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -458,8 +458,8 @@ public final class NavigationService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getCreatedBy(), folderInfo.getName(),
-                folderInfo.getLastModificationDate(), null, checkedOut.getNumItems());
+        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                folderInfo.getName(), folderInfo.getLastModificationDate(), null, checkedOut.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

@@ -90,10 +90,10 @@ public class AtomFeed extends AtomDocumentBase {
     /**
      * Writes the feed elements that are required by Atom.
      */
-    public void writeFeedElements(String id, String author, String title, GregorianCalendar updated,
+    public void writeFeedElements(String id, String atomId, String author, String title, GregorianCalendar updated,
             String pathSegment, BigInteger numItems) throws XMLStreamException {
         writeAuthor(author);
-        writeId(generateAtomId(id));
+        writeId(atomId == null ? generateAtomId(id) : atomId);
         writeTitle(title);
         writeUpdated(updated);
         writePathSegment(pathSegment);

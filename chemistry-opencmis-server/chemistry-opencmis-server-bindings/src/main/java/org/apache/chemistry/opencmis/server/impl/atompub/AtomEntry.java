@@ -85,7 +85,7 @@ public class AtomEntry extends AtomDocumentBase {
         }
 
         writeAuthor(info.getCreatedBy());
-        writeId(generateAtomId(info.getId()));
+        writeId(info.getAtomId() == null ? generateAtomId(info.getId()) : info.getAtomId());
         writePublished(info.getCreationDate());
         writeTitle(info.getName());
         writeUpdated(info.getLastModificationDate());
@@ -108,7 +108,7 @@ public class AtomEntry extends AtomDocumentBase {
         }
 
         long now = System.currentTimeMillis();
-        
+
         writeAuthor(DEFAULT_AUTHOR);
         writeId(generateAtomId(object.getId()));
         writePublished(now);

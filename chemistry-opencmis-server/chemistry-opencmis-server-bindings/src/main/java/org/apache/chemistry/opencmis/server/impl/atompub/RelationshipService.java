@@ -91,8 +91,8 @@ public class RelationshipService {
         feed.startFeed(true);
 
         // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getCreatedBy(), objectInfo.getName(),
-                objectInfo.getLastModificationDate(), null, relationships.getNumItems());
+        feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
+                objectInfo.getName(), objectInfo.getLastModificationDate(), null, relationships.getNumItems());
 
         // write links
         UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);

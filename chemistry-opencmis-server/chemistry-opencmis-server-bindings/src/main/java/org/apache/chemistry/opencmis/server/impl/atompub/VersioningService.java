@@ -125,7 +125,7 @@ public class VersioningService {
         ObjectInfo latestObjectInfo = service.getObjectInfo(repositoryId, versions.get(0).getId());
         ObjectInfo firstObjectInfo = service.getObjectInfo(repositoryId, versions.get(versions.size() - 1).getId());
 
-        feed.writeFeedElements(versionSeriesId, firstObjectInfo.getCreatedBy(), latestObjectInfo.getName(),
+        feed.writeFeedElements(versionSeriesId, null, firstObjectInfo.getCreatedBy(), latestObjectInfo.getName(),
                 latestObjectInfo.getLastModificationDate(), null, null);
 
         // write links
