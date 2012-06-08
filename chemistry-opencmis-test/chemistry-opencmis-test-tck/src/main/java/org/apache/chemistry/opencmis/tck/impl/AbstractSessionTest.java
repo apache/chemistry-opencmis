@@ -249,6 +249,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         try {
+            CmisTestResult f;
+
+            // check document name
+            f = createResult(FAILURE, "Folder name does not match!", false);
+            addResult(assertEquals(name, result.getName(), null, f));
+
             // check the new folder
             String[] propertiesToCheck = new String[result.getType().getPropertyDefinitions().size()];
 
@@ -262,8 +268,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // check object parents
             List<Folder> objectParents = result.getParents();
 
-            CmisTestResult f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: "
-                    + result.getId(), true);
+            f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
+                    true);
             addResult(assertEquals(1, objectParents.size(), null, f));
 
             f = createResult(FAILURE, "First object parent of the newly created folder does not match parent! Id: "
@@ -366,11 +372,26 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         try {
+            CmisTestResult f;
+
+            // check document name
+            f = createResult(FAILURE, "Document name does not match!", false);
+            addResult(assertEquals(name, result.getName(), null, f));
+
             // check the new document
             addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
 
             // check content
             try {
+                ContentStream contentStream = result.getContentStream();
+
+                f = createResult(WARNING, "Document filename does not match!", false);
+                addResult(assertEquals(name, contentStream.getFileName(), null, f));
+
+                f = createResult(WARNING,
+                        "cmis:contentStreamFileName and the filename of the content stream do not match!", false);
+                addResult(assertEquals(result.getContentStreamFileName(), contentStream.getFileName(), null, f));
+
                 String fetchedContent = getStringFromContentStream(result.getContentStream());
                 if (!content.equals(fetchedContent)) {
                     addResult(createResult(FAILURE,
