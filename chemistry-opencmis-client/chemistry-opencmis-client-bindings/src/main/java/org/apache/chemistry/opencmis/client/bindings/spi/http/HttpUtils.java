@@ -35,6 +35,10 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -129,6 +133,18 @@ public class HttpUtils {
                                 conn.addRequestProperty(header.getKey(), value);
                             }
                         }
+                    }
+                }
+
+                if (conn instanceof HttpsURLConnection) {
+                    SSLSocketFactory sf = authProvider.getSSLSocketFactory();
+                    if (sf != null) {
+                        ((HttpsURLConnection) conn).setSSLSocketFactory(sf);
+                    }
+
+                    HostnameVerifier hv = authProvider.getHostnameVerifier();
+                    if (hv != null) {
+                        ((HttpsURLConnection) conn).setHostnameVerifier(hv);
                     }
                 }
             }

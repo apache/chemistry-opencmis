@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
@@ -110,6 +112,16 @@ public class PortProvider extends AbstractPortProvider {
 
                 // HTTP header
                 httpHeaders = authProvider.getHTTPHeaders(service.getWSDLDocumentLocation().toString());
+
+                SSLSocketFactory sf = authProvider.getSSLSocketFactory();
+                if (sf != null) {
+                    ((BindingProvider) portObject).getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, sf);
+                }
+
+                HostnameVerifier hv = authProvider.getHostnameVerifier();
+                if (hv != null) {
+                    ((BindingProvider) portObject).getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, hv);
+                }
             }
 
             // set HTTP headers

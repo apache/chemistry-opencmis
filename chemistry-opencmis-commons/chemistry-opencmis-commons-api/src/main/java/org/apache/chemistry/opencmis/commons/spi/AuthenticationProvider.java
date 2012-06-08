@@ -22,6 +22,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.w3c.dom.Element;
 
 /**
@@ -52,6 +55,21 @@ public interface AuthenticationProvider extends Serializable {
      *         should be set
      */
     Element getSOAPHeaders(Object portObject);
+
+    /**
+     * Returns the SSL Socket Factory to be used when creating sockets for HTTPS
+     * connections.
+     * 
+     * @return a {@link SSLSocketFactory} or <code>null</code>
+     */
+    SSLSocketFactory getSSLSocketFactory();
+
+    /**
+     * Returns the Hostname Verifier for HTTPS connections.
+     * 
+     * @return a {@link HostnameVerifier} or <code>null</code>
+     */
+    HostnameVerifier getHostnameVerifier();
 
     /**
      * Receives the HTTP headers after a call.

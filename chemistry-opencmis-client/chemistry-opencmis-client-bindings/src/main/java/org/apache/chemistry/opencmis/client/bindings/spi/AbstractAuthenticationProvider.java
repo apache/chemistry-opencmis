@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.client.bindings.spi;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.w3c.dom.Element;
 
@@ -56,6 +59,14 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     }
 
     public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
+    }
+
+    public SSLSocketFactory getSSLSocketFactory() {
+        return null;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return null;
     }
 
     /**
