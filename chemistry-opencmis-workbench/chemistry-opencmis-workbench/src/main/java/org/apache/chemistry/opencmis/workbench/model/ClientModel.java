@@ -135,12 +135,13 @@ public class ClientModel {
     }
 
     public synchronized boolean supportsRelationships() {
-        try {
-            ObjectType relType = clientSession.getSession().getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
-            return relType != null;
-        } catch (Exception e) {
-            return false;
+        for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
+            if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     public synchronized ObjectId loadFolder(String folderId, boolean byPath) throws Exception {
