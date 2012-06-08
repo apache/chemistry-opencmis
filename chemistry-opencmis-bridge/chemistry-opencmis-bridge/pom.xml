@@ -98,20 +98,10 @@
         </dependency>
         <!-- copy the dependencies from the server bindings here, because mvn eclipse ignores them from a .war -->
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.0.1</version>
-        </dependency>                     
+        </dependency>              
 	</dependencies>
 
 </project>
