@@ -35,12 +35,14 @@ public class MimeHelper {
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
 
     public static final String DISPOSITION_ATTACHMENT = "attachment";
-    
+
     public static final String DISPOSITION_INLINE = "inline";
 
-    public static final String DISPOSITION_FORM_DATA_CONTENT = "form-data; name=\"content\"";
-    
     public static final String DISPOSITION_FILENAME = "filename";
+
+    public static final String DISPOSITION_NAME = "name";
+
+    public static final String DISPOSITION_FORM_DATA_CONTENT = "form-data; " + DISPOSITION_NAME + "=\"content\"";
 
     // RFC 2045
     private static final String MIME_SPECIALS = "()<>@,;:\\\"/[]?=" + "\t ";
@@ -70,9 +72,11 @@ public class MimeHelper {
      * <p>
      * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
-     *
-     * @param value the value to encode
-     * @param buf the buffer to fill
+     * 
+     * @param value
+     *            the value to encode
+     * @param buf
+     *            the buffer to fill
      * @return {@code true} if an encoding was needed, or {@code false} if no
      *         encoding was actually needed
      */
@@ -108,11 +112,12 @@ public class MimeHelper {
      * <p>
      * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
-     *
-     * @param value the string to encode
+     * 
+     * @param value
+     *            the string to encode
      * @return the encoded string
      */
-     protected static String encodeRFC2231(String key, String value) {
+    protected static String encodeRFC2231(String key, String value) {
         StringBuilder buf = new StringBuilder();
         boolean encoded = encodeRFC2231value(value, buf);
         if (encoded) {
@@ -128,13 +133,14 @@ public class MimeHelper {
      * <p>
      * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
-     *
-     * @param disposition the disposition
-     * @param filename the file name
+     * 
+     * @param disposition
+     *            the disposition
+     * @param filename
+     *            the file name
      * @return the encoded header value
      */
-    public static String encodeContentDisposition(String disposition,
-            String filename) {
+    public static String encodeContentDisposition(String disposition, String filename) {
         if (disposition == null) {
             disposition = DISPOSITION_ATTACHMENT;
         }
@@ -147,8 +153,9 @@ public class MimeHelper {
      * <p>
      * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
-     *
-     * @param value the header value to decode
+     * 
+     * @param value
+     *            the header value to decode
      * @return the filename
      */
     public static String decodeContentDispositionFilename(String value) {
@@ -165,14 +172,15 @@ public class MimeHelper {
      * <p>
      * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
-     *
-     * @param value the header value to decode
-     * @param params the map of parameters to fill
+     * 
+     * @param value
+     *            the header value to decode
+     * @param params
+     *            the map of parameters to fill
      * @return the disposition
-     *
+     * 
      */
-    public static String decodeContentDisposition(String value,
-            Map<String, String> params) {
+    public static String decodeContentDisposition(String value, Map<String, String> params) {
         try {
             HeaderTokenizer tokenizer = new HeaderTokenizer(value);
             // get the first token, which must be an ATOM
@@ -192,6 +200,86 @@ public class MimeHelper {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    /**
+     * Gets charset from a content type header.
+     * 
+     * @param value
+     *            the header value to decode
+     * @return the charset or <code>null</code> if no valid boundary available
+     */
+    public static String getCharsetFromContentType(String value) {
+        try {
+            HeaderTokenizer tokenizer = new HeaderTokenizer(value, ";", true);
+
+            // get the first token, which must be an ATOM
+            Token token = tokenizer.next();
+            if (token.getType() != Token.ATOM) {
+                return null;
+            }
+
+            // the remainder is the parameters
+            String remainder = tokenizer.getRemainder();
+            Map<String, String> params;
+            if (remainder != null) {
+                params = new HashMap<String, String>();
+                getParameters(remainder, params);
+
+                return params.get("charset");
+            }
+        } catch (ParseException e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the boundary from a <code>multipart/formdata</code> content type
+     * header.
+     * 
+     * @param value
+     *            the header value to decode
+     * @return the boundary as a byte array or <code>null</code> if no valid
+     *         boundary available
+     */
+    public static byte[] getBoundaryFromMultiPart(String value) {
+        try {
+            HeaderTokenizer tokenizer = new HeaderTokenizer(value, ";", true);
+
+            // get the first token, which must be an ATOM
+            Token token = tokenizer.next();
+            if (token.getType() != Token.ATOM) {
+                return null;
+            }
+
+            // check content type
+            String multipartContentType = token.getValue();
+            if (multipartContentType == null || !multipartContentType.equalsIgnoreCase("multipart/form-data")) {
+                return null;
+            }
+
+            // the remainder is the parameters
+            String remainder = tokenizer.getRemainder();
+            if (remainder != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                getParameters(remainder, params);
+
+                String boundaryStr = params.get("boundary");
+                if (boundaryStr != null && boundaryStr.length() > 0) {
+                    try {
+                        return boundaryStr.getBytes("ISO-8859-1");
+                    } catch (UnsupportedEncodingException e) {
+                        return boundaryStr.getBytes();
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            return null;
+        }
+
+        return null;
     }
 
     protected static class ParseException extends Exception {
@@ -256,8 +344,7 @@ public class MimeHelper {
             this(header, MIME_SPECIALS, true);
         }
 
-        protected HeaderTokenizer(String header, String delimiters,
-                boolean skipComments) {
+        protected HeaderTokenizer(String header, String delimiters, boolean skipComments) {
             this.header = header;
             this.delimiters = delimiters;
             this.skipComments = skipComments;
@@ -273,7 +360,7 @@ public class MimeHelper {
 
         /**
          * Read an ATOM token from the parsed header.
-         *
+         * 
          * @return A token containing the value of the atom token.
          */
         private Token readAtomicToken() {
@@ -282,8 +369,7 @@ public class MimeHelper {
             while (++pos < header.length()) {
                 // break on the first non-atom character.
                 char ch = header.charAt(pos);
-                if (delimiters.indexOf(header.charAt(pos)) != -1 || ch < 32
-                        || ch >= 127) {
+                if (delimiters.indexOf(header.charAt(pos)) != -1 || ch < 32 || ch >= 127) {
                     break;
                 }
             }
@@ -292,7 +378,7 @@ public class MimeHelper {
 
         /**
          * Read the next token from the header.
-         *
+         * 
          * @return The next token from the header. White space is skipped, and
          *         comment tokens are also skipped if indicated.
          */
@@ -331,13 +417,14 @@ public class MimeHelper {
         /**
          * Extract a substring from the header string and apply any
          * escaping/folding rules to the string.
-         *
-         * @param start The starting offset in the header.
-         * @param end The header end offset + 1.
+         * 
+         * @param start
+         *            The starting offset in the header.
+         * @param end
+         *            The header end offset + 1.
          * @return The processed string value.
          */
-        private String getEscapedValue(int start, int end)
-                throws ParseException {
+        private String getEscapedValue(int start, int end) throws ParseException {
             StringBuffer value = new StringBuffer();
             for (int i = start; i < end; i++) {
                 char ch = header.charAt(i);
@@ -369,7 +456,7 @@ public class MimeHelper {
         /**
          * Read a comment from the header, applying nesting and escape rules to
          * the content.
-         *
+         * 
          * @return A comment token with the token value.
          */
         private Token readComment() throws ParseException {
@@ -410,7 +497,7 @@ public class MimeHelper {
         /**
          * Parse out a quoted string from the header, applying escaping rules to
          * the value.
-         *
+         * 
          * @return The QUOTEDSTRING token with the value.
          * @exception ParseException
          */
@@ -445,8 +532,7 @@ public class MimeHelper {
          */
         private void eatWhiteSpace() {
             // skip to end of whitespace
-            while (++pos < header.length()
-                    && WHITE.indexOf(header.charAt(pos)) != -1)
+            while (++pos < header.length() && WHITE.indexOf(header.charAt(pos)) != -1)
                 ;
         }
     }
@@ -454,8 +540,7 @@ public class MimeHelper {
     /*
      * Tweaked from geronimo-javamail_1.4_spec-1.7.1. ParameterList
      */
-    protected static Map<String, String> getParameters(String list,
-            Map<String, String> params) throws ParseException {
+    protected static Map<String, String> getParameters(String list, Map<String, String> params) throws ParseException {
         HeaderTokenizer tokenizer = new HeaderTokenizer(list);
         while (true) {
             Token token = tokenizer.next();
@@ -476,8 +561,7 @@ public class MimeHelper {
                 }
 
                 if (token.getType() != Token.ATOM) {
-                    throw new ParseException("Invalid parameter name: "
-                            + token.getValue());
+                    throw new ParseException("Invalid parameter name: " + token.getValue());
                 }
 
                 // get the parameter name as a lower case version for better
@@ -494,10 +578,8 @@ public class MimeHelper {
                 // now the value, which may be an atom or a literal
                 token = tokenizer.next();
 
-                if (token.getType() != Token.ATOM
-                        && token.getType() != Token.QUOTEDSTRING) {
-                    throw new ParseException("Invalid parameter value: "
-                            + token.getValue());
+                if (token.getType() != Token.ATOM && token.getType() != Token.QUOTEDSTRING) {
+                    throw new ParseException("Invalid parameter value: " + token.getValue());
                 }
 
                 String value = token.getValue();

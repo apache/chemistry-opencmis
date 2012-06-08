@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,10 +33,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private final boolean isMultipart;
@@ -47,8 +42,8 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private BigInteger size;
     private InputStream stream;
 
-    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold, long maxContentSize)
-            throws Exception {
+    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold,
+            long maxContentSize) throws Exception {
         super(request);
 
         parameters = new HashMap<String, String[]>();
@@ -57,67 +52,19 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
         parseFormData(request.getQueryString());
 
         // check multipart
-        isMultipart = ServletFileUpload.isMultipartContent(request);
+        isMultipart = MultipartParser.isMultipartContent(request);
 
         if (isMultipart) {
-            ServletFileUpload upload = new ServletFileUpload();
-            FileItemIterator iter = upload.getItemIterator(request);
+            MultipartParser parser = new MultipartParser(request, tempDir, memoryThreshold, maxContentSize);
 
-            while (iter.hasNext()) {
-                FileItemStream item = iter.next();
-                String name = item.getFieldName();
-                InputStream itemStream = new BufferedInputStream(item.openStream());
-
-                if (item.isFormField()) {
-                    InputStreamReader reader = new InputStreamReader(itemStream, "UTF-8");
-
-                    try {
-                        StringBuilder sb = new StringBuilder();
-
-                        char[] buffer = new char[64 * 1024];
-                        int b = 0;
-                        while ((b = reader.read(buffer)) > -1) {
-                            sb.append(buffer, 0, b);
-                        }
-
-                        addParameter(name, sb.toString());
-                    } finally {
-                        try {
-                            reader.close();
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
+            while (parser.readNext()) {
+                if (parser.isContent()) {
+                    filename = parser.getFilename();
+                    contentType = parser.getContentType();
+                    size = parser.getSize();
+                    stream = parser.getStream();
                 } else {
-                    filename = item.getName();
-                    contentType = (item.getContentType() == null ? Constants.MEDIATYPE_OCTETSTREAM : item
-                            .getContentType());
-
-                    ThresholdOutputStream os = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize);
-
-                    try {
-                        byte[] buffer = new byte[64 * 1024];
-                        int b = 0;
-                        while ((b = itemStream.read(buffer)) > -1) {
-                            os.write(buffer, 0, b);
-                        }
-
-                        os.close();
-
-                        size = BigInteger.valueOf(os.getSize());
-                        stream = os.getInputStream();
-                    } catch (Exception e) {
-                        // if something went wrong, make sure the temp file will
-                        // be deleted
-                        os.destroy();
-                        throw e;
-                    } finally {
-                        try {
-                            itemStream.close();
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
+                    addParameter(parser.getName(), parser.getValue());
                 }
             }
 

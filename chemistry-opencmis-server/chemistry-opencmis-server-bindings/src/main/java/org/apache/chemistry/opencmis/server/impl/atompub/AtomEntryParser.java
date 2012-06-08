@@ -181,6 +181,7 @@ public class AtomEntryParser {
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
         XMLStreamReader parser = factory.createXMLStreamReader(stream);
 
         while (true) {

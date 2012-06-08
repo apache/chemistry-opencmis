@@ -176,6 +176,8 @@ public class FormDataWriter {
                 out.write((param.getKey() + "=" + URLEncoder.encode(param.getValue(), "UTF-8")).getBytes("UTF-8"));
             }
         } else {
+            writeLine(out);
+            
             // parameters
             for (Map.Entry<String, String> param : parameters.entrySet()) {
                 writeLine(out, "--" + boundary);
