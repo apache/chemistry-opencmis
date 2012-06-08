@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.workbench.actions.ApplyPolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CancelCheckOutPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckInPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckOutPanel;
+import org.apache.chemistry.opencmis.workbench.actions.CopyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeletePanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteTreePanel;
@@ -50,6 +51,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private PropertyUpdatePanel propertyUpdatePanel;
     private DeletePanel deletePanel;
     private DeleteTreePanel deleteTreePanel;
+    private CopyPanel copyPanel;
     private MovePanel movePanel;
     private CheckOutPanel checkOutPanel;
     private CancelCheckOutPanel cancelCheckOutPanel;
@@ -82,6 +84,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteTreePanel.setObject(object);
         deleteTreePanel.setVisible(deleteTreePanel.isAllowed());
+
+        copyPanel.setObject(object);
+        copyPanel.setVisible(copyPanel.isAllowed());
 
         movePanel.setObject(object);
         movePanel.setVisible(movePanel.isAllowed());
@@ -129,6 +134,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteTreePanel = new DeleteTreePanel(model);
         add(deleteTreePanel);
+
+        copyPanel = new CopyPanel(model);
+        add(copyPanel);
 
         movePanel = new MovePanel(model);
         add(movePanel);

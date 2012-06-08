@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +33,18 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.client.api.TransientDocument;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -131,8 +135,13 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     public Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
 
-        ObjectId newId = getSession().createDocumentFromSource(this, properties, targetFolderId, versioningState,
-                policies, addAces, removeAces);
+        ObjectId newId = null;
+        try {
+            newId = getSession().createDocumentFromSource(this, properties, targetFolderId, versioningState, policies,
+                    addAces, removeAces);
+        } catch (CmisNotSupportedException nse) {
+            newId = copyViaClient(targetFolderId, properties, versioningState, policies, addAces, removeAces);
+        }
 
         // if no context is provided the object will not be fetched
         if (context == null || newId == null) {
@@ -149,6 +158,40 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     public Document copy(ObjectId targetFolderId) {
         return copy(targetFolderId, null, null, null, null, null, getSession().getDefaultContext());
+    }
+
+    /**
+     * Copies the document manually. The content is streamed from the repository
+     * and back.
+     */
+    protected ObjectId copyViaClient(ObjectId targetFolderId, Map<String, ?> properties,
+            VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
+        Map<String, Object> newProperties = new HashMap<String, Object>();
+
+        OperationContext allPropsContext = getSession().createOperationContext();
+        allPropsContext.setFilterString("*");
+        allPropsContext.setIncludeAcls(false);
+        allPropsContext.setIncludeAllowableActions(false);
+        allPropsContext.setIncludePathSegments(false);
+        allPropsContext.setIncludePolicies(false);
+        allPropsContext.setIncludeRelationships(IncludeRelationships.NONE);
+        allPropsContext.setRenditionFilterString("cmis:none");
+
+        Document allPropsDoc = (Document) getSession().getObject(this, allPropsContext);
+
+        for (Property<?> prop : allPropsDoc.getProperties()) {
+            if (prop.getDefinition().getUpdatability() == Updatability.READWRITE
+                    || prop.getDefinition().getUpdatability() == Updatability.ONCREATE) {
+                newProperties.put(prop.getId(), prop.getValue());
+            }
+        }
+
+        if (properties != null) {
+            newProperties.putAll(properties);
+        }
+
+        return getSession().createDocument(newProperties, targetFolderId, allPropsDoc.getContentStream(),
+                versioningState, policies, addAces, removeAces);
     }
 
     public void deleteAllVersions() {
