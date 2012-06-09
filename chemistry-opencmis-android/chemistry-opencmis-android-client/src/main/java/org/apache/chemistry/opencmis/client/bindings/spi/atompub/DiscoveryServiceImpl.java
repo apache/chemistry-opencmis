@@ -109,7 +109,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         return result;
     }
-
+    
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -126,12 +126,12 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         final Map<String, String> queryParameters = new HashMap<String, String>(6);
         queryParameters.put(CmisAtomPubConstants.TAG_QUERY_STATEMENT, statement);
-        queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions.toString());
-        queryParameters.put(Constants.PARAM_ALL_VERSIONS, searchAllVersions.toString());
-        queryParameters.put(Constants.PARAM_RELATIONSHIPS, includeRelationships.toString());
+        queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, (includeAllowableActions == null) ? null : includeAllowableActions.toString());
+        queryParameters.put(Constants.PARAM_ALL_VERSIONS, (searchAllVersions == null) ? null :searchAllVersions.toString());
+        queryParameters.put(Constants.PARAM_RELATIONSHIPS, (includeRelationships == null) ? null : includeRelationships.toString());
         queryParameters.put(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        queryParameters.put(Constants.PARAM_MAX_ITEMS, maxItems.toString());
-        queryParameters.put(Constants.PARAM_SKIP_COUNT, skipCount.toString());
+        queryParameters.put(Constants.PARAM_MAX_ITEMS, (maxItems == null) ? null : maxItems.toString());
+        queryParameters.put(Constants.PARAM_SKIP_COUNT, (skipCount == null) ? null : skipCount.toString());
 
         // post the query and parse results
         HttpUtils.Response resp = post(url, Constants.MEDIATYPE_QUERY, new HttpUtils.Output() {

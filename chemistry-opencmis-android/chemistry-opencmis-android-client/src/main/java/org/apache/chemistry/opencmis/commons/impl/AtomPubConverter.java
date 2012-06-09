@@ -727,19 +727,19 @@ public class AtomPubConverter {
 	// -----------------------------------------------------------------
 
 	private static BigDecimal getDecimal(Map<String, String> values, String key) {
-		return (values.get(key) == null || values.get(key).isEmpty()) ? null : BigDecimal.valueOf(Long.parseLong(values.get(key)));
+		return (values.get(key) == null) ? null : BigDecimal.valueOf(Long.parseLong(values.get(key)));
 	}
 
 	private static Boolean getBoolean(Map<String, String> values, String key) {
-		return (values.get(key) == null || values.get(key).isEmpty()) ? null : Boolean.parseBoolean(values.get(key));
+		return (values.get(key) == null) ? null : Boolean.parseBoolean(values.get(key));
 	}
 
 	private static String getString(Map<String, String> values, String key) {
-		return (values.get(key) == null || values.get(key).isEmpty()) ? null : values.get(key);
+		return (values.get(key) == null) ? null : values.get(key);
 	}
 
 	private static BigInteger getInteger(Map<String, String> values, String key) {
-		return (values.get(key) == null || values.get(key).isEmpty()) ? null : BigInteger.valueOf(Long.parseLong(values.get(key)));
+		return (values.get(key) == null) ? null : BigInteger.valueOf(Long.parseLong(values.get(key)));
 	}
 
 	@SuppressWarnings("unchecked")

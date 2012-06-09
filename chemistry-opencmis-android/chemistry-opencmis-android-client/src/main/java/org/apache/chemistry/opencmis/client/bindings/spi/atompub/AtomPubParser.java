@@ -847,10 +847,15 @@ public class AtomPubParser {
 					skip(parser);
 				}
 				break;
-
 			}
-			eventType = parser.next();
+			
+			
+			eventType = parser.getEventType();
 			name = parser.getName();
+			if(!(eventType == XmlPullParser.END_TAG && Constants.SELECTOR_OBJECT.equals(name))){
+				eventType = parser.next();
+				name = parser.getName();	
+			}
 		}
 
 		// Important !
