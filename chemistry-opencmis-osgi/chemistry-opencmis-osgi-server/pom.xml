@@ -42,13 +42,9 @@
 							!antlr.collections.impl,
 							!org.antlr.*,
 							org.apache.avalon.framework.logger;resolution:=optional,
-							org.json.simple;resolution:=optional,
 							org.apache.log;resolution:=optional,
 							com.sun.xml.ws.*;resolution:=optional,
 							joptsimple;resolution:=optional,
-							org.apache.commons.codec.*;version="[1.4,2.0)",
-							org.apache.commons.logging.*;version="[1.1,2.0)",
-							org.apache.commons.fileupload.*;version="[1.2.0,2.0)";resolution:=optional,
 							org.apache.commons.lang.*;version="[2.5.0,3.0)";resolution:=optional,
 							*
 						</Import-Package>
