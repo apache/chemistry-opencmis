@@ -35,6 +35,7 @@ public final class Constants {
     public static final String NAMESPACE_APP = "http://www.w3.org/2007/app";
     public static final String NAMESPACE_RESTATOM = "http://docs.oasis-open.org/ns/cmis/restatom/200908/";
     public static final String NAMESPACE_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String NAMESPACE_APACHE_CHEMISTRY = "http://chemistry.apache.org/";
 
     // media types
     public static final String MEDIATYPE_SERVICE = "application/atomsvc+xml";

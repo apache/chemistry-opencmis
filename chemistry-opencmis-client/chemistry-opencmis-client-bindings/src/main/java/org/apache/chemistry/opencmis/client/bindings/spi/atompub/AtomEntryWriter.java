@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_ID;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_TITLE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_UPDATED;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
@@ -55,24 +55,26 @@ public class AtomEntryWriter {
     private static final String PREFIX_ATOM = "atom";
     private static final String PREFIX_CMIS = "cmis";
     private static final String PREFIX_RESTATOM = "cmisra";
+    private static final String PREFIX_APACHE_CHEMISTY = "chemistry";
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private final CmisObjectType object;
     private final InputStream stream;
     private final String mediaType;
+    private final String filename;
 
     /**
      * Constructor.
      */
     public AtomEntryWriter(CmisObjectType object) {
-        this(object, null, null);
+        this(object, null, null, null);
     }
 
     /**
      * Constructor.
      */
-    public AtomEntryWriter(CmisObjectType object, String mediaType, InputStream stream) {
+    public AtomEntryWriter(CmisObjectType object, String mediaType, String filename, InputStream stream) {
         if ((object == null) || (object.getProperties() == null)) {
             throw new CmisInvalidArgumentException("Object and properties must not be null!");
         }
@@ -83,6 +85,7 @@ public class AtomEntryWriter {
 
         this.object = object;
         this.mediaType = mediaType;
+        this.filename = filename;
 
         if (stream != null && !(stream instanceof BufferedInputStream) && !(stream instanceof ByteArrayInputStream)) {
             // avoid double buffering
@@ -102,6 +105,7 @@ public class AtomEntryWriter {
         writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
         writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        writer.setPrefix(PREFIX_APACHE_CHEMISTY, Constants.NAMESPACE_APACHE_CHEMISTRY);
 
         // start doc
         writer.writeStartDocument();
@@ -111,6 +115,9 @@ public class AtomEntryWriter {
         writer.writeNamespace(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
         writer.writeNamespace(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.writeNamespace(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        if (filename != null) {
+            writer.writeNamespace(PREFIX_APACHE_CHEMISTY, Constants.NAMESPACE_APACHE_CHEMISTRY);
+        }
 
         // atom:id
         writer.writeStartElement(Constants.NAMESPACE_ATOM, TAG_ATOM_ID);
@@ -134,6 +141,12 @@ public class AtomEntryWriter {
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE);
             writer.writeCharacters(mediaType);
             writer.writeEndElement();
+
+            if (filename != null) {
+                writer.writeStartElement(Constants.NAMESPACE_APACHE_CHEMISTRY, TAG_CONTENT_FILENAME);
+                writer.writeCharacters(filename);
+                writer.writeEndElement();
+            }
 
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
             writeContent(writer);
@@ -188,7 +201,7 @@ public class AtomEntryWriter {
                 writer.writeCharacters(new String(buffer, 0, b, "US-ASCII"));
             }
         }
-        
+
         b64stream.close();
     }
 }

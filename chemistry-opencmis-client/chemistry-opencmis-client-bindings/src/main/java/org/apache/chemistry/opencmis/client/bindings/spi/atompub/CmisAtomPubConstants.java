@@ -63,6 +63,7 @@ public final class CmisAtomPubConstants {
     public static final String TAG_CONTENT = "content";
     public static final String TAG_CONTENT_MEDIATYPE = "mediatype";
     public static final String TAG_CONTENT_BASE64 = "base64";
+    public static final String TAG_CONTENT_FILENAME = "filename";
 
     public static final String ATTR_DOCUMENT_TYPE = CmisTypeDocumentDefinitionType.class.getAnnotation(XmlType.class).name();
     public static final String ATTR_FOLDER_TYPE = CmisTypeFolderDefinitionType.class.getAnnotation(XmlType.class).name();

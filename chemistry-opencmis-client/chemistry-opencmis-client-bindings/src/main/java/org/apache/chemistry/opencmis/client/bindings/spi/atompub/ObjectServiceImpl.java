@@ -114,14 +114,16 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         object.setPolicyIds(convertPolicyIds(policies));
 
         String mediaType = null;
+        String filename = null;
         InputStream stream = null;
 
         if (contentStream != null) {
             mediaType = contentStream.getMimeType();
+            filename = contentStream.getFileName();
             stream = contentStream.getStream();
         }
 
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, filename, stream);
 
         // post the new folder object
         HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {

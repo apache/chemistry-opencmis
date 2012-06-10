@@ -166,14 +166,16 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         }
 
         String mediaType = null;
+        String filename = null;
         InputStream stream = null;
 
         if (contentStream != null) {
             mediaType = contentStream.getMimeType();
+            filename = contentStream.getFileName();
             stream = contentStream.getStream();
         }
 
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, filename, stream);
 
         // update
         HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {

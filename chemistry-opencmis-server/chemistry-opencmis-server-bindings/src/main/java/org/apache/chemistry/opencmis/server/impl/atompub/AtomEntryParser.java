@@ -67,6 +67,7 @@ public class AtomEntryParser {
     private static final String TAG_CONTENT = "content";
     private static final String TAG_BASE64 = "base64";
     private static final String TAG_MEDIATYPE = "mediatype";
+    private static final String TAG_FILENAME = "filename";
 
     private static final String ATTR_SRC = "src";
     private static final String ATTR_TYPE = "type";
@@ -333,6 +334,12 @@ public class AtomEntryParser {
                         ThresholdOutputStream ths = readBase64(parser);
                         cmisContentStream.setStream(ths.getInputStream());
                         cmisContentStream.setLength(BigInteger.valueOf(ths.getSize()));
+                    } else {
+                        skip(parser);
+                    }
+                } else if (Constants.NAMESPACE_APACHE_CHEMISTRY.equals(name.getNamespaceURI())) {
+                    if (TAG_FILENAME.equals(name.getLocalPart())) {
+                        cmisContentStream.setFileName(readText(parser));
                     } else {
                         skip(parser);
                     }

@@ -42,9 +42,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
 
 /**
  * Minimal test for AtomEntryWriter and AtomPubParser.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class AtomParserTest extends TestCase {
 
@@ -80,7 +77,7 @@ public class AtomParserTest extends TestCase {
         object1.setProperties(properties);
 
         // write the entry
-        AtomEntryWriter aew = new AtomEntryWriter(object1, CONTENT_TYPE, new ByteArrayInputStream(CONTENT));
+        AtomEntryWriter aew = new AtomEntryWriter(object1, CONTENT_TYPE, null, new ByteArrayInputStream(CONTENT));
         aew.write(bao);
 
         byte[] entryContent = bao.toByteArray();
