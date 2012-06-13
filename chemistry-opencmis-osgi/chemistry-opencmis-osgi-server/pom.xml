@@ -41,6 +41,7 @@
 							!org.apache.chemistry.opencmis.client.bindings;version=${project.version},
 							!antlr.collections.impl,
 							!org.antlr.*,
+							org.slf4j.impl;resolution:=optional,
 							org.apache.avalon.framework.logger;resolution:=optional,
 							org.apache.log;resolution:=optional,
 							com.sun.xml.ws.*;resolution:=optional,
