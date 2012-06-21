@@ -124,54 +124,8 @@ public class LoginDialog extends JDialog {
         loginTabs = new JTabbedPane();
         add(loginTabs, BorderLayout.CENTER);
 
-        // basic panel
-        JPanel basicPanel = new JPanel(new SpringLayout());
-
-        urlField = createTextField(basicPanel, "URL:");
-        urlField.setText(System.getProperty(SYSPROP_URL, ""));
-
-        createBindingButtons(basicPanel);
-
-        usernameField = createTextField(basicPanel, "Username:");
-        usernameField.setText(System.getProperty(SYSPROP_USER, ""));
-
-        passwordField = createPasswordField(basicPanel, "Password:");
-        passwordField.setText(System.getProperty(SYSPROP_PASSWORD, ""));
-
-        createAuthenticationButtons(basicPanel);
-
-        createCompressionButtons(basicPanel);
-
-        createClientCompressionButtons(basicPanel);
-
-        createCookieButtons(basicPanel);
-
-        makeCompactGrid(basicPanel, 8, 2, 5, 10, 5, 5);
-
-        loginTabs.addTab("Basic", basicPanel);
-
-        // expert panel
-        final JPanel expertPanel = new JPanel(new BorderLayout());
-        expertPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-
-        sessionConfigurations = ClientHelper.readFileProperties(CONFIGS_FOLDER + CONFIGS_LIBRARY, CONFIGS_FOLDER);
-
-        final JComboBox configs = new JComboBox();
-        configs.setMaximumRowCount(20);
-
-        configs.addItem(new FileEntry("", null));
-        if (sessionConfigurations != null) {
-            for (FileEntry fe : sessionConfigurations) {
-                configs.addItem(fe);
-            }
-        }
-        expertPanel.add(configs, BorderLayout.PAGE_START);
-
-        sessionParameterTextArea = new JTextArea();
-        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        expertPanel.add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
-
-        loginTabs.addTab("Expert", expertPanel);
+        // add tabs
+        addLoginTabs(loginTabs);
 
         // repository
         JPanel buttonPanel = new JPanel();
@@ -263,6 +217,73 @@ public class LoginDialog extends JDialog {
             }
         });
 
+        ClientHelper.installEscapeBinding(this, getRootPane(), false);
+
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    protected void addLoginTabs(final JTabbedPane loginTabs) {
+        // basic panel
+        JPanel basicPanel = new JPanel(new SpringLayout());
+
+        urlField = createTextField(basicPanel, "URL:");
+        urlField.setText(System.getProperty(SYSPROP_URL, ""));
+
+        createBindingButtons(basicPanel);
+
+        usernameField = createTextField(basicPanel, "Username:");
+        usernameField.setText(System.getProperty(SYSPROP_USER, ""));
+
+        passwordField = createPasswordField(basicPanel, "Password:");
+        passwordField.setText(System.getProperty(SYSPROP_PASSWORD, ""));
+
+        createAuthenticationButtons(basicPanel);
+
+        createCompressionButtons(basicPanel);
+
+        createClientCompressionButtons(basicPanel);
+
+        createCookieButtons(basicPanel);
+
+        makeCompactGrid(basicPanel, 8, 2, 5, 10, 5, 5);
+
+        loginTabs.addTab("Basic", basicPanel);
+
+        // expert panel
+        final JPanel expertPanel = new JPanel(new BorderLayout());
+        expertPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
+        sessionConfigurations = ClientHelper.readFileProperties(CONFIGS_FOLDER + CONFIGS_LIBRARY, CONFIGS_FOLDER);
+
+        final JComboBox configs = new JComboBox();
+        configs.setMaximumRowCount(20);
+
+        configs.addItem(new FileEntry("", null));
+        if (sessionConfigurations != null) {
+            for (FileEntry fe : sessionConfigurations) {
+                configs.addItem(fe);
+            }
+        }
+
+        configs.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                FileEntry fe = (FileEntry) e.getItem();
+
+                sessionParameterTextArea.setText(ClientHelper.readFileAndRemoveHeader(fe.getFile()));
+                sessionParameterTextArea.setCaretPosition(0);
+            }
+        });
+
+        expertPanel.add(configs, BorderLayout.PAGE_START);
+
+        sessionParameterTextArea = new JTextArea();
+        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        expertPanel.add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
+
+        loginTabs.addTab("Expert", expertPanel);
+
         loginTabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 expertLogin = (loginTabs.getSelectedComponent() == expertPanel);
@@ -283,24 +304,9 @@ public class LoginDialog extends JDialog {
                 }
             }
         });
-
-        configs.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                FileEntry fe = (FileEntry) e.getItem();
-
-                sessionParameterTextArea.setText(ClientHelper.readFileAndRemoveHeader(fe.getFile()));
-                sessionParameterTextArea.setCaretPosition(0);
-            }
-        });
-
-        ClientHelper.installEscapeBinding(this, getRootPane(), false);
-
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
     }
 
-    private JTextField createTextField(Container pane, String label) {
+    protected JTextField createTextField(Container pane, String label) {
         JTextField textField = new JTextField(60);
         JLabel textLabel = new JLabel(label, JLabel.TRAILING);
         textLabel.setLabelFor(textField);
@@ -311,7 +317,7 @@ public class LoginDialog extends JDialog {
         return textField;
     }
 
-    private JPasswordField createPasswordField(Container pane, String label) {
+    protected JPasswordField createPasswordField(Container pane, String label) {
         JPasswordField textField = new JPasswordField(60);
         JLabel textLabel = new JLabel(label, JLabel.TRAILING);
         textLabel.setLabelFor(textField);
@@ -322,7 +328,7 @@ public class LoginDialog extends JDialog {
         return textField;
     }
 
-    private void createBindingButtons(Container pane) {
+    protected void createBindingButtons(Container pane) {
         JPanel bindingContainer = new JPanel();
         bindingContainer.setLayout(new BoxLayout(bindingContainer, BoxLayout.LINE_AXIS));
         char bc = System.getProperty(SYSPROP_BINDING, "atom").toLowerCase().charAt(0);
@@ -347,7 +353,7 @@ public class LoginDialog extends JDialog {
         pane.add(bindingContainer);
     }
 
-    private void createAuthenticationButtons(Container pane) {
+    protected void createAuthenticationButtons(Container pane) {
         JPanel authenticationContainer = new JPanel();
         authenticationContainer.setLayout(new BoxLayout(authenticationContainer, BoxLayout.LINE_AXIS));
         boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase().equals("standard"));
@@ -371,7 +377,7 @@ public class LoginDialog extends JDialog {
         pane.add(authenticationContainer);
     }
 
-    private void createCompressionButtons(Container pane) {
+    protected void createCompressionButtons(Container pane) {
         JPanel compressionContainer = new JPanel();
         compressionContainer.setLayout(new BoxLayout(compressionContainer, BoxLayout.LINE_AXIS));
         boolean compression = !(System.getProperty(SYSPROP_COMPRESSION, "on").equalsIgnoreCase("off"));
@@ -389,7 +395,7 @@ public class LoginDialog extends JDialog {
         pane.add(compressionContainer);
     }
 
-    private void createClientCompressionButtons(Container pane) {
+    protected void createClientCompressionButtons(Container pane) {
         JPanel clientCompressionContainer = new JPanel();
         clientCompressionContainer.setLayout(new BoxLayout(clientCompressionContainer, BoxLayout.LINE_AXIS));
         boolean clientCompression = (System.getProperty(SYSPROP_CLIENTCOMPRESSION, "off").equalsIgnoreCase("on"));
@@ -407,7 +413,7 @@ public class LoginDialog extends JDialog {
         pane.add(clientCompressionContainer);
     }
 
-    private void createCookieButtons(Container pane) {
+    protected void createCookieButtons(Container pane) {
         JPanel cookiesContainer = new JPanel();
         cookiesContainer.setLayout(new BoxLayout(cookiesContainer, BoxLayout.LINE_AXIS));
         boolean cookies = (System.getProperty(SYSPROP_COOKIES, "on").equalsIgnoreCase("on"));
@@ -425,7 +431,7 @@ public class LoginDialog extends JDialog {
         pane.add(cookiesContainer);
     }
 
-    private JButton createButton(String title) {
+    protected JButton createButton(String title) {
         JButton button = new JButton(title);
         button.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
         button.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -434,7 +440,7 @@ public class LoginDialog extends JDialog {
         return button;
     }
 
-    private void createRepositoryBox(Container pane) {
+    protected void createRepositoryBox(Container pane) {
         repositoryBox = new JComboBox();
         repositoryBox.setEnabled(false);
         repositoryBox.setRenderer(new RepositoryRenderer());
@@ -450,7 +456,7 @@ public class LoginDialog extends JDialog {
         return layout.getConstraints(c);
     }
 
-    private void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad, int yPad) {
+    protected void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad, int yPad) {
         SpringLayout layout = (SpringLayout) parent.getLayout();
 
         Spring x = Spring.constant(initialX);
@@ -484,7 +490,7 @@ public class LoginDialog extends JDialog {
         layout.getConstraints(parent).setConstraint(SpringLayout.EAST, x);
     }
 
-    private Map<String, String> createBasicSessionParameters() {
+    protected Map<String, String> createBasicSessionParameters() {
         String url = urlField.getText();
 
         BindingType binding = BindingType.ATOMPUB;
@@ -508,7 +514,7 @@ public class LoginDialog extends JDialog {
                 compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected());
     }
 
-    private Map<String, String> createExpertSessionParameters() {
+    protected Map<String, String> createExpertSessionParameters() {
         Map<String, String> result = new HashMap<String, String>();
 
         for (String line : sessionParameterTextArea.getText().split("\n")) {
@@ -528,11 +534,15 @@ public class LoginDialog extends JDialog {
         return result;
     }
 
+    protected void setClientSession(ClientSession clientSession) {
+        this.clientSession = clientSession;
+    }
+    
     public void createClientSession() {
         if (expertLogin) {
-            clientSession = new ClientSession(createExpertSessionParameters());
+            setClientSession(new ClientSession(createExpertSessionParameters()));
         } else {
-            clientSession = new ClientSession(createBasicSessionParameters());
+            setClientSession(new ClientSession(createBasicSessionParameters()));
         }
     }
 
