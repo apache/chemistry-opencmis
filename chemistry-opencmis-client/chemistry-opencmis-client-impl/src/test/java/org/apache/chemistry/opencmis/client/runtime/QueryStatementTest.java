@@ -43,7 +43,7 @@ public class QueryStatementTest {
         query = "SELECT * FROM cmis:document WHERE cmis:createdBy = \'admin\' AND abc:int = 42";
         st = new QueryStatementImpl(session, query);
         assertEquals(query, st.toQueryString());
-        
+
         query = "SELECT * FROM cmis:document WHERE abc:test = 'x?z'";
         st = new QueryStatementImpl(session, query);
         st.setString(1, "y");
@@ -112,5 +112,25 @@ public class QueryStatementTest {
         st.setDateTime(1, cal.getTimeInMillis());
         assertEquals("SELECT * FROM cmis:document WHERE abc:dateTime = TIMESTAMP '2012-02-02T03:04:05.000Z'",
                 st.toQueryString());
+
+        // dateTime Timestamp
+        query = "SELECT * FROM cmis:document WHERE abc:dateTime = ?";
+
+        st = new QueryStatementImpl(session, query);
+        st.setDateTimeTimestamp(1, cal);
+        assertEquals("SELECT * FROM cmis:document WHERE abc:dateTime = TIMESTAMP '2012-02-02T03:04:05.000Z'",
+                st.toQueryString());
+
+        st = new QueryStatementImpl(session, query);
+        st.setDateTimeTimestamp(1, cal.getTimeInMillis());
+        assertEquals("SELECT * FROM cmis:document WHERE abc:dateTime = TIMESTAMP '2012-02-02T03:04:05.000Z'",
+                st.toQueryString());
+
+        query = "SELECT * FROM cmis:document WHERE abc:dateTime IN (?)";
+
+        st = new QueryStatementImpl(session, query);
+        st.setDateTimeTimestamp(1, cal.getTime(), cal.getTime());
+        assertEquals("SELECT * FROM cmis:document WHERE abc:dateTime "
+                + "IN (TIMESTAMP '2012-02-02T03:04:05.000Z',TIMESTAMP '2012-02-02T03:04:05.000Z')", st.toQueryString());
     }
 }

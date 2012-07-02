@@ -231,6 +231,14 @@ public class QueryStatementImpl implements QueryStatement {
     }
 
     public void setDateTime(int parameterIndex, Calendar... cal) {
+        setDateTime(parameterIndex, false, cal);
+    }
+
+    public void setDateTimeTimestamp(int parameterIndex, Calendar... cal) {
+        setDateTime(parameterIndex, true, cal);
+    }
+
+    protected void setDateTime(int parameterIndex, boolean prefix, Calendar... cal) {
         if (cal == null || cal.length == 0) {
             throw new IllegalArgumentException("Calendar must be set!");
         }
@@ -245,6 +253,10 @@ public class QueryStatementImpl implements QueryStatement {
                 sb.append(",");
             }
 
+            if (prefix) {
+                sb.append("TIMESTAMP ");
+            }
+
             sb.append(convert(c.getTime()));
         }
 
@@ -252,6 +264,14 @@ public class QueryStatementImpl implements QueryStatement {
     }
 
     public void setDateTime(int parameterIndex, Date... date) {
+        setDateTime(parameterIndex, false, date);
+    }
+
+    public void setDateTimeTimestamp(int parameterIndex, Date... date) {
+        setDateTime(parameterIndex, true, date);
+    }
+
+    protected void setDateTime(int parameterIndex, boolean prefix, Date... date) {
         if (date == null || date.length == 0) {
             throw new IllegalArgumentException("Date must be set!");
         }
@@ -266,6 +286,10 @@ public class QueryStatementImpl implements QueryStatement {
                 sb.append(",");
             }
 
+            if (prefix) {
+                sb.append("TIMESTAMP ");
+            }
+
             sb.append(convert(d));
         }
 
@@ -273,6 +297,14 @@ public class QueryStatementImpl implements QueryStatement {
     }
 
     public void setDateTime(int parameterIndex, long... ms) {
+        setDateTime(parameterIndex, false, ms);
+    }
+
+    public void setDateTimeTimestamp(int parameterIndex, long... ms) {
+        setDateTime(parameterIndex, true, ms);
+    }
+
+    protected void setDateTime(int parameterIndex, boolean prefix, long... ms) {
         if (ms == null || ms.length == 0) {
             throw new IllegalArgumentException("Timestamp must be set!");
         }
@@ -281,6 +313,10 @@ public class QueryStatementImpl implements QueryStatement {
         for (long l : ms) {
             if (sb.length() > 0) {
                 sb.append(",");
+            }
+
+            if (prefix) {
+                sb.append("TIMESTAMP ");
             }
 
             sb.append(convert(new Date(l)));

@@ -114,19 +114,34 @@ public interface QueryStatement extends Cloneable {
     void setBoolean(int parameterIndex, boolean... bool);
 
     /**
-     * Sets the designated parameter to the given timestamp.
+     * Sets the designated parameter to the given DateTime value.
      */
     void setDateTime(int parameterIndex, Calendar... cal);
 
     /**
-     * Sets the designated parameter to the given timestamp.
+     * Sets the designated parameter to the given DateTime value.
      */
     void setDateTime(int parameterIndex, Date... date);
 
     /**
-     * Sets the designated parameter to the given timestamp.
+     * Sets the designated parameter to the given DateTime value.
      */
     void setDateTime(int parameterIndex, long... ms);
+    
+    /**
+     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     */
+    void setDateTimeTimestamp(int parameterIndex, Calendar... cal);
+
+    /**
+     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     */
+    void setDateTimeTimestamp(int parameterIndex, Date... date);
+
+    /**
+     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     */
+    void setDateTimeTimestamp(int parameterIndex, long... ms);
 
     /**
      * Returns the query statement.
