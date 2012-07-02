@@ -257,8 +257,15 @@ public class ClientModel {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         ContentStream content = createContentStream(filename);
-        return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
-                versioningState, null, null, null);
+
+        try {
+            return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
+                    versioningState, null, null, null);
+        } finally {
+            if (content != null && content.getStream() != null) {
+                content.getStream().close();
+            }
+        }
     }
 
     public ContentStream createContentStream(String name, long length, long seed) throws Exception {
@@ -273,8 +280,14 @@ public class ClientModel {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
 
         ContentStream content = createContentStream(name, length, seed);
-        return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
-                versioningState, null, null, null);
+        try {
+            return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
+                    versioningState, null, null, null);
+        } finally {
+            if (content != null && content.getStream() != null) {
+                content.getStream().close();
+            }
+        }
     }
 
     public synchronized ObjectId createFolder(String name, String type) throws Exception {

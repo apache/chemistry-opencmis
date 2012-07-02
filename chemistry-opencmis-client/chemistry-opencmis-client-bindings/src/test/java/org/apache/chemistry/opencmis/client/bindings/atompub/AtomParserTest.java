@@ -33,6 +33,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomBas
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
@@ -77,7 +79,9 @@ public class AtomParserTest extends TestCase {
         object1.setProperties(properties);
 
         // write the entry
-        AtomEntryWriter aew = new AtomEntryWriter(object1, CONTENT_TYPE, null, new ByteArrayInputStream(CONTENT));
+        ContentStream contentStream = new ContentStreamImpl(null, BigInteger.valueOf(CONTENT.length), CONTENT_TYPE,
+                new ByteArrayInputStream(CONTENT));
+        AtomEntryWriter aew = new AtomEntryWriter(object1, contentStream);
         aew.write(bao);
 
         byte[] entryContent = bao.toByteArray();

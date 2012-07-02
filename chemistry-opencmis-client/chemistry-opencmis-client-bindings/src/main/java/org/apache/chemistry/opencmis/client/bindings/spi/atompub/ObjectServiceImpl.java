@@ -113,17 +113,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         object.setProperties(convert(properties));
         object.setPolicyIds(convertPolicyIds(policies));
 
-        String mediaType = null;
-        String filename = null;
-        InputStream stream = null;
-
-        if (contentStream != null) {
-            mediaType = contentStream.getMimeType();
-            filename = contentStream.getFileName();
-            stream = contentStream.getStream();
-        }
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, filename, stream);
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, contentStream);
 
         // post the new folder object
         HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
@@ -625,8 +615,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 while ((b = stream.read(buffer)) > -1) {
                     out.write(buffer, 0, b);
                 }
-
-                stream.close();
             }
         });
 

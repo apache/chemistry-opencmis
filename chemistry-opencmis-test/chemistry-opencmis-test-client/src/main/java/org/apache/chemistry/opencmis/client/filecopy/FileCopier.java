@@ -142,6 +142,8 @@ public class FileCopier {
                 properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
             LOG.debug("uploading document with content lenth: " + contentStream.getLength());
             Document doc = parentFolder.createDocument(properties, contentStream, VersioningState.NONE);
+            is.close();
+            
             id = doc.getId();
             LOG.info("New document created with id: " + id + ", name: " +  properties.get(PropertyIds.NAME) + " in folder: " + parentFolder.getId());
         } catch (Exception e) {

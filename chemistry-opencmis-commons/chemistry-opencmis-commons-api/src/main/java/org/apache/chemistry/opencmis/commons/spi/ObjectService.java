@@ -49,6 +49,9 @@ public interface ObjectService {
      * Creates a document object of the specified type (given by the
      * cmis:objectTypeId property) in the (optionally) specified location.
      * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
      * @param repositoryId
      *            the identifier for the repository
      * @param properties
@@ -227,7 +230,7 @@ public interface ObjectService {
      *            (default is repository specific)
      * @param includeAllowableActions
      *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for the object (default is
+     *            must return the allowable actions for the object (default is
      *            <code>false</code>)
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
@@ -300,7 +303,7 @@ public interface ObjectService {
      *            (default is repository specific)
      * @param includeAllowableActions
      *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for the object (default is
+     *            must return the allowable actions for the object (default is
      *            <code>false</code>)
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
@@ -411,6 +414,9 @@ public interface ObjectService {
 
     /**
      * Sets the content stream for the specified document object.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
      * 
      * @param repositoryId
      *            the identifier for the repository

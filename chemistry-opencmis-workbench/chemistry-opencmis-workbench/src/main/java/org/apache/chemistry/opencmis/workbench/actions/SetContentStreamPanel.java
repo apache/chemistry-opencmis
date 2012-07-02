@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.actions;
 
+import java.io.IOException;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -64,7 +66,18 @@ public class SetContentStreamPanel extends ActionPanel {
     @Override
     public boolean doAction() throws Exception {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
-        ((Document) getObject()).setContentStream(content, overwriteBox.isSelected());
+
+        try {
+            ((Document) getObject()).setContentStream(content, overwriteBox.isSelected());
+        } finally {
+            if (content != null && content.getStream() != null) {
+                try {
+                    content.getStream().close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
         return true;
     }
 }

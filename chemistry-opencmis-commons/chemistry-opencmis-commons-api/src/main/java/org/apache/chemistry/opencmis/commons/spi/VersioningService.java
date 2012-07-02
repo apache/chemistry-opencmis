@@ -40,16 +40,28 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 public interface VersioningService {
     /**
      * Create a private working copy of the document.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
      */
     void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension, Holder<Boolean> contentCopied);
 
     /**
      * Reverses the effect of a check-out.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
      */
     void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
     /**
      * Checks-in the private working copy (PWC) document.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
      */
     void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
@@ -57,6 +69,9 @@ public interface VersioningService {
 
     /**
      * Get the latest document object in the version series.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
      */
     ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId, Boolean major,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
@@ -65,6 +80,9 @@ public interface VersioningService {
     /**
      * Get a subset of the properties for the latest document object in the
      * version series.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
      */
     Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension);
@@ -72,6 +90,26 @@ public interface VersioningService {
     /**
      * Returns the list of all document objects in the specified version series,
      * sorted by the property "cmis:creationDate" descending.
+     * 
+     * Either the <code>objectId</code> or the <code>versionSeriesId</code>
+     * parameter must be set.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the object
+     * @param versionSeriesId
+     *            the identifier for the object
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param includeAllowableActions
+     *            <em>(optional)</em> if <code>true</code>, then the repository
+     *            must return the allowable actions for the objects (default is
+     *            <code>false</code>)
+     * 
+     * @return the complete version history of the version series
      */
     List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension);

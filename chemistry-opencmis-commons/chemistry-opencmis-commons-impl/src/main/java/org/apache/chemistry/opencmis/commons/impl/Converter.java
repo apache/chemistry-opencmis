@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -240,6 +243,7 @@ import com.sun.xml.ws.developer.StreamingDataHandler;
 public final class Converter {
 
     private static final String DEFAULT_EXTENSION_NS = "http://chemistry.apache.org/opencmis/extension";
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     /**
      * Private constructor.
@@ -2377,6 +2381,16 @@ public final class Converter {
         result.setLength(contentStream.getBigLength());
         result.setMimeType(contentStream.getMimeType());
 
+        InputStream in = contentStream.getStream();
+        final InputStream stream;
+
+        // avoid double buffering
+        if (!(in instanceof BufferedInputStream) && !(in instanceof ByteArrayInputStream)) {
+            stream = new BufferedInputStream(in, BUFFER_SIZE);
+        } else {
+            stream = contentStream.getStream();
+        }
+
         result.setStream(new DataHandler(new DataSource() {
 
             public OutputStream getOutputStream() throws IOException {
@@ -2388,7 +2402,12 @@ public final class Converter {
             }
 
             public InputStream getInputStream() throws IOException {
-                return contentStream.getStream();
+                return new FilterInputStream(stream) {
+                    @Override
+                    public void close() throws IOException {
+                        // prevent closing
+                    }
+                };
             }
 
             public String getContentType() {
@@ -2648,11 +2667,11 @@ public final class Converter {
             attributes = new HashMap<String, String>();
             for (int i = 0; i < node.getAttributes().getLength(); i++) {
                 Node attrNode = node.getAttributes().item(i);
-                
+
                 String attrNamespace = attrNode.getNamespaceURI();
-                
-                if (attrNamespace == null || attrNamespace.equals(namespace)) { 
-                attributes.put(attrNode.getLocalName(), attrNode.getNodeValue());
+
+                if (attrNamespace == null || attrNamespace.equals(namespace)) {
+                    attributes.put(attrNode.getLocalName(), attrNode.getNodeValue());
                 }
             }
         }

@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convertPolicyIds;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -165,17 +164,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
             object.setProperties(new CmisPropertiesType());
         }
 
-        String mediaType = null;
-        String filename = null;
-        InputStream stream = null;
-
-        if (contentStream != null) {
-            mediaType = contentStream.getMimeType();
-            filename = contentStream.getFileName();
-            stream = contentStream.getStream();
-        }
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, filename, stream);
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, contentStream);
 
         // update
         HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {

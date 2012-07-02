@@ -224,8 +224,6 @@ public class FormDataWriter {
 
             writeLine(out);
             writeLine(out, "--" + boundary + "--");
-
-            stream.close();
         }
     }
 

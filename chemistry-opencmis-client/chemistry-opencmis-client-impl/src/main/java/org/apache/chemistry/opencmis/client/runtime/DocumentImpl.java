@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,8 +191,19 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             newProperties.putAll(properties);
         }
 
-        return getSession().createDocument(newProperties, targetFolderId, allPropsDoc.getContentStream(),
-                versioningState, policies, addAces, removeAces);
+        ContentStream contentStream = allPropsDoc.getContentStream();
+        try {
+            return getSession().createDocument(newProperties, targetFolderId, contentStream, versioningState, policies,
+                    addAces, removeAces);
+        } finally {
+            if (contentStream != null && contentStream.getStream() != null) {
+                try {
+                    contentStream.getStream().close();
+                } catch (IOException ioe) {
+                    throw new CmisRuntimeException("Cannot close source stream!", ioe);
+                }
+            }
+        }
     }
 
     public void deleteAllVersions() {

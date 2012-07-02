@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
@@ -132,10 +133,20 @@ public class FileUtils {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
         properties.put(PropertyIds.NAME, name);
 
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(file.length()), mimetype,
-                new FileInputStream(file));
+        InputStream stream = new FileInputStream(file);
+        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(file.length()), mimetype, stream);
 
-        return parentFolder.createDocument(properties, contentStream, versioningState);
+        try {
+            return parentFolder.createDocument(properties, contentStream, versioningState);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ioe) {
+                    throw new CmisRuntimeException("Cannot close source stream!", ioe);
+                }
+            }
+        }
     }
 
     /**

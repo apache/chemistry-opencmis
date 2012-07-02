@@ -18,11 +18,12 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.*;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_ID;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_TITLE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_UPDATED;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_BASE64;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_FILENAME;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_MEDIATYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
 
@@ -39,6 +40,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -60,39 +62,42 @@ public class AtomEntryWriter {
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private final CmisObjectType object;
+    private final ContentStream contentStream;
     private final InputStream stream;
-    private final String mediaType;
-    private final String filename;
 
     /**
      * Constructor.
      */
     public AtomEntryWriter(CmisObjectType object) {
-        this(object, null, null, null);
+        this(object, null);
     }
 
     /**
      * Constructor.
      */
-    public AtomEntryWriter(CmisObjectType object, String mediaType, String filename, InputStream stream) {
+    public AtomEntryWriter(CmisObjectType object, ContentStream contentStream) {
         if ((object == null) || (object.getProperties() == null)) {
             throw new CmisInvalidArgumentException("Object and properties must not be null!");
         }
 
-        if ((stream != null) && (mediaType == null)) {
+        if ((contentStream != null) && (contentStream.getMimeType() == null)) {
             throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
         }
 
         this.object = object;
-        this.mediaType = mediaType;
-        this.filename = filename;
+        this.contentStream = contentStream;
+        if (contentStream != null && contentStream.getStream() != null) {
+            InputStream in = contentStream.getStream();
 
-        if (stream != null && !(stream instanceof BufferedInputStream) && !(stream instanceof ByteArrayInputStream)) {
             // avoid double buffering
-            stream = new BufferedInputStream(stream, BUFFER_SIZE);
+            if (!(in instanceof BufferedInputStream) && !(in instanceof ByteArrayInputStream)) {
+                stream = new BufferedInputStream(in, BUFFER_SIZE);
+            } else {
+                stream = in;
+            }
+        } else {
+            stream = null;
         }
-
-        this.stream = stream;
     }
 
     /**
@@ -115,7 +120,7 @@ public class AtomEntryWriter {
         writer.writeNamespace(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
         writer.writeNamespace(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
         writer.writeNamespace(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
-        if (filename != null) {
+        if (contentStream != null && contentStream.getFileName() != null) {
             writer.writeNamespace(PREFIX_APACHE_CHEMISTY, Constants.NAMESPACE_APACHE_CHEMISTRY);
         }
 
@@ -139,12 +144,12 @@ public class AtomEntryWriter {
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
 
             writer.writeStartElement(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE);
-            writer.writeCharacters(mediaType);
+            writer.writeCharacters(contentStream.getMimeType());
             writer.writeEndElement();
 
-            if (filename != null) {
+            if (contentStream.getFileName() != null) {
                 writer.writeStartElement(Constants.NAMESPACE_APACHE_CHEMISTRY, TAG_CONTENT_FILENAME);
-                writer.writeCharacters(filename);
+                writer.writeCharacters(contentStream.getFileName());
                 writer.writeEndElement();
             }
 
@@ -201,7 +206,5 @@ public class AtomEntryWriter {
                 writer.writeCharacters(new String(buffer, 0, b, "US-ASCII"));
             }
         }
-
-        b64stream.close();
     }
 }

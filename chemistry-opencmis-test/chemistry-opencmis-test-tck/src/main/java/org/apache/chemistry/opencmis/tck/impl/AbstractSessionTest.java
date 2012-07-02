@@ -366,6 +366,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // create the document
             result = parent.createDocument(properties, contentStream, versioningState, null, null, null,
                     SELECT_ALL_NO_CACHE_OC);
+            
+            contentStream.getStream().close();
         } catch (Exception e) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Document could not be created! Exception: " + e.getMessage(),
                     e, true));

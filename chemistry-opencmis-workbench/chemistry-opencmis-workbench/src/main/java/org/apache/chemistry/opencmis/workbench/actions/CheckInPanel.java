@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.actions;
 
+import java.io.IOException;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -64,7 +66,19 @@ public class CheckInPanel extends ActionPanel {
     @Override
     public boolean doAction() throws Exception {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
-        ((Document) getObject()).checkIn(majorBox.isSelected(), null, content, null, null, null, null);
+
+        try {
+            ((Document) getObject()).checkIn(majorBox.isSelected(), null, content, null, null, null, null);
+        } finally {
+            if (content != null && content.getStream() != null) {
+                try {
+                    content.getStream().close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+
         return false;
     }
 }

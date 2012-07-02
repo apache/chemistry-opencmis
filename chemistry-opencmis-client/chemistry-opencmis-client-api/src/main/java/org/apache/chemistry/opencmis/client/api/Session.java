@@ -357,6 +357,9 @@ public interface Session extends Serializable {
     /**
      * Creates a new document.
      * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
      * @return the object id of the new document
      * 
      * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
@@ -367,6 +370,9 @@ public interface Session extends Serializable {
 
     /**
      * Creates a new document.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
      * 
      * @return the object id of the new document
      * 

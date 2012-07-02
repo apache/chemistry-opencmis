@@ -131,6 +131,11 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
             ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
 
+            try {
+                contentStream.getStream().close();
+            } catch (Exception e) {
+            }
+
             // setContentStream may have created a new version
             Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId, "setContentStream()");
 

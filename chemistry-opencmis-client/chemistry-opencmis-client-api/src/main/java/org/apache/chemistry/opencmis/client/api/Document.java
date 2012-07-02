@@ -61,12 +61,20 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * afterwards. If the repository created a new version, this new document is
      * returned. Otherwise the current document is returned.
      * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
      * @return the updated document
      */
     Document setContentStream(ContentStream contentStream, boolean overwrite);
 
     /**
      * Sets a new content stream for the document.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
+     * @return the updated object id
      */
     ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh);
 
@@ -104,6 +112,9 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
      * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
      * @return new document id
      */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
@@ -112,6 +123,9 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     /**
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
      * 
      * @return new document id
      */

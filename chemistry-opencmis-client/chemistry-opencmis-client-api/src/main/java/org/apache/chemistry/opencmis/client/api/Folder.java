@@ -40,6 +40,9 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new document in this folder.
      * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
+     * 
      * @return the new document object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
      */
@@ -48,6 +51,9 @@ public interface Folder extends FileableCmisObject, FolderProperties {
 
     /**
      * Creates a new document in this folder.
+     * 
+     * The stream in <code>contentStream</code> is consumed but not closed by
+     * this method.
      * 
      * @return the new document object
      */
