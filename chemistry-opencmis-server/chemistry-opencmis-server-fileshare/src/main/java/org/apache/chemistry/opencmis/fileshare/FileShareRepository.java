@@ -1925,7 +1925,6 @@ public class FileShareRepository {
 
         // write it
         try {
-            JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(object);
             JAXBElement<CmisObjectType> objElement = JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(object);
 
             Marshaller m = JaxBHelper.createMarshaller();
