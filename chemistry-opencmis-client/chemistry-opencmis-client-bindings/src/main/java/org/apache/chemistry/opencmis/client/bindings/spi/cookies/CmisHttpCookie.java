@@ -34,8 +34,9 @@ import java.util.regex.Pattern;
 /**
  * This class represents a http cookie, which indicates the status information
  * between the client agent side and the server side. According to RFC, there
- * are 3 http cookie specifications. This class is compatible with all the three
- * forms. HttpCookie class can accept all these 3 forms of syntax.
+ * are 4 http cookie specifications. This class is compatible with the original
+ * Netscape specification, RFC 2109, RFC 2965 and party compatible with RFC
+ * 6265. HttpCookie class can accept all syntax forms.
  */
 public final class CmisHttpCookie implements Cloneable, Serializable {
 
@@ -94,6 +95,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         }
         String newDomain = domain.toLowerCase();
         String newHost = host.toLowerCase();
+
         return newDomain.equals(newHost)
                 || (isValidDomain(newDomain) && effDomainMatches(newDomain, newHost) && isValidHost(newDomain, newHost));
     }

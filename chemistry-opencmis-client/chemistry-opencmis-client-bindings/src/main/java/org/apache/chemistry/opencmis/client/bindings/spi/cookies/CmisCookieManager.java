@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Cookie Manager.
  * 
- * This implementation conforms to RFC 2965, section 3.3.
+ * This implementation conforms to RFC 2965, section 3.3 with some RFC 6265
+ * extensions.
  */
 public class CmisCookieManager implements Serializable {
     private static final long serialVersionUID = 1L;

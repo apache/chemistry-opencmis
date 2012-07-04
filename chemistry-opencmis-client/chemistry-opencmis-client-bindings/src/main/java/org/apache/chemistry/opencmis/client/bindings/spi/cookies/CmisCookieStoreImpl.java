@@ -31,12 +31,16 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Provides an in-memory cookie store.
  */
-class CmisCookieStoreImpl implements Serializable {
+public class CmisCookieStoreImpl implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    private static final String IP_ADDRESS_PATTERN_STR = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+    private static final Pattern IP_ADDRESS_PATTERN = Pattern.compile(IP_ADDRESS_PATTERN_STR);
 
     private final Map<URI, ArrayList<CmisHttpCookie>> storeMap;
 
@@ -102,19 +106,41 @@ class CmisCookieStoreImpl implements Serializable {
                     secure = scheme.toLowerCase().startsWith("https");
                 }
 
+                String newHost = uri.getHost().toLowerCase();
+
                 List<CmisHttpCookie> listCookie = storeMap.get(u);
                 Iterator<CmisHttpCookie> iter = listCookie.iterator();
                 while (iter.hasNext()) {
                     CmisHttpCookie cookie = iter.next();
-                    if (CmisHttpCookie.domainMatches(cookie.getDomain(), uri.getHost())) {
-                        if (cookie.hasExpired()) {
-                            iter.remove();
-                            if (listCookie.isEmpty()) {
-                                storeMap.remove(u);
-                            }
-                        } else if (!(cookie.hasExpired() || cookies.contains(cookie))) {
-                            if (!cookie.getSecure() || secure) {
+
+                    if (cookie.hasExpired()) {
+                        iter.remove();
+                        if (listCookie.isEmpty()) {
+                            storeMap.remove(u);
+                        }
+                    } else if (!cookies.contains(cookie) && (!cookie.getSecure() || secure)
+                            && cookie.getDomain() != null) {
+                        String newDomain = cookie.getDomain().toLowerCase();
+
+                        if (isIPAddress(newHost)) {
+                            if (newHost.equals(newDomain)) {
                                 cookies.add(cookie);
+                            }
+                        } else {
+                            if (cookie.getVersion() == 0) {
+                                // Netscape, RFC 2109, RFC 6265
+                                if (newHost.endsWith(newDomain)) {
+                                    if (newHost.length() == newDomain.length()) {
+                                        cookies.add(cookie);
+                                    } else if (newDomain.startsWith(".")) {
+                                        cookies.add(cookie);
+                                    }
+                                }
+                            } else if (cookie.getVersion() == 1) {
+                                // RFC 2965
+                                if (CmisHttpCookie.domainMatches(cookie.getDomain(), newHost)) {
+                                    cookies.add(cookie);
+                                }
                             }
                         }
                     }
@@ -123,6 +149,20 @@ class CmisCookieStoreImpl implements Serializable {
         }
 
         return cookies;
+    }
+
+    private boolean isIPAddress(String s) {
+        if (s.startsWith("[")) {
+            // IPv6
+            return true;
+        }
+
+        if (IP_ADDRESS_PATTERN.matcher(s).matches()) {
+            // IPv4
+            return true;
+        }
+
+        return false;
     }
 
     private void cleanCookieList(List<CmisHttpCookie> cookies) {
