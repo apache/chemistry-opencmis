@@ -220,7 +220,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extData);
+            service.deleteObject(repositoryId, objectId, allVersions, extData);
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
