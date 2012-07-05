@@ -41,6 +41,8 @@ public class Dispatcher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String BASE_URL_ATTRIBUTE= "org.apache.chemistry.opencmis.baseurl";
+    
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final String METHOD_PUT = "PUT";

@@ -67,6 +67,7 @@ import org.apache.chemistry.opencmis.commons.impl.json.JSONStreamAware;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
+import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 
 public class BrowserBindingUtils {
@@ -93,6 +94,11 @@ public class BrowserBindingUtils {
      * Compiles the base URL for links, collections and templates.
      */
     public static UrlBuilder compileBaseUrl(HttpServletRequest request) {
+        String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
+        if (baseUrl != null) {
+            return new UrlBuilder(baseUrl);
+        }
+
         UrlBuilder url = new UrlBuilder(request.getScheme(), request.getServerName(), request.getServerPort(), null);
 
         url.addPath(request.getContextPath());

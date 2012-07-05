@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.NamespaceDefinitions;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
+import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 
 /**
  * This class contains operations used by all services.
@@ -85,6 +86,11 @@ public final class AtomPubUtils {
      * Compiles the base URL for links, collections and templates.
      */
     public static UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
+        String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
+        if (baseUrl != null) {
+            return new UrlBuilder(baseUrl);
+        }
+        
         UrlBuilder url = new UrlBuilder(request.getScheme(), request.getServerName(), request.getServerPort(), null);
 
         url.addPath(request.getContextPath());
