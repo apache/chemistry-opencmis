@@ -63,6 +63,7 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Children.ChildrenResult;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -961,7 +962,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      */
     private boolean deleteRecursive(ObjectStore folderStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
-        List<StoredObject> children = parentFolder.getChildren(-1, -1, "Admin");
+        ChildrenResult childrenResult = parentFolder.getChildren(-1, -1, "Admin");
+        List<? extends StoredObject> children = childrenResult.getChildren();
 
         if (null == children) {
             return true;

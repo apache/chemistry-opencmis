@@ -27,6 +27,24 @@ import java.util.List;
  * @author Jens
  */
 public interface Children {
+    
+    public class ChildrenResult {
+        private int noItems;
+        private List<? extends StoredObject> children;
+                
+        public ChildrenResult(List<? extends StoredObject> children, int noItems) {
+            this.children = children;
+            this.noItems = noItems;
+        }
+        
+        public int getNoItems() {
+            return noItems;
+        }
+        
+        public List<? extends StoredObject> getChildren() {
+            return children;
+        }
+    }
 
     /**
      * get all the children of this folder. To support paging an initial offset
@@ -39,7 +57,7 @@ public interface Children {
      * @param user 
      * @return list of children objects
      */
-    List<StoredObject> getChildren(int maxItems, int skipCount, String user );
+    ChildrenResult getChildren(int maxItems, int skipCount, String user );
 
     /**
      * get all the children of this folder which are folders. To support paging
@@ -53,7 +71,7 @@ public interface Children {
      * @param user 
      * @return list of children folders
      */
-    List<Folder> getFolderChildren(int maxItems, int skipCount, String user);
+    ChildrenResult getFolderChildren(int maxItems, int skipCount, String user);
 
     /**
      * indicate if a child with the given name exists in this folder
