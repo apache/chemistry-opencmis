@@ -80,6 +80,8 @@ public class Main {
     private static final String VERSIONED_TYPE = "VersionableType";
     private static final String VERSIONED_PROP = "VersionedStringProp";
     private static String LOGDIR = System.getProperty("java.io.tmpdir");// + File.separator;
+    private static String ROOT_URL = "http://localhost:8080/inmemory"; 
+    private static String ROOT_URL_OASIS = "http://www.example.org:8080/inmemory"; // required by OASIS rules, add this host to your hosts file
     private String targetDir = System.getProperty("java.io.tmpdir");// + File.separator;
 
     private BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
@@ -94,9 +96,9 @@ public class Main {
     private DiscoveryService discSvc;
     private AclService aclSvc;
 
-    private static final String[] URLS = {"http://localhost:8080/inmemory/atom", 
-            "http://localhost:8080/inmemory/services", 
-            "http://localhost:8080/inmemory/browser"};
+    private static final String[] URLS = {ROOT_URL + "/atom", 
+        ROOT_URL + "/services", 
+        ROOT_URL + "/browser"};
     private static final BindingType[] BINDINGS = {BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER};
 
     public Main() {
@@ -113,6 +115,9 @@ public class Main {
     
     public void run() {
         LOG.debug("Generating spec examples for Binding: " + bindingType.value());
+        
+        cleanLogFilterDir(); // delete directory where Logging filter writes to ensure not to include unwanted files
+        
         // Repository Service:
         getRepositories();
 
@@ -206,6 +211,7 @@ public class Main {
         // create a folder where target files will be stored:
         targetDir = bindingType.value();
         File in = new File(targetDir);
+        deleteDirRecursive(in); // avoid that there are unwanted files from previous runs
         boolean ok = in.mkdir();
         
         LOG.debug("creating target directory for files: " + ok);
@@ -630,6 +636,35 @@ public class Main {
             Main main = new Main();
             main.runAllBindings();
             LOG.debug("... finished generating spec examples.");
+        }
+    }
+    
+    static private boolean deleteDirRecursive(File path) {
+        if( path.exists() ) {
+          File[] files = path.listFiles();
+          for(int i=0; i<files.length; i++) {
+             if(files[i].isDirectory()) {
+                 deleteDirRecursive(files[i]);
+             }
+             else {
+               files[i].delete();
+             }
+          }
+        }
+        return( path.delete() );
+      }
+
+    private void cleanLogFilterDir() {
+        File dir = new File(LOGDIR);
+        FileFilter fileFilter = new WildcardFileFilter("*-request.log");
+        File[] files = dir.listFiles(fileFilter);
+        for (File f : files) {
+            f.delete();
+        }
+        fileFilter = new WildcardFileFilter("*-response.log");
+        files = dir.listFiles(fileFilter);
+        for (File f : files) {
+            f.delete();
         }
     }
 }
