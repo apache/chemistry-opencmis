@@ -41,7 +41,7 @@
 	     Use it with care! It can generate a huge amount of files and will slow down performance
 	     significantly.
 	-->
-	<!--
+	<!-- - ->
 	<filter>
 	   	<filter-name>LoggingFilter</filter-name>
   		<filter-class>org.apache.chemistry.opencmis.server.support.filter.LoggingFilter</filter-class>
@@ -67,7 +67,15 @@
    		<filter-name>LoggingFilter</filter-name>
    		<servlet-name>cmisatom</servlet-name> 
 	</filter-mapping>
-    -->
+	<filter-mapping>
+   		<filter-name>LoggingFilter</filter-name>
+   		<servlet-name>cmisbrowser</servlet-name> 
+	</filter-mapping>
+	<filter-mapping>
+   		<filter-name>LoggingFilter</filter-name>
+   		<servlet-name>cmisws</servlet-name> 
+	</filter-mapping>
+    <!- -   -->
 
 	<!--
 		Uncomment the following filter if the OpenCMIS server runs behind a proxy server or a load balancer.
