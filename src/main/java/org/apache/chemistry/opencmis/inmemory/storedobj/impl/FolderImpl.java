@@ -112,7 +112,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         }
     }
 
-    public List<StoredObject> getChildren(int maxItems, int skipCount, String user) {
+    public ChildrenResult getChildren(int maxItems, int skipCount, String user) {
         List<StoredObject> result = new ArrayList<StoredObject>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
@@ -136,13 +136,16 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         if (skipCount < 0) {
             skipCount = 0;
         }
+        
         int from = Math.min(skipCount, result.size());
         int to = Math.min(maxItems + from, result.size());
+        int noItems = result.size();
+        
         result = result.subList(from, to);
-        return result;
+        return new ChildrenResult(result, noItems);
     }
 
-    public List<Folder> getFolderChildren(int maxItems, int skipCount, String user) {
+    public ChildrenResult getFolderChildren(int maxItems, int skipCount, String user) {
         List<Folder> result = new ArrayList<Folder>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
@@ -156,8 +159,10 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         sortFolderList(result);
         int from = Math.min(skipCount, result.size());
         int to = Math.min(maxItems + from, result.size());
+        int noItems = result.size();
+
         result = result.subList(from, to);
-        return result;
+        return new ChildrenResult(result, noItems);
     }
 
     public boolean hasChild(String name) {

@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Children;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -293,10 +294,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             return null; // it is a document and has no children
         }
 
-        List<? extends StoredObject> children = folderOnly ? folder.getFolderChildren(maxItems, skipCount, user) : folder
+        Children.ChildrenResult children = folderOnly ? folder.getFolderChildren(maxItems, skipCount, user) : folder
                 .getChildren(maxItems, skipCount, user);
 
-        for (StoredObject spo : children) {
+        for (StoredObject spo : children.getChildren()) {
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             if (includePathSegments != null && includePathSegments) {
                 oifd.setPathSegment(spo.getName());
@@ -317,7 +318,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         }
         result.setObjects(folderList);
-        result.setNumItems(BigInteger.valueOf(folderList.size()));
+        result.setNumItems(BigInteger.valueOf(children.getNoItems()));
         if (objectInfos != null) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
