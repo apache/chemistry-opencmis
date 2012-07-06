@@ -200,6 +200,60 @@ public class NavigationServiceTest extends AbstractServiceTest {
         log.info("... testGetFolderParent() finished.");
     }
 
+    @Test
+    public void testGetPaging() {
+        log.info("starting testGetPaging() ...");
+        // create a folder
+        String folderId = super.createFolder("PagingFolder", fRootFolderId, InMemoryFolderTypeDefinition
+                .getRootFolderType().getId());
+        
+        // create some documents
+        for (int i=0; i<10; i++) {
+            super.createDocument("File-" + i, folderId, "cmis:document", true);
+        }
+        log.info("test getting all objects with getChildren");
+        // get first page
+        BigInteger maxItems = BigInteger.valueOf(3);
+        BigInteger skipCount = BigInteger.valueOf(0);
+        ObjectInFolderList result = fNavSvc.getChildren(fRepositoryId, folderId, "*", null, false,
+                IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
+        List<ObjectInFolderData> files = result.getObjects();
+        log.info(" found " + files.size() + " files in getChildren()");
+        for (ObjectInFolderData file : files) {
+            log.info("   found folder id " + file.getObject().getId() + " path segment " + file.getPathSegment());
+        }
+        assertEquals(3, files.size());
+        assertEquals(BigInteger.valueOf(10), result.getNumItems());
+
+        // get second page
+        maxItems = BigInteger.valueOf(3);
+        skipCount = BigInteger.valueOf(3);
+        result = fNavSvc.getChildren(fRepositoryId, folderId, "*", null, false,
+                IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
+        files = result.getObjects();
+        log.info(" found " + files.size() + " files in getChildren()");
+        for (ObjectInFolderData file : files) {
+            log.info("   found folder id " + file.getObject().getId() + " path segment " + file.getPathSegment());
+        }
+        assertEquals(3, files.size());
+        assertEquals(BigInteger.valueOf(10), result.getNumItems());
+      
+        // get third page
+        maxItems = BigInteger.valueOf(3);
+        skipCount = BigInteger.valueOf(9);
+        result = fNavSvc.getChildren(fRepositoryId, folderId, "*", null, false,
+                IncludeRelationships.NONE, null, true, maxItems, skipCount, null);
+        files = result.getObjects();
+        log.info(" found " + files.size() + " files in getChildren()");
+        for (ObjectInFolderData file : files) {
+            log.info("   found folder id " + file.getObject().getId() + " path segment " + file.getPathSegment());
+        }
+        assertEquals(1, files.size());
+        assertEquals(BigInteger.valueOf(10), result.getNumItems());
+        log.info("... testGetPaging() finished.");
+        
+    }
+    
     private int getSizeOfDescendants(List<ObjectInFolderContainer> objs) {
         int sum = 0;
         if (null != objs) {
