@@ -54,7 +54,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_QUERY);
-        formData.addParameter(Constants.PARAM_Q, statement);
+        formData.addParameter(Constants.PARAM_STATEMENT, statement);
         formData.addParameter(Constants.PARAM_SEARCH_ALL_VERSIONS, searchAllVersions);
         formData.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
         formData.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);

@@ -198,6 +198,7 @@ public final class Constants {
     public static final String PARAM_VERSION_SERIES_ID = "versionSeries";
     public static final String PARAM_VERSIONIG_STATE = "versioningState";
     public static final String PARAM_Q = "q";
+    public static final String PARAM_STATEMENT = "statement";
     public static final String PARAM_SEARCH_ALL_VERSIONS = "searchAllVersions";
     public static final String PARAM_ACL_PROPAGATION = "ACLPropagation";
     public static final String PARAM_SOURCE_ID = "sourceId";

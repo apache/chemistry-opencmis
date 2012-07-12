@@ -60,7 +60,10 @@ public class DiscoveryService {
     public static void query(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         // get parameters
-        String statement = getStringParameter(request, Constants.PARAM_Q);
+        String statement = getStringParameter(request, Constants.PARAM_STATEMENT);
+        if(statement == null || statement.length() == 0) {
+            statement = getStringParameter(request, Constants.PARAM_Q);
+        }
         Boolean searchAllVersions = getBooleanParameter(request, Constants.PARAM_SEARCH_ALL_VERSIONS);
         Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
         IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
