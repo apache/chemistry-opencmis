@@ -892,6 +892,24 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertEquals(id, returnedId);
         log.info("... testGetObjectNoObjectIdInFilter() finished.");
     }
+    
+    @Test
+    public void testSpecialChars() {
+
+            log.info("starting testGetObjectByPath() with specal chars...");
+            log.info("  creating object");
+
+            String docID = createDocument("Hänschen", fRootFolderId, false);
+            log.info("  getting object by path with special chars");
+            try {
+                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/Hänschen", "*", false, IncludeRelationships.NONE, null, false,
+                        false, null);
+                assertNotNull(res);
+               assertNotNull(res.getId());
+             } catch (Exception e) {
+                fail("getObject() failed with exception: " + e);
+            }
+    }
 
     private static void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
