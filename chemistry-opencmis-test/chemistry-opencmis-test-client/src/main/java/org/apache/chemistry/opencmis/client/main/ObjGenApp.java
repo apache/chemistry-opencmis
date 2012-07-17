@@ -34,6 +34,7 @@ import joptsimple.OptionSpec;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.client.filecopy.FileCopier;
+import org.apache.chemistry.opencmis.client.mapper.PropertyMapperExif;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -46,9 +47,12 @@ import org.apache.chemistry.opencmis.util.repository.MultiThreadedObjectGenerato
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.CONTENT_KIND;
 import org.apache.chemistry.opencmis.util.repository.TimeLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObjGenApp {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ObjGenApp.class.getName());
     private static final String PROP_USER = SessionParameter.USER;
     private static final String PROP_PASSWORD = SessionParameter.PASSWORD;
     private static final String DEFAULT_USER = "user";
@@ -57,6 +61,7 @@ public class ObjGenApp {
     private static final String PROP_WS_URL = "org.apache.chemistry.opencmis.binding.webservices.url";
     private static final String PROP_BROWSER_URL = SessionParameter.BROWSER_URL;
     private static final String PROP_BINDING = SessionParameter.BINDING_TYPE;
+    private static final String PROP_CUSTOM = "org.apache.chemistry.opencmis.binding.header.";
     private static final String DEFAULT_ATOMPUB_URL = "http://localhost:8080/inmemory/atom";
     private static final String DEFAULT_WS_URL = "http://localhost:8080/inmemory/services/";
     private static final String DEFAULT_BROWSER_BINDING_URL  = "http://localhost:8080/inmemory/browser/";
@@ -603,6 +608,7 @@ public class ObjGenApp {
         } else {
             System.out.println("Error unknown binding: " + binding);
         }
+        fillCustomHeaders(parameters);
 
         return parameters;
     }
@@ -629,12 +635,20 @@ public class ObjGenApp {
             parameters.put(SessionParameter.PASSWORD, password);
         }
     }
+    
+    private static void fillCustomHeaders(Map<String, String> parameters) {
+    	Map<String, String> customHeaders = getCustomHeaders();
+    	for (Map.Entry<String, String> entry : customHeaders.entrySet()) {
+    		parameters.put(entry.getKey(), entry.getValue());    		
+    	}    		
+    }
 
     private static CmisBinding createAtomBinding(String url, String user, String password) {
 
         // gather parameters
         Map<String, String> parameters = new HashMap<String, String>();
         filLoginParams(parameters, user, password);
+        fillCustomHeaders(parameters);
 
         // get factory and create binding
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -648,6 +662,7 @@ public class ObjGenApp {
         // gather parameters
         Map<String, String> parameters = new HashMap<String, String>();
         filLoginParams(parameters, user, password);
+        fillCustomHeaders(parameters);
 
         // get factory and create binding
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -673,6 +688,7 @@ public class ObjGenApp {
     public static CmisBinding createWSBinding(String url, boolean isPrefix, String username, String password) {
         Map<String, String> parameters = new HashMap<String, String>();
         fillWSParameters(parameters, url, isPrefix, username, password);
+        fillCustomHeaders(parameters);
         
         // get factory and create provider
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
@@ -731,6 +747,29 @@ public class ObjGenApp {
 
     private static String getPassword() {
         return System.getProperty(PROP_PASSWORD, DEFAULT_PASSWORD);
+    }
+
+    private static Map<String, String> getCustomHeaders() {
+    	int i=0;
+    	Map<String, String> customHeaders = new HashMap<String, String>();
+    	while (true) {
+    		String val = System.getProperty(PROP_CUSTOM + i, null);
+    		if (null == val)
+    			break;
+    		else {
+    			customHeaders.put(PROP_CUSTOM + i++, val);
+//    			int posCol = val.indexOf(':');
+//    			if (posCol <= 0) {
+//    				LOG.warn("Ignoring custom header "+ val + ": no colon found.");
+//    			} else {
+//    				String headerKey = PROP_CUSTOM + val.substring(0, posCol).trim();
+//    				String headerVal = val.substring(posCol+1).trim();
+//    				LOG.debug("Adding custom header " + headerKey + ":" + headerVal);
+//    				customHeaders.put(headerKey, headerVal);
+//    			}
+    		}
+    	}
+        return customHeaders;
     }
 
     private static void getUrl(String urlStr) {
