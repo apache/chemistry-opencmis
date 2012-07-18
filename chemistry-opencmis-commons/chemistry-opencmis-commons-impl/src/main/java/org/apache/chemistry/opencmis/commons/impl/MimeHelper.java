@@ -25,6 +25,7 @@ package org.apache.chemistry.opencmis.commons.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -566,7 +567,7 @@ public class MimeHelper {
 
                 // get the parameter name as a lower case version for better
                 // mapping.
-                String name = token.getValue().toLowerCase();
+                String name = token.getValue().toLowerCase(Locale.ENGLISH);
 
                 token = tokenizer.next();
 

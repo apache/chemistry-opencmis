@@ -76,6 +76,7 @@ import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,6 +169,8 @@ public class CmisAtomPubServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        QueryStringHttpServletRequestWrapper qsRequest = new QueryStringHttpServletRequestWrapper(request);
+
         // set default headers
         response.addHeader("Cache-Control", "private, max-age=0");
         response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
@@ -175,9 +178,9 @@ public class CmisAtomPubServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_ATOMPUB,
+            context = HttpUtils.createContext(qsRequest, response, getServletContext(), CallContext.BINDING_ATOMPUB,
                     callContextHandler, tempDir, memoryThreshold, maxContentSize);
-            dispatch(context, request, response);
+            dispatch(context, qsRequest, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
                 if ((context == null) || (context.getUsername() == null)) {

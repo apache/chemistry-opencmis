@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -178,9 +179,18 @@ public class FileUtils {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
         properties.put(PropertyIds.NAME, name);
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(content == null ? new byte[0] : content.getBytes());
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content == null ? 0 : content
-                .getBytes().length), "text/plain", bais);
+        byte[] contentBytes = new byte[0];
+        if (content != null) {
+            try {
+                contentBytes = content.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                contentBytes = content.getBytes();
+            }
+        }
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(contentBytes);
+        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(contentBytes.length),
+                "text/plain", bais);
 
         return parentFolder.createDocument(properties, contentStream, versioningState);
     }

@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -188,7 +189,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 checkButton.setEnabled(true);
 
                 if (object instanceof Document) {
-                    String name = object.getName().toLowerCase();
+                    String name = object.getName().toLowerCase(Locale.ENGLISH);
                     int x = name.lastIndexOf('.');
                     if ((x > -1) && (scriptExtensions.contains(name.substring(x + 1)))) {
                         scriptPanel.setVisible(true);
@@ -292,7 +293,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     Document doc = (Document) getClientModel().getCurrentObject();
 
-                    String name = doc.getName().toLowerCase();
+                    String name = doc.getName().toLowerCase(Locale.ENGLISH);
                     if (name.endsWith(".groovy")) {
                         File file = ClientHelper.createTempFileFromDocument(doc, null);
                         Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), null);
@@ -316,7 +317,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     Document doc = (Document) getClientModel().getCurrentObject();
                     File file = ClientHelper.createTempFileFromDocument(doc, null);
-                    String name = doc.getName().toLowerCase();
+                    String name = doc.getName().toLowerCase(Locale.ENGLISH);
                     String ext = name.substring(name.lastIndexOf('.') + 1);
 
                     scriptOutput.setText("");

@@ -22,21 +22,15 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 
-public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
     private final boolean isMultipart;
-    private Map<String, String[]> parameters;
     private String filename;
     private String contentType;
     private BigInteger size;
@@ -45,11 +39,6 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
     public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold,
             long maxContentSize) throws Exception {
         super(request);
-
-        parameters = new HashMap<String, String[]>();
-
-        // parse query string
-        parseFormData(request.getQueryString());
 
         // check multipart
         isMultipart = MultipartParser.isMultipartContent(request);
@@ -90,61 +79,6 @@ public class POSTHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
             parseFormData(sb.toString());
         }
-    }
-
-    private void parseFormData(String data) throws Exception {
-        if (data == null || data.length() < 3) {
-            return;
-        }
-
-        String[] nameValuePairs = data.split("&");
-        for (String nameValuePair : nameValuePairs) {
-            int x = nameValuePair.indexOf('=');
-            if (x > 0) {
-                String name = URLDecoder.decode(nameValuePair.substring(0, x), "UTF-8");
-                String value = (x == nameValuePair.length() - 1 ? "" : URLDecoder.decode(
-                        nameValuePair.substring(x + 1), "UTF-8"));
-                addParameter(name, value);
-            }
-        }
-    }
-
-    private void addParameter(String name, String value) {
-        String[] values = parameters.get(name);
-
-        if (values == null) {
-            parameters.put(name, new String[] { value });
-        } else {
-            String[] newValues = new String[values.length + 1];
-            System.arraycopy(values, 0, newValues, 0, values.length);
-            newValues[newValues.length - 1] = value;
-            parameters.put(name, newValues);
-        }
-    }
-
-    @Override
-    public String getParameter(String name) {
-        String[] values = parameters.get(name);
-        if ((values == null) || (values.length == 0)) {
-            return null;
-        }
-
-        return values[0];
-    }
-
-    @Override
-    public Map<String, String[]> getParameterMap() {
-        return parameters;
-    }
-
-    @Override
-    public Enumeration<String> getParameterNames() {
-        return Collections.enumeration(parameters.keySet());
-    }
-
-    @Override
-    public String[] getParameterValues(String name) {
-        return parameters.get(name);
     }
 
     public String getFilename() {

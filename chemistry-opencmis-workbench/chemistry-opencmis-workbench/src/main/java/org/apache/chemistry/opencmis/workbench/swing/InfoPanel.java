@@ -39,6 +39,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -356,7 +357,7 @@ public abstract class InfoPanel extends JPanel {
                 return false;
             }
 
-            String lower = link.toLowerCase();
+            String lower = link.toLowerCase(Locale.ENGLISH);
             return lower.startsWith("http://") || lower.startsWith("https://");
         }
 

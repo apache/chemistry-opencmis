@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.tests.basics;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -68,6 +69,6 @@ public class SecurityTest extends AbstractSessionTest {
             return false;
         }
 
-        return url.trim().toLowerCase().startsWith("https://");
+        return url.trim().toLowerCase(Locale.ENGLISH).startsWith("https://");
     }
 }

@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -284,7 +285,7 @@ public class MultipartParser {
         while ((line = readLine()).length() > 0) {
             int x = line.indexOf(':');
             if (x > 0) {
-                headers.put(line.substring(0, x).toLowerCase().trim(), line.substring(x + 1).trim());
+                headers.put(line.substring(0, x).toLowerCase(Locale.ENGLISH).trim(), line.substring(x + 1).trim());
             }
         }
     }
@@ -502,7 +503,7 @@ public class MultipartParser {
     public static final boolean isMultipartContent(HttpServletRequest request) {
         String contentType = request.getContentType();
 
-        if (contentType != null && contentType.toLowerCase().startsWith(MULTIPART)) {
+        if (contentType != null && contentType.toLowerCase(Locale.ENGLISH).startsWith(MULTIPART)) {
             return true;
         }
 

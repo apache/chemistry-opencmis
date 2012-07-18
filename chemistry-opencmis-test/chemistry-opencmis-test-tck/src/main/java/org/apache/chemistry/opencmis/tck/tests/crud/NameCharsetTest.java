@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
@@ -32,7 +34,8 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
  */
 public class NameCharsetTest extends AbstractSessionTest {
 
-    private static final String[] NAMES = new String[] { "\u0064\u006f\u0063\u0075\u006d\u0065\u006e\u0074", //
+    private static final String[] NAMES = new String[] { //
+    "\u0064\u006f\u0063\u0075\u006d\u0065\u006e\u0074", //
             "\u0053\u0063\u0068\u0072\u0069\u0066\u0074\u0073\u0074\u00fc\u0063\u006b", //
             "\u0648\u062b\u064a\u0642\u0629", //
             "\u0073\u0259\u006e\u0259\u0064", //
@@ -51,7 +54,8 @@ public class NameCharsetTest extends AbstractSessionTest {
             "\u0c2a\u0c24\u0c4d\u0c30\u0c02", //
             "\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23", //
             "\u062f\u0633\u062a\u0627\u0648\u06cc\u0632", //
-            "\u0074\u00e0\u0069\u0020\u006c\u0069\u1ec7\u0075" };
+            "\u0074\u00e0\u0069\u0020\u006c\u0069\u1ec7\u0075", //
+            "a&b" };
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -62,15 +66,26 @@ public class NameCharsetTest extends AbstractSessionTest {
 
     @Override
     public void run(Session session) {
+        CmisTestResult f;
+
         // create a test folder
         Folder testFolder = createTestFolder(session);
 
         try {
             for (int i = 0; i < NAMES.length; i++) {
                 Document doc = null;
+                Document doc2 = null;
                 try {
                     doc = null;
                     doc = createDocument(session, testFolder, NAMES[i], NAMES[i]);
+
+                    // get the newly created object by path
+                    String path = doc.getPaths().get(0);
+                    doc2 = (Document) session.getObjectByPath(path, SELECT_ALL_NO_CACHE_OC);
+                    addResult(checkObject(session, doc2, getAllProperties(doc2), "New document object spec compliance"));
+
+                    f = createResult(FAILURE, "Names of the created and the fetched document don't match!");
+                    assertEquals(NAMES[i], doc2.getName(), null, f);
                 } catch (Exception e) {
                     addResult(createResult(WARNING, "The name '" + NAMES[i] + "' raised this exception: " + e, e, false));
                 } finally {
@@ -85,7 +100,7 @@ public class NameCharsetTest extends AbstractSessionTest {
                 }
             }
 
-            addResult(createInfoResult("Tested " + NAMES.length + " differnt names."));
+            addResult(createInfoResult("Tested " + NAMES.length + "different names."));
         } finally {
             // delete the test folder
             deleteTestFolder();

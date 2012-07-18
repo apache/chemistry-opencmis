@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.JAXBElement;
@@ -280,7 +281,7 @@ public class AtomEntryParser {
             if (ATTR_TYPE.equals(attrName.getLocalPart())) {
                 atomContentStream.setMimeType(parser.getAttributeValue(i));
                 if (parser.getAttributeValue(i) != null) {
-                    type = parser.getAttributeValue(i).trim().toLowerCase();
+                    type = parser.getAttributeValue(i).trim().toLowerCase(Locale.ENGLISH);
                 }
             } else if (ATTR_SRC.equals(attrName.getLocalPart())) {
                 if (ignoreAtomContentSrc) {

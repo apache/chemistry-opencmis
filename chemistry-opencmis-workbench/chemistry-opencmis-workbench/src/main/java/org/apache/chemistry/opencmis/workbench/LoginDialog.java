@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -331,7 +332,7 @@ public class LoginDialog extends JDialog {
     protected void createBindingButtons(Container pane) {
         JPanel bindingContainer = new JPanel();
         bindingContainer.setLayout(new BoxLayout(bindingContainer, BoxLayout.LINE_AXIS));
-        char bc = System.getProperty(SYSPROP_BINDING, "atom").toLowerCase().charAt(0);
+        char bc = System.getProperty(SYSPROP_BINDING, "atom").toLowerCase(Locale.ENGLISH).charAt(0);
         boolean atom = (bc == 'a');
         boolean ws = (bc == 'w');
         boolean browser = (bc == 'b');
@@ -356,8 +357,9 @@ public class LoginDialog extends JDialog {
     protected void createAuthenticationButtons(Container pane) {
         JPanel authenticationContainer = new JPanel();
         authenticationContainer.setLayout(new BoxLayout(authenticationContainer, BoxLayout.LINE_AXIS));
-        boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase().equals("standard"));
-        boolean ntlm = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase().equals("ntlm"));
+        boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase(Locale.ENGLISH)
+                .equals("standard"));
+        boolean ntlm = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("ntlm"));
         boolean none = !standard && !ntlm;
         authenticationNoneButton = new JRadioButton("None", none);
         authenticationStandardButton = new JRadioButton("Standard", standard);
@@ -537,7 +539,7 @@ public class LoginDialog extends JDialog {
     protected void setClientSession(ClientSession clientSession) {
         this.clientSession = clientSession;
     }
-    
+
     public void createClientSession() {
         if (expertLogin) {
             setClientSession(new ClientSession(createExpertSessionParameters()));

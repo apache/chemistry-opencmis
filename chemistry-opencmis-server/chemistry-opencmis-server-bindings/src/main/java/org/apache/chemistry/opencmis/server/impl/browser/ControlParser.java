@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class ControlParser {
         // gather all controls
         Map<String, String[]> controls = request.getParameterMap();
         for (Map.Entry<String, String[]> control : controls.entrySet()) {
-            String controlName = control.getKey().trim().toLowerCase();
+            String controlName = control.getKey().trim().toLowerCase(Locale.ENGLISH);
 
             int firstIndex = getFirstIndex(controlName);
 
@@ -153,7 +154,7 @@ public class ControlParser {
             throw new IllegalArgumentException("controlName must not be null!");
         }
 
-        return zeroDim.get(controlName.toLowerCase());
+        return zeroDim.get(controlName.toLowerCase(Locale.ENGLISH));
     }
 
     public List<String> getValues(String controlName) {
@@ -161,7 +162,7 @@ public class ControlParser {
             throw new IllegalArgumentException("controlName must not be null!");
         }
 
-        return convertToList(controlName, oneDim.get(controlName.toLowerCase()));
+        return convertToList(controlName, oneDim.get(controlName.toLowerCase(Locale.ENGLISH)));
     }
 
     public List<String> getValues(String controlName, int index) {
@@ -169,7 +170,7 @@ public class ControlParser {
             throw new IllegalArgumentException("controlName must not be null!");
         }
 
-        Map<Integer, Map<Integer, String>> map = twoDim.get(controlName.toLowerCase());
+        Map<Integer, Map<Integer, String>> map = twoDim.get(controlName.toLowerCase(Locale.ENGLISH));
         if (map == null) {
             return null;
         }
@@ -182,7 +183,7 @@ public class ControlParser {
             throw new IllegalArgumentException("controlName must not be null!");
         }
 
-        return oneDim.get(controlName.toLowerCase());
+        return oneDim.get(controlName.toLowerCase(Locale.ENGLISH));
     }
 
     public Map<Integer, Map<Integer, String>> getTwoDimMap(String controlName) {
@@ -190,6 +191,6 @@ public class ControlParser {
             throw new IllegalArgumentException("controlName must not be null!");
         }
 
-        return twoDim.get(controlName.toLowerCase());
+        return twoDim.get(controlName.toLowerCase(Locale.ENGLISH));
     }
 }

@@ -21,13 +21,14 @@ package org.apache.chemistry.opencmis.commons.impl;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MimeTypes {
 
     private static final Map<String, String> EXT2MIME = new HashMap<String, String>();
     private static final Map<String, String> MIME2EXT = new HashMap<String, String>();
-    
+
     private MimeTypes() {
     }
 
@@ -389,7 +390,7 @@ public class MimeTypes {
         if (x > -1) {
             mimeType = mimeType.substring(0, x);
         }
-        mimeType = mimeType.trim().toLowerCase();
+        mimeType = mimeType.trim().toLowerCase(Locale.ENGLISH);
 
         String extension = MIME2EXT.get(mimeType);
         return ((extension == null || extension.length() == 0) ? "" : "." + extension);

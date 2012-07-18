@@ -24,9 +24,6 @@ import java.util.TreeMap;
 
 /**
  * Content type cache.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
 

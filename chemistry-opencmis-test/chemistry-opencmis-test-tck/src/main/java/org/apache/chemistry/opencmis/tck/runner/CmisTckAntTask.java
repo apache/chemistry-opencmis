@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.runner;
 
 import java.io.File;
+import java.util.Locale;
 
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
@@ -96,7 +97,7 @@ public class CmisTckAntTask extends Task {
                     output = new File(DEFAULT_REPORT_NAME + ".txt");
                 }
             } else {
-                format = format.trim().toLowerCase();
+                format = format.trim().toLowerCase(Locale.ENGLISH);
                 if (REPORT_TEXT.equals(format)) {
                     report = new TextReport();
                     if (output == null) {

@@ -113,6 +113,7 @@ import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,11 +310,13 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             boolean methodFound = false;
 
             if (METHOD_GET.equals(method)) {
-                String selector = getStringParameter(request, Constants.PARAM_SELECTOR);
-                String objectId = getStringParameter(request, PARAM_OBJECT_ID);
+                QueryStringHttpServletRequestWrapper getRequest = new QueryStringHttpServletRequestWrapper(request);
+
+                String selector = getStringParameter(getRequest, Constants.PARAM_SELECTOR);
+                String objectId = getStringParameter(getRequest, PARAM_OBJECT_ID);
 
                 // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, null, request);
+                prepareContext(context, callUrl, service, repositoryId, objectId, null, getRequest);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -322,7 +325,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     }
 
                     methodFound = repositoryDispatcher.dispatch(selector, method, context, service, repositoryId,
-                            request, response);
+                            getRequest, response);
                 } else if (callUrl == CallUrl.ROOT) {
                     // set default method if necessary
                     if (selector == null) {
@@ -344,7 +347,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                         }
                     }
 
-                    methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, request,
+                    methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, getRequest,
                             response);
                 }
             } else if (METHOD_POST.equals(method)) {

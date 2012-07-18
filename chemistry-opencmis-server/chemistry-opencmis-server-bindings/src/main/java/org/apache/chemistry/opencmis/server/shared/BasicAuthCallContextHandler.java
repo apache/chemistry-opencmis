@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class BasicAuthCallContextHandler implements CallContextHandler, Serializ
         Map<String, String> result = null;
 
         String authHeader = request.getHeader("Authorization");
-        if ((authHeader != null) && (authHeader.trim().toLowerCase().startsWith("basic "))) {
+        if ((authHeader != null) && (authHeader.trim().toLowerCase(Locale.ENGLISH).startsWith("basic "))) {
             int x = authHeader.lastIndexOf(' ');
             if (x == -1) {
                 return result;
