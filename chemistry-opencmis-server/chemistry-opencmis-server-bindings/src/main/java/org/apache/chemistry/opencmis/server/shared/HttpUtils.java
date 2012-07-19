@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.shared;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -79,33 +80,38 @@ public class HttpUtils {
         // decode range
         String rangeHeader = request.getHeader("Range");
         if (rangeHeader != null) {
-            rangeHeader = rangeHeader.trim();
-            BigInteger offset = null;
-            BigInteger length = null;
+            rangeHeader = rangeHeader.trim().toLowerCase(Locale.ENGLISH);
 
-            int eq = rangeHeader.indexOf('=');
-            int ds = rangeHeader.indexOf('-');
-            if ((eq > 0) && (ds > eq)) {
-                String offsetStr = rangeHeader.substring(eq + 1, ds).trim();
-                if (offsetStr.length() > 0) {
-                    offset = new BigInteger(offsetStr);
-                }
+            if (rangeHeader.length() > 6 && rangeHeader.startsWith("bytes=") && rangeHeader.indexOf(',') == -1
+                    && rangeHeader.charAt(6) != '-') {
+                BigInteger offset = null;
+                BigInteger length = null;
 
-                if (ds < rangeHeader.length()) {
-                    String lengthStr = rangeHeader.substring(ds + 1).trim();
-                    if (lengthStr.length() > 0) {
-                        if (offset == null) {
-                            length = new BigInteger(lengthStr);
-                        } else {
-                            length = (new BigInteger(lengthStr)).subtract(offset);
+                int ds = rangeHeader.indexOf('-');
+                if (ds > 6) {
+                    try {
+                        String firstBytePosStr = rangeHeader.substring(6, ds);
+                        if (firstBytePosStr.length() > 0) {
+                            offset = new BigInteger(firstBytePosStr);
                         }
-                    }
 
-                    if (offset != null) {
-                        context.put(CallContext.OFFSET, offset);
-                    }
-                    if (length != null) {
-                        context.put(CallContext.LENGTH, length);
+                        if (!rangeHeader.endsWith("-")) {
+                            String lastBytePosStr = rangeHeader.substring(ds + 1);
+                            if (offset == null) {
+                                length = (new BigInteger(lastBytePosStr)).add(BigInteger.ONE);
+                            } else {
+                                length = (new BigInteger(lastBytePosStr)).subtract(offset).add(BigInteger.ONE);
+                            }
+                        }
+
+                        if (offset != null) {
+                            context.put(CallContext.OFFSET, offset);
+                        }
+                        if (length != null) {
+                            context.put(CallContext.LENGTH, length);
+                        }
+                    } catch (NumberFormatException e) {
+                        // invalid Range header must be ignored
                     }
                 }
             }
