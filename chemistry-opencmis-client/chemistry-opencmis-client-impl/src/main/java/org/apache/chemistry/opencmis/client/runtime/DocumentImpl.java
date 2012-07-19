@@ -346,12 +346,20 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     // content operations
 
     public ContentStream getContentStream() {
-        return getContentStream(null);
+        return getContentStream(null, null, null);
+    }
+
+    public ContentStream getContentStream(BigInteger offset, BigInteger length) {
+        return getContentStream(null, offset, length);
     }
 
     public ContentStream getContentStream(String streamId) {
+        return getContentStream(streamId, null, null);
+    }
+
+    public ContentStream getContentStream(String streamId, BigInteger offset, BigInteger length) {
         // get the stream
-        ContentStream contentStream = getSession().getContentStream(this, streamId, null, null);
+        ContentStream contentStream = getSession().getContentStream(this, streamId, offset, length);
 
         if (contentStream == null) {
             return null;
@@ -364,10 +372,10 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             filename = getContentStreamFileName();
         }
 
-        long length = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
+        long lengthLong = (contentStream.getBigLength() == null ? -1 : contentStream.getBigLength().longValue());
 
         // convert and return stream object
-        return getSession().getObjectFactory().createContentStream(filename, length, contentStream.getMimeType(),
+        return getSession().getObjectFactory().createContentStream(filename, lengthLong, contentStream.getMimeType(),
                 contentStream.getStream());
     }
 

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +50,44 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     ContentStream getContentStream();
 
     /**
+     * Retrieves the content stream of this document.
+     * 
+     * @param offset
+     *            the offset of the stream or <code>null</code> to read the
+     *            stream from the beginning
+     * @param length
+     *            the maximum length of the stream or <code>null</code> to read
+     *            to the end of the stream
+     * @return the content stream, or {@code null}
+     */
+    ContentStream getContentStream(BigInteger offset, BigInteger length);
+
+    /**
      * Retrieves the content stream that is associated with the given stream id.
      * This is usually a rendition of the document.
+     * 
+     * @param streamId
+     *            the stream id
      * 
      * @return the content stream, or {@code null}
      */
     ContentStream getContentStream(String streamId);
+
+    /**
+     * Retrieves the content stream that is associated with the given stream id.
+     * This is usually a rendition of the document.
+     * 
+     * @param streamId
+     *            the stream id
+     * @param offset
+     *            the offset of the stream or <code>null</code> to read the
+     *            stream from the beginning
+     * @param length
+     *            the maximum length of the stream or <code>null</code> to read
+     *            to the end of the stream
+     * @return the content stream, or {@code null}
+     */
+    ContentStream getContentStream(String streamId, BigInteger offset, BigInteger length);
 
     /**
      * Sets a new content stream for the document and refreshes this object

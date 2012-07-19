@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
-import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -47,11 +45,11 @@ public class CopyTest extends AbstractSessionTest {
 
     @Override
     public void run(Session session) {
-        if (getBinding() == BindingType.ATOMPUB) {
-            addResult(createResult(SKIPPED,
-                    "AtomPub binding does not support createDocumentFromSource(). Test Skipped!"));
-            return;
-        }
+        // if (getBinding() == BindingType.ATOMPUB) {
+        // addResult(createResult(SKIPPED,
+        // "AtomPub binding does not support createDocumentFromSource(). Test Skipped!"));
+        // return;
+        // }
 
         CmisTestResult f;
 
