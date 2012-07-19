@@ -1,6 +1,6 @@
 #EXIF type definition http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html
 document
-audioFile;sap
+audioFile;apache
 Audio File
 Audio Content (compressed or uncompressed)
     Artist
@@ -20,7 +20,7 @@ Audio Content (compressed or uncompressed)
     Compressor Version
 
 document
-emailDocument;sap
+emailDocument;apache
 Email Document
 Document of type Email
     From
@@ -33,7 +33,7 @@ Document of type Email
     Last Save Date
 
 document
-exifImage;sap
+exifImage;apache
 EXIF Image
 Image with EXIF tags
     Image Width
@@ -92,7 +92,7 @@ Image with EXIF tags
     Data Precision
 
 document
-officeDocument;sap
+officeDocument;apache
 Office Document
 Document of type Office
     Application Name
@@ -124,7 +124,7 @@ Document of type Office
     Last Printed
 
 document
-pdfDocument;sap
+pdfDocument;apache
 PDF Document
 Document of type PDF
     No Pages
@@ -137,3 +137,19 @@ Document of type PDF
     Created Date
     Modified Date
     Trapped
+
+document
+videoFile;apache
+Video File
+Video Movies
+    Artist
+    Album
+    Title
+    Comment
+    Genre
+    Length
+    Track
+    Year
+    Disc Number
+    Image Width
+    Image Height

@@ -582,7 +582,7 @@ public class ObjGenApp {
         String fileName = options.valueOf(fLocalFile);
         
         if ((null == fileName || fileName.length() == 0)) {
-            System.out.println("Error: You either have to provide a --file option to test metadata extraction.");
+            System.out.println("Error: You have to provide a --file option to test metadata extraction.");
             return;
         }
         

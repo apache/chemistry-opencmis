@@ -208,11 +208,12 @@ public class FileCopier {
                 // Session available? if yes do conversion
                 TypeDefinition td = null;
                 if (null!= session) {
-                    session.getTypeDefinition(typeId);
+                    td = session.getTypeDefinition(typeId);
                     if (null == td)
                         throw new MapperException("CMIS type " + typeId + " does not exist on server.");
+                    else
+                    	LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
                 }
-                LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
                 
                 parser.extractMetadata(f, td);
                 Map<String, Object> properties = parser.getCmisProperties();
