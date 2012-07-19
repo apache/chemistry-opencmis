@@ -65,6 +65,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
@@ -705,7 +706,7 @@ public class SessionImpl implements Session {
         return getRepositoryInfo().getId();
     }
 
-    // creates
+    // --- creates ---
 
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
@@ -832,6 +833,8 @@ public class SessionImpl implements Session {
         return this.createPolicy(properties, folderId, null, null, null);
     }
 
+    // --- relationships ---
+
     public ObjectId createRelationship(Map<String, ?> properties) {
         return this.createRelationship(properties, null, null, null);
     }
@@ -878,6 +881,47 @@ public class SessionImpl implements Session {
             }
         });
     }
+
+    // --- delete ---
+
+    public void delete(ObjectId objectId) {
+        delete(objectId, true);
+    }
+
+    public void delete(ObjectId objectId, boolean allVersions) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+
+        getBinding().getObjectService().deleteObject(getRepositoryId(), objectId.getId(), allVersions, null);
+        removeObjectFromCache(objectId);
+    }
+
+    // --- content stream ---
+
+    public ContentStream getContentStream(ObjectId docId) {
+        return getContentStream(docId, null, null, null);
+    }
+
+    public ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length) {
+        if ((docId == null) || (docId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid document id!");
+        }
+
+        // get the stream
+        ContentStream contentStream = null;
+        try {
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), docId.getId(),
+                    streamId, offset, length, null);
+        } catch (CmisConstraintException e) {
+            // no content stream
+            return null;
+        }
+
+        return contentStream;
+    }
+
+    // --- ACL ---
 
     public Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions) {
         if ((objectId == null) || (objectId.getId() == null)) {

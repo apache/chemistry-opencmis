@@ -66,6 +66,9 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public void applyPolicy(ObjectId policyId) {
     }
 
+    public void delete() {
+    }
+    
     public void delete(boolean allVersions) {
     }
 

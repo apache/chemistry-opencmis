@@ -261,18 +261,22 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
-    // --- properties ---
+    // --- delete ---
+
+    public void delete() {
+        delete(true);
+    }
 
     public void delete(boolean allVersions) {
         readLock();
         try {
-            String objectId = getObjectId();
-            getBinding().getObjectService().deleteObject(getRepositoryId(), objectId, allVersions, null);
-            getSession().removeObjectFromCache(this);
+            getSession().delete(this, allVersions);
         } finally {
             readUnlock();
         }
     }
+
+    // --- update properties ---
 
     public CmisObject updateProperties(Map<String, ?> properties) {
         ObjectId objectId = updateProperties(properties, true);

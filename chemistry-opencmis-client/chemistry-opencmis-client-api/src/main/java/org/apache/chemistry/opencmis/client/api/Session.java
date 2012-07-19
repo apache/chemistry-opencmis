@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.api;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -462,6 +463,55 @@ public interface Session extends Serializable {
      */
     ItemIterable<Relationship> getRelationships(ObjectId objectId, boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, ObjectType type, OperationContext context);
+
+    /**
+     * Deletes an object and, if it is a document, all versions in the version
+     * series.
+     * 
+     * @param objectId
+     *            the id of the object
+     */
+    void delete(ObjectId objectId);
+
+    /**
+     * Deletes an object.
+     * 
+     * @param objectId
+     *            the id of the object
+     * @param allVersions
+     *            if this object is a document this parameter defines if only
+     *            this version or all versions should be deleted
+     */
+    void delete(ObjectId objectId, boolean allVersions);
+
+    /**
+     * Retrieves the main content stream of a document
+     * 
+     * @param docId
+     *            the id of the document
+     * @return the content stream or <code>null</code> if the document has no
+     *         content stream
+     */
+    ContentStream getContentStream(ObjectId docId);
+
+    /**
+     * Retrieves the content stream of a document
+     * 
+     * @param docId
+     *            the id of the document
+     * @param streamId
+     *            the stream id
+     * @param offset
+     *            the offset of the stream or <code>null</code> to read the
+     *            stream from the beginning
+     * @param length
+     *            the maximum length of the stream or <code>null</code> to read
+     *            to the end of the stream
+     * 
+     * @return the content stream or <code>null</code> if the document has no
+     *         content stream
+     */
+    ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length);
 
     /**
      * Fetches the ACL of an object from the repository.

@@ -44,7 +44,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -351,19 +350,9 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     }
 
     public ContentStream getContentStream(String streamId) {
-        String objectId = getObjectId();
-
         // get the stream
-        ContentStream contentStream;
-        try {
-            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId, streamId,
-                    null, null, null);
-        } catch (CmisConstraintException e) {
-            // no content stream
-            return null;
-        }
+        ContentStream contentStream = getSession().getContentStream(this, streamId, null, null);
 
-        // handle incompliant repositories
         if (contentStream == null) {
             return null;
         }

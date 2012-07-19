@@ -55,10 +55,16 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     // object service
 
     /**
+     * Deletes this object. If this object is a document, the whole version
+     * series is deleted.
+     */
+    void delete();
+
+    /**
      * Deletes this object.
      * 
      * @param allVersions
-     *            if this object is a document this parameter defines if just
+     *            if this object is a document this parameter defines if only
      *            this version or all versions should be deleted
      */
     void delete(boolean allVersions);
