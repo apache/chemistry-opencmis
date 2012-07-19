@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.math.BigInteger;
@@ -56,39 +57,71 @@ public class ContentRangesTest extends AbstractSessionTest {
             String excerpt;
             ContentStream content;
 
+            // offset, no length
             try {
                 content = doc.getContentStream(BigInteger.valueOf(3), null);
                 excerpt = getStringFromContentStream(content);
 
-                f = createResult(WARNING,
-                        "Retrieved stream excerpt {offset=3, length=nil} doesn't match! Content ranges supported?");
-                addResult(assertEquals(CONTENT.substring(3), excerpt, null, f));
+                if (CONTENT.equals(excerpt)) {
+                    addResult(createResult(WARNING,
+                            "Retrieved full stream instead of an excerpt {offset=3, length=null}! Content ranges supported?"));
+                } else {
+                    f = createResult(FAILURE, "Retrieved stream excerpt {offset=3, length=null} doesn't match!");
+                    addResult(assertEquals(CONTENT.substring(3), excerpt, null, f));
+                }
             } catch (Exception e) {
-                addResult(createResult(WARNING,
+                addResult(createResult(FAILURE,
                         "Unexpected exception while retrieving stream {offset=3, length=null}: " + e, e, false));
             }
 
+            // no offset, length
             try {
                 content = doc.getContentStream(null, BigInteger.valueOf(12));
                 excerpt = getStringFromContentStream(content);
 
-                f = createResult(WARNING,
-                        "Retrieved stream excerpt {offset=null, length=12} doesn't match! Content ranges supported?");
-                addResult(assertEquals(CONTENT.substring(0, 12), excerpt, null, f));
+                if (CONTENT.equals(excerpt)) {
+                    addResult(createResult(WARNING,
+                            "Retrieved full stream instead of an excerpt {offset=null, length=12}! Content ranges supported?"));
+                } else {
+                    f = createResult(FAILURE, "Retrieved stream excerpt {offset=null, length=12} doesn't match!");
+                    addResult(assertEquals(CONTENT.substring(0, 12), excerpt, null, f));
+                }
             } catch (Exception e) {
-                addResult(createResult(WARNING,
+                addResult(createResult(FAILURE,
                         "Unexpected exception while retrieving stream {offset=null, length=12}: " + e, e, false));
             }
 
+            // offset and length
             try {
                 content = doc.getContentStream(BigInteger.valueOf(5), BigInteger.valueOf(17));
                 excerpt = getStringFromContentStream(content);
 
-                f = createResult(WARNING,
-                        "Retrieved stream excerpt {offset=5, length=17} doesn't match! Content ranges supported?");
-                addResult(assertEquals(CONTENT.substring(5, 5 + 17), excerpt, null, f));
+                if (CONTENT.equals(excerpt)) {
+                    addResult(createResult(WARNING,
+                            "Retrieved full stream instead of an excerpt {offset=5, length=17}! Content ranges supported?"));
+                } else {
+                    f = createResult(FAILURE, "Retrieved stream excerpt {offset=5, length=17} doesn't match!");
+                    addResult(assertEquals(CONTENT.substring(5, 5 + 17), excerpt, null, f));
+                }
             } catch (Exception e) {
-                addResult(createResult(WARNING, "Unexpected exception while retrieving stream {offset=5, length=17}: "
+                addResult(createResult(FAILURE, "Unexpected exception while retrieving stream {offset=5, length=17}: "
+                        + e, e, false));
+            }
+
+            // offset and length > content size
+            try {
+                content = doc.getContentStream(BigInteger.valueOf(9), BigInteger.valueOf(123));
+                excerpt = getStringFromContentStream(content);
+
+                if (CONTENT.equals(excerpt)) {
+                    addResult(createResult(WARNING,
+                            "Retrieved full stream instead of an excerpt {offset=9, length=123}! Content ranges supported?"));
+                } else {
+                    f = createResult(FAILURE, "Retrieved stream excerpt {offset=9, length=123} doesn't match!");
+                    addResult(assertEquals(CONTENT.substring(9), excerpt, null, f));
+                }
+            } catch (Exception e) {
+                addResult(createResult(FAILURE, "Unexpected exception while retrieving stream {offset=9, length=123}: "
                         + e, e, false));
             }
         } finally {
