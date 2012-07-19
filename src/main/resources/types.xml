@@ -5,7 +5,7 @@
      xmlns:chem="http://chemistry.apache.org/schemas/TypeDefnitions">
 <cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
     <id>audioFile</id>
-    <localName>sap</localName>
+    <localName>apache</localName>
     <localNamespace>ns</localNamespace>
     <parentId>cmis:document</parentId>
     <displayName>Audio File</displayName>
@@ -277,7 +277,7 @@
 
 <cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
     <id>emailDocument</id>
-    <localName>sap</localName>
+    <localName>apache</localName>
     <localNamespace>ns</localNamespace>
     <parentId>cmis:document</parentId>
     <displayName>Email Document</displayName>
@@ -425,7 +425,7 @@
 
 <cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
     <id>exifImage</id>
-    <localName>sap</localName>
+    <localName>apache</localName>
     <localNamespace>ns</localNamespace>
     <parentId>cmis:document</parentId>
     <displayName>EXIF Image</displayName>
@@ -1621,7 +1621,7 @@
 
 <cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
     <id>officeDocument</id>
-    <localName>sap</localName>
+    <localName>apache</localName>
     <localNamespace>ns</localNamespace>
     <parentId>cmis:document</parentId>
     <displayName>Office Document</displayName>
@@ -2073,7 +2073,7 @@
 
 <cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
     <id>pdfDocument</id>
-    <localName>sap</localName>
+    <localName>apache</localName>
     <localNamespace>ns</localNamespace>
     <parentId>cmis:document</parentId>
     <displayName>PDF Document</displayName>
@@ -2249,6 +2249,202 @@
         <orderable>false</orderable>
         <openChoice>false</openChoice>
     </propertyStringDefinition>
+</cmisra:type>
+
+<cmisra:type xsi:type="cmisTypeDocumentDefinitionType">
+    <id>videoFile</id>
+    <localName>apache</localName>
+    <localNamespace>ns</localNamespace>
+    <parentId>cmis:document</parentId>
+    <displayName>Video File</displayName>
+    <queryName>VIDEO_FILE</queryName>
+    <description>Video Movies</description>
+    <baseId>cmis:document</baseId>
+    <creatable>true</creatable>
+    <fileable>true</fileable>
+    <queryable>true</queryable>
+    <fulltextIndexed>true</fulltextIndexed>
+    <includedInSupertypeQuery>true</includedInSupertypeQuery>
+    <controllablePolicy>false</controllablePolicy>
+    <controllableACL>true</controllableACL>
+    <versionable>false</versionable>
+    <contentStreamAllowed>allowed</contentStreamAllowed>
+    <propertyStringDefinition>
+        <id>artist</id>
+        <localName>sap</localName>
+        <displayName>Artist</displayName>
+        <queryName>ARTIST</queryName>
+        <description>Artist</description>
+        <localNamespace>0x013b</localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>album</id>
+        <localName>sap</localName>
+        <displayName>Album</displayName>
+        <queryName>ALBUM</queryName>
+        <description>title</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>title</id>
+        <localName>sap</localName>
+        <displayName>Title</displayName>
+        <queryName>TITLE</queryName>
+        <description>Title</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>comment</id>
+        <localName>sap</localName>
+        <displayName>Comment</displayName>
+        <queryName>COMMENT</queryName>
+        <description>Comment</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>genre</id>
+        <localName>sap</localName>
+        <displayName>Genre</displayName>
+        <queryName>GENRE</queryName>
+        <description>Genre</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>length</id>
+        <localName>sap</localName>
+        <displayName>Length</displayName>
+        <queryName>LENGTH</queryName>
+        <description>Length in seconds</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>track</id>
+        <localName>sap</localName>
+        <displayName>Track</displayName>
+        <queryName>TRACK</queryName>
+        <description>Track in album</description>
+        <localNamespace></localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyStringDefinition>
+        <id>year</id>
+        <localName>sap</localName>
+        <displayName>Year</displayName>
+        <queryName>YEAR</queryName>
+        <description>release date of albun</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyStringDefinition>
+        <id>discNo</id>
+        <localName>sap</localName>
+        <displayName>Disc Number</displayName>
+        <queryName>DISC_NUMBER</queryName>
+        <description>number of disc / total discs</description>
+        <localNamespace></localNamespace>
+        <propertyType>string</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>readwrite</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyStringDefinition>
+    <propertyIntegerDefinition>
+        <id>imageWidth</id>
+        <localName>sap</localName>
+        <displayName>Image Width</displayName>
+        <queryName>IMAGE_WIDTH</queryName>
+        <description>Image Width</description>
+        <localNamespace>0x0100</localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>oncreate</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
+    <propertyIntegerDefinition>
+        <id>imageHeight</id>
+        <localName>sap</localName>
+        <displayName>Image Height</displayName>
+        <queryName>IMAGE_HEIGHT</queryName>
+        <description>Image Height</description>
+        <localNamespace>0x0101</localNamespace>
+        <propertyType>integer</propertyType>
+        <cardinality>single</cardinality>
+        <updatability>oncreate</updatability>
+        <inherited>false</inherited>
+        <required>false</required>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
+        <openChoice>false</openChoice>
+    </propertyIntegerDefinition>
 </cmisra:type>
 
 </chem:typeDefinitions>
