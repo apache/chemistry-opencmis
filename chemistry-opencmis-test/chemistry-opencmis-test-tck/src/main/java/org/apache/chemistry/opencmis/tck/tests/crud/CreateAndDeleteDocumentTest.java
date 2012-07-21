@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,6 +109,16 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
             f = createResult(FAILURE, "Returned number of children doesn't match the page size!");
             addResult(assertEquals(pageSize, count, null, f));
 
+            if (page1.getTotalNumItems() == -1) {
+                addResult(createResult(WARNING, "Repository did not return numItems for the first test page."));
+            } else {
+                f = createResult(FAILURE, "Returned numItems doesn't match the number of documents!");
+                addResult(assertEquals((long) numOfDocuments, page1.getTotalNumItems(), null, f));
+            }
+
+            f = createResult(FAILURE, "hasMoreItems of the first test page must be 'true'!");
+            // addResult(assertEquals(true, page1.getHasMoreItems(), null, f));
+
             count = 0;
             ItemIterable<CmisObject> page2 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
                     .skipTo(pageSize - 1).getPage(pageSize);
@@ -123,6 +134,16 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
             f = createResult(FAILURE, "Returned number of children doesn't match the page size!");
             addResult(assertEquals(pageSize, count, null, f));
+
+            if (page2.getTotalNumItems() == -1) {
+                addResult(createResult(WARNING, "Repository did not return numItems for the second test page."));
+            } else {
+                f = createResult(FAILURE, "Returned numItems doesn't match the number of documents!");
+                addResult(assertEquals((long) numOfDocuments, page2.getTotalNumItems(), null, f));
+            }
+
+            f = createResult(FAILURE, "hasMoreItems of the second test page must be 'true'!");
+            // addResult(assertEquals(true, page2.getHasMoreItems(), null, f));
 
             // check content
             for (Document document : documents.values()) {

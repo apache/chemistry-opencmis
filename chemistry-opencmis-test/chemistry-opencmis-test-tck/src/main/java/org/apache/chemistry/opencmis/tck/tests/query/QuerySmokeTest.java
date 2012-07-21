@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tck.tests.query;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,8 @@ public class QuerySmokeTest extends AbstractQueryTest {
             } else {
                 int i = 0;
                 // testing 100 results should be sufficient for this test
-                for (QueryResult qr : resultSet.getPage(pageSize)) {
+                ItemIterable<QueryResult> queryIterable = resultSet.getPage(pageSize);
+                for (QueryResult qr : queryIterable) {
                     if (qr == null) {
                         addResult(createResult(FAILURE, "Query result is null! (OpenCMIS issue???)"));
                     } else {
@@ -113,6 +115,10 @@ public class QuerySmokeTest extends AbstractQueryTest {
                 f = createResult(FAILURE, "More query results (" + i + ") than expected (page size = " + pageSize
                         + ")!");
                 addResult(assertIsFalse((i > pageSize), null, f));
+
+                if (queryIterable.getTotalNumItems() == -1) {
+                    addResult(createResult(WARNING, "Repository did not return numItems."));
+                }
 
                 addResult(createInfoResult(i + " query results for \"" + statement + "\" (page size = " + pageSize
                         + ")"));

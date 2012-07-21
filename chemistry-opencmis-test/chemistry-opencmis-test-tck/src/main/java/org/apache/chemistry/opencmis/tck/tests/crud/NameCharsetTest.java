@@ -100,7 +100,7 @@ public class NameCharsetTest extends AbstractSessionTest {
                 }
             }
 
-            addResult(createInfoResult("Tested " + NAMES.length + "different names."));
+            addResult(createInfoResult("Tested " + NAMES.length + " different names."));
         } finally {
             // delete the test folder
             deleteTestFolder();
