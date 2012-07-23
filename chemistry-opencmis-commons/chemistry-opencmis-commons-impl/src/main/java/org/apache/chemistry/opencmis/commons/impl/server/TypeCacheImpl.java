@@ -21,44 +21,64 @@ package org.apache.chemistry.opencmis.commons.impl.server;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 
 /**
  * Temporary type cache used for one call.
  */
 public class TypeCacheImpl implements TypeCache {
 
-	private final String repositoryId;
-	private final CmisService service;
-	private final Map<String, TypeDefinition> typeDefinitions;
+    private final String repositoryId;
+    private final CmisService service;
+    private final Map<String, TypeDefinition> typeDefinitions;
+    private final Map<String, TypeDefinition> objectToTypeDefinitions;
 
-	public TypeCacheImpl(String repositoryId, CmisService service) {
-		this.repositoryId = repositoryId;
-		this.service = service;
-		typeDefinitions = new HashMap<String, TypeDefinition>();
-	}
+    public TypeCacheImpl(String repositoryId, CmisService service) {
+        this.repositoryId = repositoryId;
+        this.service = service;
+        typeDefinitions = new HashMap<String, TypeDefinition>();
+        objectToTypeDefinitions = new HashMap<String, TypeDefinition>();
+    }
 
-	public TypeDefinition getTypeDefinition(String typeId) {
-		TypeDefinition type = typeDefinitions.get(typeId);
-		if (type == null) {
-			type = service.getTypeDefinition(repositoryId, typeId, null);
-			if (type != null) {
-				typeDefinitions.put(type.getId(), type);
-			}
-		}
+    public TypeDefinition getTypeDefinition(String typeId) {
+        TypeDefinition type = typeDefinitions.get(typeId);
+        if (type == null) {
+            type = service.getTypeDefinition(repositoryId, typeId, null);
+            if (type != null) {
+                typeDefinitions.put(type.getId(), type);
+            }
+        }
 
-		return type;
-	}
+        return type;
+    }
 
-	public TypeDefinition getTypeDefinitionForObject(String objectId) {
-		ObjectInfo info = service.getObjectInfo(repositoryId, objectId);
-		if (info == null) {
-			return null;
-		}
+    public TypeDefinition getTypeDefinitionForObject(String objectId) {
+        TypeDefinition type = objectToTypeDefinitions.get(objectId);
+        if (type == null) {
+            ObjectData obj = service.getObject(repositoryId, objectId,
+                    "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none",
+                    false, false, null);
 
-		return getTypeDefinition(info.getTypeId());
-	}
+            if (obj != null && obj.getProperties() != null) {
+                PropertyData<?> typeProp = obj.getProperties().getProperties().get(PropertyIds.OBJECT_TYPE_ID);
+                if (typeProp instanceof PropertyId) {
+                    String typeId = ((PropertyId) typeProp).getFirstValue();
+                    if (typeId != null) {
+                        type = getTypeDefinition(typeId);
+                    }
+                }
+            }
+
+            objectToTypeDefinitions.put(objectId, type);
+        }
+
+        return type;
+    }
 }

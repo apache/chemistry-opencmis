@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
@@ -904,14 +905,25 @@ public class JSONConverter {
             return null;
         }
 
+        // get the type
+        TypeDefinition type = null;
+        if (typeCache != null) {
+            PropertyData<?> typeProp = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
+            if (typeProp instanceof PropertyId) {
+                String typeId = ((PropertyId) typeProp).getFirstValue();
+                if (typeId != null) {
+                    type = typeCache.getTypeDefinition(typeId);
+                }
+            }
+
+            if (type == null) {
+                type = typeCache.getTypeDefinitionForObject(objectId);
+            }
+        }
+
         JSONObject result = new JSONObject();
 
         for (PropertyData<?> property : properties.getPropertyList()) {
-            TypeDefinition type = null;
-            if (typeCache != null) {
-                type = typeCache.getTypeDefinitionForObject(objectId);
-            }
-
             PropertyDefinition<?> propDef = null;
             if (type != null) {
                 propDef = type.getPropertyDefinitions().get(property.getId());
