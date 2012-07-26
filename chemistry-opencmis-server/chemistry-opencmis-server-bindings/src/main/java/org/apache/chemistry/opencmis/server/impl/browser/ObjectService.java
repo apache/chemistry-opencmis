@@ -30,7 +30,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SOURCE_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_STREAM_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TARGET_FOLDER_ID;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_VERSIONIG_STATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
@@ -105,7 +105,7 @@ public final class ObjectService {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -124,7 +124,7 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -139,7 +139,7 @@ public final class ObjectService {
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         String sourceId = getStringParameter(request, PARAM_SOURCE_ID);
         VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -164,7 +164,7 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -177,7 +177,7 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -195,7 +195,7 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -208,7 +208,7 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -226,7 +226,7 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -238,7 +238,7 @@ public final class ObjectService {
     public static void createRelationship(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -256,7 +256,7 @@ public final class ObjectService {
         JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -271,7 +271,7 @@ public final class ObjectService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -298,7 +298,7 @@ public final class ObjectService {
         }
 
         setStatus(request, response, status);
-        setCookie(request, response, repositoryId, transaction, createCookieValue(status, object.getId(), null, null));
+        setCookie(request, response, repositoryId, token, createCookieValue(status, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
     }

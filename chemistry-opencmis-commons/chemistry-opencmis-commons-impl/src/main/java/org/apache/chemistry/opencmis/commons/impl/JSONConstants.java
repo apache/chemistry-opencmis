@@ -144,6 +144,7 @@ public class JSONConstants {
     public static final String JSON_OBJECT_ACL = "acl";
     public static final String JSON_OBJECT_EXACT_ACL = "exactACL";
     public static final String JSON_OBJECT_POLICY_IDS = "policyIds";
+    public static final String JSON_OBJECT_POLICY_IDS_IDS = "ids";
     public static final String JSON_OBJECT_RENDITIONS = "renditions";
 
     public static final Set<String> OBJECT_KEYS = new HashSet<String>();
@@ -163,6 +164,11 @@ public class JSONConstants {
         for (Action action : Action.values()) {
             ALLOWABLE_ACTIONS_KEYS.add(action.value());
         }
+    }
+
+    public static final Set<String> POLICY_IDS_KEYS = new HashSet<String>();
+    static {
+        POLICY_IDS_KEYS.add(JSON_OBJECT_POLICY_IDS_IDS);
     }
 
     public static final String JSON_OBJECTINFOLDER_OBJECT = "object";

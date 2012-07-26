@@ -22,7 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWAB
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHECKIN_COMMENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAJOR;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
@@ -73,7 +73,7 @@ public class VersioningService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         Holder<String> checkOutId = new Holder<String>(objectId);
@@ -94,7 +94,7 @@ public class VersioningService {
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);
@@ -125,7 +125,7 @@ public class VersioningService {
         String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
         Boolean major = getBooleanParameter(request, PARAM_MAJOR);
         String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
+        String token = getStringParameter(request, PARAM_TOKEN);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -151,7 +151,7 @@ public class VersioningService {
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         response.setHeader("Location", location);
 
-        setCookie(request, response, repositoryId, transaction,
+        setCookie(request, response, repositoryId, token,
                 createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
 
         writeJSON(jsonObject, request, response);

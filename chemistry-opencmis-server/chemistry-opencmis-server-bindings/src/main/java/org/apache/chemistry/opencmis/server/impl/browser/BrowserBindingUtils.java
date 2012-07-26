@@ -80,7 +80,7 @@ public class BrowserBindingUtils {
     public static final String CONTEXT_OBJECT_ID = "org.apache.chemistry.opencmis.browserbinding.objectId";
     public static final String CONTEXT_OBJECT_TYPE_ID = "org.apache.chemistry.opencmis.browserbinding.objectTypeId";
     public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.opencmis.browserbinding.basetypeId";
-    public static final String CONTEXT_TRANSACTION = "org.apache.chemistry.opencmis.browserbinding.transaction";
+    public static final String CONTEXT_TOKEN = "org.apache.chemistry.opencmis.browserbinding.token";
 
     public enum CallUrl {
         SERVICE, REPOSITORY, ROOT
@@ -144,11 +144,11 @@ public class BrowserBindingUtils {
      * Returns the object id of the current request.
      */
     public static void prepareContext(CallContext context, CallUrl callUrl, CmisService service, String repositoryId,
-            String objectId, String transaction, HttpServletRequest request) {
+            String objectId, String token, HttpServletRequest request) {
         CallContextImpl contextImpl = null;
         if (context instanceof CallContextImpl) {
             contextImpl = (CallContextImpl) context;
-            contextImpl.put(CONTEXT_TRANSACTION, transaction);
+            contextImpl.put(CONTEXT_TOKEN, token);
         }
 
         if (callUrl != CallUrl.ROOT) {
@@ -416,37 +416,37 @@ public class BrowserBindingUtils {
     /**
      * Transforms the transaction into a cookie name.
      */
-    public static String getCookieName(String transaction) {
-        if (transaction == null || transaction.length() == 0) {
+    public static String getCookieName(String token) {
+        if (token == null || token.length() == 0) {
             return "cmis%";
         }
 
-        return "cmis_" + Base64.encodeBytes(transaction.getBytes()).replace('=', '%');
+        return "cmis_" + Base64.encodeBytes(token.getBytes()).replace('=', '%');
     }
 
     /**
      * Sets a transaction cookie.
      */
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String transaction, String value) {
-        setCookie(request, response, repositoryId, transaction, value, 3600);
+            String token, String value) {
+        setCookie(request, response, repositoryId, token, value, 3600);
     }
 
     /**
      * Deletes a transaction cookie.
      */
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String transaction) {
-        setCookie(request, response, repositoryId, transaction, "", 0);
+            String token) {
+        setCookie(request, response, repositoryId, token, "", 0);
     }
 
     /**
      * Sets a transaction cookie.
      */
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String transaction, String value, int expiry) {
-        if (transaction != null && transaction.length() > 0) {
-            Cookie transactionCookie = new Cookie(getCookieName(transaction), value);
+            String token, String value, int expiry) {
+        if (token != null && token.length() > 0) {
+            Cookie transactionCookie = new Cookie(getCookieName(token), value);
             transactionCookie.setMaxAge(expiry);
             transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
             response.addCookie(transactionCookie);
@@ -470,9 +470,9 @@ public class BrowserBindingUtils {
      */
     public static void writeJSON(JSONStreamAware json, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String transaction = getStringParameter(request, Constants.PARAM_TRANSACTION);
+        String token = getStringParameter(request, Constants.PARAM_TOKEN);
 
-        if (transaction == null) {
+        if (token == null) {
             response.setContentType(JSON_MIME_TYPE);
             response.setCharacterEncoding("UTF-8");
 

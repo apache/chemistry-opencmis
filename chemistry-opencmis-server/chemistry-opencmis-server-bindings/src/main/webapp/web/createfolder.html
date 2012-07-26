@@ -39,7 +39,7 @@ td {
 <script type="text/javascript">
 var repositoryUrl;
 var rootFolderUrl;
-var lastTransaction;
+var lastToken;
 
 function loadRepositoryInfos(infos) {
     for(repId in infos) {
@@ -57,18 +57,18 @@ function createFolder() {
     document.getElementById('info').innerHTML = "Creating " + foldername + " ...";
 
     createForm.action = rootFolderUrl + createForm.folder.value;
-    lastTransaction = createGUID();
-    createForm.cmistransaction.value = lastTransaction;
+    lastToken = createGUID();
+    createForm.token.value = lastToken;
  
     return true;
 }
 
 function createFolderCallback() {
-    if(lastTransaction) {
-        document.getElementById('info').innerHTML = 'Transaction: ' + lastTransaction
+    if(lastToken) {
+        document.getElementById('info').innerHTML = 'Token: ' + lastToken
 
         var script1 = document.createElement("script");
-        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&callback=showNewFolderId&transaction="+lastTransaction);
+        script1.setAttribute("src", repositoryUrl + "?cmisselector=lastResult&callback=showNewFolderId&token="+lastToken);
         script1.setAttribute("type","text/javascript");                
         document.body.appendChild(script1);
     }
@@ -91,7 +91,7 @@ function showNewFolderId(result) {
 
 <form id="createForm" action="" method="POST" target="result" onsubmit="return createFolder()">
 <input name="cmisaction" type="hidden" value="createFolder" />
-<input name="cmistransaction" type="hidden" value="" />
+<input name="token" type="hidden" value="" />
 <table>
 <tr>
     <td>Folder:</td>

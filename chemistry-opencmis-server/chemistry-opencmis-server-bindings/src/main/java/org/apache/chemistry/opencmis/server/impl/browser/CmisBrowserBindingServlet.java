@@ -65,7 +65,7 @@ import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_EXC
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_MESSAGE;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TRANSACTION;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TOKEN;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.HTML_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
@@ -356,14 +356,14 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
                 String cmisaction = getStringParameter(postRequest, Constants.CONTROL_CMISACTION);
                 String objectId = getStringParameter(postRequest, Constants.CONTROL_OBJECT_ID);
-                String transaction = getStringParameter(postRequest, Constants.CONTROL_TRANSACTION);
+                String token = getStringParameter(postRequest, Constants.CONTROL_TOKEN);
 
                 if (cmisaction == null || cmisaction.length() == 0) {
                     throw new CmisNotSupportedException("Unknown action");
                 }
 
                 // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, transaction, postRequest);
+                prepareContext(context, callUrl, service, repositoryId, objectId, token, postRequest);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -437,9 +437,9 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             LOG.error(ex.getMessage(), ex);
         }
 
-        String transaction = (context == null ? null : (String) context.get(CONTEXT_TRANSACTION));
+        String token = (context == null ? null : (String) context.get(CONTEXT_TOKEN));
 
-        if (transaction == null) {
+        if (token == null) {
             setStatus(request, response, statusCode);
             response.setContentType(JSON_MIME_TYPE);
 
@@ -463,7 +463,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             response.setContentLength(0);
 
             if (context != null) {
-                setCookie(request, response, context.getRepositoryId(), transaction,
+                setCookie(request, response, context.getRepositoryId(), token,
                         createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
             }
         }

@@ -142,7 +142,7 @@ public final class Constants {
 
     // browser binding control
     public static final String CONTROL_CMISACTION = "cmisaction";
-    public static final String CONTROL_TRANSACTION = "transaction";
+    public static final String CONTROL_TOKEN = "token";
     public static final String CONTROL_OBJECT_ID = "objectId";
     public static final String CONTROL_PROP_ID = "propertyId";
     public static final String CONTROL_PROP_VALUE = "propertyValue";
@@ -204,9 +204,9 @@ public final class Constants {
     public static final String PARAM_SOURCE_ID = "sourceId";
 
     public static final String PARAM_SELECTOR = "cmisselector";
-    public static final String PARAM_TRANSACTION = "cmistransaction";
     public static final String PARAM_CALLBACK = "callback";
     public static final String PARAM_SUPPRESS_RESPONSE_CODES = "suppressResponseCodes";
+    public static final String PARAM_TOKEN = "token";
 
     // rendition filter
     public static final String RENDITION_NONE = "cmis:none";

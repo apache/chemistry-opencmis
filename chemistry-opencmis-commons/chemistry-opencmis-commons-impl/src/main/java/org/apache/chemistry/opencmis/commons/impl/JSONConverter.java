@@ -860,6 +860,8 @@ public class JSONConverter {
             changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONStringValue(cei.getChangeType().value()));
             changeEventInfo.put(JSON_CHANGE_EVENT_TIME, getJSONValue(cei.getChangeTime()));
 
+            convertExtension(object.getChangeEventInfo(), changeEventInfo);
+
             result.put(JSON_OBJECT_CHANGE_EVENT_INFO, changeEventInfo);
         }
 
@@ -870,13 +872,16 @@ public class JSONConverter {
         }
 
         // policy ids
-        if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)
-                && (!object.getPolicyIds().getPolicyIds().isEmpty())) {
-            JSONArray policyIds = new JSONArray();
+        if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)) {
+            JSONObject policyIds = new JSONObject();
+            JSONArray ids = new JSONArray();
+            policyIds.put(JSON_OBJECT_POLICY_IDS_IDS, ids);
 
             for (String pi : object.getPolicyIds().getPolicyIds()) {
-                policyIds.add(pi);
+                ids.add(pi);
             }
+
+            convertExtension(object.getPolicyIds(), policyIds);
 
             result.put(JSON_OBJECT_POLICY_IDS, policyIds);
         }
@@ -1512,7 +1517,7 @@ public class JSONConverter {
             result.setChangeEventInfo(changeEventInfo);
         }
         result.setIsExactAcl(getBoolean(json, JSON_OBJECT_EXACT_ACL));
-        result.setPolicyIds(convertPolicyIds(getList(json.get(JSON_OBJECT_POLICY_IDS))));
+        result.setPolicyIds(convertPolicyIds(getMap(json.get(JSON_OBJECT_POLICY_IDS))));
         result.setProperties(convertProperties(getMap(json.get(JSON_OBJECT_PROPERTIES))));
         List<Object> jsonRelationships = getList(json.get(JSON_OBJECT_RELATIONSHIPS));
         if (jsonRelationships != null) {
@@ -1635,7 +1640,7 @@ public class JSONConverter {
     /**
      * Converts a list of policy ids.
      */
-    public static PolicyIdList convertPolicyIds(List<Object> json) {
+    public static PolicyIdList convertPolicyIds(Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -1643,11 +1648,17 @@ public class JSONConverter {
         PolicyIdListImpl result = new PolicyIdListImpl();
         List<String> policyIds = new ArrayList<String>();
 
-        for (Object obj : json) {
-            if (obj instanceof String) {
-                policyIds.add((String) obj);
+        List<Object> ids = getList(json.get(JSON_OBJECT_POLICY_IDS_IDS));
+
+        if (ids != null) {
+            for (Object obj : ids) {
+                if (obj instanceof String) {
+                    policyIds.add((String) obj);
+                }
             }
         }
+
+        convertExtension(json, result, POLICY_IDS_KEYS);
 
         result.setPolicyIds(policyIds);
 

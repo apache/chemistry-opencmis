@@ -22,7 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_DEPTH;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAX_ITEMS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PROPERTY_DEFINITIONS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TRANSACTION;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TYPE_ID;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -100,8 +100,8 @@ public final class RepositoryService {
     public static void getLastResult(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        String transaction = getStringParameter(request, PARAM_TRANSACTION);
-        String cookieName = BrowserBindingUtils.getCookieName(transaction);
+        String token = getStringParameter(request, PARAM_TOKEN);
+        String cookieName = BrowserBindingUtils.getCookieName(token);
         String cookieValue = null;
 
         if (request.getCookies() != null) {
@@ -125,7 +125,7 @@ public final class RepositoryService {
                     "Cookie pasring error!");
         }
 
-        BrowserBindingUtils.deleteCookie(request, response, repositoryId, transaction);
+        BrowserBindingUtils.deleteCookie(request, response, repositoryId, token);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON((JSONObject) JSONValue.parse(cookieValue), request, response);
