@@ -77,7 +77,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getRepositoryUrl(repositoryId, Constants.SELECTOR_CONTENT_CHANGES);
-        url.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES,
+        url.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN,
                 changeLogToken == null ? null : changeLogToken.getValue());
         url.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
         url.addParameter(Constants.PARAM_FILTER, filter);
