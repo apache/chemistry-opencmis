@@ -473,11 +473,15 @@ public class InMemoryQueryProcessor {
 
             String propVal = (String) PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
             
-            String pattern = translatePattern((String) rVal); // SQL to Java
-                                                              // regex
-                                                              // syntax
-            Pattern p = Pattern.compile(pattern);
-            return p.matcher(propVal).matches();
+            if (null == propVal) {
+            	return false;
+            } else {
+            	String pattern = translatePattern((String) rVal); // SQL to Java
+            	// regex
+            	// syntax
+            	Pattern p = Pattern.compile(pattern);
+            	return p.matcher(propVal).matches();
+            }
         }
 
         @Override
