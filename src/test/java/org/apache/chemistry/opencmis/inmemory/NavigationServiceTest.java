@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -224,6 +225,7 @@ public class NavigationServiceTest extends AbstractServiceTest {
         }
         assertEquals(3, files.size());
         assertEquals(BigInteger.valueOf(10), result.getNumItems());
+        assertTrue(result.hasMoreItems());
 
         // get second page
         maxItems = BigInteger.valueOf(3);
@@ -237,6 +239,7 @@ public class NavigationServiceTest extends AbstractServiceTest {
         }
         assertEquals(3, files.size());
         assertEquals(BigInteger.valueOf(10), result.getNumItems());
+        assertTrue(result.hasMoreItems());
       
         // get third page
         maxItems = BigInteger.valueOf(3);
@@ -250,6 +253,7 @@ public class NavigationServiceTest extends AbstractServiceTest {
         }
         assertEquals(1, files.size());
         assertEquals(BigInteger.valueOf(10), result.getNumItems());
+        assertFalse(result.hasMoreItems());
         log.info("... testGetPaging() finished.");
         
     }

@@ -124,6 +124,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         }
         res.setObjects(odList);
         res.setNumItems(BigInteger.valueOf(odList.size()));
+        res.setHasMoreItems(false);
 
         LOG.debug("end getCheckedOutDocs()");
         return res;
@@ -319,6 +320,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         }
         result.setObjects(folderList);
         result.setNumItems(BigInteger.valueOf(children.getNoItems()));
+        result.setHasMoreItems(children.getNoItems() > skipCount + folderList.size());
+
         if (objectInfos != null) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
