@@ -17,12 +17,14 @@ System properties reference
 
 Login dialog:
 
-cmis.workbench.url            - preset URL
-cmis.workbench.user           - preset user name
-cmis.workbench.password       - preset password
-cmis.workbench.binding        - preset binding (atompub/webservices)
-cmis.workbench.authentication - preset authentication method (none/standard/ntlm)
-cmis.workbench.compression    - preset compression (on/off)
+cmis.workbench.url               - preset URL
+cmis.workbench.user              - preset user name
+cmis.workbench.password          - preset password
+cmis.workbench.binding           - preset binding (atompub/webservices/browser)
+cmis.workbench.authentication    - preset authentication method (none/standard/ntlm)
+cmis.workbench.compression       - preset compression (on/off)
+cmis.workbench.clientcompression - preset client compression (on/off)
+cmis.workbench.cookies           - preset cookies (on/off)
 
 
 Folder operation context:
