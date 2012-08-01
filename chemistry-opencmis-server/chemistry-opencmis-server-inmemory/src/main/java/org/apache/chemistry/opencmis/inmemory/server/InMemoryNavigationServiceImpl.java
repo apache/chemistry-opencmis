@@ -140,7 +140,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         validator.getChildren(context,repositoryId, folderId, extension);
 
         int maxItemsInt = maxItems == null ? -1 : maxItems.intValue();
-        int skipCountInt = skipCount == null ? -1 : skipCount.intValue();
+        int skipCountInt = skipCount == null ? 0 : skipCount.intValue();
         String user = context.getUsername();
         ObjectInFolderList res = getChildrenIntern(repositoryId, folderId, filter, orderBy, includeAllowableActions,
                 includeRelationships, renditionFilter, includePathSegment, maxItemsInt, skipCountInt, false,
