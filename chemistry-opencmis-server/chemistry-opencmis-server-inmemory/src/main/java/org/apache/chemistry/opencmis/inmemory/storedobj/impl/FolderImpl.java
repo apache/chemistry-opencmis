@@ -206,7 +206,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
 
     // Helper functions
     private void init(String name, Folder parent) {
-        if (!NameValidator.isValidId(name)) {
+        if (!NameValidator.isValidName(name)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
         setName(name);
