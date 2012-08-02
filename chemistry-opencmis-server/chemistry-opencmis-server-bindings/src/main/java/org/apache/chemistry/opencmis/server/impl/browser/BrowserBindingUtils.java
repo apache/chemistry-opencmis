@@ -22,8 +22,10 @@ import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanPa
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -446,7 +448,13 @@ public class BrowserBindingUtils {
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
             String token, String value, int expiry) {
         if (token != null && token.length() > 0) {
-            Cookie transactionCookie = new Cookie(getCookieName(token), value);
+            String cookieValue = value;
+            try {
+                cookieValue = URLEncoder.encode(value, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+            }
+
+            Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);
             transactionCookie.setMaxAge(expiry);
             transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
             response.addCookie(transactionCookie);
@@ -499,7 +507,7 @@ public class BrowserBindingUtils {
 
     public static void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentLength(0);
-        response.setContentType("text/plain");
+        response.setContentType(HTML_MIME_TYPE);
         response.getWriter().flush();
     }
 }

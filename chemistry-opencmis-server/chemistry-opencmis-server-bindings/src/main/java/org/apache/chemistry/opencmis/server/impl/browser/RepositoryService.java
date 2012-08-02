@@ -29,6 +29,7 @@ import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanPa
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -107,7 +108,7 @@ public final class RepositoryService {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookieName.equals(cookie.getName())) {
-                    cookieValue = cookie.getValue();
+                    cookieValue = URLDecoder.decode(cookie.getValue(), "UTF-8");
                     break;
                 }
             }
