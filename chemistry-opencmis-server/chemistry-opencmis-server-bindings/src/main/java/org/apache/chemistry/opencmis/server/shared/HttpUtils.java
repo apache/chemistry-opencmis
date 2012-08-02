@@ -19,8 +19,10 @@
 package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.Map;
 
@@ -138,13 +140,24 @@ public class HttpUtils {
     /**
      * Splits the path into its fragments.
      */
-    public static String[] splitPath(HttpServletRequest request) {
-        String p = request.getPathInfo();
-        if (p == null) {
+    public static String[] splitPath(final HttpServletRequest request) {
+        int prefixLength = request.getContextPath().length() + request.getServletPath().length();
+        String p = request.getRequestURI().substring(prefixLength);
+
+        if (p.length() == 0) {
             return new String[0];
         }
 
-        return p.substring(1).split("/");
+        String[] result = p.substring(1).split("/");
+        for (int i = 0; i < result.length; i++) {
+            try {
+                result[i] = URLDecoder.decode(result[i], "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                // should not happen
+            }
+        }
+
+        return result;
     }
 
     // -------------------------------------------------------------------------
