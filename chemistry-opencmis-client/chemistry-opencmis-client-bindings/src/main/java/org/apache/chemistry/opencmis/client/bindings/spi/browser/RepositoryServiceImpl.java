@@ -54,6 +54,14 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
+        if (repositoryInfos.size() == 0) {
+            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+        }
+
+        if (repositoryInfos.size() == 1) {
+            return repositoryInfos.get(0);
+        }
+
         // find the repository
         for (RepositoryInfo info : repositoryInfos) {
             if (info.getId() == null) {
@@ -65,7 +73,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
             }
         }
 
-        throw new CmisObjectNotFoundException("Repository not found!");
+        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
     }
 
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
