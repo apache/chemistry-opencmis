@@ -1,0 +1,15 @@
+This artifact generates an OpenCMIS Client Bindings Jar that works on Weblogic.
+
+In order to use the OpenCMIS client library in a web application on Weblogic,
+place the following jars into /WEB-INF/lib :
+
+chemistry-opencmis-client-api-<version>.jar
+chemistry-opencmis-client-impl-<version>.jar
+chemistry-opencmis-client-binding-weblogic-<version>.jar
+chemistry-opencmis-commons-api-<version>.jar
+chemistry-opencmis-commons-impl-<version>.jar
+slf4j-api-1.6.x.jar
+
+Other dependencies mentioned in other parts of the OpenCMIS documentation are 
+not required. Make sure that the standard OpenCMIS Client Bindings Jar
+is not present.
