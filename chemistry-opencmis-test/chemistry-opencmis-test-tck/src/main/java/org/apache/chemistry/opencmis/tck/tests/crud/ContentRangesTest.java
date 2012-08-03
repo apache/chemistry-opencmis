@@ -31,6 +31,9 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
+/**
+ * Content Range Test.
+ */
 public class ContentRangesTest extends AbstractSessionTest {
 
     private static final String CONTENT = "0123456789012345678901234567890";
