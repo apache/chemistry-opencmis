@@ -37,7 +37,11 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
- * A factory to create CMIS objects.
+ * A factory to create and convert CMIS objects.
+ * 
+ * Custom {@link ObjectFactory} implementations may use the convert methods to
+ * inject specific implementations of the interfaces when the data is transfered
+ * from the low level API to the high level API.
  * 
  * @see org.apache.chemistry.opencmis.client.api.Session#getObjectFactory()
  */
@@ -67,8 +71,31 @@ public interface ObjectFactory {
 
     // content stream
 
+    /**
+     * Creates an object that implements the {@link ContentStream} interface.
+     * 
+     * @param filename
+     *            the filename, should be set
+     * @param length
+     *            the length of the stream or -1 if the length is unknown
+     * @param mimetype
+     *            the MIME type, if unknown "application/octet-stream" should be
+     *            used
+     * @param stream
+     *            the stream, should not be <code>null</code>
+     * 
+     * @return the {@link ContentStream} object
+     */
     ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream);
 
+    /**
+     * Converts a low level {@link ContentStream} object into a high level
+     * {@link ContentStream} object.
+     * 
+     * @param contentStream
+     *            the original {@link ContentStream} object
+     * @return the {@link ContentStream} object
+     */
     ContentStream convertContentStream(ContentStream contentStream);
 
     // types

@@ -190,7 +190,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     // content stream
 
     public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream) {
-        return new ContentStreamImpl(filename, BigInteger.valueOf(length), mimetype, stream);
+        return new ContentStreamImpl(filename, (length < 0 ? null : BigInteger.valueOf(length)), mimetype, stream);
     }
 
     public ContentStream convertContentStream(ContentStream contentStream) {
@@ -449,7 +449,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                     List<GregorianCalendar> list = new ArrayList<GregorianCalendar>(values.size());
                     for (Object d : values) {
                         GregorianCalendar cal = new GregorianCalendar();
-                        cal.setTime((Date)d);
+                        cal.setTime((Date) d);
                         list.add(cal);
                     }
                     propertyData = bof.createPropertyDateTimeData(id, list);
@@ -569,7 +569,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
         return new ChangeEventsImpl(changeLogToken, events, hasMoreItems, totalNumItems);
     }
-    
+
     private void throwWrongTypeError(Object obj, String type, Class<?> clazz, String id) {
         String expectedTypes;
         if (clazz.equals(BigInteger.class))
@@ -580,11 +580,10 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             expectedTypes = "<java.util.GregorianCalendar, java.util.Date>";
         else
             expectedTypes = clazz.getName();
-            
-        String message = "Property '" + id +"' is a " + type + " property. Expected type '"
-                + expectedTypes + "' but received a '" + obj.getClass().getName() + "' property.";
-        
+
+        String message = "Property '" + id + "' is a " + type + " property. Expected type '" + expectedTypes
+                + "' but received a '" + obj.getClass().getName() + "' property.";
+
         throw new IllegalArgumentException(message);
     }
 }
-
