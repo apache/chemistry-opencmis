@@ -96,7 +96,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
         setIsFileable(true);
         setIsFulltextIndexed(false);
         setIsIncludedInSupertypeQuery(true);
-        setIsQueryable(false);
+        setIsQueryable(true);
 
         // TODO: add with CMIS 1.1 extensions
 //        TypeMutabilityCapabilitiesImpl caps = new TypeMutabilityCapabilitiesImpl();
