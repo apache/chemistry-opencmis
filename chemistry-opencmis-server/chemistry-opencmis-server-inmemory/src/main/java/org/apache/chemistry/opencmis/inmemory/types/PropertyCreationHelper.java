@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
 import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
@@ -301,9 +302,9 @@ public class PropertyCreationHelper {
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
-            PropertyInteger pi = objFactory.createPropertyIntegerData(funcEntry.getValue(), BigInteger.valueOf(100));
+            PropertyDecimal pd = objFactory.createPropertyDecimalData(funcEntry.getValue(), BigDecimal.valueOf(1.0));
             // fixed dummy value
-            mappedProperties.put(funcEntry.getKey(), pi);
+            mappedProperties.put(funcEntry.getKey(), pd);
         }
 
         Properties props = new PropertiesImpl(mappedProperties.values());

@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -603,14 +604,20 @@ public class InMemoryQueryProcessor {
         }
         
         private boolean findText(String nodeText) {
-            Content cont;
+            Content cont = (Content)so;
             String pattern = StringUtil.unescape(nodeText, null);
-            if (so instanceof Content && (cont=(Content)so).hasContent()) {
+            if (null == pattern)
+            	throw new CmisInvalidArgumentException("Illegal Escape sequence in text search expression " + nodeText);
+            
+            if (so instanceof Content && cont.hasContent()) {
                 ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent(0, -1);
-                byte[] ba = cdi.getBytes();
-                String text = new String(ba);
-                int match = text.indexOf(pattern);
-                return match >= 0;
+                if (cdi.getMimeType().startsWith("text/")) {
+	                byte[] ba = cdi.getBytes();
+	                String text = new String(ba);
+	                int match = text.indexOf(pattern);
+	                return match >= 0;
+                } else
+                	return false;
             }
             return false;
         }

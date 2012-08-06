@@ -58,7 +58,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         setRepositoryId(repositoryId);
         fContainer = container;
         setContent(content, false);
-        fIsMajor = verState == VersioningState.MAJOR;
+        fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
         fProperties = new HashMap<String, PropertyData<?>>(); // ensure that we
         // have a map
