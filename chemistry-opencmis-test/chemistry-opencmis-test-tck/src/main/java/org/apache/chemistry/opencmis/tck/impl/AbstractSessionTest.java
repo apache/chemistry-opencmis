@@ -366,7 +366,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // create the document
             result = parent.createDocument(properties, contentStream, versioningState, null, null, null,
                     SELECT_ALL_NO_CACHE_OC);
-            
+
             contentStream.getStream().close();
         } catch (Exception e) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Document could not be created! Exception: " + e.getMessage(),
@@ -1573,8 +1573,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             lastName = child.getName();
         }
 
-        f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
-        addResult(results, assertEquals(childrenCount, children.getTotalNumItems(), null, f));
+        if (children.getTotalNumItems() >= 0) {
+            f = createResult(WARNING, "Number of children doesn't match the reported total number of items!");
+            addResult(results, assertEquals(childrenCount, children.getTotalNumItems(), null, f));
+        } else {
+            addResult(results, createResult(WARNING, "getChildren did not report the total number of items!"));
+        }
 
         f = createResult(WARNING,
                 "Children should be ordered by cmis:name, but they are not! (It might be a collation mismtach.)");
