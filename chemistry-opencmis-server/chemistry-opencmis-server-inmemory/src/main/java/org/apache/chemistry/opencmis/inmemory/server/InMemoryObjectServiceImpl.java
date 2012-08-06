@@ -699,7 +699,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
 
-        validator.createDocument(context, repositoryId, folderId, extension);
+    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
+
+    	validator.createDocument(context, repositoryId, folderId, extension);
 
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
@@ -802,7 +805,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-        validator.createFolder(context, repositoryId, folderId, extension);
+    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
+
+    	validator.createFolder(context, repositoryId, folderId, extension);
         TypeValidator.validateRequiredSystemProperties(properties);
         String user = context.getUsername();
 
@@ -871,6 +877,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private StoredObject createPolicyIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
+    	addAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+    	removeAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeAces);
         validator.createPolicy(context, repositoryId, folderId, extension);
         throw new CmisNotSupportedException("createPolicy is not supported.");
     }
@@ -883,7 +891,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
         
-        // get required properties
+    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
+
+    	// get required properties
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SOURCE_ID);
         String sourceId = (String) pd.getFirstValue();
         if (null == sourceId || sourceId.length() == 0)
