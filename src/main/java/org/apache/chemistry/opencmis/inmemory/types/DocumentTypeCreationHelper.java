@@ -143,6 +143,7 @@ public class DocumentTypeCreationHelper {
 
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.VERSION_SERIES_ID,
                 "Version Series Id", Updatability.READONLY);
+        propId.setIsQueryable(false);
         propertyDefinitions.put(propId.getId(), propId);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
