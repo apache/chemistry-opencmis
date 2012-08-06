@@ -243,8 +243,9 @@ public class PropertyCreationHelper {
         return props;
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td,
-            Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
+	public static Properties getPropertiesFromObject(StoredObject so,
+			TypeDefinition td, TypeDefinition fromType,
+			Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
         // build properties collection
 
         List<String> idList = new ArrayList<String>(requestedIds.values());
@@ -267,30 +268,34 @@ public class PropertyCreationHelper {
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
         if (requestedIds.containsValue("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
-                // map property id to property query name
-                String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
-                String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
-                String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-                AbstractPropertyData<?> ad = clonePropertyData(prop.getValue()); 
-                
-                ad.setQueryName(queryName);
-                ad.setLocalName(localName);
-                ad.setDisplayName(displayName);
-                mappedProperties.put(queryName, ad);
+            	if (fromType.getPropertyDefinitions().containsKey(prop.getKey())) {
+            		// map property id to property query name
+            		String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
+            		String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
+            		String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
+            		AbstractPropertyData<?> ad = clonePropertyData(prop.getValue()); 
+
+            		ad.setQueryName(queryName);
+            		ad.setLocalName(localName);
+            		ad.setDisplayName(displayName);
+            		mappedProperties.put(queryName, ad);
+            	}
             }
         } else {
             // replace all ids with query names or alias:
             for (Entry<String, String> propAlias : requestedIds.entrySet()) {
-                String queryNameOrAlias = propAlias.getKey();
-                PropertyData<?> prop = properties.get(propAlias.getValue());
-                String localName = td.getPropertyDefinitions().get(prop.getId()).getLocalName();
-                String displayName = td.getPropertyDefinitions().get(prop.getId()).getDisplayName();
-                AbstractPropertyData<?> ad = clonePropertyData(prop); 
-                
-                ad.setQueryName(queryNameOrAlias);
-                ad.setLocalName(localName);
-                ad.setDisplayName(displayName);
-                mappedProperties.put(queryNameOrAlias, ad);
+            	String queryNameOrAlias = propAlias.getKey();
+            	PropertyData<?> prop = properties.get(propAlias.getValue());
+            	if (fromType.getPropertyDefinitions().containsKey(prop.getId())) {
+            		String localName = td.getPropertyDefinitions().get(prop.getId()).getLocalName();
+            		String displayName = td.getPropertyDefinitions().get(prop.getId()).getDisplayName();
+            		AbstractPropertyData<?> ad = clonePropertyData(prop); 
+
+            		ad.setQueryName(queryNameOrAlias);
+            		ad.setLocalName(localName);
+            		ad.setDisplayName(displayName);
+            		mappedProperties.put(queryNameOrAlias, ad);
+            	}
             }
         }
         // add functions:
@@ -350,13 +355,13 @@ public class PropertyCreationHelper {
     }
 
     public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user,
-            Map<String, String> requestedProperties, Map<String, String> requestedFuncs,
+            Map<String, String> requestedProperties, Map<String, String> requestedFuncs, TypeDefinition fromType,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter) {
 
         ObjectDataImpl od = new ObjectDataImpl();
 
         // build properties collection
-        Properties props = getPropertiesFromObject(so, typeDef, requestedProperties, requestedFuncs);
+        Properties props = getPropertiesFromObject(so, typeDef, fromType, requestedProperties, requestedFuncs);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {

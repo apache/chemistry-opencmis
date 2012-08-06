@@ -116,10 +116,8 @@ public class DataObjectCreator {
             if (canCheckOut) {
                 set.add(Action.CAN_CHECK_OUT);
             }
-            if (isCheckedOut) {
-                set.add(Action.CAN_CANCEL_CHECK_OUT);
-            }
             if (canCheckIn) {
+                set.add(Action.CAN_CANCEL_CHECK_OUT);
                 set.add(Action.CAN_CHECK_IN);
             }
             set.add(Action.CAN_GET_ALL_VERSIONS);

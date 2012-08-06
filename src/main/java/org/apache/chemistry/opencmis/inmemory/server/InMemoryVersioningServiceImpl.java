@@ -79,7 +79,10 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.checkIn(context, repositoryId, objectId, addAces, removeAces, extension);
+    	addAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+    	removeAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeAces);
+
+    	StoredObject so = validator.checkIn(context, repositoryId, objectId, addAces, removeAces, extension);
 
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);

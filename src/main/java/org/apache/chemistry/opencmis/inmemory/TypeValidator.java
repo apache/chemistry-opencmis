@@ -18,14 +18,20 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
@@ -36,7 +42,9 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  */
 public class TypeValidator {
     
-    public static void checkType(TypeManager tm, TypeDefinition td) {
+    private static final Object CMIS_USER = "cmis:user";
+
+	public static void checkType(TypeManager tm, TypeDefinition td) {
 
         if (null == tm.getTypeById(td.getParentTypeId())) {
             throw new CmisInvalidArgumentException("Cannot add type, because parent with id " + td.getParentTypeId()
@@ -88,6 +96,39 @@ public class TypeValidator {
                 }
             }
         }        
+    }
+    
+    public static Acl expandAclMakros(String user, Acl acl) {
+     	boolean mustCopy = false;
+    	
+    	if (user == null || acl == null || acl.getAces() == null)
+    		return acl;
+    	
+     	for (Ace ace: acl.getAces()) {
+    		String principal = ace.getPrincipalId();
+    		if (principal != null && principal.equals(CMIS_USER)) {
+    			mustCopy = true;
+    		}
+    	}
+    	
+    	if (mustCopy) {
+    		AccessControlListImpl result = new AccessControlListImpl();
+    		List<Ace> list = new ArrayList<Ace>(acl.getAces().size());
+        	for (Ace ace: acl.getAces()) {
+        		String principal = ace.getPrincipalId();
+        		if (principal != null && principal.equals(CMIS_USER)) {
+        			AccessControlEntryImpl ace2 = new AccessControlEntryImpl();
+        			ace2.setPermissions(ace.getPermissions());
+        			ace2.setExtensions(ace.getExtensions());
+        			ace2.setPrincipal(new AccessControlPrincipalDataImpl(user));
+        			list.add(ace2);
+        		} else
+        			list.add(ace);        		
+        	}    		
+    		result.setAces(list);
+    		return result;
+    	} else
+    		return acl;
     }
     
     private static void checkTypeId(TypeManager tm, String typeId) {

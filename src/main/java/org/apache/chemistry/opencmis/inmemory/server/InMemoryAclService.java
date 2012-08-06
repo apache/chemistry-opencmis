@@ -24,6 +24,7 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
+import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
@@ -62,7 +63,10 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
     public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,
             ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.applyAcl(context, repositoryId, objectId, aclPropagation, extension);
+    	addAces  = TypeValidator.expandAclMakros(context.getUsername(), addAces);
+    	removeAces  = TypeValidator.expandAclMakros(context.getUsername(), removeAces);
+        
+    	StoredObject so = validator.applyAcl(context, repositoryId, objectId, aclPropagation, extension);
         Acl acl = fStoreManager.getObjectStore(repositoryId).applyAcl(so, addAces, removeAces, aclPropagation, context.getUsername());
         
         if (context.isObjectInfoRequired()) {
@@ -75,7 +79,9 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
     
     public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
         
-        StoredObject so = validator.applyAcl(context, repositoryId, objectId);
+    	aces  = TypeValidator.expandAclMakros(context.getUsername(), aces);
+
+    	StoredObject so = validator.applyAcl(context, repositoryId, objectId);
         return fStoreManager.getObjectStore(repositoryId).applyAcl(so, aces, aclPropagation, context.getUsername());        
     }
 
