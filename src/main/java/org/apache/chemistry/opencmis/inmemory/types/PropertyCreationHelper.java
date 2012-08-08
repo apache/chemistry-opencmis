@@ -302,9 +302,15 @@ public class PropertyCreationHelper {
         // add functions:
         BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
-            PropertyDecimal pd = objFactory.createPropertyDecimalData(funcEntry.getValue(), BigDecimal.valueOf(1.0));
-            // fixed dummy value
-            mappedProperties.put(funcEntry.getKey(), pd);
+        	String queryName;
+        	if (funcEntry.getValue().equals("SCORE")) {
+        		queryName = "SEARCH_SCORE";
+        		if (!funcEntry.getKey().equals("SCORE"))
+        			queryName = funcEntry.getKey();
+                PropertyDecimal pd = objFactory.createPropertyDecimalData(queryName, BigDecimal.valueOf(1.0));
+                // fixed dummy value
+                mappedProperties.put(funcEntry.getKey(), pd);
+        	}
         }
 
         Properties props = new PropertiesImpl(mappedProperties.values());

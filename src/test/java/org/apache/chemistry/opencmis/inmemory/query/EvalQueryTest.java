@@ -29,6 +29,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -825,6 +827,16 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("delta", res));
     }
 
+    @Test
+    public void testContainsAndScore() {
+        String statement = "SELECT cmis:objectId,cmis:name,SCORE() FROM " + COMPLEX_TYPE + " WHERE CONTAINS('dog')";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContains("gamma", res));
+        assertTrue(resultContains("delta", res));
+        assertTrue(resultContains(1.0, "SEARCH_SCORE", res));
+    }
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
@@ -851,6 +863,16 @@ public class EvalQueryTest extends AbstractServiceTest {
         for (ObjectData od : results.getObjects()) {
             String nameProp = (String) od.getProperties().getProperties().get(propId).getFirstValue();
             if (name.equals(nameProp)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean resultContains(Double val, String propId, ObjectList results) {
+        for (ObjectData od : results.getObjects()) {
+            BigDecimal bd = (BigDecimal) od.getProperties().getProperties().get(propId).getFirstValue();
+            if (val.equals(bd.doubleValue())) {
                 return true;
             }
         }
