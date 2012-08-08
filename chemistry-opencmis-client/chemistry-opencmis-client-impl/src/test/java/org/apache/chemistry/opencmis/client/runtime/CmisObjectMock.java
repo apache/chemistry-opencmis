@@ -63,12 +63,16 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
+    public Acl setAcl(List<Ace> aces) {
+        return null;
+    }
+
     public void applyPolicy(ObjectId policyId) {
     }
 
     public void delete() {
     }
-    
+
     public void delete(boolean allVersions) {
     }
 

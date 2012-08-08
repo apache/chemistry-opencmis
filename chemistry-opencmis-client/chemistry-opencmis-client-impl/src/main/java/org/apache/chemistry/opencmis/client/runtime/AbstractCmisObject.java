@@ -465,6 +465,14 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return applyAcl(null, removeAces, aclPropagation);
     }
 
+    public Acl setAcl(List<Ace> aces) {
+        Acl result = getSession().setAcl(this, aces);
+
+        refresh();
+
+        return result;
+    }
+
     public Acl getAcl() {
         readLock();
         try {

@@ -19,22 +19,27 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 
 /**
  * ACL Service Browser Binding client.
  */
-public class AclServiceImpl extends AbstractBrowserBindingService implements AclService {
+public class AclServiceImpl extends AbstractBrowserBindingService implements AclService, ExtendedAclService {
 
     /**
      * Constructor.
@@ -75,5 +80,21 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertAcl(json, null);
+    }
+
+    public Acl setAcl(String repositoryId, String objectId, Acl aces) {
+        Acl currentAcl = getAcl(repositoryId, objectId, false, null);
+
+        List<Ace> removeAces = new ArrayList<Ace>();
+        if (currentAcl.getAces() != null) {
+            for (Ace ace : currentAcl.getAces()) {
+                if (ace.isDirect()) {
+                    removeAces.add(ace);
+                }
+            }
+        }
+
+        return applyAcl(repositoryId, objectId, aces, new AccessControlListImpl(removeAces), AclPropagation.OBJECTONLY,
+                null);
     }
 }

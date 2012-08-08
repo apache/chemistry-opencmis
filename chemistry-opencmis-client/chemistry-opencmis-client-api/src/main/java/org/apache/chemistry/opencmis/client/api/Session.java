@@ -515,21 +515,79 @@ public interface Session extends Serializable {
 
     /**
      * Fetches the ACL of an object from the repository.
+     * 
+     * @param objectId
+     *            the id the object
+     * @param onlyBasicPermissions
+     *            if <code>true</code> the repository should express the ACL
+     *            only with the basic permissions defined in the CMIS
+     *            specification; if <code>false</code> the repository can
+     *            express the ACL with basic and repository specific permissions
+     * 
+     * @return the ACL of the object
      */
     Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions);
 
     /**
-     * Applies an ACL to an object.
+     * Applies ACL changes to an object and potentially dependent objects.
+     * 
+     * Only direct ACEs can be added and removed.
+     * 
+     * @param objectId
+     *            the id the object
+     * @param addAces
+     *            list of ACEs to be added or <code>null</code> if no ACEs
+     *            should be added
+     * @param removeAces
+     *            list of ACEs to be removed or <code>null</code> if no ACEs
+     *            should be removed
+     * @param aclPropagation
+     *            value that defines the propagation of the ACE changes;
+     *            <code>null</code> is equal to
+     *            {@link AclPropagation#REPOSITORYDETERMINED}
+     * 
+     * @return the new ACL of the object
      */
     Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
     /**
+     * Removes the direct ACEs of an object and sets the provided ACEs.
+     * 
+     * The changes are local to the given object and are not propagated to
+     * dependent objects.
+     * 
+     * @param objectId
+     *            the id the object
+     * @param aces
+     *            list of ACEs to be set
+     * 
+     * @return the new ACL of the object
+     */
+    Acl setAcl(ObjectId objectId, List<Ace> aces);
+
+    /**
      * Applies a set of policies to an object.
+     * 
+     * This operation is not atomic. If it fails some policies might already be
+     * applied.
+     * 
+     * @param objectId
+     *            the id the object
+     * @param policyIds
+     *            the ids of the policies to be applied
      */
     void applyPolicy(ObjectId objectId, ObjectId... policyIds);
 
     /**
      * Removes a set of policies from an object.
+     * 
+     * This operation is not atomic. If it fails some policies might already be
+     * removed.
+     * 
+     * @param objectId
+     *            the id the object
+     * @param policyIds
+     *            the ids of the policies to be removed
      */
     void removePolicy(ObjectId objectId, ObjectId... policyIds);
 }

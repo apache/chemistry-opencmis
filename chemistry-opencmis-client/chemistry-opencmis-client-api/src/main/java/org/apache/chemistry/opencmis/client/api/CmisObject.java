@@ -129,14 +129,26 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
     /**
-     * Adds ACEs to the objec tand refreshes this object afterwards.
+     * Adds ACEs to the object and refreshes this object afterwards.
+     * 
+     * @return the new ACL of this object
      */
     Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation);
 
     /**
      * Removes ACEs to the object and refreshes this object afterwards.
+     * 
+     * @return the new ACL of this object
      */
     Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation);
+
+    /**
+     * Removes the direct ACE of this object, sets the provided ACEs to the
+     * object and refreshes this object afterwards.
+     * 
+     * @return the new ACL of this object
+     */
+    Acl setAcl(List<Ace> aces);
 
     // extensions
 

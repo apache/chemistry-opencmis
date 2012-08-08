@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -90,17 +91,23 @@ public class ACLSmokeTest extends AbstractSessionTest {
                     }
                 }
 
-                // apply permission "cmis:read"
                 if (getAclCapability(session) == CapabilityAcl.MANAGE) {
                     String principal = getParameters().get(TestParameters.DEFAULT_ACL_PRINCIPAL);
                     if (principal == null) {
                         principal = TestParameters.DEFAULT_ACL_PRINCIPAL_VALUE;
                     }
 
+                    // apply permission "cmis:read"
                     List<Ace> aces = new ArrayList<Ace>();
                     aces.add(session.getObjectFactory().createAce(principal, Collections.singletonList("cmis:read")));
 
                     session.applyAcl(doc, aces, null, null);
+
+                    // set permission "cmis:read" and "cmis:write"
+                    aces = new ArrayList<Ace>();
+                    aces.add(session.getObjectFactory().createAce(principal, Arrays.asList("cmis:all")));
+
+                    session.setAcl(doc, aces);
                 }
 
                 deleteObject(doc);

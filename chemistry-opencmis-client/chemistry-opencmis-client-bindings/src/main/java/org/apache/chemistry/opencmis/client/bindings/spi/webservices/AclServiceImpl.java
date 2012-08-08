@@ -20,20 +20,26 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumACLPropagation;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 
 /**
  * ACL Service Web Services client.
  */
-public class AclServiceImpl extends AbstractWebServicesService implements AclService {
+public class AclServiceImpl extends AbstractWebServicesService implements AclService, ExtendedAclService {
 
     private final AbstractPortProvider portProvider;
 
@@ -66,6 +72,32 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
 
         try {
             return convert(port.getACL(repositoryId, objectId, onlyBasicPermissions, convert(extension)));
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
+    }
+
+    public Acl setAcl(String repositoryId, String objectId, Acl aces) {
+        ACLServicePort port = portProvider.getACLServicePort();
+
+        try {
+            Acl currentAcl = convert(port.getACL(repositoryId, objectId, false, null));
+
+            List<Ace> removeAces = new ArrayList<Ace>();
+            if (currentAcl.getAces() != null) {
+                for (Ace ace : currentAcl.getAces()) {
+                    if (ace.isDirect()) {
+                        removeAces.add(ace);
+                    }
+                }
+            }
+
+            return convert(port.applyACL(repositoryId, objectId, convert(aces), convert(new AccessControlListImpl(
+                    removeAces)), convert(EnumACLPropagation.class, AclPropagation.OBJECTONLY), null));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {

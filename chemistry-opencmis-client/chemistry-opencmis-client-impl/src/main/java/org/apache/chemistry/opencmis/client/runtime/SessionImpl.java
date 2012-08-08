@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -66,10 +67,13 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
@@ -943,6 +947,26 @@ public class SessionImpl implements Session {
         return getBinding().getAclService().applyAcl(getRepositoryId(), objectId.getId(), of.convertAces(addAces),
                 of.convertAces(removeAces), aclPropagation, null);
     }
+
+    public Acl setAcl(ObjectId objectId, List<Ace> aces) {
+        if ((objectId == null) || (objectId.getId() == null)) {
+            throw new IllegalArgumentException("Invalid object id!");
+        }
+        if (aces == null) {
+            aces = Collections.emptyList();
+        }
+
+        AclService aclService = getBinding().getAclService();
+        if (!(aclService instanceof ExtendedAclService)) {
+            throw new CmisNotSupportedException("setAcl() is not supported by the binding implementation.");
+        }
+
+        ObjectFactory of = getObjectFactory();
+
+        return ((ExtendedAclService) aclService).setAcl(getRepositoryId(), objectId.getId(), of.convertAces(aces));
+    }
+
+    // --- Policies ---
 
     public void applyPolicy(ObjectId objectId, ObjectId... policyIds) {
         if ((objectId == null) || (objectId.getId() == null)) {

@@ -20,15 +20,21 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 
-public class AclServiceImpl extends AbstractLocalService implements AclService {
+public class AclServiceImpl extends AbstractLocalService implements AclService, ExtendedAclService {
 
     /**
      * Constructor.
@@ -54,6 +60,28 @@ public class AclServiceImpl extends AbstractLocalService implements AclService {
 
         try {
             return service.getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
+        } finally {
+            service.close();
+        }
+    }
+
+    public Acl setAcl(String repositoryId, String objectId, Acl aces) {
+        CmisService service = getService(repositoryId);
+
+        try {
+            Acl currentAcl = service.getAcl(repositoryId, objectId, false, null);
+
+            List<Ace> removeAces = new ArrayList<Ace>();
+            if (currentAcl.getAces() != null) {
+                for (Ace ace : currentAcl.getAces()) {
+                    if (ace.isDirect()) {
+                        removeAces.add(ace);
+                    }
+                }
+            }
+
+            return service.applyAcl(repositoryId, objectId, aces, new AccessControlListImpl(removeAces),
+                    AclPropagation.OBJECTONLY, null);
         } finally {
             service.close();
         }
