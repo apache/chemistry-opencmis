@@ -423,9 +423,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
                     getRepositoryUrlCache().addRepository(id, repositoryUrl, rootUrl);
                 }
 
-                if (repositoryId == null || repositoryId.equals(id)) {
-                    repInfos.add(ri);
-                }
+                repInfos.add(ri);
             } else {
                 throw new CmisConnectionException("Found invalid Repository Info!");
             }
