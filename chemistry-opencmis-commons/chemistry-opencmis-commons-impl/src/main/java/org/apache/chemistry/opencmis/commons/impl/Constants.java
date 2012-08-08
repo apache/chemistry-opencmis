@@ -142,6 +142,7 @@ public final class Constants {
 
     // browser binding control
     public static final String CONTROL_CMISACTION = "cmisaction";
+    public static final String CONTROL_SUCCINCT = "succinct";
     public static final String CONTROL_TOKEN = "token";
     public static final String CONTROL_OBJECT_ID = "objectId";
     public static final String CONTROL_PROP_ID = "propertyId";
@@ -166,6 +167,7 @@ public final class Constants {
     public static final String PARAM_CONTINUE_ON_FAILURE = "continueOnFailure";
     public static final String PARAM_DEPTH = "depth";
     public static final String PARAM_FILTER = "filter";
+    public static final String PARAM_SUCCINCT = "succinct";
     public static final String PARAM_FOLDER_ID = "folderId";
     public static final String PARAM_ID = "id";
     public static final String PARAM_MAJOR = "major";

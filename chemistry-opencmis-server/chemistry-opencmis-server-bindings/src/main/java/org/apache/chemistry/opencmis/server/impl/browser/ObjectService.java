@@ -106,6 +106,7 @@ public final class ObjectService {
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -121,7 +122,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -140,6 +141,7 @@ public final class ObjectService {
         String sourceId = getStringParameter(request, PARAM_SOURCE_ID);
         VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -161,7 +163,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -178,6 +180,7 @@ public final class ObjectService {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -192,7 +195,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -209,6 +212,7 @@ public final class ObjectService {
         // get parameters
         String folderId = (String) context.get(CONTEXT_OBJECT_ID);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -223,7 +227,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -239,6 +243,7 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -253,7 +258,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -272,6 +277,7 @@ public final class ObjectService {
         String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -290,7 +296,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         int status = HttpServletResponse.SC_OK;
         if (!objectId.equals(newObjectId)) {
@@ -312,6 +318,7 @@ public final class ObjectService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
         String filter = getStringParameter(request, PARAM_FILTER);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         Properties properties;
@@ -329,7 +336,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -350,6 +357,7 @@ public final class ObjectService {
         String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
         Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
         Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectData object;
@@ -369,7 +377,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -516,6 +524,7 @@ public final class ObjectService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -533,7 +542,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -547,6 +556,7 @@ public final class ObjectService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
         Boolean overwriteFlag = getBooleanParameter(request, Constants.PARAM_OVERWRITE_FLAG);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -569,7 +579,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -583,6 +593,7 @@ public final class ObjectService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String targetFolderId = getStringParameter(request, PARAM_TARGET_FOLDER_ID);
         String sourceFolderId = getStringParameter(request, PARAM_SOURCE_FOLDER_ID);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -603,7 +614,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         writeJSON(jsonObject, request, response);
     }

@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
@@ -74,6 +75,7 @@ public class VersioningService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         Holder<String> checkOutId = new Holder<String>(objectId);
@@ -86,7 +88,7 @@ public class VersioningService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
@@ -126,6 +128,7 @@ public class VersioningService {
         Boolean major = getBooleanParameter(request, PARAM_MAJOR);
         String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
         String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         ControlParser cp = new ControlParser(request);
@@ -144,7 +147,7 @@ public class VersioningService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
 
@@ -166,6 +169,7 @@ public class VersioningService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String filter = getStringParameter(request, PARAM_FILTER);
         Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
@@ -178,7 +182,7 @@ public class VersioningService {
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONArray jsonVersions = new JSONArray();
         for (ObjectData version : versions) {
-            jsonVersions.add(JSONConverter.convert(version, typeCache, false));
+            jsonVersions.add(JSONConverter.convert(version, typeCache, false, succinct));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);

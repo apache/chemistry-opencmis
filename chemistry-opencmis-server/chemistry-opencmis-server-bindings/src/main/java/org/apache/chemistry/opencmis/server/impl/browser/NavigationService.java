@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
@@ -79,6 +80,7 @@ public final class NavigationService {
         Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
         BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
         BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
@@ -90,7 +92,7 @@ public final class NavigationService {
         }
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonChildren = JSONConverter.convert(children, typeCache);
+        JSONObject jsonChildren = JSONConverter.convert(children, typeCache, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChildren, request, response);
@@ -110,6 +112,7 @@ public final class NavigationService {
                 IncludeRelationships.class);
         String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
         Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
@@ -122,7 +125,7 @@ public final class NavigationService {
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONArray jsonDescendants = new JSONArray();
         for (ObjectInFolderContainer descendant : descendants) {
-            jsonDescendants.add(JSONConverter.convert(descendant, typeCache));
+            jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -143,6 +146,7 @@ public final class NavigationService {
                 IncludeRelationships.class);
         String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
         Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
@@ -155,7 +159,7 @@ public final class NavigationService {
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONArray jsonDescendants = new JSONArray();
         for (ObjectInFolderContainer descendant : folderTree) {
-            jsonDescendants.add(JSONConverter.convert(descendant, typeCache));
+            jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -170,6 +174,7 @@ public final class NavigationService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String filter = getStringParameter(request, PARAM_FILTER);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectData parent = service.getFolderParent(repositoryId, objectId, filter, null);
@@ -179,7 +184,7 @@ public final class NavigationService {
         }
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(parent, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(parent, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonObject, request, response);
@@ -198,6 +203,7 @@ public final class NavigationService {
                 IncludeRelationships.class);
         String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
         Boolean includeRelativePathSegment = getBooleanParameter(request, PARAM_RELATIVE_PATH_SEGMENT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
@@ -210,7 +216,7 @@ public final class NavigationService {
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
         JSONArray jsonParents = new JSONArray();
         for (ObjectParentData parent : parents) {
-            jsonParents.add(JSONConverter.convert(parent, typeCache));
+            jsonParents.add(JSONConverter.convert(parent, typeCache, succinct));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -232,6 +238,7 @@ public final class NavigationService {
         String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
         BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
         BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectList checkedout = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
@@ -242,7 +249,7 @@ public final class NavigationService {
         }
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache, false);
+        JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonCheckedOut, request, response);

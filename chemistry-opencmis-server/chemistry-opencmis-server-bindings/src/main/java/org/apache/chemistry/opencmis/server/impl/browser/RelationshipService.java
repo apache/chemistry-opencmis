@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
@@ -63,6 +64,7 @@ public class RelationshipService {
         Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
         BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
         BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectList relationships = service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
@@ -73,7 +75,7 @@ public class RelationshipService {
         }
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, false);
+        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChildren, request, response);

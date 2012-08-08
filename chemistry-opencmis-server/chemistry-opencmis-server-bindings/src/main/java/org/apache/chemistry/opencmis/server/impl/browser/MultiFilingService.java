@@ -57,6 +57,7 @@ public class MultiFilingService {
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String folderId = getStringParameter(request, PARAM_FOLDER_ID);
         Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -77,7 +78,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -90,6 +91,7 @@ public class MultiFilingService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String folderId = getStringParameter(request, PARAM_FOLDER_ID);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -110,7 +112,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
 
         writeJSON(jsonObject, request, response);
     }

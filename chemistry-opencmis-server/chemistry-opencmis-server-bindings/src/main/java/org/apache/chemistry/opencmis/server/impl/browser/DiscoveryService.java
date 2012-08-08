@@ -61,7 +61,7 @@ public class DiscoveryService {
             HttpServletResponse response) throws Exception {
         // get parameters
         String statement = getStringParameter(request, Constants.PARAM_STATEMENT);
-        if(statement == null || statement.length() == 0) {
+        if (statement == null || statement.length() == 0) {
             statement = getStringParameter(request, Constants.PARAM_Q);
         }
         Boolean searchAllVersions = getBooleanParameter(request, Constants.PARAM_SEARCH_ALL_VERSIONS);
@@ -71,6 +71,7 @@ public class DiscoveryService {
         String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
         BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
         BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         // execute
         ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
@@ -81,7 +82,7 @@ public class DiscoveryService {
         }
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonResults = JSONConverter.convert(results, typeCache, true);
+        JSONObject jsonResults = JSONConverter.convert(results, typeCache, true, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonResults, request, response);
@@ -99,13 +100,14 @@ public class DiscoveryService {
         Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
         Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
         BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
         Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
         ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
                 includePolicyIds, includeAcl, maxItems, null);
 
         TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
-        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, false);
+        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, false, succinct);
         jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 
         response.setStatus(HttpServletResponse.SC_OK);

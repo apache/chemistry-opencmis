@@ -821,7 +821,7 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static JSONObject convert(ObjectData object, TypeCache typeCache, boolean isQueryResult) {
+    public static JSONObject convert(ObjectData object, TypeCache typeCache, boolean isQueryResult, boolean succinct) {
         if (object == null) {
             return null;
         }
@@ -830,9 +830,16 @@ public class JSONConverter {
 
         // properties
         if (object.getProperties() != null) {
-            JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, isQueryResult);
-            if (properties != null) {
-                result.put(JSON_OBJECT_PROPERTIES, properties);
+            if (succinct) {
+                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, isQueryResult, true);
+                if (properties != null) {
+                    result.put(JSON_OBJECT_SUCCINCT_PROPERTIES, properties);
+                }
+            } else {
+                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, isQueryResult, false);
+                if (properties != null) {
+                    result.put(JSON_OBJECT_PROPERTIES, properties);
+                }
             }
         }
 
@@ -846,7 +853,7 @@ public class JSONConverter {
             JSONArray relationships = new JSONArray();
 
             for (ObjectData relationship : object.getRelationships()) {
-                relationships.add(convert(relationship, typeCache, false));
+                relationships.add(convert(relationship, typeCache, false, succinct));
             }
 
             result.put(JSON_OBJECT_RELATIONSHIPS, relationships);
@@ -905,7 +912,8 @@ public class JSONConverter {
     /**
      * Converts a bag of properties.
      */
-    public static JSONObject convert(Properties properties, String objectId, TypeCache typeCache, boolean isQueryResult) {
+    public static JSONObject convert(final Properties properties, String objectId, final TypeCache typeCache,
+            boolean isQueryResult, boolean succinct) {
         if (properties == null) {
             return null;
         }
@@ -934,7 +942,8 @@ public class JSONConverter {
                 propDef = type.getPropertyDefinitions().get(property.getId());
             }
 
-            result.put((isQueryResult ? property.getQueryName() : property.getId()), convert(property, propDef));
+            String propId = (isQueryResult ? property.getQueryName() : property.getId());
+            result.put(propId, convert(property, propDef, succinct));
         }
 
         convertExtension(properties, result);
@@ -945,54 +954,88 @@ public class JSONConverter {
     /**
      * Converts a property.
      */
-    public static JSONObject convert(PropertyData<?> property, PropertyDefinition<?> propDef) {
+    public static Object convert(final PropertyData<?> property, final PropertyDefinition<?> propDef, boolean succinct) {
         if (property == null) {
             return null;
         }
 
-        JSONObject result = new JSONObject();
+        if (succinct) {
+            Object result = null;
 
-        result.put(JSON_PROPERTY_ID, property.getId());
-        setIfNotNull(JSON_PROPERTY_LOCALNAME, property.getLocalName(), result);
-        setIfNotNull(JSON_PROPERTY_DISPLAYNAME, property.getDisplayName(), result);
-        setIfNotNull(JSON_PROPERTY_QUERYNAME, property.getQueryName(), result);
+            if (propDef != null) {
+                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                    result = null;
+                } else if (propDef.getCardinality() == Cardinality.SINGLE) {
+                    result = getJSONValue(property.getValues().get(0));
+                } else {
+                    JSONArray values = new JSONArray();
 
-        if (propDef != null) {
-            result.put(JSON_PROPERTY_DATATYPE, propDef.getPropertyType().value());
-            result.put(JSON_PROPERTY_CARDINALITY, propDef.getCardinality().value());
+                    for (Object value : property.getValues()) {
+                        values.add(getJSONValue(value));
+                    }
 
-            if ((property.getValues() == null) || (property.getValues().size() == 0)) {
-                result.put(JSON_PROPERTY_VALUE, null);
-            } else if (propDef.getCardinality() == Cardinality.SINGLE) {
-                result.put(JSON_PROPERTY_VALUE, getJSONValue(property.getValues().get(0)));
+                    result = values;
+                }
             } else {
-                JSONArray values = new JSONArray();
+                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                    result = null;
+                } else if (property.getValues().size() > 0) {
+                    JSONArray values = new JSONArray();
 
-                for (Object value : property.getValues()) {
-                    values.add(getJSONValue(value));
+                    for (Object value : property.getValues()) {
+                        values.add(getJSONValue(value));
+                    }
+
+                    result = values;
                 }
-
-                result.put(JSON_PROPERTY_VALUE, values);
             }
+
+            return result;
         } else {
-            result.put(JSON_PROPERTY_DATATYPE, getJSONPropertyDataType(property));
+            JSONObject result = new JSONObject();
 
-            if ((property.getValues() == null) || (property.getValues().size() == 0)) {
-                result.put(JSON_PROPERTY_VALUE, null);
-            } else if (property.getValues().size() > 0) {
-                JSONArray values = new JSONArray();
+            result.put(JSON_PROPERTY_ID, property.getId());
+            setIfNotNull(JSON_PROPERTY_LOCALNAME, property.getLocalName(), result);
+            setIfNotNull(JSON_PROPERTY_DISPLAYNAME, property.getDisplayName(), result);
+            setIfNotNull(JSON_PROPERTY_QUERYNAME, property.getQueryName(), result);
 
-                for (Object value : property.getValues()) {
-                    values.add(getJSONValue(value));
+            if (propDef != null) {
+                result.put(JSON_PROPERTY_DATATYPE, propDef.getPropertyType().value());
+                result.put(JSON_PROPERTY_CARDINALITY, propDef.getCardinality().value());
+
+                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                    result.put(JSON_PROPERTY_VALUE, null);
+                } else if (propDef.getCardinality() == Cardinality.SINGLE) {
+                    result.put(JSON_PROPERTY_VALUE, getJSONValue(property.getValues().get(0)));
+                } else {
+                    JSONArray values = new JSONArray();
+
+                    for (Object value : property.getValues()) {
+                        values.add(getJSONValue(value));
+                    }
+
+                    result.put(JSON_PROPERTY_VALUE, values);
                 }
+            } else {
+                result.put(JSON_PROPERTY_DATATYPE, getJSONPropertyDataType(property));
 
-                result.put(JSON_PROPERTY_VALUE, values);
+                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                    result.put(JSON_PROPERTY_VALUE, null);
+                } else if (property.getValues().size() > 0) {
+                    JSONArray values = new JSONArray();
+
+                    for (Object value : property.getValues()) {
+                        values.add(getJSONValue(value));
+                    }
+
+                    result.put(JSON_PROPERTY_VALUE, values);
+                }
             }
+
+            convertExtension(property, result);
+
+            return result;
         }
-
-        convertExtension(property, result);
-
-        return result;
     }
 
     /**
@@ -1079,7 +1122,7 @@ public class JSONConverter {
     /**
      * Converts a query object list.
      */
-    public static JSONObject convert(ObjectList list, TypeCache typeCache, boolean isQueryResult) {
+    public static JSONObject convert(ObjectList list, TypeCache typeCache, boolean isQueryResult, boolean succinct) {
         if (list == null) {
             return null;
         }
@@ -1089,7 +1132,7 @@ public class JSONConverter {
         JSONArray objects = new JSONArray();
         if (list.getObjects() != null) {
             for (ObjectData object : list.getObjects()) {
-                objects.add(convert(object, typeCache, isQueryResult));
+                objects.add(convert(object, typeCache, isQueryResult, succinct));
             }
         }
 
@@ -1113,13 +1156,13 @@ public class JSONConverter {
     /**
      * Converts an object in a folder list.
      */
-    public static JSONObject convert(ObjectInFolderData objectInFolder, TypeCache typeCache) {
+    public static JSONObject convert(ObjectInFolderData objectInFolder, TypeCache typeCache, boolean succinct) {
         if ((objectInFolder == null) || (objectInFolder.getObject() == null)) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTINFOLDER_OBJECT, convert(objectInFolder.getObject(), typeCache, false));
+        result.put(JSON_OBJECTINFOLDER_OBJECT, convert(objectInFolder.getObject(), typeCache, false, succinct));
         setIfNotNull(JSON_OBJECTINFOLDER_PATH_SEGMENT, objectInFolder.getPathSegment(), result);
 
         convertExtension(objectInFolder, result);
@@ -1130,7 +1173,7 @@ public class JSONConverter {
     /**
      * Converts a folder list.
      */
-    public static JSONObject convert(ObjectInFolderList objectInFolderList, TypeCache typeCache) {
+    public static JSONObject convert(ObjectInFolderList objectInFolderList, TypeCache typeCache, boolean succinct) {
         if (objectInFolderList == null) {
             return null;
         }
@@ -1141,7 +1184,7 @@ public class JSONConverter {
             JSONArray objects = new JSONArray();
 
             for (ObjectInFolderData object : objectInFolderList.getObjects()) {
-                objects.add(convert(object, typeCache));
+                objects.add(convert(object, typeCache, succinct));
             }
 
             result.put(JSON_OBJECTINFOLDERLIST_OBJECTS, objects);
@@ -1158,18 +1201,18 @@ public class JSONConverter {
     /**
      * Converts a folder container.
      */
-    public static JSONObject convert(ObjectInFolderContainer container, TypeCache typeCache) {
+    public static JSONObject convert(ObjectInFolderContainer container, TypeCache typeCache, boolean succinct) {
         if (container == null) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTINFOLDERCONTAINER_OBJECT, convert(container.getObject(), typeCache));
+        result.put(JSON_OBJECTINFOLDERCONTAINER_OBJECT, convert(container.getObject(), typeCache, succinct));
 
         if ((container.getChildren() != null) && (container.getChildren().size() > 0)) {
             JSONArray children = new JSONArray();
             for (ObjectInFolderContainer descendant : container.getChildren()) {
-                children.add(JSONConverter.convert(descendant, typeCache));
+                children.add(JSONConverter.convert(descendant, typeCache, succinct));
             }
 
             result.put(JSON_OBJECTINFOLDERCONTAINER_CHILDREN, children);
@@ -1183,13 +1226,13 @@ public class JSONConverter {
     /**
      * Converts an object parent.
      */
-    public static JSONObject convert(ObjectParentData parent, TypeCache typeCache) {
+    public static JSONObject convert(ObjectParentData parent, TypeCache typeCache, boolean succinct) {
         if ((parent == null) || (parent.getObject() == null)) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTPARENTS_OBJECT, convert(parent.getObject(), typeCache, false));
+        result.put(JSON_OBJECTPARENTS_OBJECT, convert(parent.getObject(), typeCache, false, succinct));
         if (parent.getRelativePathSegment() != null) {
             result.put(JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT, parent.getRelativePathSegment());
         }
