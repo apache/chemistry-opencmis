@@ -41,7 +41,6 @@ import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
-import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -81,7 +80,7 @@ public class DiscoveryService {
             throw new CmisRuntimeException("Results are null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONObject jsonResults = JSONConverter.convert(results, typeCache, true, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -106,7 +105,7 @@ public class DiscoveryService {
         ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
                 includePolicyIds, includeAcl, maxItems, null);
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, false, succinct);
         jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 

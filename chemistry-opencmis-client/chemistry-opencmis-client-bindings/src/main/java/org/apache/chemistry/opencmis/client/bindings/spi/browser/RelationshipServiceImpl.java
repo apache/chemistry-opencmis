@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
@@ -55,11 +56,14 @@ public class RelationshipServiceImpl extends AbstractBrowserBindingService imple
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjectList(json, false);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjectList(json, typeCache, false);
     }
 }

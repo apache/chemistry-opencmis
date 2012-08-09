@@ -98,6 +98,12 @@ public class FormDataWriter {
         }
     }
 
+    public void addSuccinctFlag(boolean succinct) {
+        if (succinct) {
+            addParameter(Constants.CONTROL_SUCCINCT, "true");
+        }
+    }
+
     public void addPoliciesParameters(List<String> policies) {
         if (policies == null) {
             return;
@@ -177,7 +183,7 @@ public class FormDataWriter {
             }
         } else {
             writeLine(out);
-            
+
             // parameters
             for (Map.Entry<String, String> param : parameters.entrySet()) {
                 writeLine(out, "--" + boundary);

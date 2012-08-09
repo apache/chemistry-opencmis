@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
@@ -62,6 +63,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CHECK_OUT);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -71,7 +73,10 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
@@ -110,6 +115,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -119,7 +125,10 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
@@ -137,12 +146,15 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_ACL, includeAcl);
         url.addParameter(Constants.PARAM_RETURN_VERSION,
                 (major == null || Boolean.FALSE.equals(major) ? ReturnVersion.LATEST : ReturnVersion.LASTESTMAJOR));
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObject(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObject(json, typeCache);
     }
 
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
@@ -152,12 +164,18 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_RETURN_VERSION,
                 (major == null || Boolean.FALSE.equals(major) ? ReturnVersion.LATEST : ReturnVersion.LASTESTMAJOR));
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertProperties(json);
+        if (getSuccinct()) {
+            TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+            return JSONConverter.convertSuccinctProperties(json, typeCache);
+        } else {
+            return JSONConverter.convertProperties(json);
+        }
     }
 
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
@@ -166,11 +184,14 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_VERSIONS);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjects(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjects(json, typeCache);
     }
 }

@@ -195,6 +195,9 @@ public class CmisBindingFactory {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
             }
         }
+        if (!sessionParameters.containsKey(SessionParameter.BROWSER_SUCCINCT)) {
+            sessionParameters.put(SessionParameter.BROWSER_SUCCINCT, "true");
+        }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
             sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
         }

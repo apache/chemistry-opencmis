@@ -418,7 +418,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
         // get id property
         PropertyData<?> idProperty = bindingParent.getProperties().getProperties().get(PropertyIds.OBJECT_ID);
-        if (!(idProperty instanceof PropertyId)) {
+        if (!(idProperty instanceof PropertyId) && !(idProperty instanceof PropertyString)) {
             // the repository sent an object without a valid object id...
             throw new CmisRuntimeException("Repository sent invalid data! No object id!");
         }

@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
@@ -71,6 +72,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -80,7 +82,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         return (newObj == null ? null : newObj.getId());
     }
@@ -99,6 +104,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -108,7 +114,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         return (newObj == null ? null : newObj.getId());
     }
@@ -124,6 +133,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -133,7 +143,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         return (newObj == null ? null : newObj.getId());
     }
@@ -149,6 +162,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -158,7 +172,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         return (newObj == null ? null : newObj.getId());
     }
@@ -174,6 +191,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -183,7 +201,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         return (newObj == null ? null : newObj.getId());
     }
@@ -210,12 +231,15 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
         url.addParameter(Constants.PARAM_ACL, includeAcl);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObject(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObject(json, typeCache);
     }
 
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
@@ -229,24 +253,33 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
         url.addParameter(Constants.PARAM_ACL, includeAcl);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObject(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObject(json, typeCache);
     }
 
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_PROPERTIES);
         url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertProperties(json);
+        if (getSuccinct()) {
+            TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+            return JSONConverter.convertSuccinctProperties(json, typeCache);
+        } else {
+            return JSONConverter.convertProperties(json);
+        }
     }
 
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
@@ -302,6 +335,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_PROPERTIES);
         formData.addPropertiesParameters(properties);
         formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -311,7 +345,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
@@ -335,6 +372,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_MOVE);
         formData.addParameter(Constants.PARAM_TARGET_FOLDER_ID, targetFolderId);
         formData.addParameter(Constants.PARAM_SOURCE_FOLDER_ID, sourceFolderId);
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -344,7 +382,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
@@ -405,6 +446,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_SET_CONTENT, contentStream);
         formData.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
         formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -414,7 +456,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
@@ -437,6 +482,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE_CONTENT);
         formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -446,7 +492,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        ObjectData newObj = JSONConverter.convertObject(json);
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 

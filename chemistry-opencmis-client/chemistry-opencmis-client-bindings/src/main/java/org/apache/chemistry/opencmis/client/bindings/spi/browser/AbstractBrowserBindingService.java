@@ -73,12 +73,16 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     };
 
     private BindingSession session;
+    private boolean succint;
 
     /**
      * Sets the current session.
      */
     protected void setSession(BindingSession session) {
         this.session = session;
+
+        Object succintObj = session.get(SessionParameter.BROWSER_SUCCINCT);
+        this.succint = (succintObj == null ? true : Boolean.parseBoolean(succintObj.toString()));
     }
 
     /**
@@ -173,6 +177,14 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         }
 
         return result;
+    }
+
+    protected boolean getSuccinct() {
+        return succint;
+    }
+
+    protected String getSuccinctParameter() {
+        return succint ? "true" : null;
     }
 
     // ---- exceptions ----

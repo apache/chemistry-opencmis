@@ -1539,7 +1539,7 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static ObjectData convertObject(Map<String, Object> json) {
+    public static ObjectData convertObject(Map<String, Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -1561,10 +1561,19 @@ public class JSONConverter {
         }
         result.setIsExactAcl(getBoolean(json, JSON_OBJECT_EXACT_ACL));
         result.setPolicyIds(convertPolicyIds(getMap(json.get(JSON_OBJECT_POLICY_IDS))));
-        result.setProperties(convertProperties(getMap(json.get(JSON_OBJECT_PROPERTIES))));
+
+        Map<String, Object> propMap = getMap(json.get(JSON_OBJECT_SUCCINCT_PROPERTIES));
+        if (propMap != null) {
+            result.setProperties(convertSuccinctProperties(propMap, typeCache));
+        }
+        propMap = getMap(json.get(JSON_OBJECT_PROPERTIES));
+        if (propMap != null) {
+            result.setProperties(convertProperties(propMap));
+        }
+
         List<Object> jsonRelationships = getList(json.get(JSON_OBJECT_RELATIONSHIPS));
         if (jsonRelationships != null) {
-            result.setRelationships(convertObjects(jsonRelationships));
+            result.setRelationships(convertObjects(jsonRelationships, typeCache));
         }
         List<Object> jsonRenditions = getList(json.get(JSON_OBJECT_RENDITIONS));
         if (jsonRenditions != null) {
@@ -1579,14 +1588,14 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static List<ObjectData> convertObjects(List<Object> json) {
+    public static List<ObjectData> convertObjects(List<Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
 
         List<ObjectData> result = new ArrayList<ObjectData>();
         for (Object obj : json) {
-            ObjectData relationship = convertObject(getMap(obj));
+            ObjectData relationship = convertObject(getMap(obj), typeCache);
             if (relationship != null) {
                 result.add(relationship);
             }
@@ -1904,6 +1913,253 @@ public class JSONConverter {
     }
 
     /**
+     * Converts properties.
+     */
+    @SuppressWarnings("unchecked")
+    public static Properties convertSuccinctProperties(Map<String, Object> json, TypeCache typeCache) {
+        if (json == null) {
+            return null;
+        }
+
+        TypeDefinition typeDef = null;
+        if (json.get(PropertyIds.OBJECT_TYPE_ID) instanceof String) {
+            typeDef = typeCache.getTypeDefinition((String) json.get(PropertyIds.OBJECT_TYPE_ID));
+        }
+
+        PropertiesImpl result = new PropertiesImpl();
+
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            String id = entry.getKey();
+            PropertyDefinition<?> propDef = (typeDef == null ? null : typeDef.getPropertyDefinitions().get(id));
+
+            List<Object> values = null;
+            if (entry.getValue() instanceof List) {
+                values = (List<Object>) entry.getValue();
+            } else if (entry.getValue() != null) {
+                values = Collections.singletonList(entry.getValue());
+            }
+
+            AbstractPropertyData<?> property = null;
+
+            if (propDef != null) {
+                switch (propDef.getPropertyType()) {
+                case STRING:
+                    property = new PropertyStringImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyStringImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case ID:
+                    property = new PropertyIdImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyIdImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case BOOLEAN:
+                    property = new PropertyBooleanImpl();
+                    {
+                        List<Boolean> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<Boolean>();
+                            for (Object obj : values) {
+                                if (obj instanceof Boolean) {
+                                    propertyValues.add((Boolean) obj);
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyBooleanImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case INTEGER:
+                    property = new PropertyIntegerImpl();
+                    {
+                        List<BigInteger> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<BigInteger>();
+                            for (Object obj : values) {
+                                if (obj instanceof BigInteger) {
+                                    propertyValues.add((BigInteger) obj);
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyIntegerImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case DECIMAL:
+                    property = new PropertyDecimalImpl();
+                    {
+                        List<BigDecimal> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<BigDecimal>();
+                            for (Object obj : values) {
+                                if (obj instanceof BigDecimal) {
+                                    propertyValues.add((BigDecimal) obj);
+                                } else if (obj instanceof BigInteger) {
+                                    propertyValues.add(new BigDecimal((BigInteger) obj));
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyDecimalImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case DATETIME:
+                    property = new PropertyDateTimeImpl();
+                    {
+                        List<GregorianCalendar> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<GregorianCalendar>();
+                            for (Object obj : values) {
+                                if (obj instanceof Number) {
+                                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                                    cal.setTimeInMillis(((Number) obj).longValue());
+                                    propertyValues.add(cal);
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyDateTimeImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case HTML:
+                    property = new PropertyHtmlImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyHtmlImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                case URI:
+                    property = new PropertyUriImpl();
+                    {
+                        List<String> propertyValues = null;
+                        if (values != null) {
+                            propertyValues = new ArrayList<String>();
+                            for (Object obj : values) {
+                                if (obj instanceof String) {
+                                    propertyValues.add(obj.toString());
+                                } else {
+                                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                                }
+                            }
+                        }
+                        ((PropertyUriImpl) property).setValues(propertyValues);
+                    }
+                    break;
+                }
+
+                property.setId(id);
+                property.setDisplayName(propDef.getDisplayName());
+                property.setQueryName(propDef.getQueryName());
+                property.setLocalName(propDef.getLocalName());
+            } else {
+                // this else block should only be reached in rare circumstances
+                // it may return incorrect types
+
+                if (values == null) {
+                    property = new PropertyStringImpl();
+                    ((PropertyStringImpl) property).setValues(null);
+                } else {
+                    Object firstValue = values.get(0);
+                    if (firstValue instanceof Boolean) {
+                        property = new PropertyBooleanImpl();
+                        List<Boolean> propertyValues = new ArrayList<Boolean>();
+                        for (Object obj : values) {
+                            if (obj instanceof Boolean) {
+                                propertyValues.add((Boolean) obj);
+                            } else {
+                                throw new CmisRuntimeException("Invalid property value: " + obj);
+                            }
+                        }
+                        ((PropertyBooleanImpl) property).setValues(propertyValues);
+                    } else if (firstValue instanceof BigInteger) {
+                        property = new PropertyIntegerImpl();
+                        List<BigInteger> propertyValues = new ArrayList<BigInteger>();
+                        for (Object obj : values) {
+                            if (obj instanceof BigInteger) {
+                                propertyValues.add((BigInteger) obj);
+                            } else {
+                                throw new CmisRuntimeException("Invalid property value: " + obj);
+                            }
+                        }
+                        ((PropertyIntegerImpl) property).setValues(propertyValues);
+                    } else if (firstValue instanceof BigDecimal) {
+                        property = new PropertyDecimalImpl();
+                        List<BigDecimal> propertyValues = new ArrayList<BigDecimal>();
+                        for (Object obj : values) {
+                            if (obj instanceof BigDecimal) {
+                                propertyValues.add((BigDecimal) obj);
+                            } else if (obj instanceof BigInteger) {
+                                propertyValues.add(new BigDecimal((BigInteger) obj));
+                            } else {
+                                throw new CmisRuntimeException("Invalid property value: " + obj);
+                            }
+                        }
+                        ((PropertyDecimalImpl) property).setValues(propertyValues);
+                    } else {
+                        property = new PropertyStringImpl();
+                        List<String> propertyValues = new ArrayList<String>();
+                        for (Object obj : values) {
+                            if (obj instanceof String) {
+                                propertyValues.add((String) obj);
+                            } else {
+                                throw new CmisRuntimeException("Invalid property value: " + obj);
+                            }
+                        }
+                        ((PropertyStringImpl) property).setValues(propertyValues);
+                    }
+                }
+
+                property.setId(id);
+                property.setDisplayName(id);
+                property.setQueryName(null);
+                property.setLocalName(null);
+            }
+
+            result.addProperty(property);
+        }
+
+        return result;
+    }
+
+    /**
      * Converts a rendition.
      */
     public static RenditionData convertRendition(Map<String, Object> json) {
@@ -1950,7 +2206,7 @@ public class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectInFolderList convertObjectInFolderList(Map<String, Object> json) {
+    public static ObjectInFolderList convertObjectInFolderList(Map<String, Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -1964,7 +2220,7 @@ public class JSONConverter {
             for (Object obj : jsonChildren) {
                 Map<String, Object> jsonObject = getMap(obj);
                 if (jsonObject != null) {
-                    objects.add(convertObjectInFolder(jsonObject));
+                    objects.add(convertObjectInFolder(jsonObject, typeCache));
                 }
             }
         }
@@ -1981,14 +2237,14 @@ public class JSONConverter {
     /**
      * Converts an object in a folder.
      */
-    public static ObjectInFolderData convertObjectInFolder(Map<String, Object> json) {
+    public static ObjectInFolderData convertObjectInFolder(Map<String, Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
 
         ObjectInFolderDataImpl result = new ObjectInFolderDataImpl();
 
-        result.setObject(convertObject(getMap(json.get(JSON_OBJECTINFOLDER_OBJECT))));
+        result.setObject(convertObject(getMap(json.get(JSON_OBJECTINFOLDER_OBJECT)), typeCache));
         result.setPathSegment(getString(json, JSON_OBJECTINFOLDER_PATH_SEGMENT));
 
         convertExtension(json, result, OBJECTINFOLDER_KEYS);
@@ -1999,7 +2255,7 @@ public class JSONConverter {
     /**
      * Converts a descendants tree.
      */
-    public static List<ObjectInFolderContainer> convertDescendants(List<Object> json) {
+    public static List<ObjectInFolderContainer> convertDescendants(List<Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2009,7 +2265,7 @@ public class JSONConverter {
         for (Object obj : json) {
             Map<String, Object> desc = getMap(obj);
             if (desc != null) {
-                result.add(convertDescendant(desc));
+                result.add(convertDescendant(desc, typeCache));
             }
         }
 
@@ -2019,14 +2275,14 @@ public class JSONConverter {
     /**
      * Converts a descendant.
      */
-    public static ObjectInFolderContainer convertDescendant(Map<String, Object> json) {
+    public static ObjectInFolderContainer convertDescendant(Map<String, Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
 
         ObjectInFolderContainerImpl result = new ObjectInFolderContainerImpl();
 
-        result.setObject(convertObjectInFolder(getMap(json.get(JSON_OBJECTINFOLDERCONTAINER_OBJECT))));
+        result.setObject(convertObjectInFolder(getMap(json.get(JSON_OBJECTINFOLDERCONTAINER_OBJECT)), typeCache));
 
         List<ObjectInFolderContainer> containerList = new ArrayList<ObjectInFolderContainer>();
         List<Object> jsonContainerList = getList(json.get(JSON_OBJECTINFOLDERCONTAINER_CHILDREN));
@@ -2034,7 +2290,7 @@ public class JSONConverter {
             for (Object obj : jsonContainerList) {
                 Map<String, Object> containerChild = getMap(obj);
                 if (containerChild != null) {
-                    containerList.add(convertDescendant(containerChild));
+                    containerList.add(convertDescendant(containerChild, typeCache));
                 }
             }
         }
@@ -2049,7 +2305,7 @@ public class JSONConverter {
     /**
      * Converts an object parents list.
      */
-    public static List<ObjectParentData> convertObjectParents(List<Object> json) {
+    public static List<ObjectParentData> convertObjectParents(List<Object> json, TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2061,7 +2317,7 @@ public class JSONConverter {
             if (jsonParent != null) {
                 ObjectParentDataImpl parent = new ObjectParentDataImpl();
 
-                parent.setObject(convertObject(getMap(jsonParent.get(JSON_OBJECTPARENTS_OBJECT))));
+                parent.setObject(convertObject(getMap(jsonParent.get(JSON_OBJECTPARENTS_OBJECT)), typeCache));
                 parent.setRelativePathSegment(getString(jsonParent, JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT));
 
                 convertExtension(jsonParent, parent, OBJECTPARENTS_KEYS);
@@ -2076,7 +2332,7 @@ public class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectList convertObjectList(Map<String, Object> json, boolean isQueryResult) {
+    public static ObjectList convertObjectList(Map<String, Object> json, TypeCache typeCache, boolean isQueryResult) {
         if (json == null) {
             return null;
         }
@@ -2091,7 +2347,7 @@ public class JSONConverter {
             for (Object obj : jsonChildren) {
                 Map<String, Object> jsonObject = getMap(obj);
                 if (jsonObject != null) {
-                    objects.add(convertObject(jsonObject));
+                    objects.add(convertObject(jsonObject, typeCache));
                 }
             }
         }

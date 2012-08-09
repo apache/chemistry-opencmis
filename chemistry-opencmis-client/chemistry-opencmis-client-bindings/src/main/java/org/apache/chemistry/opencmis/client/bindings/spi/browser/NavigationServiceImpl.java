@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
@@ -61,12 +62,15 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjectInFolderList(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjectInFolderList(json, typeCache);
     }
 
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
@@ -80,12 +84,15 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertDescendants(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertDescendants(json, typeCache);
     }
 
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
@@ -99,12 +106,15 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertDescendants(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertDescendants(json, typeCache);
     }
 
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
@@ -117,24 +127,30 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_RELATIVE_PATH_SEGMENT, includeRelativePathSegment);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjectParents(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjectParents(json, typeCache);
     }
 
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, folderId, Constants.SELECTOR_PARENT);
         url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObject(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObject(json, typeCache);
     }
 
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
@@ -150,11 +166,14 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjectList(json, false);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjectList(json, typeCache, false);
     }
 }

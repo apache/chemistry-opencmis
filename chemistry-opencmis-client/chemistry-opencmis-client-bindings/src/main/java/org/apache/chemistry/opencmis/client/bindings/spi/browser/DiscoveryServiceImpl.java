@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -61,6 +62,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
         formData.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         formData.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         formData.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        // Important: No succinct flag here!!!
 
         // send and parse
         HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
@@ -69,21 +71,23 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
             }
         });
 
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-        return JSONConverter.convertObjectList(json, true);
+        return JSONConverter.convertObjectList(json, typeCache, true);
     }
 
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getRepositoryUrl(repositoryId, Constants.SELECTOR_CONTENT_CHANGES);
-        url.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN,
-                changeLogToken == null ? null : changeLogToken.getValue());
+        url.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, changeLogToken == null ? null : changeLogToken.getValue());
         url.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
         url.addParameter(Constants.PARAM_ACL, includeAcl);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
@@ -96,6 +100,8 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
             }
         }
 
-        return JSONConverter.convertObjectList(json, false);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjectList(json, typeCache, false);
     }
 }

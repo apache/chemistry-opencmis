@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.server;
+package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,14 +33,14 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 /**
  * Temporary type cache used for one call.
  */
-public class TypeCacheImpl implements TypeCache {
+public class ServerTypeCacheImpl implements TypeCache {
 
     private final String repositoryId;
     private final CmisService service;
     private final Map<String, TypeDefinition> typeDefinitions;
     private final Map<String, TypeDefinition> objectToTypeDefinitions;
 
-    public TypeCacheImpl(String repositoryId, CmisService service) {
+    public ServerTypeCacheImpl(String repositoryId, CmisService service) {
         this.repositoryId = repositoryId;
         this.service = service;
         typeDefinitions = new HashMap<String, TypeDefinition>();

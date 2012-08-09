@@ -52,7 +52,6 @@ import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
-import org.apache.chemistry.opencmis.commons.impl.server.TypeCacheImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
@@ -91,7 +90,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Children are null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONObject jsonChildren = JSONConverter.convert(children, typeCache, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -122,7 +121,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Descendants are null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONArray jsonDescendants = new JSONArray();
         for (ObjectInFolderContainer descendant : descendants) {
             jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
@@ -156,7 +155,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Folder Tree are null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONArray jsonDescendants = new JSONArray();
         for (ObjectInFolderContainer descendant : folderTree) {
             jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
@@ -183,7 +182,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Parent is null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONObject jsonObject = JSONConverter.convert(parent, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -213,7 +212,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Parents are null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONArray jsonParents = new JSONArray();
         for (ObjectParentData parent : parents) {
             jsonParents.add(JSONConverter.convert(parent, typeCache, succinct));
@@ -248,7 +247,7 @@ public final class NavigationService {
             throw new CmisRuntimeException("Checked out list is null!");
         }
 
-        TypeCache typeCache = new TypeCacheImpl(repositoryId, service);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache, false, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);

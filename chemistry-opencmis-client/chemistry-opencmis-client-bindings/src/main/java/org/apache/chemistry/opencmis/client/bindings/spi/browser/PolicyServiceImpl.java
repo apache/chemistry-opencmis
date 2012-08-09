@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
@@ -80,11 +81,14 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_POLICIES);
         url.addParameter(Constants.PARAM_FILTER, filter);
+        url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
         HttpUtils.Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertObjects(json);
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        return JSONConverter.convertObjects(json, typeCache);
     }
 }
