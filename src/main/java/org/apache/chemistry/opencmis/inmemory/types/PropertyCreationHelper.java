@@ -307,8 +307,17 @@ public class PropertyCreationHelper {
         		queryName = "SEARCH_SCORE";
         		if (!funcEntry.getKey().equals("SCORE"))
         			queryName = funcEntry.getKey();
-                PropertyDecimal pd = objFactory.createPropertyDecimalData(queryName, BigDecimal.valueOf(1.0));
+                
+//        		PropertyDecimal pd = objFactory.createPropertyDecimalData(queryName, BigDecimal.valueOf(1.0));
+        		// does not give me an impl class, so directly use it
+                PropertyDecimalImpl pd = new PropertyDecimalImpl();
+
                 // fixed dummy value
+        		pd.setValue(BigDecimal.valueOf(1.0));
+        		pd.setId(queryName);
+        		pd.setQueryName(queryName);
+        		pd.setLocalName("SCORE");
+        		pd.setDisplayName("Score");
                 mappedProperties.put(funcEntry.getKey(), pd);
         	}
         }
