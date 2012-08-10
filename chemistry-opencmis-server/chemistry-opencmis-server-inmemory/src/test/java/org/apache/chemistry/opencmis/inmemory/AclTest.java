@@ -56,19 +56,17 @@ public class AclTest {
 
     @Test
     public void testCreateAce() {
-        InMemoryAce ace;
         try {
-            ace = new InMemoryAce(null, Permission.NONE);
+            new InMemoryAce(null, Permission.NONE);
             fail("create an ACE with null principalId should fail.");
         } catch (RuntimeException e) {            
         }
 
         try {
-            ace = new InMemoryAce("xxx", null);
+            new InMemoryAce("xxx", null);
             fail("create an ACE with null permission should fail.");
         } catch (RuntimeException e) {            
         }
-
     }
     
     @Test

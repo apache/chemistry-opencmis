@@ -33,6 +33,7 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
      * Constructor.
      */
     public ContentTypeCacheLevelImpl() {
+        super();
         enableKeyFallback(null);
     }
 

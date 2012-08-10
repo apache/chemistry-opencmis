@@ -66,9 +66,9 @@ public class TypeManager {
     public static final String RELATIONSHIP_TYPE_ID = BaseTypeId.CMIS_RELATIONSHIP.value();
     public static final String POLICY_TYPE_ID = BaseTypeId.CMIS_POLICY.value();
 
-    private static final String NAMESPACE = "http://opencmis.org/fileshare";
+    private static final String NAMESPACE = "http://chemistry.apache.org/opencmis/fileshare";
 
-    private static final Logger log = LoggerFactory.getLogger(TypeManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TypeManager.class);
 
     private Map<String, TypeDefinitionContainerImpl> types;
     private List<TypeDefinitionContainer> typesList;
@@ -354,7 +354,7 @@ public class TypeManager {
         // add it
         addTypeInteral(newType);
 
-        log.info("Added type '" + newType.getId() + "'.");
+        LOG.info("Added type '" + newType.getId() + "'.");
 
         return true;
     }

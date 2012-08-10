@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 /**
  * QueryStatement implementation.
  */
-public class QueryStatementImpl implements QueryStatement {
+public class QueryStatementImpl implements QueryStatement, Cloneable {
 
     private final Session session;
     private final String statement;

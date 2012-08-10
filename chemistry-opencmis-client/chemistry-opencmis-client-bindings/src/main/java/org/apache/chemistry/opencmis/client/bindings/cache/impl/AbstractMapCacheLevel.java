@@ -24,9 +24,6 @@ import org.apache.chemistry.opencmis.client.bindings.cache.CacheLevel;
 
 /**
  * Abstract Map cache.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractMapCacheLevel implements CacheLevel {
 

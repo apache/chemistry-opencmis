@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CmisAtomPubSpi implements CmisSpi {
 
-    private static final Logger log = LoggerFactory.getLogger(CmisAtomPubSpi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubSpi.class);
 
     private final BindingSession session;
 
@@ -55,8 +55,8 @@ public class CmisAtomPubSpi implements CmisSpi {
      * Constructor.
      */
     public CmisAtomPubSpi(BindingSession session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing AtomPub SPI...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Initializing AtomPub SPI...");
         }
 
         this.session = session;

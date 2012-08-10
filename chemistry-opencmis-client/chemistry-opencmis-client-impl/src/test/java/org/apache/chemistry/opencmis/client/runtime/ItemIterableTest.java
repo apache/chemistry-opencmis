@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 
 public class ItemIterableTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ItemIterableTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ItemIterableTest.class);
     static {
         Properties p = new Properties();
         try {
@@ -59,7 +59,7 @@ public class ItemIterableTest {
                 boolean hasMoreItems = true;
                 List<String> page = new ArrayList<String>();
 
-                ItemIterableTest.log.info("(" + skipCount + "|" + this.maxNumItems + ") ");
+                ItemIterableTest.LOG.info("(" + skipCount + "|" + this.maxNumItems + ") ");
 
                 int from = (int) skipCount;
                 int to = (int) (skipCount + this.maxNumItems);
@@ -172,7 +172,7 @@ public class ItemIterableTest {
 
     @Test
     public void totalNumItems() {
-        ItemIterableTest.log.info("totalNumItems");
+        ItemIterableTest.LOG.info("totalNumItems");
 
         int pageSize = 5;
         ItemIterable<String> p = this.getIterable(this.data10, pageSize);
@@ -188,7 +188,7 @@ public class ItemIterableTest {
 
     @Test
     public void hasMoreItems() {
-        ItemIterableTest.log.info("totalHasMoreItems");
+        ItemIterableTest.LOG.info("totalHasMoreItems");
 
         int pageSize = 5;
         ItemIterable<String> p = this.getIterable(this.data10, pageSize);
@@ -204,7 +204,7 @@ public class ItemIterableTest {
 
     @Test
     public void pageNumItems() {
-        ItemIterableTest.log.info("totalPageNumItems");
+        ItemIterableTest.LOG.info("totalPageNumItems");
 
         int pageSize = 7;
         ItemIterable<String> p = this.getIterable(this.data10, pageSize);
@@ -219,7 +219,7 @@ public class ItemIterableTest {
     }
 
     private void loopSubPage(String[] data, int skipCount, int maxItems, int pageSize) {
-        ItemIterableTest.log.info("loopSubPage (" + skipCount + ", " + maxItems + ", " + pageSize + ")");
+        ItemIterableTest.LOG.info("loopSubPage (" + skipCount + ", " + maxItems + ", " + pageSize + ")");
         String msg = "";
 
         ItemIterable<String> p = this.getIterable(data, pageSize);
@@ -236,12 +236,12 @@ public class ItemIterableTest {
             msg += (s + " ");
             count++;
         }
-        ItemIterableTest.log.info(msg);
+        ItemIterableTest.LOG.info(msg);
         assertTrue(count <= pageSize);
     }
 
     private void loopSkip(String[] data, int skipCount, int pageSize) {
-        ItemIterableTest.log.info("loopSkip (" + skipCount + ", " + pageSize + ")");
+        ItemIterableTest.LOG.info("loopSkip (" + skipCount + ", " + pageSize + ")");
         String msg = "";
 
         ItemIterable<String> p = this.getIterable(data, pageSize);
@@ -256,12 +256,12 @@ public class ItemIterableTest {
             msg += (s + " ");
             count++;
         }
-        ItemIterableTest.log.info(msg);
+        ItemIterableTest.LOG.info(msg);
         assertEquals(data.length - skipCount, count);
     }
 
     private void loopAll(String[] data, int pageSize) {
-        ItemIterableTest.log.info("loopAll (" + pageSize + ")");
+        ItemIterableTest.LOG.info("loopAll (" + pageSize + ")");
         String msg = "";
 
         ItemIterable<String> p = this.getIterable(data, pageSize);
@@ -274,12 +274,12 @@ public class ItemIterableTest {
             msg += (s + " ");
             count++;
         }
-        ItemIterableTest.log.info(msg);
+        ItemIterableTest.LOG.info(msg);
         assertEquals(data.length, count);
     }
 
     private void loopPage(String[] data, int skipCount, int pageSize) {
-        ItemIterableTest.log.info("loopPage (" + skipCount + ", " + pageSize + ")");
+        ItemIterableTest.LOG.info("loopPage (" + skipCount + ", " + pageSize + ")");
         String msg = "";
 
         ItemIterable<String> p = this.getIterable(data, pageSize);
@@ -294,7 +294,7 @@ public class ItemIterableTest {
             msg += (s + " ");
             count++;
         }
-        ItemIterableTest.log.info(msg);
+        ItemIterableTest.LOG.info(msg);
         assertEquals(Math.min(data.length - skipCount, pageSize), count);
     }
 

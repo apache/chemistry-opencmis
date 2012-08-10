@@ -26,7 +26,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 /**
  * JSON object constants.
  */
-public class JSONConstants {
+public final class JSONConstants {
 
     public static final String ERROR_EXCEPTION = "exception";
     public static final String ERROR_MESSAGE = "message";
@@ -139,6 +139,7 @@ public class JSONConstants {
 
     public static final String JSON_OBJECT_PROPERTIES = "properties";
     public static final String JSON_OBJECT_SUCCINCT_PROPERTIES = "succinctProperties";
+    public static final String JSON_OBJECT_PROPERTIES_EXTENSION = "propertiesExtension";
     public static final String JSON_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
     public static final String JSON_OBJECT_RELATIONSHIPS = "relationships";
     public static final String JSON_OBJECT_CHANGE_EVENT_INFO = "changeEventInfo";
@@ -152,6 +153,7 @@ public class JSONConstants {
     static {
         OBJECT_KEYS.add(JSON_OBJECT_PROPERTIES);
         OBJECT_KEYS.add(JSON_OBJECT_SUCCINCT_PROPERTIES);
+        OBJECT_KEYS.add(JSON_OBJECT_PROPERTIES_EXTENSION);
         OBJECT_KEYS.add(JSON_OBJECT_ALLOWABLE_ACTIONS);
         OBJECT_KEYS.add(JSON_OBJECT_RELATIONSHIPS);
         OBJECT_KEYS.add(JSON_OBJECT_CHANGE_EVENT_INFO);

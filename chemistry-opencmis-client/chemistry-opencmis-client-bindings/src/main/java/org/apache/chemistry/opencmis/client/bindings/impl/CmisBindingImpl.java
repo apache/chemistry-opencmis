@@ -68,7 +68,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
      * @param authenticationProvider
      *            an authentication provider instance
      */
-    public CmisBindingImpl(Map<String, String> sessionParameters, AuthenticationProvider authenticationProvider) {
+    public CmisBindingImpl(final Map<String, String> sessionParameters, AuthenticationProvider authenticationProvider) {
         // some checks first
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Session parameters must be set!");

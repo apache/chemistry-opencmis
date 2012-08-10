@@ -63,7 +63,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
     public static final BigInteger MINUS_ONE = BigInteger.valueOf(-1);
 
-    private static final Logger log = LoggerFactory.getLogger(CmisServiceWrapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisServiceWrapper.class);
 
     private BigInteger defaultTypesMaxItems = null;
     private BigInteger defaultTypesDepth = MINUS_ONE;
@@ -134,7 +134,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         } else {
             // should not happen if the connector works correctly
             // it's alarming enough to log the exception
-            log.warn(e.toString(), e);
+            LOG.warn(e.toString(), e);
 
             return new CmisRuntimeException(e.getMessage(), e);
         }

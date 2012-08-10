@@ -1672,9 +1672,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     if (parent == null) {
                         f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
                         addResult(results, assertIsTrue(parents.size() > 0, null, f));
-                    }
-
-                    if (folder.getId().equals(parent.getId())) {
+                    } else if (folder.getId().equals(parent.getId())) {
                         foundParent = true;
                         break;
                     }

@@ -184,7 +184,7 @@ public class ObjGenApp {
                 fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
             else
                 fContentKind = null;
-        } if (kind.equals("static/text"))
+        } else if (kind.equals("static/text"))
             fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
         else if (kind.equals("lorem/text"))
             fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;

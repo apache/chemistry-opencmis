@@ -150,7 +150,7 @@ import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 /**
  * OpenCMIS objects to JSON converter.
  */
-public class JSONConverter {
+public final class JSONConverter {
 
     /**
      * Private constructor.
@@ -161,7 +161,8 @@ public class JSONConverter {
     /**
      * Converts a repository info object.
      */
-    public static JSONObject convert(RepositoryInfo repositoryInfo, String repositoryUrl, String rootUrl) {
+    public static JSONObject convert(final RepositoryInfo repositoryInfo, final String repositoryUrl,
+            final String rootUrl) {
         if (repositoryInfo == null) {
             return null;
         }
@@ -204,7 +205,7 @@ public class JSONConverter {
     /**
      * Converts a capabilities object.
      */
-    public static JSONObject convert(RepositoryCapabilities capabilities) {
+    public static JSONObject convert(final RepositoryCapabilities capabilities) {
         if (capabilities == null) {
             return null;
         }
@@ -235,7 +236,7 @@ public class JSONConverter {
     /**
      * Converts an ACL capabilities object.
      */
-    public static JSONObject convert(AclCapabilities capabilities) {
+    public static JSONObject convert(final AclCapabilities capabilities) {
         if (capabilities == null) {
             return null;
         }
@@ -288,7 +289,7 @@ public class JSONConverter {
         return result;
     }
 
-    public static RepositoryInfo convertRepositoryInfo(Map<String, Object> json) {
+    public static RepositoryInfo convertRepositoryInfo(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -331,7 +332,7 @@ public class JSONConverter {
         return result;
     }
 
-    public static RepositoryCapabilities convertRepositoryCapabilities(Map<String, Object> json) {
+    public static RepositoryCapabilities convertRepositoryCapabilities(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -361,7 +362,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static AclCapabilities convertAclCapabilities(Map<String, Object> json) {
+    public static AclCapabilities convertAclCapabilities(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -433,7 +434,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static TypeDefinition convertTypeDefinition(Map<String, Object> json) {
+    public static TypeDefinition convertTypeDefinition(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -525,7 +526,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static PropertyDefinition<?> convertPropertyDefinition(Map<String, Object> json) {
+    public static PropertyDefinition<?> convertPropertyDefinition(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -637,7 +638,7 @@ public class JSONConverter {
      * Converts choices.
      */
     @SuppressWarnings({ "rawtypes" })
-    private static List<Choice<String>> convertChoicesString(Object choices) {
+    private static List<Choice<String>> convertChoicesString(final Object choices) {
         if (!(choices instanceof List)) {
             return null;
         }
@@ -674,7 +675,7 @@ public class JSONConverter {
      * Converts choices.
      */
     @SuppressWarnings({ "rawtypes" })
-    private static List<Choice<Boolean>> convertChoicesBoolean(Object choices) {
+    private static List<Choice<Boolean>> convertChoicesBoolean(final Object choices) {
         if (!(choices instanceof List)) {
             return null;
         }
@@ -711,7 +712,7 @@ public class JSONConverter {
      * Converts choices.
      */
     @SuppressWarnings({ "rawtypes" })
-    private static List<Choice<BigInteger>> convertChoicesInteger(Object choices) {
+    private static List<Choice<BigInteger>> convertChoicesInteger(final Object choices) {
         if (!(choices instanceof List)) {
             return null;
         }
@@ -748,7 +749,7 @@ public class JSONConverter {
      * Converts choices.
      */
     @SuppressWarnings({ "rawtypes" })
-    private static List<Choice<BigDecimal>> convertChoicesDecimal(Object choices) {
+    private static List<Choice<BigDecimal>> convertChoicesDecimal(final Object choices) {
         if (!(choices instanceof List)) {
             return null;
         }
@@ -785,7 +786,7 @@ public class JSONConverter {
      * Converts choices.
      */
     @SuppressWarnings({ "rawtypes" })
-    private static List<Choice<GregorianCalendar>> convertChoicesDateTime(Object choices) {
+    private static List<Choice<GregorianCalendar>> convertChoicesDateTime(final Object choices) {
         if (!(choices instanceof List)) {
             return null;
         }
@@ -821,7 +822,8 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static JSONObject convert(ObjectData object, TypeCache typeCache, boolean isQueryResult, boolean succinct) {
+    public static JSONObject convert(final ObjectData object, final TypeCache typeCache, final boolean isQueryResult,
+            final boolean succinct) {
         if (object == null) {
             return null;
         }
@@ -840,6 +842,12 @@ public class JSONConverter {
                 if (properties != null) {
                     result.put(JSON_OBJECT_PROPERTIES, properties);
                 }
+            }
+
+            JSONObject propertiesExtension = new JSONObject();
+            convertExtension(object.getProperties(), propertiesExtension);
+            if (!propertiesExtension.isEmpty()) {
+                result.put(JSON_OBJECT_PROPERTIES_EXTENSION, propertiesExtension);
             }
         }
 
@@ -912,8 +920,8 @@ public class JSONConverter {
     /**
      * Converts a bag of properties.
      */
-    public static JSONObject convert(final Properties properties, String objectId, final TypeCache typeCache,
-            boolean isQueryResult, boolean succinct) {
+    public static JSONObject convert(final Properties properties, final String objectId, final TypeCache typeCache,
+            final boolean isQueryResult, final boolean succinct) {
         if (properties == null) {
             return null;
         }
@@ -945,8 +953,6 @@ public class JSONConverter {
             String propId = (isQueryResult ? property.getQueryName() : property.getId());
             result.put(propId, convert(property, propDef, succinct));
         }
-
-        convertExtension(properties, result);
 
         return result;
     }
@@ -1041,7 +1047,7 @@ public class JSONConverter {
     /**
      * Converts allowable actions.
      */
-    public static JSONObject convert(AllowableActions allowableActions) {
+    public static JSONObject convert(final AllowableActions allowableActions) {
         if (allowableActions == null) {
             return null;
         }
@@ -1061,7 +1067,7 @@ public class JSONConverter {
     /**
      * Converts an ACL.
      */
-    public static JSONObject convert(Acl acl) {
+    public static JSONObject convert(final Acl acl) {
         if ((acl == null) || (acl.getAces() == null)) {
             return null;
         }
@@ -1098,7 +1104,7 @@ public class JSONConverter {
     /**
      * Converts a rendition.
      */
-    public static JSONObject convert(RenditionData rendition) {
+    public static JSONObject convert(final RenditionData rendition) {
         if (rendition == null) {
             return null;
         }
@@ -1122,7 +1128,8 @@ public class JSONConverter {
     /**
      * Converts a query object list.
      */
-    public static JSONObject convert(ObjectList list, TypeCache typeCache, boolean isQueryResult, boolean succinct) {
+    public static JSONObject convert(final ObjectList list, final TypeCache typeCache, final boolean isQueryResult,
+            final boolean succinct) {
         if (list == null) {
             return null;
         }
@@ -1156,7 +1163,8 @@ public class JSONConverter {
     /**
      * Converts an object in a folder list.
      */
-    public static JSONObject convert(ObjectInFolderData objectInFolder, TypeCache typeCache, boolean succinct) {
+    public static JSONObject convert(final ObjectInFolderData objectInFolder, final TypeCache typeCache,
+            final boolean succinct) {
         if ((objectInFolder == null) || (objectInFolder.getObject() == null)) {
             return null;
         }
@@ -1173,7 +1181,8 @@ public class JSONConverter {
     /**
      * Converts a folder list.
      */
-    public static JSONObject convert(ObjectInFolderList objectInFolderList, TypeCache typeCache, boolean succinct) {
+    public static JSONObject convert(final ObjectInFolderList objectInFolderList, final TypeCache typeCache,
+            final boolean succinct) {
         if (objectInFolderList == null) {
             return null;
         }
@@ -1201,7 +1210,8 @@ public class JSONConverter {
     /**
      * Converts a folder container.
      */
-    public static JSONObject convert(ObjectInFolderContainer container, TypeCache typeCache, boolean succinct) {
+    public static JSONObject convert(final ObjectInFolderContainer container, final TypeCache typeCache,
+            final boolean succinct) {
         if (container == null) {
             return null;
         }
@@ -1226,7 +1236,7 @@ public class JSONConverter {
     /**
      * Converts an object parent.
      */
-    public static JSONObject convert(ObjectParentData parent, TypeCache typeCache, boolean succinct) {
+    public static JSONObject convert(final ObjectParentData parent, final TypeCache typeCache, final boolean succinct) {
         if ((parent == null) || (parent.getObject() == null)) {
             return null;
         }
@@ -1245,7 +1255,7 @@ public class JSONConverter {
     /**
      * Converts a type definition.
      */
-    public static JSONObject convert(TypeDefinition type) {
+    public static JSONObject convert(final TypeDefinition type) {
         if (type == null) {
             return null;
         }
@@ -1298,7 +1308,7 @@ public class JSONConverter {
     /**
      * Converts a property type definition.
      */
-    public static JSONObject convert(PropertyDefinition<?> propertyDefinition) {
+    public static JSONObject convert(final PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition == null) {
             return null;
         }
@@ -1380,7 +1390,7 @@ public class JSONConverter {
     /**
      * Converts choices.
      */
-    private static <T> JSONArray convertChoices(List<Choice<T>> choices, Cardinality cardinality) {
+    private static <T> JSONArray convertChoices(final List<Choice<T>> choices, final Cardinality cardinality) {
         if (choices == null) {
             return null;
         }
@@ -1417,7 +1427,7 @@ public class JSONConverter {
     /**
      * Converts a type definition list.
      */
-    public static JSONObject convert(TypeDefinitionList list) {
+    public static JSONObject convert(final TypeDefinitionList list) {
         if (list == null) {
             return null;
         }
@@ -1446,7 +1456,7 @@ public class JSONConverter {
      * Converts a type definition list.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static TypeDefinitionList convertTypeChildren(Map<String, Object> json) {
+    public static TypeDefinitionList convertTypeChildren(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -1476,7 +1486,7 @@ public class JSONConverter {
     /**
      * Converts a type definition container.
      */
-    public static JSONObject convert(TypeDefinitionContainer container) {
+    public static JSONObject convert(final TypeDefinitionContainer container) {
         if (container == null) {
             return null;
         }
@@ -1502,7 +1512,7 @@ public class JSONConverter {
      * Converts a type definition list.
      */
     @SuppressWarnings({ "unchecked" })
-    public static List<TypeDefinitionContainer> convertTypeDescendants(List<Object> json) {
+    public static List<TypeDefinitionContainer> convertTypeDescendants(final List<Object> json) {
         if (json == null) {
             return null;
         }
@@ -1539,7 +1549,7 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static ObjectData convertObject(Map<String, Object> json, TypeCache typeCache) {
+    public static ObjectData convertObject(final Map<String, Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -1564,11 +1574,12 @@ public class JSONConverter {
 
         Map<String, Object> propMap = getMap(json.get(JSON_OBJECT_SUCCINCT_PROPERTIES));
         if (propMap != null) {
-            result.setProperties(convertSuccinctProperties(propMap, typeCache));
+            result.setProperties(convertSuccinctProperties(propMap, getMap(json.get(JSON_OBJECT_PROPERTIES_EXTENSION)),
+                    typeCache));
         }
         propMap = getMap(json.get(JSON_OBJECT_PROPERTIES));
         if (propMap != null) {
-            result.setProperties(convertProperties(propMap));
+            result.setProperties(convertProperties(propMap, getMap(json.get(JSON_OBJECT_PROPERTIES_EXTENSION))));
         }
 
         List<Object> jsonRelationships = getList(json.get(JSON_OBJECT_RELATIONSHIPS));
@@ -1588,7 +1599,7 @@ public class JSONConverter {
     /**
      * Converts an object.
      */
-    public static List<ObjectData> convertObjects(List<Object> json, TypeCache typeCache) {
+    public static List<ObjectData> convertObjects(final List<Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -1607,7 +1618,7 @@ public class JSONConverter {
     /**
      * Converts an ACL.
      */
-    public static Acl convertAcl(Map<String, Object> json, Boolean isExact) {
+    public static Acl convertAcl(final Map<String, Object> json, final Boolean isExact) {
         if (json == null) {
             return null;
         }
@@ -1667,7 +1678,7 @@ public class JSONConverter {
     /**
      * Converts allowable actions.
      */
-    public static AllowableActions convertAllowableActions(Map<String, Object> json) {
+    public static AllowableActions convertAllowableActions(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -1692,7 +1703,7 @@ public class JSONConverter {
     /**
      * Converts a list of policy ids.
      */
-    public static PolicyIdList convertPolicyIds(Map<String, Object> json) {
+    public static PolicyIdList convertPolicyIds(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -1721,7 +1732,7 @@ public class JSONConverter {
      * Converts properties.
      */
     @SuppressWarnings("unchecked")
-    public static Properties convertProperties(Map<String, Object> json) {
+    public static Properties convertProperties(final Map<String, Object> json, final Map<String, Object> extJson) {
         if (json == null) {
             return null;
         }
@@ -1907,7 +1918,9 @@ public class JSONConverter {
             }
         }
 
-        // TODO: properties extensions
+        if (extJson != null) {
+            convertExtension(extJson, result, Collections.<String> emptySet());
+        }
 
         return result;
     }
@@ -1916,7 +1929,8 @@ public class JSONConverter {
      * Converts properties.
      */
     @SuppressWarnings("unchecked")
-    public static Properties convertSuccinctProperties(Map<String, Object> json, TypeCache typeCache) {
+    public static Properties convertSuccinctProperties(final Map<String, Object> json,
+            final Map<String, Object> extJson, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2156,13 +2170,17 @@ public class JSONConverter {
             result.addProperty(property);
         }
 
+        if (extJson != null) {
+            convertExtension(extJson, result, Collections.<String> emptySet());
+        }
+
         return result;
     }
 
     /**
      * Converts a rendition.
      */
-    public static RenditionData convertRendition(Map<String, Object> json) {
+    public static RenditionData convertRendition(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -2186,7 +2204,7 @@ public class JSONConverter {
     /**
      * Converts a list of renditions.
      */
-    public static List<RenditionData> convertRenditions(List<Object> json) {
+    public static List<RenditionData> convertRenditions(final List<Object> json) {
         if (json == null) {
             return null;
         }
@@ -2206,7 +2224,7 @@ public class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectInFolderList convertObjectInFolderList(Map<String, Object> json, TypeCache typeCache) {
+    public static ObjectInFolderList convertObjectInFolderList(final Map<String, Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2237,7 +2255,7 @@ public class JSONConverter {
     /**
      * Converts an object in a folder.
      */
-    public static ObjectInFolderData convertObjectInFolder(Map<String, Object> json, TypeCache typeCache) {
+    public static ObjectInFolderData convertObjectInFolder(final Map<String, Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2255,7 +2273,7 @@ public class JSONConverter {
     /**
      * Converts a descendants tree.
      */
-    public static List<ObjectInFolderContainer> convertDescendants(List<Object> json, TypeCache typeCache) {
+    public static List<ObjectInFolderContainer> convertDescendants(final List<Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2275,7 +2293,7 @@ public class JSONConverter {
     /**
      * Converts a descendant.
      */
-    public static ObjectInFolderContainer convertDescendant(Map<String, Object> json, TypeCache typeCache) {
+    public static ObjectInFolderContainer convertDescendant(final Map<String, Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2305,7 +2323,7 @@ public class JSONConverter {
     /**
      * Converts an object parents list.
      */
-    public static List<ObjectParentData> convertObjectParents(List<Object> json, TypeCache typeCache) {
+    public static List<ObjectParentData> convertObjectParents(final List<Object> json, final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2332,7 +2350,8 @@ public class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectList convertObjectList(Map<String, Object> json, TypeCache typeCache, boolean isQueryResult) {
+    public static ObjectList convertObjectList(final Map<String, Object> json, final TypeCache typeCache,
+            final boolean isQueryResult) {
         if (json == null) {
             return null;
         }
@@ -2367,7 +2386,7 @@ public class JSONConverter {
     /**
      * Converts FailedToDelete ids.
      */
-    public static JSONObject convert(FailedToDeleteData ftd) {
+    public static JSONObject convert(final FailedToDeleteData ftd) {
         if (ftd == null) {
             return null;
         }
@@ -2391,7 +2410,7 @@ public class JSONConverter {
     /**
      * Converts FailedToDelete ids.
      */
-    public static FailedToDeleteData convertFailedToDelete(Map<String, Object> json) {
+    public static FailedToDeleteData convertFailedToDelete(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -2418,7 +2437,7 @@ public class JSONConverter {
 
     // -----------------------------------------------------------------
 
-    public static void convertExtension(ExtensionsData source, JSONObject target) {
+    public static void convertExtension(final ExtensionsData source, final JSONObject target) {
         if (source == null || source.getExtensions() == null) {
             return;
         }
@@ -2432,7 +2451,7 @@ public class JSONConverter {
         }
     }
 
-    private static JSONObject convertExtensionList(List<CmisExtensionElement> extensionList) {
+    private static JSONObject convertExtensionList(final List<CmisExtensionElement> extensionList) {
         if (extensionList == null) {
             return null;
         }
@@ -2451,7 +2470,8 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static void convertExtension(Map<String, Object> source, ExtensionsData target, Set<String> cmisKeys) {
+    public static void convertExtension(final Map<String, Object> source, final ExtensionsData target,
+            final Set<String> cmisKeys) {
         if (source == null) {
             return;
         }
@@ -2483,7 +2503,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<CmisExtensionElement> convertExtension(Map<String, Object> map) {
+    public static List<CmisExtensionElement> convertExtension(final Map<String, Object> map) {
         if (map == null) {
             return null;
         }
@@ -2507,7 +2527,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<CmisExtensionElement> convertExtension(List<Object> list) {
+    public static List<CmisExtensionElement> convertExtension(final List<Object> list) {
         if (list == null) {
             return null;
         }
@@ -2535,7 +2555,7 @@ public class JSONConverter {
 
     // -----------------------------------------------------------------
 
-    public static String getJSONStringValue(Object obj) {
+    public static String getJSONStringValue(final Object obj) {
         if (obj == null) {
             return null;
         }
@@ -2543,7 +2563,7 @@ public class JSONConverter {
         return obj.toString();
     }
 
-    public static Object getJSONValue(Object value) {
+    public static Object getJSONValue(final Object value) {
         if (value instanceof GregorianCalendar) {
             return ((GregorianCalendar) value).getTimeInMillis();
         }
@@ -2551,7 +2571,7 @@ public class JSONConverter {
         return value;
     }
 
-    public static Object getCMISValue(Object value, PropertyType propertyType) {
+    public static Object getCMISValue(final Object value, final PropertyType propertyType) {
         if (value == null) {
             return null;
         }
@@ -2592,7 +2612,7 @@ public class JSONConverter {
         throw new CmisRuntimeException("Unkown property type!");
     }
 
-    public static JSONArray getJSONArrayFromList(List<?> list) {
+    public static JSONArray getJSONArrayFromList(final List<?> list) {
         if (list == null) {
             return null;
         }
@@ -2603,7 +2623,7 @@ public class JSONConverter {
         return result;
     }
 
-    public static String getJSONPropertyDataType(PropertyData<?> property) {
+    public static String getJSONPropertyDataType(final PropertyData<?> property) {
         if (property instanceof PropertyBoolean) {
             return PropertyType.BOOLEAN.value();
         } else if (property instanceof PropertyId) {
@@ -2632,7 +2652,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getMap(Object o) {
+    public static Map<String, Object> getMap(final Object o) {
         if (o == null) {
             return null;
         }
@@ -2646,7 +2666,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Object> getList(Object o) {
+    public static List<Object> getList(final Object o) {
         if (o == null) {
             return null;
         }
@@ -2659,12 +2679,12 @@ public class JSONConverter {
                 + (o instanceof List ? "JSON object" : o.getClass().getSimpleName()) + ": " + o.toString());
     }
 
-    public static String getString(Map<String, Object> json, String key) {
+    public static String getString(final Map<String, Object> json, final String key) {
         Object obj = json.get(key);
         return obj == null ? null : obj.toString();
     }
 
-    public static Boolean getBoolean(Map<String, Object> json, String key) {
+    public static Boolean getBoolean(final Map<String, Object> json, final String key) {
         Object obj = json.get(key);
 
         if (obj instanceof Boolean) {
@@ -2674,7 +2694,7 @@ public class JSONConverter {
         return null;
     }
 
-    public static BigInteger getInteger(Map<String, Object> json, String key) {
+    public static BigInteger getInteger(final Map<String, Object> json, final String key) {
         Object obj = json.get(key);
 
         if (obj instanceof BigInteger) {
@@ -2684,7 +2704,7 @@ public class JSONConverter {
         return null;
     }
 
-    public static BigDecimal getDecimal(Map<String, Object> json, String key) {
+    public static BigDecimal getDecimal(final Map<String, Object> json, final String key) {
         Object obj = json.get(key);
 
         if (obj instanceof BigDecimal) {
@@ -2694,7 +2714,7 @@ public class JSONConverter {
         return null;
     }
 
-    public static GregorianCalendar getDateTime(Map<String, Object> json, String key) {
+    public static GregorianCalendar getDateTime(final Map<String, Object> json, final String key) {
         Object obj = json.get(key);
 
         if (obj instanceof Number) {
@@ -2707,7 +2727,7 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<T>> T getEnum(Map<String, Object> json, String key, Class<T> clazz) {
+    public static <T extends Enum<T>> T getEnum(final Map<String, Object> json, final String key, final Class<T> clazz) {
         String value = getString(json, key);
         if (value == null) {
             return null;
@@ -2726,7 +2746,8 @@ public class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<T>> T getIntEnum(Map<String, Object> json, String key, Class<T> clazz) {
+    public static <T extends Enum<T>> T getIntEnum(final Map<String, Object> json, final String key,
+            final Class<T> clazz) {
         BigInteger value = getInteger(json, key);
         if (value == null) {
             return null;

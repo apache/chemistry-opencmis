@@ -23,9 +23,6 @@ import java.util.Map;
 
 /**
  * LRU cache.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class LruCacheLevelImpl extends AbstractMapCacheLevel {
 

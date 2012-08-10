@@ -303,9 +303,9 @@ public class MultipartParserTest {
 
         assertEquals(count, counter);
         assertEquals(counter - (hasContent ? 1 : 0), parameters.size());
-        assertEquals(values.size(), parameters.size());
 
         if (values != null) {
+            assertEquals(values.size(), parameters.size());
             for (Map.Entry<String, String> e : values.entrySet()) {
                 assertEquals(e.getValue(), parameters.get(e.getKey()));
             }

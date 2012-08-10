@@ -21,13 +21,11 @@ package org.apache.chemistry.opencmis.server.support.filter;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -61,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoggingFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoggingFilter.class);
     private static int REQUEST_NO = 0;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
     private String logDir;
@@ -101,7 +99,7 @@ public class LoggingFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
             ServletException {
-        log.debug("Logging filter doFilter");
+        LOG.debug("Logging filter doFilter");
 
         if (resp instanceof HttpServletResponse && req instanceof HttpServletRequest) {
             LoggingRequestWrapper logReq = new LoggingRequestWrapper((HttpServletRequest)req);
@@ -130,7 +128,7 @@ public class LoggingFilter implements Filter {
             }
             
             xmlRequest = sb.toString() + xmlRequest;
-            log.debug("Found request: " + requestFileName + ": " + xmlRequest);
+            LOG.debug("Found request: " + requestFileName + ": " + xmlRequest);
             writeTextToFile(requestFileName, xmlRequest);
             
 
@@ -157,7 +155,7 @@ public class LoggingFilter implements Filter {
             }
                 
             xmlResponse = sb.toString() + xmlResponse;
-            log.debug("Found response: " + responseFileName  + ": " + xmlResponse);
+            LOG.debug("Found response: " + responseFileName  + ": " + xmlResponse);
             writeTextToFile(responseFileName, xmlResponse);
         } else {            
             chain.doFilter(req, resp);
@@ -219,7 +217,7 @@ public class LoggingFilter implements Filter {
         if (endIndex < 0)
             endIndex = cType.length();
         String boundary = "--" + cType.substring(beginIndex, endIndex);
-        log.debug("Boundary = " + boundary);
+        LOG.debug("Boundary = " + boundary);
         BufferedReader in = new BufferedReader(new StringReader(messageBody));
         StringBuffer out = new StringBuffer();
         String line;
@@ -237,9 +235,12 @@ public class LoggingFilter implements Filter {
                     xmlBodyBuffer.write(line.getBytes(), 0, line.length());                   
                     while (inXmlOrJsonBody)  {
                         line = in.readLine();
+                        if(line == null) {
+                            break;
+                        }
                         boundaryFound = line.startsWith(boundary);
                         if (boundaryFound) {
-                            log.debug("Leaving XML body: " + line);
+                            LOG.debug("Leaving XML body: " + line);
                             inXmlOrJsonBody = false;
                             inXmlOrJsonPart = false;
                             if (isXml)
@@ -251,22 +252,22 @@ public class LoggingFilter implements Filter {
                             xmlBodyBuffer.write(line.getBytes(), 0, line.length());
                     }               
                 } else { 
-                    log.debug("in XML part is: " + line);
+                    LOG.debug("in XML part is: " + line);
                     out.append(line).append("\n");
                 }
 
             } else {
-                log.debug("not in XML part: " + line);
+                LOG.debug("not in XML part: " + line);
                 out.append(line).append("\n");
                 boundaryFound = line.startsWith(boundary);
                 if (boundaryFound) {
-                    log.debug("Boundardy found!");
+                    LOG.debug("Boundardy found!");
                     inXmlOrJsonPart = true;
                 }
             }
         }
         in.close();        
-        log.debug("End parsing multipart.");
+        LOG.debug("End parsing multipart.");
         
         return out.toString();
     }
@@ -413,7 +414,7 @@ public class LoggingFilter implements Filter {
                     writer = new PrintWriter(this.getOutputStream());
                 return writer;
             } catch (IOException e) {
-                log.error("Failed to get PrintWriter in LoggingFilter: "+ e);
+                LOG.error("Failed to get PrintWriter in LoggingFilter: "+ e);
                 e.printStackTrace();
                 return null;             
             }

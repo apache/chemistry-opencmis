@@ -276,9 +276,9 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         if (getSuccinct()) {
             TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
-            return JSONConverter.convertSuccinctProperties(json, typeCache);
+            return JSONConverter.convertSuccinctProperties(json, null, typeCache);
         } else {
-            return JSONConverter.convertProperties(json);
+            return JSONConverter.convertProperties(json, null);
         }
     }
 
@@ -348,7 +348,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
 
-        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
@@ -385,7 +385,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
 
-        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
@@ -459,7 +459,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
 
-        ObjectData newObj = JSONConverter.convertObject(json,typeCache);
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 

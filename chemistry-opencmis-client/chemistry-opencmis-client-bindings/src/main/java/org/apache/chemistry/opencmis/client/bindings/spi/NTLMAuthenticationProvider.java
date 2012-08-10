@@ -41,9 +41,9 @@ public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
     private static final long serialVersionUID = 1L;
 
     // java.net.Authenticator is static, so this can be static too
-    private static final OpenCMISAuthenticator authenticator = new OpenCMISAuthenticator();
+    private static final OpenCMISAuthenticator AUTHENTICATOR = new OpenCMISAuthenticator();
     static {
-        Authenticator.setDefault(authenticator);
+        Authenticator.setDefault(AUTHENTICATOR);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
 
         // if no user is set, reset the authenticator
         if (user == null) {
-            authenticator.reset();
+            AUTHENTICATOR.reset();
             return null;
         }
 
@@ -63,7 +63,7 @@ public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
         }
 
         // set user and password
-        authenticator.setPasswordAuthentication(user, password);
+        AUTHENTICATOR.setPasswordAuthentication(user, password);
 
         // OpenCMIS is not in charge of the authentication
         // -> no HTTP header to set

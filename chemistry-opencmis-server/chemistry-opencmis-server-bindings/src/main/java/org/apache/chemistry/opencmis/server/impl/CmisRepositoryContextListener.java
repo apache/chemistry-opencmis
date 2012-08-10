@@ -39,7 +39,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
     public static final String SERVICES_FACTORY = "org.apache.chemistry.opencmis.servicesfactory";
 
-    private static final Logger log = LoggerFactory.getLogger(CmisRepositoryContextListener.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisRepositoryContextListener.class.getName());
 
     private static final String CONFIG_INIT_PARAM = "org.apache.chemistry.opencmis.REPOSITORY_CONFIG_FILE";
     private static final String CONFIG_FILENAME = "/repository.properties";
@@ -75,7 +75,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         InputStream stream = this.getClass().getResourceAsStream(filename);
 
         if (stream == null) {
-            log.warn("Cannot find configuration!");
+            LOG.warn("Cannot find configuration!");
             return null;
         }
 
@@ -83,7 +83,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         try {
             props.load(stream);
         } catch (IOException e) {
-            log.warn("Cannot load configuration: " + e, e);
+            LOG.warn("Cannot load configuration: " + e, e);
             return null;
         } finally {
             try {
@@ -95,7 +95,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         // get 'class' property
         String className = props.getProperty(PROPERTY_CLASS);
         if (className == null) {
-            log.warn("Configuration doesn't contain the property 'class'!");
+            LOG.warn("Configuration doesn't contain the property 'class'!");
             return null;
         }
 
@@ -104,12 +104,12 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         try {
             object = Class.forName(className).newInstance();
         } catch (Exception e) {
-            log.warn("Could not create a services factory instance: " + e, e);
+            LOG.warn("Could not create a services factory instance: " + e, e);
             return null;
         }
 
         if (!(object instanceof CmisServiceFactory)) {
-            log.warn("The provided class is not an instance of CmisServiceFactory!");
+            LOG.warn("The provided class is not an instance of CmisServiceFactory!");
         }
 
         CmisServiceFactory factory = (CmisServiceFactory) object;
@@ -125,7 +125,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
         factory.init(parameters);
 
-        log.info("Initialized Services Factory: " + factory.getClass().getName());
+        LOG.info("Initialized Services Factory: " + factory.getClass().getName());
 
         return factory;
     }

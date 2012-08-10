@@ -29,8 +29,6 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
-import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;

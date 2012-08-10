@@ -25,11 +25,9 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 
-public class InMemoryAcl {
+public class InMemoryAcl implements Cloneable{
     
     private List<InMemoryAce> acl;
     private int id;

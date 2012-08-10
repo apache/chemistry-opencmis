@@ -145,7 +145,7 @@ public class FileShareRepository {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private static final Logger log = LoggerFactory.getLogger(FileShareRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileShareRepository.class);
 
     /** Repository id */
     private final String repositoryId;
@@ -1943,7 +1943,7 @@ public class FileShareRepository {
     private static GregorianCalendar millisToCalendar(long millis) {
         GregorianCalendar result = new GregorianCalendar();
         result.setTimeZone(TimeZone.getTimeZone("GMT"));
-        result.setTimeInMillis((long) (Math.ceil(millis / 1000) * 1000));
+        result.setTimeInMillis((long) (Math.ceil((double) millis / 1000) * 1000));
 
         return result;
     }
@@ -2128,7 +2128,7 @@ public class FileShareRepository {
     }
 
     private void warn(String msg, Throwable t) {
-        log.warn("<" + repositoryId + "> " + msg, t);
+        LOG.warn("<" + repositoryId + "> " + msg, t);
     }
 
     private void debug(String msg) {
@@ -2136,6 +2136,6 @@ public class FileShareRepository {
     }
 
     private void debug(String msg, Throwable t) {
-        log.debug("<" + repositoryId + "> " + msg, t);
+        LOG.debug("<" + repositoryId + "> " + msg, t);
     }
 }

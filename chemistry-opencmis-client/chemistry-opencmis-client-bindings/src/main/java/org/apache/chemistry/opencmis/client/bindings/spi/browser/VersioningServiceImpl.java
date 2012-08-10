@@ -172,9 +172,9 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         if (getSuccinct()) {
             TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
-            return JSONConverter.convertSuccinctProperties(json, typeCache);
+            return JSONConverter.convertSuccinctProperties(json, null, typeCache);
         } else {
-            return JSONConverter.convertProperties(json);
+            return JSONConverter.convertProperties(json, null);
         }
     }
 

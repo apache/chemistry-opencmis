@@ -55,8 +55,6 @@ public class UpdateSmokeTest extends AbstractSessionTest {
 
     @Override
     public void run(Session session) {
-        CmisTestResult f;
-
         try {
             // create test folder
             Folder testFolder = createTestFolder(session);

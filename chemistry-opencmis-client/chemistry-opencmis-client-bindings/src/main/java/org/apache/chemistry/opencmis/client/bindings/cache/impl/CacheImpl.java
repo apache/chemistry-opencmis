@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CacheImpl implements Cache {
 
-    private static final Logger log = LoggerFactory.getLogger(CacheImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheImpl.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -196,8 +196,8 @@ public class CacheImpl implements Cache {
 
             cacheLevel.put(value, keys[keys.length - 1]);
 
-            if (log.isTraceEnabled()) {
-                log.trace(name + ": put [" + getFormattedKeys(keys) + "] = " + value);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(name + ": put [" + getFormattedKeys(keys) + "] = " + value);
             }
         } finally {
             lock.writeLock().unlock();
@@ -228,8 +228,8 @@ public class CacheImpl implements Cache {
 
             cacheLevel.remove(keys[keys.length - 1]);
 
-            if (log.isTraceEnabled()) {
-                log.trace(name + ": removed [" + getFormattedKeys(keys) + "]");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(name + ": removed [" + getFormattedKeys(keys) + "]");
             }
         } finally {
             lock.writeLock().unlock();

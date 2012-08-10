@@ -50,10 +50,13 @@ public class SimpleCmisBindingFactory {
         switch (bindingType) {
         case WEBSERVICES:
             binding = BINDING_FACTORY.createCmisWebServicesBinding(parameters);
+            break;
         case BROWSER:
             binding = BINDING_FACTORY.createCmisBrowserBinding(parameters);
+            break;
         default:
             binding = BINDING_FACTORY.createCmisAtomPubBinding(parameters);
+            break;
         }
 
         return binding;

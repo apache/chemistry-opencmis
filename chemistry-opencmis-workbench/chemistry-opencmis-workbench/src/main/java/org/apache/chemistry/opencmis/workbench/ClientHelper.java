@@ -89,25 +89,25 @@ public class ClientHelper {
     public static final Color LINK_COLOR = new Color(105, 29, 21);
     public static final Color LINK_SELECTED_COLOR = new Color(255, 255, 255);
 
-    private static final Logger log = LoggerFactory.getLogger(ClientHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private ClientHelper() {
     }
 
     public static void showError(Component parent, Exception ex) {
-        if (log.isErrorEnabled()) {
-            log.error(ex.getClass().getSimpleName() + ": " + ex.getMessage(), ex);
+        if (LOG.isErrorEnabled()) {
+            LOG.error(ex.getClass().getSimpleName() + ": " + ex.getMessage(), ex);
 
             if (ex instanceof CmisBaseException) {
                 CmisBaseException cex = (CmisBaseException) ex;
 
                 if (cex.getCode() != null) {
-                    log.error("Error code: " + cex.getCode());
+                    LOG.error("Error code: " + cex.getCode());
                 }
 
                 if (cex.getErrorContent() != null) {
-                    log.error("Error content: " + cex.getErrorContent());
+                    LOG.error("Error content: " + cex.getErrorContent());
                 }
             }
         }

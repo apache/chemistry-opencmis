@@ -23,9 +23,6 @@ import java.util.Map;
 
 /**
  * Map cache.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class MapCacheLevelImpl extends AbstractMapCacheLevel {
 

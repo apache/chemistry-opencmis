@@ -151,10 +151,6 @@ public class SwingReport extends AbstractCmisTestReport {
                         CmisTestReport report = null;
 
                         switch (reportType.getSelectedIndex()) {
-                        case 0:
-                            tempReportFile = File.createTempFile("cmistck", ".html");
-                            report = new HtmlReport();
-                            break;
                         case 1:
                             tempReportFile = File.createTempFile("cmistck", ".txt");
                             report = new TextReport();
@@ -162,6 +158,10 @@ public class SwingReport extends AbstractCmisTestReport {
                         case 2:
                             tempReportFile = File.createTempFile("cmistck", ".xml");
                             report = new XmlReport();
+                            break;
+                        default:
+                            tempReportFile = File.createTempFile("cmistck", ".html");
+                            report = new HtmlReport();
                             break;
                         }
 

@@ -108,7 +108,7 @@ public class CheckedOutTest extends AbstractSessionTest {
 
         for (Document pwc : pwcs) {
             String[] propertiesToCheck = getAllProperties(pwc);
-            addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + pwc.getId()));
+            addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + (pwc == null ? "?" : pwc.getId())));
 
             if (pwc != null) {
                 f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()

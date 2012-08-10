@@ -35,8 +35,6 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
-import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -219,6 +217,7 @@ public class PropertyCreationHelper {
             if (td == null) {
                 log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
                         + " is unknown");
+                return null;
             } else {
                 String baseTypeId = td.getBaseTypeId().value();
                 properties.put(PropertyIds.BASE_TYPE_ID,
@@ -300,7 +299,6 @@ public class PropertyCreationHelper {
             }
         }
         // add functions:
-        BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
         	String queryName;
         	if (funcEntry.getValue().equals("SCORE")) {
