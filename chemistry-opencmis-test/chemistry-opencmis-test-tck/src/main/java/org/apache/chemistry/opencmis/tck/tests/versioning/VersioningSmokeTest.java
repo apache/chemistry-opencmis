@@ -19,9 +19,11 @@
 package org.apache.chemistry.opencmis.tck.tests.versioning;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
+import org.apache.chemistry.opencmis.tck.impl.CmisTestResultImpl;
 
 /**
  * Checked out test.
@@ -61,6 +64,14 @@ public class VersioningSmokeTest extends AbstractSessionTest {
                 return;
             }
 
+            // gather properties for later
+            String[] propertiesToCheck = new String[doc.getType().getPropertyDefinitions().size()];
+
+            int i = 0;
+            for (String propId : doc.getType().getPropertyDefinitions().keySet()) {
+                propertiesToCheck[i++] = propId;
+            }
+
             // check out
             ObjectId pwcId = doc.checkOut();
             Document pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
@@ -68,6 +79,11 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 1"));
 
             checkCheckedOut(pwc);
+
+            // check version series
+            // addResult(checkVersionSeries(session,
+            // pwc.getAllVersions(SELECT_ALL_NO_CACHE_OC), propertiesToCheck,
+            // "Test version series after check out"));
 
             // cancel checkout
             pwc.cancelCheckOut();
@@ -92,7 +108,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             checkCheckedIn(newVersion);
 
             // check version history
-            List<Document> versions = newVersion.getAllVersions();
+            List<Document> versions = newVersion.getAllVersions(SELECT_ALL_NO_CACHE_OC);
             f = createResult(FAILURE, "Version series should have 2 versions but has " + versions.size() + "!");
             addResult(assertEquals(2, versions.size(), null, f));
 
@@ -100,6 +116,14 @@ public class VersioningSmokeTest extends AbstractSessionTest {
                 f = createResult(FAILURE,
                         "Version history order is incorrect! The first version should be the new version.");
                 addResult(assertEquals(newVersion.getId(), versions.get(0).getId(), null, f));
+
+                f = createResult(FAILURE,
+                        "The new version should be the latest version, but cmis:isLatestVersion is not TRUE.");
+                addResult(assertEquals(true, versions.get(0).isLatestVersion(), null, f));
+
+                f = createResult(FAILURE,
+                        "The new version should be the latest major version, but cmis:isLatestMajorVersion is not TRUE.");
+                addResult(assertEquals(true, versions.get(0).isLatestMajorVersion(), null, f));
             }
 
             if (versions.size() > 1) {
@@ -107,6 +131,10 @@ public class VersioningSmokeTest extends AbstractSessionTest {
                         "Version history order is incorrect! The second version should be the origin document.");
                 addResult(assertEquals(doc.getId(), versions.get(1).getId(), null, f));
             }
+
+            // check version series
+            addResult(checkVersionSeries(session, pwc.getAllVersions(SELECT_ALL_NO_CACHE_OC), propertiesToCheck,
+                    "Test version series after check in"));
 
             // remove the document
             deleteObject(doc);
@@ -143,5 +171,28 @@ public class VersioningSmokeTest extends AbstractSessionTest {
 
         f = createResult(FAILURE, "Version series is not checked out but cmis:versionSeriesCheckedOutBy has a value!");
         addResult(assertNull(doc.getVersionSeriesCheckedOutBy(), null, f));
+    }
+
+    private CmisTestResult checkVersionSeries(Session session, List<Document> versions, String[] properties,
+            String message) {
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        int countLatest = 0;
+        for (Document version : versions) {
+            addResult(results, checkObject(session, version, properties, "Version object check: " + version.getId()));
+
+            if (Boolean.TRUE.equals(version.isLatestVersion())) {
+                countLatest++;
+            }
+        }
+
+        CmisTestResult f = createResult(FAILURE, "A version series should have one latest version, but it has "
+                + countLatest + "!");
+        addResult(results, assertEquals(1, countLatest, null, f));
+
+        CmisTestResultImpl result = createResult(getWorst(results), message);
+        result.getChildren().addAll(results);
+
+        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 }

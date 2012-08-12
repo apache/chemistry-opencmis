@@ -116,10 +116,10 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                 addResult(assertEquals((long) numOfDocuments, page1.getTotalNumItems(), null, f));
             }
 
-            f = createResult(FAILURE, "hasMoreItems of the first test page must be 'true'!");
+            f = createResult(FAILURE, "hasMoreItems of the first test page must be TRUE!");
             addResult(assertEquals(true, page1.getHasMoreItems(), null, f));
 
-            // check escond page
+            // check second page
             count = 0;
             ItemIterable<CmisObject> page2 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
                     .skipTo(pageSize - 1).getPage(pageSize);
@@ -143,30 +143,53 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                 addResult(assertEquals((long) numOfDocuments, page2.getTotalNumItems(), null, f));
             }
 
-            f = createResult(FAILURE, "hasMoreItems of the second test page must be 'true'!");
+            f = createResult(FAILURE, "hasMoreItems of the second test page must be TRUE!");
             addResult(assertEquals(true, page2.getHasMoreItems(), null, f));
+
+            // check third page
+            count = 0;
+            ItemIterable<CmisObject> page3 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+                    .skipTo(numOfDocuments - 5).getPage(10);
+            for (@SuppressWarnings("unused")
+            CmisObject child : page3) {
+                count++;
+            }
+
+            f = createResult(FAILURE,
+                    "Returned number of children should be 5 because page startetd at (numOfDocuments - 5).");
+            addResult(assertEquals(5, count, null, f));
+
+            if (page3.getTotalNumItems() == -1) {
+                addResult(createResult(WARNING, "Repository did not return numItems for the third test page."));
+            } else {
+                f = createResult(FAILURE, "Returned numItems doesn't match the number of documents!");
+                addResult(assertEquals((long) numOfDocuments, page3.getTotalNumItems(), null, f));
+            }
+
+            f = createResult(FAILURE, "hasMoreItems of the third test page must be FALSE!");
+            addResult(assertEquals(false, page3.getHasMoreItems(), null, f));
 
             // check non-existing page
             count = 0;
-            ItemIterable<CmisObject> page3 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+            ItemIterable<CmisObject> pageNotExisting = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
                     .skipTo(100000).getPage(pageSize);
             for (@SuppressWarnings("unused")
-            CmisObject child : page3) {
+            CmisObject child : pageNotExisting) {
                 count++;
             }
 
             f = createResult(FAILURE, "The page size of a non-existing page must be 0!");
             addResult(assertEquals(0, count, null, f));
 
-            if (page3.getTotalNumItems() == -1) {
+            if (pageNotExisting.getTotalNumItems() == -1) {
                 addResult(createResult(WARNING, "Repository did not return numItems for a non-existing page."));
             } else {
                 f = createResult(FAILURE, "Returned numItems doesn't match the number of documents!");
-                addResult(assertEquals((long) numOfDocuments, page3.getTotalNumItems(), null, f));
+                addResult(assertEquals((long) numOfDocuments, pageNotExisting.getTotalNumItems(), null, f));
             }
 
-            f = createResult(FAILURE, "hasMoreItems of a non-existing page must be 'false'!");
-            addResult(assertEquals(false, page3.getHasMoreItems(), null, f));
+            f = createResult(FAILURE, "hasMoreItems of a non-existing page must be FALSE!");
+            addResult(assertEquals(false, pageNotExisting.getHasMoreItems(), null, f));
 
             // check content
             for (Document document : documents.values()) {
