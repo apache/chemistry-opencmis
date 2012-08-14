@@ -284,5 +284,9 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
       return true;
     }
 
+    public void rename(String newName) {
+    	super.rename(newName);
+    	fContainer.setName(newName);
+    }
 
 }
