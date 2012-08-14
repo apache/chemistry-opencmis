@@ -131,6 +131,9 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
     public DocumentVersion getLatestVersion(boolean major) {
 
         DocumentVersion latest = null;
+        if (fVersions.size() == 0)
+        	return null;
+        
         if (major) {
             for (DocumentVersion ver : fVersions) {
                 if (ver.isMajor()) {
@@ -200,6 +203,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         fIsCheckedOut = false;
         fCheckedOutUser = null;
         fVersions.remove(pwc);
+        if (fVersions.size() > 0) {
+        	String nameLatestVer = getLatestVersion(false).getName();
+        	if (!getName().equals(nameLatestVer)) {
+        		setName(nameLatestVer);
+        	}        	
+        }
+
         if (deleteInObjectStore)
             fObjStore.removeVersion(pwc);
     }
