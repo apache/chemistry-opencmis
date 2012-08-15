@@ -26,18 +26,64 @@
         <parentBasedir>../../</parentBasedir>
     </properties>
     
-
+	<build>
+		<plugins>
+			<plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <mainClass>org.apache.chemistry.opencmis.tools.main.ObjGenApp</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix />
+                        </manifest>
+                        <manifestEntries>
+                            <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
+                            <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+	
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>chemistry-opencmis-commons-api</artifactId>
+            <artifactId>chemistry-opencmis-client-impl</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>chemistry-opencmis-test-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-client-bindings</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.0.1</version>
+        </dependency>     
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>          
+        </dependency>        
     </dependencies>
 
 </project>
