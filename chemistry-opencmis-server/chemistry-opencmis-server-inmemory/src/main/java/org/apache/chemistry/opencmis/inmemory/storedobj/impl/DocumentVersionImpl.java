@@ -135,11 +135,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     private boolean isLatestVersion() {
         List<DocumentVersion> allVers = fContainer.getAllVersions();
         boolean isLatestVersion;
-        if (isPwc()) {
-            isLatestVersion = allVers.size() > 1 && allVers.get(allVers.size() - 2).equals(this);
-        } else {
-            isLatestVersion = allVers.get(allVers.size() - 1).equals(this);
-        }
+        isLatestVersion = allVers.get(allVers.size() - 1).equals(this);
         return isLatestVersion;
     }
 

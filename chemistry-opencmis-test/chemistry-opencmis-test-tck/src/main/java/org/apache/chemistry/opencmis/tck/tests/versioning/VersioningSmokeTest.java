@@ -81,9 +81,9 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             checkCheckedOut(pwc);
 
             // check version series
-            // addResult(checkVersionSeries(session,
-            // pwc.getAllVersions(SELECT_ALL_NO_CACHE_OC), propertiesToCheck,
-            // "Test version series after check out"));
+             addResult(checkVersionSeries(session,
+             pwc.getAllVersions(SELECT_ALL_NO_CACHE_OC), propertiesToCheck,
+             "Test version series after check out"));
 
             // cancel checkout
             pwc.cancelCheckOut();
