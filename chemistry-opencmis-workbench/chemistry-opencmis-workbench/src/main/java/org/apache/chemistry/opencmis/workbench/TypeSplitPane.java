@@ -96,6 +96,8 @@ public class TypeSplitPane extends JSplitPane {
         private YesNoLabel creatableLabel;
         private YesNoLabel fileableLabel;
         private YesNoLabel queryableLabel;
+        private YesNoLabel includeInSuperTypeLabel;
+        private YesNoLabel fulltextIndexedLabel;
         private YesNoLabel aclLabel;
         private YesNoLabel policyLabel;
         private YesNoLabel versionableLabel;
@@ -120,6 +122,8 @@ public class TypeSplitPane extends JSplitPane {
                 creatableLabel.setValue(is(type.isCreatable()));
                 fileableLabel.setValue(is(type.isFileable()));
                 queryableLabel.setValue(is(type.isQueryable()));
+                includeInSuperTypeLabel.setValue(is(type.isIncludedInSupertypeQuery()));
+                fulltextIndexedLabel.setValue(is(type.isFulltextIndexed()));
                 aclLabel.setValue(is(type.isControllableAcl()));
                 policyLabel.setValue(is(type.isControllablePolicy()));
 
@@ -158,6 +162,8 @@ public class TypeSplitPane extends JSplitPane {
                 creatableLabel.setValue(false);
                 fileableLabel.setValue(false);
                 queryableLabel.setValue(false);
+                includeInSuperTypeLabel.setValue(false);
+                fulltextIndexedLabel.setValue(false);
                 aclLabel.setValue(false);
                 policyLabel.setValue(false);
                 versionableLabel.setVisible(false);
@@ -182,6 +188,8 @@ public class TypeSplitPane extends JSplitPane {
             creatableLabel = addYesNoLabel("Creatable:");
             fileableLabel = addYesNoLabel("Fileable:");
             queryableLabel = addYesNoLabel("Queryable:");
+            includeInSuperTypeLabel = addYesNoLabel("Included in super type queries:");
+            fulltextIndexedLabel = addYesNoLabel("Full text indexed:");
             aclLabel = addYesNoLabel("ACL controlable:");
             policyLabel = addYesNoLabel("Policy controlable:");
             versionableLabel = addYesNoLabel("Versionable:");
@@ -204,9 +212,9 @@ public class TypeSplitPane extends JSplitPane {
         private static final long serialVersionUID = 1L;
 
         private static final String[] COLUMN_NAMES = { "Name", "Id", "Description", "Local Namespace", "Local Name",
-                "Query Name", "Type", "Cardinality", "Updatability", "Queryable", "Required", "Inherited",
+                "Query Name", "Type", "Cardinality", "Updatability", "Queryable", "Orderable", "Required", "Inherited",
                 "Default Value", "Choices" };
-        private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200, 200, 200, 80, 80, 80, 50, 50, 50, 200, 200 };
+        private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200, 200, 200, 80, 80, 80, 50, 50, 50, 50, 200, 200 };
 
         private ObjectType type;
         private List<PropertyDefinition<?>> propertyDefintions;
@@ -331,12 +339,14 @@ public class TypeSplitPane extends JSplitPane {
                 case 9:
                     return propDef.isQueryable();
                 case 10:
-                    return propDef.isRequired();
+                    return propDef.isOrderable();
                 case 11:
-                    return propDef.isInherited();
+                    return propDef.isRequired();
                 case 12:
-                    return propDef.getDefaultValue();
+                    return propDef.isInherited();
                 case 13:
+                    return propDef.getDefaultValue();
+                case 14:
                     return propDef.getChoices();
                 }
 
@@ -345,7 +355,7 @@ public class TypeSplitPane extends JSplitPane {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if ((columnIndex == 12) || (columnIndex == 13)) {
+                if ((columnIndex == 13) || (columnIndex == 14)) {
                     return Collection.class;
                 }
 
