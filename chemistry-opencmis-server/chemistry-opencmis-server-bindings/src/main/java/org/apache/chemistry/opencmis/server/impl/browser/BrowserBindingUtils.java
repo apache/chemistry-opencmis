@@ -480,7 +480,10 @@ public class BrowserBindingUtils {
             throws IOException {
         String token = getStringParameter(request, Constants.PARAM_TOKEN);
 
-        if (token == null) {
+        if (token != null && "POST".equals(request.getMethod())) {
+            response.setContentType(HTML_MIME_TYPE);
+            response.setContentLength(0);
+        } else {
             response.setContentType(JSON_MIME_TYPE);
             response.setCharacterEncoding("UTF-8");
 
@@ -497,9 +500,6 @@ public class BrowserBindingUtils {
             if (callback != null) {
                 response.getWriter().print(");");
             }
-        } else {
-            response.setContentType(HTML_MIME_TYPE);
-            response.setContentLength(0);
         }
 
         response.getWriter().flush();

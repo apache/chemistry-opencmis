@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -252,7 +253,7 @@ public class HttpUtils {
             Method m = clazz.getMethod("fromValue", new Class[] { String.class });
             return (T) m.invoke(null, new Object[] { value });
         } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
+            if (e instanceof InvocationTargetException && e.getCause() instanceof IllegalArgumentException) {
                 throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
             }
 

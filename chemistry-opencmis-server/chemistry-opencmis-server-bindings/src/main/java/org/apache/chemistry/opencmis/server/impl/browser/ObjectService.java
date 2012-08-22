@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.MEDIATYPE_OCTETSTREAM;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ACL;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_DOWNLOAD;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_IDS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RELATIONSHIPS;
@@ -432,6 +433,7 @@ public final class ObjectService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String streamId = getStringParameter(request, PARAM_STREAM_ID);
+        boolean download = getBooleanParameter(request, PARAM_DOWNLOAD, false);
 
         BigInteger offset = context.getOffset();
         BigInteger length = context.getLength();
@@ -455,9 +457,18 @@ public final class ObjectService {
             setStatus(request, response, HttpServletResponse.SC_PARTIAL_CONTENT);
         }
         response.setContentType(contentType);
-        if (content.getFileName() != null) {
+
+        String contentFilename = content.getFileName();
+        if (contentFilename == null) {
+            contentFilename = "content";
+        }
+
+        if (download) {
             response.setHeader(MimeHelper.CONTENT_DISPOSITION,
-                    MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_INLINE, content.getFileName()));
+                    MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT, contentFilename));
+        } else {
+            response.setHeader(MimeHelper.CONTENT_DISPOSITION,
+                    MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_INLINE, contentFilename));
         }
 
         // send content

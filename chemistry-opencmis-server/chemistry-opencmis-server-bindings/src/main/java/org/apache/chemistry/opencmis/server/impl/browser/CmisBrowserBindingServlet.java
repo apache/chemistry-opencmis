@@ -109,6 +109,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CallUrl;
+import org.apache.chemistry.opencmis.server.impl.browser.token.TokenHandler;
 import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
@@ -246,6 +247,22 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
+            String method = request.getMethod();
+
+            if (METHOD_GET.equals(method)) {
+                request = new QueryStringHttpServletRequestWrapper(request);
+            } else if (METHOD_POST.equals(method)) {
+                request = new POSTHttpServletRequestWrapper(request, tempDir, memoryThreshold, maxContentSize);
+            } else {
+                throw new CmisNotSupportedException("Unsupported method");
+            }
+
+            // invoke token handler, if necessary
+            if (request.getParameter("login") != null && callContextHandler instanceof TokenHandler) {
+                ((TokenHandler) callContextHandler).service(getServletContext(), request, response);
+                return;
+            }
+
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
                     callContextHandler, tempDir, memoryThreshold, maxContentSize);
             dispatch(context, request, response);
@@ -310,13 +327,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             boolean methodFound = false;
 
             if (METHOD_GET.equals(method)) {
-                QueryStringHttpServletRequestWrapper getRequest = new QueryStringHttpServletRequestWrapper(request);
-
-                String selector = getStringParameter(getRequest, Constants.PARAM_SELECTOR);
-                String objectId = getStringParameter(getRequest, PARAM_OBJECT_ID);
+                String selector = getStringParameter(request, Constants.PARAM_SELECTOR);
+                String objectId = getStringParameter(request, PARAM_OBJECT_ID);
 
                 // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, null, getRequest);
+                prepareContext(context, callUrl, service, repositoryId, objectId, null, request);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -325,7 +340,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     }
 
                     methodFound = repositoryDispatcher.dispatch(selector, method, context, service, repositoryId,
-                            getRequest, response);
+                            request, response);
                 } else if (callUrl == CallUrl.ROOT) {
                     // set default method if necessary
                     if (selector == null) {
@@ -347,31 +362,28 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                         }
                     }
 
-                    methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, getRequest,
+                    methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, request,
                             response);
                 }
             } else if (METHOD_POST.equals(method)) {
-                POSTHttpServletRequestWrapper postRequest = new POSTHttpServletRequestWrapper(request, tempDir,
-                        memoryThreshold, maxContentSize);
-
-                String cmisaction = getStringParameter(postRequest, Constants.CONTROL_CMISACTION);
-                String objectId = getStringParameter(postRequest, Constants.CONTROL_OBJECT_ID);
-                String token = getStringParameter(postRequest, Constants.CONTROL_TOKEN);
+                String cmisaction = getStringParameter(request, Constants.CONTROL_CMISACTION);
+                String objectId = getStringParameter(request, Constants.CONTROL_OBJECT_ID);
+                String token = getStringParameter(request, Constants.CONTROL_TOKEN);
 
                 if (cmisaction == null || cmisaction.length() == 0) {
                     throw new CmisNotSupportedException("Unknown action");
                 }
 
                 // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, token, postRequest);
+                prepareContext(context, callUrl, service, repositoryId, objectId, token, request);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
                     methodFound = repositoryDispatcher.dispatch(cmisaction, method, context, service, repositoryId,
-                            postRequest, response);
+                            request, response);
                 } else if (callUrl == CallUrl.ROOT) {
-                    methodFound = rootDispatcher.dispatch(cmisaction, method, context, service, repositoryId,
-                            postRequest, response);
+                    methodFound = rootDispatcher.dispatch(cmisaction, method, context, service, repositoryId, request,
+                            response);
                 }
             }
 

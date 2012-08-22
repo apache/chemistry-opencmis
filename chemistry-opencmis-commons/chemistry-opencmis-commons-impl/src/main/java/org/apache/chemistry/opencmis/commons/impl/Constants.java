@@ -166,6 +166,7 @@ public final class Constants {
     public static final String PARAM_CHILD_TYPES = "childTypes";
     public static final String PARAM_CONTINUE_ON_FAILURE = "continueOnFailure";
     public static final String PARAM_DEPTH = "depth";
+    public static final String PARAM_DOWNLOAD = "download";
     public static final String PARAM_FILTER = "filter";
     public static final String PARAM_SUCCINCT = "succinct";
     public static final String PARAM_FOLDER_ID = "folderId";
