@@ -433,7 +433,7 @@ public final class ObjectService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String streamId = getStringParameter(request, PARAM_STREAM_ID);
-        boolean download = getBooleanParameter(request, PARAM_DOWNLOAD, false);
+        boolean download = "attachment".equalsIgnoreCase(getStringParameter(request, PARAM_DOWNLOAD));
 
         BigInteger offset = context.getOffset();
         BigInteger length = context.getLength();
