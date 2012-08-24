@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.workbench.RandomInputStream;
 
@@ -315,7 +315,7 @@ public class ClientModel {
         ObjectType rootType = null;
         try {
             rootType = clientSession.getSession().getTypeDefinition(rootTypeId);
-        } catch (CmisObjectNotFoundException e) {
+        } catch (CmisBaseException e) {
             return result;
         }
 

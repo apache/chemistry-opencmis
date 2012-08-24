@@ -89,9 +89,9 @@ public class DataObjectCreator {
         if (isFolder || isDocument) {
             set.add(Action.CAN_GET_PROPERTIES);
             if (!isRootFolder) {
-                set.add(Action.CAN_GET_OBJECT_PARENTS);
+                set.add(Action.CAN_GET_OBJECT_PARENTS);   
+                set.add(Action.CAN_MOVE_OBJECT);
             }
-            set.add(Action.CAN_MOVE_OBJECT);
         }
 
         if (isFolder) {

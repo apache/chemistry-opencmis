@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
@@ -592,13 +593,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     protected boolean hasRelationships(Session session) {
         if (supportsRelationships == null) {
-            try {
-                session.getTypeDefinition(BaseTypeId.CMIS_RELATIONSHIP.value());
-                supportsRelationships = Boolean.TRUE;
-            } catch (CmisInvalidArgumentException e) {
-                supportsRelationships = Boolean.FALSE;
-            } catch (CmisObjectNotFoundException e) {
-                supportsRelationships = Boolean.FALSE;
+            supportsRelationships = Boolean.FALSE;
+            for (ObjectType type : session.getTypeChildren(null, false)) {
+                if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
+                    supportsRelationships = Boolean.TRUE;
+                    break;
+                }
             }
         }
 
@@ -607,13 +607,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     protected boolean hasPolicies(Session session) {
         if (supportsPolicies == null) {
-            try {
-                session.getTypeDefinition(BaseTypeId.CMIS_POLICY.value());
-                supportsPolicies = Boolean.TRUE;
-            } catch (CmisInvalidArgumentException e) {
-                supportsPolicies = Boolean.FALSE;
-            } catch (CmisObjectNotFoundException e) {
-                supportsPolicies = Boolean.FALSE;
+            supportsPolicies = Boolean.FALSE;
+            for (ObjectType type : session.getTypeChildren(null, false)) {
+                if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
+                    supportsPolicies = Boolean.TRUE;
+                    break;
+                }
             }
         }
 
@@ -824,6 +823,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                         f = createResult(FAILURE, "Root folder has CAN_GET_FOLDER_PARENT allowable action!");
                         addResult(results, assertNotAllowableAction(object, Action.CAN_GET_FOLDER_PARENT, null, f));
+
+                        f = createResult(FAILURE, "Root folder has CAN_MOVE_OBJECT allowable action!");
+                        addResult(results, assertNotAllowableAction(object, Action.CAN_MOVE_OBJECT, null, f));
                     }
                 } else {
                     f = createResult(FAILURE, "Non-Folder object has CAN_GET_DESCENDANTS allowable action!");
@@ -1067,7 +1069,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         f = createResult(FAILURE, "Content MIME types don't match!");
-        addResult(results, assertEquals(docMimeType, contentMimeType, null, f));
+        addResult(results, assertEquals(contentMimeType, docMimeType, null, f));
 
         if (contentStream.getMimeType() != null) {
             if (contentMimeType.equals(docMimeType)) {
