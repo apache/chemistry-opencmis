@@ -101,6 +101,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -634,7 +635,8 @@ public class AtomPubConverter {
 		AbstractPropertyDefinition<?> result = null;
 
 		// find property type
-		PropertyType propertyType = PropertyType.fromValue(id.replace(PROPERTY, "").replace("Definition", "").toLowerCase());
+		//Locale.ENGLISH is used because in turkish the "I".toLowerCase is not equal to i.
+		PropertyType propertyType = PropertyType.fromValue(id.replace(PROPERTY, "").replace("Definition", "").toLowerCase(Locale.ENGLISH));
 		if (propertyType == null) {
 			throw new CmisRuntimeException("Invalid property type '" + id + "'! Data type not set!");
 		}
@@ -781,26 +783,37 @@ public class AtomPubConverter {
 
 	// -----------------------------------------------------------------
 
-	private static Date parseAtomPubDate(String atomPubDate) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		sdf.setLenient(true);
-		Date d = null;
+	 private static final String FORMAT_1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-		try {
-			d = sdf.parse(atomPubDate);
-		} catch (ParseException e) {
-			try {
-				sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				d = sdf.parse(atomPubDate);
-			} catch (ParseException ee) {
-				try {
-					sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-					d = sdf.parse(atomPubDate);
-				} catch (ParseException eee) {
-					eee.printStackTrace();
-				}
-			}
-		}
-		return d;
-	}
+	 private static final String FORMAT_2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+	 private static final String FORMAT_3 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+	 private static final String FORMAT_4 = "MMM dd yyyy HH:mm:ss zzzz";
+
+	 private static final String FORMAT_5 = "dd MMM yyyy HH:mm:ss zzzz";
+
+	 private static final String[] DATE_FORMATS = { FORMAT_1, FORMAT_2, FORMAT_3, FORMAT_4, FORMAT_5 };
+
+	 private static Date parseAtomPubDate(String atomPubDate)
+	    {
+	        Date d = null;
+	        SimpleDateFormat sdf;
+	        for (int i = 0; i < DATE_FORMATS.length; i++)
+	        {
+	            sdf = new SimpleDateFormat(DATE_FORMATS[i], Locale.UK);
+	            sdf.setLenient(true);
+	            try
+	            {
+	                d = sdf.parse(atomPubDate);
+	                break;
+	            }
+	            catch (ParseException e)
+	            {
+	                continue;
+	            }
+	        }
+
+	        return d;
+	    }
 }
