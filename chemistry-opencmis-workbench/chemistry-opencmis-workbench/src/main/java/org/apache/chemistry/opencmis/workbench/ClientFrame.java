@@ -22,11 +22,14 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -104,6 +107,41 @@ public class ClientFrame extends JFrame implements WindowListener {
         ImageIcon icon = ClientHelper.getIcon("icon.png");
         if (icon != null) {
             setIconImage(icon.getImage());
+        }
+
+        // Mac OS X goodies
+        if (ClientHelper.isMacOSX()) {
+            try {
+                Class<?> macAppClass = Class.forName("com.apple.eawt.Application");
+                Method macAppGetApp = macAppClass.getMethod("getApplication", (Class<?>[]) null);
+                Object macApp = macAppGetApp.invoke(null, (Object[]) null);
+
+                if (icon != null) {
+                    try {
+                        macAppClass.getMethod("setDockIconImage", new Class<?>[] { Image.class }).invoke(macApp,
+                                new Object[] { icon.getImage() });
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+
+                try {
+                    macAppClass.getMethod("setDockIconImage", new Class<?>[] { Image.class }).invoke(macApp,
+                            new Object[] { icon.getImage() });
+                } catch (Exception e) {
+                    // ignore
+                }
+
+                try {
+                    Class<?> fullscreenClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+                    fullscreenClass.getMethod("setWindowCanFullScreen", new Class<?>[] { Window.class, Boolean.TYPE })
+                            .invoke(fullscreenClass, this, true);
+                } catch (Exception e) {
+                    // ignore
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         setLayout(new BorderLayout());

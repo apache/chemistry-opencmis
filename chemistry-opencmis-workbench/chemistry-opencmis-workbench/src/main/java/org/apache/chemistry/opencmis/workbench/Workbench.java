@@ -29,6 +29,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 public class Workbench {
 
     public Workbench() throws InterruptedException, InvocationTargetException {
+        // set Mac OS X name
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "CMIS Workbench");
+
         // turn off existing Authenticators (-> Web Start)
         Authenticator.setDefault(null);
 
