@@ -19,6 +19,9 @@
       <useProjectArtifact></useProjectArtifact>
       <unpack>false</unpack>
       <scope>runtime</scope>
+      <excludes>
+        <exclude>org.apache.felix:org.osgi.core</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
   <fileSets>

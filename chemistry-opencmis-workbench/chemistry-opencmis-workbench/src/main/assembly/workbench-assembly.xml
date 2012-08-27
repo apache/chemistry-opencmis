@@ -53,12 +53,12 @@
 	      <useProjectArtifact></useProjectArtifact>
 	      <unpack>false</unpack>
 	      <scope>runtime</scope>
-			<excludes>
+          <excludes>
               <exclude>${project.groupId}:chemistry-opencmis-test-util</exclude>
               <exclude>junit:junit</exclude>                       
               <exclude>org.apache.felix:org.osgi.core</exclude>
               <exclude>net.sf.jopt-simple:jopt-simple</exclude>
-           </excludes>
+          </excludes>
 	    </dependencySet>
 	  </dependencySets>
 
