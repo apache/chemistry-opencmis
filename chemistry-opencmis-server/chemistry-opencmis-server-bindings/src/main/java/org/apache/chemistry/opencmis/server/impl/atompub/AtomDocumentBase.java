@@ -344,7 +344,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
 
 	public void writeFolderTreeLink(String href) throws XMLStreamException {
 		writeLink(Constants.REL_FOLDERTREE, href,
-				Constants.MEDIATYPE_DESCENDANTS, null);
+				Constants.MEDIATYPE_FEED, null);
 	}
 
 	public void writeTypeUpLink(String href, String type)

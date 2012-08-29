@@ -146,7 +146,9 @@ public class CmisAtomPubServlet extends HttpServlet {
             dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class, "createRelationship");
             dispatcher.addResource(RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
             dispatcher.addResource(RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
+            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_DELETE, NavigationService.class, "deleteTree"); // 1.1
             dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
+            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_DELETE, ObjectService.class, "deleteTree");
             dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
             dispatcher.addResource(RESOURCE_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
             dispatcher.addResource(RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class, "deleteAllVersions");

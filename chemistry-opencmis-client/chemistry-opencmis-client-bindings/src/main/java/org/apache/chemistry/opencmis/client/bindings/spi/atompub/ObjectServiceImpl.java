@@ -371,11 +371,25 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
 
-        // find the link
-        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
+        // find the down links
+        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, null);
+
+        if (link != null) {
+            // found only a children link, but no descendants link
+            // -> try folder tree link
+            link = null;
+        } else {
+            // found no or two down links
+            // -> get only the descendants link
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
+        }
 
         if (link == null) {
             link = loadLink(repositoryId, folderId, Constants.REL_FOLDERTREE, Constants.MEDIATYPE_DESCENDANTS);
+        }
+
+        if (link == null) {
+            link = loadLink(repositoryId, folderId, Constants.REL_FOLDERTREE, Constants.MEDIATYPE_FEED);
         }
 
         if (link == null) {
