@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,9 +43,9 @@ public class ThresholdOutputStream extends OutputStream {
     private static final int MAX_GROW = 10 * 1024 * 1024; // 10 MiB
     private static final int DEFAULT_THRESHOLD = 4 * 1024 * 1024; // 4 MiB
 
-    private File tempDir;
-    private int memoryThreshold;
-    private long maxContentSize;
+    private final File tempDir;
+    private final int memoryThreshold;
+    private final long maxContentSize;
 
     private byte[] buf = null;
     private int bufSize = 0;
@@ -229,40 +228,56 @@ public class ThresholdOutputStream extends OutputStream {
     /**
      * Provides information about the input stream.
      */
-    public interface ThresholdInputStream {
+    public abstract class ThresholdInputStream extends InputStream {
 
         /**
-         * Returns <code>true</code> if the data is in memory. Returns
-         * <code>false</code> if the data resides in a temporary file.
+         * Returns if the data is stored in memory.
+         * 
+         * @return <code>true</code> if the data is in memory and
+         *         <code>false</code> if the data resides in a temporary file
          */
-        boolean isInMemory();
+        public abstract boolean isInMemory();
 
         /**
-         * Returns the temporary file if the data stored in a file. Returns
-         * <code>null</code> is the data is stored in memory.
+         * Gets the temporary file.
+         * 
+         * @return the temporary file or <code>null</code> if the data is stored
+         *         in memory
          */
-        File getTemporaryFile();
+        public File getTemporaryFile() {
+            return null;
+        }
 
         /**
-         * Returns content as a byte array if the data is stored in memory.
-         * Returns <code>null</code> is the data is stored in a file.
+         * Gets the byte buffer.
+         * 
+         * @return the content in a byte array or <code>null</code> if the data
+         *         is stored in a file
          */
-        byte[] getBytes();
+        public byte[] getBytes() {
+            return null;
+        }
+
+        /**
+         * Returns the length of the stream.
+         * 
+         * @return the length of the stream in bytes
+         */
+        public long length() {
+            return size;
+        }
     }
 
     /**
      * InputStream for in-memory data.
      */
-    private class InternalBufferInputStream extends InputStream implements ThresholdInputStream {
+    private class InternalBufferInputStream extends ThresholdInputStream {
 
         private int pos = 0;
+        private int mark = -1;
 
         public boolean isInMemory() {
             return true;
-        }
-
-        public File getTemporaryFile() {
-            return null;
         }
 
         public byte[] getBytes() {
@@ -271,7 +286,23 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public boolean markSupported() {
-            return false;
+            return true;
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            if (buf != null) {
+                mark = pos;
+            }
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            if (mark < 0) {
+                throw new IOException("Reset not possible.");
+            }
+
+            pos = mark;
         }
 
         @Override
@@ -323,19 +354,21 @@ public class ThresholdOutputStream extends OutputStream {
         @Override
         public void close() throws IOException {
             buf = null;
+            mark = -1;
         }
     }
 
     /**
      * InputStream for file data.
      */
-    private class InternalTempFileInputStream extends FilterInputStream implements ThresholdInputStream {
+    private class InternalTempFileInputStream extends ThresholdInputStream {
 
+        private final BufferedInputStream stream;
         private boolean isDeleted = false;
         private boolean isClosed = false;
 
         public InternalTempFileInputStream() throws FileNotFoundException {
-            super(new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold));
+            stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
         }
 
         public boolean isInMemory() {
@@ -346,13 +379,43 @@ public class ThresholdOutputStream extends OutputStream {
             return tempFile;
         }
 
-        public byte[] getBytes() {
-            return null;
+        @Override
+        public int available() throws IOException {
+            if (isClosed) {
+                throw new IOException("Stream is already closed!");
+            }
+
+            return stream.available();
         }
 
         @Override
         public boolean markSupported() {
-            return false;
+            return stream.markSupported();
+        }
+
+        @Override
+        public synchronized void mark(int readlimit) {
+            if (!isClosed) {
+                stream.mark(readlimit);
+            }
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            if (isClosed) {
+                throw new IOException("Stream is already closed!");
+            }
+
+            stream.reset();
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            if (isClosed) {
+                throw new IOException("Stream is already closed!");
+            }
+
+            return stream.skip(n);
         }
 
         @Override
@@ -361,11 +424,11 @@ public class ThresholdOutputStream extends OutputStream {
                 return -1;
             }
 
-            int b = super.read();
+            int b = stream.read();
 
             if (b == -1 && !isDeleted) {
                 try {
-                    super.close();
+                    stream.close();
                     isClosed = true;
                 } catch (Exception e) {
                 }
@@ -390,7 +453,7 @@ public class ThresholdOutputStream extends OutputStream {
 
             if (n == -1 && !isDeleted) {
                 try {
-                    super.close();
+                    stream.close();
                     isClosed = true;
                 } catch (Exception e) {
                 }
@@ -404,7 +467,7 @@ public class ThresholdOutputStream extends OutputStream {
         public void close() throws IOException {
             if (!isClosed) {
                 try {
-                    super.close();
+                    stream.close();
                     isClosed = true;
                 } catch (Exception e) {
                 }
