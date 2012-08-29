@@ -88,9 +88,14 @@ public class SessionImpl implements Session {
             IncludeRelationships.NONE, null, true, null, true, 100);
 
     private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
+    private static final Set<Updatability> CREATE_AND_CHECKOUT_UPDATABILITY = new HashSet<Updatability>();
+
     static {
         CREATE_UPDATABILITY.add(Updatability.ONCREATE);
         CREATE_UPDATABILITY.add(Updatability.READWRITE);
+        CREATE_AND_CHECKOUT_UPDATABILITY.add(Updatability.ONCREATE);
+        CREATE_AND_CHECKOUT_UPDATABILITY.add(Updatability.READWRITE);
+        CREATE_AND_CHECKOUT_UPDATABILITY.add(Updatability.WHENCHECKEDOUT);
     }
 
     // private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
@@ -718,10 +723,13 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
 
-        String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
-                (folderId == null ? null : folderId.getId()), objectFactory.convertContentStream(contentStream),
-                versioningState, objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        String newId = getBinding().getObjectService().createDocument(
+                getRepositoryId(),
+                objectFactory.convertProperties(properties, null,
+                        (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
+                                : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()),
+                objectFactory.convertContentStream(contentStream), versioningState,
+                objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
                 objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {
@@ -750,10 +758,14 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Source object must be a document!");
         }
 
-        String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
-                objectFactory.convertProperties(properties, type, CREATE_UPDATABILITY),
-                (folderId == null ? null : folderId.getId()), versioningState, objectFactory.convertPolicies(policies),
-                objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+        String newId = getBinding().getObjectService().createDocumentFromSource(
+                getRepositoryId(),
+                source.getId(),
+                objectFactory.convertProperties(properties, type,
+                        (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
+                                : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()), versioningState,
+                objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+                objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {
             return null;
