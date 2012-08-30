@@ -59,6 +59,10 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +72,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -443,6 +448,38 @@ public final class ObjectService {
 
         if (content == null || content.getStream() == null) {
             throw new CmisRuntimeException("Content stream is null!");
+        }
+
+        // check if Last-Modified header should be set
+        if (content instanceof LastModifiedContentStream) {
+            GregorianCalendar lastModified = ((LastModifiedContentStream) content).getLastModified();
+            if (lastModified != null) {
+                long lastModifiedSecs = (long) Math.floor((double) lastModified.getTimeInMillis() / 1000);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+
+                String modifiedSinceStr = request.getHeader("If-Modified-Since");
+                if (modifiedSinceStr != null) {
+                    try {
+                        Date modifiedSince = sdf.parse(modifiedSinceStr);
+                        long modifiedSinceSecs = (long) Math.floor((double) modifiedSince.getTime() / 1000);
+
+                        if (modifiedSinceSecs >= lastModifiedSecs) {
+                            // close stream
+                            content.getStream().close();
+
+                            // send not modified status code
+                            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                            response.setContentLength(0);
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        // ignore
+                    }
+                }
+
+                response.setHeader("Last-Modified", sdf.format(lastModifiedSecs * 1000));
+            }
         }
 
         String contentType = content.getMimeType();
