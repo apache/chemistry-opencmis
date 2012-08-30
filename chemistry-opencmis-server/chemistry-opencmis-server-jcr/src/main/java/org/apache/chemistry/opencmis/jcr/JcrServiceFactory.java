@@ -19,6 +19,19 @@
  */
 package org.apache.chemistry.opencmis.jcr;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.imageio.spi.ServiceRegistry;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.RepositoryFactory;
+
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -31,18 +44,6 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.imageio.spi.ServiceRegistry;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.RepositoryFactory;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
@@ -58,10 +59,10 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     public static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
     public static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
-    private JcrTypeManager typeManager;
-    private Map<String, String> jcrConfig;
-    private String mountPath;
-    private JcrRepository jcrRepository;
+    protected JcrTypeManager typeManager;
+    protected Map<String, String> jcrConfig;
+    protected String mountPath;
+    protected JcrRepository jcrRepository;
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -209,6 +210,15 @@ public class JcrServiceFactory extends AbstractServiceFactory {
         }
 
         return result.toString();
+    }
+
+    public JcrTypeManager getTypeManager() {
+        return typeManager;
+    }
+
+
+    public JcrRepository getJcrRepository() {
+        return jcrRepository;
     }
 
 }

@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.jcr.impl;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -29,10 +33,6 @@ import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.type.JcrFolderTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 /**
  * Type handler that provides cmis:folder.
@@ -91,12 +91,10 @@ public class DefaultFolderTypeHandler extends AbstractJcrTypeHandler implements 
     public JcrFolder createFolder(JcrFolder parentFolder, String name, Properties properties) {
         try {
             Node node = parentFolder.getNode().addNode(name, NodeType.NT_FOLDER);
-            node.addMixin(NodeType.MIX_CREATED);
-            node.addMixin(NodeType.MIX_LAST_MODIFIED);
-
+            addMixins(node);
             // compile the properties
-            JcrFolder.setProperties(node, getTypeDefinition(), properties);
-
+            updateProperties(node, properties);
+            //save changes
             node.getSession().save();
             return getJcrNode(node);
         }
@@ -104,5 +102,14 @@ public class DefaultFolderTypeHandler extends AbstractJcrTypeHandler implements 
             log.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
+    }
+
+    protected void updateProperties(Node node, Properties properties) {
+        JcrFolder.setProperties(node, getTypeDefinition(), properties);
+    }
+
+    protected void addMixins(Node node) throws RepositoryException {
+        node.addMixin(NodeType.MIX_CREATED);
+        node.addMixin(NodeType.MIX_LAST_MODIFIED);
     }
 }

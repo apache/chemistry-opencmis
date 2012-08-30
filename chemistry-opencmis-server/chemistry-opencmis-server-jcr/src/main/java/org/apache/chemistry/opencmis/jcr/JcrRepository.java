@@ -92,10 +92,10 @@ import org.slf4j.LoggerFactory;
 public class JcrRepository {
     private static final Logger log = LoggerFactory.getLogger(JcrRepository.class);
 
-    private final Repository repository;
-    private final JcrTypeManager typeManager;
-    private final PathManager pathManager;
-    private final JcrTypeHandlerManager typeHandlerManager;
+    protected final Repository repository;
+    protected final JcrTypeManager typeManager;
+    protected final PathManager pathManager;
+    protected final JcrTypeHandlerManager typeHandlerManager;
 
     /**
      * Create a new <code>JcrRepository</code> instance backed by a JCR repository.
@@ -1113,5 +1113,22 @@ public class JcrRepository {
         result.add(PropertyIds.BASE_TYPE_ID);
 
         return result;
+    }
+
+
+    public Repository getRepository() {
+        return repository;
+    }
+
+    public JcrTypeManager getTypeManager() {
+        return typeManager;
+    }
+
+    public PathManager getPathManager() {
+        return pathManager;
+    }
+
+    public JcrTypeHandlerManager getTypeHandlerManager() {
+        return typeHandlerManager;
     }
 }

@@ -18,6 +18,17 @@
  */
 package org.apache.chemistry.opencmis.jcr.impl;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
+
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -37,16 +48,6 @@ import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.type.JcrDocumentTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionManager;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 
 /**
  * Type handler that provides cmis:document.
@@ -98,45 +99,20 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
         return node.isNodeType(NodeType.NT_FILE) && node.isNodeType(NodeType.MIX_SIMPLE_VERSIONABLE);
     }
 
-    public JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties, ContentStream contentStream, VersioningState versioningState) {
+    public JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties,
+                                  ContentStream contentStream, VersioningState versioningState) {
         try {
             Node fileNode = parentFolder.getNode().addNode(name, NodeType.NT_FILE);
-            if (versioningState != VersioningState.NONE) {
-                fileNode.addMixin(NodeType.MIX_SIMPLE_VERSIONABLE);
-            }
-
+            addFileNodeMixins(fileNode,versioningState);
             Node contentNode = fileNode.addNode(Node.JCR_CONTENT, NodeType.NT_RESOURCE);
-            contentNode.addMixin(NodeType.MIX_CREATED);
-
+            addContentNodeMixins(contentNode);
             // compile the properties
-            JcrFolder.setProperties(contentNode, getTypeDefinition(), properties);
-
+            setContentNodeProperties(contentNode, properties);
             // write content, if available
-            Binary binary = contentStream == null || contentStream.getStream() == null
-                    ? JcrBinary.EMPTY
-                    : new JcrBinary(new BufferedInputStream(contentStream.getStream()));
-            try {
-                contentNode.setProperty(Property.JCR_DATA, binary);
-                if (contentStream != null && contentStream.getMimeType() != null) {
-                    contentNode.setProperty(Property.JCR_MIMETYPE, contentStream.getMimeType());
-                }
-            }
-            finally {
-                binary.dispose();
-            }
-
+            updateContentNode(contentStream, contentNode);
+            //save changes
             fileNode.getSession().save();
-            JcrNode jcrFileNode = getJcrNode(fileNode);
-            if (versioningState == VersioningState.NONE) {
-                return jcrFileNode;
-            }
-
-            JcrVersionBase jcrVersion = jcrFileNode.asVersion();
-            if (versioningState == VersioningState.MINOR || versioningState == VersioningState.MAJOR) {
-                return jcrVersion.checkin(null, null, "auto checkin");
-            } else {
-                return jcrVersion.getPwc();
-            }
+            return getJcrNode(fileNode, versioningState);
         }
         catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
@@ -147,4 +123,51 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
             throw new CmisStorageException(e.getMessage(), e);
         }
     }
+
+    protected JcrNode getJcrNode(Node fileNode, VersioningState versioningState)
+            throws RepositoryException {
+        JcrNode jcrFileNode = getJcrNode(fileNode);
+        if (versioningState == VersioningState.NONE) {
+            return jcrFileNode;
+        }
+
+        JcrVersionBase jcrVersion = jcrFileNode.asVersion();
+        if (versioningState == VersioningState.MINOR || versioningState == VersioningState.MAJOR) {
+            return jcrVersion.checkin(null, null, "auto checkin");
+        } else {
+            return jcrVersion.getPwc();
+        }
+    }
+
+    protected void updateContentNode(ContentStream contentStream, Node contentNode)
+            throws IOException, RepositoryException {
+        Binary binary = contentStream == null || contentStream.getStream() == null
+                ? JcrBinary.EMPTY
+                : new JcrBinary(new BufferedInputStream(contentStream.getStream()));
+        try {
+            contentNode.setProperty(Property.JCR_DATA, binary);
+            if (contentStream != null && contentStream.getMimeType() != null) {
+                contentNode.setProperty(Property.JCR_MIMETYPE, contentStream.getMimeType());
+            }
+        }
+        finally {
+            binary.dispose();
+        }
+    }
+
+    protected void setContentNodeProperties(Node contentNode, Properties properties) {
+        JcrFolder.setProperties(contentNode, getTypeDefinition(), properties);
+    }
+
+    protected void addContentNodeMixins(Node contentNode) throws RepositoryException {
+        contentNode.addMixin(NodeType.MIX_CREATED);
+    }
+
+    protected void addFileNodeMixins(Node fileNode, VersioningState versioningState)
+            throws RepositoryException {
+        if (versioningState != VersioningState.NONE) {
+            fileNode.addMixin(NodeType.MIX_SIMPLE_VERSIONABLE);
+        }
+    }
+
 }
