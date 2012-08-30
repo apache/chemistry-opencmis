@@ -18,6 +18,28 @@
  */
 package org.apache.chemistry.opencmis.jcr;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.Credentials;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -42,7 +64,6 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
@@ -64,27 +85,6 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Credentials;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
-import javax.jcr.NoSuchWorkspaceException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * JCR back-end for CMIS server.
@@ -230,16 +230,12 @@ public class JcrRepository {
             throw new CmisConstraintException("Versioning required for " + typeId);
         }
 
-        // check the name
+        // get the name
         String name = PropertyHelper.getStringProperty(properties, PropertyIds.NAME);
-        if (!JcrConverter.isValidJcrName(name)) {
-            throw new CmisNameConstraintViolationException("Name is not valid: " + name);
-        }
-
         // get parent Node and create child
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
         JcrDocumentTypeHandler typeHandler = typeHandlerManager.getDocumentTypeHandler(typeId);
-        JcrNode jcrNode = typeHandler.createDocument(parent, name, properties, contentStream, versioningState);
+        JcrNode jcrNode = typeHandler.createDocument(parent, JcrConverter.toJcrName(name), properties, contentStream, versioningState);
         return jcrNode.getId();
     }
 
@@ -289,16 +285,12 @@ public class JcrRepository {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
 
-        // check the name
+        // get the name
         String name = PropertyHelper.getStringProperty(properties, PropertyIds.NAME);
-        if (!JcrConverter.isValidJcrName(name)) {
-            throw new CmisNameConstraintViolationException("Name is not valid: " + name);
-        }
-
         // get parent Node
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
         JcrFolderTypeHandler typeHandler = typeHandlerManager.getFolderTypeHandler(typeId);
-        JcrNode jcrNode = typeHandler.createFolder(parent, name, properties);
+        JcrNode jcrNode = typeHandler.createFolder(parent, JcrConverter.toJcrName(name), properties);
         return jcrNode.getId();
     }
 

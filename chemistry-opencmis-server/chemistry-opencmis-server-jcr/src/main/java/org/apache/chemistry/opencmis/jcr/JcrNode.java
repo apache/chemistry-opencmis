@@ -19,6 +19,24 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -32,7 +50,6 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
@@ -51,23 +68,6 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Common base class for all JCR <code>Node</code>s to be represented as CMIS objects. Instances of this class
@@ -319,15 +319,11 @@ public abstract class JcrNode {
      */
     public JcrNode updateProperties(Properties properties) {
         // get and check the new name
-        String newName = PropertyHelper.getStringProperty(properties, PropertyIds.NAME);
+        String newName = JcrConverter.toJcrName(PropertyHelper.getStringProperty(properties, PropertyIds.NAME));
         boolean rename = newName != null && !getName().equals(newName);
-        if (rename && !JcrConverter.isValidJcrName(newName)) {
-            throw new CmisNameConstraintViolationException("Name is not valid: " + newName);
-        }
         if (rename && isRoot()) {
             throw new CmisUpdateConflictException("Cannot rename root node");
         }
-
         try {
             // rename file or folder if necessary
             Session session = getNode().getSession();

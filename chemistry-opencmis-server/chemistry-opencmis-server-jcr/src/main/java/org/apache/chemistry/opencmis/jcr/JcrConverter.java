@@ -19,6 +19,25 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.NodeType;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -38,30 +57,23 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImp
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.jcr.util.Util;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFactory;
-import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.NodeType;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class providing methods for converting various entities from/to their respective representation
  * in JCR/CMIS.
  */
 public final class JcrConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(JcrConverter.class);
+    private static final Pattern QUALIFIED_NAME = Pattern.compile("\\{([^}]*)\\}(.*)");
+    private static final Pattern PREFIXED_NAME = Pattern.compile("(([^:/]+):)?([^:]*)");
+    
     private JcrConverter() {}
 
     /**
-     * Escapes all illegal JCR name characters of a string.
+     * Escapes all illegal for JCR local name characters of a string.
      * The encoding is loosely modeled after URI encoding, but only encodes
      * the characters it absolutely needs to in order to make the resulting
      * string a valid JCR name.
@@ -79,9 +91,9 @@ public final class JcrConverter {
      *
      * @param cmisName the name to escape
      * @return the escaped name
-     */    
-    public static String toJcrName(String cmisName) {
-        StringBuilder buffer = new StringBuilder(cmisName.length() * 2);
+     */
+    private static String escapeForJcr(String cmisName){
+        StringBuilder buffer = new StringBuilder(cmisName.length() * 16 + 32);
         for (int i = 0; i < cmisName.length(); i++) {
             char ch = cmisName.charAt(i);
             if (ch == '%' || ch == '/' || ch == ':' || ch == '[' || ch == ']' || ch == '*' || ch == '|'
@@ -100,27 +112,52 @@ public final class JcrConverter {
     }
 
     /**
-     * Checks if the given name is valid a valid JCR name
-     *
-     * @param name  the name to check
-     * @return <code>true</code> if the name is valid, <code>false</code> otherwise.
-     */
-    public static boolean isValidJcrName(String name) { 
-        if (name == null || name.length() == 0) {
-            return false;
+     * See JSR-283, 3.2 Names
+     * A JCR name is an ordered pair of strings:
+     * (N, L) where N is a JCR namespace and L is a JCR local name.
+     * @param cmisName the name to escape
+     * @return the escaped name
+     */    
+    public static String toJcrName(String cmisName) {
+        if (cmisName == null || cmisName.length()==0){
+            return null;
         }
-
-        for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
-            if (ch == '%' || ch == '/' || ch == ':' || ch == '[' || ch == ']' || ch == '*' || ch == '|'
-                    || ch == '\t' || ch == '\r' || ch == '\n'
-                    || ch == '.' && name.length() < 3
-                    || ch == ' ' && (i == 0 || i == name.length() - 1)) {
-                return false;
+        if (cmisName.charAt(0) == '{') {
+            Matcher matcher = QUALIFIED_NAME.matcher(cmisName);
+            if (matcher.matches()) {
+                String namespaceUri = matcher.group(1);
+                String localName = matcher.group(2);
+                StringBuilder builder = new StringBuilder(cmisName.length() * 16 + 32);
+                if (namespaceUri != null && namespaceUri.length() > 0) {
+                    //This must be valid URI
+                    try {
+                        namespaceUri = new URI(namespaceUri).toString();
+                        builder.append('{');
+                        builder.append(namespaceUri);
+                        builder.append('}');
+                    } catch (URISyntaxException e1) {
+                        //Skip URI
+                        log.debug(e1.getMessage(),e1);
+                    }
+                }
+                builder.append(escapeForJcr(localName));
+                return builder.toString();
+            }
+        } else {
+            Matcher matcher = PREFIXED_NAME.matcher(cmisName);
+            if (matcher.matches()) {
+                String prefix = matcher.group(2);
+                String localName = matcher.group(3);
+                StringBuilder builder = new StringBuilder(cmisName.length() * 16 + 32);
+                if (prefix != null && prefix.length() > 0) {
+                    builder.append(escapeForJcr(prefix));
+                    builder.append(':');
+                }
+                builder.append(escapeForJcr(localName));
+                return builder.toString();
             }
         }
-
-        return true;
+        return escapeForJcr(cmisName);
     }
 
     /**
