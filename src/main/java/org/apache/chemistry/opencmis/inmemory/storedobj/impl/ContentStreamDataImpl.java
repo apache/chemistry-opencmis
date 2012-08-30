@@ -26,13 +26,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 
-public class ContentStreamDataImpl implements ContentStream {
+public class ContentStreamDataImpl implements LastModifiedContentStream {
 
     private int fLength;
 
@@ -41,6 +43,8 @@ public class ContentStreamDataImpl implements ContentStream {
     private String fFileName;
 
     private byte[] fContent;
+    
+    private GregorianCalendar fLastModified;
 
     private long fStreamLimitOffset;
 
@@ -114,6 +118,14 @@ public class ContentStreamDataImpl implements ContentStream {
         }
     }
 
+    public void setLastModified(GregorianCalendar lastModified) {
+        this.fLastModified = lastModified;
+    }
+    
+    public GregorianCalendar getLastModified() {
+        return fLastModified;
+    }
+    
     public ContentStream getCloneWithLimits(long offset, long length) {
         ContentStreamDataImpl clone = new ContentStreamDataImpl(0);
         clone.fFileName = fFileName;
@@ -122,13 +134,14 @@ public class ContentStreamDataImpl implements ContentStream {
         clone.fMimeType = fMimeType;
         clone.fStreamLimitOffset = offset;
         clone.fStreamLimitLength = length;
+        clone.fLastModified = fLastModified;
         return clone;
     }
 
     public final byte[] getBytes() {
         return fContent;
     }
-    
+
     public List<CmisExtensionElement> getExtensions() {
         return null;
     }

@@ -31,7 +31,6 @@ import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +77,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
                 mimeType = "application/octet-stream"; // use as fallback
             }
             fContent.setMimeType(mimeType);
+            fContent.setLastModified(getModifiedAt());
             try {
                 fContent.setContent(content.getStream());
             } catch (IOException e) {

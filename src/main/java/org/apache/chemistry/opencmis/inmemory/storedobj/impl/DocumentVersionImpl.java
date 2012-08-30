@@ -71,6 +71,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
             fContent.setFileName(content.getFileName());
             fContent.setMimeType(content.getMimeType());
+            fContent.setLastModified(getModifiedAt());
             try {
                 fContent.setContent(content.getStream());
             } catch (IOException e) {
