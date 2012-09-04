@@ -270,6 +270,7 @@ public class HttpUtils {
                 if (contentType != null) {
                     String contentTypeLower = contentType.toLowerCase().split(";")[0];
                     if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")
+                            || contentTypeLower.startsWith("application/xml")
                             || contentTypeLower.startsWith("application/json")) {
                         StringBuilder sb = new StringBuilder();
 
