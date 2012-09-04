@@ -34,6 +34,7 @@ int countTypes(String typeId) {
 
     try {
         session.getTypeDescendants(typeId, -1, false).each { counter += 1 + count(it) }
+        counter++
     }
     catch(CmisBaseException e) { }
     
