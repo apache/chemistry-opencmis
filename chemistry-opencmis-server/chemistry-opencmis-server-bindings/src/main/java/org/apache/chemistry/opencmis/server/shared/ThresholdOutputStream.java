@@ -214,7 +214,7 @@ public class ThresholdOutputStream extends OutputStream {
     /**
      * Returns the data as an InputStream.
      */
-    public InputStream getInputStream() throws Exception {
+    public InputStream getInputStream() throws IOException {
         if (tmpStream != null) {
             close();
             buf = null;
@@ -266,6 +266,11 @@ public class ThresholdOutputStream extends OutputStream {
         public long length() {
             return size;
         }
+
+        /**
+         * Rewinds the stream so that it can be read from the beginning.
+         */
+        public abstract void rewind() throws IOException;
     }
 
     /**
@@ -282,6 +287,16 @@ public class ThresholdOutputStream extends OutputStream {
 
         public byte[] getBytes() {
             return buf;
+        }
+
+        @Override
+        public void rewind() throws IOException {
+            if (buf == null) {
+                throw new IOException("Stream is already closed!");
+            }
+
+            pos = 0;
+            mark = -1;
         }
 
         @Override
@@ -363,7 +378,7 @@ public class ThresholdOutputStream extends OutputStream {
      */
     private class InternalTempFileInputStream extends ThresholdInputStream {
 
-        private final BufferedInputStream stream;
+        private BufferedInputStream stream;
         private boolean isDeleted = false;
         private boolean isClosed = false;
 
@@ -377,6 +392,17 @@ public class ThresholdOutputStream extends OutputStream {
 
         public File getTemporaryFile() {
             return tempFile;
+        }
+
+        @Override
+        public void rewind() throws IOException {
+            if (isClosed) {
+                throw new IOException("Stream is already closed!");
+            }
+
+            stream.close();
+
+            stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
         }
 
         @Override
