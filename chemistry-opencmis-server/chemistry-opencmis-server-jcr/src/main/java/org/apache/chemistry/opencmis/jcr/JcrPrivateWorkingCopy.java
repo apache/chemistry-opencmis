@@ -19,13 +19,13 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 /**
  * Instances of this class represent a private working copy of a cmis:document backed by an underlying
@@ -59,7 +59,7 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
      * @see JcrPrivateWorkingCopy#PWC_NAME
      */
     public static boolean isPwc(String objectId) {
-        return objectId.endsWith('/' + PWC_NAME);   
+        return objectId.equals(PWC_NAME);   
     }
 
     //------------------------------------------< protected >---
@@ -82,7 +82,7 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
 
     @Override
     protected String getObjectId() throws RepositoryException {
-        return getVersionSeriesId() + '/' + PWC_NAME;
+        return getVersionSeriesId();
     }
 
     @Override

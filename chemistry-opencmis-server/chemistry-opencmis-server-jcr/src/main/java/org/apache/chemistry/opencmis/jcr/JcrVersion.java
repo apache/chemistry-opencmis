@@ -19,13 +19,14 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
-import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 /**
  * Instances of this class represent a specific version of a cmis:document backed by an underlying
@@ -60,7 +61,7 @@ public class JcrVersion extends JcrVersionBase {
     
     @Override
     protected String getObjectId() throws RepositoryException {
-        return getVersionSeriesId() + '/' + version.getName();
+        return getVersionSeriesId();
     }
 
     @Override
@@ -94,7 +95,7 @@ public class JcrVersion extends JcrVersionBase {
         // todo set checkinComment
         return "";
     }
-
+    
     //------------------------------------------< private >---
 
     private static String parseVersion(String name, int group) {
@@ -104,5 +105,13 @@ public class JcrVersion extends JcrVersionBase {
                 : null;
     }
 
+    /**
+     * Retrieve version name.
+     * @return version name
+     * @throws RepositoryException
+     */
+    public String getVersionName() throws RepositoryException {
+    	return version.getName();
+    }
 
 }

@@ -339,7 +339,16 @@ public class JcrRepository {
 
         // get the node
         JcrNode jcrNode = getJcrNode(session, objectId);
-        jcrNode.delete(Boolean.TRUE.equals(allVersions), JcrPrivateWorkingCopy.isPwc(objectId)); 
+        try {
+            // check on private copy
+            boolean isPwc = jcrNode.isVersionable()
+                    && JcrPrivateWorkingCopy.isPwc(jcrNode.asVersion().getVersionLabel());
+            jcrNode.delete(Boolean.TRUE.equals(allVersions), isPwc);
+        }
+        catch(RepositoryException rex) {
+            log.debug(rex.getMessage(), rex);
+            throw new CmisRuntimeException(rex.getMessage(), rex);
+        }
     }
 
     /**
@@ -993,24 +1002,21 @@ public class JcrRepository {
                 return typeHandlerManager.create(getRootNode(session));
             }
 
-            int k = id.indexOf('/');
-            if (k >= 0) {
-                String nodeId = id.substring(0, k);
-                String versionName = id.substring(k + 1);
-
-                Node node = session.getNodeByIdentifier(nodeId);
-
-                JcrNode jcrNode = typeHandlerManager.create(node);
-                if (JcrPrivateWorkingCopy.denotesPwc(versionName)) {
-                    return jcrNode.asVersion().getPwc();
-                }
-                else {
-                    return jcrNode.asVersion().getVersion(versionName);
-                }
+            Node node = session.getNodeByIdentifier(id);
+            JcrNode jcrNode = typeHandlerManager.create(node);
+            
+            // if node isn't under versioning, then return retrieved object 
+            if (!jcrNode.isVersionable()) {
+            	return jcrNode;
+            }
+            
+            JcrVersionBase versionNode = jcrNode.asVersion();
+            if (JcrPrivateWorkingCopy.denotesPwc(versionNode.getVersionLabel())) {
+                return versionNode.getPwc();
             }
             else {
-                Node node = session.getNodeByIdentifier(id);
-                return typeHandlerManager.create(node);
+               JcrVersion version = versionNode.getVersion(((JcrVersion) versionNode).getVersionName());
+               return version;
             }
 
         }
