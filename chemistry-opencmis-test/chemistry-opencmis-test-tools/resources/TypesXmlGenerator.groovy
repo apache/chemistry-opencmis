@@ -212,7 +212,7 @@ def genTypeDef (name, id, descr, typeKind, parentType, props) {
 	outFile.println("<cmisra:type xsi:type=\"" + xsiType + "\">")
     outFile.println("    <id>" + id1 + "</id>")
 	outFile.println("    <localName>" + localName + "</localName>")
-	outFile.println("    <localNamespace>ns</localNamespace>")
+	outFile.println("    <localNamespace>" + ns + "</localNamespace>")
 	outFile.println("    <parentId>" + parentType + "</parentId>")
 	outFile.println("    <displayName>" + name + "</displayName>")
 	outFile.println("    <queryName>" +  name.replaceAll(" ", "_").toUpperCase() + "</queryName>")
@@ -281,9 +281,8 @@ def readPropertiesFile(inputFile) {
     while (inFile.readLine() != null) {   
        def typeLine = inFile.readLine()
        def name = inFile.readLine().trim()
-       println("Processing property: " + name + " type: " + typeLine)
+       println("   processing property: " + name + " type: " + typeLine)
        def id = inFile.readLine().trim()
-       println("   id: " + id)
        def descr = inFile.readLine().trim()
        def attrs = inFile.readLine().trim()
        def choices = null;
@@ -368,11 +367,16 @@ def writePropDefs(propDefsMap) {
 //  Main program
 
 println("Starting...")
+def propsFile = "PropertyDefinitions.txt";
+def typesFile = "TypeDefinitions.txt";
+def outFileName = "types.xml";
+outFile = new File(outFileName).newPrintWriter()
 
-outFile = new File("types.xml").newPrintWriter()
-typeDefsMap = readTypeDefinitions("TypeDefinitions.txt")
-propDefsMap = readPropertiesFile("PropertyDefinitions.txt")
-      
+println("Reading type definitions from file " + typesFile);
+typeDefsMap = readTypeDefinitions(typesFile)
+println("Reading property definitions from file " + propsFile);
+propDefsMap = readPropertiesFile(propsFile)
+println("Writing out to " + outFileName);      
 outFile.println("<!-- Generated Output file with type definitions. Do not edit! -->")
 writeTypes(typeDefsMap)
 outFile.close()
