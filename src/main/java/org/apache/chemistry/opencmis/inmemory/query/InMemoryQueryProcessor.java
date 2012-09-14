@@ -683,7 +683,7 @@ public class InMemoryQueryProcessor {
             if (rVal instanceof Double) {
                 return lDoubleValue.compareTo((Double) rVal);
             } else if (rVal instanceof Long) {
-                return Double.valueOf(((Integer) lValue).doubleValue()).compareTo(((Long)rVal).doubleValue());
+                return lDoubleValue.compareTo(Double.valueOf( ((Long)rVal)) );
             } else {
                 throwIncompatibleTypesException(lValue, rVal);
             }
