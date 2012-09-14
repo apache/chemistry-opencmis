@@ -33,9 +33,16 @@ import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ContentStreamDataImpl implements LastModifiedContentStream {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ContentStreamDataImpl.class.getName());
+
+    private static long TOTAL_LENGTH  = 0L;
+    private static long TOTAL_CALLS  = 0L;
+    
     private int fLength;
 
     private String fMimeType;
@@ -77,6 +84,10 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
             contentStream.close();
             in.close();
         }
+        TOTAL_LENGTH += fLength;
+        LOG.debug("setting content stream, total no calls " + ++TOTAL_CALLS + ".");
+        LOG.debug("setting content stream, new size total " + (TOTAL_LENGTH / (1024 * 1024)) + "MB.");
+
     }
 
     public long getLength() {
