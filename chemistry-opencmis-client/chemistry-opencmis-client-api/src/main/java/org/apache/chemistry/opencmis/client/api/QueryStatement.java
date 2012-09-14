@@ -89,10 +89,16 @@ public interface QueryStatement extends Cloneable {
 
     /**
      * Sets the designated parameter to the given string. It does not escape
-     * backslashes ('\') in front of "%' and '_'.
+     * backslashes ('\') in front of '%' and '_'.
      */
     void setStringLike(int parameterIndex, String str);
 
+    /**
+     * Sets the designated parameter to the given string. It does not escape
+     * backslashes ('\') in front of '*',  '?' and '-'.
+     */
+    void setStringContains(int parameterIndex, String str);
+    
     /**
      * Sets the designated parameter to the given object id.
      */

@@ -142,6 +142,15 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, sb.toString());
     }
 
+
+    public void setStringContains(int parameterIndex, String str) {
+        if (str == null) {
+            throw new IllegalArgumentException("String must be set!");
+        }
+
+        parametersMap.put(parameterIndex, escapeContains(str));
+    }
+
     public void setStringLike(int parameterIndex, String str) {
         if (str == null) {
             throw new IllegalArgumentException("String must be set!");
@@ -408,6 +417,29 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
                     // no additional back slash
                 } else {
                     sb.append("\\");
+                }
+            }
+
+            sb.append(c);
+        }
+
+        sb.append("'");
+
+        return sb.toString();
+    }
+
+    private static String escapeContains(String str) {
+        StringBuilder sb = new StringBuilder("'");
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+
+            if (c == '\'') {
+                sb.append("\\\\");
+            } else if (c == '\\') {
+                if (i + 1 < str.length() && (str.charAt(i + 1) == '*' || str.charAt(i + 1) == '?' || str.charAt(i + 1) == '-')) {
+                    // no additional back slash
+                } else {
+                    sb.append("\\\\");
                 }
             }
 

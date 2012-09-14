@@ -79,6 +79,13 @@ public class QueryStatementTest {
         assertEquals("SELECT * FROM cmis:document WHERE abc:string LIKE '\\_test\\%blah\\\\\\\\blah'",
                 st.toQueryString());
 
+        // contains
+        query = "SELECT * FROM cmis:document WHERE CONTAINS(?)";
+        st = new QueryStatementImpl(session, query);
+        st.setStringContains(1, "John'sPresentation\\-Version2");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('John\\\\'sPresentation\\-Version2')",
+                st.toQueryString());
+
         // ids
         query = "SELECT * FROM cmis:document WHERE abc:id = ?";
         st = new QueryStatementImpl(session, query);
