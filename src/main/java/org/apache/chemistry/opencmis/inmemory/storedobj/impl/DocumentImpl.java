@@ -113,7 +113,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
             properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
-                    PropertyIds.CONTENT_STREAM_LENGTH, null != fContent ? fContent.getBigLength() : BigInteger.ZERO));
+                    PropertyIds.CONTENT_STREAM_LENGTH, null != fContent ? fContent.getBigLength() : null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
             properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
