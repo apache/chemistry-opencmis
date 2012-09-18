@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tools.parser;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.tools.mapper.MapperException;
 import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;
@@ -57,7 +58,7 @@ public interface MetadataParser {
      *      file to parse
      * @throws MapperException
      */
-    void extractMetadata(File f, TypeDefinition td) throws MapperException;
+    void extractMetadata(File f, TypeDefinition td, Session session) throws MapperException;
     
     /**
      * Return all found metadata, called after parsing is completed.

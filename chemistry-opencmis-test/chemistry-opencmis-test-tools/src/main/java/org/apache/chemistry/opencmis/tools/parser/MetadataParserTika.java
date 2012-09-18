@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -43,11 +44,12 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MetadataParserTika extends AbstractMetadataParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataParserTika.class.getName());
+    private Session session;
 
-    public MetadataParserTika() {        
+    public MetadataParserTika() {
     }
     
-    public void extractMetadata(File f, TypeDefinition td) throws MapperException {
+    public void extractMetadata(File f, TypeDefinition td, Session session) throws MapperException {
         try {
             InputStream stream = new FileInputStream(f);
             Metadata metadata = new Metadata();
@@ -65,10 +67,7 @@ public class MetadataParserTika extends AbstractMetadataParser {
                     String propertyId = mapper.getMappedPropertyId(key);
                     if (null != propertyId && null != val) {
                         if (td != null) {
-                            PropertyDefinition<?> propDef = td.getPropertyDefinitions().get(propertyId);
-                            if (null == propDef)
-                                throw new MapperException("Mapping error: unknown property "+ propertyId + " in type definition " + td.getId());
-                            PropertyType propertyType = propDef.getPropertyType();
+                            PropertyDefinition<?> propDef = getMappedPropertyDefinition(td.getId(), propertyId, session);                            
                             Object convVal = mapper.convertValue(propertyId, propDef, val);
                             if (null != convVal)
                                 cmisProperties.put(propertyId, convVal);
@@ -82,6 +81,18 @@ public class MetadataParserTika extends AbstractMetadataParser {
             LOG.error(e.toString(), e);
             throw new MapperException("Extracting metadata failed for file " + f.getAbsolutePath(), e);
         }
+    }
+
+    private PropertyDefinition<?> getMappedPropertyDefinition(String typeId, String propertyId, Session session) {
+        String typeIdOrg = typeId;
+        while (null != typeId) {
+            TypeDefinition td = session.getTypeDefinition(typeId);
+            PropertyDefinition<?> propDef = td.getPropertyDefinitions().get(propertyId);
+            if (null != propDef)
+                return propDef;
+            typeId = td.getParentTypeId();
+        }
+        throw new MapperException("Mapping error: unknown property "+ propertyId + " in type definition " + typeIdOrg);
     }    
     
     public void listMetadata(File f) throws MapperException {

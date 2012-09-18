@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.tools.mapper.MapperException;
 import org.apache.chemistry.opencmis.tools.mapper.PropertyMapperExif;
@@ -44,7 +45,7 @@ public class MetadataParserExif extends AbstractMetadataParser  {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataParserExif.class.getName());
     
-    public void extractMetadata(File f, TypeDefinition td) throws MapperException {
+    public void extractMetadata(File f, TypeDefinition td, Session session) throws MapperException {
         
         reset();
         

@@ -152,12 +152,12 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         if (GpsDirectory.class.equals(dir.getClass())) {
             // first check for those tags that need special consideration:
             if ( GpsDirectory.TAG_GPS_LONGITUDE == tag.getTagType()) {
-                Object ref = dir.getObject(GpsDirectory.TAG_GPS_DEST_LONGITUDE_REF);
-                boolean mustInv = ref != null && ref.equals('W');
+                Object ref = dir.getObject(GpsDirectory.TAG_GPS_LONGITUDE_REF);
+                boolean mustInv = ref != null && ref.equals("W");
                 return convertGps(tag, dir, mustInv);
             } else if ( GpsDirectory.TAG_GPS_LATITUDE == tag.getTagType()) {
-                Object ref = dir.getObject(GpsDirectory.TAG_GPS_DEST_LONGITUDE_REF);
-                boolean mustInv = ref != null && ref.equals('S');
+                Object ref = dir.getObject(GpsDirectory.TAG_GPS_LONGITUDE_REF);
+                boolean mustInv = ref != null && ref.equals("S");
                 return convertGps(tag, dir, mustInv);
             } else {
                 String propId = propMapGps.get(hexStr);

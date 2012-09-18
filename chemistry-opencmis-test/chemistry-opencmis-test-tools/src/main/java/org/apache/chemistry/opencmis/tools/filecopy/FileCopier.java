@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
@@ -39,15 +38,16 @@ import org.apache.chemistry.opencmis.tools.mapper.MapperException;
 import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;
 import org.apache.chemistry.opencmis.tools.parser.MetadataParser;
 import org.apache.chemistry.opencmis.tools.parser.MetadataParserTika;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.tika.Tika;
     
 public class FileCopier {
     
     private static final Logger LOG = LoggerFactory.getLogger(FileCopier.class.getName());
     // initialize configurator to get parsers and property mappings
     private static final Configurator CFG = Configurator.getInstance(); 
+    private static int TOTAL_NUM = 0;
     
     private Session session;
     
@@ -122,7 +122,7 @@ public class FileCopier {
                     throw new MapperException("CMIS type " + typeId + " does not exist on server.");
 
                 LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
-                parser.extractMetadata(f, td);
+                parser.extractMetadata(f, td, session);
                 properties = parser.getCmisProperties();
             }
                         
@@ -146,6 +146,7 @@ public class FileCopier {
             
             id = doc.getId();
             LOG.info("New document created with id: " + id + ", name: " +  properties.get(PropertyIds.NAME) + " in folder: " + parentFolder.getId());
+            LOG.debug("total number of creations : " + ++TOTAL_NUM);
         } catch (Exception e) {
             LOG.error("Failed to create CMIS document.", e);
         } finally {
@@ -215,7 +216,7 @@ public class FileCopier {
                     	LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
                 }
                 
-                parser.extractMetadata(f, td);
+                parser.extractMetadata(f, td, session);
                 Map<String, Object> properties = parser.getCmisProperties();
                 for (String key : properties.keySet()) {
                     LOG.info("Found metadata tag " + key + "mapped to " + properties.get(key));
