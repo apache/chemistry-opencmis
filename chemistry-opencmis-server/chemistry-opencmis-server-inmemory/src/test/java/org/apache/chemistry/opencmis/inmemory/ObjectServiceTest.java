@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -86,6 +87,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_DOCUMENT_STRING_PROP_ID = "MyDocumentStringProp";
     private static final String TEST_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomDocumentType";
     private static final String TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomInheritedDocType";
+    private static final String TEST_CUSTOM_NO_CONTENT_TYPE_ID = "NoContentType";
+    private static final String TEST_CUSTOM_MUST_CONTENT_TYPE_ID = "MustHaveContentType";
     private static final String TEST_DOCUMENT_MY_STRING_PROP_ID = "MyCustomDocumentStringProp";
     private static final String TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
     private static final String TEST_DOCUMENT_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
@@ -95,7 +98,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
     private static final String TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
     private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
     private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
-
     private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
     private static final String DOCUMENT_ID = "Document_1";
     private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
@@ -910,6 +912,67 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 fail("getObject() failed with exception: " + e);
             }
     }
+    
+    @Test
+    public void testNoContentAllowed() {
+        log.info("starting testNoContentAllowed() ...");
+        String id = createDocument("NoContentAllowedDoc1", fRootFolderId, TEST_CUSTOM_NO_CONTENT_TYPE_ID, false);
+        assertNotNull (id);
+
+        try {
+            id = createDocumentNoCatch("NoContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_NO_CONTENT_TYPE_ID, VersioningState.NONE, true);
+            fail("Creating  document with content and type allows no content should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisConstraintException);
+            log.info("Creating  document with content for no-content type failed as expected.");
+        }
+        log.info("... testNoContentAllowed finished.");
+    }
+
+    @Test
+    public void testMustHaveContent() {
+        log.info("starting testMustHaveContent() ...");
+        String id = createDocument("MustHaveContentAllowedDoc1", fRootFolderId, TEST_CUSTOM_MUST_CONTENT_TYPE_ID, true);
+        assertNotNull (id);
+
+        try {
+            id = createDocumentNoCatch("MustHaveContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_MUST_CONTENT_TYPE_ID, VersioningState.NONE, false);
+            fail("Creating document without content and type requires content should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisConstraintException);
+            log.info("Creating document with content for must-have-content type failed as expected.");
+        }
+        log.info("... testMustHaveContent finished.");
+    }
+    
+    @Test
+    public void testMaxContentSize() {
+        log.info("starting testMaxContentSize() ...");
+        try {
+            createContent(MAX_SIZE + 1, MAX_SIZE);
+            fail("createContent with exceeded content size should fail.");
+        } catch (CmisInvalidArgumentException e) {
+            log.debug("createDocument with exceeded failed as excpected.");
+        } catch (Exception e1) {
+            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
+                    + e1.getClass().getName() + ").");
+        }
+
+        try {
+            ContentStream contentStream = createContent(MAX_SIZE + 1);
+            Properties props = createDocumentProperties("TestMaxContentSize", DOCUMENT_TYPE_ID);
+            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, null,
+                    null, null, null);
+            fail("createDocument with exceeded content size should fail.");
+        } catch (CmisInvalidArgumentException e) {
+            log.debug("createDocument with exceeded failed as excpected.");
+        } catch (Exception e1) {
+            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
+                    + e1.getClass().getName() + ").");
+        }
+    }
+
+
 
     private static void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));
@@ -1167,10 +1230,15 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
 
             InMemoryDocumentTypeDefinition customDocType = createCustomTypeWithStringIntProperty();
+            InMemoryDocumentTypeDefinition noContentType = createCustomTypeNoContent();
+            InMemoryDocumentTypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
+
             // add type to types collection
             typesList.add(cmisDocumentType);
             typesList.add(cmisFolderType);
             typesList.add(customDocType);
+            typesList.add(noContentType);
+            typesList.add(mustHaveContentType);
             typesList.add(createCustomInheritedType(customDocType));
             typesList.add(createDocumentTypeWithDefault());
             typesList.add(createFolderTypeWithDefault());
@@ -1246,6 +1314,24 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisDocumentType;
         }
 
+        private static InMemoryDocumentTypeDefinition createCustomTypeNoContent() {
+            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
+                    TEST_CUSTOM_NO_CONTENT_TYPE_ID, "No Content Document Type", InMemoryDocumentTypeDefinition
+                            .getRootDocumentType());
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
+            return cmisDocumentType;
+        }
+        
+        private static InMemoryDocumentTypeDefinition createCustomTypeMustHaveContent() {
+            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
+                    TEST_CUSTOM_MUST_CONTENT_TYPE_ID, "Must Have Content Document Type", InMemoryDocumentTypeDefinition
+                            .getRootDocumentType());
+            cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.REQUIRED);
+            return cmisDocumentType;
+        }
+        
         private static InMemoryFolderTypeDefinition createFolderTypeWithDefault() {
             InMemoryFolderTypeDefinition cmisFolderType = new InMemoryFolderTypeDefinition(
                     TEST_FOLDER_TYPE_WITH_DEFAULTS_ID, "Folder Type With default values", InMemoryFolderTypeDefinition.
@@ -1275,33 +1361,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
 
             return cmisFolderType;
-        }
-    }
-
-    @Test
-    public void testMaxContentSize() {
-        log.info("starting testMaxContentSize() ...");
-        try {
-            createContent(MAX_SIZE + 1, MAX_SIZE);
-            fail("createContent with exceeded content size should fail.");
-        } catch (CmisInvalidArgumentException e) {
-            log.debug("createDocument with exceeded failed as excpected.");
-        } catch (Exception e1) {
-            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
-                    + e1.getClass().getName() + ").");
-        }
-
-        try {
-            ContentStream contentStream = createContent(MAX_SIZE + 1);
-            Properties props = createDocumentProperties("TestMaxContentSize", DOCUMENT_TYPE_ID);
-            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, null,
-                    null, null, null);
-            fail("createDocument with exceeded content size should fail.");
-        } catch (CmisInvalidArgumentException e) {
-            log.debug("createDocument with exceeded failed as excpected.");
-        } catch (Exception e1) {
-            log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
-                    + e1.getClass().getName() + ").");
         }
     }
 

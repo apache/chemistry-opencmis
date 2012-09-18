@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinit
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -324,6 +325,15 @@ public class TypeValidator {
     	{
     		throw new CmisConstraintException("acl set for type: " + typeDef.getDisplayName() + " that is not controllableACL");
     	}
+    }
+    
+    public static void validateContentAllowed(DocumentTypeDefinition typeDef, boolean hasContent) {
+        ContentStreamAllowed contentAllowed = typeDef.getContentStreamAllowed();
+        if (ContentStreamAllowed.REQUIRED == contentAllowed && !hasContent) {
+            throw new CmisConstraintException("Type " + typeDef.getId() + " requires content but document has no content.");
+        } else if (ContentStreamAllowed.NOTALLOWED == contentAllowed && hasContent) {
+            throw new CmisConstraintException("Type " + typeDef.getId() + " does not allow content but document has content.");
+        }
     }
 
     private static List<String> getMandatoryPropDefs(Map<String, PropertyDefinition<?>> propDefs) {

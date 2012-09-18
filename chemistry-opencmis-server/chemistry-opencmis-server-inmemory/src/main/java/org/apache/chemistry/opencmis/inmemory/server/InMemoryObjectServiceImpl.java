@@ -549,6 +549,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     + " does not refer to a document, but only documents can have content");
         }
 
+        // validate content allowed
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
+        if (!(typeDef instanceof DocumentTypeDefinition))
+            throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
+        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef , null != contentStream);
+
         if (so instanceof Document) {
             content = ((Document) so);
         } else if (so instanceof DocumentVersion) {
@@ -719,7 +725,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-
+        
         Folder folder = null;
         if (null != folderId) {
             StoredObject so = objectStore.getObjectById(folderId);
@@ -747,6 +753,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (!NameValidator.isValidName(name)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME + " Name is: " + name);
         }
+
+        // validate content allowed
+        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
 
