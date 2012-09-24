@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -276,6 +277,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
+    @SuppressWarnings("rawtypes")
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         // we need an object id
@@ -339,23 +341,20 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                     if (changeToken != null) {
                         object = (ObjectDataImpl) element.getObject();
 
-                        // TODO
-                        /*
-                         * if (object.getProperties() != null) { for
-                         * (CmisProperty property :
-                         * object.getProperties().getPropertyList()) { if
-                         * (PropertyIds
-                         * .CHANGE_TOKEN.equals(property.getPropertyDefinitionId
-                         * ()) && (property instanceof CmisPropertyString)) {
-                         * 
-                         * CmisPropertyString changeTokenProperty =
-                         * (CmisPropertyString) property; if
-                         * (!changeTokenProperty.getValue().isEmpty()) {
-                         * changeToken
-                         * .setValue(changeTokenProperty.getValue().get(0)); }
-                         * 
-                         * break; } } }
-                         */
+                        if (object.getProperties() != null) {
+                            for (PropertyData property : object.getProperties().getPropertyList()) {
+                                if (PropertyIds.CHANGE_TOKEN.equals(property.getId())
+                                        && (property instanceof PropertyString)) {
+
+                                    PropertyString changeTokenProperty = (PropertyString) property;
+                                    if (changeTokenProperty.getFirstValue() != null && changeTokenProperty.getFirstValue().length() > 0) {
+                                        changeToken.setValue(changeTokenProperty.getFirstValue());
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -693,18 +692,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             return;
         }
 
-        Acl originalAces = null;
-
-        // walk through the entry and find the current ACL
-        for (AtomElement element : entry.getElements()) {
-            if (element.getObject() instanceof ObjectData) {
-                // extract current ACL
-                ObjectData object = (ObjectData) element.getObject();
-                originalAces = object.getAcl();
-
-                break;
-            }
-        }
+        Acl originalAces = getAclInternal(repositoryId, entry.getId(), Boolean.FALSE, null);
 
         if (originalAces != null) {
             // merge and update ACL

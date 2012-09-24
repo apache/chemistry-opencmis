@@ -527,8 +527,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         AtomBase parseResult = parser.getResults();
 
         if (!clazz.isInstance(parseResult)) {
-            throw new CmisConnectionException("Unexpected document! Received "
-                    + (parseResult == null ? "something unknown" : parseResult.getType()) + "!");
+            throw new CmisConnectionException("Unexpected document! Received: "
+                    + (parseResult == null ? "something unknown" : parseResult.getType()));
         }
 
         return (T) parseResult;
@@ -540,6 +540,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected HttpUtils.Response read(UrlBuilder url) {
         // make the call
+        //Log.d("URL", url.toString());
         HttpUtils.Response resp = HttpUtils.invokeGET(url, session);
 
         // check response code
@@ -556,6 +557,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected HttpUtils.Response post(UrlBuilder url, String contentType, HttpUtils.Output writer) {
         // make the call
+        //Log.d("URL", url.toString());
         HttpUtils.Response resp = HttpUtils.invokePOST(url, contentType, writer, session);
 
         // check response code
@@ -581,6 +583,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     protected HttpUtils.Response put(UrlBuilder url, String contentType, Map<String, String> headers,
             HttpUtils.Output writer) {
         // make the call
+        //Log.d("URL", url.toString());
         HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, headers, writer, session);
 
         // check response code
@@ -597,6 +600,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected void delete(UrlBuilder url) {
         // make the call
+        //Log.d("URL", url.toString());
         HttpUtils.Response resp = HttpUtils.invokeDELETE(url, session);
 
         // check response code
@@ -838,6 +842,29 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         return result;
+    }
+
+    /**
+     * Retrieves the ACL of an object.
+     */
+    public Acl getAclInternal(String repositoryId, String objectId, Boolean onlyBasicPermissions,
+            ExtensionsData extension) {
+
+        // find the link
+        String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+
+        if (link == null) {
+            throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
+        }
+
+        UrlBuilder url = new UrlBuilder(link);
+        url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
+
+        // read and parse
+        HttpUtils.Response resp = read(url);
+        AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
+
+        return acl.getACL();
     }
 
     /**

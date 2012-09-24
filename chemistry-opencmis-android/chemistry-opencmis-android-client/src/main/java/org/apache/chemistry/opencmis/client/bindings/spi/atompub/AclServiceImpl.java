@@ -20,12 +20,9 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 
 /**
@@ -62,22 +59,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
     }
 
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-
-        // find the link
-        String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
-
-        if (link == null) {
-            throwLinkException(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
-        }
-
-        UrlBuilder url = new UrlBuilder(link);
-        url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
-
-        // read and parse
-        HttpUtils.Response resp = read(url);
-        AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
-
-        return acl.getACL();
+        return getAclInternal(repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
 }

@@ -150,7 +150,8 @@ public class LinkCache implements Serializable {
             String[] params = link.substring(i + 1).split("&");
             for (String param : params) {
                 String[] parts = param.split("=", 2);
-                if (parts[0].equals(Constants.PARAM_STREAM_ID) && parts.length == 2) {
+                if (parts[0].equals(Constants.PARAM_STREAM_ID)
+                        && parts.length == 2) {
                     return parts[1];
                 }
             }
@@ -331,7 +332,7 @@ public class LinkCache implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

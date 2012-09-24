@@ -23,14 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Base type for Atom responses.
  */
 public abstract class AtomBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<AtomElement> fElements = new ArrayList<AtomElement>();
+    private final List<AtomElement> elements = new ArrayList<AtomElement>();
 
     protected AtomBase() {
     }
@@ -38,12 +37,12 @@ public abstract class AtomBase implements Serializable {
     public abstract String getType();
 
     public List<AtomElement> getElements() {
-        return fElements;
+        return elements;
     }
 
     public void addElement(AtomElement element) {
         if (element != null) {
-            fElements.add(element);
+            elements.add(element);
         }
     }
 }
