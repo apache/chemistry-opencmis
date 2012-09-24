@@ -190,7 +190,9 @@ public class ClientModel {
     }
 
     public synchronized void reloadFolder() throws Exception {
-        loadFolder(currentFolder.getId(), false);
+        if (currentFolder != null) {
+            loadFolder(currentFolder.getId(), false);
+        }
     }
 
     public synchronized void loadObject(String objectId) throws Exception {
