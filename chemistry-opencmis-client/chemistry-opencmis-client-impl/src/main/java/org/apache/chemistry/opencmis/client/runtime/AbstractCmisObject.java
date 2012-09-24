@@ -319,6 +319,9 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     getObjectFactory().convertProperties(properties, this.objectType, updatebility), null);
 
             newObjectId = objectIdHolder.getValue();
+
+            // remove the object from the cache, it has been changed
+            getSession().removeObjectFromCache(objectId);
         } finally {
             readUnlock();
         }

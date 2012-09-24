@@ -225,6 +225,10 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             readUnlock();
         }
 
+        // remove original version from cache, the path and a few versioning
+        // properties are not valid anymore
+        getSession().removeObjectFromCache(this);
+
         if (newObjectId == null) {
             return null;
         }
@@ -236,6 +240,9 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         String objectId = getObjectId();
 
         getBinding().getVersioningService().cancelCheckOut(getRepositoryId(), objectId, null);
+
+        // remove PWC from cache, it doesn't exist anymore
+        getSession().removeObjectFromCache(this);
     }
 
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
@@ -262,12 +269,14 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             readUnlock();
         }
 
+        // remove PWC from cache, it doesn't exist anymore
+        getSession().removeObjectFromCache(this);
+
         if (newObjectId == null) {
             return null;
         }
 
         return getSession().createObjectId(newObjectId);
-
     }
 
     public List<Document> getAllVersions() {

@@ -142,6 +142,9 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         getBinding().getObjectService().moveObject(getRepositoryId(), objectIdHolder, targetFolderId.getId(),
                 sourceFolderId.getId(), null);
 
+        // invalidate path cache
+        getSession().removeObjectFromCache(objectId);
+
         if (objectIdHolder.getValue() == null) {
             return null;
         }
@@ -163,6 +166,9 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
 
         getBinding().getMultiFilingService().addObjectToFolder(getRepositoryId(), objectId, folderId.getId(),
                 allVersions, null);
+
+        // invalidate path cache
+        getSession().removeObjectFromCache(objectId);
     }
 
     public void removeFromFolder(ObjectId folderId) {
@@ -174,5 +180,8 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
 
         getBinding().getMultiFilingService()
                 .removeObjectFromFolder(getRepositoryId(), objectId, folderId.getId(), null);
+
+        // invalidate path cache
+        getSession().removeObjectFromCache(objectId);
     }
 }
