@@ -25,9 +25,11 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
@@ -40,6 +42,18 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
  * @author Jens
  */
 
+/**
+ * @author d058463
+ *
+ */
+/**
+ * @author d058463
+ *
+ */
+/**
+ * @author d058463
+ *
+ */
 public interface StoredObject {
 
     /**
@@ -268,5 +282,32 @@ public interface StoredObject {
      * get the allowable actions  of the object
      */
 	AllowableActions getAllowableActions(String user);
+	
+    /**
+     * get the rendition this objects supports
+     * 
+     * @param renditionFilter
+     * @param maxItems
+     * @param skipCount
+     * @param extension
+     * @return
+     *      List of renditions or null if no renditions are available for this object
+     */
+    public List<RenditionData> getRenditions(String renditionFilter,
+            long maxItems, long skipCount);
+    
+    /**
+     * get the rendition of this object
+     * 
+     * @param streamId
+     *      stream if of rendition
+     * @param offset
+     *      offset in rendition content
+     * @param length
+     *      length of rendition content
+     * @return
+     *     ContentStream containing the rendition
+     */
+    public ContentStream getRenditionContent(String streamId, long offset, long length);
 
 }

@@ -24,17 +24,17 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
@@ -398,7 +398,6 @@ public class StoredObjectImpl implements StoredObject {
 			String filter, Boolean includeAllowableActions,
 			BigInteger maxItems, BigInteger skipCount,
 			ExtensionsData extension, String user) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -407,4 +406,11 @@ public class StoredObjectImpl implements StoredObject {
 		return actions;
 	}
 
+    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
+        return null;
+    }
+
+    public ContentStream getRenditionContent(String streamId, long offset, long length) {
+        return null;
+    }
 }

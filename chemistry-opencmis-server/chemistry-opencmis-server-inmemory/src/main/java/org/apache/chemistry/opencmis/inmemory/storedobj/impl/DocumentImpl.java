@@ -20,12 +20,16 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
@@ -47,6 +51,12 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleFilingImpl.class.getName());
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+
+    public static final int IMG_HEIGHT = 100;
+    public static final int IMG_WIDTH = 100;
+    public static final String RENDITION_MIME_TYPE = "image/jpeg";
+    public static final String RENDITION_SUFFIX = "-rendition"
+            ;
 
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
         super(objStore);
@@ -164,5 +174,49 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     public boolean hasContent() {
         return null != fContent;
     }
+
+    @Override
+    public List<RenditionData> getRenditions(String renditionFilter,
+            long maxItems, long skipCount) {
+
+        String tokenizer = "[\\s;]";                        
+        String[] formats = renditionFilter.split(tokenizer);
+        boolean isImageRendition = testRenditionFilterForImage(formats);
+        if (isImageRendition) {
+            List<RenditionData> renditions = new ArrayList<RenditionData>(1);
+            RenditionDataImpl rendition = new RenditionDataImpl();
+            rendition.setBigHeight(BigInteger.valueOf(IMG_HEIGHT));
+            rendition.setBigWidth(BigInteger.valueOf(IMG_WIDTH));
+            rendition.setKind("cmis:thumbnail");
+            rendition.setMimeType(RENDITION_MIME_TYPE);
+            rendition.setRenditionDocumentId(getId());
+            rendition.setStreamId(getId() + RENDITION_SUFFIX);
+            rendition.setBigLength(BigInteger.valueOf(-1L));
+            renditions.add(rendition);
+            return renditions;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ContentStream getRenditionContent(String streamId, long offset, long length) {        
+        ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
+        return generator.getRendition(IMG_WIDTH, IMG_HEIGHT);
+    }
+
+    protected boolean testRenditionFilterForImage(String[] formats) {
+        return arrayContainsString(formats, "*")  || arrayContainsString(formats, "image/*") 
+                || arrayContainsString(formats, "image/jpeg") ;
+    }
+
+    private boolean arrayContainsString(String[] formats, String val) {
+        for (String s : formats) {
+            if (val.equals(s))
+                return true;            
+        }
+        return false;
+    }
+
 
 }
