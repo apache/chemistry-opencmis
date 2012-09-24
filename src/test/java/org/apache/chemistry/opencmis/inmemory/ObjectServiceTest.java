@@ -25,6 +25,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
@@ -62,15 +67,17 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.omg.CORBA_2_3.portable.OutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jens
@@ -972,7 +979,82 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
     }
 
+    @Test
+    public void testRendition() {
+        // upload an image as JPEG picture
+        log.info("starting testRendition() ...");
+        final String JPEG = "image/jpeg";
+        
+        try {
+            InputStream imageStream = this.getClass().getResourceAsStream("/image.jpg");
+            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed", imageStream);
+            String id = createDocumentFromStream("TestJpegImage", fRootFolderId, DOCUMENT_TYPE_ID, imageStream,
+                    JPEG);            
 
+            assertNotNull (id);
+            String renditionFilter = "*";
+            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            assertNotNull(renditions);
+            assertEquals(1, renditions.size());
+            RenditionData rd = renditions.get(0);
+            assertEquals(JPEG, rd.getMimeType());
+            assertEquals("cmis:thumbnail", rd.getKind());
+            assertEquals(id, rd.getRenditionDocumentId());
+            assertNotNull(rd.getBigHeight());
+            assertNotNull(rd.getBigWidth());
+            assertEquals(DocumentImpl.IMG_HEIGHT, rd.getBigHeight().longValue());
+            assertEquals(DocumentImpl.IMG_WIDTH, rd.getBigWidth().longValue());
+            assertNotNull(rd.getStreamId());
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            assertEquals(rd.getMimeType(), renditionContent.getMimeType());
+            readThumbnailStream(renditionContent.getStream());
+        } catch (Exception e) {
+            log.error("testRendition failed with exception ", e);
+            fail("testRendition failed with exceetion " + e);
+        }
+        log.info("... testRendition finished.");
+   
+    }
+
+    protected String createDocumentFromStream(String name, String folderId, String typeId, InputStream is,
+            String contentType) throws IOException {
+
+        Properties props = createDocumentProperties(name, typeId);
+
+        ContentStreamDataImpl content = new ContentStreamDataImpl(0);
+        content.setFileName(name);
+        content.setMimeType(contentType);
+
+        ByteArrayOutputStream ba = new ByteArrayOutputStream();
+        byte[] buffer = new byte [65536];
+        int noBytesRead = 0;
+
+        while ((noBytesRead = is.read(buffer)) >=0 ) {
+            ba.write(buffer, 0, noBytesRead);
+        }
+        
+        content.setContent(new ByteArrayInputStream(ba.toByteArray()));
+
+        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, content, VersioningState.NONE, null,
+                null, null, null);
+        return id;
+    }
+
+    private void readThumbnailStream(InputStream stream) {
+        
+        byte[] buffer = new byte [65536];
+        int noBytesRead = 0;
+        int count = 0;
+        try {
+            while ((noBytesRead = stream.read(buffer)) >=0 ) {
+                count += noBytesRead;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Reading rendition stream failed with exception " + e);
+        }
+        assertTrue(count > 0);
+    }
 
     private static void verifyAllowableActionsDocument(Set<Action> actions, boolean isVersioned, boolean hasContent) {
         assertTrue(actions.contains(Action.CAN_DELETE_OBJECT));

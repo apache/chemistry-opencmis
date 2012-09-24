@@ -448,12 +448,16 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     public List<RenditionData> getRenditions(CallContext context, String repositoryId, String objectId,
             String renditionFilter, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
-        // TODO to be completed if renditions are implemented
         LOG.debug("start getRenditions()");
-        validator.getRenditions(context, repositoryId, objectId, extension);
+        StoredObject so = validator.getRenditions(context, repositoryId, objectId, extension);
 
+        if (so == null) {
+            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+        }
+
+        List<RenditionData> renditions = so.getRenditions(renditionFilter, maxItems==null ? 0 : maxItems.longValue(), skipCount==null ? 0: skipCount.longValue());
         LOG.debug("stop getRenditions()");
-        return null;
+        return renditions;
     }
 
     public ObjectData moveObject(CallContext context, String repositoryId, Holder<String> objectId,
@@ -1010,12 +1014,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private static ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset, BigInteger length) {
-        if (streamId != null) {
-            return null;
-        }
+        ContentStream csd = null;
         long lOffset = offset == null ? 0 : offset.longValue();
         long lLength = length == null ? -1 : length.longValue();
-        ContentStream csd = ((Content) so).getContent(lOffset, lLength);
+        
+        if (streamId == null) {
+            csd = ((Content) so).getContent(lOffset, lLength);
+            return csd;
+        } else if (streamId.endsWith("-rendition")) {
+            csd = so.getRenditionContent(streamId, lOffset, lLength);
+        }
+        
         return csd;
     }
 

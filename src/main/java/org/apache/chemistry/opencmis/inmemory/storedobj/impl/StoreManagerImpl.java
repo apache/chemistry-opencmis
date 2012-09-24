@@ -353,7 +353,7 @@ public class StoreManagerImpl implements StoreManager {
         caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
         caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED);
-        caps.setCapabilityRendition(CapabilityRenditions.NONE);
+        caps.setCapabilityRendition(CapabilityRenditions.READ);
         caps.setIsPwcSearchable(false);
         caps.setIsPwcUpdatable(true);
         caps.setSupportsGetDescendants(true);
