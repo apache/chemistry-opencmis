@@ -36,6 +36,7 @@ public class CRUDTestGroup extends AbstractSessionTestGroup {
         addTest(new CreateAndDeleteFolderTest());
         addTest(new CreateAndDeleteDocumentTest());
         addTest(new CreateBigDocument());
+        addTest(new CreateDocumentWithoutContent());
         addTest(new NameCharsetTest());
         addTest(new CreateAndDeleteRelationshipTest());
         addTest(new UpdateSmokeTest());

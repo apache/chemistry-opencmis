@@ -64,7 +64,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
         CmisTestResult f;
 
         if (getContentStreamUpdatesCapbility(session) == CapabilityContentStreamUpdates.NONE) {
-            addResult(createInfoResult("Stream updates are not supported. Test skipped!"));
+            addResult(createResult(SKIPPED, "Stream updates are not supported. Test skipped!"));
             return;
         }
 
