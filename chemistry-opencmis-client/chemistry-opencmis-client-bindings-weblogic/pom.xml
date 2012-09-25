@@ -58,6 +58,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pack</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>true</attach>
+                            <descriptors>
+                                <descriptor>
+                                  src/main/assembly/assembly.xml
+                                </descriptor>
+                            </descriptors>
+                        </configuration>
+                     </execution>
+                </executions>
+            </plugin>            
         </plugins>
     </build>
 
