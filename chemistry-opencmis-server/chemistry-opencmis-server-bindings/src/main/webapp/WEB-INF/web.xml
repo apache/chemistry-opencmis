@@ -123,13 +123,6 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-	<servlet>
-		<description>
-		</description>
-		<display-name>FilterBridgeServlet</display-name>
-		<servlet-name>FilterBridgeServlet</servlet-name>
-		<servlet-class>org.apache.chemistry.opencmis.filterbridge.FilterBridgeServlet</servlet-class>
-	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>cmisws</servlet-name>
