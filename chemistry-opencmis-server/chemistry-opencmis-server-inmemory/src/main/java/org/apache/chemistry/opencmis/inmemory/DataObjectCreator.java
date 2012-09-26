@@ -67,6 +67,7 @@ public class DataObjectCreator {
         boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
         boolean hasContent = so instanceof Content && ((Content) so).hasContent();
         boolean isRootFolder = isFolder && ((Folder)so).getParent() == null;
+        boolean hasRendition = so.hasRendition(user);
         
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
@@ -135,6 +136,10 @@ public class DataObjectCreator {
                 set.add(Action.CAN_SET_CONTENT_STREAM);
         }
 
+        if (hasRendition) {
+            set.add(Action.CAN_GET_RENDITIONS);
+        }
+        
         allowableActions.setAllowableActions(set);
         return allowableActions;
     }

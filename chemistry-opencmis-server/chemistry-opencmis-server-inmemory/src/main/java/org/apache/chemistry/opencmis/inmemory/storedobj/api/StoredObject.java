@@ -284,6 +284,13 @@ public interface StoredObject {
 	AllowableActions getAllowableActions(String user);
 	
     /**
+     * check if the document can generate a renditions and rendition is visible for user
+     * @return
+     *   true if rendition exists, false if not.
+     */
+    public boolean hasRendition(String user);
+    
+	/**
      * get the rendition this objects supports
      * 
      * @param renditionFilter

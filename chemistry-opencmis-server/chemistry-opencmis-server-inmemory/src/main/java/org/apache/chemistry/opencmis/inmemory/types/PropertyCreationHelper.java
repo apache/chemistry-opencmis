@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -343,6 +344,10 @@ public class PropertyCreationHelper {
             AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
+
+        List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
+        if (null != renditions && renditions.size() > 0)
+            od.setRenditions(renditions);
 
         if (null != includeACL && includeACL) {
             Acl acl = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAcl() : so.getAcl();
