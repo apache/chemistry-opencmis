@@ -257,7 +257,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         result = getObjectParentsIntern(repositoryId, spo, filter, 
         		context.isObjectInfoRequired() ? objectInfos : null, includeAllowableActions, includeRelationships,
-				context.getUsername());
+				renditionFilter, context.getUsername());
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -368,7 +368,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     private List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop, String filter,
             ObjectInfoHandler objectInfos, Boolean includeAllowableActions, 
-            IncludeRelationships includeRelationships, String user) {
+            IncludeRelationships includeRelationships, String renditionFilter, String user) {
 
         List<ObjectParentData> result = null;
         if (sop instanceof SingleFiling) {
@@ -395,7 +395,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                     TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, parent.getTypeId()).getTypeDefinition();
                     ObjectData objData = PropertyCreationHelper.getObjectData(typeDef, parent, filter, user, includeAllowableActions, 
-                            includeRelationships, "", false, true, null);
+                            includeRelationships, renditionFilter, false, true, null);
 
                     parentData.setObject(objData);
                     parentData.setRelativePathSegment(multiParentObj.getPathSegment());

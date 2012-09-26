@@ -179,10 +179,12 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     public List<RenditionData> getRenditions(String renditionFilter,
             long maxItems, long skipCount) {
 
-        String tokenizer = "[\\s;]";                        
+        String tokenizer = "[\\s;]";
+        if (null==renditionFilter)
+            renditionFilter = "*";
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
-        if (isImageRendition) {
+        if (isImageRendition && fContent != null && hasRendition(null)) {
             List<RenditionData> renditions = new ArrayList<RenditionData>(1);
             RenditionDataImpl rendition = new RenditionDataImpl();
             rendition.setBigHeight(BigInteger.valueOf(IMG_HEIGHT));
@@ -204,9 +206,18 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
         return generator.getRendition(IMG_WIDTH, IMG_HEIGHT);
     }
+    
+    @Override
+    public boolean hasRendition(String user) {
+        return null != fContent && fContent.getMimeType().startsWith("image/");
+    }
+
 
     protected boolean testRenditionFilterForImage(String[] formats) {
-        return arrayContainsString(formats, "*")  || arrayContainsString(formats, "image/*") 
+        if (formats.length == 1 && null != formats[0] && formats[0].equals("cmis:none"))
+            return false;
+        else
+            return arrayContainsString(formats, "*")  || arrayContainsString(formats, "image/*") 
                 || arrayContainsString(formats, "image/jpeg") ;
     }
 

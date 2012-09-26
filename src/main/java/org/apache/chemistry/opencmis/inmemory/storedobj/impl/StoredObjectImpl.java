@@ -413,4 +413,8 @@ public class StoredObjectImpl implements StoredObject {
     public ContentStream getRenditionContent(String streamId, long offset, long length) {
         return null;
     }
+
+    public boolean hasRendition(String user) {
+        return false;
+    }
 }
