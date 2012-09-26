@@ -4,10 +4,16 @@ OpenCMIS Android Client
 The OpenCMIS Android Client provides a collection of methods to access and manage CMIS Repository.
 
 
+OpenCMIS Client Bindings supported
+----------------------------------
+OpenCMIS Android Client uses ATOMPUB binding.
+Web Service Binding (SOAP protocol) & jSON Binding are not supported in this library.
+
+
 Android Version Supported
 -------------------------
-Previous versions of Android don’t contain all dependencies required to run and use OpenCMIS Android client.  
-It’s only since Android 2.3 (aka Gingerbread) everything works. 
+Previous versions of Android don't contain all dependencies required to run and use OpenCMIS Android client.  
+It's only since Android 2.3 (aka Gingerbread) everything works. 
 In other terms, Android client supports Android 2.3 and above
 
 -------------------------
@@ -15,11 +21,11 @@ In other terms, Android client supports Android 2.3 and above
 -------------------------
 OpenCMIS Android Client is a SYNCHRONOUS library ! 
 It's highly recommended that you encapsulate all CMIS operations in background thread. 
-In Android It’s possible to use
-•	Services
-•	Loaders
-•	AsyncTask
-•	Thread/Handler
+In Android It's possible to use
++	Services
++	Loaders
++	AsyncTask
++	Thread/Handler
 
 For more information on Thread and background task : <http://developer.android.com/guide/components/processes-and-threads.html>
 
@@ -119,10 +125,3 @@ public class FirstOpenCMISActivity extends Activity {
     	}
     }
 }
-
-
-License
--------
-
-Apache License, Version 2.0
-Please see <http://www.apache.org/licenses/LICENSE-2.0>.
