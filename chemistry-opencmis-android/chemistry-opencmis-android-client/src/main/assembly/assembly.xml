@@ -27,12 +27,10 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     
     <files>
-        <!--
         <file>
             <source>README</source>
             <outputDirectory></outputDirectory>
         </file>
-        -->
         <file>
             <source>${project.build.directory}/${project.build.finalName}.jar</source>
             <outputDirectory></outputDirectory>
