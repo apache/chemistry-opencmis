@@ -433,14 +433,10 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
 
-            if (c == '\'') {
-                sb.append("\\\\");
-            } else if (c == '\\') {
-                if (i + 1 < str.length() && (str.charAt(i + 1) == '*' || str.charAt(i + 1) == '?' || str.charAt(i + 1) == '-')) {
-                    // no additional back slash
-                } else {
-                    sb.append("\\\\");
-                }
+            if (c == '\\') {
+                sb.append("\\");
+            } else if (c == '\'' || c == '\"') {
+                sb.append("\\\\\\");
             }
 
             sb.append(c);

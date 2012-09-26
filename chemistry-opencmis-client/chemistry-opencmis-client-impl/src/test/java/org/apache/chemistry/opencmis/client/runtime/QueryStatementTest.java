@@ -80,12 +80,42 @@ public class QueryStatementTest {
                 st.toQueryString());
 
         // contains
+
+        // *, ? and - are treated as text search operators: 1st level escaping: none, 2nd level escaping: none
+        // \*, \? and \- are used as literals, 1st level escaping: none, 2nd level escaping: \\*, \\?, \\-
+        // ' and " are used as literals, 1st level escaping: \', \", 2nd level escaping:  \\\', \\\",
+        // \ plus any other character, 1st level escaping \\ plus character, 2nd level: \\\\ plus character
+
         query = "SELECT * FROM cmis:document WHERE CONTAINS(?)";
         st = new QueryStatementImpl(session, query);
-        st.setStringContains(1, "John'sPresentation\\-Version2");
-        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('John\\\\'sPresentation\\-Version2')",
+        st.setStringContains(1, "John's");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('John\\\\\\'s')",
                 st.toQueryString());
-
+        st.setStringContains(1, "foo -bar");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo -bar')",
+                st.toQueryString());
+        st.setStringContains(1, "foo*");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo*')",
+                st.toQueryString());
+        st.setStringContains(1, "foo?");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo?')",
+                st.toQueryString());
+        st.setStringContains(1, "foo\\-bar");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\-bar')",
+                st.toQueryString());
+        st.setStringContains(1, "foo\\*");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\*')",
+                st.toQueryString());
+        st.setStringContains(1, "foo\\?");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\?')",
+                st.toQueryString());
+        st.setStringContains(1, "\"Cool\"");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('\\\\\\\"Cool\\\\\\\"')",
+                st.toQueryString());
+        st.setStringContains(1, "c:\\MyDcuments");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('c:\\\\MyDcuments')",
+                st.toQueryString());
+       
         // ids
         query = "SELECT * FROM cmis:document WHERE abc:id = ?";
         st = new QueryStatementImpl(session, query);
@@ -140,4 +170,24 @@ public class QueryStatementTest {
         assertEquals("SELECT * FROM cmis:document WHERE abc:dateTime "
                 + "IN (TIMESTAMP '2012-02-02T03:04:05.000Z',TIMESTAMP '2012-02-02T03:04:05.000Z')", st.toQueryString());
     }
+    
+//    @Test
+    public void testQueryApiEscaping() {
+        // contains
+        Session session = new SessionImpl(new HashMap<String, String>(), null, null, null);
+
+        String query = "SELECT * FROM cmis:document WHERE CONTAINS(?)";
+        String ss = "a\\xc";
+        assertEquals(4, ss.length());
+        System.out.println(ss);
+        QueryStatement st = new QueryStatementImpl(session, query);
+        st.setStringContains(1, "John's");
+        System.out.println("setStringContains: "+ st.toQueryString());
+        String expected = "SELECT * FROM cmis:document WHERE CONTAINS('John\\\'s')";
+        System.out.println("Expected: " + expected);
+        
+        assertEquals(expected, st.toQueryString());
+
+    }
+
 }

@@ -94,8 +94,28 @@ public interface QueryStatement extends Cloneable {
     void setStringLike(int parameterIndex, String str);
 
     /**
-     * Sets the designated parameter to the given string. It does not escape
-     * backslashes ('\') in front of '*',  '?' and '-'.
+     * Sets the designated parameter to the given string in a CMIS contains statement.
+     * Note that the CMIS specification requires two levels of escaping. The first level
+     * escapes ', ", \ characters to \', \" and \\. The characters *, ? and - are
+     * interpreted as text search operators and are not escaped on first level. If *, ?, -  
+     * shall be used as literals, they must be passed escaped with \*, \? and \- to 
+     * this method.
+     * 
+     * For all statements in a CONTAINS() clause it is required to isolate those
+     * from a query statement. Therefore a second level escaping is performed. On
+     * the second level grammar ", ', - and \ are escaped with a \. See the spec for
+     * further details.
+     *  
+     *  Summary (input --> first level escaping --> second level escaping and output):
+     *      * --> * --> *
+     *      ? --> ? --> ?
+     *      - --> - --> -
+     *      \ --> \\ --> \\\\  (for any other character following other than * ? -)
+     *      \* --> \* --> \\*
+     *      \? --> \? --> \\?
+     *      \- --> \- --> \\-
+     *      ' --> \' --> \\\'
+     *      " --> \" --> \\\"
      */
     void setStringContains(int parameterIndex, String str);
     
