@@ -163,12 +163,6 @@ public class DataObjectCreator {
         return getRelationships(includeRelationships, so, user);
     }
 
-    public static List<RenditionData> fillRenditions(StoredObject so) {
-        // TODO: to be completed if renditions are implemented
-        List<RenditionData> renditions = new ArrayList<RenditionData>();
-        return renditions;
-    }
-
     public static ChangeEventInfo fillChangeEventInfo(StoredObject so) {
         // TODO: to be completed if change information is implemented
         ChangeEventInfo changeEventInfo = new ChangeEventInfoDataImpl();
