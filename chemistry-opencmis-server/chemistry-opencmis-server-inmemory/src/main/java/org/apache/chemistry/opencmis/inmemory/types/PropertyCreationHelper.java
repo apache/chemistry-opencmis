@@ -363,10 +363,6 @@ public class PropertyCreationHelper {
             od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
 
-        if (renditionFilter != null && renditionFilter.length() > 0) {
-            od.setRenditions(DataObjectCreator.fillRenditions(so));
-        }
-
         od.setProperties(props);
 
         // Note: do not set change event info for this call
@@ -397,9 +393,9 @@ public class PropertyCreationHelper {
             od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
         }
 
-        if (renditionFilter != null && renditionFilter.length() > 0) {
-            od.setRenditions(DataObjectCreator.fillRenditions(so));
-        }
+        List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
+        if (null != renditions && renditions.size() > 0)
+            od.setRenditions(renditions);
 
         od.setProperties(props);
 
