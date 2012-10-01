@@ -387,8 +387,8 @@ public class AtomPubConverter {
 				List<BigDecimal> propertyValues = null;
 				if (values != null) {
 					propertyValues = new ArrayList<BigDecimal>();
-					for (String obj : values) {
-						propertyValues.add(BigDecimal.valueOf(Long.parseLong(obj)));
+					for (String obj : values) { 
+						propertyValues.add(new BigDecimal(obj));
 					}
 				}
 				((PropertyDecimalImpl) property).setValues(propertyValues);
