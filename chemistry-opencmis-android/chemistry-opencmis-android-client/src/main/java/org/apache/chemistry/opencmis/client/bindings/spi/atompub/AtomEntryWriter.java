@@ -77,6 +77,8 @@ public class AtomEntryWriter {
     private final ObjectData object;
     private final InputStream stream;
     private final String mediaType;
+    
+    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     /**
      * Constructor.
@@ -320,7 +322,7 @@ public class AtomEntryWriter {
         }
 
         if (value instanceof GregorianCalendar) {
-            return "" + ((GregorianCalendar) value).getTimeInMillis();
+            return dateFormatter.format(((GregorianCalendar) value).getTime());
         }
 
         return value.toString();
