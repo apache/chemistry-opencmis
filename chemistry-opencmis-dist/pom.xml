@@ -153,7 +153,7 @@
                                         <argument>-k</argument>
                                         <argument>-np</argument>
                                         <argument>--include-directories=/java/</argument>
-                                        <argument>--exclude-directories=/java/maven/</argument>
+                                        <argument>--exclude-directories=/java/0.4.0/maven/,/java/0.5.0/maven/,/java/0.6.0/maven/,/java/0.7.0/maven/</argument>
                                         <argument>${docs.start.url}</argument>
                                     </arguments>
                                     <successCodes>
