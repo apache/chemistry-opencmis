@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
  */
 
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,9 +30,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
@@ -256,4 +262,42 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         return null;
     }
 
+    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
+        if (null==renditionFilter)
+            renditionFilter = "*";
+        String tokenizer = "[\\s;]";
+        String[] formats = renditionFilter.split(tokenizer);
+        boolean isImageRendition = testRenditionFilterForImage(formats);
+ 
+        if (isImageRendition) {
+            List<RenditionData> renditions = new ArrayList<RenditionData>(1);
+            RenditionDataImpl rendition = new RenditionDataImpl();
+            rendition.setBigHeight(BigInteger.valueOf(ICON_SIZE));
+            rendition.setBigWidth(BigInteger.valueOf(ICON_SIZE));
+            rendition.setKind("cmis:thumbnail");
+            rendition.setMimeType(RENDITION_MIME_TYPE_PNG);
+            rendition.setRenditionDocumentId(getId());
+            rendition.setStreamId(getId() + RENDITION_SUFFIX);
+            rendition.setBigLength(BigInteger.valueOf(-1L));
+            rendition.setTitle(getName());
+            rendition.setRenditionDocumentId(getId());
+            renditions.add(rendition);
+            return renditions;
+        } else {
+            return null;
+        }
+    }
+
+    public ContentStream getRenditionContent(String streamId, long offset, long length) {
+        try {
+            return getIconFromResourceDir("/folder.png");
+        } catch (IOException e) {
+            LOG.error("Failed to generate rendition: ", e);
+            throw new CmisRuntimeException("Failed to generate rendition: " + e);
+        }
+    }
+
+    public boolean hasRendition(String user) {
+        return true;
+    }
 }

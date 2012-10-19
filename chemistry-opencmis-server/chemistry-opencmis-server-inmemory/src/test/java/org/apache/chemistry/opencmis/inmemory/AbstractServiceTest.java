@@ -236,13 +236,17 @@ public class AbstractServiceTest {
     }
 
     protected ContentStream createContent(int sizeInKB) {
-        return createContent(sizeInKB, 0);
+        return createContent(sizeInKB, 0, null);
     }
 
-    protected ContentStream createContent(int sizeInKB, long maxSizeInKB) {
+    protected ContentStream createContent(int sizeInKB, long maxSizeInKB, String mimeType) {
         ContentStreamDataImpl content = new ContentStreamDataImpl(maxSizeInKB);
         content.setFileName("data.txt");
-        content.setMimeType("text/plain");
+        
+        if (null == mimeType)
+            content.setMimeType("text/plain");
+        else
+            content.setMimeType(mimeType);
         int len = sizeInKB * 1024;
         byte[] b = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a }; // 32

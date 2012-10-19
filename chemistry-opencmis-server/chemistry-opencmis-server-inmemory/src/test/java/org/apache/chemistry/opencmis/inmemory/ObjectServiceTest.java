@@ -111,7 +111,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     private static final String FOLDER_ID = "Folder_1";
     private static final String MY_CUSTOM_NAME = "My Custom Document";
     private static final int MAX_SIZE = 100;
-
+    private static final String PNG = "image/png";
+    private static final String JPEG = "image/jpeg";
+    
     ObjectCreator fCreator;
 
     @Override
@@ -956,7 +958,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testMaxContentSize() {
         log.info("starting testMaxContentSize() ...");
         try {
-            createContent(MAX_SIZE + 1, MAX_SIZE);
+            createContent(MAX_SIZE + 1, MAX_SIZE, null);
             fail("createContent with exceeded content size should fail.");
         } catch (CmisInvalidArgumentException e) {
             log.debug("createDocument with exceeded failed as excpected.");
@@ -980,10 +982,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testRendition() {
+    public void testRenditionImage() {
         // upload an image as JPEG picture
         log.info("starting testRendition() ...");
-        final String JPEG = "image/jpeg";
         
         try {
             InputStream imageStream = this.getClass().getResourceAsStream("/image.jpg");
@@ -1002,8 +1003,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(id, rd.getRenditionDocumentId());
             assertNotNull(rd.getBigHeight());
             assertNotNull(rd.getBigWidth());
-            assertEquals(DocumentImpl.IMG_HEIGHT, rd.getBigHeight().longValue());
-            assertEquals(DocumentImpl.IMG_WIDTH, rd.getBigWidth().longValue());
+            assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigHeight().longValue());
+            assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
             ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
             assertEquals(rd.getMimeType(), renditionContent.getMimeType());
@@ -1012,10 +1013,77 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.error("testRendition failed with exception ", e);
             fail("testRendition failed with exceetion " + e);
         }
-        log.info("... testRendition finished.");
+        log.info("... testRendition finished.");   
+    }
+    
+    @Test
+    public void testRenditionIcon() {
+        // fake an office document
+        log.info("starting testRendition() ...");
+        
+        try {
+            ContentStream content = createContent(4, 0, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); 
+            Properties props = createDocumentProperties("TestJOffice", DOCUMENT_TYPE_ID);
+            String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, content, VersioningState.NONE,
+                    null, null, null, null);
+
+            assertNotNull (id);
+            String renditionFilter = "*";
+            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            assertNotNull(renditions);
+            assertEquals(1, renditions.size());
+            RenditionData rd = renditions.get(0);
+            assertEquals(PNG, rd.getMimeType());
+            assertEquals("cmis:thumbnail", rd.getKind());
+            assertEquals(id, rd.getRenditionDocumentId());
+            assertNotNull(rd.getBigHeight());
+            assertNotNull(rd.getBigWidth());
+            assertEquals(DocumentImpl.ICON_SIZE, rd.getBigHeight().longValue());
+            assertEquals(DocumentImpl.ICON_SIZE, rd.getBigWidth().longValue());
+            assertNotNull(rd.getStreamId());
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            assertEquals(rd.getMimeType(), renditionContent.getMimeType());
+            readThumbnailStream(renditionContent.getStream());
+        } catch (Exception e) {
+            log.error("testRendition failed with exception ", e);
+            fail("testRendition failed with exceetion " + e);
+        }
+        log.info("... testRendition finished.");   
+    }
+    @Test
+    public void testFolderRendition() {
+        // upload an image as JPEG picture
+        log.info("starting testFolderRendition() ...");
+        
+        try {
+            InputStream imageStream = this.getClass().getResourceAsStream("/image.jpg");
+            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed", imageStream);
+            String id = createFolder();           
+
+            assertNotNull (id);
+            String renditionFilter = "*";
+            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            assertNotNull(renditions);
+            assertEquals(1, renditions.size());
+            RenditionData rd = renditions.get(0);
+            assertEquals(PNG, rd.getMimeType());
+            assertEquals("cmis:thumbnail", rd.getKind());
+            assertEquals(id, rd.getRenditionDocumentId());
+            assertNotNull(rd.getBigHeight());
+            assertNotNull(rd.getBigWidth());
+            assertEquals(DocumentImpl.ICON_SIZE, rd.getBigHeight().longValue());
+            assertEquals(DocumentImpl.ICON_SIZE, rd.getBigWidth().longValue());
+            assertNotNull(rd.getStreamId());
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            assertEquals(rd.getMimeType(), renditionContent.getMimeType());
+            readThumbnailStream(renditionContent.getStream());
+        } catch (Exception e) {
+            log.error("testFolderRendition failed with exception ", e);
+            fail("testFolderRendition failed with exceetion " + e);
+        }
+        log.info("... testFolderRendition finished.");
    
     }
-
     protected String createDocumentFromStream(String name, String folderId, String typeId, InputStream is,
             String contentType) throws IOException {
 
