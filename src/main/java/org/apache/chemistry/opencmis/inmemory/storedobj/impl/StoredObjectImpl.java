@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,6 +52,11 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
  * @author Jens
  */
 public class StoredObjectImpl implements StoredObject {
+
+    public static final String RENDITION_MIME_TYPE_JPEG = "image/jpeg";
+    public static final String RENDITION_MIME_TYPE_PNG = "image/png";
+    public static final String RENDITION_SUFFIX = "-rendition";
+    public static final int ICON_SIZE = 32;
 
     protected String fId;
     protected String fName;
@@ -417,4 +426,43 @@ public class StoredObjectImpl implements StoredObject {
     public boolean hasRendition(String user) {
         return false;
     }
+    
+    protected  ContentStream getIconFromResourceDir(String name) throws IOException {
+        
+        InputStream imageStream = this.getClass().getResourceAsStream(name);
+        ContentStreamDataImpl content = new ContentStreamDataImpl(0);
+        content.setFileName(name);
+        content.setMimeType("image/png");
+
+        ByteArrayOutputStream ba = new ByteArrayOutputStream();
+        byte[] buffer = new byte [65536];
+        int noBytesRead = 0;
+
+        while ((noBytesRead = imageStream.read(buffer)) >=0 ) {
+            ba.write(buffer, 0, noBytesRead);
+        }
+        
+        content.setContent(new ByteArrayInputStream(ba.toByteArray()));
+        return content;
+    }
+    
+    protected boolean testRenditionFilterForImage(String[] formats) {
+        if (formats.length == 1 && null != formats[0] && formats[0].equals("cmis:none"))
+            return false;
+        else
+            return arrayContainsString(formats, "*")  || arrayContainsString(formats, "image/*") 
+                || arrayContainsString(formats, "image/jpeg") ;
+    }
+    
+    private boolean arrayContainsString(String[] formats, String val) {
+        for (String s : formats) {
+            if (val.equals(s))
+                return true;            
+        }
+        return false;
+    }
+
+
+
+
 }

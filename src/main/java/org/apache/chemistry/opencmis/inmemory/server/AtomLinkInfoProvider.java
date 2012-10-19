@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -26,10 +27,13 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
+import org.apache.chemistry.opencmis.commons.impl.server.RenditionInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
+import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
@@ -125,7 +129,22 @@ public class AtomLinkInfoProvider {
         }
 
         // Renditions, currently not supported by in-memory provider
-        objInfo.setRenditionInfos(null);
+        List<RenditionData> renditions = so.getRenditions("*", 0, 0);
+        if (renditions == null || renditions.size() == 0)
+            objInfo.setRenditionInfos(null);
+        else {
+            List<RenditionInfo> infos = new ArrayList<RenditionInfo>();
+            for (RenditionData rendition : renditions) {
+                RenditionInfoImpl info = new RenditionInfoImpl();
+                info.setKind(rendition.getKind());
+                info.setId(rendition.getStreamId());
+                info.setContentType(rendition.getMimeType());
+                info.setLength(rendition.getBigLength());
+                info.setTitle(rendition.getTitle());
+                infos.add(info);
+            }
+            objInfo.setRenditionInfos(infos);
+        }
 
         // Relationships, currently not supported by in-memory provider
         objInfo.setSupportsRelationships(false);

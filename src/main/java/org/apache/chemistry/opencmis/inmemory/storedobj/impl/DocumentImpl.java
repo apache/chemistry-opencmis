@@ -18,7 +18,10 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
@@ -49,14 +53,10 @@ import org.slf4j.LoggerFactory;
 public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleFilingImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentImpl.class.getName());
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
-    public static final int IMG_HEIGHT = 100;
-    public static final int IMG_WIDTH = 100;
-    public static final String RENDITION_MIME_TYPE = "image/jpeg";
-    public static final String RENDITION_SUFFIX = "-rendition"
-            ;
+    public static final int THUMBNAIL_SIZE = 100;
 
     DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
         super(objStore);
@@ -184,16 +184,25 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
             renditionFilter = "*";
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
+
         if (isImageRendition && fContent != null && hasRendition(null)) {
             List<RenditionData> renditions = new ArrayList<RenditionData>(1);
+            String mimeType = fContent.getMimeType();
             RenditionDataImpl rendition = new RenditionDataImpl();
-            rendition.setBigHeight(BigInteger.valueOf(IMG_HEIGHT));
-            rendition.setBigWidth(BigInteger.valueOf(IMG_WIDTH));
+            if (mimeType.equals("image/jpeg")) {
+                rendition.setBigHeight(BigInteger.valueOf(THUMBNAIL_SIZE));
+                rendition.setBigWidth(BigInteger.valueOf(THUMBNAIL_SIZE));
+                rendition.setMimeType(RENDITION_MIME_TYPE_JPEG);
+            } else {
+                rendition.setBigHeight(BigInteger.valueOf(ICON_SIZE));
+                rendition.setBigWidth(BigInteger.valueOf(ICON_SIZE));
+                rendition.setMimeType(RENDITION_MIME_TYPE_PNG);
+            }
             rendition.setKind("cmis:thumbnail");
-            rendition.setMimeType(RENDITION_MIME_TYPE);
             rendition.setRenditionDocumentId(getId());
             rendition.setStreamId(getId() + RENDITION_SUFFIX);
             rendition.setBigLength(BigInteger.valueOf(-1L));
+            rendition.setTitle(getName());
             renditions.add(rendition);
             return renditions;
         } else {
@@ -202,32 +211,105 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     }
 
     @Override
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {        
-        ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
-        return generator.getRendition(IMG_WIDTH, IMG_HEIGHT);
+    public ContentStream getRenditionContent(String streamId, long offset, long length) {     
+        if (null == fContent)
+            return null;
+        
+        String mimeType = fContent.getMimeType();
+        
+        try {
+            if (isImage(mimeType)) {
+                ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
+                return generator.getRendition(THUMBNAIL_SIZE, 0);
+            } else if (isAudio(mimeType)) {
+                return getIconFromResourceDir("/audio-x-generic.png");
+            } else if (isVideo(mimeType)) {
+                return getIconFromResourceDir("/video-x-generic.png");
+            } else if (isPDF(mimeType)) {
+                return getIconFromResourceDir("/application-pdf.png");
+            } else if (isWord(mimeType)) {
+                return getIconFromResourceDir("/application-msword.png");
+            } else if (isPowerpoint(mimeType)) {
+                return getIconFromResourceDir("/application-vnd.ms-powerpoint.png");
+            } else if (isExcel(mimeType)) {
+                return getIconFromResourceDir("/application-vnd.ms-excel.png");
+            } else if (isHtml(mimeType)) {
+                return getIconFromResourceDir("/text-html.png");
+            } else if (isPlainText(mimeType)) {
+                return getIconFromResourceDir("/text-x-generic.png");
+            } else
+                return null;
+        } catch (IOException e) {
+            LOG.error("Failed to generate rendition: ", e);
+            throw new CmisRuntimeException("Failed to generate rendition: " + e);
+        }
     }
     
     @Override
     public boolean hasRendition(String user) {
-        return null != fContent && fContent.getMimeType().startsWith("image/");
-    }
-
-
-    protected boolean testRenditionFilterForImage(String[] formats) {
-        if (formats.length == 1 && null != formats[0] && formats[0].equals("cmis:none"))
+        if (null == fContent)
             return false;
+        
+        String mimeType = fContent.getMimeType();
+        
+        if (isImage(mimeType))
+            return true;
+        else if (isAudio(mimeType))
+            return true;
+        else if (isVideo(mimeType))
+            return true;
+        else if (isPDF(mimeType))
+            return true;
+        else if (isPowerpoint(mimeType))
+            return true;
+        else if (isExcel(mimeType))
+            return true;
+        else if (isWord(mimeType))
+            return true;
+        else if (isHtml(mimeType))
+            return true;
+        else if (isPlainText(mimeType))
+            return true;
         else
-            return arrayContainsString(formats, "*")  || arrayContainsString(formats, "image/*") 
-                || arrayContainsString(formats, "image/jpeg") ;
-    }
-
-    private boolean arrayContainsString(String[] formats, String val) {
-        for (String s : formats) {
-            if (val.equals(s))
-                return true;            
-        }
-        return false;
+            return false;
     }
 
 
-}
+    private boolean isImage(String mimeType) {
+        return mimeType.startsWith("image/");
+    }
+
+    private boolean isWord(String mimeType) {
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    }
+
+    private boolean isExcel(String mimeType) {
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+    
+    private boolean isPowerpoint(String mimeType) {
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.slideshow") ||
+        mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+    }
+    
+    private boolean isPDF(String mimeType) {
+        return mimeType.equals("application/pdf");
+    }
+    
+    private boolean isHtml(String mimeType) {
+       return mimeType.equals("text/html");
+    }
+    
+    private boolean isAudio(String mimeType) {
+        return mimeType.startsWith("audio/");
+    }
+
+    private boolean isVideo(String mimeType) {
+        return mimeType.startsWith("video/");
+    }
+    
+    private boolean isPlainText(String mimeType) {
+        return mimeType.equals("text/plain");
+    }
+    
+ }

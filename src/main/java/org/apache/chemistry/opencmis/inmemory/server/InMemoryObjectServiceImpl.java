@@ -342,7 +342,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
         }
 
-        if (!(so instanceof Content)) {
+        if (!(so instanceof Content) && objectId.endsWith("-rendition")) {
             throw new CmisConstraintException("Id" + objectId
                     + " does not refer to a document or version, but only those can have content");
         }
