@@ -250,6 +250,7 @@ public class StoredObjectImpl implements StoredObject {
             setName((String) properties.get(PropertyIds.NAME).getFirstValue());
             setTypeId((String) properties.get(PropertyIds.OBJECT_TYPE_ID).getFirstValue());
         } else {
+            setModifiedBy(user);
             setModifiedAtNow();
         }
     }

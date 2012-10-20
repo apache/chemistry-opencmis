@@ -604,8 +604,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // update properties
-        boolean hasUpdatedName = false;
-        boolean hasUpdatedOtherProps = false;
+        boolean hasUpdatedProp = false;
 
         if(properties != null) {
         	for (String key : properties.getProperties().keySet()) {
@@ -625,7 +624,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         								+ key);
         			}
         			oldProperties.remove(key);
-        			hasUpdatedOtherProps = true;
+        			hasUpdatedProp = true;
         		} else {
         			if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
         				if (!isCheckedOut)
@@ -638,7 +637,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         								+ key);
         			}
         			oldProperties.put(key, value);
-        			hasUpdatedOtherProps = true;
+        			hasUpdatedProp = true;
         		}
         	}
 
@@ -656,11 +655,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         		}
 
         		so.rename((String) pd.getFirstValue()); // note: this does persist
-        		hasUpdatedName = true;
+        		hasUpdatedProp = true;
         	}
         }
 
-        if (hasUpdatedOtherProps) {
+        if (hasUpdatedProp) {
             // set user, creation date, etc.
             if (user == null) {
                 user = "unknown";
@@ -670,7 +669,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             so.persist();
         }
 
-        if (hasUpdatedName || hasUpdatedOtherProps) {
+        if (hasUpdatedProp) {
             objectId.setValue(so.getId()); // might have a new id
             if (null != changeToken) {
                 String changeTokenVal = so.getChangeToken();
