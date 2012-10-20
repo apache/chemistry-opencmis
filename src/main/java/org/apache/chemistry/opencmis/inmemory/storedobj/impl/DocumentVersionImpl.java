@@ -51,6 +51,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     private String fComment; // checkin comment
     boolean fIsMajor;
     boolean fIsPwc; // true if this is the PWC
+    String label;
 
     public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
             VersioningState verState, ObjectStoreImpl objStore) {
@@ -61,6 +62,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
         fProperties = new HashMap<String, PropertyData<?>>(); // ensure that we
+        label = createVersionLabel();
         // have a map
     }
 
@@ -89,8 +91,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         return fComment;
     }
 
-    public String getVersionLabel() {
-        int majorNo = 0;
+    private String createVersionLabel() {
+        int majorNo = 1;
         int minorNo = 0;
         List<DocumentVersion> allVersions = fContainer.getAllVersions();
         for (DocumentVersion ver : allVersions) {
@@ -284,6 +286,10 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     public void rename(String newName) {
     	super.rename(newName);
     	fContainer.setName(newName);
+    }
+
+    public String getVersionLabel() {
+        return label;
     }
 
 }
