@@ -212,6 +212,7 @@ public class JcrFolder extends JcrNode {
         // folder properties
         if (pathManager.isRoot(getNode())) {
             objectInfo.setHasParent(false);
+            addPropertyList(properties, typeId, filter, PropertyIds.PARENT_ID, Collections.<String>emptyList());
         }
         else {
             objectInfo.setHasParent(true);
