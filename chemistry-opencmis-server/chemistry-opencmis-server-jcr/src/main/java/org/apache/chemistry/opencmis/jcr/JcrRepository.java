@@ -964,13 +964,13 @@ public class JcrRepository {
         capabilities.setIsPwcSearchable(false);
         capabilities.setIsPwcUpdatable(true);
         capabilities.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED);
-        capabilities.setCapabilityChanges(CapabilityChanges.NONE);
+        capabilities.setCapabilityChanges(CapabilityChanges.OBJECTIDSONLY);
         capabilities.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         capabilities.setSupportsGetDescendants(true);
         capabilities.setSupportsGetFolderTree(true);
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
         fRepositoryInfo.setCapabilities(capabilities);
-
+        
         return fRepositoryInfo;
     }
 
@@ -1120,7 +1120,7 @@ public class JcrRepository {
 
         return result;
     }
-
+    
 
     public Repository getRepository() {
         return repository;
