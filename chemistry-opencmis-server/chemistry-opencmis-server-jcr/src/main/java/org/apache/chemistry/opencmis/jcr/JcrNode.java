@@ -685,6 +685,19 @@ public abstract class JcrNode {
         prop.setQueryName(id);
         props.addProperty(prop);
     }
+    
+	protected final void addPropertyList(PropertiesImpl props, String typeId, Set<String> filter, String id, 
+			List<String> values) {
+    	
+	   if (!checkAddProperty(props, typeId, filter, id)) {
+           return;
+       }
+	   
+       PropertyStringImpl prop = new PropertyStringImpl(id, values);
+       prop.setQueryName(id);
+       props.addProperty(prop);
+	   
+    }
 
     /**
      * Validate a set of properties against a filter and its definitions

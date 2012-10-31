@@ -19,11 +19,27 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.version.Version;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -39,18 +55,6 @@ import org.apache.chemistry.opencmis.jcr.util.Predicate;
 import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.version.Version;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 
 /**
@@ -213,6 +217,8 @@ public class JcrFolder extends JcrNode {
             objectInfo.setHasParent(true);
             addPropertyId(properties, typeId, filter, PropertyIds.PARENT_ID, getParent().getObjectId());
         }
+
+        addPropertyAllowedChildObjectTypeIds(properties, filter, typeId);
     }
 
     @Override
@@ -334,5 +340,24 @@ public class JcrFolder extends JcrNode {
         QueryResult queryResult = query.execute();
         return queryResult.getNodes().hasNext();
     }
+    
+    /**
+     * Add property "cmis:allowedChildObjectTypeIds" to the CMIS object.
+     * See CMIS specification v.1.0, 2.1.5.4.2 Property Definitions.
+     * 
+     * @param properties - the properties of the CMIS object represented by this instance. 
+     * @param filter
+     * @param typeId - type ID of the instance.
+     */
+	private void addPropertyAllowedChildObjectTypeIds(PropertiesImpl properties, 
+			Set<String> filter, String typeId) {
+		Iterator<TypeDefinitionContainer> typeDefIterator = super.typeManager.getTypeDefinitionList().iterator();
+        List<String> typeIds = new ArrayList<String>(super.typeManager.getTypeDefinitionList().size());
+        while (typeDefIterator.hasNext()) {
+        	TypeDefinitionContainer definition = typeDefIterator.next();
+        	typeIds.add(definition.getTypeDefinition().getId());
+        }
+		addPropertyList(properties, typeId, filter, PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, typeIds);
+	}
     
 }
