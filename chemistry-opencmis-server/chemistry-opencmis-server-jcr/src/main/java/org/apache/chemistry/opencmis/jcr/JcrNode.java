@@ -490,6 +490,10 @@ public abstract class JcrNode {
 
         // name
         String name = getNodeName();
+        if (PathManager.CMIS_ROOT_ID.equals(objectId) && "".equals(name)) {
+        	//set default name for the root node
+        	name = PathManager.CMIS_ROOT_ID;
+        }
         addPropertyString(properties, typeId, filter, PropertyIds.NAME, name);
         objectInfo.setName(name);
 
