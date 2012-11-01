@@ -1,1 +1,1 @@
-${jcr.service.factory.class} # JCR Implementation
+${service.factory.class} # JCR Implementation
