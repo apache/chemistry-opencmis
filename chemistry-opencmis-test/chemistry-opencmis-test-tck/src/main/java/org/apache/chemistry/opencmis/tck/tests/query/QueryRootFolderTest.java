@@ -45,11 +45,11 @@ public class QueryRootFolderTest extends AbstractQueryTest {
 
     @Override
     public void run(Session session) {
-        if (supportsQuery(session)) {
+        if (supportsQuery(session) && !isFulltextOnly(session)) {
             queryById(session);
             queryByDate(session);
         } else {
-            addResult(createResult(SKIPPED, "Query not supported. Test Skipped!"));
+            addResult(createResult(SKIPPED, "Metadata query not supported. Test Skipped!"));
         }
     }
 

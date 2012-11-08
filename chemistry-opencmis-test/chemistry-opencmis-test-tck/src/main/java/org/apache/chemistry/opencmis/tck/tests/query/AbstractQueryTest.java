@@ -34,4 +34,14 @@ public abstract class AbstractQueryTest extends AbstractSessionTest {
 
         return repository.getCapabilities().getQueryCapability() != CapabilityQuery.NONE;
     }
+
+    protected boolean isFulltextOnly(Session session) {
+        RepositoryInfo repository = session.getRepositoryInfo();
+
+        if (repository.getCapabilities().getQueryCapability() == null) {
+            return false;
+        }
+
+        return repository.getCapabilities().getQueryCapability() == CapabilityQuery.FULLTEXTONLY;
+    }
 }
