@@ -45,6 +45,7 @@ public enum Action {
     CAN_CREATE_DOCUMENT("canCreateDocument"), //
     CAN_CREATE_FOLDER("canCreateFolder"), //
     CAN_CREATE_RELATIONSHIP("canCreateRelationship"), //
+    CAN_CREATE_ITEM("canCreateItem"), //
     CAN_DELETE_TREE("canDeleteTree"), //
     CAN_GET_RENDITIONS("canGetRenditions"), //
     CAN_GET_ACL("canGetACL"), //

@@ -99,4 +99,34 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
+
+        try {
+            return service.createType(repositoryId, type, extension);
+        } finally {
+            service.close();
+        }
+    }
+
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
+
+        try {
+            return service.updateType(repositoryId, type, extension);
+        } finally {
+            service.close();
+        }
+    }
+
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
+
+        try {
+            service.deleteType(repositoryId, typeId, extension);
+        } finally {
+            service.close();
+        }
+    }
+
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -254,6 +255,28 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
         if (statement.length() == 0) {
             throw new CmisInvalidArgumentException("Statement must not be empty!");
+        }
+    }
+
+    /**
+     * Throws an exception if the given type definition is <code>null</code>.
+     */
+    protected void checkTypeDefinition(TypeDefinition typeDef) {
+        if (typeDef == null) {
+            throw new CmisInvalidArgumentException("Type definition must be set!");
+        }
+    }
+
+    /**
+     * Throws an exception if the given list is <code>null</code> or empty.
+     */
+    protected void checkList(String name, List<?> list) {
+        if (list == null) {
+            throw new CmisInvalidArgumentException(name + " must be set!");
+        }
+
+        if (list.isEmpty()) {
+            throw new CmisInvalidArgumentException(name + " must not be empty!");
         }
     }
 
@@ -523,6 +546,39 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
         try {
             return service.getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkTypeDefinition(type);
+
+        try {
+            return service.createType(repositoryId, type, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkTypeDefinition(type);
+
+        try {
+            return service.updateType(repositoryId, type, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkId("Type Id", typeId);
+
+        try {
+            service.deleteType(repositoryId, typeId, extension);
         } catch (Exception e) {
             throw createCmisException(e);
         }
@@ -893,6 +949,19 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         }
     }
 
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkHolderId("Object Id", objectId);
+        checkContentStream(contentStream);
+
+        try {
+            service.appendContentStream(repositoryId, objectId, changeToken, contentStream, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -901,6 +970,21 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
         try {
             service.updateProperties(repositoryId, objectId, changeToken, properties, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkList("Object Id list", objectIdAndChangeToken);
+        checkProperties(properties);
+
+        try {
+            return service.bulkUpdateProperties(repositoryId, objectIdAndChangeToken, properties, addSecondaryTypeIds,
+                    removeSecondaryTypeIds, extension);
         } catch (Exception e) {
             throw createCmisException(e);
         }

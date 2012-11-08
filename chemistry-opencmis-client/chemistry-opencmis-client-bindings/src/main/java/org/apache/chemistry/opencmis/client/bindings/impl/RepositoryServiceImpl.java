@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -174,4 +174,39 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
             addToTypeCache(cache, repositoryId, container.getChildren());
         }
     }
+
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        // get the SPI and create the type definitions
+        CmisSpi spi = CmisBindingsHelper.getSPI(session);
+        TypeDefinition result = spi.getRepositoryService().createType(repositoryId, type, extension);
+
+        // add the type to cache
+        TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
+        cache.put(repositoryId, result);
+
+        return result;
+    }
+
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        // get the SPI and update the type definitions
+        CmisSpi spi = CmisBindingsHelper.getSPI(session);
+        TypeDefinition result = spi.getRepositoryService().updateType(repositoryId, type, extension);
+
+        // update the type in cache
+        TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
+        cache.put(repositoryId, result);
+
+        return result;
+    }
+
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        // get the SPI and delete the type definitions
+        CmisSpi spi = CmisBindingsHelper.getSPI(session);
+        spi.getRepositoryService().deleteType(repositoryId, typeId, extension);
+
+        // remove the type from cache
+        TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
+        cache.remove(repositoryId, typeId);
+    }
+
 }

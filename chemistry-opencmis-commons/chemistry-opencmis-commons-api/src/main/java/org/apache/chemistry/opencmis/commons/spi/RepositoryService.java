@@ -113,4 +113,36 @@ public interface RepositoryService {
      *            typeId of an object type specified in the repository
      */
     TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
+
+    /**
+     * Creates a new type.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param type
+     *            the type definition
+     * @return the newly created type
+     */
+    TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension);
+
+    /**
+     * Updates a type.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param type
+     *            the type definition
+     * @return the updated type
+     */
+    TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension);
+
+    /**
+     * Deletes a type.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param typeId
+     *            typeId of an object type specified in the repository
+     */
+    void deleteType(String repositoryId, String typeId, ExtensionsData extension);
 }

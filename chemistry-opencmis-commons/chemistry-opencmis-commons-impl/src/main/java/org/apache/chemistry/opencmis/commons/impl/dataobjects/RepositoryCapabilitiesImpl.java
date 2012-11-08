@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
@@ -44,6 +45,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
     private Boolean isPwcUpdatable;
     private Boolean supportsGetDescendants;
     private Boolean supportsGetFolderTree;
+    private CapabilityOrderBy capabilityOrderBy;
     private Boolean supportsMultifiling;
     private Boolean supportsUnfiling;
     private Boolean supportsVersionSpecificFiling;
@@ -140,6 +142,14 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
 
     public void setSupportsGetFolderTree(Boolean supportsGetFolderTree) {
         this.supportsGetFolderTree = supportsGetFolderTree;
+    }
+
+    public CapabilityOrderBy getOrderByCapability() {
+        return capabilityOrderBy;
+    }
+
+    public void setOrderByCapability(CapabilityOrderBy capabilityOrderBy) {
+        this.capabilityOrderBy = capabilityOrderBy;
     }
 
     public Boolean isMultifilingSupported() {

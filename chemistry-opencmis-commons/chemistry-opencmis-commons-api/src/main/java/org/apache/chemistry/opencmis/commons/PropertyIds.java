@@ -37,6 +37,10 @@ public final class PropertyIds {
     public static final String LAST_MODIFICATION_DATE = "cmis:lastModificationDate";
     public static final String CHANGE_TOKEN = "cmis:changeToken";
 
+    // CMIS 1.1
+    public static final String DESCRIPTION = "cmis:description";
+    public static final String SECONDARY_OBJECT_TYPE_IDS = "cmis:secondaryObjectTypeIds";
+
     // ---- document ----
     public static final String IS_IMMUTABLE = "cmis:isImmutable";
     public static final String IS_LATEST_VERSION = "cmis:isLatestVersion";
@@ -52,6 +56,9 @@ public final class PropertyIds {
     public static final String CONTENT_STREAM_MIME_TYPE = "cmis:contentStreamMimeType";
     public static final String CONTENT_STREAM_FILE_NAME = "cmis:contentStreamFileName";
     public static final String CONTENT_STREAM_ID = "cmis:contentStreamId";
+
+    // CMIS 1.1
+    public static final String IS_PRIVATE_WORKING_COPY = "cmis:isPrivateWorkingCopy";
 
     // ---- folder ----
     public static final String PARENT_ID = "cmis:parentId";

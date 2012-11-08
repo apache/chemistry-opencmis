@@ -18,44 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-
-public interface RepositoryInfo extends Serializable, ExtensionsData {
+public interface BulkUpdateObjectIdAndChangeToken extends ExtensionsData {
 
     String getId();
 
-    String getName();
+    String getNewId();
 
-    String getDescription();
-
-    String getVendorName();
-
-    String getProductName();
-
-    String getProductVersion();
-
-    String getRootFolderId();
-
-    RepositoryCapabilities getCapabilities();
-
-    AclCapabilities getAclCapabilities();
-
-    String getLatestChangeLogToken();
-
-    String getCmisVersionSupported();
-
-    String getThinClientUri();
-
-    Boolean getChangesIncomplete();
-
-    List<BaseTypeId> getChangesOnType();
-
-    String getPrincipalIdAnonymous();
-
-    String getPrincipalIdAnyone();
-
-    List<ExtensionFeature> getExtensionFeatures();
+    String getChangeToken();
 }

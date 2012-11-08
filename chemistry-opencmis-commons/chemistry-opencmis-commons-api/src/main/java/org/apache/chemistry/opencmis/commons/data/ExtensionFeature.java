@@ -16,46 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.chemistry.opencmis.commons.data;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-
-public interface RepositoryInfo extends Serializable, ExtensionsData {
+public interface ExtensionFeature extends Serializable, ExtensionsData {
 
     String getId();
 
-    String getName();
+    String getUrl();
+
+    String getCommonName();
+
+    String getVersionLabel();
 
     String getDescription();
 
-    String getVendorName();
-
-    String getProductName();
-
-    String getProductVersion();
-
-    String getRootFolderId();
-
-    RepositoryCapabilities getCapabilities();
-
-    AclCapabilities getAclCapabilities();
-
-    String getLatestChangeLogToken();
-
-    String getCmisVersionSupported();
-
-    String getThinClientUri();
-
-    Boolean getChangesIncomplete();
-
-    List<BaseTypeId> getChangesOnType();
-
-    String getPrincipalIdAnonymous();
-
-    String getPrincipalIdAnyone();
-
-    List<ExtensionFeature> getExtensionFeatures();
+    Map<String, String> getFeatureData();
 }

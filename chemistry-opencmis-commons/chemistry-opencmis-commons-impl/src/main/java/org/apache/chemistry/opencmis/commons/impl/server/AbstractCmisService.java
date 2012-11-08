@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -79,7 +80,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required. Convenience implementation is present.</li>
      * </ul>
      */
@@ -109,7 +110,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * </ul>
      */
@@ -121,7 +122,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * </ul>
      */
@@ -134,7 +135,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -149,11 +150,56 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * </ul>
      */
     public abstract TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * <li>Introduced in CMIS 1.1</li>
+     * </ul>
+     */
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * <li>Introduced in CMIS 1.1</li>
+     * </ul>
+     */
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * <li>Introduced in CMIS 1.1</li>
+     * </ul>
+     */
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
 
     // --- navigation service ---
 
@@ -163,7 +209,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * <li>Object infos should contain the folder and all returned children.</li>
      * </ul>
@@ -178,7 +224,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the folder and all returned descendants.</li>
      * </ul>
@@ -195,7 +241,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the folder and all returned descendants.</li>
      * </ul>
@@ -212,7 +258,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * <li>Object infos should contain the object and all returned parents.</li>
      * </ul>
@@ -227,7 +273,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned parent folder.</li>
      * </ul>
@@ -242,7 +288,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the folder and the returned objects.</li>
      * </ul>
@@ -313,7 +359,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -329,7 +375,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -345,7 +391,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -360,7 +406,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the newly created object.</li>
      * </ul>
@@ -376,7 +422,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -391,7 +437,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -405,7 +451,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is required.</li>
      * <li>Object infos should contain the returned object.</li>
      * </ul>
@@ -420,7 +466,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -434,7 +480,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -449,7 +495,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned object.</li>
      * </ul>
@@ -466,7 +512,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -481,7 +527,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the updated object.</li>
      * </ul>
@@ -497,7 +543,24 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * <li>Introduced in CMIS 1.1</li>
+     * </ul>
+     */
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the moved object.</li>
      * </ul>
@@ -513,7 +576,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
@@ -542,7 +605,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -557,7 +620,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -572,7 +635,23 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * <li>Introduced in CMIS 1.1</li>
+     * </ul>
+     */
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -589,7 +668,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the checked out object.</li>
      * </ul>
@@ -605,7 +684,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -619,7 +698,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the checked in object.</li>
      * </ul>
@@ -636,7 +715,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned object.</li>
      * </ul>
@@ -668,7 +747,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned objects.</li>
      * </ul>
@@ -686,7 +765,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned objects.</li>
      * </ul>
@@ -702,7 +781,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -720,7 +799,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the added object.</li>
      * </ul>
@@ -736,7 +815,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the removed object.</li>
      * </ul>
@@ -753,7 +832,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the object and the returned relationship
      * objects.</li>
@@ -773,7 +852,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: Web Services, Local</li>
+     * <li>Bindings: Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -802,7 +881,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */
@@ -818,7 +897,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the applied policy object.</li>
      * </ul>
@@ -833,7 +912,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * <li>Object infos should contain the returned policy objects.</li>
      * </ul>
@@ -849,7 +928,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <p>
      * <b>Implementation Hints:</b>
      * <ul>
-     * <li>Bindings: AtomPub, Web Services, Local</li>
+     * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
      * <li>Implementation is optional.</li>
      * </ul>
      */

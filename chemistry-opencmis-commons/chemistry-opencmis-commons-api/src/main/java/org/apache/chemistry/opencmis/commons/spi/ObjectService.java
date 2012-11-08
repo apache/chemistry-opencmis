@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -358,6 +359,24 @@ public interface ObjectService {
             Properties properties, ExtensionsData extension);
 
     /**
+     * Updates properties and secondary types of one or more objects.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectIdAndChangeToken
+     *            the ids and change tokens of the objects to update
+     * @param properties
+     *            the properties to set
+     * @param addSecondaryTypeIds
+     *            the secondary types to apply
+     * @param removeSecondaryTypeIds
+     *            the secondary types to remove
+     */
+    List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension);
+
+    /**
      * Moves the specified file-able object from one folder to another.
      * 
      * @param repositoryId
@@ -455,4 +474,22 @@ public interface ObjectService {
      */
     void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension);
+
+    /**
+     * Appends the content stream to the content of the document.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the object. The repository might return a
+     *            different/new object id
+     * @param changeToken
+     *            <em>(optional)</em> the last change token of this object that
+     *            the client received. The repository might return a new change
+     *            token (default is <code>null</code>)
+     * @param contentStream
+     *            the content stream to append
+     */
+    void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, ExtensionsData extension);
 }

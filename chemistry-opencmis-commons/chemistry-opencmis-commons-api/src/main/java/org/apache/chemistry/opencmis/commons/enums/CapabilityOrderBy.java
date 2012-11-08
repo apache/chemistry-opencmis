@@ -18,21 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.enums;
 
-/**
- * Base Object Type Ids Enum.
- */
-public enum BaseTypeId {
+public enum CapabilityOrderBy {
 
-    CMIS_DOCUMENT("cmis:document"), //
-    CMIS_FOLDER("cmis:folder"), //
-    CMIS_RELATIONSHIP("cmis:relationship"), //
-    CMIS_POLICY("cmis:policy"), //
-    CMIS_ITEM("cmis:item"), // CMIS 1.1
-    CMIS_SECONDARY("cmis:secondary"); // CMIS 1.1
-
+    NONE("none"), COMMON("common"), CUSTOM("custom");
     private final String value;
 
-    BaseTypeId(String v) {
+    CapabilityOrderBy(String v) {
         value = v;
     }
 
@@ -40,12 +31,13 @@ public enum BaseTypeId {
         return value;
     }
 
-    public static BaseTypeId fromValue(String v) {
-        for (BaseTypeId c : BaseTypeId.values()) {
+    public static CapabilityOrderBy fromValue(String v) {
+        for (CapabilityOrderBy c : CapabilityOrderBy.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
         }
         throw new IllegalArgumentException(v);
     }
+
 }

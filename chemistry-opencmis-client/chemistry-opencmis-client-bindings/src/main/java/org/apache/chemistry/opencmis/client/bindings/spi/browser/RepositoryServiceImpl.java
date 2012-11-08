@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -109,5 +110,17 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertTypeDescendants(json);
+    }
+
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
     }
 }

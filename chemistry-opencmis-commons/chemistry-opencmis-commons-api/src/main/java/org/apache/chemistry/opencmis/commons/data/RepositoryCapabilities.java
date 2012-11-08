@@ -24,6 +24,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 
@@ -42,6 +43,8 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     Boolean isGetDescendantsSupported();
 
     Boolean isGetFolderTreeSupported();
+
+    CapabilityOrderBy getOrderByCapability();
 
     // Filing
 

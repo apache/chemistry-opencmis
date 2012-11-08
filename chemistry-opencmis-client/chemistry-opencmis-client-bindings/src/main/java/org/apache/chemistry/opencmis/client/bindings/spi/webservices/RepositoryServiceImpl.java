@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
@@ -139,5 +140,17 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         } finally {
             portProvider.endCall(port);
         }
+    }
+    
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
     }
 }
