@@ -47,7 +47,7 @@ public class VersioningStateCreateTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Versioning State Create Test");
-        setDescription("Creates documents in different versioing states.");
+        setDescription("Creates documents in different versioning states.");
     }
 
     @Override
