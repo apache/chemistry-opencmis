@@ -22,7 +22,6 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -97,17 +97,20 @@ public class ACLSmokeTest extends AbstractSessionTest {
                         principal = TestParameters.DEFAULT_ACL_PRINCIPAL_VALUE;
                     }
 
-                    // apply permission "cmis:read"
+                    // apply permission "cmis:write"
                     List<Ace> aces = new ArrayList<Ace>();
-                    aces.add(session.getObjectFactory().createAce(principal, Collections.singletonList("cmis:read")));
+                    aces.add(session.getObjectFactory().createAce(principal, Collections.singletonList("cmis:write")));
 
                     session.applyAcl(doc, aces, null, null);
 
-                    // set permission "cmis:read" and "cmis:write"
-                    aces = new ArrayList<Ace>();
-                    aces.add(session.getObjectFactory().createAce(principal, Arrays.asList("cmis:all")));
+                    if (session.getRepositoryInfo().getAclCapabilities().getAclPropagation() != AclPropagation.REPOSITORYDETERMINED) {
+                        // set permission "cmis:all"
+                        aces = new ArrayList<Ace>();
+                        aces.add(session.getObjectFactory()
+                                .createAce(principal, Collections.singletonList("cmis:all")));
 
-                    session.setAcl(doc, aces);
+                        session.setAcl(doc, aces);
+                    }
                 }
 
                 deleteObject(doc);
