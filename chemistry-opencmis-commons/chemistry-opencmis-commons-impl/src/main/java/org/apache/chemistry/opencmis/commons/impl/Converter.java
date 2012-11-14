@@ -2370,7 +2370,7 @@ public final class Converter {
     /**
      * Converts a content stream object.
      */
-    public static CmisContentStreamType convert(final ContentStream contentStream) {
+    public static CmisContentStreamType convert(final ContentStream contentStream, final boolean allowClose) {
         if (contentStream == null) {
             return null;
         }
@@ -2402,12 +2402,16 @@ public final class Converter {
             }
 
             public InputStream getInputStream() throws IOException {
-                return new FilterInputStream(stream) {
-                    @Override
-                    public void close() throws IOException {
-                        // prevent closing
-                    }
-                };
+                if (allowClose) {
+                    return stream;
+                } else {
+                    return new FilterInputStream(stream) {
+                        @Override
+                        public void close() throws IOException {
+                            // prevent closing
+                        }
+                    };
+                }
             }
 
             public String getContentType() {

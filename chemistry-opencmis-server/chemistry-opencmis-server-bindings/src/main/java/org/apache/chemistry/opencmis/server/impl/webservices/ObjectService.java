@@ -266,8 +266,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getContentStream(repositoryId, objectId, streamId, offset, length,
-                    convert(extension)));
+            return convert(
+                    service.getContentStream(repositoryId, objectId, streamId, offset, length, convert(extension)),
+                    true);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

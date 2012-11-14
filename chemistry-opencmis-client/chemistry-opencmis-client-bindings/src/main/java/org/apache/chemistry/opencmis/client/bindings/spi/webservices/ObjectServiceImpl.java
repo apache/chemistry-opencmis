@@ -77,7 +77,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             javax.xml.ws.Holder<String> objectId = new javax.xml.ws.Holder<String>();
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-            port.createDocument(repositoryId, convert(properties), folderId, convert(contentStream),
+            port.createDocument(repositoryId, convert(properties), folderId, convert(contentStream, false),
                     convert(EnumVersioningState.class, versioningState), policies, convert(addACEs),
                     convert(removeACEs), portExtension, objectId);
 
@@ -209,7 +209,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             portProvider.endCall(port);
         }
     }
-    
+
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -388,8 +388,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-            port.setContentStream(repositoryId, portObjectId, overwriteFlag, portChangeToken, convert(contentStream),
-                    portExtension);
+            port.setContentStream(repositoryId, portObjectId, overwriteFlag, portChangeToken,
+                    convert(contentStream, false), portExtension);
 
             setHolderValue(portObjectId, objectId);
             setHolderValue(portChangeToken, changeToken);

@@ -108,7 +108,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
-            port.checkIn(repositoryId, portObjectId, major, convert(properties), convert(contentStream),
+            port.checkIn(repositoryId, portObjectId, major, convert(properties), convert(contentStream, false),
                     checkinComment, policies, convert(addACEs), convert(removeACEs), portExtension);
 
             setHolderValue(portObjectId, objectId);
