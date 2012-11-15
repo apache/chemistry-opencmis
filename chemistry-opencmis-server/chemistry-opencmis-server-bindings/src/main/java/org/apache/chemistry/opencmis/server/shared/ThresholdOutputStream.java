@@ -322,6 +322,10 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public int available() {
+            if (buf == null) {
+                return 0;
+            }
+
             return bufSize - pos;
         }
 
@@ -353,6 +357,10 @@ public class ThresholdOutputStream extends OutputStream {
 
         @Override
         public long skip(long n) {
+            if (buf == null) {
+                return -1;
+            }
+
             if ((pos + n) > bufSize) {
                 n = bufSize - pos;
             }
@@ -408,7 +416,7 @@ public class ThresholdOutputStream extends OutputStream {
         @Override
         public int available() throws IOException {
             if (isClosed) {
-                throw new IOException("Stream is already closed!");
+                return 0;
             }
 
             return stream.available();
@@ -438,7 +446,7 @@ public class ThresholdOutputStream extends OutputStream {
         @Override
         public long skip(long n) throws IOException {
             if (isClosed) {
-                throw new IOException("Stream is already closed!");
+                return -1;
             }
 
             return stream.skip(n);
