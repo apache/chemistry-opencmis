@@ -128,7 +128,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         // add type.
-        repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+        repSvc.createType(repositoryId, typeDefRef, null);
         TypeDefinition type = repSvc.getTypeDefinition(fTestCallContext, repositoryId, typeDefRef.getId(), null);
         assertEquals(typeDefRef.getId(), type.getId());
         assertEquals(typeDefRef.getDescription(), type.getDescription());
@@ -146,7 +146,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         // add type.
-        repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+        repSvc.createType(repositoryId, typeDefRef, null);
         // add type again should fail
         checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
         // type should still exist then
@@ -247,7 +247,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     
     private void checkAddingType(String repositoryId, TypeDefinition typeDef, Class<? extends Exception> clazz) {
         try { 
-            repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDef), null);
+            typeDef = repSvc.createType(repositoryId, typeDef, null);
             fail("Illegal type should throw a " + clazz.getName());
         } catch (RuntimeException e) {
             assertTrue("Illegal type name threw wrong exception type (should be a " + clazz.getName() + ")",
@@ -261,10 +261,10 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         log.info("starting testTypeMutabilityUpdate() ...");
         TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
-        repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+        repSvc.createType(repositoryId, typeDefRef, null);
         // update type.
         try {
-            repSvc.updateTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+            repSvc.updateType(repositoryId, typeDefRef, null);
             fail("updating a type should throw exception.");
         } catch (Exception e) {
             assert(e instanceof CmisNotSupportedException);
@@ -278,13 +278,13 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         log.info("starting testTypeMutabilityDeletion() ...");
         TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
-        repSvc.createTypeDefinition(repositoryId, new Holder<TypeDefinition>(typeDefRef), null);
+        repSvc.createType(repositoryId, typeDefRef, null);
         
         String docId = createDoc("Book1", getRootFolderId(REPOSITORY_ID), TYPE_ID_MUTABILITY);
         
         // try deleting type, should fail, because in use.
         try {
-            repSvc.deleteTypeDefinition(repositoryId, TYPE_ID_MUTABILITY, null);
+            repSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
             fail("deleting a type which is in use should throw exception.");
         } catch (Exception e) {
             assert(e instanceof CmisInvalidArgumentException);
@@ -293,7 +293,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         objSvc.deleteObject(fTestCallContext, fRepositoryId, docId, true, null);
         
         try {
-            repSvc.deleteTypeDefinition(repositoryId, TYPE_ID_MUTABILITY, null);
+            repSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
         } catch (Exception e) {
             fail("deleting a type which is in not in use should not throw exception! Exception is: " + e);
         }
@@ -305,13 +305,13 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         }
 
         try {
-            repSvc.deleteTypeDefinition(repositoryId, BaseTypeId.CMIS_DOCUMENT.name(), null);
+            repSvc.deleteType(repositoryId, BaseTypeId.CMIS_DOCUMENT.name(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
             assert(e instanceof CmisInvalidArgumentException);
         }
         try {
-            repSvc.deleteTypeDefinition(repositoryId, BaseTypeId.CMIS_FOLDER.name(), null);
+            repSvc.deleteType(repositoryId, BaseTypeId.CMIS_FOLDER.name(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
             assert(e instanceof CmisInvalidArgumentException);
