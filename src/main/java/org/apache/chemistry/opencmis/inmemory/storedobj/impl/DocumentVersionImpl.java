@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -61,9 +62,16 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         setContent(content, false);
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
-        fProperties = new HashMap<String, PropertyData<?>>(); // ensure that we
+        fProperties = new HashMap<String, PropertyData<?>>();
+        // copy user properties from latest version
+        DocumentVersionImpl src = (DocumentVersionImpl)container.getLatestVersion(false);
+        if (null != src && null != src.fProperties) {
+            for (Entry<String, PropertyData<?>> prop : src.fProperties.entrySet()) {
+                fProperties.put(prop.getKey(), prop.getValue());
+            }
+        }
+
         label = createVersionLabel();
-        // have a map
     }
 
     public void setContent(ContentStream content, boolean mustPersist) {
