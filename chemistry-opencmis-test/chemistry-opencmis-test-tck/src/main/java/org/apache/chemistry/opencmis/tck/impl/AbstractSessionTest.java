@@ -1664,25 +1664,33 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             if (child instanceof FileableCmisObject) {
                 FileableCmisObject fileableChild = (FileableCmisObject) child;
-                List<Folder> parents = fileableChild.getParents();
 
-                f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
-                addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                Set<Action> actions = fileableChild.getAllowableActions().getAllowableActions();
+                boolean hasObjectParentsAction = actions.contains(Action.CAN_GET_OBJECT_PARENTS);
+                boolean hasFolderParentAction = actions.contains(Action.CAN_GET_FOLDER_PARENT);
 
-                boolean foundParent = false;
-                for (Folder parent : parents) {
-                    if (parent == null) {
-                        f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
-                        addResult(results, assertIsTrue(parents.size() > 0, null, f));
-                    } else if (folder.getId().equals(parent.getId())) {
-                        foundParent = true;
-                        break;
-                    }
-                }
+                if (hasObjectParentsAction || hasFolderParentAction) {
+                    List<Folder> parents = fileableChild.getParents();
 
-                if (!foundParent) {
-                    f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
+                    f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
                     addResult(results, assertIsTrue(parents.size() > 0, null, f));
+
+                    boolean foundParent = false;
+                    for (Folder parent : parents) {
+                        if (parent == null) {
+                            f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
+                            addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                        } else if (folder.getId().equals(parent.getId())) {
+                            foundParent = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundParent) {
+                        f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
+                        addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                    }
+
                 }
 
                 // get object by id and compare
@@ -1711,11 +1719,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
 
-            f = createResult(FAILURE, "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
+            f = createResult(WARNING, "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
             addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
 
             if (child instanceof Folder) {
-                f = createResult(FAILURE, "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
+                f = createResult(WARNING, "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
                 addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
             }
         }
