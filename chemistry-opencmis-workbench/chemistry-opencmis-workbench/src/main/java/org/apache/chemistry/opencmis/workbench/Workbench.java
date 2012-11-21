@@ -56,6 +56,7 @@ public class Workbench {
 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
+        ClientHelper.installKeyBindings();
 
         // show client frame
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
