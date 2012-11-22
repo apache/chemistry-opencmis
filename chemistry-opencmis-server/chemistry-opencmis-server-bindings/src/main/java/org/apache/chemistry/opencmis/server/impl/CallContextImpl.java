@@ -80,6 +80,10 @@ public class CallContextImpl implements CallContext {
         return (File) get(TEMP_DIR);
     }
 
+    public boolean encryptTempFiles() {
+        return Boolean.TRUE.equals(get(ENCRYPT_TEMP_FILE));
+    }
+
     public int getMemoryThreshold() {
         return (Integer) get(MEMORY_THRESHOLD);
     }

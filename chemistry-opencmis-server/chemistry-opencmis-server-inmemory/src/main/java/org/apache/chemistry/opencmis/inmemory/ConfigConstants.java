@@ -28,6 +28,7 @@ public class ConfigConstants {
     public static final String MEMORY_THRESHOLD = "InMemoryServer.MemoryThreshold";
     public static final String TEMP_DIR = "InMemoryServer.TempDir";
     public static final String MAX_CONTENT_SIZE = "InMemoryServer.MaxContentSize";
+    public static final String ENCRYPT_TEMP_FILES = "InMemoryServer.EncryptTempFiles";
 
     // Helper constants that allow to fill a repository with data on
     // initialization

@@ -142,6 +142,10 @@ public abstract class AbstractLocalService {
             return null;
         }
 
+        public boolean encryptTempFiles() {
+            return false;
+        }
+
         public int getMemoryThreshold() {
             return 0;
         }

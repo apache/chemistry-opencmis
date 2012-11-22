@@ -27,6 +27,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 
@@ -43,15 +50,24 @@ public class ThresholdOutputStream extends OutputStream {
     private static final int MAX_GROW = 10 * 1024 * 1024; // 10 MiB
     private static final int DEFAULT_THRESHOLD = 4 * 1024 * 1024; // 4 MiB
 
+    private static final String ALGORITHM = "AES";
+    private static final String MODE = "CTR";
+    private static final String PADDING = "PKCS5Padding";
+    private static final String TRANSFORMATION = ALGORITHM + '/' + MODE + '/' + PADDING;
+    private static final int KEY_SIZE = 128;
+
     private final File tempDir;
     private final int memoryThreshold;
     private final long maxContentSize;
+    private final boolean encrypt;
 
     private byte[] buf = null;
     private int bufSize = 0;
     private long size = 0;
     private File tempFile;
     private OutputStream tmpStream;
+    private Key key;
+    private byte[] iv;
 
     /**
      * Constructor.
@@ -64,7 +80,21 @@ public class ThresholdOutputStream extends OutputStream {
      *            max size of the content in bytes (-1 to disable the check)
      */
     public ThresholdOutputStream(File tempDir, int memoryThreshold, long maxContentSize) {
-        this(64 * 1024, tempDir, memoryThreshold, maxContentSize);
+        this(64 * 1024, tempDir, memoryThreshold, maxContentSize, false);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param tempDir
+     *            temp directory
+     * @param memoryThreshold
+     *            memory threshold in bytes
+     * @param maxContentSize
+     *            max size of the content in bytes (-1 to disable the check)
+     */
+    public ThresholdOutputStream(File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
+        this(64 * 1024, tempDir, memoryThreshold, maxContentSize, encrypt);
     }
 
     /**
@@ -79,7 +109,7 @@ public class ThresholdOutputStream extends OutputStream {
      * @param maxContentSize
      *            max size of the content in bytes (-1 to disable the check)
      */
-    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize) {
+    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
         if (initSize < 0) {
             throw new IllegalArgumentException("Negative initial size: " + initSize);
         }
@@ -87,6 +117,7 @@ public class ThresholdOutputStream extends OutputStream {
         this.tempDir = tempDir;
         this.memoryThreshold = (memoryThreshold < 0 ? DEFAULT_THRESHOLD : memoryThreshold);
         this.maxContentSize = maxContentSize;
+        this.encrypt = encrypt;
 
         buf = new byte[initSize];
     }
@@ -99,7 +130,26 @@ public class ThresholdOutputStream extends OutputStream {
         if (bufSize + nextBufferSize > memoryThreshold) {
             if (tmpStream == null) {
                 tempFile = File.createTempFile("opencmis", null, tempDir);
-                tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+                if (encrypt) {
+
+                    Cipher cipher;
+                    try {
+                        KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
+                        keyGenerator.init(KEY_SIZE);
+                        key = keyGenerator.generateKey();
+
+                        cipher = Cipher.getInstance(TRANSFORMATION);
+                        cipher.init(Cipher.ENCRYPT_MODE, key);
+
+                        iv = cipher.getIV();
+                    } catch (Exception e) {
+                        throw new IOException("Cannot initialize encryption cipher!", e);
+                    }
+
+                    tmpStream = new BufferedOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), cipher));
+                } else {
+                    tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+                }
             }
             tmpStream.write(buf, 0, bufSize);
 
@@ -386,12 +436,34 @@ public class ThresholdOutputStream extends OutputStream {
      */
     private class InternalTempFileInputStream extends ThresholdInputStream {
 
+        private final Cipher cipher;
         private BufferedInputStream stream;
         private boolean isDeleted = false;
         private boolean isClosed = false;
 
-        public InternalTempFileInputStream() throws FileNotFoundException {
-            stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
+        public InternalTempFileInputStream() throws IOException {
+
+            if (encrypt) {
+                try {
+                    cipher = Cipher.getInstance(TRANSFORMATION);
+                    cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+                } catch (Exception e) {
+                    throw new IOException("Cannot initialize decryption cipher!", e);
+                }
+            } else {
+                cipher = null;
+            }
+
+            openStream();
+        }
+
+        protected void openStream() throws FileNotFoundException {
+            if (encrypt) {
+                stream = new BufferedInputStream(new CipherInputStream(new FileInputStream(tempFile), cipher),
+                        memoryThreshold);
+            } else {
+                stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
+            }
         }
 
         public boolean isInMemory() {
@@ -410,7 +482,7 @@ public class ThresholdOutputStream extends OutputStream {
 
             stream.close();
 
-            stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
+            openStream();
         }
 
         @Override

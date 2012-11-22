@@ -47,6 +47,7 @@ public interface CallContext {
     String TEMP_DIR = "tempDir";
     String MEMORY_THRESHOLD = "memoryThreshold";
     String MAX_CONTENT_SIZE = "maxContentSize";
+    String ENCRYPT_TEMP_FILE = "encryptTempFiles";
 
     /**
      * Returns the binding. Usually it returns
@@ -104,6 +105,11 @@ public interface CallContext {
      * Returns the temp directory.
      */
     File getTempDirectory();
+
+    /**
+     * Returns if temp files should be encrypted.
+     */
+    boolean encryptTempFiles();
 
     /**
      * Returns the memory threshold.

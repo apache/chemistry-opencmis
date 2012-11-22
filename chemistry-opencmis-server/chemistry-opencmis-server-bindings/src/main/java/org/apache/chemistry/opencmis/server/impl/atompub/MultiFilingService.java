@@ -55,7 +55,7 @@ public class MultiFilingService {
         String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 
         AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize());
+                context.getMaxContentSize(), context.encryptTempFiles());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 

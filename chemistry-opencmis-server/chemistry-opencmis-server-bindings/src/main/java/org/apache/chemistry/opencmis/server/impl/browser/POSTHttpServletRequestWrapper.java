@@ -38,14 +38,14 @@ public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequest
     private InputStream stream;
 
     public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold,
-            long maxContentSize) throws Exception {
+            long maxContentSize, boolean encrypt) throws Exception {
         super(request);
 
         // check multipart
         isMultipart = MultipartParser.isMultipartContent(request);
 
         if (isMultipart) {
-            MultipartParser parser = new MultipartParser(request, tempDir, memoryThreshold, maxContentSize);
+            MultipartParser parser = new MultipartParser(request, tempDir, memoryThreshold, maxContentSize, encrypt);
             parser.parse();
 
             if (parser.hasContent()) {

@@ -173,7 +173,7 @@ public class AtomEntryParserTest {
     @Test
     public void testAtomTitle() throws Exception {
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), null,
-                THRESHOLD, MAX_SIZE);
+                THRESHOLD, MAX_SIZE, false);
 
         assertNotNull(aep);
         assertNotNull(aep.getObject());
@@ -189,7 +189,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testNullStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD, MAX_SIZE);
+        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD, MAX_SIZE, false);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -200,7 +200,8 @@ public class AtomEntryParserTest {
 
     @Test
     public void testEmptyStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD, MAX_SIZE);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD, MAX_SIZE,
+                false);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -210,7 +211,7 @@ public class AtomEntryParserTest {
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD, MAX_SIZE);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD, MAX_SIZE, false);
         ContentStream contentStream = aep.getContentStream();
 
         assertNotNull(contentStream);

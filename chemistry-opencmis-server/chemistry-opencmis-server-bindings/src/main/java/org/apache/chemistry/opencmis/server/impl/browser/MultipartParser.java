@@ -58,6 +58,7 @@ public class MultipartParser {
     private final File tempDir;
     private final int memoryThreshold;
     private final long maxContentSize;
+    private final boolean encrypt;
     private final InputStream requestStream;
 
     private byte[] boundary;
@@ -84,12 +85,13 @@ public class MultipartParser {
     private Map<String, byte[][]> rawFields;
     private String charset = "ISO-8859-1";
 
-    public MultipartParser(HttpServletRequest request, File tempDir, int memoryThreshold, long maxContentSize)
-            throws IOException {
+    public MultipartParser(HttpServletRequest request, File tempDir, int memoryThreshold, long maxContentSize,
+            boolean encrypt) throws IOException {
         this.request = request;
         this.tempDir = tempDir;
         this.memoryThreshold = memoryThreshold;
         this.maxContentSize = maxContentSize;
+        this.encrypt = encrypt;
 
         this.requestStream = request.getInputStream();
 
@@ -380,7 +382,7 @@ public class MultipartParser {
     }
 
     private void readBodyAsStream() throws IOException {
-        ThresholdOutputStream stream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize);
+        ThresholdOutputStream stream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize, encrypt);
 
         try {
             while (true) {

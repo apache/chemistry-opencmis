@@ -44,6 +44,13 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     }
 
     /**
+     * Returns <code>false</code>, do not encrypt temporary files.
+     */
+    public boolean encryptTempFiles() {
+        return false;
+    }
+
+    /**
      * Returns a threshold of 4 MiB.
      */
     public int getMemoryThreshold() {

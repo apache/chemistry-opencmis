@@ -129,6 +129,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
     private File tempDir;
     private int memoryThreshold;
     private long maxContentSize;
+    private boolean encrypt;
 
     private Dispatcher repositoryDispatcher;
     private Dispatcher rootDispatcher;
@@ -156,6 +157,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         tempDir = factory.getTempDirectory();
         memoryThreshold = factory.getMemoryThreshold();
         maxContentSize = factory.getMaxContentSize();
+        encrypt = factory.encryptTempFiles();
 
         // initialize the dispatchers
         repositoryDispatcher = new Dispatcher(false);
@@ -252,7 +254,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
-                request = new POSTHttpServletRequestWrapper(request, tempDir, memoryThreshold, maxContentSize);
+                request = new POSTHttpServletRequestWrapper(request, tempDir, memoryThreshold, maxContentSize, encrypt);
             } else {
                 throw new CmisNotSupportedException("Unsupported method");
             }
@@ -264,7 +266,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             }
 
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    callContextHandler, tempDir, memoryThreshold, maxContentSize);
+                    callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

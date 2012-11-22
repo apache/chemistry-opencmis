@@ -83,7 +83,7 @@ public final class ObjectService {
                 VersioningState.class);
 
         AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize());
+                context.getMaxContentSize(), context.encryptTempFiles());
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 
@@ -140,7 +140,7 @@ public final class ObjectService {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxContentSize());
+                context.getMemoryThreshold(), context.getMaxContentSize(), context.encryptTempFiles());
 
         // execute
         String newObjectId = service.createRelationship(repositoryId, parser.getProperties(), parser.getPolicyIds(),
@@ -425,6 +425,11 @@ public final class ObjectService {
         }
         response.setContentType(contentType);
 
+        if (content.getFileName() != null) {
+            response.setHeader(MimeHelper.CONTENT_DISPOSITION,
+                    MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT, content.getFileName()));
+        }
+
         // send content
         InputStream in = new BufferedInputStream(content.getStream(), BUFFER_SIZE);
         OutputStream out = new BufferedOutputStream(response.getOutputStream());
@@ -451,7 +456,7 @@ public final class ObjectService {
         Boolean major = getBooleanParameter(request, Constants.PARAM_MAJOR);
 
         AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxContentSize());
+                context.getMemoryThreshold(), context.getMaxContentSize(), context.encryptTempFiles());
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);

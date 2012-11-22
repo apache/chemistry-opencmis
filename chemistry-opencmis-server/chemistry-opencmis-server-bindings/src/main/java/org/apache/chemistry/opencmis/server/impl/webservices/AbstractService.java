@@ -87,7 +87,7 @@ public abstract class AbstractService {
      * Creates a CallContext object for the Web Service context.
      */
     @SuppressWarnings("unchecked")
-    protected CallContext createContext(WebServiceContext wsContext, String repositoryId) {
+    protected CallContext createContext(WebServiceContext wsContext, CmisServiceFactory factory, String repositoryId) {
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, repositoryId, false);
 
         MessageContext mc = wsContext.getMessageContext();
@@ -133,6 +133,11 @@ public abstract class AbstractService {
             }
         }
 
+        context.put(CallContext.TEMP_DIR, factory.getTempDirectory());
+        context.put(CallContext.MEMORY_THRESHOLD, factory.getMemoryThreshold());
+        context.put(CallContext.MAX_CONTENT_SIZE, -1);
+        context.put(CallContext.ENCRYPT_TEMP_FILE, false);
+
         return context;
     }
 
@@ -141,7 +146,7 @@ public abstract class AbstractService {
      */
     protected CmisService getService(WebServiceContext wsContext, String repositoryId) {
         CmisServiceFactory factory = getServiceFactory(wsContext);
-        CallContext context = createContext(wsContext, repositoryId);
+        CallContext context = createContext(wsContext, factory, repositoryId);
         return factory.getService(context);
     }
 

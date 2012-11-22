@@ -376,7 +376,7 @@ public class MultipartParserTest {
         Mockito.when(request.getContentType()).thenReturn("multipart/form-data; boundary=\"" + boundary + "\"");
         Mockito.when(request.getInputStream()).thenReturn(stream);
 
-        return new MultipartParser(request, null, THRESHOLD, MAX_SIZE);
+        return new MultipartParser(request, null, THRESHOLD, MAX_SIZE, false);
     }
 
     private byte[] readBytesFromStream(InputStream is) throws IOException {

@@ -57,6 +57,16 @@ public interface CmisServiceFactory {
     File getTempDirectory();
 
     /**
+     * Indicates if temporary files should be encrypted.
+     * 
+     * @return <code>true</code> if temporary files should be encrypted,
+     *         <code>false</code> otherwise
+     * 
+     * @see CmisServiceFactory#getTempDirectory()
+     */
+    boolean encryptTempFiles();
+
+    /**
      * Returns up to which size content should be kept in memory. Documents
      * bigger than this threshold will be cached in a temporary directory.
      * 
@@ -68,7 +78,7 @@ public interface CmisServiceFactory {
 
     /**
      * Returns the maximal content size in bytes. If a client provides content
-     * bigger than that, {@link CmisConstraintException} is thrown.
+     * bigger than that, a {@link CmisConstraintException} is thrown.
      * 
      * @return the max size in bytes or -1 to disable the size check
      */
