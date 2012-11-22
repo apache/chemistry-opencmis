@@ -63,7 +63,7 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
                 addParameter(name, value);
             } else {
                 String name = URLDecoder.decode(nameValuePair, "UTF-8");
-                addParameter(name, null);
+                addParameter(name, (String) null);
             }
         }
     }
@@ -80,6 +80,22 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
             String[] newValues = new String[values.length + 1];
             System.arraycopy(values, 0, newValues, 0, values.length);
             newValues[newValues.length - 1] = value;
+            parameters.put(name, newValues);
+        }
+    }
+
+    /**
+     * Adds an array of values to a parameter.
+     */
+    protected void addParameter(String name, String[] additionalValues) {
+        String[] values = parameters.get(name);
+
+        if (values == null) {
+            parameters.put(name, additionalValues);
+        } else {
+            String[] newValues = new String[values.length + additionalValues.length];
+            System.arraycopy(values, 0, newValues, 0, values.length);
+            System.arraycopy(additionalValues, 0, newValues, values.length, additionalValues.length);
             parameters.put(name, newValues);
         }
     }

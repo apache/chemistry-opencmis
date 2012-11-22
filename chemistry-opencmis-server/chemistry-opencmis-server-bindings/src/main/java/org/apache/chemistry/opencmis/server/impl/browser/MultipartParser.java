@@ -44,8 +44,9 @@ public class MultipartParser {
 
     public static final String MULTIPART = "multipart/";
 
-    private static final int MAX_FIELD_BYTES = 10 * 1024 * 1024;
+    private static final String CHARSET_FIELD = "_charset_";
 
+    private static final int MAX_FIELD_BYTES = 10 * 1024 * 1024;
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final byte CR = 0x0D;
@@ -74,13 +75,14 @@ public class MultipartParser {
 
     private Map<String, String> headers;
 
-    private boolean isContent;
-    private String name;
     private String filename;
     private String contentType;
     private BigInteger contentSize;
     private InputStream contentStream;
-    private String value;
+
+    private Map<String, String[]> fields;
+    private Map<String, byte[][]> rawFields;
+    private String charset = "ISO-8859-1";
 
     public MultipartParser(HttpServletRequest request, File tempDir, int memoryThreshold, long maxContentSize)
             throws IOException {
@@ -102,7 +104,36 @@ public class MultipartParser {
         hasContent = false;
         fieldBytes = 0;
 
+        fields = new HashMap<String, String[]>();
+        rawFields = new HashMap<String, byte[][]>();
+
         skipPreamble();
+    }
+
+    private void addField(String name, String value) {
+        String[] values = fields.get(name);
+
+        if (values == null) {
+            fields.put(name, new String[] { value });
+        } else {
+            String[] newValues = new String[values.length + 1];
+            System.arraycopy(values, 0, newValues, 0, values.length);
+            newValues[newValues.length - 1] = value;
+            fields.put(name, newValues);
+        }
+    }
+
+    private void addRawField(String name, byte[] value) {
+        byte[][] values = rawFields.get(name);
+
+        if (values == null) {
+            rawFields.put(name, new byte[][] { value });
+        } else {
+            byte[][] newValues = new byte[values.length + 1][];
+            System.arraycopy(values, 0, newValues, 0, values.length);
+            newValues[newValues.length - 1] = value;
+            rawFields.put(name, newValues);
+        }
     }
 
     private void extractBoundary() {
@@ -229,7 +260,7 @@ public class MultipartParser {
         }
 
         if (bufferCount > bufferPosition) {
-            return buffer[bufferPosition++];
+            return buffer[bufferPosition++] & 0xff;
         }
 
         readBuffer();
@@ -290,38 +321,65 @@ public class MultipartParser {
         }
     }
 
-    public void readBodyAsString(String charset) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    private byte[] readBodyBytes() throws IOException {
+        readBuffer();
 
+        int boundaryPosition = findBoundary();
+
+        if (boundaryPosition > -1) {
+            // the body bytes are completely in the buffer
+            int len = boundaryPosition - bufferPosition;
+            addFieldBytes(len);
+
+            byte[] body = new byte[len];
+            System.arraycopy(buffer, bufferPosition, body, 0, len);
+            bufferPosition = boundaryPosition + boundary.length;
+            return body;
+        }
+
+        // the body bytes are not completely in the buffer
+        // read all available bytes
+        int len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
+        addFieldBytes(len);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(len + 32);
+
+        bos.write(buffer, bufferPosition, len);
+        bufferPosition = bufferPosition + len;
+
+        // read next chunk
         while (true) {
             readBuffer();
 
-            int boundaryPosition = findBoundary();
+            boundaryPosition = findBoundary();
 
             if (boundaryPosition > -1) {
-                bos.write(buffer, bufferPosition, boundaryPosition - bufferPosition);
+                len = boundaryPosition - bufferPosition;
+                addFieldBytes(len);
+
+                bos.write(buffer, bufferPosition, len);
                 bufferPosition = boundaryPosition + boundary.length;
                 break;
             } else {
-                int len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
+                len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
+                addFieldBytes(len);
+
                 bos.write(buffer, bufferPosition, len);
                 bufferPosition = bufferPosition + len;
             }
-
-            fieldBytes += bos.size();
-            if (fieldBytes > MAX_FIELD_BYTES) {
-                throw new CmisInvalidArgumentException("Limit exceeded!");
-            }
         }
 
-        try {
-            value = bos.toString(charset);
-        } catch (UnsupportedEncodingException uee) {
-            throw new CmisInvalidArgumentException("Unknown endcoding!");
+        return bos.toByteArray();
+    }
+
+    private void addFieldBytes(int len) {
+        fieldBytes += len;
+        if (fieldBytes > MAX_FIELD_BYTES) {
+            throw new CmisInvalidArgumentException("Limit exceeded!");
         }
     }
 
-    public void readBodyAsStream() throws Exception {
+    private void readBodyAsStream() throws IOException {
         ThresholdOutputStream stream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize);
 
         try {
@@ -345,7 +403,7 @@ public class MultipartParser {
 
             contentSize = BigInteger.valueOf(stream.getSize());
             contentStream = stream.getInputStream();
-        } catch (Exception e) {
+        } catch (IOException e) {
             // if something went wrong, make sure the temp file will
             // be deleted
             stream.destroy();
@@ -353,7 +411,7 @@ public class MultipartParser {
         }
     }
 
-    private void readBody() throws Exception {
+    private void readBody() throws IOException {
         String contentDisposition = headers.get("content-disposition");
 
         if (contentDisposition == null) {
@@ -362,11 +420,7 @@ public class MultipartParser {
 
         Map<String, String> params = new HashMap<String, String>();
         MimeHelper.decodeContentDisposition(contentDisposition, params);
-
-        name = params.get(MimeHelper.DISPOSITION_NAME);
-        filename = params.get(MimeHelper.DISPOSITION_FILENAME);
-        isContent = (filename != null);
-        contentType = headers.get("content-type");
+        boolean isContent = params.containsKey(MimeHelper.DISPOSITION_FILENAME);
 
         if (isContent) {
             if (hasContent) {
@@ -375,25 +429,33 @@ public class MultipartParser {
 
             hasContent = true;
 
+            filename = params.get(MimeHelper.DISPOSITION_FILENAME);
+
+            contentType = headers.get("content-type");
             if (contentType == null) {
                 contentType = Constants.MEDIATYPE_OCTETSTREAM;
             }
 
             readBodyAsStream();
         } else {
-            contentSize = BigInteger.ZERO;
+            String name = params.get(MimeHelper.DISPOSITION_NAME);
+            byte[] rawValue = readBodyBytes();
 
-            String charset = null;
-
-            if (contentType != null) {
-                charset = MimeHelper.getCharsetFromContentType(contentType);
+            if (CHARSET_FIELD.equalsIgnoreCase(name)) {
+                charset = new String(rawValue, "ISO-8859-1");
+                return;
             }
 
-            if (charset == null) {
-                charset = "ISO-8859-1";
+            String fieldContentType = headers.get("content-type");
+            if (fieldContentType != null) {
+                String fieldCharset = MimeHelper.getCharsetFromContentType(fieldContentType);
+                if (fieldCharset != null) {
+                    addField(name, new String(rawValue, fieldCharset));
+                    return;
+                }
             }
 
-            readBodyAsString(charset);
+            addRawField(name, rawValue);
         }
     }
 
@@ -441,7 +503,7 @@ public class MultipartParser {
         }
     }
 
-    public boolean readNext() throws Exception {
+    private boolean readNext() throws IOException {
         try {
             readHeaders();
 
@@ -454,7 +516,7 @@ public class MultipartParser {
             readBody();
 
             return true;
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (contentStream != null) {
                 try {
                     contentStream.close();
@@ -469,16 +531,52 @@ public class MultipartParser {
         }
     }
 
-    public boolean isContent() {
-        return isContent;
+    public void parse() throws IOException {
+        try {
+
+            while (readNext()) {
+                // nothing to do here, just read
+            }
+
+            // apply charset
+            for (Map.Entry<String, byte[][]> e : rawFields.entrySet()) {
+
+                String[] otherValues = fields.get(e.getKey());
+                int index = (otherValues != null ? otherValues.length : 0);
+
+                String[] values = new String[e.getValue().length + index];
+
+                if (otherValues != null) {
+                    System.arraycopy(otherValues, 0, values, 0, otherValues.length);
+                }
+
+                for (byte[] rawValue : e.getValue()) {
+                    values[index++] = new String(rawValue, charset);
+                }
+
+                fields.put(e.getKey(), values);
+            }
+        } catch (UnsupportedEncodingException uee) {
+            if (contentStream != null) {
+                try {
+                    contentStream.close();
+                } catch (Exception e2) {
+                    // ignore
+                }
+            }
+
+            skipEpilogue();
+
+            fields = null;
+
+            throw new CmisInvalidArgumentException("Encoding not supported!");
+        } finally {
+            rawFields = null;
+        }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getValue() {
-        return value;
+    public boolean hasContent() {
+        return hasContent;
     }
 
     public String getFilename() {
@@ -495,6 +593,10 @@ public class MultipartParser {
 
     public InputStream getStream() {
         return contentStream;
+    }
+
+    public Map<String, String[]> getFields() {
+        return fields;
     }
 
     /**

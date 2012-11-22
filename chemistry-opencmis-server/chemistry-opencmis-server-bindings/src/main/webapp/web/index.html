@@ -487,6 +487,7 @@ function showNewId(result) {
 <div id="folder" class="box">
 <h2>Create Folder</h2>
 <form id="createFolderForm" action="" method="POST" target="createResult">
+	<input name="_charset_" type="hidden" />
 	<input name="cmisaction" type="hidden" value="createFolder" />
 	<input name="token" type="hidden" value="" />
 	<table>
@@ -517,6 +518,7 @@ function showNewId(result) {
 
 
 <form id="createDocumentForm" action="" method="POST" target="createResult" enctype="multipart/form-data">
+	<input name="_charset_" type="hidden" />
 	<input name="cmisaction" type="hidden" value="createDocument" />
 	<input name="token" type="hidden" value="" />
 	<table>

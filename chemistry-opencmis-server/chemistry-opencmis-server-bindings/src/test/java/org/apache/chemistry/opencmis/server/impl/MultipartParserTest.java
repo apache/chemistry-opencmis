@@ -20,6 +20,9 @@ package org.apache.chemistry.opencmis.server.impl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,7 +59,7 @@ public class MultipartParserTest {
                 + boundary + "\r\n"
                 + "Content-Disposition: form-data; name=\"content\"; filename=test-filename.txt\r\n"
                 + "Content-Type: text/plain\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"
-                + new String(content) + "\r\n" + "--" + boundary + "--").getBytes();
+                + new String(content) + "\r\n" + "--" + boundary + "--").getBytes("ISO-8859-1");
 
         MultipartParser parser = prepareParser(boundary, formdata);
 
@@ -66,6 +69,41 @@ public class MultipartParserTest {
         values.put("field3", "value3");
 
         assertMultipartBasics(parser, 4, values, true, "test-filename.txt", "text/plain", content);
+    }
+
+    @Test
+    public void testMultipartParser2() throws Exception {
+        String boundary = "-----------------------------1294919323195";
+        byte[] content = "Test content!".getBytes("ISO-8859-1");
+        byte[] formdata = ("\r\n--"
+                + boundary
+                + "\r\nContent-Disposition: form-data; name=\"fileUploader\"; filename=\"√§.txt\"\r\nContent-Type: text/plain\r\n\r\n"
+                + new String(content) + "\r\n--" + boundary
+                + "\r\nContent-Disposition: form-data; name=\"fileUploader-data\"\r\n\r\n\r\n--" + boundary
+                + "\r\nContent-Disposition: form-data; name=\"objectid\"\r\n\r\nf6bad54b4696bf2ac9249805\r\n--"
+                + boundary + "\r\nContent-Disposition: form-data; name=\"cmisaction\"\r\n\r\ncreateDocument\r\n--"
+                + boundary + "\r\nContent-Disposition: form-data; name=\"propertyId[0]\"\r\n\r\ncmis:name\r\n--"
+                + boundary + "\r\nContent-Disposition: form-data; name=\"propertyValue[0]\"\r\n\r\n√§.txt\r\n--"
+                + boundary
+                + "\r\nContent-Disposition: form-data; name=\"propertyId[1]\"\r\n\r\ncmis:objectTypeId\r\n--"
+                + boundary + "\r\nContent-Disposition: form-data; name=\"propertyValue[1]\"\r\n\r\ncmis:document\r\n--"
+                + boundary
+                + "\r\nContent-Disposition: form-data; name=\"token\"\r\n\r\n855475d8a6169b5f57111f5921f56136\r\n--"
+                + boundary + "--").getBytes("ISO-8859-1");
+
+        MultipartParser parser = prepareParser(boundary, formdata);
+
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("fileUploader-data", "");
+        values.put("objectid", "f6bad54b4696bf2ac9249805");
+        values.put("cmisaction", "createDocument");
+        values.put("propertyId[0]", "cmis:name");
+        values.put("propertyValue[0]", "√§.txt");
+        values.put("propertyId[1]", "cmis:objectTypeId");
+        values.put("propertyValue[1]", "cmis:document");
+        values.put("token", "855475d8a6169b5f57111f5921f56136");
+
+        assertMultipartBasics(parser, 9, values, true, "√§.txt", "text/plain", content);
     }
 
     @Test
@@ -126,7 +164,7 @@ public class MultipartParserTest {
     @Test
     public void testContentOnly() throws Exception {
         String boundary = "ABCD-1234";
-        byte[] content = "abcäöü".getBytes();
+        byte[] content = "abc√§√∂√º".getBytes();
         byte[] formdata = ("\r\n--" + boundary + "\r\n"
                 + "Content-Disposition: form-data; name=\"content\"; filename=\"a new file\"\r\n"
                 + "Content-Type: application/something\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"
@@ -193,7 +231,7 @@ public class MultipartParserTest {
     }
 
     @Test
-    public void testCharsets() throws Exception {
+    public void testCharsetsInContentType() throws Exception {
         String[] charsets = new String[] { "utf-8", "iso-8859-1", "utf-16" };
 
         String boundary = "ldchqeriuvoqeirbvxipu  eckqnqklwjcnqwklcqwncqewlciqecqwecevoipooei cqwcoewcq";
@@ -208,14 +246,86 @@ public class MultipartParserTest {
 
         for (String charset : charsets) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bos.write(("\r\n--" + boundary + "\r\n" + "Content-Disposition: form-data; name=\"field1\"\r\n"
-                    + "Content-Type: text/plain; charset=" + charset + "\r\n" + "\r\n").getBytes());
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"field1\"\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Type: text/plain; charset=" + charset + "\r\n\r\n").getBytes("ISO-8859-1"));
             bos.write(value.toString().getBytes(charset));
-            bos.write(("\r\n" + "--" + boundary + "--This is an epilogue.").getBytes());
+            bos.write(("\r\n--" + boundary + "--\r\n").getBytes("ISO-8859-1"));
+            bos.write(("This is an epilogue.").getBytes("ISO-8859-1"));
 
             MultipartParser parser = prepareParser(boundary, bos.toByteArray());
 
             assertMultipartBasics(parser, 1, values, false, null, null, null);
+        }
+    }
+
+    @Test
+    public void testCharsetsAsExtraField() throws Exception {
+        String[] charsets = new String[] { "utf-8", "iso-8859-1", "utf-16" };
+
+        String boundary = "ldchqeriuvoqeirbvxipu  eckqnqklwjcnqwklcqwncqewlciqecqwecevoipooei cqwcoewcq";
+        StringBuilder value = new StringBuilder();
+
+        for (int i = 1; i < 255; i++) {
+            value.append((char) i);
+        }
+
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("field1", value.toString());
+
+        for (String charset : charsets) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"field1\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(value.toString().getBytes(charset));
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"_charset_\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(charset.getBytes("ISO-8859-1"));
+            bos.write(("\r\n--" + boundary + "--\r\n").getBytes("ISO-8859-1"));
+            bos.write(("This is an epilogue.").getBytes("ISO-8859-1"));
+
+            MultipartParser parser = prepareParser(boundary, bos.toByteArray());
+
+            assertMultipartBasics(parser, 1, values, false, null, null, null);
+        }
+    }
+
+    @Test
+    public void testCharsetsMixed() throws Exception {
+        String[] charsets = new String[] { "utf-8", "iso-8859-1", "utf-16" };
+
+        String boundary = "ldchqeriuvoqeirbvxipu  eckqnqklwjcnqwklcqwncqewlciqecqwecevoipooei cqwcoewcq";
+        StringBuilder value = new StringBuilder();
+
+        for (int i = 1; i < 255; i++) {
+            value.append((char) i);
+        }
+
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("field1", value.toString());
+        values.put("field2", value.toString());
+        values.put("field3", value.toString());
+
+        for (String charset : charsets) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"field1\"\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Type: text/plain; charset=\"utf-8\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(value.toString().getBytes("utf-8"));
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"field2\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(value.toString().getBytes(charset));
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"_charset_\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(charset.getBytes("ISO-8859-1"));
+            bos.write(("\r\n--" + boundary + "\r\n").getBytes("ISO-8859-1"));
+            bos.write(("Content-Disposition: form-data; name=\"field3\"\r\n\r\n").getBytes("ISO-8859-1"));
+            bos.write(value.toString().getBytes(charset));
+            bos.write(("\r\n--" + boundary + "--\r\n").getBytes("ISO-8859-1"));
+
+            MultipartParser parser = prepareParser(boundary, bos.toByteArray());
+
+            assertMultipartBasics(parser, 3, values, false, null, null, null);
         }
     }
 
@@ -243,7 +353,7 @@ public class MultipartParserTest {
     @Test(expected = CmisInvalidArgumentException.class)
     public void testTwoContentParts() throws Exception {
         String boundary = "-?-";
-        byte[] content = "abcäöü".getBytes();
+        byte[] content = "abc√§√∂√º".getBytes();
         byte[] formdata = ("\r\n--" + boundary + "\r\n"
                 + "Content-Disposition: form-data; name=\"content1\"; filename=\"file1\"\r\n"
                 + "Content-Type: application/something\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"
@@ -285,31 +395,36 @@ public class MultipartParserTest {
 
     private void assertMultipartBasics(MultipartParser parser, int count, Map<String, String> values,
             boolean hasContent, String filename, String contentType, byte[] content) throws Exception {
-        Map<String, String> parameters = new HashMap<String, String>();
-
         int counter = 0;
-        while (parser.readNext()) {
-            counter++;
 
-            if (parser.isContent()) {
-                assertEquals(filename, parser.getFilename());
-                assertEquals(contentType, parser.getContentType());
-                assertEquals(content.length, parser.getSize().intValue());
-                assertArrayEquals(content, readBytesFromStream(parser.getStream()));
-            } else {
-                parameters.put(parser.getName(), parser.getValue());
-            }
+        parser.parse();
+
+        if (parser.hasContent()) {
+            counter++;
+            assertTrue(hasContent);
+            assertEquals(filename, parser.getFilename());
+            assertEquals(contentType, parser.getContentType());
+            assertEquals(content.length, parser.getSize().intValue());
+            assertArrayEquals(content, readBytesFromStream(parser.getStream()));
+        } else {
+            assertFalse(hasContent);
+        }
+
+        Map<String, String[]> fields = parser.getFields();
+        for (Map.Entry<String, String[]> e : fields.entrySet()) {
+            assertNotNull(e.getValue());
+            assertEquals(1, e.getValue().length);
+
+            String fieldName = e.getKey();
+            String fieldValue = e.getValue()[0];
+
+            assertEquals(fieldValue, values.get(fieldName));
+
+            counter++;
         }
 
         assertEquals(count, counter);
-        assertEquals(counter - (hasContent ? 1 : 0), parameters.size());
-
-        if (values != null) {
-            assertEquals(values.size(), parameters.size());
-            for (Map.Entry<String, String> e : values.entrySet()) {
-                assertEquals(e.getValue(), parameters.get(e.getKey()));
-            }
-        }
+        assertEquals(counter - (hasContent ? 1 : 0), fields.size());
     }
 
     private static class FakeServletInputStream extends ServletInputStream {

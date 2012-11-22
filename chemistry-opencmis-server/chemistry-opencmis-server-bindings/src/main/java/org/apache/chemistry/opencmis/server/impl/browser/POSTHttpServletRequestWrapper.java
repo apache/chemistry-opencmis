@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,16 +46,17 @@ public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequest
 
         if (isMultipart) {
             MultipartParser parser = new MultipartParser(request, tempDir, memoryThreshold, maxContentSize);
+            parser.parse();
 
-            while (parser.readNext()) {
-                if (parser.isContent()) {
-                    filename = parser.getFilename();
-                    contentType = parser.getContentType();
-                    size = parser.getSize();
-                    stream = parser.getStream();
-                } else {
-                    addParameter(parser.getName(), parser.getValue());
-                }
+            if (parser.hasContent()) {
+                filename = parser.getFilename();
+                contentType = parser.getContentType();
+                size = parser.getSize();
+                stream = parser.getStream();
+            }
+
+            for (Map.Entry<String, String[]> e : parser.getFields().entrySet()) {
+                addParameter(e.getKey(), e.getValue());
             }
 
             String filenameControl = HttpUtils.getStringParameter(this, Constants.CONTROL_FILENAME);
