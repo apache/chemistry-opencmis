@@ -81,6 +81,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private File tempDir;
     private int memoryThreshold;
     private long maxContentSize;
+    private boolean encrypt;
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -115,6 +116,9 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         String maxContentSizeStr = parameters.get(ConfigConstants.MAX_CONTENT_SIZE);
         maxContentSize = (maxContentSizeStr == null ? super.getMaxContentSize() : Long.parseLong(maxContentSizeStr));
 
+        String encryptTempFilesStr = parameters.get(ConfigConstants.ENCRYPT_TEMP_FILES);
+        encrypt = (encryptTempFilesStr == null ? super.encryptTempFiles() : Boolean.parseBoolean(encryptTempFilesStr));
+        
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
 
@@ -166,6 +170,11 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     @Override
     public File getTempDirectory() {
         return tempDir;
+    }
+
+    @Override
+    public boolean encryptTempFiles() {
+        return encrypt;
     }
 
     @Override
@@ -322,6 +331,10 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             public File getTempDirectory() {
 
                 return tempDir;
+            }
+
+            public boolean encryptTempFiles() {
+                return encrypt;
             }
 
             public int getMemoryThreshold() {

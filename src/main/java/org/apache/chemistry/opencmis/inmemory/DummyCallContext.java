@@ -86,6 +86,10 @@ public class DummyCallContext implements CallContext {
         return null;
     }
 
+    public boolean encryptTempFiles() {
+        return false;
+    }
+
     public int getMemoryThreshold() {
         return 4 * 1024 * 1024;
     }
