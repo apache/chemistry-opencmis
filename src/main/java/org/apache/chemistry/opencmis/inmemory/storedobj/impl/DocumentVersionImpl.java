@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
@@ -87,6 +88,21 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException("Failed to get content from InputStream", e);
+            }
+        }
+    }
+
+    public void appendContent(ContentStream content) {
+        if (null == content) {
+            return;
+        } if (null != fContent) {
+            setContent(content, true);
+        } else {
+            try {
+                fContent.appendContent(content.getStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new CmisStorageException("Failed to append content: IO Exception", e);
             }
         }
     }
@@ -299,5 +315,6 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     public String getVersionLabel() {
         return label;
     }
+
 
 }

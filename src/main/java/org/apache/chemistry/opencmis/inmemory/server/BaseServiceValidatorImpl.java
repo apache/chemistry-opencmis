@@ -322,6 +322,11 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         return checkStandardParameters(repositoryId, objectId.getValue());
     }
 
+    public StoredObject appendContentStream(CallContext context, String repositoryId, Holder<String> objectId,
+            ExtensionsData extension) {
+        return checkStandardParameters(repositoryId, objectId.getValue());
+    }
+
     public StoredObject deleteContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension) {
         return checkStandardParameters(repositoryId, objectId.getValue());
