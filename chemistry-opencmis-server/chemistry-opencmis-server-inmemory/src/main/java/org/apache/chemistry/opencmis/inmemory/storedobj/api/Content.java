@@ -38,7 +38,7 @@ public interface Content {
     ContentStream getContent(long offset, long length);
 
     /**
-     * Assign content do a document. Existing content gets overwritten. The
+     * Assign content to a document. Existing content gets overwritten. The
      * document is not yet persisted in the new state.
      * 
      * @param content
@@ -49,4 +49,12 @@ public interface Content {
      */
     void setContent(ContentStream content, boolean mustPersist);
 
+    /**
+     * Append content to an existing content stream. The
+     * document is persisted in the new state.
+     * 
+     * @param content
+     *            content to be assigned to the document.
+     */
+    void appendContent(ContentStream content);
 }

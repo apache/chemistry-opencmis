@@ -545,8 +545,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         StoredObject so = validator.setContentStream(context, repositoryId, objectId, overwriteFlag, extension);
 
-        if ( so.getChangeToken() != null && ( changeToken == null || !so.getChangeToken().equals( changeToken.getValue() ) ) )
-            throw new CmisUpdateConflictException( "setContentStream failed, ChangeToken does not match." );
+        if (changeToken != null && changeToken.getValue() != null
+                && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
+            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
+        }
              
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
             throw new CmisObjectNotFoundException("Id" + objectId
@@ -701,6 +703,47 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop updateProperties()");
     }
 
+    // CMIS 1.1
+    public void appendContentStream(CallContext context, String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, ExtensionsData extension) {
+
+        Content content;
+        
+        LOG.debug("start appendContentStream()");
+        StoredObject so = validator.appendContentStream(context, repositoryId, objectId, extension);
+
+        if (changeToken != null && changeToken.getValue() != null
+                && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
+            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
+        }
+             
+        if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
+            throw new CmisObjectNotFoundException("Id" + objectId
+                    + " does not refer to a document, but only documents can have content");
+        }
+
+        // validate content allowed
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
+        if (!(typeDef instanceof DocumentTypeDefinition))
+            throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
+        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef , null != contentStream);
+
+        if (so instanceof Document) {
+            content = ((Document) so);
+        } else if (so instanceof DocumentVersion) {
+            // something that is versionable check the proper status of the
+            // object
+            String user = context.getUsername();
+            testHasProperCheckedOutStatus(so, user);
+            content = (DocumentVersion) so;
+        } else {
+            throw new IllegalArgumentException("Content cannot be set on this object (must be document or version)");
+        }
+
+        content.appendContent(contentStream);
+    }
+    
+    
     // ///////////////////////////////////////////////////////
     // private helper methods
 

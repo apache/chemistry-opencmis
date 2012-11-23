@@ -286,9 +286,13 @@ public class AbstractServiceTest {
     }
 
     protected void verifyContentResult(ContentStream sd) {
+        verifyContentResult(sd, 32);
+    }
+    
+    protected void verifyContentResult(ContentStream sd, int sizeInK) {
         assertEquals("text/plain", sd.getMimeType());
         assertEquals("data.txt", sd.getFileName());
-        assertEquals(32 * 1024, sd.getBigLength().longValue());
+        assertEquals(sizeInK * 1024, sd.getBigLength().longValue());
         byte[] ba = new byte[32];
         InputStream is = sd.getStream();
         int counter = 0;
@@ -303,7 +307,7 @@ public class AbstractServiceTest {
         } catch (IOException e) {
             fail("reading from content stream failed");
         }
-        assertEquals(1024, counter);
+        assertEquals(sizeInK * 1024 / 32, counter);
     }
 
     protected String getByPath(String id, String path) {

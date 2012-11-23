@@ -313,6 +313,13 @@ public class InMemoryService extends AbstractCmisService {
                 this);
     }
 
+    // CMIS 1.1
+    @Override
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, ExtensionsData extension) {
+        fObjSvc.appendContentStream(getCallContext(), repositoryId, objectId, changeToken, contentStream, extension);
+    }
+
     // --- versioning service ---
 
     @Override

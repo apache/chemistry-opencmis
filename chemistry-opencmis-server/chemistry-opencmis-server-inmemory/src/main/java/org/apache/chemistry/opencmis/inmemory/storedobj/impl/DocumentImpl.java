@@ -18,10 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +26,10 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
@@ -96,6 +93,22 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
             }
         }
     }
+    
+    public void appendContent(ContentStream content) {
+        if (null == content) {
+            return;
+        } if (null == fContent) {
+            setContent(content, true);
+        } else {
+            try {
+                fContent.appendContent(content.getStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new CmisStorageException("Failed to append content: IO Exception", e);
+            }
+        }
+    }
+
 
     @Override
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
@@ -311,5 +324,5 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     private boolean isPlainText(String mimeType) {
         return mimeType.equals("text/plain");
     }
-    
+
  }

@@ -106,6 +106,9 @@ public interface CmisServiceValidator {
 
     StoredObject setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             Boolean overwriteFlag, ExtensionsData extension);
+    
+    StoredObject appendContentStream(CallContext context, String repositoryId, Holder<String> objectId,
+            ExtensionsData extension);
 
     StoredObject deleteContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension);
