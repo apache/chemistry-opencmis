@@ -40,6 +40,7 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -63,6 +64,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolat
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -75,7 +77,6 @@ import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.CORBA_2_3.portable.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     private static final int MAX_SIZE = 100;
     private static final String PNG = "image/png";
     private static final String JPEG = "image/jpeg";
-    
+    private static final String NEW_STRING_PROP_VAL = "My ugly string 1";
+    private static final BigInteger NEW_INT_PROP_VAL = BigInteger.valueOf(815);
+
     ObjectCreator fCreator;
 
     @Override
@@ -639,7 +642,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testUpdateProperties() {
         log.info("starting testUpdateProperties() ...");
         String oldChangeToken, newChangeToken;
-        String id = createDocumentWithCustomType(fRootFolderId, false);
+        String id = createDocumentWithCustomType(MY_CUSTOM_NAME, fRootFolderId, false);
         if (id != null) {
             log.info("createDocument succeeded with created id: " + id);
         }
@@ -670,41 +673,21 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
             // update properties:
             log.info("updating property");
-            final String newStringPropVal = "My ugly string";
-            final BigInteger newIntPropVal = BigInteger.valueOf(815);
             List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
             // properties.add(fFactory.createPropertyIdData(PropertyIds.CMIS_NAME
             // , MY_CUSTOM_NAME));
             // properties.add(fFactory.createPropertyIdData(PropertyIds.
             // CMIS_OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
             // Generate some property values for custom attributes
-            properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, newStringPropVal));
-            properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, newIntPropVal));
+            properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, NEW_STRING_PROP_VAL));
+            properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, NEW_INT_PROP_VAL));
             Properties newProps = fFactory.createPropertiesData(properties);
 
             Holder<String> idHolder = new Holder<String>(id);
             Holder<String> changeTokenHolder = new Holder<String>();
             fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
             oldChangeToken = changeTokenHolder.getValue(); // store for later
-            // use
-            // check if we now retrieve new values
-            res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE, null, false, false, null);
-            assertNotNull(res);
-            props = res.getProperties().getProperties();
-            for (PropertyData<?> pd2 : props.values()) {
-                log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
-            }
-            returnedId = res.getId();
-            assertEquals(id, returnedId);
-            pd = props.get(PropertyIds.NAME);
-            assertNotNull(pd);
-            assertEquals(MY_CUSTOM_NAME, pd.getFirstValue());
-            pd = props.get(PropertyIds.OBJECT_TYPE_ID);
-            assertEquals(TEST_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
-            pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
-            assertEquals(newStringPropVal, pd.getFirstValue());
-            pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
-            assertEquals(newIntPropVal, pd.getFirstValue());
+            verifyUpdatedProperties(id, MY_CUSTOM_NAME);
 
             // Test delete properties
             log.info("deleting property");
@@ -780,7 +763,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(newName, pd.getFirstValue());
 
             // test rename with a conflicting name
-            createDocumentWithCustomType(fRootFolderId, false);
+            createDocumentWithCustomType(MY_CUSTOM_NAME, fRootFolderId, false);
             properties = new ArrayList<PropertyData<?>>();
             properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, MY_CUSTOM_NAME));
             newProps = fFactory.createPropertiesData(properties);
@@ -1107,6 +1090,84 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("... testAppendContent() finished.");
     }
 
+    @Test
+    public void testBulkUpdateProperties() {
+        log.info("starting testBulkUpdateProperties() ...");
+        String MY_CUSTOM_NAME_2 = MY_CUSTOM_NAME + "_2";
+        String id1 = createDocumentWithCustomType(MY_CUSTOM_NAME, fRootFolderId, false);
+        String id2 = createDocumentWithCustomType(MY_CUSTOM_NAME_2, fRootFolderId, false);
+        String changeToken1, changeToken2;
+        try {
+            ObjectData res = fObjSvc.getObject(fRepositoryId, id1, "*", false, IncludeRelationships.NONE, null, false,
+                    false, null);
+            assertNotNull(res);
+            Map<String, PropertyData<?>> props = res.getProperties().getProperties();
+            changeToken1 = (String) props.get(PropertyIds.CHANGE_TOKEN).getFirstValue();
+
+            res = fObjSvc.getObject(fRepositoryId, id2, "*", false, IncludeRelationships.NONE, null, false,
+                    false, null);
+            assertNotNull(res);
+            props = res.getProperties().getProperties();
+            changeToken2 = (String) props.get(PropertyIds.CHANGE_TOKEN).getFirstValue();
+
+            // check returned properties
+            for (PropertyData<?> pd : props.values()) {
+                log.info("  return property id: " + pd.getId() + ", value: " + pd.getValues());
+            }
+
+
+            // update properties:
+            log.info("updating property");
+            List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+            properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, NEW_STRING_PROP_VAL));
+            properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, NEW_INT_PROP_VAL));
+            Properties newProps = fFactory.createPropertiesData(properties);
+            // wait some time to get a newer change token
+            
+            List<BulkUpdateObjectIdAndChangeToken> objs = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
+            objs.add(new BulkUpdateObjectIdAndChangeTokenImpl(id1, changeToken1));
+            objs.add(new BulkUpdateObjectIdAndChangeTokenImpl(id2, changeToken2));
+
+            List<BulkUpdateObjectIdAndChangeToken> newObjs;
+            newObjs = fObjSvc.bulkUpdateProperties(fRepositoryId, objs, newProps, null, null, null);
+            assertNotNull(newObjs);
+            assertEquals(objs.size(), newObjs.size());
+            for (int i=0; i<newObjs.size(); i++) {
+                assertEquals(objs.get(i).getId(), newObjs.get(i).getId());
+                assertTrue(! objs.get(i).getChangeToken().equals(newObjs.get(i).getChangeToken()));
+            }
+            // check that new propertie are set
+            verifyUpdatedProperties(id1, MY_CUSTOM_NAME);
+            verifyUpdatedProperties(id2, MY_CUSTOM_NAME_2);
+
+
+        } catch (Exception e) {
+            fail("testBulkUpdateProperties() failed with exception: " + e);
+        }
+        log.info("... testBulkUpdateProperties() finished.");
+    }
+
+    private void verifyUpdatedProperties(String id, String name) {
+        
+        ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE, null, false, false, null);
+        assertNotNull(res);
+        Map<String, PropertyData<?>> props = res.getProperties().getProperties();
+        for (PropertyData<?> pd2 : props.values()) {
+            log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
+        }
+        
+        PropertyData<?> pd;
+        pd = props.get(PropertyIds.NAME);
+        assertNotNull(pd);
+        assertEquals(name, pd.getFirstValue());
+        pd = props.get(PropertyIds.OBJECT_TYPE_ID);
+        assertEquals(TEST_CUSTOM_DOCUMENT_TYPE_ID, pd.getFirstValue());
+        pd = props.get(TEST_DOCUMENT_MY_STRING_PROP_ID);
+        assertEquals(NEW_STRING_PROP_VAL, pd.getFirstValue());
+        pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
+        assertEquals(NEW_INT_PROP_VAL, pd.getFirstValue());
+    }
+
     protected String createDocumentFromStream(String name, String folderId, String typeId, InputStream is,
             String contentType) throws IOException {
 
@@ -1297,7 +1358,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
     }
 
-    private String createDocumentWithCustomType(String folderId, boolean withContent) {
+    private String createDocumentWithCustomType(String name, String folderId, boolean withContent) {
         ContentStream contentStream = null;
         VersioningState versioningState = VersioningState.NONE;
         List<String> policies = null;
@@ -1307,7 +1368,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         // create the properties:
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-        properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, MY_CUSTOM_NAME));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_CUSTOM_DOCUMENT_TYPE_ID));
         // Generate some property values for custom attributes
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_MY_STRING_PROP_ID, "My pretty string"));
