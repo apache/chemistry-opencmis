@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -318,6 +319,15 @@ public class InMemoryService extends AbstractCmisService {
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, ExtensionsData extension) {
         fObjSvc.appendContentStream(getCallContext(), repositoryId, objectId, changeToken, contentStream, extension);
+    }
+
+    // CMIS 1.1
+    @Override
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        return fObjSvc.bulkUpdateProperties(getCallContext(), repositoryId, objectIdAndChangeToken, properties,
+                addSecondaryTypeIds, removeSecondaryTypeIds, extension);
     }
 
     // --- versioning service ---
