@@ -144,6 +144,10 @@ public class TransientDocumentImpl extends AbstractTransientFileableCmisObject i
         return getPropertyValue(PropertyIds.IS_MAJOR_VERSION);
     }
 
+    public Boolean isPrivateWorkingCopy() {
+        return getPropertyValue(PropertyIds.IS_PRIVATE_WORKING_COPY);
+    }
+
     public Boolean isVersionSeriesCheckedOut() {
         return getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     }

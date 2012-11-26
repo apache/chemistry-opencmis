@@ -32,6 +32,8 @@ public interface TransientCmisObject extends ObjectId, CmisObjectProperties {
 
     void setName(String name);
 
+    void setDescription(String description);
+
     <T> void setPropertyValue(String id, Object value);
 
     // read-only

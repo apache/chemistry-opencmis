@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.client.runtime.ChangeEventImpl;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventsImpl;
 import org.apache.chemistry.opencmis.client.runtime.DocumentImpl;
 import org.apache.chemistry.opencmis.client.runtime.FolderImpl;
+import org.apache.chemistry.opencmis.client.runtime.ItemImpl;
 import org.apache.chemistry.opencmis.client.runtime.PolicyImpl;
 import org.apache.chemistry.opencmis.client.runtime.PropertyImpl;
 import org.apache.chemistry.opencmis.client.runtime.QueryResultImpl;
@@ -55,8 +56,10 @@ import org.apache.chemistry.opencmis.client.runtime.RenditionImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.DocumentTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.FolderTypeImpl;
+import org.apache.chemistry.opencmis.client.runtime.objecttype.ItemTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.PolicyTypeImpl;
 import org.apache.chemistry.opencmis.client.runtime.objecttype.RelationshipTypeImpl;
+import org.apache.chemistry.opencmis.client.runtime.objecttype.SecondaryTypeImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -70,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
@@ -81,6 +85,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
@@ -215,6 +220,10 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             return new RelationshipTypeImpl(this.session, (RelationshipTypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof PolicyTypeDefinition) {
             return new PolicyTypeImpl(this.session, (PolicyTypeDefinition) typeDefinition);
+        } else if (typeDefinition instanceof ItemTypeDefinition) {
+            return new ItemTypeImpl(this.session, (ItemTypeDefinition) typeDefinition);
+        } else if (typeDefinition instanceof SecondaryTypeDefinition) {
+            return new SecondaryTypeImpl(this.session, (SecondaryTypeDefinition) typeDefinition);
         } else if (typeDefinition == null) {
             throw new CmisRuntimeException("No base type supplied!");
         } else {
@@ -496,8 +505,12 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             return new PolicyImpl((SessionImpl) this.session, type, objectData, context);
         case CMIS_RELATIONSHIP:
             return new RelationshipImpl((SessionImpl) this.session, type, objectData, context);
+        case CMIS_ITEM:
+            return new ItemImpl((SessionImpl) this.session, type, objectData, context);
+        case CMIS_SECONDARY:
+            throw new CmisRuntimeException("Secondary type is used as object type: " + objectData.getBaseTypeId());
         default:
-            throw new CmisRuntimeException("unsupported type: " + objectData.getBaseTypeId());
+            throw new CmisRuntimeException("Unsupported base type: " + objectData.getBaseTypeId());
         }
     }
 

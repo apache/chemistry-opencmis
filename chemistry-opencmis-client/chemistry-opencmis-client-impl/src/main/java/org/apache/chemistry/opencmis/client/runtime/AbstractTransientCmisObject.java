@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -185,6 +186,10 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return object.getType();
     }
 
+    public List<SecondaryType> getSecondaryTypes() {
+        return object.getSecondaryTypes();
+    }
+
     public String getChangeToken() {
         return getPropertyValue(PropertyIds.CHANGE_TOKEN);
     }
@@ -215,6 +220,14 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
 
     public void setName(String name) {
         setPropertyValue(PropertyIds.NAME, name);
+    }
+
+    public String getDescription() {
+        return getPropertyValue(PropertyIds.DESCRIPTION);
+    }
+
+    public void setDescription(String description) {
+        setPropertyValue(PropertyIds.DESCRIPTION, description);
     }
 
     public List<Property<?>> getProperties() {

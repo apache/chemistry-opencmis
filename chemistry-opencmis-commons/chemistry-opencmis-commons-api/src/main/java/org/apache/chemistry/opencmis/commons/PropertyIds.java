@@ -71,4 +71,13 @@ public final class PropertyIds {
 
     // ---- policy ----
     public static final String POLICY_TEXT = "cmis:policyText";
+
+    // ---- retention ---
+    // CMIS 1.1
+    public static final String EXPIRATION_DATE = "cmis:rm_expirationDate";
+    public static final String START_OF_RETENTION = "cmis:rm_startOfRetention";
+    public static final String DESTRUCTION_DATE = "cmis:rm_destructionDate";
+
+    public static final String HOLD_IDS = "cmis:rm_holdIds";
+
 }

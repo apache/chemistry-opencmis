@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Accessors to CMIS document properties.
- *
+ * 
  * @see CmisObjectProperties
  */
 public interface DocumentProperties {
@@ -45,11 +45,16 @@ public interface DocumentProperties {
     Boolean isMajorVersion();
 
     /**
-     * Returns
-     * <code>true</code> if this CMIS object is the latest major version (CMIS property
-     * <code>cmis:isLatestMajorVersion</code>).
+     * Returns <code>true</code> if this CMIS object is the latest major version
+     * (CMIS property <code>cmis:isLatestMajorVersion</code>).
      */
     Boolean isLatestMajorVersion();
+
+    /**
+     * Returns <code>true</code> if this CMIS object is the PWC (CMIS property
+     * <code>cmis:isPrivateWorkingCopy</code>).
+     */
+    Boolean isPrivateWorkingCopy();
 
     /**
      * Returns the version label (CMIS property <code>cmis:versionLabel</code>).
@@ -63,9 +68,8 @@ public interface DocumentProperties {
     String getVersionSeriesId();
 
     /**
-     * Returns
-     * <code>true</code> if this version series is checked out (CMIS property
-     * <code>cmis:isVersionSeriesCheckedOut</code>).
+     * Returns <code>true</code> if this version series is checked out (CMIS
+     * property <code>cmis:isVersionSeriesCheckedOut</code>).
      */
     Boolean isVersionSeriesCheckedOut();
 

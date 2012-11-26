@@ -65,6 +65,12 @@ public interface CmisObjectProperties {
     String getName();
 
     /**
+     * Returns the description of this CMIS object (CMIS property
+     * <code>cmis:description</code>).
+     */
+    String getDescription();
+
+    /**
      * Returns the user who created this CMIS object (CMIS property
      * <code>cmis:createdBy</code>).
      */
@@ -105,6 +111,12 @@ public interface CmisObjectProperties {
      * <code>cmis:objectTypeId</code>).
      */
     ObjectType getType();
+
+    /**
+     * Returns the secondary types of this CMIS object (object types identified
+     * by <code>cmis:secondaryObjectTypeIds</code>).
+     */
+    List<SecondaryType> getSecondaryTypes();
 
     /**
      * Returns the change token (CMIS property <code>cmis:changeToken</code>).

@@ -109,6 +109,10 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getPropertyValue(PropertyIds.IS_MAJOR_VERSION);
     }
 
+    public Boolean isPrivateWorkingCopy() {
+        return getPropertyValue(PropertyIds.IS_PRIVATE_WORKING_COPY);
+    }
+
     public Boolean isVersionSeriesCheckedOut() {
         return getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     }
@@ -411,6 +415,46 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
             getBinding().getObjectService().setContentStream(getRepositoryId(), objectIdHolder, overwrite,
                     changeTokenHolder, getObjectFactory().convertContentStream(contentStream), null);
+
+            newObjectId = objectIdHolder.getValue();
+        } finally {
+            readUnlock();
+        }
+
+        if (refresh) {
+            refresh();
+        }
+
+        if (newObjectId == null) {
+            return null;
+        }
+
+        return getSession().createObjectId(newObjectId);
+    }
+
+    public Document appendContentStream(ContentStream contentStream) {
+        ObjectId objectId = appendContentStream(contentStream, true);
+        if (objectId == null) {
+            return null;
+        }
+
+        if (!getObjectId().equals(objectId.getId())) {
+            return (Document) getSession().getObject(objectId, getCreationContext());
+        }
+
+        return this;
+    }
+
+    public ObjectId appendContentStream(ContentStream contentStream, boolean refresh) {
+        String newObjectId = null;
+
+        readLock();
+        try {
+            Holder<String> objectIdHolder = new Holder<String>(getObjectId());
+            Holder<String> changeTokenHolder = new Holder<String>((String) getPropertyValue(PropertyIds.CHANGE_TOKEN));
+
+            getBinding().getObjectService().appendContentStream(getRepositoryId(), objectIdHolder, changeTokenHolder,
+                    getObjectFactory().convertContentStream(contentStream), null);
 
             newObjectId = objectIdHolder.getValue();
         } finally {

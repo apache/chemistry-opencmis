@@ -53,6 +53,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -544,6 +545,18 @@ public class SessionImpl implements Session {
         return result;
     }
 
+    public ObjectType createType(ObjectType type) {
+        throw new CmisNotSupportedException("Not implemented, yet");
+    }
+
+    public ObjectType updateType(ObjectType type) {
+        throw new CmisNotSupportedException("Not implemented, yet");
+    }
+
+    public void deleteType(String typeId) {
+        getBinding().getRepositoryService().deleteType(getRepositoryId(), typeId, null);
+    }
+
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
         return query(statement, searchAllVersions, getDefaultContext());
     }
@@ -896,6 +909,14 @@ public class SessionImpl implements Session {
                 return new AbstractPageFetcher.Page<Relationship>(page, relList.getNumItems(), relList.hasMoreItems());
             }
         });
+    }
+
+    // --- bulk update ---
+
+    public BulkUpdateObjectIdAndChangeToken bulkUpdateProperties(
+            BulkUpdateObjectIdAndChangeToken objectIdsAndChangeToken, Map<String, ?> properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
+        throw new CmisNotSupportedException("Not implemented, yet");
     }
 
     // --- delete ---

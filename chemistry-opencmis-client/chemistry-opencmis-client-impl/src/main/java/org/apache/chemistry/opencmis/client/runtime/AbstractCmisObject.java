@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -63,6 +64,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     private SessionImpl session;
     private ObjectType objectType;
+    private List<SecondaryType> secondaryTypes;
     private Map<String, Property<?>> properties;
     private AllowableActions allowableActions;
     private List<Rendition> renditions;
@@ -96,6 +98,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
         this.session = session;
         this.objectType = objectType;
+        this.secondaryTypes = null;
         this.extensions = new HashMap<ExtensionLevel, List<CmisExtensionElement>>();
         this.creationContext = new OperationContextImpl(context);
         this.refreshTimestamp = System.currentTimeMillis();
@@ -152,8 +155,26 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                 }
             }
 
+            // get secondary types
+            if (properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+                @SuppressWarnings("unchecked")
+                List<String> stids = (List<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
+                if (stids != null && stids.size() > 0) {
+                    secondaryTypes = new ArrayList<SecondaryType>();
+                    for (String stid : stids) {
+                        if (stid != null) {
+                            ObjectType type = session.getTypeDefinition(stid);
+                            if (type instanceof SecondaryType) {
+                                secondaryTypes.add((SecondaryType) type);
+                            }
+                        }
+                    }
+                }
+            }
+
             extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
         }
+
     }
 
     /**
@@ -385,6 +406,10 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return getPropertyValue(PropertyIds.NAME);
     }
 
+    public String getDescription() {
+        return getPropertyValue(PropertyIds.DESCRIPTION);
+    }
+
     public List<Property<?>> getProperties() {
         readLock();
         try {
@@ -418,6 +443,15 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         readLock();
         try {
             return this.objectType;
+        } finally {
+            readUnlock();
+        }
+    }
+
+    public List<SecondaryType> getSecondaryTypes() {
+        readLock();
+        try {
+            return this.secondaryTypes;
         } finally {
             readUnlock();
         }
