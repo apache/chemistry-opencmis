@@ -678,7 +678,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     }
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
 

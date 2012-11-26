@@ -19,8 +19,10 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_ADD_OBJECT_TO_FOLDER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_APPEND_CONTENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_APPLY_ACL;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_APPLY_POLICY;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_BULK_UPDATE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CANCEL_CHECK_OUT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CHECK_IN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CHECK_OUT;
@@ -29,15 +31,18 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CR
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_FOLDER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_POLICY;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_RELATIONSHIP;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_TYPE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_DELETE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_DELETE_CONTENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_DELETE_TREE;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_DELETE_TYPE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_MOVE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_QUERY;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_REMOVE_OBJECT_FROM_FOLDER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_REMOVE_POLICY;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_SET_CONTENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_UPDATE_PROPERTIES;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_UPDATE_TYPE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_OBJECT_ID;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_ACL;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_ALLOWABLEACTIONS;
@@ -174,12 +179,17 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "getTypeDescendants");
             repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET, RepositoryService.class,
                     "getTypeDefinition");
+            repositoryDispatcher
+                    .addResource(CMISACTION_CREATE_TYPE, METHOD_POST, RepositoryService.class, "createType");
+            repositoryDispatcher
+                    .addResource(CMISACTION_UPDATE_TYPE, METHOD_POST, RepositoryService.class, "updateType");
+            repositoryDispatcher
+                    .addResource(CMISACTION_DELETE_TYPE, METHOD_POST, RepositoryService.class, "deleteType");
             repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET, DiscoveryService.class, "query");
             repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, NavigationService.class,
                     "getCheckedOutDocs");
             repositoryDispatcher.addResource(SELECTOR_CONTENT_CHANGES, METHOD_GET, DiscoveryService.class,
                     "getContentChanges");
-
             repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
             repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
                     "createDocument");
@@ -189,6 +199,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     .addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
             repositoryDispatcher.addResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, ObjectService.class,
                     "createRelationship");
+            repositoryDispatcher.addResource(CMISACTION_BULK_UPDATE, METHOD_POST, ObjectService.class,
+                    "bulkUpdateProperties");
 
             rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
             rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
@@ -216,6 +228,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             rootDispatcher.addResource(CMISACTION_UPDATE_PROPERTIES, METHOD_POST, ObjectService.class,
                     "updateProperties");
             rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST, ObjectService.class, "setContentStream");
+            rootDispatcher.addResource(CMISACTION_APPEND_CONTENT, METHOD_POST, ObjectService.class,
+                    "appendContentStream");
             rootDispatcher.addResource(CMISACTION_DELETE_CONTENT, METHOD_POST, ObjectService.class,
                     "deleteContentStream");
             rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST, ObjectService.class, "deleteObject");

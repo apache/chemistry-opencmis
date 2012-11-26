@@ -365,7 +365,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
-    
+
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         // we need an object id
@@ -477,6 +477,43 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         }
     }
 
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
+            throw new CmisInvalidArgumentException("Object id must be set!");
+        }
+
+        // build URL
+        UrlBuilder url = getObjectUrl(repositoryId, objectId.getValue());
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_APPEND_CONTENT, contentStream);
+        formData.addParameter(Constants.CONTROL_IS_LAST_CHUNK, isLastChunk);
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addSuccinctFlag(getSuccinct());
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
+
+        objectId.setValue(newObj == null ? null : newObj.getId());
+
+        if (changeToken != null && newObj.getProperties() != null) {
+            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
+            changeToken.setValue(ct == null ? null : ct.toString());
+        }
+    }
+
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         // we need an object id
@@ -511,10 +548,5 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
             changeToken.setValue(ct == null ? null : ct.toString());
         }
-    }
-
-    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
     }
 }

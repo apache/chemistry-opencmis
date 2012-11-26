@@ -122,7 +122,7 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * 
      * @return the updated document
      */
-    Document appendContentStream(ContentStream contentStream);
+    Document appendContentStream(ContentStream contentStream, boolean isLastChunk);
 
     /**
      * Appends a content stream to the content stream of the document.
@@ -132,7 +132,7 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * 
      * @return the updated object id
      */
-    ObjectId appendContentStream(ContentStream contentStream, boolean refresh);
+    ObjectId appendContentStream(ContentStream contentStream, boolean isLastChunk, boolean refresh);
 
     /**
      * Removes the current content stream from the document and refreshes this

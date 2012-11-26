@@ -24,6 +24,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PROPERT
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TYPE_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -176,6 +177,9 @@ public final class RepositoryService {
         BrowserBindingUtils.writeJSON(jsonTypeTree, request, response);
     }
 
+    /**
+     * getTypeDefinition.
+     */
     public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
@@ -187,5 +191,35 @@ public final class RepositoryService {
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonType, request, response);
+    }
+
+    /**
+     * createType.
+     */
+    public static void createType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // TODO
+    }
+
+    /**
+     * updateType.
+     */
+    public static void updateType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // TODO
+    }
+
+    /**
+     * deleteType.
+     */
+    public static void deleteType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String typeId = getStringParameter(request, PARAM_TYPE_ID);
+
+        service.deleteType(repositoryId, typeId, null);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeEmpty(request, response);
     }
 }

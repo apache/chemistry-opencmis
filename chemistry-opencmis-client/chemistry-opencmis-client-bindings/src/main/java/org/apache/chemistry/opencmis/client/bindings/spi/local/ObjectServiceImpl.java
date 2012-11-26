@@ -233,11 +233,11 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
     }
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
         try {
-            service.appendContentStream(repositoryId, objectId, changeToken, contentStream, extension);
+            service.appendContentStream(repositoryId, objectId, changeToken, contentStream, isLastChunk, extension);
         } finally {
             service.close();
         }

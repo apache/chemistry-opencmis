@@ -432,8 +432,8 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
-    public Document appendContentStream(ContentStream contentStream) {
-        ObjectId objectId = appendContentStream(contentStream, true);
+    public Document appendContentStream(ContentStream contentStream, boolean isLastChunk) {
+        ObjectId objectId = appendContentStream(contentStream, isLastChunk, true);
         if (objectId == null) {
             return null;
         }
@@ -445,7 +445,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return this;
     }
 
-    public ObjectId appendContentStream(ContentStream contentStream, boolean refresh) {
+    public ObjectId appendContentStream(ContentStream contentStream, boolean isLastChunk, boolean refresh) {
         String newObjectId = null;
 
         readLock();
@@ -454,7 +454,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             Holder<String> changeTokenHolder = new Holder<String>((String) getPropertyValue(PropertyIds.CHANGE_TOKEN));
 
             getBinding().getObjectService().appendContentStream(getRepositoryId(), objectIdHolder, changeTokenHolder,
-                    getObjectFactory().convertContentStream(contentStream), null);
+                    getObjectFactory().convertContentStream(contentStream), isLastChunk, null);
 
             newObjectId = objectIdHolder.getValue();
         } finally {

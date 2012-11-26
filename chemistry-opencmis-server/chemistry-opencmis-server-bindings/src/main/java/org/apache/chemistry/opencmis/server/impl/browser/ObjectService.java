@@ -315,6 +315,14 @@ public final class ObjectService {
     }
 
     /**
+     * bulkUpdateProperties.
+     */
+    public static void bulkUpdateProperties(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // TODO
+    }
+
+    /**
      * getProperties.
      */
     public static void getProperties(CallContext context, CmisService service, String repositoryId,
@@ -595,7 +603,7 @@ public final class ObjectService {
     }
 
     /**
-     * Set content stream.
+     * setContentStream.
      */
     public static void setContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -610,6 +618,43 @@ public final class ObjectService {
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
         service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
                 createContentStream(request), null);
+
+        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("Object is null!");
+        }
+
+        // set headers
+        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
+
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
+        response.setHeader("Location", location);
+
+        // return object
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
+     * appendContentStream.
+     */
+    public static void appendContentStream(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+        boolean isLastChunk = getBooleanParameter(request, Constants.CONTROL_IS_LAST_CHUNK, false);
+        String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+
+        // execute
+        Holder<String> objectIdHolder = new Holder<String>(objectId);
+        Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
+        service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, createContentStream(request),
+                isLastChunk, null);
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

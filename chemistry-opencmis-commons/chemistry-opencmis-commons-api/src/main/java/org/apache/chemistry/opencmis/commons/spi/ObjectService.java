@@ -489,7 +489,9 @@ public interface ObjectService {
      *            token (default is <code>null</code>)
      * @param contentStream
      *            the content stream to append
+     * @param isLastChunk
+     *            indicates if this content stream is the last chunk
      */
     void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension);
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension);
 }

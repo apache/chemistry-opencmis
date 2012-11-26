@@ -950,13 +950,13 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
     }
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkHolderId("Object Id", objectId);
         checkContentStream(contentStream);
 
         try {
-            service.appendContentStream(repositoryId, objectId, changeToken, contentStream, extension);
+            service.appendContentStream(repositoryId, objectId, changeToken, contentStream, isLastChunk, extension);
         } catch (Exception e) {
             throw createCmisException(e);
         }
