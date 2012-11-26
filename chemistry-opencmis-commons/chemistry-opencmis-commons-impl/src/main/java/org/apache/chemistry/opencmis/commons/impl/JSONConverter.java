@@ -937,7 +937,7 @@ public final class JSONConverter {
                 }
             }
 
-            if (type == null) {
+            if (type == null && objectId != null) {
                 type = typeCache.getTypeDefinitionForObject(objectId);
             }
         }
