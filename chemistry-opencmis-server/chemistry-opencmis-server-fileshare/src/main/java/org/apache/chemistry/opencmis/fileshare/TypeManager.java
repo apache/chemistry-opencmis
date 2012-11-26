@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
@@ -51,8 +52,10 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +68,8 @@ public class TypeManager {
     public static final String FOLDER_TYPE_ID = BaseTypeId.CMIS_FOLDER.value();
     public static final String RELATIONSHIP_TYPE_ID = BaseTypeId.CMIS_RELATIONSHIP.value();
     public static final String POLICY_TYPE_ID = BaseTypeId.CMIS_POLICY.value();
+    public static final String ITEM_TYPE_ID = BaseTypeId.CMIS_ITEM.value();
+    public static final String SECONDARY_TYPE_ID = BaseTypeId.CMIS_SECONDARY.value();
 
     private static final String NAMESPACE = "http://chemistry.apache.org/opencmis/fileshare";
 
@@ -84,6 +89,13 @@ public class TypeManager {
         types = new HashMap<String, TypeDefinitionContainerImpl>();
         typesList = new ArrayList<TypeDefinitionContainer>();
 
+        // type mutaibility
+
+        TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
+        typeMutability.setCanCreate(false);
+        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(false);
+
         // folder type
         FolderTypeDefinitionImpl folderType = new FolderTypeDefinitionImpl();
         folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
@@ -100,6 +112,7 @@ public class TypeManager {
         folderType.setIsQueryable(false);
         folderType.setQueryName("cmis:folder");
         folderType.setId(FOLDER_TYPE_ID);
+        folderType.setTypeMutability(typeMutability);
 
         addBasePropertyDefinitions(folderType);
         addFolderPropertyDefinitions(folderType);
@@ -122,6 +135,7 @@ public class TypeManager {
         documentType.setIsQueryable(false);
         documentType.setQueryName("cmis:document");
         documentType.setId(DOCUMENT_TYPE_ID);
+        documentType.setTypeMutability(typeMutability);
 
         documentType.setIsVersionable(false);
         documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
@@ -146,6 +160,7 @@ public class TypeManager {
         relationshipType.setIsQueryable(false);
         relationshipType.setQueryName("cmis:relationship");
         relationshipType.setId(RELATIONSHIP_TYPE_ID);
+        relationshipType.setTypeMutability(typeMutability);
 
         addBasePropertyDefinitions(relationshipType);
 
@@ -167,11 +182,56 @@ public class TypeManager {
         policyType.setIsQueryable(false);
         policyType.setQueryName("cmis:policy");
         policyType.setId(POLICY_TYPE_ID);
+        policyType.setTypeMutability(typeMutability);
 
         addBasePropertyDefinitions(policyType);
 
         // not supported - don't expose it
         // addTypeInteral(policyType);
+
+        // item type
+        ItemTypeDefinitionImpl itemType = new ItemTypeDefinitionImpl();
+        itemType.setBaseTypeId(BaseTypeId.CMIS_ITEM);
+        itemType.setIsControllableAcl(false);
+        itemType.setIsControllablePolicy(false);
+        itemType.setIsCreatable(true);
+        itemType.setDescription("Item");
+        itemType.setDisplayName("Item");
+        itemType.setIsFileable(true);
+        itemType.setIsIncludedInSupertypeQuery(true);
+        itemType.setLocalName("Item");
+        itemType.setLocalNamespace(NAMESPACE);
+        itemType.setIsQueryable(false);
+        itemType.setQueryName("cmis:item");
+        itemType.setId(ITEM_TYPE_ID);
+        itemType.setTypeMutability(typeMutability);
+
+        addBasePropertyDefinitions(itemType);
+
+        // not supported - don't expose it
+        // addTypeInteral(itemType);
+
+        // secondary type
+        SecondaryTypeDefinitionImpl secondaryType = new SecondaryTypeDefinitionImpl();
+        secondaryType.setBaseTypeId(BaseTypeId.CMIS_ITEM);
+        secondaryType.setIsControllableAcl(false);
+        secondaryType.setIsControllablePolicy(false);
+        secondaryType.setIsCreatable(true);
+        secondaryType.setDescription("Secondary");
+        secondaryType.setDisplayName("Secondary");
+        secondaryType.setIsFileable(false);
+        secondaryType.setIsIncludedInSupertypeQuery(true);
+        secondaryType.setLocalName("Secondary");
+        secondaryType.setLocalNamespace(NAMESPACE);
+        secondaryType.setIsQueryable(false);
+        secondaryType.setQueryName("cmis:secondary");
+        secondaryType.setId(SECONDARY_TYPE_ID);
+        secondaryType.setTypeMutability(typeMutability);
+
+        addBasePropertyDefinitions(secondaryType);
+
+        // not supported - don't expose it
+        // addTypeInteral(secondaryType);
     }
 
     private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {

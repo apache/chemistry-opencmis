@@ -18,6 +18,6 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
-public interface FolderTypeDefinition extends TypeDefinition {
+public interface SecondaryTypeDefinition extends TypeDefinition {
 
 }

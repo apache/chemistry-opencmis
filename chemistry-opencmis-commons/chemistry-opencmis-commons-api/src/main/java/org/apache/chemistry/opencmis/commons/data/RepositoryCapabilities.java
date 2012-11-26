@@ -72,4 +72,10 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
 
     CapabilityAcl getAclCapability();
 
+    // Type mutability
+
+    CreatablePropertyTypes getCreatablePropertyTypes();
+
+    NewTypeSettableAttributes getNewTypeSettableAttributes();
+
 }

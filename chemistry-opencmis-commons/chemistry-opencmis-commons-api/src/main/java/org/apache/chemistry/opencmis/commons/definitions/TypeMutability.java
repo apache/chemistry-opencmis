@@ -18,6 +18,34 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
-public interface FolderTypeDefinition extends TypeDefinition {
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
+/**
+ * Type mutability flags.
+ */
+public interface TypeMutability extends ExtensionsData {
+
+    /**
+     * Indicates if a sub type of this type can be created.
+     * 
+     * @return <code>true</code> if a sub type can be created,
+     *         <code>false</code> otherwise
+     */
+    Boolean canCreate();
+
+    /**
+     * Indicates if this type can be updated.
+     * 
+     * @return <code>true</code> if this type can be updated, <code>false</code>
+     *         otherwise
+     */
+    Boolean canUpdate();
+
+    /**
+     * Indicates if this type can be deleted.
+     * 
+     * @return <code>true</code> if this type can be deleted, <code>false</code>
+     *         otherwise
+     */
+    Boolean canDelete();
 }

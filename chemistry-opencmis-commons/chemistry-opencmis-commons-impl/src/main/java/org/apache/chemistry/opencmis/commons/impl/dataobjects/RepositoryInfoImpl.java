@@ -74,6 +74,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         vendorName = data.getVendorName();
         productName = data.getProductName();
         productVersion = data.getProductVersion();
+        extensionFeatures = data.getExtensionFeatures();
         setExtensions(data.getExtensions());
     }
 

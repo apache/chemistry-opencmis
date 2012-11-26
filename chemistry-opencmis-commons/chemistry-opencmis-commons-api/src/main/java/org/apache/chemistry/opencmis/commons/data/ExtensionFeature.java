@@ -22,17 +22,50 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * Representation of an extension feature;
+ */
 public interface ExtensionFeature extends Serializable, ExtensionsData {
 
+    /**
+     * Returns the unique feature id.
+     * 
+     * @return feature id
+     */
     String getId();
 
+    /**
+     * Returns a URL that provides more information about the feature.
+     * 
+     * @return feature URL
+     */
     String getUrl();
 
+    /**
+     * Returns a human-readable name for the feature.
+     * 
+     * @return feature name
+     */
     String getCommonName();
 
+    /**
+     * Returns a feature version label.
+     * 
+     * @return feature version label
+     */
     String getVersionLabel();
 
+    /**
+     * Returns a human-readable description of the feature.
+     * 
+     * @return feature description
+     */
     String getDescription();
 
+    /**
+     * Returns extra feature data.
+     * 
+     * @return key-value pairs of extra data.
+     */
     Map<String, String> getFeatureData();
 }

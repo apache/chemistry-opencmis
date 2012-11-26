@@ -26,9 +26,6 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Base type definition interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface TypeDefinition extends Serializable, ExtensionsData {
 
@@ -159,4 +156,11 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      *         definitions were not requested
      */
     Map<String, PropertyDefinition<?>> getPropertyDefinitions();
+
+    /**
+     * Returns type mutability flags.
+     * 
+     * @return type mutability flags
+     */
+    TypeMutability getTypeMutability();
 }

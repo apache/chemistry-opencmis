@@ -16,8 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.definitions;
+package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-public interface FolderTypeDefinition extends TypeDefinition {
+import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
+
+public class ItemTypeDefinitionImpl extends AbstractTypeDefinition implements ItemTypeDefinition {
+
+    private static final long serialVersionUID = 1L;
 
 }

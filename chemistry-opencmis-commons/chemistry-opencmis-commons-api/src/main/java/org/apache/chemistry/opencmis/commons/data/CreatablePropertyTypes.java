@@ -16,8 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.definitions;
+package org.apache.chemistry.opencmis.commons.data;
 
-public interface FolderTypeDefinition extends TypeDefinition {
+import java.util.Set;
+
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+
+/**
+ * Holds the set of property data types for type creation and update.
+ */
+public interface CreatablePropertyTypes extends ExtensionsData {
+
+    /**
+     * Returns the set of property data types that can used to create or update
+     * a type definition.
+     * 
+     * @return the available set of property data types.
+     */
+    Set<PropertyType> canCreate();
 
 }

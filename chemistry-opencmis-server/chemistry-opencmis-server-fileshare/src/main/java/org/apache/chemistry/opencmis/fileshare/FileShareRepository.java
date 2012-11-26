@@ -101,6 +101,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
@@ -224,6 +225,23 @@ public class FileShareRepository {
         capabilities.setSupportsGetDescendants(true);
         capabilities.setSupportsGetFolderTree(true);
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
+
+        NewTypeSettableAttributesImpl typeSetAttributes = new NewTypeSettableAttributesImpl();
+        typeSetAttributes.setCanSetControllableAcl(false);
+        typeSetAttributes.setCanSetControllablePolicy(false);
+        typeSetAttributes.setCanSetCreatable(false);
+        typeSetAttributes.setCanSetDescription(false);
+        typeSetAttributes.setCanSetDisplayName(false);
+        typeSetAttributes.setCanSetFileable(false);
+        typeSetAttributes.setCanSetFulltextIndexed(false);
+        typeSetAttributes.setCanSetId(false);
+        typeSetAttributes.setCanSetIncludedInSupertypeQuery(false);
+        typeSetAttributes.setCanSetLocalName(false);
+        typeSetAttributes.setCanSetLocalNamespace(false);
+        typeSetAttributes.setCanSetQueryable(false);
+        typeSetAttributes.setCanSetQueryName(false);
+
+        capabilities.setNewTypeSettableAttributes(typeSetAttributes);
 
         repositoryInfo.setCapabilities(capabilities);
 
@@ -1285,7 +1303,7 @@ public class FileShareRepository {
     }
 
     /**
-     * Compiles an object type object from a file or folder.�
+     * Compiles an object type object from a file or folder.
      */
     private ObjectData compileObjectType(CallContext context, File file, Set<String> filter,
             boolean includeAllowableActions, boolean includeAcl, boolean userReadOnly, ObjectInfoHandler objectInfos) {
