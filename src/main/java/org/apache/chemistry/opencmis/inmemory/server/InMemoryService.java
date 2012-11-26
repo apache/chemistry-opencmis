@@ -317,7 +317,7 @@ public class InMemoryService extends AbstractCmisService {
     // CMIS 1.1
     @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         fObjSvc.appendContentStream(getCallContext(), repositoryId, objectId, changeToken, contentStream, extension);
     }
 
