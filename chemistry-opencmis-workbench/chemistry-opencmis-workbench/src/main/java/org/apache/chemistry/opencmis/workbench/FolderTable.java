@@ -172,6 +172,7 @@ public class FolderTable extends JTable implements FolderListener {
         icons.put(BaseTypeId.CMIS_FOLDER, ClientHelper.getIcon("folder.png"));
         icons.put(BaseTypeId.CMIS_RELATIONSHIP, ClientHelper.getIcon("relationship.png"));
         icons.put(BaseTypeId.CMIS_POLICY, ClientHelper.getIcon("policy.png"));
+        icons.put(BaseTypeId.CMIS_ITEM, ClientHelper.getIcon("item.png"));
 
         checkedOutIcon = ClientHelper.getIcon("checkedout.png");
         pwcIcon = ClientHelper.getIcon("pwc.png");
