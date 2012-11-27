@@ -48,7 +48,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
     private Boolean isFulltextIndexed;
     private Boolean isControllableACL;
     private Boolean isControllablePolicy;
-    private Map<String, PropertyDefinition<?>> propertyDefinitions;
+    private LinkedHashMap<String, PropertyDefinition<?>> propertyDefinitions;
     private TypeMutability typeMutability;
 
     public void initialize(TypeDefinition typeDefinition) {
@@ -200,7 +200,13 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
     }
 
     public void setPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
-        this.propertyDefinitions = propertyDefinitions;
+        if (propertyDefinitions == null) {
+            this.propertyDefinitions = null;
+        } else if (propertyDefinitions instanceof LinkedHashMap) {
+            this.propertyDefinitions = (LinkedHashMap<String, PropertyDefinition<?>>) propertyDefinitions;
+        } else {
+            this.propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>(propertyDefinitions);
+        }
     }
 
     /**

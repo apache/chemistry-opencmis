@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -113,14 +113,62 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
     }
 
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_TYPE);
+        if (type != null) {
+            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type).toJSONString());
+        }
+
+        // send
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertTypeDefinition(json);
     }
 
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_TYPE);
+        if (type != null) {
+            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type).toJSONString());
+        }
+
+        // send
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertTypeDefinition(json);
     }
 
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE_TYPE);
+        formData.addParameter(Constants.CONTROL_TYPE_ID, typeId);
+
+        // send
+        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
     }
 }

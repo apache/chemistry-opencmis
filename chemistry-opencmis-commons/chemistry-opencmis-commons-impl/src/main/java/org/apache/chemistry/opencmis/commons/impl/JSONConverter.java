@@ -79,6 +79,7 @@ import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinit
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -144,6 +145,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 
@@ -511,6 +513,19 @@ public final class JSONConverter {
         result.setLocalNamespace(getString(json, JSON_TYPE_LOCALNAMESPACE));
         result.setParentTypeId(getString(json, JSON_TYPE_PARENT_ID));
         result.setQueryName(getString(json, JSON_TYPE_QUERYNAME));
+
+        Map<String, Object> typeMutabilityJson = getMap(json.get(JSON_TYPE_TYPE_MUTABILITY));
+        if (typeMutabilityJson != null) {
+            TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
+
+            typeMutability.setCanCreate(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_CREATE));
+            typeMutability.setCanUpdate(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_UPDATE));
+            typeMutability.setCanDelete(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_DELETE));
+
+            convertExtension(typeMutabilityJson, typeMutability, JSON_TYPE_TYPE_MUTABILITY_KEYS);
+
+            result.setTypeMutability(typeMutability);
+        }
 
         Map<String, Object> propertyDefinitions = getMap(json.get(JSON_TYPE_PROPERTY_DEFINITIONS));
         if (propertyDefinitions != null) {
@@ -1276,6 +1291,19 @@ public final class JSONConverter {
         result.put(JSON_TYPE_INCLUDE_IN_SUPERTYPE_QUERY, type.isIncludedInSupertypeQuery());
         result.put(JSON_TYPE_CONTROLABLE_POLICY, type.isControllablePolicy());
         result.put(JSON_TYPE_CONTROLABLE_ACL, type.isControllableAcl());
+
+        if (type.getTypeMutability() != null) {
+            TypeMutability typeMutability = type.getTypeMutability();
+            JSONObject typeMutabilityJson = new JSONObject();
+
+            typeMutabilityJson.put(JSON_TYPE_TYPE_MUTABILITY_CREATE, typeMutability.canCreate());
+            typeMutabilityJson.put(JSON_TYPE_TYPE_MUTABILITY_UPDATE, typeMutability.canUpdate());
+            typeMutabilityJson.put(JSON_TYPE_TYPE_MUTABILITY_DELETE, typeMutability.canDelete());
+
+            convertExtension(typeMutability, typeMutabilityJson);
+
+            result.put(JSON_TYPE_TYPE_MUTABILITY, typeMutabilityJson);
+        }
 
         if (type instanceof DocumentTypeDefinition) {
             result.put(JSON_TYPE_VERSIONABLE, ((DocumentTypeDefinition) type).isVersionable());

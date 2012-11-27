@@ -95,6 +95,7 @@
                             	<copy todir="${gendir}">
 									<fileset dir="${client-impl}/${sourcefiles}">
 										<include name="**/*.java" />
+										<exclude name="**/TypeUtils.java" />
 										<exclude name="**/osgi/**" />
 									</fileset>
 								</copy>                                   

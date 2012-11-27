@@ -160,6 +160,8 @@ public final class Constants {
     public static final String CONTROL_CONTENT_TYPE = "contenttype";
     public static final String CONTROL_FILENAME = "filename";
     public static final String CONTROL_IS_LAST_CHUNK = "isLastChunk";
+    public static final String CONTROL_TYPE = "type";
+    public static final String CONTROL_TYPE_ID = "typeId";
 
     // parameter
     public static final String PARAM_ACL = "includeACL";

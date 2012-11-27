@@ -329,6 +329,7 @@ public final class JSONConstants {
     public static final String JSON_TYPE_CONTROLABLE_POLICY = "controllablePolicy";
     public static final String JSON_TYPE_CONTROLABLE_ACL = "controllableACL";
     public static final String JSON_TYPE_PROPERTY_DEFINITIONS = "propertyDefinitions";
+    public static final String JSON_TYPE_TYPE_MUTABILITY = "typeMutability";
 
     public static final String JSON_TYPE_VERSIONABLE = "versionable"; // document
     public static final String JSON_TYPE_CONTENTSTREAM_ALLOWED = "contentStreamAllowed"; // document
@@ -358,6 +359,7 @@ public final class JSONConstants {
         TYPE_KEYS.add(JSON_TYPE_CONTENTSTREAM_ALLOWED);
         TYPE_KEYS.add(JSON_TYPE_ALLOWED_SOURCE_TYPES);
         TYPE_KEYS.add(JSON_TYPE_ALLOWED_TARGET_TYPES);
+        TYPE_KEYS.add(JSON_TYPE_TYPE_MUTABILITY);
     }
 
     public static final String JSON_PROPERTY_TYPE_ID = "id";
@@ -411,6 +413,17 @@ public final class JSONConstants {
         PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_PRECISION);
         PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_RESOLUTION);
         PROPERTY_TYPE_KEYS.add(JSON_PROPERTY_TYPE_CHOICE);
+    }
+
+    public static final String JSON_TYPE_TYPE_MUTABILITY_CREATE = "create";
+    public static final String JSON_TYPE_TYPE_MUTABILITY_UPDATE = "update";
+    public static final String JSON_TYPE_TYPE_MUTABILITY_DELETE = "delete";
+
+    public static final Set<String> JSON_TYPE_TYPE_MUTABILITY_KEYS = new HashSet<String>();
+    static {
+        JSON_TYPE_TYPE_MUTABILITY_KEYS.add(JSON_TYPE_TYPE_MUTABILITY_CREATE);
+        JSON_TYPE_TYPE_MUTABILITY_KEYS.add(JSON_TYPE_TYPE_MUTABILITY_UPDATE);
+        JSON_TYPE_TYPE_MUTABILITY_KEYS.add(JSON_TYPE_TYPE_MUTABILITY_DELETE);
     }
 
     public static final String JSON_TYPESLIST_TYPES = "types";
