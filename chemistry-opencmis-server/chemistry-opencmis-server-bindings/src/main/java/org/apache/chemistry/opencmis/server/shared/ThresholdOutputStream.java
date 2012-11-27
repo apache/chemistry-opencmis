@@ -249,7 +249,10 @@ public class ThresholdOutputStream extends OutputStream {
      */
     public void destroy() {
         try {
-            close();
+            if (tmpStream != null) {
+                tmpStream.flush();
+                tmpStream.close();
+            }
         } catch (Exception e) {
             // ignore
         }
