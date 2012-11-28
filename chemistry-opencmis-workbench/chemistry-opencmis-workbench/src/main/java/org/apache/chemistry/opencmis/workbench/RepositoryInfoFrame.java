@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 
@@ -129,6 +130,72 @@ public class RepositoryInfoFrame extends JFrame {
                 addLine("Renditions:").setText(str(cap.getRenditionsCapability()));
                 addLine("Changes:").setText(str(cap.getChangesCapability()));
                 addLine("ACLs:").setText(str(cap.getAclCapability()));
+
+                StringBuilder sb = new StringBuilder();
+                if (cap.getNewTypeSettableAttributes() != null) {
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetId())) {
+                        appendToString(sb, "id");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetLocalName())) {
+                        appendToString(sb, "localName");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetLocalNamespace())) {
+                        appendToString(sb, "localNamespace");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetDisplayName())) {
+                        appendToString(sb, "displayName");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetQueryName())) {
+                        appendToString(sb, "queryName");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetDescription())) {
+                        appendToString(sb, "description");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetCreatable())) {
+                        appendToString(sb, "creatable");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetFileable())) {
+                        appendToString(sb, "fileable");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetQueryable())) {
+                        appendToString(sb, "queryable");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetFulltextIndexed())) {
+                        appendToString(sb, "fulltextIndexed");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetIncludedInSupertypeQuery())) {
+                        appendToString(sb, "includedInSupertypeQuery");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetControllablePolicy())) {
+                        appendToString(sb, "controllablePolicy");
+                    }
+
+                    if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetControllableAcl())) {
+                        appendToString(sb, "controllableACL");
+                    }
+                }
+
+                addLine("New type settable attributes:").setText(sb.toString());
+
+                sb = new StringBuilder();
+                if (cap.getCreatablePropertyTypes() != null && cap.getCreatablePropertyTypes().canCreate() != null) {
+                    for (PropertyType pt : cap.getCreatablePropertyTypes().canCreate()) {
+                        appendToString(sb, pt.value());
+                    }
+                }
+
+                addLine("Creatable property types:").setText(sb.toString());
             }
 
             if (repInfo.getAclCapabilities() != null) {
@@ -197,6 +264,14 @@ public class RepositoryInfoFrame extends JFrame {
                     addExtension(node, ext.getChildren());
                 }
             }
+        }
+
+        private void appendToString(StringBuilder sb, String str) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+
+            sb.append(str);
         }
 
         private boolean is(Boolean b) {
