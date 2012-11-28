@@ -72,6 +72,8 @@ public final class AtomPubUtils {
     public static final String RESOURCE_CHANGES = "changes";
     public static final String RESOURCE_CONTENT = "content";
 
+    public static final String REPOSITORY_PLACEHOLDER = "{repositoryId}";
+
     public static final BigInteger PAGE_SIZE = BigInteger.valueOf(100);
 
     public static final String TYPE_AUTHOR = "unknown";
@@ -88,9 +90,15 @@ public final class AtomPubUtils {
     public static UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
         String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
         if (baseUrl != null) {
-            return new UrlBuilder(baseUrl);
+            int repIdPos = baseUrl.indexOf(REPOSITORY_PLACEHOLDER);
+            if (repIdPos < 0) {
+                return new UrlBuilder(baseUrl);
+            } else {
+                return new UrlBuilder(baseUrl.substring(0, repIdPos) + repositoryId
+                        + baseUrl.substring(repIdPos + REPOSITORY_PLACEHOLDER.length()));
+            }
         }
-        
+
         UrlBuilder url = new UrlBuilder(request.getScheme(), request.getServerName(), request.getServerPort(), null);
 
         url.addPath(request.getContextPath());

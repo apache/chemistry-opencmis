@@ -53,6 +53,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -183,7 +184,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(qsRequest, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
+                    CmisVersion.CMIS_1_0, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
             dispatch(context, qsRequest, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -108,6 +109,10 @@ public abstract class AbstractLocalService {
 
         public Object get(String key) {
             return contextMap.get(key);
+        }
+
+        public CmisVersion getCmisVersion() {
+            return CmisVersion.CMIS_1_1;
         }
 
         public String getRepositoryId() {

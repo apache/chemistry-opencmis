@@ -92,6 +92,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -280,7 +281,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             }
 
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
+                    CmisVersion.CMIS_1_1, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

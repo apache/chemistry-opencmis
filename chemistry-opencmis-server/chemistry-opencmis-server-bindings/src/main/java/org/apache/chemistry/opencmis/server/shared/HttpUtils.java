@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -48,8 +49,9 @@ public class HttpUtils {
      * Creates a {@link CallContext} object from a servlet request.
      */
     public static CallContext createContext(HttpServletRequest request, HttpServletResponse response,
-            ServletContext servletContext, String binding, CallContextHandler callContextHandler, File tempDir,
-            int memoryThreshold, long maxContentSize, boolean encrypt) {
+            ServletContext servletContext, String binding, CmisVersion cmisVersion,
+            CallContextHandler callContextHandler, File tempDir, int memoryThreshold, long maxContentSize,
+            boolean encrypt) {
         String[] pathFragments = splitPath(request);
 
         String repositoryId = null;
@@ -75,6 +77,9 @@ public class HttpUtils {
         context.put(CallContext.HTTP_SERVLET_REQUEST, request);
         context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
 
+        // CMIS version
+        context.put(CallContext.CMIS_VERSION, cmisVersion);
+        
         // content
         context.put(CallContext.TEMP_DIR, tempDir);
         context.put(CallContext.MEMORY_THRESHOLD, memoryThreshold);

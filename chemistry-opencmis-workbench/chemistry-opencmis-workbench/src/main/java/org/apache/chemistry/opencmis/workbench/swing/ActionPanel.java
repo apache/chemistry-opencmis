@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
@@ -65,6 +66,14 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
     public CmisObject getObject() {
         return object;
+    }
+
+    public CmisVersion getCmisVersion() {
+        try {
+            return model.getRepositoryInfo().getCmisVersion();
+        } catch (Exception e) {
+            return CmisVersion.CMIS_1_0;
+        }
     }
 
     protected void createGUI(String title, String buttonLabel) {

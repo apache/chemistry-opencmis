@@ -63,6 +63,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -546,14 +547,28 @@ public class SessionImpl implements Session {
     }
 
     public ObjectType createType(ObjectType type) {
-        throw new CmisNotSupportedException("Not implemented, yet");
+        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
+        }
+
+        return objectFactory.convertTypeDefinition(getBinding().getRepositoryService().createType(getRepositoryId(),
+                type, null));
     }
 
     public ObjectType updateType(ObjectType type) {
-        throw new CmisNotSupportedException("Not implemented, yet");
+        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
+        }
+
+        return objectFactory.convertTypeDefinition(getBinding().getRepositoryService().updateType(getRepositoryId(),
+                type, null));
     }
 
     public void deleteType(String typeId) {
+        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
+        }
+
         getBinding().getRepositoryService().deleteType(getRepositoryId(), typeId, null);
     }
 
@@ -916,6 +931,10 @@ public class SessionImpl implements Session {
     public BulkUpdateObjectIdAndChangeToken bulkUpdateProperties(
             BulkUpdateObjectIdAndChangeToken objectIdsAndChangeToken, Map<String, ?> properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
+        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
+        }
+
         throw new CmisNotSupportedException("Not implemented, yet");
     }
 

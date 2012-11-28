@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -433,6 +434,10 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     }
 
     public Document appendContentStream(ContentStream contentStream, boolean isLastChunk) {
+        if (getSession().getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
+        }
+
         ObjectId objectId = appendContentStream(contentStream, isLastChunk, true);
         if (objectId == null) {
             return null;

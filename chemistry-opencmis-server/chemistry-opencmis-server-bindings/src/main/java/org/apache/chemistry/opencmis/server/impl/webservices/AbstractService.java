@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -89,6 +90,8 @@ public abstract class AbstractService {
     @SuppressWarnings("unchecked")
     protected CallContext createContext(WebServiceContext wsContext, CmisServiceFactory factory, String repositoryId) {
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, repositoryId, false);
+
+        context.put(CallContext.CMIS_VERSION, CmisVersion.CMIS_1_0);
 
         MessageContext mc = wsContext.getMessageContext();
         Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);

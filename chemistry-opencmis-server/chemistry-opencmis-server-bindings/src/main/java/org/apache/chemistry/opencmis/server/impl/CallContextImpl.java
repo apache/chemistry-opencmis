@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 /**
@@ -50,6 +51,10 @@ public class CallContextImpl implements CallContext {
 
     public Object get(String key) {
         return parameter.get(key);
+    }
+
+    public CmisVersion getCmisVersion() {
+        return (CmisVersion) get(CMIS_VERSION);
     }
 
     public String getRepositoryId() {

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
 public interface RepositoryInfo extends Serializable, ExtensionsData {
 
@@ -46,6 +47,8 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     String getLatestChangeLogToken();
 
     String getCmisVersionSupported();
+    
+    CmisVersion getCmisVersion();
 
     String getThinClientUri();
 

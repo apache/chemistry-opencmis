@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.workbench.actions.AclUpdatePanel;
 import org.apache.chemistry.opencmis.workbench.actions.AddObjectToFolderPanel;
+import org.apache.chemistry.opencmis.workbench.actions.AppendContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.actions.ApplyPolicyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CancelCheckOutPanel;
 import org.apache.chemistry.opencmis.workbench.actions.CheckInPanel;
@@ -57,6 +58,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private CancelCheckOutPanel cancelCheckOutPanel;
     private CheckInPanel checkInPanel;
     private SetContentStreamPanel setContentStreamPanel;
+    private AppendContentStreamPanel appendContentStreamPanel;
     private DeleteContentStreamPanel deleteContentStreamPanel;
     private AddObjectToFolderPanel addObjectToFolderPanel;
     private RemoveObjectFromFolderPanel removeObjectFromFolderPanel;
@@ -102,6 +104,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         setContentStreamPanel.setObject(object);
         setContentStreamPanel.setVisible(setContentStreamPanel.isAllowed());
+
+        appendContentStreamPanel.setObject(object);
+        appendContentStreamPanel.setVisible(appendContentStreamPanel.isAllowed());
 
         deleteContentStreamPanel.setObject(object);
         deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
@@ -152,6 +157,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         setContentStreamPanel = new SetContentStreamPanel(model);
         add(setContentStreamPanel);
+
+        appendContentStreamPanel = new AppendContentStreamPanel(model);
+        add(appendContentStreamPanel);
 
         deleteContentStreamPanel = new DeleteContentStreamPanel(model);
         add(deleteContentStreamPanel);

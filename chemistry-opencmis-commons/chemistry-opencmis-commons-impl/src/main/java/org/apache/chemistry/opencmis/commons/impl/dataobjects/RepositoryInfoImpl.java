@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
 /**
  * Repository info data implementation.
@@ -108,6 +109,26 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
 
     public void setCmisVersionSupported(String versionSupported) {
         this.versionSupported = versionSupported;
+    }
+
+    public CmisVersion getCmisVersion() {
+        if (versionSupported == null) {
+            return CmisVersion.CMIS_1_0;
+        }
+
+        try {
+            return CmisVersion.valueOf(versionSupported);
+        } catch (IllegalArgumentException e) {
+            return CmisVersion.CMIS_1_0;
+        }
+    }
+
+    public void setCmisVersion(CmisVersion cmisVersion) {
+        if (cmisVersion == null) {
+            versionSupported = null;
+        } else {
+            versionSupported = cmisVersion.value();
+        }
     }
 
     public RepositoryCapabilities getCapabilities() {

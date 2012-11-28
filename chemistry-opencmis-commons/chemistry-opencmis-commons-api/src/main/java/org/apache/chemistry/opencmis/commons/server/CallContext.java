@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.commons.server;
 import java.io.File;
 import java.math.BigInteger;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+
 /**
  * An object implementing this interface holds context data of the current call.
  */
@@ -30,6 +32,8 @@ public interface CallContext {
     String BINDING_WEBSERVICES = "webservices";
     String BINDING_BROWSER = "browser";
     String BINDING_LOCAL = "local";
+
+    String CMIS_VERSION = "cmisVersion";
 
     String REPOSITORY_ID = "repositoryId";
     String USERNAME = "username";
@@ -70,6 +74,11 @@ public interface CallContext {
      * @return the data if the key is valid, <code>null</code> otherwise
      */
     Object get(String key);
+
+    /**
+     * Returns the CMIS version.
+     */
+    CmisVersion getCmisVersion();
 
     /**
      * Returns the repository id.
