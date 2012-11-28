@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -302,6 +303,10 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
             public boolean isObjectInfoRequired() {
                 return false;
+            }
+
+            public CmisVersion getCmisVersion() {
+                return CmisVersion.CMIS_1_1;
             }
 
             public String getRepositoryId() {

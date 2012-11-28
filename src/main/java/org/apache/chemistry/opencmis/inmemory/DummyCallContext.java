@@ -25,6 +25,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 public class DummyCallContext implements CallContext {
@@ -52,6 +53,10 @@ public class DummyCallContext implements CallContext {
 
     public String getBinding() {
         return BINDING_ATOMPUB;
+    }
+    
+    public CmisVersion getCmisVersion() {
+        return CmisVersion.CMIS_1_1;
     }
 
     public String getRepositoryId() {
