@@ -81,6 +81,8 @@ public class AbstractServiceTest {
     protected CallContext fTestCallContext;
     private String fTypeCreatorClassName;
 
+    private CmisBinding binding;
+
     public AbstractServiceTest() {
         // The in-memory server unit tests can either be run directly against
         // the
@@ -104,7 +106,6 @@ public class AbstractServiceTest {
     }
 
     protected void setUp() {
-        // super.setUp();
         LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
         Map<String, String> parameters = new HashMap<String, String>();
 
@@ -112,8 +113,7 @@ public class AbstractServiceTest {
         parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
         parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
 
-        // give subclasses a chance to provide additional parameters for special
-        // tests
+        // give subclasses a chance to provide additional parameters for special tests
         addParameters(parameters);
 
         fTestCallContext = new DummyCallContext();
@@ -142,7 +142,7 @@ public class AbstractServiceTest {
     }
 
     protected void tearDown() {
-        // super.tearDown();
+        binding.close();
     }
 
     public void testDummy() {
@@ -404,7 +404,7 @@ public class AbstractServiceTest {
 
         // get factory and create binding
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisLocalBinding(parameters);
+        binding = factory.createCmisLocalBinding(parameters);
         assertNotNull(binding);
         fFactory = binding.getObjectFactory();
         fRepSvc = binding.getRepositoryService();

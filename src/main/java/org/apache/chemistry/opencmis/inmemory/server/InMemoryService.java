@@ -56,7 +56,6 @@ public class InMemoryService extends AbstractCmisService {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryService.class.getName());
 
     private final StoreManager storeManager; // singleton root of everything
-    private CallContext context;
 
     private final InMemoryRepositoryServiceImpl fRepSvc;
     private final InMemoryObjectServiceImpl fObjSvc;
@@ -82,14 +81,20 @@ public class InMemoryService extends AbstractCmisService {
     }
 
     public CallContext getCallContext() {
-        return context;
+        return InMemoryServiceContext.getCallContext();
     }
 
     public void setCallContext(CallContext context) {
-        this.context = context;
+        InMemoryServiceContext.setCallContext(context);
     }
 
     // --- repository service ---
+
+    @Override
+    public void close() {
+        super.close();
+        setCallContext(null);
+    }
 
     @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {

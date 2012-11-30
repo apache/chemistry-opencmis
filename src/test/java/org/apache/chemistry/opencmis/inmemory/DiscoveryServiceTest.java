@@ -28,10 +28,11 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DiscoveryServiceTest extends AbstractServiceTest {
 
@@ -46,6 +47,11 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
     public void setUp() {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
+    }
+
+    @After
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test
