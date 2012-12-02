@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 
 public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefinitionImpl {
@@ -99,12 +100,11 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         setIsIncludedInSupertypeQuery(true);
         setIsQueryable(false);
 
-        // TODO: add with CMIS 1.1 extensions
-//        TypeMutabilityCapabilitiesImpl caps = new TypeMutabilityCapabilitiesImpl();
-//        caps.setSupportsCreate(createAndDeletable);
-//        caps.setSupportsUpdate(false);
-//        caps.setSupportsDelete(createAndDeletable);
-//        super.setTypeMutability(caps);
+        TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
+        typeMutability.setCanCreate(true);
+        typeMutability.setCanDelete(false);
+        typeMutability.setCanCreate(false);
+        setTypeMutability (typeMutability);
 
         // relationship specifics
         setAllowedSourceTypes(null);

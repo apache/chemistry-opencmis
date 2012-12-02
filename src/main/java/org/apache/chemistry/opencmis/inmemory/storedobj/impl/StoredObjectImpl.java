@@ -39,10 +39,12 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
 /**
@@ -69,6 +71,7 @@ public class StoredObjectImpl implements StoredObject {
     protected Map<String, PropertyData<?>> fProperties;
     protected final ObjectStoreImpl fObjStore;
     protected int fAclId;
+    protected String description; // CMIS 1.1
 
     StoredObjectImpl(ObjectStoreImpl objStore) { // visibility should be package
         GregorianCalendar now = getNow();
@@ -137,6 +140,16 @@ public class StoredObjectImpl implements StoredObject {
     public String getRepositoryId() {
         return fRepositoryId;
     }
+    
+    // CMIS 1.1:
+    public void setDescription(String descr) {
+        description = descr;
+    }
+    
+    // CMIS 1.1:
+    public String getDescription() {
+        return description;
+    }
 
     public void setProperties(Map<String, PropertyData<?>> props) {
         fProperties = props;
@@ -166,6 +179,8 @@ public class StoredObjectImpl implements StoredObject {
 
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
+        
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (FilterParser.isContainedInFilter(PropertyIds.NAME, requestedIds)) {
             properties.put(PropertyIds.NAME, objFactory.createPropertyStringData(PropertyIds.NAME, getName()));
@@ -203,6 +218,11 @@ public class StoredObjectImpl implements StoredObject {
             String token = getChangeToken();
             properties.put(PropertyIds.CHANGE_TOKEN, objFactory.createPropertyStringData(PropertyIds.CHANGE_TOKEN,
                     token));
+        }
+        
+        if (cmis11 && FilterParser.isContainedInFilter(PropertyIds.DESCRIPTION, requestedIds)) {
+            properties.put(PropertyIds.DESCRIPTION, objFactory.createPropertyStringData(PropertyIds.DESCRIPTION,
+                    description));
         }
 
         // add custom properties of type definition to the collection
@@ -245,6 +265,9 @@ public class StoredObjectImpl implements StoredObject {
         // Note that initial creation and modification date is set in
         // constructor.
         setModifiedBy(user);
+        if (null != properties.get(PropertyIds.DESCRIPTION))
+            setDescription((String)properties.get(PropertyIds.DESCRIPTION).getFirstValue());
+        
         if (isCreated) {
             setCreatedBy(user);
             setName((String) properties.get(PropertyIds.NAME).getFirstValue());

@@ -23,6 +23,8 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -38,6 +40,7 @@ public class PropertyUtil {
         VersionedDocument verDoc = null;
         Folder folder = null;
         Document doc = null;
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Content)
             content = ((Content) so).getContent(0, 0);
@@ -77,6 +80,9 @@ public class PropertyUtil {
         }
         if (propertyId.equals(PropertyIds.CHANGE_TOKEN)) {
             return so.getChangeToken();
+        }
+        if (cmis11 && propertyId.equals(PropertyIds.DESCRIPTION)) {
+            return so.getDescription();
         }
 
         if (ver != null) {

@@ -116,6 +116,11 @@ public class DocumentTypeCreationHelper {
 
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHANGE_TOKEN, "Change Token", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
+
+        // CMIS 1.1:
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.DESCRIPTION, "Description", Updatability.READWRITE);
+        propertyDefinitions.put(propS.getId(), propS);
+
     }
 
     public static void setBasicDocumentPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
