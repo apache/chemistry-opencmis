@@ -36,13 +36,16 @@ import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
@@ -58,6 +61,7 @@ import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
@@ -333,7 +337,6 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setId(repositoryId == null ? "inMem" : repositoryId);
         repoInfo.setName("Apache Chemistry OpenCMIS InMemory Repository");
         repoInfo.setDescription("Apache Chemistry OpenCMIS InMemory Repository (Version: " + OPENCMIS_VERSION + ")");
-        repoInfo.setCmisVersionSupported("1.0");
         repoInfo.setRootFolder(rootFolderId);
         repoInfo.setPrincipalAnonymous(InMemoryAce.getAnonymousUser());
         repoInfo.setPrincipalAnyone(InMemoryAce.getAnyoneUser());
@@ -419,7 +422,39 @@ public class StoreManagerImpl implements StoreManager {
         for (PermissionMapping pm : list) {
             map.put(pm.getKey(), pm);
         }
-
+        
+        // CMIS 1.1 extensions
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+        if (cmis11) {
+            repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_1.value());
+            repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
+// TODO: temporary fix until TCK is fixed (breaks build)
+            repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
+            repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
+            List<BaseTypeId> changesOnType = new ArrayList<BaseTypeId>() {{
+                add(BaseTypeId.CMIS_DOCUMENT);
+                add(BaseTypeId.CMIS_FOLDER);
+//                add(BaseTypeId.CMIS_ITEM);
+//                add(BaseTypeId.CMIS_SECONDARY);
+            }};
+            repoInfo.setChangesOnType(changesOnType);
+            
+            List<PropertyType> creatablePropertyTypes = new ArrayList<PropertyType>() {{
+                add(PropertyType.BOOLEAN);
+                add(PropertyType.DATETIME);
+                add(PropertyType.DECIMAL);
+                add(PropertyType.HTML);
+                add(PropertyType.ID);
+                add(PropertyType.INTEGER);
+                add(PropertyType.STRING);
+                add(PropertyType.URI);
+            }};
+//            repoInfo.setCreatablePropertyTypes(creatablePropertyTypes);
+        } else {
+            repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
+            repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
+        }
+        
         aclCaps.setPermissionMappingData(map);
 
         repoInfo.setAclCapabilities(aclCaps);
