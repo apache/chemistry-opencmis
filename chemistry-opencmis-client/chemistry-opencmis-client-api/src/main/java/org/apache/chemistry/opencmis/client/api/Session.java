@@ -460,6 +460,25 @@ public interface Session extends Serializable {
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId);
 
     /**
+     * Creates a new item.
+     * 
+     * @return the object id of the new policy
+     * 
+     * @see Folder#createItem(Map, List, List, List, OperationContext)
+     */
+    ObjectId createItem(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
+            List<Ace> removeAces);
+
+    /**
+     * Creates a new item.
+     * 
+     * @return the object id of the new item
+     * 
+     * @see Folder#createItem(Map, List, List, List, OperationContext)
+     */
+    ObjectId createItem(Map<String, ?> properties, ObjectId folderId);
+
+    /**
      * Creates a new relationship.
      * 
      * @return the object id of the new relationship

@@ -99,6 +99,17 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        CmisService service = getService(repositoryId);
+
+        try {
+            return service.createItem(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+        } finally {
+            service.close();
+        }
+    }
+
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         CmisService service = getService(repositoryId);

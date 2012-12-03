@@ -841,6 +841,24 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    public ObjectId createItem(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
+            List<Ace> removeAces) {
+        if ((properties == null) || (properties.isEmpty())) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+
+        String newId = getBinding().getObjectService().createItem(getRepositoryId(),
+                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
+                (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
+                objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
+
+        if (newId == null) {
+            return null;
+        }
+
+        return createObjectId(newId);
+    }
+
     public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces) {
         if ((properties == null) || (properties.isEmpty())) {
@@ -875,6 +893,10 @@ public class SessionImpl implements Session {
 
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId) {
         return this.createPolicy(properties, folderId, null, null, null);
+    }
+
+    public ObjectId createItem(Map<String, ?> properties, ObjectId folderId) {
+        return this.createItem(properties, folderId, null, null, null);
     }
 
     // --- relationships ---

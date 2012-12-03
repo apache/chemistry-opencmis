@@ -330,7 +330,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         TypeDefinition type = getTypeDefinition(repositoryId, objectTypeId, null);
 
         // create object
-        String newId = null;
+        String newId;
         switch (type.getBaseTypeId()) {
         case CMIS_DOCUMENT:
             newId = createDocument(repositoryId, properties, folderId, contentStream, versioningState, policies, null,
@@ -342,6 +342,11 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         case CMIS_POLICY:
             newId = createPolicy(repositoryId, properties, folderId, policies, null, null, extension);
             break;
+        case CMIS_ITEM:
+            newId = createItem(repositoryId, properties, folderId, policies, null, null, extension);
+            break;
+        default:
+            newId = null;
         }
 
         // check new object id
@@ -427,6 +432,21 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * </ul>
      */
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * <b>Implementation Hints:</b>
+     * <ul>
+     * <li>Bindings: Web Services, Browser, Local</li>
+     * <li>Implementation is optional.</li>
+     * </ul>
+     */
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }

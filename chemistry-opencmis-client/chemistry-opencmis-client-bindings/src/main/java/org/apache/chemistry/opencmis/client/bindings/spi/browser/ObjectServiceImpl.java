@@ -211,6 +211,35 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return (newObj == null ? null : newObj.getId());
     }
 
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        // build URL
+        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_ITEM);
+        formData.addPropertiesParameters(properties);
+        formData.addPoliciesParameters(policies);
+        formData.addAddAcesParameters(addAces);
+        formData.addRemoveAcesParameters(removeAces);
+        formData.addSuccinctFlag(getSuccinct());
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
+
+        TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
+
+        ObjectData newObj = JSONConverter.convertObject(json, typeCache);
+
+        return (newObj == null ? null : newObj.getId());
+    }
+
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ALLOWABLEACTIONS);

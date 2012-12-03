@@ -101,6 +101,22 @@ public interface Folder extends FileableCmisObject, FolderProperties {
             OperationContext context);
 
     /**
+     * Creates a new item in this folder.
+     * 
+     * @return the new item object
+     */
+    Item createItem(Map<String, ?> properties);
+
+    /**
+     * Creates a new item in this folder.
+     * 
+     * @return the new item object or <code>null</code> if the parameter
+     *         <code>context</code> was set to <code>null</code>
+     */
+    Item createItem(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context);
+
+    /**
      * Creates a new policy in this folder.
      * 
      * @return the new policy object

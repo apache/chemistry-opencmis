@@ -242,6 +242,38 @@ public final class ObjectService {
     }
 
     /**
+     * Create Item.
+     */
+    public static void createItem(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String folderId = (String) context.get(CONTEXT_OBJECT_ID);
+        String token = getStringParameter(request, PARAM_TOKEN);
+        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+
+        // execute
+        ControlParser cp = new ControlParser(request);
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+
+        String newObjectId = service.createItem(repositoryId, createProperties(cp, null, typeCache), folderId,
+                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+        if (object == null) {
+            throw new CmisRuntimeException("New item is null!");
+        }
+
+        // return object
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+
+        setStatus(request, response, HttpServletResponse.SC_CREATED);
+        setCookie(request, response, repositoryId, token,
+                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+        writeJSON(jsonObject, request, response);
+    }
+
+    /**
      * Create relationship.
      */
     public static void createRelationship(CallContext context, CmisService service, String repositoryId,

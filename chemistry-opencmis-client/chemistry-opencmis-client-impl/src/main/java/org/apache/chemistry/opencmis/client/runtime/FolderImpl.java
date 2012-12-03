@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.Item;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -159,6 +160,25 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         return (Policy) object;
+    }
+
+    public Item createItem(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
+            OperationContext context) {
+
+        ObjectId newId = getSession().createItem(properties, this, policies, addAces, removeAces);
+
+        // if no context is provided the object will not be fetched
+        if ((context == null) || (newId == null)) {
+            return null;
+        }
+
+        // get the new object
+        CmisObject object = getSession().getObject(newId, context);
+        if (!(object instanceof Item)) {
+            throw new CmisRuntimeException("Newly created object is not an item! New id: " + newId);
+        }
+
+        return (Item) object;
     }
 
     public List<String> deleteTree(boolean allVersions, UnfileObject unfile, boolean continueOnFailure) {
@@ -455,5 +475,9 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
     public Policy createPolicy(Map<String, ?> properties) {
         return this.createPolicy(properties, null, null, null, getSession().getDefaultContext());
+    }
+
+    public Item createItem(Map<String, ?> properties) {
+        return this.createItem(properties, null, null, null, getSession().getDefaultContext());
     }
 }

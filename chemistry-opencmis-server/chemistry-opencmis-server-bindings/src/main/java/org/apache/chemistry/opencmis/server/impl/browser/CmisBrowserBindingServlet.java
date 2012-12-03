@@ -29,6 +29,7 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CH
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_DOCUMENT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_DOCUMENT_FROM_SOURCE;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_FOLDER;
+import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_ITEM;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_POLICY;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_RELATIONSHIP;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.CMISACTION_CREATE_TYPE;
@@ -198,6 +199,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "createDocumentFromSource");
             repositoryDispatcher
                     .addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
+            repositoryDispatcher.addResource(CMISACTION_CREATE_ITEM, METHOD_POST, ObjectService.class, "createItem");
             repositoryDispatcher.addResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, ObjectService.class,
                     "createRelationship");
             repositoryDispatcher.addResource(CMISACTION_BULK_UPDATE, METHOD_POST, ObjectService.class,
@@ -226,6 +228,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     "createDocumentFromSource");
             rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
             rootDispatcher.addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
+            rootDispatcher.addResource(CMISACTION_CREATE_ITEM, METHOD_POST, ObjectService.class, "createItem");
             rootDispatcher.addResource(CMISACTION_UPDATE_PROPERTIES, METHOD_POST, ObjectService.class,
                     "updateProperties");
             rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST, ObjectService.class, "setContentStream");

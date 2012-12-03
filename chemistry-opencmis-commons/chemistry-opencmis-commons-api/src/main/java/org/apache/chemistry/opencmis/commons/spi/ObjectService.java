@@ -209,6 +209,36 @@ public interface ObjectService {
             Acl addAces, Acl removeAces, ExtensionsData extension);
 
     /**
+     * Creates an item object of the specified type (given by the
+     * cmis:objectTypeId property).
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param properties
+     *            the property values that must be applied to the newly created
+     *            policy object
+     * @param folderId
+     *            <em>(optional)</em> if specified, the identifier for the
+     *            folder that must be the parent folder for the newly created
+     *            policy object
+     * @param policies
+     *            <em>(optional)</em> a list of policy IDs that must be applied
+     *            to the newly created policy object
+     * @param addAces
+     *            <em>(optional)</em> a list of ACEs that must be added to the
+     *            newly created policy object, either using the ACL from
+     *            <code>folderId</code> if specified, or being applied if no
+     *            <code>folderId</code> is specified
+     * @param removeAces
+     *            <em>(optional)</em> a list of ACEs that must be removed from
+     *            the newly created policy object, either using the ACL from
+     *            <code>folderId</code> if specified, or being ignored if no
+     *            <code>folderId</code> is specified
+     */
+    String createItem(String repositoryId, Properties properties, String folderId, List<String> policies, Acl addAces,
+            Acl removeAces, ExtensionsData extension);
+
+    /**
      * Gets the list of allowable actions for an object.
      * 
      * @param repositoryId

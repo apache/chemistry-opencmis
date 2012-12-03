@@ -231,6 +231,53 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        checkCreateProperties(properties);
+
+        // find the link
+        String link = null;
+
+        if (folderId == null) {
+            link = loadCollection(repositoryId, Constants.COLLECTION_UNFILED);
+
+            if (link == null) {
+                throw new CmisObjectNotFoundException("Unknown repository or unfiling not supported!");
+            }
+        } else {
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+
+            if (link == null) {
+                throwLinkException(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+            }
+        }
+
+        UrlBuilder url = new UrlBuilder(link);
+
+        // set up object and writer
+        ObjectDataImpl object = new ObjectDataImpl();
+        object.setProperties(properties);
+        // TODO
+        // object.setPolicyIds(convertPolicyIds(policies));
+
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+
+        // post the new folder object
+        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+
+        // parse the response
+        AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
+
+        // handle ACL modifications
+        handleAclModifications(repositoryId, entry, addAces, removeAces);
+
+        return entry.getId();
+    }
+    
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         checkCreateProperties(properties);

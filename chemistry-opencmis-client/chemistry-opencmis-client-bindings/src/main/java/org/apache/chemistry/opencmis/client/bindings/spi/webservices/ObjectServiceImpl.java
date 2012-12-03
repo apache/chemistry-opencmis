@@ -164,6 +164,11 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        throw new CmisNotSupportedException("Not supported!");
+    }
+
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort();

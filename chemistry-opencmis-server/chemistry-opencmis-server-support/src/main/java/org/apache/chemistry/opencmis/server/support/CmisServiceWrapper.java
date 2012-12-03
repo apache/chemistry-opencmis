@@ -766,6 +766,19 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         }
     }
 
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        checkRepositoryId(repositoryId);
+        checkProperties(properties);
+        checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
+
+        try {
+            return service.createItem(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+        } catch (Exception e) {
+            throw createCmisException(e);
+        }
+    }
+
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
