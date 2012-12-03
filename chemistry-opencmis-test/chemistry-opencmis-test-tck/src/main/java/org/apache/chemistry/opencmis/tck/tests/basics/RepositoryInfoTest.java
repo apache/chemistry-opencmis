@@ -101,8 +101,9 @@ public class RepositoryInfoTest extends AbstractSessionTest {
         failure = createResult(FAILURE, "CMIS Version Supported is not set!");
         addResult(assertStringNotEmpty(ri.getCmisVersionSupported(), success, failure));
 
-        failure = createResult(FAILURE, "CMIS Version Supported is not '1.0'!");
-        addResult(assertEquals("1.0", ri.getCmisVersionSupported(), null, failure));
+        if (!"1.0".equals(ri.getCmisVersionSupported()) && !"1.1".equals(ri.getCmisVersionSupported())) {
+            addResult(createResult(FAILURE, "CMIS Version Supported is neither '1.0' nor '1.1'!"));
+        }
 
         // root folder
         success = createResult(OK, "Root folder id: " + ri.getRootFolderId());
