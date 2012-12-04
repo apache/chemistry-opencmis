@@ -59,6 +59,11 @@ public class SecurityTest extends AbstractSessionTest {
                 addResult(f);
             }
             break;
+        case BROWSER:
+            if (!isHttpsUrl(getParameters().get(SessionParameter.BROWSER_URL))) {
+                addResult(f);
+            }
+            break;
         default:
             // nothing to do
         }

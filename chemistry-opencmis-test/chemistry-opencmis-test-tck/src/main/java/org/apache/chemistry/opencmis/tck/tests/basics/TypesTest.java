@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -97,6 +98,36 @@ public class TypesTest extends AbstractSessionTest {
             addResult(createResult(WARNING, "Policy type not available!", e, false));
         } catch (CmisObjectNotFoundException e) {
             addResult(createResult(WARNING, "Policy type not available!", e, false));
+        }
+
+        // CMIS 1.1 types
+        if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_1) {
+            // item
+            try {
+                TypeDefinition itemType = session.getTypeDefinition(BaseTypeId.CMIS_ITEM.value());
+                addResult(checkTypeDefinition(session, itemType, "Item type spec compliance."));
+
+                failure = createResult(FAILURE, "Item type has the wrong base type: " + itemType.getBaseTypeId());
+                addResult(assertEquals(BaseTypeId.CMIS_ITEM, itemType.getBaseTypeId(), null, failure));
+            } catch (CmisInvalidArgumentException e) {
+                addResult(createResult(WARNING, "Item type not available!", e, false));
+            } catch (CmisObjectNotFoundException e) {
+                addResult(createResult(WARNING, "Item type not available!", e, false));
+            }
+
+            // secondary type
+            try {
+                TypeDefinition secondaryType = session.getTypeDefinition(BaseTypeId.CMIS_SECONDARY.value());
+                addResult(checkTypeDefinition(session, secondaryType, "Secondary type spec compliance."));
+
+                failure = createResult(FAILURE,
+                        "Secondary type has the wrong base type: " + secondaryType.getBaseTypeId());
+                addResult(assertEquals(BaseTypeId.CMIS_SECONDARY, secondaryType.getBaseTypeId(), null, failure));
+            } catch (CmisInvalidArgumentException e) {
+                addResult(createResult(WARNING, "Secondary type not available!", e, false));
+            } catch (CmisObjectNotFoundException e) {
+                addResult(createResult(WARNING, "Secondary type not available!", e, false));
+            }
         }
 
         int numOfTypes = runTypeChecks(session, session.getTypeDescendants(null, -1, true));
