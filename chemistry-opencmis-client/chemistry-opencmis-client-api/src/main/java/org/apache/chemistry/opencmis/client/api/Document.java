@@ -33,6 +33,10 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Document extends FileableCmisObject, DocumentProperties {
 
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
     TransientDocument getTransientDocument();
 
     // object service

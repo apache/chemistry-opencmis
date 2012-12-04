@@ -59,6 +59,10 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public abstract class AbstractTransientCmisObject implements TransientCmisObject {
 
     protected Session session;

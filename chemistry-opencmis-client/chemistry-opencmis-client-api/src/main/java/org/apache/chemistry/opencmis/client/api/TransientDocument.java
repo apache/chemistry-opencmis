@@ -25,6 +25,10 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public interface TransientDocument extends TransientFileableCmisObject, DocumentProperties {
 
     void deleteAllVersions();

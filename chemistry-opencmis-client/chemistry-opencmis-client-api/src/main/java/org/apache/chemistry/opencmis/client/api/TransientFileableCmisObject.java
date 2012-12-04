@@ -20,6 +20,10 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public interface TransientFileableCmisObject extends TransientCmisObject {
     FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
 

@@ -26,6 +26,10 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public interface TransientFolder extends TransientFileableCmisObject, FolderProperties {
 
     Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,

@@ -39,7 +39,6 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
-import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -576,22 +575,30 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- adapters ---
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public <T> T getAdapter(Class<T> adapterInterface) {
         if (adapterInterface == null) {
             return null;
         }
-        if (adapterInterface.equals(TransientCmisObject.class)) {
+        if (adapterInterface.equals(org.apache.chemistry.opencmis.client.api.TransientCmisObject.class)) {
             return (T) createTransientCmisObject();
         }
         return null;
     }
 
-    public TransientCmisObject getTransientObject() {
-        return getAdapter(TransientCmisObject.class);
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
+    public org.apache.chemistry.opencmis.client.api.TransientCmisObject getTransientObject() {
+        return getAdapter(org.apache.chemistry.opencmis.client.api.TransientCmisObject.class);
     }
 
-    protected TransientCmisObject createTransientCmisObject() {
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
+    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
         return null;
     }
 

@@ -38,6 +38,10 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public class TransientDocumentImpl extends AbstractTransientFileableCmisObject implements TransientDocument {
 
     private ContentStream contentStream;

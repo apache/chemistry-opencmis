@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public interface TransientRelationship extends TransientCmisObject, RelationshipProperties {
 
     CmisObject getSource();

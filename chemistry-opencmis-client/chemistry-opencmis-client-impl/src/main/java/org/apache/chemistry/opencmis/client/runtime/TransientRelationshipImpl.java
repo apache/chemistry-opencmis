@@ -24,6 +24,10 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.TransientRelationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public class TransientRelationshipImpl extends AbstractTransientCmisObject implements TransientRelationship {
 
     public CmisObject getSource() {

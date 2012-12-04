@@ -23,8 +23,6 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
-import org.apache.chemistry.opencmis.client.api.TransientCmisObject;
-import org.apache.chemistry.opencmis.client.api.TransientRelationship;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -39,16 +37,24 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         initialize(session, objectType, objectData, context);
     }
 
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
     @Override
-    protected TransientCmisObject createTransientCmisObject() {
+    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
         TransientRelationshipImpl tr = new TransientRelationshipImpl();
         tr.initialize(getSession(), this);
 
         return tr;
     }
 
-    public TransientRelationship getTransientRelationship() {
-        return (TransientRelationship) getTransientObject();
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
+    public org.apache.chemistry.opencmis.client.api.TransientRelationship getTransientRelationship() {
+        return (org.apache.chemistry.opencmis.client.api.TransientRelationship) getTransientObject();
     }
 
     public CmisObject getSource() {

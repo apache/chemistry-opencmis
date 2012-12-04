@@ -33,6 +33,10 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Folder extends FileableCmisObject, FolderProperties {
 
+    /**
+     * @deprecated Support for transient objects will be removed in the future.
+     */
+    @Deprecated
     TransientFolder getTransientFolder();
 
     // object service

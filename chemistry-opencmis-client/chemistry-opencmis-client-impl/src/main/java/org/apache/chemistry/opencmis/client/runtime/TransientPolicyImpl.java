@@ -21,6 +21,10 @@ package org.apache.chemistry.opencmis.client.runtime;
 import org.apache.chemistry.opencmis.client.api.TransientPolicy;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public class TransientPolicyImpl extends AbstractTransientFileableCmisObject implements TransientPolicy {
 
     public String getPolicyText() {

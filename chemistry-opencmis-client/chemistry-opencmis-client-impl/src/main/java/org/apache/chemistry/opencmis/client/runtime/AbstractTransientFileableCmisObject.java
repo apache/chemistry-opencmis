@@ -25,6 +25,10 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.TransientFileableCmisObject;
 
+/**
+ * @deprecated Support for transient objects will be removed in the future.
+ */
+@Deprecated
 public abstract class AbstractTransientFileableCmisObject extends AbstractTransientCmisObject implements
         TransientFileableCmisObject {
 
