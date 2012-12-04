@@ -428,9 +428,7 @@ public class StoreManagerImpl implements StoreManager {
         if (cmis11) {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_1.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
-// TODO: temporary fix until TCK is fixed (breaks build)
-            repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
-            repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
+            repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
             List<BaseTypeId> changesOnType = new ArrayList<BaseTypeId>() {{
                 add(BaseTypeId.CMIS_DOCUMENT);
                 add(BaseTypeId.CMIS_FOLDER);
