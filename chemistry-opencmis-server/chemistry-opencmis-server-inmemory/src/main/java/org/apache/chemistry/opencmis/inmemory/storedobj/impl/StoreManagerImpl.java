@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
@@ -437,7 +439,7 @@ public class StoreManagerImpl implements StoreManager {
             }};
             repoInfo.setChangesOnType(changesOnType);
             
-            List<PropertyType> creatablePropertyTypes = new ArrayList<PropertyType>() {{
+            Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>() {{
                 add(PropertyType.BOOLEAN);
                 add(PropertyType.DATETIME);
                 add(PropertyType.DECIMAL);
@@ -447,7 +449,9 @@ public class StoreManagerImpl implements StoreManager {
                 add(PropertyType.STRING);
                 add(PropertyType.URI);
             }};
-//            repoInfo.setCreatablePropertyTypes(creatablePropertyTypes);
+            CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
+            creatablePropertyTypes.setCanCreate(propertyTypeSet);
+            caps.setCreatablePropertyTypes(creatablePropertyTypes);
         } else {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
