@@ -161,6 +161,10 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         CmisServiceFactory factory = (CmisServiceFactory) config.getServletContext().getAttribute(
                 CmisRepositoryContextListener.SERVICES_FACTORY);
 
+        if (factory == null) {
+            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
+        }
+
         tempDir = factory.getTempDirectory();
         memoryThreshold = factory.getMemoryThreshold();
         maxContentSize = factory.getMaxContentSize();

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.webservices;
 import javax.servlet.ServletConfig;
 import javax.xml.ws.WebServiceFeature;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 
@@ -43,6 +44,10 @@ public class CmisWebServicesServlet extends WSServlet {
             // get the CmisService factory
             CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
                     CmisRepositoryContextListener.SERVICES_FACTORY);
+
+            if (factory == null) {
+                throw new CmisRuntimeException("Service factory not available! Configuration problem?");
+            }
 
             // iterate of all adapters
             for (ServletAdapter adapter : delegate.adapters) {
