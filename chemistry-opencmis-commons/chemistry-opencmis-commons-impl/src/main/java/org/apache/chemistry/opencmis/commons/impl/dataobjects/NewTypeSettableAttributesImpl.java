@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 
-public class NewTypeSettableAttributesImpl implements NewTypeSettableAttributes, Serializable {
+public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements NewTypeSettableAttributes, Serializable {
 
     private static final long serialVersionUID = 1L;
 

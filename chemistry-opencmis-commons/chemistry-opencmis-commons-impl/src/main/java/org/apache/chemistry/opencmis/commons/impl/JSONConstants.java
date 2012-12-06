@@ -87,6 +87,8 @@ public final class JSONConstants {
     public static final String JSON_CAP_QUERY = "capabilityQuery";
     public static final String JSON_CAP_JOIN = "capabilityJoin";
     public static final String JSON_CAP_ACL = "capabilityACL";
+    public static final String JSON_CAP_CREATABLE_PROPERTY_TYPES = "capabilityCreatablePropertyTypes";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES = "capabilityNewTypeSettableAttributes";
 
     public static final Set<String> CAP_KEYS = new HashSet<String>();
     static {
@@ -104,6 +106,45 @@ public final class JSONConstants {
         CAP_KEYS.add(JSON_CAP_QUERY);
         CAP_KEYS.add(JSON_CAP_JOIN);
         CAP_KEYS.add(JSON_CAP_ACL);
+        CAP_KEYS.add(JSON_CAP_CREATABLE_PROPERTY_TYPES);
+        CAP_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES);
+    }
+
+    public static final String JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE = "canCreate";
+
+    public static final Set<String> CAP_CREATABLE_PROPERTY_TYPES_KEYS = new HashSet<String>();
+    static {
+        CAP_CREATABLE_PROPERTY_TYPES_KEYS.add(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE);
+    }
+
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID = "id";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME = "localName";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE = "localNamespace";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME = "displayName";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME = "queryName";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION = "description";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE = "creatable";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE = "fileable";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE = "queryable";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED = "fulltextIndexed";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY = "includedInSupertypeQuery";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY = "controllablePolicy";
+    public static final String JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL = "controllableACL";
+
+    public static final Set<String> CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS = new HashSet<String>();
+    static {
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY);
+        CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS.add(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL);
     }
 
     public static final String JSON_ACLCAP_SUPPORTED_PERMISSIONS = "supportedPermissions";
@@ -451,6 +492,17 @@ public final class JSONConstants {
     public static final Set<String> FAILEDTODELETE_KEYS = new HashSet<String>();
     static {
         FAILEDTODELETE_KEYS.add(JSON_FAILEDTODELETE_ID);
+    }
+
+    public static final String JSON_BULK_UPDATE_ID = "id";
+    public static final String JSON_BULK_UPDATE_NEW_ID = "newId";
+    public static final String JSON_BULK_UPDATE_CHANGE_TOKEN = "changeToken";
+
+    public static final Set<String> BULK_UPDATE_KEYS = new HashSet<String>();
+    static {
+        BULK_UPDATE_KEYS.add(JSON_BULK_UPDATE_ID);
+        BULK_UPDATE_KEYS.add(JSON_BULK_UPDATE_NEW_ID);
+        BULK_UPDATE_KEYS.add(JSON_BULK_UPDATE_CHANGE_TOKEN);
     }
 
     // Constant utility class.

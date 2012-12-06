@@ -80,6 +80,7 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -312,7 +313,7 @@ public final class ObjectService {
         // get parameters
         String objectId = (String) context.get(CONTEXT_OBJECT_ID);
         String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
-        String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        String changeToken = getStringParameter(request, Constants.CONTROL_CHANGE_TOKEN);
         String token = getStringParameter(request, PARAM_TOKEN);
         boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
@@ -351,7 +352,28 @@ public final class ObjectService {
      */
     public static void bulkUpdateProperties(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // TODO
+
+        throw new CmisNotSupportedException("Not supported!");
+
+        // ControlParser cp = new ControlParser(request);
+        //
+        // List<BulkUpdateObjectIdAndChangeToken> result =
+        // service.bulkUpdateProperties(repositoryId,
+        // objectIdAndChangeToken, properties,
+        // cp.getValues(Constants.CONTROL_ADD_SECONDARY_TYPE),
+        // cp.getValues(Constants.CONTROL_REMOVE_SECONDARY_TYPE), null);
+        //
+        // JSONArray jsonList = new JSONArray();
+        // if (result != null) {
+        // for (BulkUpdateObjectIdAndChangeToken oc : result) {
+        // if (oc != null) {
+        // jsonList.add(JSONConverter.convert(oc));
+        // }
+        // }
+        // }
+        //
+        // response.setStatus(HttpServletResponse.SC_OK);
+        // writeJSON(jsonList, request, response);
     }
 
     /**

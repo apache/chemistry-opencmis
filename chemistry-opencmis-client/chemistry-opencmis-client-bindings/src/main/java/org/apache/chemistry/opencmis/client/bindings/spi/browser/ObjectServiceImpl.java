@@ -39,7 +39,6 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
@@ -392,7 +391,31 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // we need object ids
+        if ((objectIdAndChangeToken == null) || (objectIdAndChangeToken.size() == 0)) {
+            throw new CmisInvalidArgumentException("Object ids must be set!");
+        }
+
+        // build URL
+        UrlBuilder url = getRepositoryUrl(repositoryId);
+
+        // prepare form data
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT);
+        formData.addObjectIdsAndChangeTokens(objectIdAndChangeToken);
+        formData.addPropertiesParameters(properties);
+        formData.addSecondaryTypeIds(addSecondaryTypeIds);
+        formData.removeSecondaryTypeIds(removeSecondaryTypeIds);
+
+        // send and parse
+        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+            public void write(OutputStream out) throws Exception {
+                formData.write(out);
+            }
+        });
+
+        List<Object> json = parseArray(resp.getStream(), resp.getCharset());
+
+        return JSONConverter.convertBulkUpdate(json);
     }
 
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,

@@ -38,10 +38,13 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -106,12 +109,16 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
@@ -229,6 +236,60 @@ public final class JSONConverter {
         result.put(JSON_CAP_QUERY, getJSONStringValue(capabilities.getQueryCapability().value()));
         result.put(JSON_CAP_JOIN, getJSONStringValue(capabilities.getJoinCapability().value()));
         result.put(JSON_CAP_ACL, getJSONStringValue(capabilities.getAclCapability().value()));
+
+        if (capabilities.getCreatablePropertyTypes() != null) {
+            CreatablePropertyTypes creatablePropertyTypes = capabilities.getCreatablePropertyTypes();
+
+            JSONObject creatablePropertyTypesJson = new JSONObject();
+
+            if (creatablePropertyTypes.canCreate() != null) {
+                JSONArray canCreate = new JSONArray();
+                for (PropertyType propType : creatablePropertyTypes.canCreate()) {
+                    canCreate.add(propType.value());
+                }
+                creatablePropertyTypesJson.put(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE, canCreate);
+            }
+
+            convertExtension(creatablePropertyTypes, creatablePropertyTypesJson);
+
+            result.put(JSON_CAP_CREATABLE_PROPERTY_TYPES, creatablePropertyTypesJson);
+        }
+
+        if (capabilities.getNewTypeSettableAttributes() != null) {
+            NewTypeSettableAttributes newTypeSettableAttributes = capabilities.getNewTypeSettableAttributes();
+
+            JSONObject newTypeSettableAttributesJson = new JSONObject();
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID,
+                    newTypeSettableAttributes.canSetId());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME,
+                    newTypeSettableAttributes.canSetLocalName());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE,
+                    newTypeSettableAttributes.canSetLocalNamespace());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME,
+                    newTypeSettableAttributes.canSetDisplayName());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME,
+                    newTypeSettableAttributes.canSetQueryName());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION,
+                    newTypeSettableAttributes.canSetDescription());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE,
+                    newTypeSettableAttributes.canSetCreatable());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE,
+                    newTypeSettableAttributes.canSetFileable());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE,
+                    newTypeSettableAttributes.canSetQueryable());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED,
+                    newTypeSettableAttributes.canSetFulltextIndexed());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY,
+                    newTypeSettableAttributes.canSetIncludedInSupertypeQuery());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY,
+                    newTypeSettableAttributes.canSetControllablePolicy());
+            newTypeSettableAttributesJson.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL,
+                    newTypeSettableAttributes.canSetControllableAcl());
+
+            convertExtension(newTypeSettableAttributes, newTypeSettableAttributesJson);
+
+            result.put(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES, newTypeSettableAttributesJson);
+        }
 
         convertExtension(capabilities, result);
 
@@ -356,6 +417,70 @@ public final class JSONConverter {
         result.setCapabilityQuery(getEnum(json, JSON_CAP_QUERY, CapabilityQuery.class));
         result.setCapabilityJoin(getEnum(json, JSON_CAP_JOIN, CapabilityJoin.class));
         result.setCapabilityAcl(getEnum(json, JSON_CAP_ACL, CapabilityAcl.class));
+
+        Map<String, Object> creatablePropertyTypesJson = getMap(json.get(JSON_CAP_CREATABLE_PROPERTY_TYPES));
+        if (creatablePropertyTypesJson != null) {
+            CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
+
+            List<Object> canCreateJson = getList(creatablePropertyTypesJson
+                    .get(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE));
+            if (canCreateJson != null) {
+                Set<PropertyType> canCreate = new HashSet<PropertyType>();
+
+                for (Object o : canCreateJson) {
+                    try {
+                        if (o != null) {
+                            canCreate.add(PropertyType.fromValue(o.toString()));
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+
+                creatablePropertyTypes.setCanCreate(canCreate);
+            }
+
+            convertExtension(creatablePropertyTypesJson, creatablePropertyTypes, CAP_CREATABLE_PROPERTY_TYPES_KEYS);
+
+            result.setCreatablePropertyTypes(creatablePropertyTypes);
+        }
+
+        Map<String, Object> newTypeSettableAttributesJson = getMap(json.get(JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES));
+        if (newTypeSettableAttributesJson != null) {
+            NewTypeSettableAttributesImpl newTypeSettableAttributes = new NewTypeSettableAttributesImpl();
+
+            newTypeSettableAttributes.setCanSetId(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID));
+            newTypeSettableAttributes.setCanSetLocalName(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME));
+            newTypeSettableAttributes.setCanSetLocalNamespace(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE));
+            newTypeSettableAttributes.setCanSetDisplayName(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME));
+            newTypeSettableAttributes.setCanSetQueryName(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME));
+            newTypeSettableAttributes.setCanSetDescription(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION));
+            newTypeSettableAttributes.setCanSetCreatable(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE));
+            newTypeSettableAttributes.setCanSetFileable(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE));
+            newTypeSettableAttributes.setCanSetQueryable(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE));
+            newTypeSettableAttributes.setCanSetFulltextIndexed(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED));
+            newTypeSettableAttributes.setCanSetIncludedInSupertypeQuery(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY));
+            newTypeSettableAttributes.setCanSetControllablePolicy(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY));
+            newTypeSettableAttributes.setCanSetControllableAcl(getBoolean(newTypeSettableAttributesJson,
+                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL));
+
+            convertExtension(newTypeSettableAttributesJson, newTypeSettableAttributes,
+                    CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS);
+
+            result.setNewTypeSettableAttributes(newTypeSettableAttributes);
+        }
 
         // handle extensions
         convertExtension(json, result, CAP_KEYS);
@@ -493,6 +618,9 @@ public final class JSONConverter {
             break;
         case CMIS_POLICY:
             result = new PolicyTypeDefinitionImpl();
+            break;
+        case CMIS_ITEM:
+            result = new ItemTypeDefinitionImpl();
             break;
         default:
             throw new CmisRuntimeException("Type '" + id + "' does not match a base type!");
@@ -2459,6 +2587,66 @@ public final class JSONConverter {
         result.setIds(ids);
 
         convertExtension(json, result, FAILEDTODELETE_KEYS);
+
+        return result;
+    }
+
+    // -----------------------------------------------------------------
+
+    /**
+     * Converts bulk update data.
+     */
+    public static JSONObject convert(BulkUpdateObjectIdAndChangeToken oc) {
+        if (oc == null) {
+            return null;
+        }
+
+        JSONObject result = new JSONObject();
+
+        setIfNotNull(JSON_BULK_UPDATE_ID, oc.getId(), result);
+        setIfNotNull(JSON_BULK_UPDATE_NEW_ID, oc.getNewId(), result);
+        setIfNotNull(JSON_BULK_UPDATE_CHANGE_TOKEN, oc.getChangeToken(), result);
+
+        convertExtension(oc, result);
+
+        return result;
+    }
+
+    /**
+     * Converts bulk update data lists.
+     */
+    public static List<BulkUpdateObjectIdAndChangeToken> convertBulkUpdate(final List<Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
+
+        for (Object ocJson : json) {
+            BulkUpdateObjectIdAndChangeToken oc = convertBulkUpdate(getMap(ocJson));
+            if (oc != null) {
+                result.add(oc);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts bulk update data.
+     */
+    public static BulkUpdateObjectIdAndChangeToken convertBulkUpdate(final Map<String, Object> json) {
+        if (json == null) {
+            return null;
+        }
+
+        String id = getString(json, JSON_BULK_UPDATE_ID);
+        String newId = getString(json, JSON_BULK_UPDATE_NEW_ID);
+        String changeToken = getString(json, JSON_BULK_UPDATE_CHANGE_TOKEN);
+
+        BulkUpdateObjectIdAndChangeTokenImpl result = new BulkUpdateObjectIdAndChangeTokenImpl(id, newId, changeToken);
+
+        convertExtension(json, result, BULK_UPDATE_KEYS);
 
         return result;
     }

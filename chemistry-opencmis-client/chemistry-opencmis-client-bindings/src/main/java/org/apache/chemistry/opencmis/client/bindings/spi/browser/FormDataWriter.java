@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -148,6 +149,52 @@ public class FormDataWriter {
                 }
                 idx++;
             }
+        }
+    }
+
+    public void addObjectIdsAndChangeTokens(List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens) {
+        if (objectIdsAndChangeTokens == null || objectIdsAndChangeTokens.size() == 0) {
+            return;
+        }
+
+        int idx = 0;
+        for (BulkUpdateObjectIdAndChangeToken oc : objectIdsAndChangeTokens) {
+            if (oc == null || oc.getId() == null || oc.getId().length() == 0) {
+                continue;
+            }
+
+            String idxStr = "[" + idx + "]";
+            addParameter(Constants.CONTROL_OBJECT_ID + idxStr, oc.getId());
+            addParameter(Constants.CONTROL_CHANGE_TOKEN + idxStr,
+                    (oc.getChangeToken() == null ? "" : oc.getChangeToken()));
+
+            idx++;
+        }
+    }
+
+    public void addSecondaryTypeIds(List<String> secondaryTypeIds) {
+        addSecondaryTypeIdParameters(secondaryTypeIds, Constants.CONTROL_ADD_SECONDARY_TYPE);
+    }
+
+    public void removeSecondaryTypeIds(List<String> secondaryTypeIds) {
+        addSecondaryTypeIdParameters(secondaryTypeIds, Constants.CONTROL_REMOVE_SECONDARY_TYPE);
+    }
+
+    private void addSecondaryTypeIdParameters(List<String> secondaryTypeIds, String secondaryTypeIdControl) {
+        if (secondaryTypeIds == null || secondaryTypeIds.size() == 0) {
+            return;
+        }
+
+        int idx = 0;
+        for (String typeId : secondaryTypeIds) {
+            if (typeId == null || typeId.length() == 0) {
+                continue;
+            }
+
+            String idxStr = "[" + idx + "]";
+            addParameter(secondaryTypeIdControl + idxStr, typeId);
+
+            idx++;
         }
     }
 

@@ -163,6 +163,9 @@ public final class Constants {
     public static final String CONTROL_IS_LAST_CHUNK = "isLastChunk";
     public static final String CONTROL_TYPE = "type";
     public static final String CONTROL_TYPE_ID = "typeId";
+    public static final String CONTROL_CHANGE_TOKEN = "changeToken";
+    public static final String CONTROL_ADD_SECONDARY_TYPE = "addSecondaryTypeId";
+    public static final String CONTROL_REMOVE_SECONDARY_TYPE = "removeSecondaryTypeId";
 
     // parameter
     public static final String PARAM_ACL = "includeACL";

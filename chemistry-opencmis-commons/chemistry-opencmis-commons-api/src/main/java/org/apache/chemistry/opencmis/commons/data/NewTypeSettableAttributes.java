@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.commons.data;
  * A collection of flags that indicate which type attributes can be set at type
  * creation.
  */
-public interface NewTypeSettableAttributes {
+public interface NewTypeSettableAttributes extends ExtensionsData {
 
     /**
      * Indicates if the "id" attribute can be set.
