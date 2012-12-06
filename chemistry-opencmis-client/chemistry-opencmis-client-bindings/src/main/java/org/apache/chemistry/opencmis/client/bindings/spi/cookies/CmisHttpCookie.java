@@ -46,12 +46,12 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
     private static final String LOCAL_STR = ".local";
     private static final String QUOTE_STR = "\"";
     private static final String COMMA_STR = ",";
-    private static Pattern HEAD_PATTERN = Pattern.compile("Set-Cookie2?:", Pattern.CASE_INSENSITIVE);
-    private static Pattern NAME_PATTERN = Pattern.compile(
+    private static final Pattern HEAD_PATTERN = Pattern.compile("Set-Cookie2?:", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NAME_PATTERN = Pattern.compile(
             "([^$=,\u0085\u2028\u2029][^,\n\t\r\r\n\u0085\u2028\u2029]*?)=([^;]*)(;)?", Pattern.DOTALL
                     | Pattern.CASE_INSENSITIVE);
-    private static Pattern ATTR_PATTERN0 = Pattern.compile("([^;=]*)(?:=([^;]*))?");
-    private static Pattern ATTR_PATTERN1 = Pattern.compile("(,?[^;=]*)(?:=([^;,]*))?((?=.))?");
+    private static final Pattern ATTR_PATTERN0 = Pattern.compile("([^;=]*)(?:=([^;]*))?");
+    private static final Pattern ATTR_PATTERN1 = Pattern.compile("(,?[^;=]*)(?:=([^;,]*))?((?=.))?");
 
     private abstract static class Setter {
         boolean set;

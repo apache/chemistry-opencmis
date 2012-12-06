@@ -125,13 +125,6 @@ public class ClientFrame extends JFrame implements WindowListener {
                 }
 
                 try {
-                    macAppClass.getMethod("setDockIconImage", new Class<?>[] { Image.class }).invoke(macApp,
-                            new Object[] { icon.getImage() });
-                } catch (Exception e) {
-                    // ignore
-                }
-
-                try {
                     Class<?> fullscreenClass = Class.forName("com.apple.eawt.FullScreenUtilities");
                     fullscreenClass.getMethod("setWindowCanFullScreen", new Class<?>[] { Window.class, Boolean.TYPE })
                             .invoke(fullscreenClass, this, true);

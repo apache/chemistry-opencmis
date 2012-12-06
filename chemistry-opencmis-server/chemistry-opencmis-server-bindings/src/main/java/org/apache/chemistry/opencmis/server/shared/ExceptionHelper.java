@@ -28,14 +28,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ExceptionHelper {
+public final class ExceptionHelper {
 
     public static final String STACK_TRACE_PROPERTY = "org.apache.chemistry.opencmis.stacktrace.disable";
 
-    private static final boolean sendStackTrace;
+    private static final boolean SEND_STACK_TRACE;
 
     static {
-        sendStackTrace = System.getProperty(STACK_TRACE_PROPERTY) == null;
+        SEND_STACK_TRACE = System.getProperty(STACK_TRACE_PROPERTY) == null;
     }
 
     private ExceptionHelper() {
@@ -45,7 +45,7 @@ public class ExceptionHelper {
      * Returns the stack trace as string.
      */
     public static String getStacktraceAsString(Throwable t) {
-        if (!sendStackTrace || t == null) {
+        if (!SEND_STACK_TRACE || t == null) {
             return null;
         }
 

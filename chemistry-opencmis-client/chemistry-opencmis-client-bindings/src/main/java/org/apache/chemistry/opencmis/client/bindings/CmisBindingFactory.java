@@ -235,9 +235,9 @@ public class CmisBindingFactory {
         }
 
         // check binding entry
-        String SPIClass = sessionParameters.get(SessionParameter.BINDING_SPI_CLASS);
+        final String spiClass = sessionParameters.get(SessionParameter.BINDING_SPI_CLASS);
         if (mustContainSPI) {
-            if ((SPIClass == null) || (SPIClass.trim().length() == 0)) {
+            if ((spiClass == null) || (spiClass.trim().length() == 0)) {
                 throw new IllegalArgumentException("SPI class entry (" + SessionParameter.BINDING_SPI_CLASS
                         + ") is missing!");
             }

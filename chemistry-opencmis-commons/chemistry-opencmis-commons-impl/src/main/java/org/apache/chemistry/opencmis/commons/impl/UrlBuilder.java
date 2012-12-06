@@ -167,7 +167,7 @@ public class UrlBuilder {
         return this;
     }
 
-    public static char[] RFC7232_RESERVED = ";?:@&=+$,[]".toCharArray();
+    public static final char[] RFC7232_RESERVED = ";?:@&=+$,[]".toCharArray();
 
     public static String quoteURIPathComponent(String s, boolean quoteSlash) {
         if (s.length() == 0) {

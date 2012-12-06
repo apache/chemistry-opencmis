@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
  * Text Report.
  */
 public class TextReport extends AbstractCmisTestReport {
-    public static String NL = System.getProperty("line.separator");
+    public static final String NL = System.getProperty("line.separator");
 
     public TextReport() {
 

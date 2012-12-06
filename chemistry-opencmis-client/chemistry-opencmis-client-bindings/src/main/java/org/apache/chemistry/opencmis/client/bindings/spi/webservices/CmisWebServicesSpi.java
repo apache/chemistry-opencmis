@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CmisWebServicesSpi implements CmisSpi {
 
-    private static final Logger log = LoggerFactory.getLogger(CmisWebServicesSpi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesSpi.class);
 
     private final RepositoryService repositoryService;
     private final NavigationService navigationService;
@@ -54,8 +54,8 @@ public class CmisWebServicesSpi implements CmisSpi {
      * Constructor.
      */
     public CmisWebServicesSpi(BindingSession session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing Web Services SPI...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Initializing Web Services SPI...");
         }
 
         AbstractPortProvider portProvider = null;

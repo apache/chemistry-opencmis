@@ -48,7 +48,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Discovery Service operations.
  */
-public class DiscoveryService {
+public final class DiscoveryService {
 
     private DiscoveryService() {
     }

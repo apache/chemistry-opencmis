@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 /**
  * Utility methods that are used by the AtomPub and Browser binding.
  */
-public class HttpUtils {
+public final class HttpUtils {
 
     private HttpUtils() {
     }

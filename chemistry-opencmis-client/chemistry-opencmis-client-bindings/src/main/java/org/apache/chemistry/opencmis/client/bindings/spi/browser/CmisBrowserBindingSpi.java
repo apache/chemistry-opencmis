@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class CmisBrowserBindingSpi implements CmisSpi {
 
-    private static final Logger log = LoggerFactory.getLogger(CmisBrowserBindingSpi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingSpi.class);
 
     private final BindingSession session;
 
@@ -52,8 +52,8 @@ public class CmisBrowserBindingSpi implements CmisSpi {
      * Constructor.
      */
     public CmisBrowserBindingSpi(BindingSession session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing Browser Binding SPI...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Initializing Browser Binding SPI...");
         }
 
         this.session = session;

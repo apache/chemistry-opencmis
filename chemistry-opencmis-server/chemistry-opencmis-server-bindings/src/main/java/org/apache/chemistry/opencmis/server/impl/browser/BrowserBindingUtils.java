@@ -72,7 +72,7 @@ import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 
-public class BrowserBindingUtils {
+public final class BrowserBindingUtils {
 
     public static final String JSON_MIME_TYPE = "application/json";
     public static final String HTML_MIME_TYPE = "text/html";

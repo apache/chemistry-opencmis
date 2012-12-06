@@ -55,7 +55,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Discovery Service operations.
  */
-public class DiscoveryService {
+public final class DiscoveryService {
 
     private static final String METHOD_GET = "GET";
     private static final String METHOD_POST = "POST";

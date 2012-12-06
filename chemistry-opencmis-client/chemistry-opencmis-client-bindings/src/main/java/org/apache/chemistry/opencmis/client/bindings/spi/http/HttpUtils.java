@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
 
     private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 
@@ -87,8 +87,8 @@ public class HttpUtils {
             Output writer, BindingSession session, BigInteger offset, BigInteger length) {
         try {
             // log before connect
-            if (log.isDebugEnabled()) {
-                log.debug(method + " " + url);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(method + " " + url);
             }
 
             // connect
@@ -208,8 +208,8 @@ public class HttpUtils {
             }
 
             // log after connect
-            if (log.isTraceEnabled()) {
-                log.trace(method + " " + url + " > Headers: " + conn.getHeaderFields());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(method + " " + url + " > Headers: " + conn.getHeaderFields());
             }
 
             // forward response HTTP headers

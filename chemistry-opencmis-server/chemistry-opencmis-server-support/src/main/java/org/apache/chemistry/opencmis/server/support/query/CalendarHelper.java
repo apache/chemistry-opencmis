@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Helper dealing with conversion of {@link Calendar} to and from the string
  * format specified by CMISQL.
  */
-public class CalendarHelper {
+public final class CalendarHelper {
 
     private static final Pattern CMISQL_PATTERN = Pattern.compile( //
             "(\\d{4})-(\\d{2})-(\\d{2})[Tt]" + "(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d+))?"

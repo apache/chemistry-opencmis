@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +40,8 @@ public class Dispatcher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String BASE_URL_ATTRIBUTE= "org.apache.chemistry.opencmis.baseurl";
-    
+    public static final String BASE_URL_ATTRIBUTE = "org.apache.chemistry.opencmis.baseurl";
+
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final String METHOD_PUT = "PUT";
@@ -51,7 +50,7 @@ public class Dispatcher implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(Dispatcher.class.getName());
 
     private final boolean caseSensitive;
-    private Map<String, Method> methodMap = new HashMap<String, Method>();
+    private final HashMap<String, Method> methodMap;
 
     public Dispatcher() {
         this(true);
@@ -59,6 +58,7 @@ public class Dispatcher implements Serializable {
 
     public Dispatcher(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
+        methodMap = new HashMap<String, Method>();
     }
 
     /**

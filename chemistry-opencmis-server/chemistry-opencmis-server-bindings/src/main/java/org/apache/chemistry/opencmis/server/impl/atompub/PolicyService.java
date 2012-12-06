@@ -43,7 +43,7 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 /**
  * Policy Service operations.
  */
-public class PolicyService {
+public final class PolicyService {
 
     private PolicyService() {
     }

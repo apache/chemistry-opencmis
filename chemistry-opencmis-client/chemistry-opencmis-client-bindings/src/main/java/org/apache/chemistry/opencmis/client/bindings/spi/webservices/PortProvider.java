@@ -56,15 +56,15 @@ import com.sun.xml.ws.developer.WSBindingProvider;
  * headers.
  */
 public class PortProvider extends AbstractPortProvider {
-    private static final Logger log = LoggerFactory.getLogger(PortProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PortProvider.class);
 
     /**
      * Creates a port object.
      */
     protected Object createPortObject(Service service) {
 
-        if (log.isDebugEnabled()) {
-            log.debug("Creating Web Service port object of " + (service == null ? "???" : service.getServiceName())
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating Web Service port object of " + (service == null ? "???" : service.getServiceName())
                     + "...");
         }
 

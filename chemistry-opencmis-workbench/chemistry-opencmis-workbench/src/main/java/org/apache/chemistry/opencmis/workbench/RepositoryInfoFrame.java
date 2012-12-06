@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
@@ -107,8 +108,14 @@ public class RepositoryInfoFrame extends JFrame {
             addLine("Principal id anonymous:").setText(repInfo.getPrincipalIdAnonymous());
             addLine("Principal id anyone:").setText(repInfo.getPrincipalIdAnyone());
             addYesNoLabel("Changes incomplete:").setValue(is(repInfo.getChangesIncomplete()));
-            addLine("Changes on type:").setText(
-                    repInfo.getChangesOnType() == null ? "" : repInfo.getChangesOnType().toString());
+
+            StringBuilder sb = new StringBuilder();
+            if (repInfo.getChangesOnType() != null) {
+                for (BaseTypeId bt : repInfo.getChangesOnType()) {
+                    appendToString(sb, bt.value());
+                }
+            }
+            addLine("Changes on type:").setText(sb.toString());
 
             if (repInfo.getCapabilities() != null) {
                 RepositoryCapabilities cap = repInfo.getCapabilities();
@@ -131,7 +138,7 @@ public class RepositoryInfoFrame extends JFrame {
                 addLine("Changes:").setText(str(cap.getChangesCapability()));
                 addLine("ACLs:").setText(str(cap.getAclCapability()));
 
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 if (cap.getNewTypeSettableAttributes() != null) {
                     if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetId())) {
                         appendToString(sb, "id");

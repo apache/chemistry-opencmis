@@ -248,6 +248,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         } catch (CmisBaseException e) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Folder could not be created! Exception: " + e.getMessage(),
                     e, true));
+            return null;
         }
 
         try {
@@ -373,6 +374,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         } catch (Exception e) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Document could not be created! Exception: " + e.getMessage(),
                     e, true));
+            return null;
         }
 
         try {
@@ -463,12 +465,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     "Relationship could not be created! Exception: " + e.getMessage(), e, true));
         }
 
-        try {
-            // check the new relationship
-            addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
-        } catch (CmisBaseException e) {
-            addResult(createResult(UNEXPECTED_EXCEPTION,
-                    "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
+        if (result != null) {
+            try {
+                // check the new relationship
+                addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
+            } catch (CmisBaseException e) {
+                addResult(createResult(UNEXPECTED_EXCEPTION,
+                        "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
+            }
         }
 
         return result;

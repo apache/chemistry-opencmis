@@ -61,7 +61,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Versioning Service operations.
  */
-public class VersioningService {
+public final class VersioningService {
 
     private VersioningService() {
     }

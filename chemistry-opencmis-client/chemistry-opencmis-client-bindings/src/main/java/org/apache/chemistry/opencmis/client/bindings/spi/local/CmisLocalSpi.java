@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CmisLocalSpi implements CmisSpi {
 
-    private static final Logger log = LoggerFactory.getLogger(CmisLocalSpi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CmisLocalSpi.class);
 
     private final CmisServiceFactory factory;
 
@@ -63,8 +63,8 @@ public class CmisLocalSpi implements CmisSpi {
      * Constructor.
      */
     public CmisLocalSpi(BindingSession session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing local SPI...");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Initializing local SPI...");
         }
 
         // get the service factory class name

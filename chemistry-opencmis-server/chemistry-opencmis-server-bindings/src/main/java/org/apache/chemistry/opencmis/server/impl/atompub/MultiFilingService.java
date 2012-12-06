@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 /**
  * MultiFiling Service operations.
  */
-public class MultiFilingService {
+public final class MultiFilingService {
 
     private MultiFilingService() {
     }

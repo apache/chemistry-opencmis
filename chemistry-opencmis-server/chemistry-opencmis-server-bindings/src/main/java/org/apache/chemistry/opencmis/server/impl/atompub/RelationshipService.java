@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 /**
  * Relationship Service operations.
  */
-public class RelationshipService {
+public final class RelationshipService {
 
     private RelationshipService() {
     }

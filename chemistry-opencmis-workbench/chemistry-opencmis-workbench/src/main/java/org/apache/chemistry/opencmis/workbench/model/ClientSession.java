@@ -146,6 +146,7 @@ public class ClientSession {
             parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                     CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
             break;
+        default:
         }
 
         if (compression) {
