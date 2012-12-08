@@ -150,6 +150,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
@@ -621,6 +622,9 @@ public final class JSONConverter {
             break;
         case CMIS_ITEM:
             result = new ItemTypeDefinitionImpl();
+            break;
+        case CMIS_SECONDARY:
+            result = new SecondaryTypeDefinitionImpl();
             break;
         default:
             throw new CmisRuntimeException("Type '" + id + "' does not match a base type!");
