@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
+x * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
@@ -31,6 +31,7 @@ public class InMemoryAcl implements Cloneable{
     
     private List<InMemoryAce> acl;
     private int id;
+    @SuppressWarnings("serial")
     private static InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(InMemoryAce.getDefaultAce()); }} );
     private static class AceComparator<T extends InMemoryAce> implements Comparator<T> {
 

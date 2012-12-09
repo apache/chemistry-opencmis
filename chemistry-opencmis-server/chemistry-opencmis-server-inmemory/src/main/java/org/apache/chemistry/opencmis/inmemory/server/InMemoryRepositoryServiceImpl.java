@@ -33,7 +33,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
@@ -183,8 +182,6 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
         if (null == typeDefC)
             throw new CmisInvalidArgumentException("Cannot delete type unknown type id: " + typeId);
-
-        TypeDefinition typeDef =  typeDefC.getTypeDefinition();
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         if (objectStore.isTypeInUse(typeId)) {

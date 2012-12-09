@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.slf4j.Logger;
@@ -80,7 +79,6 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension);
         StoredObject so = sos[0];
 
-        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject folder = sos[1];
 
         checkObjects(so, folder);

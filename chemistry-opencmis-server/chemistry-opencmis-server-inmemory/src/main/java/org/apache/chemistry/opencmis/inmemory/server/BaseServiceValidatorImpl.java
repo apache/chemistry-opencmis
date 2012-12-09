@@ -270,7 +270,6 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     public StoredObject getObject(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
-        String principalId = context.getUsername();
         StoredObject so = checkStandardParameters(repositoryId, objectId);
         return so;
     }

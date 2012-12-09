@@ -273,6 +273,7 @@ public class StoredObjectImpl implements StoredObject {
      * CMIS_LAST_MODIFICATION_DATE, CMIS_CHANGE_TOKEN system properties to the
      * list of properties with current values
      */
+    @SuppressWarnings("unchecked")
     private void addSystemBaseProperties(Map<String, PropertyData<?>> properties, String user, boolean isCreated) {
         if (user == null) {
             user = "unknown";

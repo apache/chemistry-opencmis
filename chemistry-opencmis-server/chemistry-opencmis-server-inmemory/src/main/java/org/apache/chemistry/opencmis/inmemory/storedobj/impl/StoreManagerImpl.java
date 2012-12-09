@@ -198,7 +198,7 @@ public class StoreManagerImpl implements StoreManager {
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
-        Collection<TypeDefinitionContainer> typeColl = typeManager.getTypeDefinitionList();
+        Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId);
         if (includePropertyDefinitions) {
             result = typeColl;
         } else {
@@ -213,10 +213,6 @@ public class StoreManagerImpl implements StoreManager {
             }
         }
         return result;
-    }
-
-    public Map<String, TypeDefinitionContainer> getTypeDefinitionMap(String repositoryId) {
-        return null;
     }
 
     public List<TypeDefinitionContainer> getRootTypes(String repositoryId) {
@@ -347,6 +343,7 @@ public class StoreManagerImpl implements StoreManager {
         typeManager.initTypeSystem(typeDefs);
     }
 
+    @SuppressWarnings("serial")
     private RepositoryInfo createRepositoryInfo(String repositoryId) {
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
@@ -364,7 +361,7 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setChangesOnType(null);
         repoInfo.setLatestChangeLogToken(Long.valueOf(new Date(0).getTime()).toString());
         repoInfo.setVendorName("Apache Chemistry");
-        repoInfo.setProductName("OpenCMIS InMemory-Server");
+        repoInfo.setProductName(OPENCMIS_SERVER);
         repoInfo.setProductVersion(OPENCMIS_VERSION);
 
         // set capabilities
@@ -451,8 +448,8 @@ public class StoreManagerImpl implements StoreManager {
             List<BaseTypeId> changesOnType = new ArrayList<BaseTypeId>() {{
                 add(BaseTypeId.CMIS_DOCUMENT);
                 add(BaseTypeId.CMIS_FOLDER);
-//                add(BaseTypeId.CMIS_ITEM);
-//                add(BaseTypeId.CMIS_SECONDARY);
+                add(BaseTypeId.CMIS_ITEM);
+                add(BaseTypeId.CMIS_SECONDARY);
             }};
             repoInfo.setChangesOnType(changesOnType);
             
