@@ -28,18 +28,23 @@ import java.util.Map.Entry;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyDefinitionType;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +88,17 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     public synchronized Collection<TypeDefinitionContainer> getTypeDefinitionList() {
 
         List<TypeDefinitionContainer> typeRoots = new ArrayList<TypeDefinitionContainer>();
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+
         // iterate types map and return a list collecting the root types:
         for (TypeDefinitionContainer typeDef : fTypesMap.values()) {
             if (typeDef.getTypeDefinition().getParentTypeId() == null) {
-                typeRoots.add(typeDef);
+                if (cmis11) {
+                    typeRoots.add(typeDef);
+                } else if (!typeDef.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value()) && 
+                            ! typeDef.getTypeDefinition().getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
+                    typeRoots.add(typeDef);                        
+                }
             }
         }
 
@@ -237,7 +249,10 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         if (c.getTypeDefinition().equals(InMemoryFolderTypeDefinition.getRootFolderType())
                 || c.getTypeDefinition().equals(InMemoryDocumentTypeDefinition.getRootDocumentType())
                 || c.getTypeDefinition().equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType())
-                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())) {
+                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())
+                || c.getTypeDefinition().equals(InMemoryItemTypeDefinition.getRootItemType()) // CMIS 1.1
+                || c.getTypeDefinition().equals(InMemorySecondaryTypeDefinition.getRootSecondaryType()) // CMIS 1.1
+                ) {
             return true;
         } else {
             return false;
@@ -250,19 +265,5 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         PropertyDefinition<?> clone = Converter.convert(tmp);
         return clone;
     }
-
-    // private static PropertyDefinition<?>
-    // clonePropertyDefinition2(PropertyDefinition<?> src)
-    // throws IOException, ClassNotFoundException {
-    // ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    // ObjectOutputStream oout = new ObjectOutputStream(bout);
-    // oout.writeObject(src);
-    // byte[] bytes = bout.toByteArray();
-    //
-    // ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-    // ObjectInputStream oin = new ObjectInputStream(bin);
-    // PropertyDefinition<?> clone = (PropertyDefinition<?>) oin.readObject();
-    // return clone;
-    // }
 
 }

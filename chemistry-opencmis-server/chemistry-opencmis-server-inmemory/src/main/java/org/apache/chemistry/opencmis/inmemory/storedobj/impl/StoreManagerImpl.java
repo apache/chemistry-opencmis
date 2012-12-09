@@ -225,7 +225,24 @@ public class StoreManagerImpl implements StoreManager {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
-
+        
+        // remove cmis:item and cmis:secondary for CMIS 1.0
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+        if (!cmis11) {
+            rootTypes = new ArrayList<TypeDefinitionContainer>(rootTypes);
+            TypeDefinitionContainer tcItem = null, tcSecondary = null;
+            for(TypeDefinitionContainer tc : rootTypes) {
+                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value()))
+                    tcItem = tc;
+                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_SECONDARY.value()))
+                    tcSecondary = tc;
+            }
+            if (tcItem != null)
+                rootTypes.remove(tcItem);
+            if (tcSecondary != null)
+                rootTypes.remove(tcSecondary);
+        }
+        
         return rootTypes;
     }
 

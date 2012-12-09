@@ -18,8 +18,11 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -252,6 +255,12 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     public StoredObject createPolicy(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
     	 return checkStandardParameters(repositoryId, folderId);
     }
+
+    // CMIS 1.1
+    public StoredObject createItem(CallContext context, String repositoryId, Properties properties, String folderId,
+            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
+        return checkStandardParametersAllowNull(repositoryId, folderId);
+   }
 
     public StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {

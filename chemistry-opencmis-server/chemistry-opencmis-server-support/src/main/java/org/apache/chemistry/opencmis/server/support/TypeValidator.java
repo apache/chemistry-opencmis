@@ -244,44 +244,52 @@ public class TypeValidator {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory) {
+        validateProperties(typeDef, properties, false, checkMandatory, false);
+    }
 
+    public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory, boolean cmis11) {
+
+        validateProperties(typeDef, properties, false, checkMandatory, cmis11);
+    }
+
+    public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean allowUnknowns, boolean checkMandatory, boolean cmis11) {
         List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
 
         if(properties != null) {
-			for (PropertyData<?> prop : properties.getProperties().values()) {
-				String propertyId = prop.getId();
-				BaseTypeId baseTypeId = typeDef.getBaseTypeId();
+            for (PropertyData<?> prop : properties.getProperties().values()) {
+                String propertyId = prop.getId();
+                BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
-				// check that all mandatory attributes are present
-				if (checkMandatory && propDefsRequired.contains(propertyId)) {
-					propDefsRequired.remove(propertyId);
-				}
+                // check that all mandatory attributes are present
+                if (checkMandatory && propDefsRequired.contains(propertyId)) {
+                    propDefsRequired.remove(propertyId);
+                }
 
-				if (isSystemProperty(baseTypeId, propertyId)) {
-					continue; // ignore system properties for validation
-				}
+                if (isSystemProperty(baseTypeId, propertyId, cmis11)) {
+                    continue; // ignore system properties for validation
+                }
 
-				// Check if all properties are known in the type
-				if (!typeContainsProperty(typeDef, propertyId)) {
-					throw new CmisConstraintException("Unknown property "
-							+ propertyId + " in type " + typeDef.getId());
-				}
-
-				// check all type specific constraints:
-				PropertyDefinition<T> propDef = getPropertyDefinition(typeDef,
-						propertyId);
-				PropertyValidator<T> validator = createPropertyValidator(propDef);
-				validator.validate(propDef, (PropertyData<T>) prop);
-			}
+                // Check if all properties are known in the type
+                if (typeContainsProperty(typeDef, propertyId)) {
+                    // check all type specific constraints:
+                    PropertyDefinition<T> propDef = getPropertyDefinition(typeDef,
+                            propertyId);
+                    PropertyValidator<T> validator = createPropertyValidator(propDef);
+                    validator.validate(propDef, (PropertyData<T>) prop);
+                }
+                else if (!allowUnknowns) {
+                    throw new CmisConstraintException("Unknown property "
+                            + propertyId + " in type " + typeDef.getId());
+                }
+            }
         }
 
         if (checkMandatory && !propDefsRequired.isEmpty()) {
             throw new CmisConstraintException("The following mandatory properties are missing: " + propDefsRequired);
-        }
+        }    
     }
-
+    
     public static void validateVersionStateForCreate(DocumentTypeDefinition typeDef, VersioningState verState) {
         if (null == verState) {
             return;
@@ -397,7 +405,7 @@ public class TypeValidator {
         }
     }
 
-    private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId) {
+    private static boolean isSystemProperty(BaseTypeId baseTypeId, String propertyId, boolean cmis11) {
 
         if (propertyId.equals(PropertyIds.NAME)) {
             return true;
@@ -416,6 +424,10 @@ public class TypeValidator {
         } else if (propertyId.equals(PropertyIds.LAST_MODIFICATION_DATE)) {
             return true;
         } else if (propertyId.equals(PropertyIds.CHANGE_TOKEN)) {
+            return true;
+        } else if (cmis11 && propertyId.equals(PropertyIds.DESCRIPTION)) {
+            return true;
+        } else if (cmis11 && propertyId.equals(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
             return true;
         }
 

@@ -92,6 +92,29 @@ public interface StoredObject {
      *            id of the type this object gets assigned.
      */
     void setTypeId(String type);
+    
+    /**
+     * CMIS 1.1 add a secondary type
+     * 
+     * @param typeId
+     *      id of secondary type to add
+     */
+    void addSecondaryType (String typeId);
+
+    /**
+     * CMIS 1.1 add a list of secondary types
+     * 
+     * @param typeId
+     *      id of secondary type to add
+     */
+    void addSecondaryTypes(List<String> typeIds);
+    
+    /**
+     * CMIS 1.1 get ids of all secondary types
+     * @return
+     *      list of type ids
+     */
+    List<String> getSecondaryTypeIds();
 
     /**
      * CMIS 1.1: set description of an object

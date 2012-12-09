@@ -267,6 +267,21 @@ public class ObjectStoreImpl implements ObjectStore {
         return doc;
     }
 
+    public StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
+            Acl addACEs, Acl removeACEs) {
+        StoredObjectImpl item = new ItemImpl(this);
+        item.createSystemBasePropertiesWhenCreated(propMap, user);
+        item.setCustomProperties(propMap);
+        item.setRepositoryId(fRepositoryId);
+        item.setName(name);
+        if (null != folder) {
+            ((FolderImpl)folder).addChildItem(item); // add document to folder and
+        }
+        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        item.setAclId(aclId);
+        return item;
+    }
+    
     public DocumentVersion createVersionedDocument(String name,
     		Map<String, PropertyData<?>> propMap, String user, Folder folder,
 			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState) {

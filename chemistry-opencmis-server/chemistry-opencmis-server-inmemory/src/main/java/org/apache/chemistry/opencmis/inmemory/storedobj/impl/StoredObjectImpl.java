@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -72,6 +74,7 @@ public class StoredObjectImpl implements StoredObject {
     protected final ObjectStoreImpl fObjStore;
     protected int fAclId;
     protected String description; // CMIS 1.1
+    protected List<String> secondaryTypeIds; // CMIS 1.1
 
     StoredObjectImpl(ObjectStoreImpl objStore) { // visibility should be package
         GregorianCalendar now = getNow();
@@ -79,6 +82,7 @@ public class StoredObjectImpl implements StoredObject {
         fCreatedAt = now;
         fModifiedAt = now;
         fObjStore = objStore;
+        secondaryTypeIds = new ArrayList<String>();
     }
 
     public String getId() {
@@ -149,6 +153,18 @@ public class StoredObjectImpl implements StoredObject {
     // CMIS 1.1:
     public String getDescription() {
         return description;
+    }
+
+    public void addSecondaryType (String typeId) {
+        secondaryTypeIds.add(typeId);
+    }
+
+    public void addSecondaryTypes(List<String> typeIds) {
+        secondaryTypeIds.addAll(typeIds);
+    }
+
+    public List<String> getSecondaryTypeIds() {
+        return Collections.unmodifiableList(secondaryTypeIds);
     }
 
     public void setProperties(Map<String, PropertyData<?>> props) {
@@ -267,6 +283,9 @@ public class StoredObjectImpl implements StoredObject {
         setModifiedBy(user);
         if (null != properties.get(PropertyIds.DESCRIPTION))
             setDescription((String)properties.get(PropertyIds.DESCRIPTION).getFirstValue());
+        
+        if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS))
+            addSecondaryTypes((List<String>)properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
         
         if (isCreated) {
             setCreatedBy(user);

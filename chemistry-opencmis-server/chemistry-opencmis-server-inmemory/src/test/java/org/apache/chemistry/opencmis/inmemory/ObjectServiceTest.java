@@ -72,6 +72,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataIm
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.After;
@@ -106,6 +108,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
     private static final String TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
     private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
     private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
+    private static final String TEST_ITEM_TYPE_ID = "MyItemType";
+    private static final String ITEM_STRING_PROP = "ItemStringProp";
     private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
     private static final String DOCUMENT_ID = "Document_1";
     private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
@@ -116,6 +120,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     private static final String JPEG = "image/jpeg";
     private static final String NEW_STRING_PROP_VAL = "My ugly string 1";
     private static final BigInteger NEW_INT_PROP_VAL = BigInteger.valueOf(815);
+    public static final String TEST_SECONDARY_TYPE_ID = "MySecondaryType";
+    public static final String SECONDARY_STRING_PROP = "SecondaryStringProp";
+    public static final String SECONDARY_INTEGER_PROP = "SecondaryIntegerProp";
 
     ObjectCreator fCreator;
 
@@ -1147,6 +1154,89 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("... testBulkUpdateProperties() finished.");
     }
 
+    // CMIS 1.1: test item typpe
+    @Test
+    public void testItemCreation() {
+ 
+        log.info("starting testItemCreation() ...");
+        String propVal = "abc123";
+        String name = "CoolItem";
+        String id = createItem(name, fRootFolderId, propVal);
+        if (id != null) {
+            log.info("testItemCreation succeeded with created id: " + id);
+        }
+        log.info("... testCreateObject() finished.");
+        
+        // read document again and check properties
+        ObjectData res = getDocumentObjectData(id);
+        String returnedId = res.getId();
+        Map<String, PropertyData<?>> props = res.getProperties().getProperties();
+        testReturnedProperties(returnedId, name, TEST_ITEM_TYPE_ID, props);
+        PropertyData<?> pd = props.get(ITEM_STRING_PROP);
+        assertEquals(propVal, pd.getFirstValue());
+        assertEquals(12, props.size()); // should not contain all the document properties
+        log.info("... finished testItemCreation()");
+    }
+    
+    @Test
+    public void testSecondaryTypes() {
+        log.info("starting testItemCreation() ...");
+        final String strPropVal = "Secondary";
+        final BigInteger intPropVal = BigInteger.valueOf(100);
+        final String primaryPropVal = "Sample Doc String Property";
+        
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "ObjectWithSecondaryType"));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, TEST_SECONDARY_TYPE_ID));
+        properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal));
+        properties.add(fFactory.createPropertyIntegerData(SECONDARY_INTEGER_PROP, intPropVal));
+        Properties props = fFactory.createPropertiesData(properties);
+        
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
+                null, null, null);
+        assertNotNull(id);
+        
+        Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+        assertNotNull(res.getProperties());
+        Map<String, PropertyData<?>> returnedProps = res.getProperties();
+        assertNotNull(returnedProps);
+        String returnedValueStr = (String) returnedProps.get(SECONDARY_STRING_PROP).getFirstValue();
+        BigInteger returnedValueInt = (BigInteger) returnedProps.get(SECONDARY_INTEGER_PROP).getFirstValue();
+        assertEquals(strPropVal, returnedValueStr);
+        assertEquals(intPropVal, returnedValueInt);
+        String returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
+        assertEquals(primaryPropVal, returnedPrimaryPropVal);
+        
+        // test updating properties
+        final String strPropVal2 = "Secondary updated";
+        final String primaryPropVal2 = "Sample Doc String Property updated";
+        properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal2));
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
+        props = fFactory.createPropertiesData(properties);
+//        fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
+//        
+//        res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+//        assertNotNull(res.getProperties());
+//        returnedProps = res.getProperties();
+//        assertNotNull(returnedProps);
+//        returnedValueStr = (String) returnedProps.get(SECONDARY_STRING_PROP).getFirstValue();
+//        returnedValueInt = (BigInteger) returnedProps.get(SECONDARY_INTEGER_PROP).getFirstValue();
+//        assertEquals(strPropVal2, returnedValueStr);
+//        assertEquals(intPropVal, returnedValueInt);
+//        returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
+//        assertEquals(primaryPropVal2, returnedPrimaryPropVal);
+      
+        log.info("... finished testSecondaryTypes()");        
+    }
+    
+    // TODO: test add secondary type
+    // TODO: remove secondary type
+    // TODO: test constraints on secondary types
+    
+    
     private void verifyUpdatedProperties(String id, String name) {
         
         ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE, null, false, false, null);
@@ -1333,6 +1423,18 @@ public class ObjectServiceTest extends AbstractServiceTest {
         return createDocument(name, folderId, DOCUMENT_TYPE_ID, withContent);
     }
 
+    private String createItem(String name, String folderId, String itemPropVal) {
+        
+        // create the properties:
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, name));
+        properties.add(fFactory.createPropertyStringData(ITEM_STRING_PROP, itemPropVal));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_ITEM_TYPE_ID));
+        Properties props = fFactory.createPropertiesData(properties);
+
+        return fObjSvc.createItem(fRepositoryId, props, folderId, null, null, null, null);
+    }
+
     private Properties createDocumentPropertiesForDocumentFromSource(String name) {
         // We only provide a name but not a type id, as spec says to copy
         // missing attributes
@@ -1467,6 +1569,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             InMemoryDocumentTypeDefinition noContentType = createCustomTypeNoContent();
             InMemoryDocumentTypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
 
+            
             // add type to types collection
             typesList.add(cmisDocumentType);
             typesList.add(cmisFolderType);
@@ -1476,6 +1579,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
             typesList.add(createCustomInheritedType(customDocType));
             typesList.add(createDocumentTypeWithDefault());
             typesList.add(createFolderTypeWithDefault());
+            typesList.add(createItemType());
+            typesList.add(createSecondaryType());
+            
             return typesList;
         }
 
@@ -1595,6 +1701,43 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
 
             return cmisFolderType;
+        }
+        
+        private static InMemoryItemTypeDefinition createItemType() {
+            //CMIS 1.1 create an item item type
+
+            InMemoryItemTypeDefinition cmisItemType = new InMemoryItemTypeDefinition(TEST_ITEM_TYPE_ID, "MyItemType");
+            // create a single String property definition
+
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(ITEM_STRING_PROP,
+                    "Item String Property", Updatability.READWRITE);
+            propertyDefinitions.put(prop1.getId(), prop1);
+            cmisItemType.addCustomPropertyDefinitions(propertyDefinitions);
+            // add type to types collection
+            return cmisItemType;            
+        }
+        
+        private static InMemorySecondaryTypeDefinition createSecondaryType() {
+            //CMIS 1.1 create an item item type
+
+            InMemorySecondaryTypeDefinition cmisSecondaryType = new InMemorySecondaryTypeDefinition(TEST_SECONDARY_TYPE_ID, 
+                    "MySecondaryType");
+            // create a single String property definition
+
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(SECONDARY_STRING_PROP,
+                    "Secondary String Property", Updatability.READWRITE);
+            propertyDefinitions.put(prop1.getId(), prop1);
+            PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(SECONDARY_INTEGER_PROP,
+                    "Secondary Integer Property", Updatability.READWRITE);
+            prop2.setIsRequired(true);
+            propertyDefinitions.put(prop2.getId(), prop2);
+            cmisSecondaryType.addCustomPropertyDefinitions(propertyDefinitions);
+
+            return cmisSecondaryType;            
         }
     }
 

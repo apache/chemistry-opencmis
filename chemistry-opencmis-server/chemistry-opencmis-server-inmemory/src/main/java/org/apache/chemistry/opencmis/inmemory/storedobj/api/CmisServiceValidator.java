@@ -18,8 +18,11 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -107,6 +110,7 @@ public interface CmisServiceValidator {
     StoredObject setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             Boolean overwriteFlag, ExtensionsData extension);
     
+    // CMIS 1.1
     StoredObject appendContentStream(CallContext context, String repositoryId, Holder<String> objectId,
             ExtensionsData extension);
 
@@ -162,9 +166,11 @@ public interface CmisServiceValidator {
     StoredObject create(CallContext context, String repositoryId, String folderId,
             ExtensionsData extension);
 
-//    StoredObject deleteObjectOrCancelCheckOut(CallContext context, String repositoryId,
-//            String objectId, ExtensionsData extension);
-
     StoredObject applyAcl(CallContext context, String repositoryId, String objectId);
+
+    // CMIS 1.1
+    StoredObject createItem(CallContext context, String repositoryId, Properties properties, String folderId,
+            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension);
+
 
  }

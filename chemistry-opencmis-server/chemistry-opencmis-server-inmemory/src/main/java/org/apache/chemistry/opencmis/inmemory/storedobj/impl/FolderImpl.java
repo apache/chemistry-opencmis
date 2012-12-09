@@ -93,6 +93,10 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         addChildObject(doc);
     }
 
+    public void addChildItem(StoredObject item) {
+        addChildObject(item);
+    }
+
     private void addChildObject(StoredObject so) {
         try {
             fObjStore.lock();

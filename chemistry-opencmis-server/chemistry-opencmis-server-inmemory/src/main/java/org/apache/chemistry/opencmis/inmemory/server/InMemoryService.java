@@ -237,6 +237,12 @@ public class InMemoryService extends AbstractCmisService {
     }
 
     @Override
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        return fObjSvc.createItem(getCallContext(), repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+    }
+
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         fObjSvc.deleteContentStream(getCallContext(), repositoryId, objectId, changeToken, extension);

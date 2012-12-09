@@ -127,7 +127,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         int totalSize = getRecursiveSize(types);
 
         assertEquals(expectedSize, totalSize);
-        assertEquals(2, types.size());
+        assertEquals(4, types.size());
 
         for (TypeDefinitionContainer type : types) {
             assertNotNull(type);
@@ -502,6 +502,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         } else if (baseTypeId.equals(BaseTypeId.CMIS_RELATIONSHIP.value())) {
             assertTrue(propDefs.containsKey(PropertyIds.SOURCE_ID));
             assertTrue(propDefs.containsKey(PropertyIds.TARGET_ID));
+        } else if (baseTypeId.equals(BaseTypeId.CMIS_ITEM.value())) {
+        } else if (baseTypeId.equals(BaseTypeId.CMIS_SECONDARY.value())) {
         } else {
             fail("Unknown base type id in type definition");
         }

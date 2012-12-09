@@ -101,7 +101,7 @@ public interface ObjectStore {
 
     /**
      * Create a folder as initial step. The folder is created but still
-     * temporary It is not yet persisted and does not have an id yet. After this
+     * temporary. It is not yet persisted and does not have an id yet. After this
      * call additional actions can take place (like assigning properties and a
      * type) before it is persisted.
      * 
@@ -145,6 +145,29 @@ public interface ObjectStore {
     DocumentVersion createVersionedDocument(String name,
 			Map<String, PropertyData<?>> propMap, String user, Folder folder,
 			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState);
+
+    /**
+     * Create an item as initial step. The item is created but still
+     * temporary. It is not yet persisted and does not have an id yet. After this
+     * call additional actions can take place (like assigning properties and a
+     * type) before it is persisted.
+     * 
+     * @param name
+     *            name of the document
+     * @param propMap
+     *            map of properties   
+     * @param user
+     *            the user who creates the document
+     * @param folder
+     *            the parent folder 
+     * @param addACEs
+     *            aces that are added 
+     * @param removeACEs 
+     *            aces that are removed
+     * @return document object
+     */
+    StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
+            Acl addACEs, Acl removeACEs);
 
     /**
      * Clear repository and remove all data.
