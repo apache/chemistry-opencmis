@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +29,11 @@ import java.util.Map.Entry;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyDefinitionType;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
@@ -85,24 +82,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getTypeDefinitionList()
      */
-    public synchronized Collection<TypeDefinitionContainer> getTypeDefinitionList() {
-
-        List<TypeDefinitionContainer> typeRoots = new ArrayList<TypeDefinitionContainer>();
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
-
-        // iterate types map and return a list collecting the root types:
-        for (TypeDefinitionContainer typeDef : fTypesMap.values()) {
-            if (typeDef.getTypeDefinition().getParentTypeId() == null) {
-                if (cmis11) {
-                    typeRoots.add(typeDef);
-                } else if (!typeDef.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value()) && 
-                            ! typeDef.getTypeDefinition().getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
-                    typeRoots.add(typeDef);                        
-                }
-            }
-        }
-
-        return typeRoots;
+    public Collection<TypeDefinitionContainer> getTypeDefinitionList() {
+        return Collections.unmodifiableCollection(fTypesMap.values());
     }
 
     /* (non-Javadoc)
