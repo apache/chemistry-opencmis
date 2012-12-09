@@ -629,10 +629,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         		}
 
         		PropertyData<?> value = properties.getProperties().get(key);
-        		PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-        		if (null == propDef) {
-        		    throw new CmisInvalidArgumentException("Cannot update property " + key + ": not contained in type");
+                PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
+        		if (null == propDef && cmis11) {
+        		    TypeDefinition typeDefSecondary= getSecondaryTypeDefinition(so, key);
+        		    if (null == typeDefSecondary)
+        		        throw new CmisInvalidArgumentException("Cannot update property " + key + ": not contained in type");
+        		    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
         		}
+
         		if (value.getValues() == null || value.getFirstValue() == null) {
         			// delete property
         			// check if a required a property
@@ -1242,5 +1246,22 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 TypeValidator.validateProperties(typeDef, properties, true, checkMandatory, true);
             }
         }
+    }
+    
+    private TypeDefinition getSecondaryTypeDefinition(StoredObject so, String propertyId) {
+        List<String> secondaryTypeIds = so.getSecondaryTypeIds();
+        if (null == secondaryTypeIds || secondaryTypeIds.isEmpty())
+            return null;
+        
+        for (String typeId : secondaryTypeIds) {
+            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(so.getRepositoryId(), typeId);
+            TypeDefinition typeDef = typeDefC.getTypeDefinition();
+
+            if (TypeValidator.typeContainsProperty(typeDef, propertyId)) {
+                return typeDef;
+            }
+        }
+
+        return null;
     }
 }

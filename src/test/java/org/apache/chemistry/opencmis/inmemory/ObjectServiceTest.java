@@ -1214,20 +1214,20 @@ public class ObjectServiceTest extends AbstractServiceTest {
         final String primaryPropVal2 = "Sample Doc String Property updated";
         properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal2));
-        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal2));
         props = fFactory.createPropertiesData(properties);
-//        fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
-//        
-//        res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
-//        assertNotNull(res.getProperties());
-//        returnedProps = res.getProperties();
-//        assertNotNull(returnedProps);
-//        returnedValueStr = (String) returnedProps.get(SECONDARY_STRING_PROP).getFirstValue();
-//        returnedValueInt = (BigInteger) returnedProps.get(SECONDARY_INTEGER_PROP).getFirstValue();
-//        assertEquals(strPropVal2, returnedValueStr);
-//        assertEquals(intPropVal, returnedValueInt);
-//        returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
-//        assertEquals(primaryPropVal2, returnedPrimaryPropVal);
+        fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
+        
+        res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+        assertNotNull(res.getProperties());
+        returnedProps = res.getProperties();
+        assertNotNull(returnedProps);
+        returnedValueStr = (String) returnedProps.get(SECONDARY_STRING_PROP).getFirstValue();
+        returnedValueInt = (BigInteger) returnedProps.get(SECONDARY_INTEGER_PROP).getFirstValue();
+        assertEquals(strPropVal2, returnedValueStr);
+        assertEquals(intPropVal, returnedValueInt);
+        returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
+        assertEquals(primaryPropVal2, returnedPrimaryPropVal);
       
         log.info("... finished testSecondaryTypes()");        
     }
