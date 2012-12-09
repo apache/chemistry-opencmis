@@ -27,12 +27,14 @@ import java.util.Map.Entry;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -267,6 +269,16 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
                         PropertyIds.CONTENT_STREAM_MIME_TYPE, fContent.getMimeType()));
             }
         }
+
+        // CMIS 1.1
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+
+        if (cmis11 && FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
+            properties.put(PropertyIds.IS_PRIVATE_WORKING_COPY,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_PRIVATE_WORKING_COPY, isPwc()));
+        }
+        
+        
     }
 
     @Override

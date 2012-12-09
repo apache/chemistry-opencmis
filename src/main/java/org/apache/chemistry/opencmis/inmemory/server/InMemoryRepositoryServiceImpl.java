@@ -72,8 +72,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
         boolean inclPropDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions;
         getRepositoryInfoFromStoreManager(repositoryId); // just to check if
-        // repository
-        // exists
+        // repository exists
 
         int skip = skipCount == null ? 0 : skipCount.intValue();
         int max = maxItems == null ? -1 : maxItems.intValue();

@@ -45,6 +45,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     public static final String COMPLEX_TYPE = "ComplexType";
     public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     public static final String VERSIONED_TYPE = "VersionableType";
+    public static final String ITEM_TYPE = "MyItemType";
     public static final String LEVEL1_TYPE = "DocumentLevel1";
     public static final String LEVEL2_TYPE = "DocumentLevel2";
 
@@ -282,6 +283,21 @@ public class DefaultTypeSystemCreator implements TypeCreator {
 
         // add type to types collection
         typesList.add(cmisVersionedType);
+        
+        //CMIS 1.1 create an item item type
+
+        InMemoryItemTypeDefinition cmisItemType = new InMemoryItemTypeDefinition(ITEM_TYPE, "MyItemType");
+
+        // create a single String property definition
+
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+
+        prop1 = PropertyCreationHelper.createStringDefinition("ItemStringProp",
+                "Item String Property", Updatability.READWRITE);
+        propertyDefinitions.put(prop1.getId(), prop1);
+        cmisItemType.addCustomPropertyDefinitions(propertyDefinitions);
+        // add type to types collection
+        typesList.add(cmisItemType);
 
         return typesList;
     }

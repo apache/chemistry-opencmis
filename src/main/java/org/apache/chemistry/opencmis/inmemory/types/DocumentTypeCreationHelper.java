@@ -67,6 +67,13 @@ public class DocumentTypeCreationHelper {
         // cmisType = PolicyTypeDefinition.getRootPolicyType();
         // typesList.add(cmisType);
 
+        // CMIS 1.1
+        cmisType = InMemoryItemTypeDefinition.getRootItemType();
+        typesList.add(cmisType);
+        
+        cmisType = InMemorySecondaryTypeDefinition.getRootSecondaryType();
+        typesList.add(cmisType);
+
         return typesList;
     }
 
@@ -121,6 +128,9 @@ public class DocumentTypeCreationHelper {
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.DESCRIPTION, "Description", Updatability.READWRITE);
         propertyDefinitions.put(propS.getId(), propS);
 
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
+                Updatability.READONLY);
+        propertyDefinitions.put(propId.getId(), propId);
     }
 
     public static void setBasicDocumentPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
@@ -184,6 +194,12 @@ public class DocumentTypeCreationHelper {
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "Stream Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
+        // CMIS 1.1:
+        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_PRIVATE_WORKING_COPY, "Private Working Copy", 
+                Updatability.READONLY);
+        propertyDefinitions.put(propB.getId(), propB);
+
+        propertyDefinitions.put(propS.getId(), propS);
     }
 
     public static void setBasicFolderPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
@@ -201,7 +217,6 @@ public class DocumentTypeCreationHelper {
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH,
                 "Path", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
-
     }
 
     public static void setBasicPolicyPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {

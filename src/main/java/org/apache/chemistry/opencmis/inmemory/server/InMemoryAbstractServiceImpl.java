@@ -68,7 +68,7 @@ public class InMemoryAbstractServiceImpl {
     protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj) {
 
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId());
-        return typeDefC.getTypeDefinition();
+        return typeDefC == null ? null : typeDefC.getTypeDefinition();
     }
 
     /**
