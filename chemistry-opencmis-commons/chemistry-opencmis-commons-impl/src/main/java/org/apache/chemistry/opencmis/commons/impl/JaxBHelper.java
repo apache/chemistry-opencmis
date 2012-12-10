@@ -37,9 +37,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 
 /**
  * JAXB helper class.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public final class JaxBHelper {
 
@@ -52,10 +49,15 @@ public final class JaxBHelper {
     public static final JAXBContext CONTEXT;
     static {
         JAXBContext jc = null;
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(JaxBHelper.class.getClassLoader());
+
             jc = JAXBContext.newInstance(ObjectFactory.class, CMISExtraObjectFactory.class);
         } catch (JAXBException e) {
             e.printStackTrace();
+        } finally {
+            Thread.currentThread().setContextClassLoader(cl);
         }
         CONTEXT = jc;
     }
