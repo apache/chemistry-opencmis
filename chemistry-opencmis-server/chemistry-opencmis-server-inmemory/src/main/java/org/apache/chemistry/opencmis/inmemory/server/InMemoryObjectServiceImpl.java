@@ -22,8 +22,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -622,6 +624,27 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // update properties
         boolean hasUpdatedProp = false;
 
+        // Find secondary type definitions to consider for update
+        List<String> existingSecondaryTypeIds = so.getSecondaryTypeIds();
+        @SuppressWarnings("unchecked")
+        PropertyData<String> pdSec = (PropertyData<String>) properties.getProperties().get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        List<String> newSecondaryTypeIds = pdSec == null ? null : pdSec.getValues();
+        Set<String> secondaryTypeIds = new HashSet<String>();
+        if (null != existingSecondaryTypeIds)
+            secondaryTypeIds.addAll(existingSecondaryTypeIds);
+        if (null != newSecondaryTypeIds)
+            secondaryTypeIds.addAll(newSecondaryTypeIds);
+
+        // Find secondary type definitions to delete
+        // TODO: implement this
+        if (null != newSecondaryTypeIds && newSecondaryTypeIds.size() > 0) {
+            List<String> propertiesIdToDelete = getListOfPropertiesToDeleteFromRemovedSecondaryTypes(repositoryId, so, newSecondaryTypeIds);
+            for (String propIdToRemove : propertiesIdToDelete) {
+                so.getProperties().remove(propIdToRemove);
+            }
+        }
+
+        // update properties:
         if(properties != null) {
         	for (String key : properties.getProperties().keySet()) {
         		if (key.equals(PropertyIds.NAME)) {
@@ -631,7 +654,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         		PropertyData<?> value = properties.getProperties().get(key);
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
         		if (null == propDef && cmis11) {
-        		    TypeDefinition typeDefSecondary= getSecondaryTypeDefinition(so, key);
+        		    TypeDefinition typeDefSecondary= getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
         		    if (null == typeDefSecondary)
         		        throw new CmisInvalidArgumentException("Cannot update property " + key + ": not contained in type");
         		    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
@@ -767,7 +790,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
 
-        // TODO: add support for secondary types
         List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
         for ( BulkUpdateObjectIdAndChangeToken obj: objectIdAndChangeToken) {
             Holder<String> objId = new Holder<String>(obj.getId());
@@ -1248,13 +1270,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
     }
     
-    private TypeDefinition getSecondaryTypeDefinition(StoredObject so, String propertyId) {
-        List<String> secondaryTypeIds = so.getSecondaryTypeIds();
+    private TypeDefinition getSecondaryTypeDefinition(String repositoryId, Set<String> secondaryTypeIds, String propertyId) {
         if (null == secondaryTypeIds || secondaryTypeIds.isEmpty())
             return null;
         
         for (String typeId : secondaryTypeIds) {
-            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(so.getRepositoryId(), typeId);
+            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
             TypeDefinition typeDef = typeDefC.getTypeDefinition();
 
             if (TypeValidator.typeContainsProperty(typeDef, propertyId)) {
@@ -1264,4 +1285,24 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         return null;
     }
+
+    private List<String> getListOfPropertiesToDeleteFromRemovedSecondaryTypes(String repositoryId, StoredObject so,
+            List<String> newSecondaryTypeIds) {
+        
+        List<String> propertiesToDelete = new ArrayList<String>(); // properties id to be removed
+        
+        // calculate delta to be removed
+        List<String> existingSecondaryTypeIds = so.getSecondaryTypeIds();
+        List<String> delta = new ArrayList<String>(existingSecondaryTypeIds);
+        delta.removeAll(newSecondaryTypeIds);
+        for (String typeDefId : delta) {
+            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeDefId);
+            TypeDefinition typeDef = typeDefC.getTypeDefinition();
+            propertiesToDelete.addAll(typeDef.getPropertyDefinitions().keySet());
+        }
+
+        // Note the list may contain too many properties, if the same property is also in a type not to be removed
+        return propertiesToDelete;
+    }
+
 }

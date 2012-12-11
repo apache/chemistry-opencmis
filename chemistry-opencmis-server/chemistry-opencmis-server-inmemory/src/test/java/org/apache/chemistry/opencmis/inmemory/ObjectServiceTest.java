@@ -1186,7 +1186,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         final String primaryPropVal = "Sample Doc String Property";
         
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-        properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "ObjectWithSecondaryType"));
+        properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "ObjectWithSecondaryType"));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
         properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, TEST_SECONDARY_TYPE_ID));
@@ -1233,6 +1233,50 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
     
     // TODO: test add secondary type
+    @Test
+    public void testUpdatePropertiesWithTypeCreation () {
+        final String strPropVal = "Secondary";
+        final BigInteger intPropVal = BigInteger.valueOf(100);
+        final String primaryPropVal = "Sample Doc String Property";
+        final String primaryPropVal2 = "Sample Doc String Property updated";
+
+        log.info("starting testUpdatePropertiesWithTypeCreation() ...");
+        
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "SimpleDocument"));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
+        Properties props = fFactory.createPropertiesData(properties);
+        
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
+                null, null, null);
+        assertNotNull(id);
+
+        properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal2));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, TEST_SECONDARY_TYPE_ID));
+        properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal));
+        properties.add(fFactory.createPropertyIntegerData(SECONDARY_INTEGER_PROP, intPropVal));
+        props = fFactory.createPropertiesData(properties);
+        fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
+        
+        Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+        assertNotNull(res.getProperties());
+        Map<String, PropertyData<?>> returnedProps = res.getProperties();
+        assertNotNull(returnedProps);
+        assertEquals(1, returnedProps.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues().size());
+        String secIds = (String) returnedProps.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getFirstValue();
+        assertEquals(TEST_SECONDARY_TYPE_ID, secIds);
+        String returnedValueStr = (String) returnedProps.get(SECONDARY_STRING_PROP).getFirstValue();
+        BigInteger returnedValueInt = (BigInteger) returnedProps.get(SECONDARY_INTEGER_PROP).getFirstValue();
+        assertEquals(strPropVal, returnedValueStr);
+        assertEquals(intPropVal, returnedValueInt);
+        String returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
+        assertEquals(primaryPropVal2, returnedPrimaryPropVal);
+      
+        log.info("... finished testUpdatePropertiesWithTypeCreation()");        
+    }
+    
     // TODO: remove secondary type
     // TODO: test constraints on secondary types
     

@@ -129,7 +129,7 @@ public class DocumentTypeCreationHelper {
         propertyDefinitions.put(propS.getId(), propS);
 
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
-                Updatability.READONLY);
+                Updatability.READWRITE);
         propertyDefinitions.put(propId.getId(), propId);
     }
 
