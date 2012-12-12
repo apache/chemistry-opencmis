@@ -461,15 +461,17 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         String baseTypeId = typeDef.getBaseTypeId().value();
 
-        assertTrue(propDefs.containsKey(PropertyIds.NAME));
-        assertTrue(propDefs.containsKey(PropertyIds.OBJECT_ID));
-        assertTrue(propDefs.containsKey(PropertyIds.OBJECT_TYPE_ID));
-        assertTrue(propDefs.containsKey(PropertyIds.BASE_TYPE_ID));
-        assertTrue(propDefs.containsKey(PropertyIds.CREATED_BY));
-        assertTrue(propDefs.containsKey(PropertyIds.CREATION_DATE));
-        assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFIED_BY));
-        assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFICATION_DATE));
-        assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));
+        if (!typeDef.getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
+            assertTrue(propDefs.containsKey(PropertyIds.NAME));
+            assertTrue(propDefs.containsKey(PropertyIds.OBJECT_ID));
+            assertTrue(propDefs.containsKey(PropertyIds.OBJECT_TYPE_ID));
+            assertTrue(propDefs.containsKey(PropertyIds.BASE_TYPE_ID));
+            assertTrue(propDefs.containsKey(PropertyIds.CREATED_BY));
+            assertTrue(propDefs.containsKey(PropertyIds.CREATION_DATE));
+            assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFIED_BY));
+            assertTrue(propDefs.containsKey(PropertyIds.LAST_MODIFICATION_DATE));
+            assertTrue(propDefs.containsKey(PropertyIds.CHANGE_TOKEN));
+        }
 
         if (baseTypeId.equals(BaseTypeId.CMIS_DOCUMENT.value())) {
             assertTrue(propDefs.containsKey(PropertyIds.IS_IMMUTABLE));
