@@ -41,9 +41,6 @@ public class InMemorySecondaryTypeDefinition extends SecondaryTypeDefinitionImpl
     public InMemorySecondaryTypeDefinition() {
         init(BaseTypeId.CMIS_SECONDARY.value(), "Secondary Type");
         setParentTypeId(null);
-        // set base properties
-        Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
-        DocumentTypeCreationHelper.setBasicDocumentPropertyDefinitions(props);
     }
 
     public InMemorySecondaryTypeDefinition(String id, String displayName) {

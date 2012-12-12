@@ -635,9 +635,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (null != newSecondaryTypeIds)
             secondaryTypeIds.addAll(newSecondaryTypeIds);
 
-        // Find secondary type definitions to delete
-        // TODO: implement this
-        if (null != newSecondaryTypeIds && newSecondaryTypeIds.size() > 0) {
+        // Find secondary type definitions to delete (null means not set --> do not change, empty --> remove all secondary types)
+        if (null != newSecondaryTypeIds) {
             List<String> propertiesIdToDelete = getListOfPropertiesToDeleteFromRemovedSecondaryTypes(repositoryId, so, newSecondaryTypeIds);
             for (String propIdToRemove : propertiesIdToDelete) {
                 so.getProperties().remove(propIdToRemove);
@@ -1301,7 +1300,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             propertiesToDelete.addAll(typeDef.getPropertyDefinitions().keySet());
         }
 
-        // Note the list may contain too many properties, if the same property is also in a type not to be removed
+        // TODO: the list may contain too many properties, if the same property is also in a type not to be removed
         return propertiesToDelete;
     }
 

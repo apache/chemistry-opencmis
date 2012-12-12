@@ -155,14 +155,6 @@ public class StoredObjectImpl implements StoredObject {
         return description;
     }
 
-    public void addSecondaryType (String typeId) {
-        secondaryTypeIds.add(typeId);
-    }
-
-    public void addSecondaryTypes(List<String> typeIds) {
-        secondaryTypeIds.addAll(typeIds);
-    }
-
     public List<String> getSecondaryTypeIds() {
         return Collections.unmodifiableList(secondaryTypeIds);
     }
@@ -285,8 +277,10 @@ public class StoredObjectImpl implements StoredObject {
         if (null != properties.get(PropertyIds.DESCRIPTION))
             setDescription((String)properties.get(PropertyIds.DESCRIPTION).getFirstValue());
         
-        if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS))
-            addSecondaryTypes((List<String>)properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
+        if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            secondaryTypeIds.clear();
+            secondaryTypeIds.addAll((List<String>)properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
+        }
         
         if (isCreated) {
             setCreatedBy(user);
