@@ -148,7 +148,9 @@ public class InMemoryQueryProcessor {
         TypeDefinition fromType = queryObj.getMainFromName();
         
         for (StoredObject so : matches) {
-            TypeDefinition td = tm.getTypeById(so.getTypeId()).getTypeDefinition();
+            String queryName = queryObj.getTypes().values().iterator().next();
+            TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
+
             ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(td, so, user, props, funcs,
                     fromType, includeAllowableActions, includeRelationships, renditionFilter);
 
@@ -163,6 +165,13 @@ public class InMemoryQueryProcessor {
         while (typeId != null) {
             if (typeId.equals(td.getId())) {
                 return true;
+            }
+            // check secondary types
+            List<String> secTypeIds = so.getSecondaryTypeIds();
+            for (String secTypeId: secTypeIds) {
+                if (secTypeId.equals(td.getId())) {
+                    return true;
+                }             
             }
             // check parent type
             TypeDefinition parentTD = queryObj.getParentType(typeId);

@@ -41,14 +41,18 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
+import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.*;
 
@@ -329,6 +333,51 @@ public class QueryTestDataCreator {
         return verIdSer;
     }
 
+    @SuppressWarnings("serial")
+    public void createSecondaryTestDocuments() {
+
+        final int intPropVal1 = 100;
+        final String stringPropVal1 = "Secondary Property Value";
+        final int intPropVal2 = 200;
+        final String stringPropVal2 = "Secondary String";
+
+        final GregorianCalendar gc1 = new GregorianCalendar(TZ);
+        gc1.clear();
+        gc1.set(1945, 4, 8);
+
+        final Map<String, Object> propertyMap1 =
+            new HashMap<String, Object>() {
+            {
+                put(PROP_ID_STRING, "Secondary");
+                put(PROP_ID_INT, Integer.valueOf(-100));
+                put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
+                put(PROP_ID_DATETIME, gc1);
+                put(PROP_ID_BOOLEAN, true);
+                put(SECONDARY_STRING_PROP, stringPropVal1);
+                put(SECONDARY_INTEGER_PROP,intPropVal1);
+                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
+            }};
+        ContentStream content1 = createContent("Some more content.");
+        doc1 = createDocument("docwithsecondary", rootFolderId, COMPLEX_TYPE, propertyMap1, content1);
+        assertNotNull(doc1);
+        
+        final Map<String, Object> propertyMap2 =
+                new HashMap<String, Object>() {
+                {
+                    put(PROP_ID_STRING, "Secondary 2");
+                    put(PROP_ID_INT, Integer.valueOf(123));
+                    put(PROP_ID_DECIMAL, Double.valueOf(1.23E24d));
+                    put(PROP_ID_BOOLEAN, false);
+                    put(SECONDARY_STRING_PROP, stringPropVal2);
+                    put(SECONDARY_INTEGER_PROP,intPropVal2);
+                    put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
+                }};
+            ContentStream content2 = createContent("Even still some more content.");
+            doc1 = createDocument("docwithsecondary2", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
+            assertNotNull(doc1);
+    }
+    
+    
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
         Properties props = createFolderProperties(folderName, typeId, properties);
         String id = null;
