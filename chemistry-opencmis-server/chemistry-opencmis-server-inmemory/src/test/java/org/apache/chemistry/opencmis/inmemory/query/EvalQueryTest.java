@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.P
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DATETIME;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DECIMAL;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_INT;
+import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.SECONDARY_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,10 +31,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.AbstractServiceTest;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
@@ -837,13 +840,36 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains(1.0, "SEARCH_SCORE", res));
     }
 
+    @Test
+    public void testSecondaryTypes() {
+        // create documents with secondary types in addition
+        dataCreator.createSecondaryTestDocuments();
+
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "= 'Secondary'";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("docwithsecondary", res));
+        assertFalse(resultContains(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
+
+        statement = "SELECT * FROM " + SECONDARY_TYPE + " WHERE " + UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP + "= 100";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertFalse(resultContains("docwithsecondary", res));
+        assertTrue(resultContains("Secondary Property Value", UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
+        assertTrue(resultContains(BigInteger.valueOf(100), UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
+    }
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
                 IncludeRelationships.NONE, null, null, null, null);
         log.debug("Query result, number of matching objects: " + res.getNumItems());
         for (ObjectData od : res.getObjects()) {
-            log.debug("Found matching object: " + od.getProperties().getProperties().get(PropertyIds.NAME).getFirstValue());
+            PropertyData<?> propData = od.getProperties().getProperties().get(PropertyIds.NAME);
+            if (null != propData)
+                log.debug("Found matching object: " + propData.getFirstValue());
+            else
+                log.debug("Found matching object: (unknown, no name)");
         }
         return res;
     }
@@ -859,11 +885,14 @@ public class EvalQueryTest extends AbstractServiceTest {
         return res;
     }
 
-    private static boolean resultContains(String name, String propId, ObjectList results) {
+    private static boolean resultContains(Object value, String propId, ObjectList results) {
         for (ObjectData od : results.getObjects()) {
-            String nameProp = (String) od.getProperties().getProperties().get(propId).getFirstValue();
-            if (name.equals(nameProp)) {
-                return true;
+            PropertyData<?> propData = od.getProperties().getProperties().get(propId);
+            if (null != propData) {
+                Object propVal = propData.getFirstValue();
+                if (value.equals(propVal)) {
+                    return true;
+                }
             }
         }
         return false;

@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 
 public class UnitTestTypeSystemCreator implements TypeCreator {
@@ -55,6 +56,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     public static final String VERSIONED_TYPE = "MyVersionedType";
     public static final String VERSION_PROPERTY_ID = "StringProp";
     public static final String FOLDER_TYPE = "FolderType";
+    public static final String SECONDARY_TYPE = "MySecondaryType";
     
     public static final String PROP_ID_BOOLEAN = "BooleanProp";
     public static final String PROP_ID_DATETIME = "DateTimeProp";
@@ -72,6 +74,8 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     public static final String PROP_ID_INT_MULTI_VALUE = "IntPropMV";
     public static final String PROP_ID_STRING_MULTI_VALUE = "StringPropMV";
     public static final String PROP_ID_URI_MULTI_VALUE = "UriPropMV";
+    public static final String SECONDARY_STRING_PROP = "SecondaryStringProp";
+    public static final String SECONDARY_INTEGER_PROP = "SecondaryIntegerProp";
 
     /**
      * in the public interface of this class we return the singleton containing
@@ -312,13 +316,29 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         propertyDefinitions.put(prop7.getId(), prop7);
         cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
 
-        
+        // CMIS 1.1 create a secondary type
+        InMemorySecondaryTypeDefinition cmisSecondaryType = new InMemorySecondaryTypeDefinition(SECONDARY_TYPE, 
+                "MySecondaryType");
+        // create a single String property definition
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        PropertyStringDefinitionImpl propStr = PropertyCreationHelper.createStringDefinition(SECONDARY_STRING_PROP,
+                "Secondary String Property", Updatability.READWRITE);
+        propertyDefinitions.put(propStr.getId(), propStr);
+        PropertyIntegerDefinitionImpl propInt = PropertyCreationHelper.createIntegerDefinition(SECONDARY_INTEGER_PROP,
+                "Secondary Integer Property", Updatability.READWRITE);
+        propInt.setIsRequired(true);
+        propertyDefinitions.put(propInt.getId(), propInt);
+        cmisSecondaryType.addCustomPropertyDefinitions(propertyDefinitions);
+
+
         // add type to types collection
         typesList.add(cmisDocTypeTopLevel);
         typesList.add(cmisDocTypeLevel1);
         typesList.add(cmisDocTypeLevel2);
         typesList.add(cmisVersionedType);
         typesList.add(cmisFolderType);
+        typesList.add(cmisSecondaryType);
 
         return typesList;
     }
