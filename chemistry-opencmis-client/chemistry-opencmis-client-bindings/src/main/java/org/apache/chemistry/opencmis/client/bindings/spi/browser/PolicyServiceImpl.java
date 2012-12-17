@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -53,7 +54,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(Collections.singletonList(policyId));
 
         // send
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -69,7 +70,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         formData.addPoliciesParameters(Collections.singletonList(policyId));
 
         // send
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -84,7 +85,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);

@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -76,7 +77,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -108,7 +109,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -137,7 +138,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -166,7 +167,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -195,7 +196,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -224,7 +225,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -244,7 +245,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ALLOWABLEACTIONS);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertAllowableActions(json);
@@ -264,7 +265,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
@@ -286,7 +287,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
@@ -301,7 +302,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         if (getSuccinct()) {
@@ -321,7 +322,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertRenditions(json);
@@ -336,7 +337,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_STREAM_ID, streamId);
 
         // get the content
-        HttpUtils.Response resp = HttpUtils.invokeGET(url, getSession(), offset, length);
+        Response resp = getHttpInvoker().invokeGET(url, getSession(), offset, length);
 
         // check response code
         if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 206)) {
@@ -368,7 +369,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -407,7 +408,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.removeSecondaryTypeIds(removeSecondaryTypeIds);
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -435,7 +436,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -459,7 +460,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
 
         // send
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -478,7 +479,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addParameter(Constants.PARAM_CONTINUE_ON_FAILURE, continueOnFailure);
 
         // send
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -509,7 +510,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -546,7 +547,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -582,7 +583,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }

@@ -22,7 +22,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -59,7 +59,7 @@ public class RelationshipServiceImpl extends AbstractBrowserBindingService imple
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);

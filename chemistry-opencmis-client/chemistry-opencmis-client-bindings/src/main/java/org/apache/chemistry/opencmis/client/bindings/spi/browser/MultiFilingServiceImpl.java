@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 import java.io.OutputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -50,7 +50,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
         formData.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
 
         // send and parse
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -66,7 +66,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
         formData.addParameter(Constants.PARAM_FOLDER_ID, folderId);
 
         // send and parse
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }

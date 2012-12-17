@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -91,7 +92,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertTypeChildren(json);
@@ -106,7 +107,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertTypeDescendants(json);
@@ -123,7 +124,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         }
 
         // send
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -145,7 +146,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         }
 
         // send
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -165,7 +166,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         formData.addParameter(Constants.CONTROL_TYPE_ID, typeId);
 
         // send
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }

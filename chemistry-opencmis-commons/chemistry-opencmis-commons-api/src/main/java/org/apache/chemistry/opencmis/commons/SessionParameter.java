@@ -79,11 +79,13 @@ public final class SessionParameter {
 
     // --- connection ---
 
+    public static final String HTTP_INVOKER_CLASS = "org.apache.chemistry.opencmis.binding.httpinvoker.classname";
+
     public static final String COMPRESSION = "org.apache.chemistry.opencmis.binding.compression";
     public static final String CLIENT_COMPRESSION = "org.apache.chemistry.opencmis.binding.clientcompression";
 
     public static final String COOKIES = "org.apache.chemistry.opencmis.binding.cookies";
-    
+
     public static final String HEADER = "org.apache.chemistry.opencmis.binding.header";
 
     public static final String CONNECT_TIMEOUT = "org.apache.chemistry.opencmis.binding.connecttimeout";

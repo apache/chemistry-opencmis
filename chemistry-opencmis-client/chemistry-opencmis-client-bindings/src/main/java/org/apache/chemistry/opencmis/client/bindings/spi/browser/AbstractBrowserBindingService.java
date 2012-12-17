@@ -25,9 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -90,6 +93,13 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      */
     protected BindingSession getSession() {
         return session;
+    }
+
+    /**
+     * Gets the HTTP Invoker object.
+     */
+    protected HttpInvoker getHttpInvoker() {
+        return CmisBindingsHelper.getHttpInvoker(session);
     }
 
     /**
@@ -326,9 +336,9 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Performs a GET on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response read(UrlBuilder url) {
+    protected Response read(UrlBuilder url) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokeGET(url, session);
+        Response resp = getHttpInvoker().invokeGET(url, session);
 
         // check response code
         if (resp.getResponseCode() != 200) {
@@ -342,9 +352,9 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Performs a POST on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response post(UrlBuilder url, String contentType, HttpUtils.Output writer) {
+    protected Response post(UrlBuilder url, String contentType, Output writer) {
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokePOST(url, contentType, writer, session);
+        Response resp = getHttpInvoker().invokePOST(url, contentType, writer, session);
 
         // check response code
         if (resp.getResponseCode() != 200 && resp.getResponseCode() != 201) {
@@ -358,8 +368,8 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      * Performs a POST on an URL, checks the response code and returns the
      * result.
      */
-    protected void postAndConsume(UrlBuilder url, String contentType, HttpUtils.Output writer) {
-        HttpUtils.Response resp = post(url, contentType, writer);
+    protected void postAndConsume(UrlBuilder url, String contentType, Output writer) {
+        Response resp = post(url, contentType, writer);
 
         InputStream stream = resp.getStream();
         try {
@@ -413,7 +423,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         }
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         List<RepositoryInfo> repInfos = new ArrayList<RepositoryInfo>();
@@ -453,7 +463,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         url.addParameter(Constants.PARAM_TYPE_ID, typeId);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertTypeDefinition(json);

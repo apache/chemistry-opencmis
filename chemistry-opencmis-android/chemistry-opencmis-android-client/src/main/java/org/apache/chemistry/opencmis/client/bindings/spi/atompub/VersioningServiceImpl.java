@@ -28,7 +28,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -77,7 +78,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
 
         // post move request
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -174,7 +175,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
 
         // update
-        HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -240,7 +241,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // get the versions

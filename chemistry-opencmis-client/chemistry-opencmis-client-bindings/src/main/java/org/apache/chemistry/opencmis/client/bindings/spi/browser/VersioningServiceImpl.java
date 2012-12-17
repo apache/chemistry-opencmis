@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -66,7 +67,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -89,7 +90,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CANCEL_CHECK_OUT);
 
         // send
-        postAndConsume(url, formData.getContentType(), new HttpUtils.Output() {
+        postAndConsume(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -118,7 +119,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }
@@ -149,7 +150,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);
@@ -167,7 +168,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         if (getSuccinct()) {
@@ -187,7 +188,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         List<Object> json = parseArray(resp.getStream(), resp.getCharset());
 
         TypeCache typeCache = new ClientTypeCacheImpl(repositoryId, this);

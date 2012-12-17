@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -101,7 +101,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // handle top level
@@ -167,7 +167,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // process tree

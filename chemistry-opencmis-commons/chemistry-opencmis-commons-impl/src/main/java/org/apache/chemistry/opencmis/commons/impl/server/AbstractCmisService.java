@@ -458,11 +458,12 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <b>Implementation Hints:</b>
      * <ul>
      * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
-     * <li>Implementation is optional.</li>
+     * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        return getObject(repositoryId, objectId, "cmi:objectId", true, IncludeRelationships.NONE, "cmis:none", false,
+                false, extension).getAllowableActions();
     }
 
     /**
@@ -487,11 +488,12 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <b>Implementation Hints:</b>
      * <ul>
      * <li>Bindings: Web Services, Browser, Local</li>
-     * <li>Implementation is optional.</li>
+     * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        return getObject(repositoryId, objectId, filter, false, IncludeRelationships.NONE, "cmis:none", false, false,
+                extension).getProperties();
     }
 
     /**
@@ -753,12 +755,15 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <b>Implementation Hints:</b>
      * <ul>
      * <li>Bindings: Web Services, Local</li>
-     * <li>Implementation is optional.</li>
+     * <li>Implementation is optional. Convenience implementation is present, if
+     * {@link #getObjectOfLatestVersion(String, String, String, Boolean, String, Boolean, IncludeRelationships, String, Boolean, Boolean, ExtensionsData)}
+     * is implemented.</li>
      * </ul>
      */
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        return getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, false,
+                IncludeRelationships.NONE, "cmis:none", false, false, extension).getProperties();
     }
 
     /**

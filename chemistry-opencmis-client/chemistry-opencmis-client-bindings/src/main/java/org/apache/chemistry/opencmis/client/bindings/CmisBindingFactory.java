@@ -40,6 +40,8 @@ public class CmisBindingFactory {
     /** Default CMIS local binding SPI implementation */
     public static final String BINDING_SPI_LOCAL = "org.apache.chemistry.opencmis.client.bindings.spi.local.CmisLocalSpi";
 
+    /** Default HTTP invoker class */
+    public static final String DEFAULT_HTTP_INVOKER = "org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker";
     /** Standard authentication provider class */
     public static final String STANDARD_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.StandardAuthenticationProvider";
     /** NTLM authentication provider class */
@@ -116,6 +118,9 @@ public class CmisBindingFactory {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_ATOMPUB);
+        if (!sessionParameters.containsKey(SessionParameter.HTTP_INVOKER_CLASS)) {
+            sessionParameters.put(SessionParameter.HTTP_INVOKER_CLASS, DEFAULT_HTTP_INVOKER);
+        }
         if (authenticationProvider == null) {
             if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
@@ -190,6 +195,9 @@ public class CmisBindingFactory {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_BROWSER);
+        if (!sessionParameters.containsKey(SessionParameter.HTTP_INVOKER_CLASS)) {
+            sessionParameters.put(SessionParameter.HTTP_INVOKER_CLASS, DEFAULT_HTTP_INVOKER);
+        }
         if (authenticationProvider == null) {
             if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);

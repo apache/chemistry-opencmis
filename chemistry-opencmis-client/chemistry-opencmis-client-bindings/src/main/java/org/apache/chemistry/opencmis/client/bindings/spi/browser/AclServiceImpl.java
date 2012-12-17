@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -54,7 +55,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
         return JSONConverter.convertAcl(json, null);
@@ -72,7 +73,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         formData.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
         // send and parse
-        HttpUtils.Response resp = post(url, formData.getContentType(), new HttpUtils.Output() {
+        Response resp = post(url, formData.getContentType(), new Output() {
             public void write(OutputStream out) throws Exception {
                 formData.write(out);
             }

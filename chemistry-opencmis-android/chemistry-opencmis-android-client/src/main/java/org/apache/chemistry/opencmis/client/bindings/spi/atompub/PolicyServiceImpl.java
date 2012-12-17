@@ -27,7 +27,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -64,7 +65,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
         // post applyPolicy request
-        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -86,7 +87,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         url.addParameter(Constants.PARAM_FILTER, filter);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // get the policies
@@ -127,7 +128,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         url.addParameter(Constants.PARAM_FILTER, PropertyIds.OBJECT_ID);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // find the policy

@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 import java.io.OutputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -61,7 +61,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
         // post addObjectToFolder request
-        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -87,7 +87,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
 
         // post removeObjectFromFolder request
-        post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }

@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -36,6 +37,7 @@ public final class CmisBindingsHelper {
     public static final String REPOSITORY_INFO_CACHE = "org.apache.chemistry.opencmis.binding.repositoryInfoCache";
     public static final String TYPE_DEFINTION_CACHE = "org.apache.chemistry.opencmis.binding.typeDefintionCache";
     public static final String SPI_OBJECT = "org.apache.chemistry.opencmis.binding.spi.object";
+    public static final String HTTP_INVOKER_OBJECT = "org.apache.chemistry.opencmis.binding.httpinvoker.object";
     public static final String AUTHENTICATION_PROVIDER_OBJECT = "org.apache.chemistry.opencmis.binding.auth.object";
     public static final String ACCEPT_LANGUAGE = "org.apache.chemistry.opencmis.binding.acceptLanguage";
 
@@ -88,6 +90,43 @@ public final class CmisBindingsHelper {
         }
 
         return spi;
+    }
+
+    /**
+     * Gets the HTTP Invoker object from the session.
+     */
+    public static HttpInvoker getHttpInvoker(BindingSession session) {
+        HttpInvoker invoker = (HttpInvoker) session.get(HTTP_INVOKER_OBJECT);
+
+        if (invoker != null) {
+            return invoker;
+        }
+
+        session.writeLock();
+        try {
+            // try again
+            invoker = (HttpInvoker) session.get(HTTP_INVOKER_OBJECT);
+            if (invoker != null) {
+                return invoker;
+            }
+
+            // ok, we have to create it...
+            try {
+                String invokerName = (String) session.get(SessionParameter.HTTP_INVOKER_CLASS);
+                invoker = (HttpInvoker) Class.forName(invokerName).newInstance();
+            } catch (CmisBaseException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new CmisRuntimeException("HTTP invoker cannot be initialized: " + e.getMessage(), e);
+            }
+
+            // we have an Invoker object -> put it into the session
+            session.put(HTTP_INVOKER_OBJECT, invoker, true);
+        } finally {
+            session.writeUnlock();
+        }
+
+        return invoker;
     }
 
     /**

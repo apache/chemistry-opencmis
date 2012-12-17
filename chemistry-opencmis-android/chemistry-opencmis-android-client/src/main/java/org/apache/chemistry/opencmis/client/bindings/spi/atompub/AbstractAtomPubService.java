@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
@@ -37,7 +38,9 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEnt
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -106,6 +109,13 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         return session;
     }
 
+    /**
+     * Gets the HTTP Invoker object.
+     */
+    protected HttpInvoker getHttpInvoker() {
+        return CmisBindingsHelper.getHttpInvoker(session);
+    }    
+    
     /**
      * Returns the service document URL of this session.
      */
@@ -538,10 +548,10 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Performs a GET on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response read(UrlBuilder url) {
+    protected Response read(UrlBuilder url) {
         // make the call
         //Log.d("URL", url.toString());
-        HttpUtils.Response resp = HttpUtils.invokeGET(url, session);
+        Response resp = getHttpInvoker().invokeGET(url, session);
 
         // check response code
         if (resp.getResponseCode() != 200) {
@@ -555,10 +565,10 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Performs a POST on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response post(UrlBuilder url, String contentType, HttpUtils.Output writer) {
+    protected Response post(UrlBuilder url, String contentType, Output writer) {
         // make the call
         //Log.d("URL", url.toString());
-        HttpUtils.Response resp = HttpUtils.invokePOST(url, contentType, writer, session);
+        Response resp = getHttpInvoker().invokePOST(url, contentType, writer, session);
 
         // check response code
         if (resp.getResponseCode() != 201) {
@@ -572,7 +582,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Performs a PUT on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response put(UrlBuilder url, String contentType, HttpUtils.Output writer) {
+    protected Response put(UrlBuilder url, String contentType, Output writer) {
         return put(url, contentType, null, writer);
     }
 
@@ -580,11 +590,11 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Performs a PUT on an URL, checks the response code and returns the
      * result.
      */
-    protected HttpUtils.Response put(UrlBuilder url, String contentType, Map<String, String> headers,
-            HttpUtils.Output writer) {
+    protected Response put(UrlBuilder url, String contentType, Map<String, String> headers,
+            Output writer) {
         // make the call
         //Log.d("URL", url.toString());
-        HttpUtils.Response resp = HttpUtils.invokePUT(url, contentType, headers, writer, session);
+        Response resp = getHttpInvoker().invokePUT(url, contentType, headers, writer, session);
 
         // check response code
         if ((resp.getResponseCode() < 200) || (resp.getResponseCode() > 299)) {
@@ -601,7 +611,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     protected void delete(UrlBuilder url) {
         // make the call
         //Log.d("URL", url.toString());
-        HttpUtils.Response resp = HttpUtils.invokeDELETE(url, session);
+        Response resp = getHttpInvoker().invokeDELETE(url, session);
 
         // check response code
         if (resp.getResponseCode() != 204) {
@@ -712,7 +722,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         url.addParameter(Constants.PARAM_REPOSITORY_ID, repositoryId);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         ServiceDoc serviceDoc = parse(resp.getStream(), ServiceDoc.class);
 
         // walk through the workspaces
@@ -772,7 +782,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
 
         // we expect a CMIS entry
@@ -815,7 +825,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         // read and parse
-        HttpUtils.Response resp = read(new UrlBuilder(link));
+        Response resp = read(new UrlBuilder(link));
         AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
 
         // we expect a CMIS entry
@@ -861,7 +871,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         url.addParameter(Constants.PARAM_ONLY_BASIC_PERMISSIONS, onlyBasicPermissions);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
 
         return acl.getACL();
@@ -883,7 +893,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         aclUrl.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
         // update
-        HttpUtils.Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new HttpUtils.Output() {
+        Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new Output() {
             public void write(OutputStream out) throws Exception {
                 // TODO not implemented
                 AtomEntryWriter.writeACL(out, acl);

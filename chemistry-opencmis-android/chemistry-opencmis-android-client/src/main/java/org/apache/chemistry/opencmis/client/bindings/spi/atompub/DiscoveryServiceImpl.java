@@ -29,7 +29,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -73,7 +74,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // handle top level
@@ -134,7 +135,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         queryParameters.put(Constants.PARAM_SKIP_COUNT, (skipCount == null) ? null : skipCount.toString());
 
         // post the query and parse results
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_QUERY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_QUERY, new Output() {
             public void write(OutputStream out) throws Exception {
                 AtomEntryWriter.writeQuery(out, queryParameters);
             }

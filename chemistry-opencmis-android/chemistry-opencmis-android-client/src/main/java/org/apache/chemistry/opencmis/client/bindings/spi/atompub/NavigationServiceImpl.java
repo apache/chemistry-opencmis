@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
@@ -50,8 +50,6 @@ import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 /**
  * Navigation Service AtomPub client.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
 public class NavigationServiceImpl extends AbstractAtomPubService implements NavigationService {
 
@@ -85,7 +83,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // handle top level
@@ -158,7 +156,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // process tree
@@ -181,7 +179,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_FILTER, filter);
 
         // read
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
 
         AtomBase base = parse(resp.getStream(), AtomBase.class);
 
@@ -240,7 +238,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // process tree
@@ -270,7 +268,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_RELATIVE_PATH_SEGMENT, includeRelativePathSegment);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
 
         AtomBase base = parse(resp.getStream(), AtomBase.class);
 
@@ -353,7 +351,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
 
         // handle top level

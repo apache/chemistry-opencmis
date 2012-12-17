@@ -35,7 +35,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpUtils;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -117,7 +118,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object, contentStream);
 
         // post the new folder object
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -159,7 +160,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
         // post the new folder object
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -209,7 +210,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
         // post the new folder object
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -255,7 +256,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
         // post the new folder object
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -302,7 +303,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
         // post the new folder object
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -343,7 +344,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
 
         // update
-        HttpUtils.Response resp = put(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -455,7 +456,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         url.addParameter(Constants.PARAM_CONTINUE_ON_FAILURE, continueOnFailure);
 
         // make the call
-        HttpUtils.Response resp = HttpUtils.invokeDELETE(url, getSession());
+        Response resp = getHttpInvoker().invokeDELETE(url, getSession());
 
         // check response code
         if (resp.getResponseCode() == 200 || resp.getResponseCode() == 202 || resp.getResponseCode() == 204) {
@@ -514,7 +515,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
 
         // read and parse
-        HttpUtils.Response resp = read(url);
+        Response resp = read(url);
         AtomAllowableActions allowableActions = parse(resp.getStream(), AtomAllowableActions.class);
 
         return convert(allowableActions.getAllowableActions());
@@ -547,7 +548,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         url.addParameter(Constants.PARAM_STREAM_ID, streamId);
 
         // get the content
-        HttpUtils.Response resp = HttpUtils.invokeGET(url, getSession(), offset, length);
+        Response resp = getHttpInvoker().invokeGET(url, getSession(), offset, length);
 
         // check response code
         if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 206)) {
@@ -624,7 +625,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
 
         // post move request
-        HttpUtils.Response resp = post(url, Constants.MEDIATYPE_ENTRY, new HttpUtils.Output() {
+        Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
             public void write(OutputStream out) throws Exception {
                 entryWriter.write(out);
             }
@@ -674,7 +675,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         }
 
         // send content
-        HttpUtils.Response resp = put(url, contentStream.getMimeType(), headers, new HttpUtils.Output() {
+        Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
             public void write(OutputStream out) throws Exception {
                 int b;
                 byte[] buffer = new byte[4096];
