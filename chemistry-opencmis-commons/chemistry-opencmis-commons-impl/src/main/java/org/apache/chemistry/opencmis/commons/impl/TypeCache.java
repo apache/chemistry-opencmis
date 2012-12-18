@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 
 /**
@@ -25,13 +26,18 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
  */
 public interface TypeCache {
 
-	/**
-	 * Gets the type definition by type id.
-	 */
-	public TypeDefinition getTypeDefinition(String typeId);
+    /**
+     * Gets the type definition by type id.
+     */
+    TypeDefinition getTypeDefinition(String typeId);
 
-	/**
-	 * Gets the type definition of an object.
-	 */
-	public TypeDefinition getTypeDefinitionForObject(String objectId);
+    /**
+     * Gets the type definition of an object.
+     */
+    TypeDefinition getTypeDefinitionForObject(String objectId);
+
+    /**
+     * Finds the property definition in all cached types.
+     */
+    PropertyDefinition<?> getPropertyDefinition(String propId);
 }

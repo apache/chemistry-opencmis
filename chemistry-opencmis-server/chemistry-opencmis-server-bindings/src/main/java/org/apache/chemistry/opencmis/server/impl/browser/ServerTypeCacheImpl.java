@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
@@ -80,5 +81,16 @@ public class ServerTypeCacheImpl implements TypeCache {
         }
 
         return type;
+    }
+
+    public PropertyDefinition<?> getPropertyDefinition(String propId) {
+        for (TypeDefinition typeDef : typeDefinitions.values()) {
+            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(propId);
+            if (propDef != null) {
+                return propDef;
+            }
+        }
+
+        return null;
     }
 }

@@ -41,8 +41,10 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createNewProperties;
+
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createUpdateProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
@@ -61,6 +63,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -70,6 +73,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
@@ -77,16 +81,18 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -118,7 +124,7 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createDocument(repositoryId, createProperties(cp, null, typeCache), folderId,
+        String newObjectId = service.createDocument(repositoryId, createNewProperties(cp, typeCache), folderId,
                 createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
@@ -160,8 +166,8 @@ public final class ObjectService {
         }
 
         String newObjectId = service.createDocumentFromSource(repositoryId, sourceId,
-                createProperties(cp, sourceTypeId.getFirstValue().toString(), typeCache), folderId, versioningState,
-                createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+                createUpdateProperties(cp, sourceTypeId.getFirstValue().toString(), null, null, typeCache), folderId,
+                versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
@@ -192,7 +198,7 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createFolder(repositoryId, createProperties(cp, null, typeCache), folderId,
+        String newObjectId = service.createFolder(repositoryId, createNewProperties(cp, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
@@ -224,7 +230,7 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createPolicy(repositoryId, createProperties(cp, null, typeCache), folderId,
+        String newObjectId = service.createPolicy(repositoryId, createNewProperties(cp, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
@@ -256,7 +262,7 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createItem(repositoryId, createProperties(cp, null, typeCache), folderId,
+        String newObjectId = service.createItem(repositoryId, createNewProperties(cp, typeCache), folderId,
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
@@ -287,7 +293,7 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createRelationship(repositoryId, createProperties(cp, null, typeCache),
+        String newObjectId = service.createRelationship(repositoryId, createNewProperties(cp, typeCache),
                 createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
@@ -324,7 +330,7 @@ public final class ObjectService {
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
 
         service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder,
-                createProperties(cp, typeId, typeCache), null);
+                createUpdateProperties(cp, typeId, null, null, typeCache), null);
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 
@@ -352,28 +358,52 @@ public final class ObjectService {
      */
     public static void bulkUpdateProperties(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ControlParser cp = new ControlParser(request);
 
-        throw new CmisNotSupportedException("Not supported!");
+        // get object ids and change tokens
+        List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
 
-        // ControlParser cp = new ControlParser(request);
-        //
-        // List<BulkUpdateObjectIdAndChangeToken> result =
-        // service.bulkUpdateProperties(repositoryId,
-        // objectIdAndChangeToken, properties,
-        // cp.getValues(Constants.CONTROL_ADD_SECONDARY_TYPE),
-        // cp.getValues(Constants.CONTROL_REMOVE_SECONDARY_TYPE), null);
-        //
-        // JSONArray jsonList = new JSONArray();
-        // if (result != null) {
-        // for (BulkUpdateObjectIdAndChangeToken oc : result) {
-        // if (oc != null) {
-        // jsonList.add(JSONConverter.convert(oc));
-        // }
-        // }
-        // }
-        //
-        // response.setStatus(HttpServletResponse.SC_OK);
-        // writeJSON(jsonList, request, response);
+        List<String> objectIds = cp.getValues(Constants.CONTROL_OBJECT_ID);
+        List<String> changeTokens = cp.getValues(Constants.CONTROL_CHANGE_TOKEN);
+
+        if (objectIds == null || objectIds.size() == 0) {
+            throw new CmisInvalidArgumentException("No object ids provided!");
+        }
+
+        int n = objectIds.size();
+        for (int i = 0; i < n; i++) {
+            String id = objectIds.get(i);
+            String changeToken = (changeTokens != null && changeTokens.size() > i ? changeTokens.get(i) : null);
+            objectIdAndChangeToken.add(new BulkUpdateObjectIdAndChangeTokenImpl(id, changeToken));
+        }
+
+        // get secondary type ids
+        List<String> addSecondaryTypes = cp.getValues(Constants.CONTROL_ADD_SECONDARY_TYPE);
+        List<String> removeSecondaryTypes = cp.getValues(Constants.CONTROL_REMOVE_SECONDARY_TYPE);
+
+        // compile properties
+        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+
+        // TODO: fix this!
+        TypeDefinition typeDef = typeCache.getTypeDefinitionForObject(objectIds.get(0));
+        Properties properties = createUpdateProperties(cp, typeDef.getId(), addSecondaryTypes, objectIds, typeCache);
+
+        // execute
+        List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
+                objectIdAndChangeToken, properties, addSecondaryTypes, removeSecondaryTypes, null);
+
+        // return result
+        JSONArray jsonList = new JSONArray();
+        if (result != null) {
+            for (BulkUpdateObjectIdAndChangeToken oc : result) {
+                if (oc != null) {
+                    jsonList.add(JSONConverter.convert(oc));
+                }
+            }
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        writeJSON(jsonList, request, response);
     }
 
     /**

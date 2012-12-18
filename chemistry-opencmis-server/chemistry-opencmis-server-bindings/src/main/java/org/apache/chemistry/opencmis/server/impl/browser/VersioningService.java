@@ -32,7 +32,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createProperties;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createUpdateProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
@@ -134,7 +134,7 @@ public final class VersioningService {
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-        service.checkIn(repositoryId, objectIdHolder, major, createProperties(cp, typeId, typeCache),
+        service.checkIn(repositoryId, objectIdHolder, major, createUpdateProperties(cp, typeId, null, null, typeCache),
                 createContentStream(request), checkinComment, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
