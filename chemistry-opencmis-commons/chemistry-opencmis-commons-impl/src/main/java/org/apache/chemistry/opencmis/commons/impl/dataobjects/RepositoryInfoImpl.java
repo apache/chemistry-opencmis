@@ -117,7 +117,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         }
 
         try {
-            return CmisVersion.valueOf(versionSupported);
+            return CmisVersion.fromValue(versionSupported);
         } catch (IllegalArgumentException e) {
             return CmisVersion.CMIS_1_0;
         }

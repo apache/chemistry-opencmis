@@ -18,27 +18,17 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -48,7 +38,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.util.TypeUtils;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
@@ -64,7 +53,7 @@ public class TypeSplitPane extends JSplitPane {
     private final ClientModel model;
 
     private TypeInfoPanel typePanel;
-    private TypeButtonPanel typeButtonPanel;
+
     private PropertyDefinitionTable propertyDefinitionTable;
 
     public TypeSplitPane(ClientModel model) {
@@ -81,14 +70,12 @@ public class TypeSplitPane extends JSplitPane {
 
     private void createGUI() {
         typePanel = new TypeInfoPanel(model);
-        typeButtonPanel = new TypeButtonPanel();
+
         propertyDefinitionTable = new PropertyDefinitionTable();
 
-        JPanel typeBorderPanel = new JPanel(new BorderLayout());
-        typeBorderPanel.add(typePanel, BorderLayout.CENTER);
-        typeBorderPanel.add(typeButtonPanel, BorderLayout.LINE_END);
+        add(typePanel);
 
-        setLeftComponent(new JScrollPane(typeBorderPanel));
+        setLeftComponent(new JScrollPane(typePanel));
         setRightComponent(new JScrollPane(propertyDefinitionTable));
 
         setDividerLocation(300);
@@ -96,7 +83,6 @@ public class TypeSplitPane extends JSplitPane {
 
     public void setType(ObjectType type) {
         typePanel.setType(type);
-        typeButtonPanel.setType(type);
         propertyDefinitionTable.setType(type);
     }
 
@@ -250,106 +236,6 @@ public class TypeSplitPane extends JSplitPane {
             }
 
             return b.booleanValue();
-        }
-    }
-
-    static class TypeButtonPanel extends JPanel {
-
-        private static final long serialVersionUID = 1L;
-
-        private JButton saveToXMLButton;
-        private JButton saveToJSONButton;
-
-        private ObjectType type;
-
-        public TypeButtonPanel() {
-            super();
-            createGUI();
-        }
-
-        private void createGUI() {
-            setBackground(Color.WHITE);
-
-            saveToXMLButton = new JButton("Save type to XML");
-            saveToJSONButton = new JButton("Save type to JSON");
-
-            saveToXMLButton.setEnabled(false);
-            saveToJSONButton.setEnabled(false);
-
-            JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
-            buttonPanel.setBackground(Color.WHITE);
-
-            buttonPanel.add(saveToXMLButton);
-            buttonPanel.add(saveToJSONButton);
-
-            add(buttonPanel);
-
-            saveToXMLButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setSelectedFile(new File(getFilename() + ".xml"));
-
-                    int chooseResult = fileChooser.showDialog(TypeButtonPanel.this.getParent(), "Save XML");
-                    if (chooseResult == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser
-                                    .getSelectedFile()));
-                            TypeUtils.writeToXML(type, out);
-                            out.flush();
-                            out.close();
-                        } catch (Exception e) {
-                            ClientHelper.showError(TypeButtonPanel.this.getParent(), e);
-                        }
-                    }
-                }
-            });
-
-            saveToJSONButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setSelectedFile(new File(getFilename() + ".json"));
-
-                    int chooseResult = fileChooser.showDialog(TypeButtonPanel.this.getParent(), "Save JSON");
-                    if (chooseResult == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser
-                                    .getSelectedFile()));
-                            TypeUtils.writeToJSON(type, out);
-                            out.flush();
-                            out.close();
-                        } catch (Exception e) {
-                            ClientHelper.showError(TypeButtonPanel.this.getParent(), e);
-                        }
-                    }
-                }
-            });
-        }
-
-        private String getFilename() {
-            if (type != null) {
-                String filename = type.getId();
-                filename = filename.replace(':', '_');
-                filename = filename.replace('/', '_');
-                filename = filename.replace('\\', '_');
-
-                return filename;
-            }
-
-            return "type";
-        }
-
-        public void setType(ObjectType type) {
-            this.type = type;
-
-            if (type != null) {
-                saveToXMLButton.setEnabled(true);
-                saveToJSONButton.setEnabled(true);
-            } else {
-                saveToXMLButton.setEnabled(false);
-                saveToJSONButton.setEnabled(false);
-            }
         }
     }
 

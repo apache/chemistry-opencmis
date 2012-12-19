@@ -128,7 +128,7 @@ public class DocumentTypeCreationHelper {
         propS = PropertyCreationHelper.createStringDefinition(PropertyIds.DESCRIPTION, "Description", Updatability.READWRITE);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
+        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
                 Updatability.READWRITE);
         propertyDefinitions.put(propId.getId(), propId);
     }

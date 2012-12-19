@@ -18,22 +18,42 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Tree;
+import org.apache.chemistry.opencmis.client.util.TypeUtils;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class TypesFrame extends JFrame {
@@ -42,8 +62,17 @@ public class TypesFrame extends JFrame {
 
     private static final String WINDOW_TITLE = "CMIS Types";
 
-    private final ClientModel model;
+    private static final int BUTTON_SAVE = 0;
+    private static final int BUTTON_UPDATE = 1;
+    private static final int BUTTON_DELETE = 2;
+    private static final int BUTTON_CREATE = 3;
 
+    private final ClientModel model;
+    private RepositoryInfo repInfo;
+    private ObjectType currentType;
+
+    private JToolBar toolBar;
+    private JButton[] toolbarButton;
     private JTree typesTree;
     private TypeSplitPane typePanel;
 
@@ -51,6 +80,14 @@ public class TypesFrame extends JFrame {
         super();
 
         this.model = model;
+
+        try {
+            repInfo = model.getRepositoryInfo();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
         createGUI();
         loadData();
     }
@@ -59,6 +96,206 @@ public class TypesFrame extends JFrame {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(200, 60));
+        setLayout(new BorderLayout());
+
+        toolBar = new JToolBar("CMIS Types Toolbar", JToolBar.HORIZONTAL);
+
+        toolbarButton = new JButton[4];
+
+        JMenuItem menuItem;
+
+        // -- save ---
+        final JPopupMenu savePopup = new JPopupMenu();
+
+        menuItem = new JMenuItem("Save Type Definition to XML");
+        savePopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createXmlFileChooser();
+                fileChooser.setSelectedFile(new File(getFilename() + ".xml"));
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Save XML");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                        TypeUtils.writeToXML(currentType, out);
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        menuItem = new JMenuItem("Save Type Definition to JSON");
+        savePopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createJsonFileChooser();
+                fileChooser.setSelectedFile(new File(getFilename() + ".json"));
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Save JSON");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                        TypeUtils.writeToJSON(currentType, out);
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        toolbarButton[BUTTON_SAVE] = new JButton("Save Type Definition", ClientHelper.getIcon("savetype.png"));
+        toolbarButton[BUTTON_SAVE].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                savePopup.show(toolbarButton[BUTTON_SAVE], 0, toolbarButton[BUTTON_SAVE].getHeight());
+            }
+        });
+        toolBar.add(toolbarButton[BUTTON_SAVE]);
+
+        toolBar.addSeparator();
+
+        // -- update --
+        final JPopupMenu updatePopup = new JPopupMenu();
+        menuItem = new JMenuItem("Load Type Definition from XML");
+        updatePopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createXmlFileChooser();
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        ObjectType type = TypeUtils.readFromXML(in);
+                        in.close();
+                        model.getClientSession().getSession().updateType(type);
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        menuItem = new JMenuItem("Load Type Definition from JSON");
+        updatePopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createJsonFileChooser();
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Load JSON");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        ObjectType type = TypeUtils.readFromJSON(in);
+                        in.close();
+                        model.getClientSession().getSession().updateType(type);
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        toolbarButton[BUTTON_UPDATE] = new JButton("Update Type", ClientHelper.getIcon("updatetype.png"));
+        toolbarButton[BUTTON_UPDATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
+        toolbarButton[BUTTON_UPDATE].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                updatePopup.show(toolbarButton[BUTTON_UPDATE], 0, toolbarButton[BUTTON_UPDATE].getHeight());
+            }
+        });
+        toolBar.add(toolbarButton[BUTTON_UPDATE]);
+
+        // -- delete --
+        toolbarButton[BUTTON_DELETE] = new JButton("Delete Type", ClientHelper.getIcon("deletetype.png"));
+        toolbarButton[BUTTON_DELETE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
+        toolbarButton[BUTTON_DELETE].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                int answer = JOptionPane.showConfirmDialog(getOwner(), "Do you really want to delete the type "
+                        + currentType.getId() + "?", "Delete Type", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+
+                if (answer == JOptionPane.YES_OPTION) {
+                    try {
+                        model.getClientSession().getSession().deleteType(currentType.getId());
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+
+                    loadData();
+                }
+            }
+        });
+        toolBar.add(toolbarButton[BUTTON_DELETE]);
+
+        toolBar.addSeparator();
+
+        // -- create --
+        final JPopupMenu createPopup = new JPopupMenu();
+        menuItem = new JMenuItem("Load Type Definition from XML");
+        createPopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createXmlFileChooser();
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        ObjectType type = TypeUtils.readFromXML(in);
+                        in.close();
+                        model.getClientSession().getSession().createType(type);
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        menuItem = new JMenuItem("Load Type Definition from JSON");
+        createPopup.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JFileChooser fileChooser = createJsonFileChooser();
+
+                int chooseResult = fileChooser.showDialog(getRootPane(), "Load JSON");
+                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        ObjectType type = TypeUtils.readFromJSON(in);
+                        in.close();
+                        model.getClientSession().getSession().createType(type);
+                    } catch (Exception e) {
+                        ClientHelper.showError(getRootPane(), e);
+                    }
+                }
+            }
+        });
+
+        toolbarButton[BUTTON_CREATE] = new JButton("Create Type", ClientHelper.getIcon("newtype.png"));
+        toolbarButton[BUTTON_CREATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
+        toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                createPopup.show(toolbarButton[BUTTON_CREATE], 0, toolbarButton[BUTTON_CREATE].getHeight());
+            }
+        });
+        toolBar.add(toolbarButton[BUTTON_CREATE]);
+
+        add(toolBar, BorderLayout.PAGE_START);
 
         typesTree = new JTree();
         typesTree.setRootVisible(false);
@@ -73,8 +310,16 @@ public class TypesFrame extends JFrame {
                     return;
                 }
 
-                ObjectType type = ((TypeNode) node.getUserObject()).getType();
-                typePanel.setType(type);
+                currentType = ((TypeNode) node.getUserObject()).getType();
+
+                if (repInfo.getCmisVersion() != CmisVersion.CMIS_1_0) {
+                    toolbarButton[BUTTON_UPDATE].setEnabled(currentType.getTypeMutability() != null
+                            && Boolean.TRUE.equals(currentType.getTypeMutability().canUpdate()));
+                    toolbarButton[BUTTON_DELETE].setEnabled(currentType.getTypeMutability() != null
+                            && Boolean.TRUE.equals(currentType.getTypeMutability().canDelete()));
+                }
+
+                typePanel.setType(currentType);
             }
         });
 
@@ -83,7 +328,7 @@ public class TypesFrame extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(typesTree), typePanel);
         splitPane.setDividerLocation(300);
 
-        add(splitPane);
+        add(splitPane, BorderLayout.CENTER);
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
@@ -92,6 +337,55 @@ public class TypesFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private JFileChooser createXmlFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+
+            @Override
+            public String getDescription() {
+                return "XML CMIS Type Definition File";
+            }
+
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".xml");
+            }
+        });
+
+        return fileChooser;
+    }
+
+    private JFileChooser createJsonFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+
+            @Override
+            public String getDescription() {
+                return "JSON CMIS Type Definition File";
+            }
+
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".json");
+            }
+        });
+
+        return fileChooser;
+    }
+
+    private String getFilename() {
+        if (currentType != null) {
+            String filename = currentType.getId();
+            filename = filename.replace(':', '_');
+            filename = filename.replace('/', '_');
+            filename = filename.replace('\\', '_');
+
+            return filename;
+        }
+
+        return "type";
     }
 
     private void loadData() {
@@ -107,6 +401,8 @@ public class TypesFrame extends JFrame {
 
             DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
             typesTree.setModel(treeModel);
+
+            typesTree.setSelectionRow(0);
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
             return;
