@@ -134,6 +134,16 @@ public class ClientModel {
         }
     }
 
+    public synchronized boolean supportsItems() {
+        for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
+            if (type.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public synchronized boolean supportsRelationships() {
         for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
@@ -290,6 +300,14 @@ public class ClientModel {
                 content.getStream().close();
             }
         }
+    }
+
+    public synchronized ObjectId createItem(String name, String type) throws Exception {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, type);
+
+        return clientSession.getSession().createItem(properties, currentFolder, null, null, null);
     }
 
     public synchronized ObjectId createFolder(String name, String type) throws Exception {

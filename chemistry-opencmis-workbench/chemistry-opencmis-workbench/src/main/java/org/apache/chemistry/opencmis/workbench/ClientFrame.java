@@ -61,11 +61,9 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final int BUTTON_CHANGELOG = 4;
     private static final int BUTTON_CONSOLE = 5;
     private static final int BUTTON_TCK = 6;
-    private static final int BUTTON_CREATE_DOCUMENT = 7;
-    private static final int BUTTON_CREATE_FOLDER = 8;
-    private static final int BUTTON_CREATE_RELATIONSHIP = 9;
-    private static final int BUTTON_LOG = 10;
-    private static final int BUTTON_INFO = 11;
+    private static final int BUTTON_CREATE = 7;
+    private static final int BUTTON_LOG = 8;
+    private static final int BUTTON_INFO = 9;
 
     private static final String PREFS_X = "x";
     private static final String PREFS_Y = "y";
@@ -85,6 +83,11 @@ public class ClientFrame extends JFrame implements WindowListener {
     private JToolBar toolBar;
     private JButton[] toolbarButton;
     private JPopupMenu toolbarConsolePopup;
+    private JPopupMenu toolbarCreatePopup;
+    private JMenuItem documentMenuItem;
+    private JMenuItem itemMenuItem;
+    private JMenuItem folderMenuItem;
+    private JMenuItem relationshipMenuItem;
 
     private JSplitPane split;
     private FolderPanel folderPanel;
@@ -147,7 +150,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar = new JToolBar("CMIS Toolbar", JToolBar.HORIZONTAL);
 
-        toolbarButton = new JButton[12];
+        toolbarButton = new JButton[10];
 
         toolbarButton[BUTTON_CONNECT] = new JButton("Connection", ClientHelper.getIcon("connect.png"));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
@@ -236,36 +239,56 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.addSeparator();
 
-        toolbarButton[BUTTON_CREATE_DOCUMENT] = new JButton("Create Document", ClientHelper.getIcon("newdocument.png"));
-        toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(false);
-        toolbarButton[BUTTON_CREATE_DOCUMENT].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        toolbarCreatePopup = new JPopupMenu();
+        documentMenuItem = new JMenuItem("Document");
+        documentMenuItem.setEnabled(true);
+        toolbarCreatePopup.add(documentMenuItem);
+        documentMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
                 new CreateDocumentDialog(thisFrame, model);
             }
         });
 
-        toolBar.add(toolbarButton[BUTTON_CREATE_DOCUMENT]);
+        itemMenuItem = new JMenuItem("Item");
+        itemMenuItem.setEnabled(false);
+        toolbarCreatePopup.add(itemMenuItem);
+        itemMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                new CreateItemDialog(thisFrame, model);
+            }
+        });
 
-        toolbarButton[BUTTON_CREATE_FOLDER] = new JButton("Create Folder", ClientHelper.getIcon("newfolder.png"));
-        toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(false);
-        toolbarButton[BUTTON_CREATE_FOLDER].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        folderMenuItem = new JMenuItem("Folder");
+        folderMenuItem.setEnabled(true);
+        toolbarCreatePopup.add(folderMenuItem);
+        folderMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
                 new CreateFolderDialog(thisFrame, model);
             }
         });
 
-        toolBar.add(toolbarButton[BUTTON_CREATE_FOLDER]);
-
-        toolbarButton[BUTTON_CREATE_RELATIONSHIP] = new JButton("Create Relationship",
-                ClientHelper.getIcon("newrelationship.png"));
-        toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(false);
-        toolbarButton[BUTTON_CREATE_RELATIONSHIP].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        relationshipMenuItem = new JMenuItem("Relationship");
+        relationshipMenuItem.setEnabled(false);
+        toolbarCreatePopup.add(relationshipMenuItem);
+        relationshipMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
                 new CreateRelationshipDialog(thisFrame, model);
             }
         });
 
-        toolBar.add(toolbarButton[BUTTON_CREATE_RELATIONSHIP]);
+        toolbarButton[BUTTON_CREATE] = new JButton("Create Object", ClientHelper.getIcon("newdocument.png"));
+        toolbarButton[BUTTON_CREATE].setEnabled(false);
+        toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                toolbarCreatePopup.show(toolbarButton[BUTTON_CREATE], 0, toolbarButton[BUTTON_CREATE].getHeight());
+            }
+        });
+
+        toolBar.add(toolbarButton[BUTTON_CREATE]);
 
         toolBar.addSeparator();
 
@@ -334,9 +357,10 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_CHANGELOG].setEnabled(model.supportsChangeLog());
                 toolbarButton[BUTTON_CONSOLE].setEnabled(true);
                 toolbarButton[BUTTON_TCK].setEnabled(true);
-                toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(true);
-                toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(true);
-                toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(model.supportsRelationships());
+                toolbarButton[BUTTON_CREATE].setEnabled(true);
+
+                itemMenuItem.setEnabled(model.supportsItems());
+                relationshipMenuItem.setEnabled(model.supportsRelationships());
 
                 Object user = clientSession.getSessionParameters().get(SessionParameter.USER);
                 if (user != null) {
@@ -353,9 +377,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
                 toolbarButton[BUTTON_CONSOLE].setEnabled(false);
                 toolbarButton[BUTTON_TCK].setEnabled(false);
-                toolbarButton[BUTTON_CREATE_DOCUMENT].setEnabled(false);
-                toolbarButton[BUTTON_CREATE_FOLDER].setEnabled(false);
-                toolbarButton[BUTTON_CREATE_RELATIONSHIP].setEnabled(false);
+                toolbarButton[BUTTON_CREATE].setEnabled(false);
 
                 ClientHelper.showError(null, ex);
 
