@@ -31,6 +31,7 @@ println "Folder " + folder.getName();
 println "----------------------------------------------";
 println "Folders:   " + stats["folders"];
 println "Documents: " + stats["documents"];
+println "Items:     " + stats["items"];
 println "Policies:  " + stats["policies"];
 println "Content:   " + stats["bytes"] + " bytes";
 
@@ -40,6 +41,7 @@ def count(Folder folder, boolean tree = false) {
     def stats = [:];
     stats["folders"] = 0;
     stats["documents"] = 0;
+    stats["items"] = 0;
     stats["policies"] = 0;
     stats["bytes"] = 0;
 
@@ -62,6 +64,8 @@ def countInternal(Folder folder, boolean tree, OperationContext oc, def stats) {
             stats["documents"]++;  
             long size =((Document) child).getContentStreamLength();
             if (size > 0) { stats["bytes"] += size; }
+        } else if(child instanceof Item) {
+            stats["item"]++;
         } else if(child instanceof Policy) {
             stats["policies"]++;
         }

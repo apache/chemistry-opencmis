@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.*
 import org.apache.chemistry.opencmis.client.api.*
 
 println "'cmis:document' and subtypes:     " + countTypes("cmis:document")
+println "'cmis:item' and subtypes:         " + countTypes("cmis:item")
 println "'cmis:folder' and subtypes:       " + countTypes("cmis:folder")
 println "'cmis:relationship' and subtypes: " + countTypes("cmis:relationship")
 println "'cmis:policy' and subtypes:       " + countTypes("cmis:policy")

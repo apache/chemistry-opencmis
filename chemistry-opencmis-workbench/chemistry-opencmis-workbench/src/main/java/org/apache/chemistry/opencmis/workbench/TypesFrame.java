@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -94,6 +95,12 @@ public class TypesFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
+        
+        ImageIcon icon = ClientHelper.getIcon("icon.png");
+        if (icon != null) {
+            setIconImage(icon.getImage());
+        }
+        
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(200, 60));
         setLayout(new BorderLayout());
