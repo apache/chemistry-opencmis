@@ -100,9 +100,9 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         setIsQueryable(false);
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
-        typeMutability.setCanCreate(false);
+        typeMutability.setCanCreate(true);
         typeMutability.setCanDelete(false);
-        typeMutability.setCanCreate(false);
+        typeMutability.setCanUpdate(false);
         setTypeMutability (typeMutability);
 
 

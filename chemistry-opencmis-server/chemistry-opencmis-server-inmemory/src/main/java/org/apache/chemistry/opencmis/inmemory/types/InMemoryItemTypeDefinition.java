@@ -92,7 +92,7 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
         setQueryName(id);
         setIsControllableAcl(true);
         setIsControllablePolicy(false);
-        setIsCreatable(false);
+        setIsCreatable(true);
         setIsFileable(true);
         setIsFulltextIndexed(false);
         setIsIncludedInSupertypeQuery(true);
@@ -101,7 +101,7 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
         typeMutability.setCanDelete(false);
-        typeMutability.setCanCreate(false);
+        typeMutability.setCanUpdate(false);
         setTypeMutability (typeMutability);
 
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
