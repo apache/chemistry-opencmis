@@ -103,7 +103,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
         typeMutability.setCanDelete(false);
-        typeMutability.setCanCreate(false);
+        typeMutability.setCanUpdate(false);
         setTypeMutability (typeMutability);
 
         // relationship specifics
