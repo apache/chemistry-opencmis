@@ -19,6 +19,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyStringDefinition>
@@ -291,6 +296,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyStringDefinition>
@@ -439,6 +449,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyIntegerDefinition>
@@ -453,8 +468,8 @@
         <updatability>oncreate</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>false</queryable>
-        <orderable>false</orderable>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
         <openChoice>false</openChoice>
     </propertyIntegerDefinition>
     <propertyIntegerDefinition>
@@ -469,8 +484,8 @@
         <updatability>oncreate</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>false</queryable>
-        <orderable>false</orderable>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
         <openChoice>false</openChoice>
     </propertyIntegerDefinition>
     <propertyIntegerDefinition>
@@ -692,8 +707,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>true</queryable>
-        <orderable>true</orderable>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
         <openChoice>false</openChoice>
     </propertyStringDefinition>
     <propertyStringDefinition>
@@ -1033,8 +1048,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>true</queryable>
-        <orderable>true</orderable>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
         <openChoice>false</openChoice>
         <choice displayName="North">
             <value>N</value>
@@ -1071,8 +1086,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>true</queryable>
-        <orderable>true</orderable>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
         <openChoice>false</openChoice>
         <choice displayName="East">
             <value>E</value>
@@ -1109,8 +1124,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>true</queryable>
-        <orderable>true</orderable>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
         <openChoice>false</openChoice>
         <choice displayName="Above Sea Level">
             <value>0</value>
@@ -1163,8 +1178,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>false</queryable>
-        <orderable>false</orderable>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
         <openChoice>false</openChoice>
     </propertyDateTimeDefinition>
     <propertyDateTimeDefinition>
@@ -1379,8 +1394,8 @@
         <updatability>readwrite</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>true</queryable>
-        <orderable>true</orderable>
+        <queryable>false</queryable>
+        <orderable>false</orderable>
         <openChoice>false</openChoice>
     </propertyStringDefinition>
     <propertyIntegerDefinition>
@@ -1635,6 +1650,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyStringDefinition>
@@ -2087,6 +2107,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyStringDefinition>
@@ -2171,6 +2196,11 @@
     <includedInSupertypeQuery>true</includedInSupertypeQuery>
     <controllablePolicy>false</controllablePolicy>
     <controllableACL>true</controllableACL>
+    <TypeMutability>
+        <create>true</create>
+        <update>true</update>
+        <delete>true</delete>
+    </TypeMutability>
     <versionable>false</versionable>
     <contentStreamAllowed>allowed</contentStreamAllowed>
     <propertyStringDefinition>
@@ -2329,8 +2359,8 @@
         <updatability>oncreate</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>false</queryable>
-        <orderable>false</orderable>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
         <openChoice>false</openChoice>
     </propertyIntegerDefinition>
     <propertyIntegerDefinition>
@@ -2345,8 +2375,8 @@
         <updatability>oncreate</updatability>
         <inherited>false</inherited>
         <required>false</required>
-        <queryable>false</queryable>
-        <orderable>false</orderable>
+        <queryable>true</queryable>
+        <orderable>true</orderable>
         <openChoice>false</openChoice>
     </propertyIntegerDefinition>
 </cmisra:type>
