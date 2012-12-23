@@ -153,6 +153,7 @@ public class TypeSplitPane extends JSplitPane {
                         sb.append("delete");
                     }
 
+                    typeMutabilityField.setText(sb.toString());
                 } else {
                     typeMutabilityField.setText("");
                 }

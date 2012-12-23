@@ -650,9 +650,9 @@ public final class JSONConverter {
         if (typeMutabilityJson != null) {
             TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
 
-            typeMutability.setCanCreate(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_CREATE));
-            typeMutability.setCanUpdate(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_UPDATE));
-            typeMutability.setCanDelete(getBoolean(json, JSON_TYPE_TYPE_MUTABILITY_DELETE));
+            typeMutability.setCanCreate(getBoolean(typeMutabilityJson, JSON_TYPE_TYPE_MUTABILITY_CREATE));
+            typeMutability.setCanUpdate(getBoolean(typeMutabilityJson, JSON_TYPE_TYPE_MUTABILITY_UPDATE));
+            typeMutability.setCanDelete(getBoolean(typeMutabilityJson, JSON_TYPE_TYPE_MUTABILITY_DELETE));
 
             convertExtension(typeMutabilityJson, typeMutability, JSON_TYPE_TYPE_MUTABILITY_KEYS);
 
