@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
+    <version>\${version}</version>
+    <packaging>war</packaging>
+
+    <properties>
+        <opencmis.version>${opencmisVersion}</opencmis.version>
+    </properties>
+
+   <name>Your OpenCMIS Server</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <overlays>
+                        <overlay></overlay>
+                        <overlay>
+                            <groupId>org.apache.chemistry.opencmis</groupId>
+                            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+                            <excludes>
+                                <!-- exclude everything you don't need -->
+                                <exclude>index.html</exclude>
+                                <exclude>web/**</exclude>
+                                <exclude>WEB-INF/classes/sample-repository.properties</exclude>
+                                <exclude>WEB-INF/token/**</exclude>
+                                <exclude>WEB-INF/websphere/**</exclude>
+                            </excludes>
+                        </overlay>
+                    </overlays>
+                    <archiveClasses>true</archiveClasses>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <wtpversion>2.0</wtpversion>
+                    <wtpContextName>\${artifactId}</wtpContextName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <version>\${opencmis.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <artifactId>chemistry-opencmis-server-support</artifactId>
+            <version>\${opencmis.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

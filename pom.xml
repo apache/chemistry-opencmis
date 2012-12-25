@@ -190,13 +190,14 @@
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-jcr</module>
-        <module>chemistry-opencmis-bridge/chemistry-opencmis-bridge</module>        
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-archetype</module>
+        <module>chemistry-opencmis-bridge/chemistry-opencmis-bridge</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-fit</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-tck</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-tools</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-util</module>
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser</module>
-        <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>        
+        <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>
         <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-client</module>
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
