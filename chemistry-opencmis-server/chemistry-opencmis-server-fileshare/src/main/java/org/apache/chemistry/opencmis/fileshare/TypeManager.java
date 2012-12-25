@@ -89,7 +89,7 @@ public class TypeManager {
         types = new HashMap<String, TypeDefinitionContainerImpl>();
         typesList = new ArrayList<TypeDefinitionContainer>();
 
-        // type mutaibility
+        // type mutability
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(false);
@@ -247,6 +247,9 @@ public class TypeManager {
         type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READWRITE, false, true));
 
+        type.addPropertyDefinition(createPropDef(PropertyIds.DESCRIPTION, "Description", "Description",
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
+
         type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
 
@@ -262,6 +265,9 @@ public class TypeManager {
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
+                "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI, Updatability.READONLY, false, false));
     }
 
     private static void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
@@ -395,6 +401,8 @@ public class TypeManager {
             baseType = copyTypeDefintion(types.get(DOCUMENT_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
             baseType = copyTypeDefintion(types.get(FOLDER_TYPE_ID).getTypeDefinition());
+        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
+            baseType = copyTypeDefintion(types.get(ITEM_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
             baseType = copyTypeDefintion(types.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
