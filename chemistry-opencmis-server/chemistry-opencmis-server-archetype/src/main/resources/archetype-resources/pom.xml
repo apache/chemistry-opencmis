@@ -28,16 +28,16 @@
                             <artifactId>chemistry-opencmis-server-bindings</artifactId>
                             <excludes>
                                 <!-- exclude everything you don't need -->
-                                <exclude>index.html</exclude>
-                                <exclude>web/**</exclude>
-                                <exclude>WEB-INF/classes/sample-repository.properties</exclude>
-                                <exclude>WEB-INF/token/**</exclude>
-                                <exclude>WEB-INF/websphere/**</exclude>
+                                <exclude>index.html</exclude> <!-- default index page -->
+                                <exclude>css/**</exclude> <!-- CSS for the default index page -->
+                                <exclude>images/**</exclude> <!-- images for the default index page -->
+                                <exclude>web/**</exclude> <!-- sample JavaScript application -->
+                                <exclude>WEB-INF/classes/sample-repository.properties</exclude> <!-- sample server properties file -->
+                                <exclude>WEB-INF/token/**</exclude>  <!-- sample Browser Binding token implementation -->
+                                <exclude>WEB-INF/websphere/**</exclude> <!-- WebSphere specfic files -->
                             </excludes>
                         </overlay>
                     </overlays>
-                    <archiveClasses>true</archiveClasses>
-                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
             <plugin>

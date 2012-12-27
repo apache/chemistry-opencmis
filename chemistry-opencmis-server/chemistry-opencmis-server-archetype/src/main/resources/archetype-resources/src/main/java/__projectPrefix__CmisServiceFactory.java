@@ -45,7 +45,7 @@ public class ${projectPrefix}CmisServiceFactory extends AbstractServiceFactory {
         String user = context.getUsername();
         String password = context.getPassword();
 
-        // if authentication fails, throw CmisPermissionDeniedException
+        // if the authentication fails, throw a CmisPermissionDeniedException
 
         // create a new service object
         // (can also be pooled or stored in a ThreadLocal)
