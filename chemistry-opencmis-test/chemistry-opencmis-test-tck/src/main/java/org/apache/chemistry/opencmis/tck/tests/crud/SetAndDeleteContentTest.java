@@ -45,7 +45,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Copy test.
+ * Content test.
  */
 public class SetAndDeleteContentTest extends AbstractSessionTest {
 

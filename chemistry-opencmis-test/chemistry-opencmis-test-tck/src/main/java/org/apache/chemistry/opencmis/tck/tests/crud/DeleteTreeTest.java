@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Simple document test.
+ * Delete tree test.
  */
 public class DeleteTreeTest extends AbstractSessionTest {
 

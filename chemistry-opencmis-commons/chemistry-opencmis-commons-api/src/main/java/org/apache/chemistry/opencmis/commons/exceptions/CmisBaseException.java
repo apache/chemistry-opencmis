@@ -146,8 +146,7 @@ public abstract class CmisBaseException extends RuntimeException {
     }
 
     /**
-     * Returns the content of the error page sent by the web server (AtomPub
-     * binding only).
+     * Returns the content of the error page sent by the web server.
      * 
      * @return the content of the error page or <code>null</code> if the server
      *         didn't send text content.

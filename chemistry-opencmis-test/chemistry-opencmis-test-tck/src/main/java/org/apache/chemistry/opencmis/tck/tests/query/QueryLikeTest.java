@@ -29,6 +29,9 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 
+/**
+ * Query LIKE test. 
+ */
 public class QueryLikeTest extends AbstractQueryTest {
 
     @Override

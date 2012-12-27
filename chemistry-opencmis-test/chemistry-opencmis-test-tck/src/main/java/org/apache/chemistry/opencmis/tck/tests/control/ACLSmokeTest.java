@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 
 /**
- * Query smoke test.
+ * ACL smoke test.
  */
 public class ACLSmokeTest extends AbstractSessionTest {
 

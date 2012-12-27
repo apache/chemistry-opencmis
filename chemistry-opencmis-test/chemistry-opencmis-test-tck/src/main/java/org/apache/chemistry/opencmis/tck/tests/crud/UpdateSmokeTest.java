@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Copy test.
+ * Update smoke test.
  */
 public class UpdateSmokeTest extends AbstractSessionTest {
 

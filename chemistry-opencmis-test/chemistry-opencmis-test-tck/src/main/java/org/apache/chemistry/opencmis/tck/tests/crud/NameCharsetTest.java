@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Tests document names.
+ * Document names test.
  */
 public class NameCharsetTest extends AbstractSessionTest {
 

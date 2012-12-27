@@ -28,29 +28,47 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
  */
 public interface CallContext {
 
+    /** Binding: AtomPub */
     String BINDING_ATOMPUB = "atompub";
+    /** Binding: Web Services */
     String BINDING_WEBSERVICES = "webservices";
+    /** Binding: Browser */
     String BINDING_BROWSER = "browser";
+    /** Binding: Local */
     String BINDING_LOCAL = "local";
 
+    /** Key: CMIS version (value is a CmisVersion) */
     String CMIS_VERSION = "cmisVersion";
 
+    /** Key: repository id */
     String REPOSITORY_ID = "repositoryId";
+    /** Key: username */
     String USERNAME = "username";
+    /** Key: password */
     String PASSWORD = "password";
+    /** Key: local */
     String LOCALE = "locale";
+    /** Key: offset (value is a BigInteger) */
     String OFFSET = "offset";
+    /** Key: length (value is a BigInteger) */
     String LENGTH = "length";
     String LOCALE_ISO639_LANGUAGE = "language";
     String LOCALE_ISO3166_COUNTRY = "country";
 
+    /** Key: servlet context (value is a ServletContext) */
     String SERVLET_CONTEXT = "servletContext";
+    /** Key: servlet request (value is a HttpServletRequest) */
     String HTTP_SERVLET_REQUEST = "httpServletRequest";
+    /** Key: servlet response (value is a HttpServletResponse) */
     String HTTP_SERVLET_RESPONSE = "httpServletResponse";
 
+    /** Key: temp directory */
     String TEMP_DIR = "tempDir";
+    /** Key: memory threshold (values is an Integer) */
     String MEMORY_THRESHOLD = "memoryThreshold";
+    /** Key: max content size (values is a Long) */
     String MAX_CONTENT_SIZE = "maxContentSize";
+    /** Key: encrypt temp files (values is a Boolean) */
     String ENCRYPT_TEMP_FILE = "encryptTempFiles";
 
     /**

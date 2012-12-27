@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Copy test.
+ * Move test.
  */
 public class MoveTest extends AbstractSessionTest {
 

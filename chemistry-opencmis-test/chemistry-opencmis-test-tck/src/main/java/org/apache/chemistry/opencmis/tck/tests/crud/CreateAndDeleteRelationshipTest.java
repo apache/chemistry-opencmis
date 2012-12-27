@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
- * Simple folder test.
+ * Simple relationship test.
  */
 public class CreateAndDeleteRelationshipTest extends AbstractSessionTest {
 

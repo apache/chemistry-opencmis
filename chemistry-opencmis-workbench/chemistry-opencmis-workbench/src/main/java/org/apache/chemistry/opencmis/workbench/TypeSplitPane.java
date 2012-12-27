@@ -164,7 +164,7 @@ public class TypeSplitPane extends JSplitPane {
                     versionableLabel.setValue(is(docType.isVersionable()));
                     contentStreamAllowedField.setVisible(true);
                     contentStreamAllowedField.setText(docType.getContentStreamAllowed() == null ? "???" : docType
-                            .getContentStreamAllowed().toString());
+                            .getContentStreamAllowed().value());
                 } else {
                     versionableLabel.setVisible(false);
                     contentStreamAllowedField.setVisible(false);
