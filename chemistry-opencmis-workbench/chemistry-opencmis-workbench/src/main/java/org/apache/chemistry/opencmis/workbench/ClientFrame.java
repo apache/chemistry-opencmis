@@ -29,7 +29,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -51,6 +53,8 @@ import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 public class ClientFrame extends JFrame implements WindowListener {
 
     private static final long serialVersionUID = 1L;
+
+    public static final String SYSPROP_SCRIPTS = ClientSession.WORKBENCH_PREFIX + "scripts";
 
     private static final String WINDOW_TITLE = "CMIS Workbench";
 
@@ -217,7 +221,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         toolbarConsolePopup = new JPopupMenu();
         for (FileEntry fe : readScriptLibrary()) {
             JMenuItem menuItem = new JMenuItem(fe.getName());
-            final String file = fe.getFile();
+            final URI file = fe.getFile();
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -389,8 +393,18 @@ public class ClientFrame extends JFrame implements WindowListener {
     }
 
     private List<FileEntry> readScriptLibrary() {
-        List<FileEntry> result = ClientHelper.readFileProperties(GROOVY_SCRIPT_FOLDER + GROOVY_SCRIPT_LIBRARY,
-                GROOVY_SCRIPT_FOLDER);
+
+        URI propFile = null;
+
+        String externalScripts = System.getProperty(SYSPROP_SCRIPTS);
+        if (externalScripts == null) {
+            propFile = ClientHelper.getClasspathURI(GROOVY_SCRIPT_FOLDER + GROOVY_SCRIPT_LIBRARY);
+        } else {
+            propFile = (new File(externalScripts)).toURI();
+        }
+
+        List<FileEntry> result = ClientHelper.readFileProperties(propFile);
+
         if (result == null) {
             result = Collections.singletonList(new FileEntry("Groovy Console", null));
         }

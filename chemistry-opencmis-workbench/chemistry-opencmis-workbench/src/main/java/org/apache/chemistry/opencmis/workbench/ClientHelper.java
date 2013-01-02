@@ -47,6 +47,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -467,54 +468,103 @@ public class ClientHelper {
         return value.toString();
     }
 
-    public static String readFileAndRemoveHeader(String file) {
+    public static URI getClasspathURI(String path) {
+        try {
+            return ClientHelper.class.getResource(path).toURI();
+        } catch (URISyntaxException e) {
+            // not very likely
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String readFileAndRemoveHeader(final URI file) {
         if (file == null) {
             return "";
         }
 
-        InputStream stream = ClientHelper.class.getResourceAsStream(file);
+        final InputStream stream;
+        try {
+            stream = file.toURL().openStream();
+        } catch (Exception e) {
+            return "";
+        }
+
+        final String result = readStreamAndRemoveHeader(stream);
+
+        try {
+            stream.close();
+        } catch (IOException e) {
+            // ignore
+        }
+
+        return result;
+    }
+
+    public static String readStreamAndRemoveHeader(final InputStream stream) {
         if (stream == null) {
             return "";
-        } else {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-                StringBuilder sb = new StringBuilder();
-                String s;
-                boolean header = true;
+        }
 
-                while ((s = reader.readLine()) != null) {
-                    // remove header
-                    if (header) {
-                        String st = s.trim();
-                        if (st.length() == 0) {
-                            header = false;
-                            continue;
-                        }
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            final StringBuilder sb = new StringBuilder();
+            String s;
+            boolean header = true;
 
-                        char c = st.charAt(0);
-                        header = (c == '/') || (c == '*') || (c == '#');
-                        if (header) {
-                            continue;
-                        }
+            while ((s = reader.readLine()) != null) {
+                // remove header
+                if (header) {
+                    String st = s.trim();
+                    if (st.length() == 0) {
+                        header = false;
+                        continue;
                     }
 
-                    sb.append(s);
-                    sb.append("\n");
+                    char c = st.charAt(0);
+                    header = (c == '/') || (c == '*') || (c == '#');
+                    if (header) {
+                        continue;
+                    }
                 }
 
-                reader.close();
-
-                return sb.toString();
-            } catch (Exception e) {
-                return "";
+                sb.append(s);
+                sb.append("\n");
             }
+
+            reader.close();
+
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
         }
     }
 
-    public static List<FileEntry> readFileProperties(String propertiesFile, String path) {
-        InputStream stream = ClientHelper.class.getResourceAsStream(propertiesFile);
-        if (stream == null) {
+    public static List<FileEntry> readFileProperties(URI propertiesFile) {
+
+        final InputStream stream;
+        try {
+            stream = propertiesFile.toURL().openStream();
+            if (stream == null) {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
+        }
+
+        String classpathParent = null;
+        if ("classpath".equalsIgnoreCase(propertiesFile.getScheme())) {
+            String path = propertiesFile.getSchemeSpecificPart();
+            int x = path.lastIndexOf('/');
+            if (x > -1) {
+                classpathParent = path.substring(0, x);
+            }
+        }
+
+        String fileParent = null;
+        if ("file".equalsIgnoreCase(propertiesFile.getScheme())) {
+            fileParent = (new File(propertiesFile)).getParent();
         }
 
         try {
@@ -522,14 +572,32 @@ public class ClientHelper {
             properties.load(stream);
             stream.close();
 
-            List<FileEntry> result = new ArrayList<FileEntry>();
+            final List<FileEntry> result = new ArrayList<FileEntry>();
             for (String file : properties.stringPropertyNames()) {
-                result.add(new FileEntry(properties.getProperty(file), path + file));
+
+                try {
+                    URI uri = null;
+
+                    if (classpathParent != null) {
+                        uri = ClientHelper.class.getResource(classpathParent + "/" + file).toURI();
+                    }
+
+                    if (fileParent != null) {
+                        uri = (new File(fileParent, file)).toURI();
+                    }
+
+                    if (uri != null) {
+                        result.add(new FileEntry(properties.getProperty(file), uri));
+                    }
+                } catch (URISyntaxException e) {
+                    // ignore entry
+                }
             }
             Collections.sort(result);
 
             return result;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         } finally {
             try {
@@ -539,7 +607,7 @@ public class ClientHelper {
         }
     }
 
-    public static Console openConsole(final Component parent, final ClientModel model, final String file) {
+    public static Console openConsole(final Component parent, final ClientModel model, final URI file) {
         try {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -554,12 +622,14 @@ public class ClientHelper {
 
             addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
                     "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
+            addConsoleMenu(cmisMenu, "CMIS 1.1 Specification", new URI(
+                    "http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
                     new URI("http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc", new URI(
-                    "http://chemistry.apache.org/java/0.7.0/maven/apidocs/"));
+                    "http://chemistry.apache.org/java/0.8.0/maven/apidocs/"));
 
-            console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
+            console.getInputArea().setText(readFileAndRemoveHeader(file));
 
             return console;
         } catch (Exception ex) {
@@ -630,9 +700,9 @@ public class ClientHelper {
 
     public static class FileEntry implements Comparable<FileEntry> {
         private final String name;
-        private final String file;
+        private final URI file;
 
-        public FileEntry(String name, String file) {
+        public FileEntry(String name, URI file) {
             this.name = name;
             this.file = file;
         }
@@ -641,7 +711,7 @@ public class ClientHelper {
             return name;
         }
 
-        public String getFile() {
+        public URI getFile() {
             return file;
         }
 

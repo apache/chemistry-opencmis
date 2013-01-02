@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -75,6 +77,7 @@ public class LoginDialog extends JDialog {
     public static final String SYSPROP_COOKIES = ClientSession.WORKBENCH_PREFIX + "cookies";
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
+    public static final String SYSPROP_CONFIGS = ClientSession.WORKBENCH_PREFIX + "configs";
 
     private static final String CONFIGS_FOLDER = "/configs/";
     private static final String CONFIGS_LIBRARY = "config-library.properties";
@@ -256,7 +259,16 @@ public class LoginDialog extends JDialog {
         final JPanel expertPanel = new JPanel(new BorderLayout());
         expertPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
-        sessionConfigurations = ClientHelper.readFileProperties(CONFIGS_FOLDER + CONFIGS_LIBRARY, CONFIGS_FOLDER);
+        URI propFile = null;
+
+        String externalConfigs = System.getProperty(SYSPROP_CONFIGS);
+        if (externalConfigs == null) {
+            propFile = ClientHelper.getClasspathURI(CONFIGS_FOLDER + CONFIGS_LIBRARY);
+        } else {
+            propFile = (new File(externalConfigs)).toURI();
+        }
+
+        sessionConfigurations = ClientHelper.readFileProperties(propFile);
 
         final JComboBox configs = new JComboBox();
         configs.setMaximumRowCount(20);
