@@ -58,7 +58,7 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
         DiscoveryService, MultiFilingService, RelationshipService, AclService, PolicyService {
 
     /**
-     * Creates a new document, folder or policy.
+     * Creates a new document, folder, policy, or item.
      * 
      * The property "cmis:objectTypeId" defines the type and implicitly the base
      * type.

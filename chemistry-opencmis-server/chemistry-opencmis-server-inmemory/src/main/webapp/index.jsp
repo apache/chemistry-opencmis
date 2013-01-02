@@ -79,7 +79,14 @@ out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom");
 </a>
 </p>
 <p>
-Authentication: Basic Authentication (user name and password are arbitrary)
+Browser Binding: <a href="browser"> 
+<% 
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "browser");
+%>
+</a>
+</p>
+<p>
+Authentication: Basic Authentication (user name and password are arbitrary)<br>
 Note: Authentication is optional and only informational. User names are stored 
 in properties (createdBy, etc.), password is not required. The server does 
 not perform any kind of secure authentication.

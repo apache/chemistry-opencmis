@@ -599,7 +599,10 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <b>Implementation Hints:</b>
      * <ul>
      * <li>Bindings: Web Services, Browser, Local</li>
-     * <li>Implementation is optional. Convenience implementation is present.</li>
+     * <li>Implementation is optional. Convenience implementation is present
+     * (forwards to
+     * {@link #deleteObjectOrCancelCheckOut(String, String, Boolean, ExtensionsData)}
+     * ).</li>
      * </ul>
      */
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
