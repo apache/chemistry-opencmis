@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
@@ -136,12 +137,61 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <b>Implementation Hints:</b>
      * <ul>
      * <li>Bindings: AtomPub, Web Services, Browser, Local</li>
-     * <li>Implementation is optional.</li>
+     * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // check depth
+        int d = (depth == null ? -1 : depth.intValue());
+        if (d == 0) {
+            throw new CmisInvalidArgumentException("Depth must not be 0!");
+        }
+        if (typeId == null) {
+            d = -1;
+        }
+
+        List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
+
+        TypeDefinitionList children = getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
+                BigInteger.valueOf(Integer.MAX_VALUE), BigInteger.ZERO, null);
+
+        if (children != null && children.getList() != null && children.getList().size() > 0) {
+            for (TypeDefinition td : children.getList()) {
+                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+                addTypeChildren(repositoryId, includePropertyDefinitions, (d > 0 ? d - 1 : -1), tdc);
+                result.add(tdc);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Helper method for
+     * {@link #getTypeDescendants(String, String, BigInteger, Boolean, ExtensionsData)}
+     * .
+     */
+    private void addTypeChildren(String repositoryId, Boolean includePropertyDefinitions, int depth,
+            TypeDefinitionContainerImpl container) {
+
+        if (depth == 0) {
+            return;
+        }
+
+        TypeDefinitionList children = getTypeChildren(repositoryId, container.getTypeDefinition().getId(),
+                includePropertyDefinitions, BigInteger.valueOf(Integer.MAX_VALUE), BigInteger.ZERO, null);
+
+        if (children != null && children.getList() != null && children.getList().size() > 0) {
+            List<TypeDefinitionContainer> list = new ArrayList<TypeDefinitionContainer>();
+            container.setChildren(list);
+
+            for (TypeDefinition td : children.getList()) {
+                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+                addTypeChildren(repositoryId, includePropertyDefinitions, (depth > 0 ? depth - 1 : -1), tdc);
+                list.add(tdc);
+            }
+        }
     }
 
     /**

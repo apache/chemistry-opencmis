@@ -532,6 +532,9 @@ public class TypeManager {
         if (d == 0) {
             throw new CmisInvalidArgumentException("Depth must not be 0!");
         }
+        if (typeId == null) {
+            d = -1;
+        }
 
         // set property definition flag to default value if not set
         boolean ipd = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
