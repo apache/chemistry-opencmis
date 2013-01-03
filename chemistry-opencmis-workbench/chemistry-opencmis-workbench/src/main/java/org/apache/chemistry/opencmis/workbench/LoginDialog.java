@@ -282,10 +282,12 @@ public class LoginDialog extends JDialog {
 
         configs.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                FileEntry fe = (FileEntry) e.getItem();
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    FileEntry fe = (FileEntry) e.getItem();
 
-                sessionParameterTextArea.setText(ClientHelper.readFileAndRemoveHeader(fe.getFile()));
-                sessionParameterTextArea.setCaretPosition(0);
+                    sessionParameterTextArea.setText(ClientHelper.readFileAndRemoveHeader(fe.getFile()));
+                    sessionParameterTextArea.setCaretPosition(0);
+                }
             }
         });
 
