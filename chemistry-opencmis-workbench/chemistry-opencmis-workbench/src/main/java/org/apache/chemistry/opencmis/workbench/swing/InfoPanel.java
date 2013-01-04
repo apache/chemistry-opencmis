@@ -207,6 +207,7 @@ public abstract class InfoPanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
         private String link;
+        private boolean updated = false;
         private final JPopupMenu popup;
 
         public ClickableTextField() {
@@ -283,6 +284,8 @@ public abstract class InfoPanel extends JPanel {
                 link = text;
             }
 
+            updated = true;
+
             super.setText(text);
         }
 
@@ -296,6 +299,10 @@ public abstract class InfoPanel extends JPanel {
 
         @Override
         public void repaint(long tm, int x, int y, int width, int height) {
+            if (updated) {
+                super.repaint(tm, x, y, width, height);
+                updated = false;
+            }
         }
 
         @Override
