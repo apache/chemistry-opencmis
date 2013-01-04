@@ -98,17 +98,49 @@
 	-->
 
 	<servlet>
-		<servlet-name>cmisws</servlet-name>
+		<servlet-name>cmisws10</servlet-name>
 		<servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
+		<init-param>
+			<param-name>cmisVersion</param-name>
+			<param-value>1.0</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>cmisws11</servlet-name>
+		<servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
+		<init-param>
+			<param-name>cmisVersion</param-name>
+			<param-value>1.1</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet>
-		<servlet-name>cmisatom</servlet-name>
+		<servlet-name>cmisatom10</servlet-name>
 		<servlet-class>org.apache.chemistry.opencmis.server.impl.atompub.CmisAtomPubServlet</servlet-class>
 		<init-param>
 			<param-name>callContextHandler</param-name>
 			<param-value>org.apache.chemistry.opencmis.server.shared.BasicAuthCallContextHandler</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cmisVersion</param-name>
+			<param-value>1.0</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>cmisatom11</servlet-name>
+		<servlet-class>org.apache.chemistry.opencmis.server.impl.atompub.CmisAtomPubServlet</servlet-class>
+		<init-param>
+			<param-name>callContextHandler</param-name>
+			<param-value>org.apache.chemistry.opencmis.server.shared.BasicAuthCallContextHandler</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cmisVersion</param-name>
+			<param-value>1.1</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -124,13 +156,23 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>cmisws</servlet-name>
+		<servlet-name>cmisws10</servlet-name>
 		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>cmisatom</servlet-name>
+		<servlet-name>cmisws11</servlet-name>
+		<url-pattern>/services11/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>cmisatom10</servlet-name>
 		<url-pattern>/atom/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cmisatom11</servlet-name>
+		<url-pattern>/atom11/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

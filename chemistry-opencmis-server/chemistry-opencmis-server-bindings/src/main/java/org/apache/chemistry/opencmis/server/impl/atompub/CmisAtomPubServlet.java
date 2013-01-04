@@ -88,11 +88,13 @@ import org.slf4j.LoggerFactory;
 public class CmisAtomPubServlet extends HttpServlet {
 
     public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
-    public static final String PARAM_TRUSTED_PROXIES = "trustedProxies";
+    public static final String PARAM_CMIS_VERSION = "cmisVersion";
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class.getName());
 
     private static final long serialVersionUID = 1L;
+
+    private CmisVersion cmisVersion;
 
     private File tempDir;
     private int memoryThreshold;
@@ -115,6 +117,24 @@ public class CmisAtomPubServlet extends HttpServlet {
             } catch (Exception e) {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }
+        }
+
+        // get CMIS version
+        String cmisVersionStr = config.getInitParameter(PARAM_CMIS_VERSION);
+        if (cmisVersionStr != null) {
+            try {
+                cmisVersion = CmisVersion.fromValue(cmisVersionStr);
+
+                // !!! As long as CMIS 1.1 is not implemented, we have to set
+                // the CMIS version to 1.0 !!!
+                cmisVersion = CmisVersion.CMIS_1_0;
+            } catch (IllegalArgumentException e) {
+                LOG.warn("CMIS version is invalid! Setting it to CMIS 1.0.");
+                cmisVersion = CmisVersion.CMIS_1_0;
+            }
+        } else {
+            LOG.warn("CMIS version is not defined! Setting it to CMIS 1.0.");
+            cmisVersion = CmisVersion.CMIS_1_0;
         }
 
         // get memory threshold and temp directory
@@ -188,7 +208,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(qsRequest, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    CmisVersion.CMIS_1_0, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
+                    cmisVersion, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
             dispatch(context, qsRequest, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

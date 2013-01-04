@@ -91,7 +91,8 @@ public abstract class AbstractService {
     protected CallContext createContext(WebServiceContext wsContext, CmisServiceFactory factory, String repositoryId) {
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, repositoryId, false);
 
-        context.put(CallContext.CMIS_VERSION, CmisVersion.CMIS_1_0);
+        ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_CONTEXT);
 
         MessageContext mc = wsContext.getMessageContext();
         Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);
@@ -101,8 +102,9 @@ public abstract class AbstractService {
             }
         }
 
-        ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
-                MessageContext.SERVLET_CONTEXT);
+        CmisVersion cmisVersion = (CmisVersion) servletContext.getAttribute(CmisWebServicesServlet.CMIS_VERSION);
+        context.put(CallContext.CMIS_VERSION, cmisVersion);
+
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
 
         HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
