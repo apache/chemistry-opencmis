@@ -271,9 +271,9 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             updatebility.add(Updatability.WHENCHECKEDOUT);
 
             getBinding().getVersioningService().checkIn(getRepositoryId(), objectIdHolder, major,
-                    of.convertProperties(properties, getType(), updatebility), of.convertContentStream(contentStream),
-                    checkinComment, of.convertPolicies(policies), of.convertAces(addAces), of.convertAces(removeAces),
-                    null);
+                    of.convertProperties(properties, getType(), getSecondaryTypes(), updatebility),
+                    of.convertContentStream(contentStream), checkinComment, of.convertPolicies(policies),
+                    of.convertAces(addAces), of.convertAces(removeAces), null);
 
             newObjectId = objectIdHolder.getValue();
         } finally {

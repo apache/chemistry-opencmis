@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.api;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,9 +109,11 @@ public interface ObjectFactory {
 
     <T> Property<T> createProperty(PropertyDefinition<T> type, List<T> values);
 
-    Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties);
+    Map<String, Property<?>> convertProperties(ObjectType objectType, Collection<SecondaryType> secondaryTypes,
+            Properties properties);
 
-    Properties convertProperties(Map<String, ?> properties, ObjectType type, Set<Updatability> updatabilityFilter);
+    Properties convertProperties(Map<String, ?> properties, ObjectType type, Collection<SecondaryType> secondaryTypes,
+            Set<Updatability> updatabilityFilter);
 
     List<PropertyData<?>> convertQueryProperties(Properties properties);
 

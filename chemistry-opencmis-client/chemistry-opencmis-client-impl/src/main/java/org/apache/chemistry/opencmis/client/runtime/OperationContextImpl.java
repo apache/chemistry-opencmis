@@ -38,6 +38,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
     private static final long serialVersionUID = 1L;
 
     private TreeSet<String> filter;
+    private boolean loadSecondaryTypeProperties;
     private boolean includeAcls;
     private boolean includeAllowableActions;
     private boolean includePolicies;
@@ -54,6 +55,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
      */
     public OperationContextImpl() {
         setFilter(null);
+        setLoadSecondaryTypeProperties(false);
         setIncludeAcls(false);
         setIncludeAllowableActions(true);
         setIncludePolicies(false);
@@ -72,6 +74,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
      */
     public OperationContextImpl(OperationContext source) {
         setFilter(source.getFilter());
+        setLoadSecondaryTypeProperties(source.loadSecondaryTypeProperties());
         setIncludeAcls(source.isIncludeAcls());
         setIncludeAllowableActions(source.isIncludeAllowableActions());
         setIncludePolicies(source.isIncludePolicies());
@@ -177,6 +180,9 @@ public class OperationContextImpl implements OperationContext, Serializable {
         this.filter.add(PropertyIds.OBJECT_ID);
         this.filter.add(PropertyIds.BASE_TYPE_ID);
         this.filter.add(PropertyIds.OBJECT_TYPE_ID);
+        if (loadSecondaryTypeProperties) {
+            this.filter.add(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        }
 
         StringBuilder sb = new StringBuilder();
 
@@ -189,6 +195,14 @@ public class OperationContextImpl implements OperationContext, Serializable {
         }
 
         return sb.toString();
+    }
+
+    public void setLoadSecondaryTypeProperties(boolean load) {
+        this.loadSecondaryTypeProperties = load;
+    }
+
+    public boolean loadSecondaryTypeProperties() {
+        return loadSecondaryTypeProperties;
     }
 
     public boolean isIncludeAcls() {

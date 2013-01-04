@@ -105,9 +105,31 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         ObjectFactory of = getObjectFactory();
 
         if (objectData != null) {
+
             // handle properties
             if (objectData.getProperties() != null) {
-                this.properties = of.convertProperties(objectType, objectData.getProperties());
+                
+                // get secondary types
+                if (objectData.getProperties().getProperties() != null
+                        && objectData.getProperties().getProperties()
+                                .containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+                    @SuppressWarnings("unchecked")
+                    List<String> stids = (List<String>) objectData.getProperties().getProperties()
+                            .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
+                    if (stids != null && stids.size() > 0) {
+                        secondaryTypes = new ArrayList<SecondaryType>();
+                        for (String stid : stids) {
+                            if (stid != null) {
+                                ObjectType type = session.getTypeDefinition(stid);
+                                if (type instanceof SecondaryType) {
+                                    secondaryTypes.add((SecondaryType) type);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                this.properties = of.convertProperties(objectType, secondaryTypes, objectData.getProperties());
                 extensions.put(ExtensionLevel.PROPERTIES, objectData.getProperties().getExtensions());
             }
 
@@ -150,23 +172,6 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     CmisObject relationship = of.convertObject(rod, this.creationContext);
                     if (relationship instanceof Relationship) {
                         relationships.add((Relationship) relationship);
-                    }
-                }
-            }
-
-            // get secondary types
-            if (properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
-                @SuppressWarnings("unchecked")
-                List<String> stids = (List<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
-                if (stids != null && stids.size() > 0) {
-                    secondaryTypes = new ArrayList<SecondaryType>();
-                    for (String stid : stids) {
-                        if (stid != null) {
-                            ObjectType type = session.getTypeDefinition(stid);
-                            if (type instanceof SecondaryType) {
-                                secondaryTypes.add((SecondaryType) type);
-                            }
-                        }
                     }
                 }
             }
@@ -335,8 +340,12 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             }
 
             // it's time to update
-            getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder, changeTokenHolder,
-                    getObjectFactory().convertProperties(properties, this.objectType, updatebility), null);
+            getBinding().getObjectService().updateProperties(
+                    getRepositoryId(),
+                    objectIdHolder,
+                    changeTokenHolder,
+                    getObjectFactory()
+                            .convertProperties(properties, this.objectType, this.secondaryTypes, updatebility), null);
 
             newObjectId = objectIdHolder.getValue();
 

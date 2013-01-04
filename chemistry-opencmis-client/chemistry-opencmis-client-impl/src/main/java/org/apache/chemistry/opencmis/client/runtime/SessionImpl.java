@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
@@ -753,7 +754,7 @@ public class SessionImpl implements Session {
 
         String newId = getBinding().getObjectService().createDocument(
                 getRepositoryId(),
-                objectFactory.convertProperties(properties, null,
+                objectFactory.convertProperties(properties, null, null,
                         (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
                                 : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()),
                 objectFactory.convertContentStream(contentStream), versioningState,
@@ -775,11 +776,14 @@ public class SessionImpl implements Session {
 
         // get the type of the source document
         ObjectType type = null;
+        List<SecondaryType> secondaryTypes = null;
         if (source instanceof CmisObject) {
             type = ((CmisObject) source).getType();
+            secondaryTypes = ((CmisObject) source).getSecondaryTypes();
         } else {
             CmisObject sourceObj = getObject(source);
             type = sourceObj.getType();
+            secondaryTypes = sourceObj.getSecondaryTypes();
         }
 
         if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
@@ -789,7 +793,7 @@ public class SessionImpl implements Session {
         String newId = getBinding().getObjectService().createDocumentFromSource(
                 getRepositoryId(),
                 source.getId(),
-                objectFactory.convertProperties(properties, type,
+                objectFactory.convertProperties(properties, type, secondaryTypes,
                         (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
                                 : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()), versioningState,
                 objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
@@ -812,7 +816,7 @@ public class SessionImpl implements Session {
         }
 
         String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY), folderId.getId(),
+                objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY), folderId.getId(),
                 objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
                 objectFactory.convertAces(removeAces), null);
 
@@ -830,7 +834,7 @@ public class SessionImpl implements Session {
         }
 
         String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
+                objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
                 (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
                 objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
@@ -848,7 +852,7 @@ public class SessionImpl implements Session {
         }
 
         String newId = getBinding().getObjectService().createItem(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
+                objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
                 (folderId == null ? null : folderId.getId()), objectFactory.convertPolicies(policies),
                 objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
@@ -866,7 +870,7 @@ public class SessionImpl implements Session {
         }
 
         String newId = getBinding().getObjectService().createRelationship(getRepositoryId(),
-                objectFactory.convertProperties(properties, null, CREATE_UPDATABILITY),
+                objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
                 objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
                 objectFactory.convertAces(removeAces), null);
 

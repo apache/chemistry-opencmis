@@ -306,6 +306,7 @@ public final class BrowserBindingUtils {
                             }
                         }
                     }
+                    break;
                 }
 
                 i++;

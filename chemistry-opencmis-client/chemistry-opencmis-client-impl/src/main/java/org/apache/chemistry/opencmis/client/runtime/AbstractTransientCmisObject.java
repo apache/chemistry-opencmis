@@ -473,7 +473,8 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         }
 
         // convert properties
-        Properties result = getObjectFactory().convertProperties(properties, getType(), updatebility);
+        Properties result = getObjectFactory().convertProperties(properties, getType(), getSecondaryTypes(),
+                updatebility);
 
         // extensions
         List<CmisExtensionElement> extensions = ouputExtensions.get(ExtensionLevel.PROPERTIES);

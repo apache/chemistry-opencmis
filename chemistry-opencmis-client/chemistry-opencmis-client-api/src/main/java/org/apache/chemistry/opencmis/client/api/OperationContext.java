@@ -59,6 +59,16 @@ public interface OperationContext extends Serializable {
     String getFilterString();
 
     /**
+     * Sets if secondary type properties should be loaded.
+     */
+    void setLoadSecondaryTypeProperties(boolean load);
+
+    /**
+     * Returns is secondary type properties should be loaded.
+     */
+    boolean loadSecondaryTypeProperties();
+
+    /**
      * Returns if allowable actions should returned.
      */
     boolean isIncludeAllowableActions();

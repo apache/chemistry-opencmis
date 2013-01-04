@@ -42,10 +42,9 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createNewProperties;
-
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createUpdateProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createUpdateProperties;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
@@ -81,7 +80,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -384,9 +382,7 @@ public final class ObjectService {
         // compile properties
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        // TODO: fix this!
-        TypeDefinition typeDef = typeCache.getTypeDefinitionForObject(objectIds.get(0));
-        Properties properties = createUpdateProperties(cp, typeDef.getId(), addSecondaryTypes, objectIds, typeCache);
+        Properties properties = createUpdateProperties(cp, null, addSecondaryTypes, objectIds, typeCache);
 
         // execute
         List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,6 +43,7 @@ import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventImpl;
 import org.apache.chemistry.opencmis.client.runtime.ChangeEventsImpl;
@@ -252,16 +254,32 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> Property<T> convertProperty(ObjectType objectType, PropertyData<T> pd) {
+    protected <T> Property<T> convertProperty(ObjectType objectType, Collection<SecondaryType> secondaryTypes,
+            PropertyData<T> pd) {
         PropertyDefinition<T> definition = (PropertyDefinition<T>) objectType.getPropertyDefinitions().get(pd.getId());
+
+        // search secondary types
+        if (definition == null && secondaryTypes != null) {
+            for (SecondaryType secondaryType : secondaryTypes) {
+                if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
+                    definition = (PropertyDefinition<T>) secondaryType.getPropertyDefinitions().get(pd.getId());
+                    if (definition != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
         if (definition == null) {
             // property without definition
             throw new CmisRuntimeException("Property '" + pd.getId() + "' doesn't exist!");
         }
+
         return createProperty(definition, pd.getValues());
     }
 
-    public Map<String, Property<?>> convertProperties(ObjectType objectType, Properties properties) {
+    public Map<String, Property<?>> convertProperties(ObjectType objectType, Collection<SecondaryType> secondaryTypes,
+            Properties properties) {
         // check input
         if (objectType == null) {
             throw new IllegalArgumentException("Object type must set!");
@@ -279,7 +297,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         Map<String, Property<?>> result = new LinkedHashMap<String, Property<?>>();
         for (Map.Entry<String, PropertyData<?>> entry : properties.getProperties().entrySet()) {
             // find property definition
-            Property<?> apiProperty = convertProperty(objectType, entry.getValue());
+            Property<?> apiProperty = convertProperty(objectType, secondaryTypes, entry.getValue());
             result.put(entry.getKey(), apiProperty);
         }
 
@@ -287,7 +305,8 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public Properties convertProperties(Map<String, ?> properties, ObjectType type, Set<Updatability> updatabilityFilter) {
+    public Properties convertProperties(Map<String, ?> properties, ObjectType type,
+            Collection<SecondaryType> secondaryTypes, Set<Updatability> updatabilityFilter) {
         // check input
         if (properties == null) {
             return null;
@@ -301,6 +320,33 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             }
 
             type = session.getTypeDefinition(typeId.toString());
+        }
+
+        // get secondary types
+        Collection<SecondaryType> allSecondaryTypes = null;
+        Object secondaryTypeIds = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        if (secondaryTypeIds instanceof List) {
+            allSecondaryTypes = new ArrayList<SecondaryType>();
+
+            for (Object secondaryTypeId : (List<?>) secondaryTypeIds) {
+                if (!(secondaryTypeId instanceof String)) {
+                    throw new IllegalArgumentException("Secondary types property contains an invalid entry: "
+                            + secondaryTypeId);
+                }
+
+                ObjectType secondaryType = session.getTypeDefinition(secondaryTypeId.toString());
+                if (!(secondaryType instanceof SecondaryType)) {
+                    throw new IllegalArgumentException(
+                            "Secondary types property contains a type that is not a secondary type: "
+                                    + secondaryType.getId());
+                }
+
+                allSecondaryTypes.add((SecondaryType) secondaryType);
+            }
+        }
+
+        if (secondaryTypes != null && allSecondaryTypes == null) {
+            allSecondaryTypes = secondaryTypes;
         }
 
         // some preparation
@@ -326,8 +372,21 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
             // get the property definition
             PropertyDefinition<?> definition = type.getPropertyDefinitions().get(id);
+
+            if (definition == null && allSecondaryTypes != null) {
+                for (SecondaryType secondaryType : allSecondaryTypes) {
+                    if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
+                        definition = (PropertyDefinition<?>) secondaryType.getPropertyDefinitions().get(id);
+                        if (definition != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (definition == null) {
-                throw new IllegalArgumentException("Property '" + id + "' is not valid for this type!");
+                throw new IllegalArgumentException("Property '" + id
+                        + "' is not valid for this type or one of the secondary types!");
             }
 
             // check updatability

@@ -1093,7 +1093,10 @@ public final class JSONConverter {
 
         for (PropertyData<?> property : properties.getPropertyList()) {
             PropertyDefinition<?> propDef = null;
-            if (type != null) {
+            if (typeCache != null) {
+                propDef = typeCache.getPropertyDefinition(property.getId());
+            }
+            if (propDef == null && type != null) {
                 propDef = type.getPropertyDefinitions().get(property.getId());
             }
 
