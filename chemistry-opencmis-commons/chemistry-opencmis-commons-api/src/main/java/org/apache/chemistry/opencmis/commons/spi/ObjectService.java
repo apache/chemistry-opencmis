@@ -393,7 +393,7 @@ public interface ObjectService {
      * 
      * @param repositoryId
      *            the identifier for the repository
-     * @param objectIdAndChangeToken
+     * @param objectIdsAndChangeTokens
      *            the ids and change tokens of the objects to update
      * @param properties
      *            the properties to set
@@ -403,7 +403,7 @@ public interface ObjectService {
      *            the secondary types to remove
      */
     List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
-            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension);
 
     /**

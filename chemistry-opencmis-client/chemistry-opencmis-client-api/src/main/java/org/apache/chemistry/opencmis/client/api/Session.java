@@ -502,8 +502,8 @@ public interface Session extends Serializable {
     /**
      * Updates multiple objects in one request.
      */
-    BulkUpdateObjectIdAndChangeToken bulkUpdateProperties(BulkUpdateObjectIdAndChangeToken objectIdsAndChangeToken,
-            Map<String, ?> properties, List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds);
+    List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(List<CmisObject> objects, Map<String, ?> properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds);
 
     /**
      * Deletes an object and, if it is a document, all versions in the version

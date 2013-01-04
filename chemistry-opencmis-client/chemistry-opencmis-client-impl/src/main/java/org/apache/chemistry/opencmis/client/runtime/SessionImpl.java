@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -72,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
@@ -954,14 +956,60 @@ public class SessionImpl implements Session {
 
     // --- bulk update ---
 
-    public BulkUpdateObjectIdAndChangeToken bulkUpdateProperties(
-            BulkUpdateObjectIdAndChangeToken objectIdsAndChangeToken, Map<String, ?> properties,
-            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(List<CmisObject> objects,
+            Map<String, ?> properties, List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
         if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }
 
-        throw new CmisNotSupportedException("Not implemented, yet");
+        if ((objects == null) || objects.isEmpty()) {
+            throw new IllegalArgumentException("Objects must be set!");
+        }
+
+        ObjectType objectType = null;
+        Map<String, SecondaryType> secondaryTypes = new HashMap<String, SecondaryType>();
+
+        // gather secondary types
+        if (addSecondaryTypeIds != null) {
+            for (String stid : addSecondaryTypeIds) {
+                ObjectType secondaryType = getTypeDefinition(stid);
+
+                if (!(secondaryType instanceof SecondaryType)) {
+                    throw new IllegalArgumentException("Secondary types contains a type that is not a secondary type: "
+                            + secondaryType.getId());
+                }
+
+                secondaryTypes.put(secondaryType.getId(), (SecondaryType) secondaryType);
+            }
+        }
+
+        // gather ids and change tokens
+        List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
+        for (CmisObject object : objects) {
+            if (object == null) {
+                continue;
+            }
+
+            objectIdsAndChangeTokens.add(new BulkUpdateObjectIdAndChangeTokenImpl(object.getId(), object
+                    .getChangeToken()));
+
+            if (objectType == null) {
+                objectType = object.getType();
+            }
+
+            if (object.getSecondaryTypes() != null) {
+                for (SecondaryType secondaryType : object.getSecondaryTypes()) {
+                    secondaryTypes.put(secondaryType.getId(), secondaryType);
+                }
+            }
+        }
+
+        Set<Updatability> updatebility = new HashSet<Updatability>();
+        updatebility.add(Updatability.READWRITE);
+
+        return getBinding().getObjectService().bulkUpdateProperties(getRepositoryId(), objectIdsAndChangeTokens,
+                objectFactory.convertProperties(properties, objectType, secondaryTypes.values(), updatebility),
+                addSecondaryTypeIds, removeSecondaryTypeIds, null);
     }
 
     // --- delete ---

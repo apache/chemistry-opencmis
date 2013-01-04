@@ -23,7 +23,8 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 
-public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData implements BulkUpdateObjectIdAndChangeToken {
+public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData implements
+        BulkUpdateObjectIdAndChangeToken {
 
     private static final long serialVersionUID = 1L;
     private String id;
@@ -32,17 +33,18 @@ public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData 
 
     public BulkUpdateObjectIdAndChangeTokenImpl(String id, String changeToken) {
         this.id = id;
-        this.newId = id;
+        this.newId = null;
         this.changeToken = changeToken;
     }
-    
+
     public BulkUpdateObjectIdAndChangeTokenImpl(String id, String newId, String changeToken) {
         this.id = id;
         this.newId = newId;
         this.changeToken = changeToken;
     }
 
-    public BulkUpdateObjectIdAndChangeTokenImpl(String id, String newId, String changeToken, List<CmisExtensionElement> extensions) {
+    public BulkUpdateObjectIdAndChangeTokenImpl(String id, String newId, String changeToken,
+            List<CmisExtensionElement> extensions) {
         this.id = id;
         this.newId = newId;
         this.changeToken = changeToken;
@@ -61,4 +63,9 @@ public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData 
         return changeToken;
     }
 
+    @Override
+    public String toString() {
+        return "BulkUpdateObjectIdAndChangeToken [id=" + id + ", newId=" + newId + ", changeToken=" + changeToken + "]"
+                + super.toString();
+    }
 }

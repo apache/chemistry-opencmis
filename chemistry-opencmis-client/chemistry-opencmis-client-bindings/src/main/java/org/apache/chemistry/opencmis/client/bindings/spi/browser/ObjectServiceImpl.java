@@ -401,7 +401,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         UrlBuilder url = getRepositoryUrl(repositoryId);
 
         // prepare form data
-        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT);
+        final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_BULK_UPDATE);
         formData.addObjectIdsAndChangeTokens(objectIdAndChangeToken);
         formData.addPropertiesParameters(properties);
         formData.addSecondaryTypeIds(addSecondaryTypeIds);
