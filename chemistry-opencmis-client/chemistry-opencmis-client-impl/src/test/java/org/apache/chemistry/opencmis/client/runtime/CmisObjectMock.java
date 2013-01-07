@@ -164,6 +164,10 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public List<SecondaryType> getSecondaryTypes() {
         return null;
     }
+    
+    public List<ObjectType> findObjectType(String id) {
+        return null;
+    }
 
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         return null;

@@ -194,6 +194,10 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
         return object.getSecondaryTypes();
     }
 
+    public List<ObjectType> findObjectType(String id) {
+        return object.findObjectType(id);
+    }
+
     public String getChangeToken() {
         return getPropertyValue(PropertyIds.CHANGE_TOKEN);
     }

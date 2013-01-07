@@ -108,7 +108,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
             // handle properties
             if (objectData.getProperties() != null) {
-                
+
                 // get secondary types
                 if (objectData.getProperties().getProperties() != null
                         && objectData.getProperties().getProperties()
@@ -463,6 +463,34 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         } finally {
             readUnlock();
         }
+    }
+
+    public List<ObjectType> findObjectType(String id) {
+        List<ObjectType> result = null;
+
+        readLock();
+        try {
+            if (objectType.getPropertyDefinitions().containsKey(id)) {
+                result = new ArrayList<ObjectType>();
+                result.add(objectType);
+            }
+
+            if (secondaryTypes != null) {
+                for (SecondaryType secondaryType : secondaryTypes) {
+                    if (secondaryType.getPropertyDefinitions() != null
+                            && secondaryType.getPropertyDefinitions().containsKey(id)) {
+                        if (result == null) {
+                            result = new ArrayList<ObjectType>();
+                        }
+                        result.add(secondaryType);
+                    }
+                }
+            }
+        } finally {
+            readUnlock();
+        }
+
+        return result;
     }
 
     // --- allowable actions ---

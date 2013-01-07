@@ -119,6 +119,13 @@ public interface CmisObjectProperties {
     List<SecondaryType> getSecondaryTypes();
 
     /**
+     * Returns a list of primary and secondary object types that define the
+     * given property. If the property is not defined in any attached type,
+     * <code>null</code> is returned.
+     */
+    List<ObjectType> findObjectType(String id);
+
+    /**
      * Returns the change token (CMIS property <code>cmis:changeToken</code>).
      */
     String getChangeToken();
