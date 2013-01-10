@@ -25,7 +25,6 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +37,9 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -51,12 +50,13 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
     private static final String CONTENT1 = "one";
     private static final String CONTENT2 = "two";
+    private static final String CONTENT3 = "three";
 
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
-        setName("Set and Delete content Test");
-        setDescription("Creates a new document and tries to set and delete its content.");
+        setName("Set, Append, and Delete Content Test");
+        setDescription("Creates a new document and tries to set, append, and delete its content.");
     }
 
     @Override
@@ -126,8 +126,8 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             } catch (Exception e) {
             }
 
-            ContentStream contentStream = new ContentStreamImpl(workDoc.getName(),
-                    BigInteger.valueOf(contentBytes.length), "text/plain", new ByteArrayInputStream(contentBytes));
+            ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),
+                    contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
 
             ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
 
@@ -147,6 +147,35 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             } catch (IOException e) {
                 addResult(createResult(UNEXPECTED_EXCEPTION,
                         "Document content couldn't be read! Exception: " + e.getMessage(), e, true));
+            }
+
+            // test appendContentStream
+            if (session.getRepositoryInfo().getCmisVersion() != CmisVersion.CMIS_1_0) {
+                contentBytes = new byte[0];
+                try {
+                    contentBytes = CONTENT3.getBytes("UTF-8");
+                } catch (Exception e) {
+                }
+
+                contentStream = session.getObjectFactory().createContentStream(contentDoc.getName(),
+                        contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
+
+                newObjectId = contentDoc.appendContentStream(contentStream, true);
+
+                // appendContentStream may have created a new version
+                Document contentDoc2 = getNewVersion(session, contentDoc, checkedout, newObjectId,
+                        "appendContentStream()");
+
+                // test new content
+                try {
+                    String content = getStringFromContentStream(contentDoc2.getContentStream());
+                    f = createResult(FAILURE,
+                            "Document content doesn't match the content set by setContentStream() followed by appendContentStream()!");
+                    addResult(assertEquals(CONTENT2 + CONTENT3, content, null, f));
+                } catch (IOException e) {
+                    addResult(createResult(UNEXPECTED_EXCEPTION,
+                            "Document content couldn't be read! Exception: " + e.getMessage(), e, true));
+                }
             }
 
             // cancel a possible check out

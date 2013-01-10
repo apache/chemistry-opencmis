@@ -22,8 +22,10 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -51,6 +53,31 @@ public class TypesTest extends AbstractSessionTest {
     @Override
     public void run(Session session) {
         CmisTestResult failure;
+
+        // check base types
+        Set<String> cmisTypes = new HashSet<String>();
+        cmisTypes.add(BaseTypeId.CMIS_DOCUMENT.value());
+        cmisTypes.add(BaseTypeId.CMIS_FOLDER.value());
+        cmisTypes.add(BaseTypeId.CMIS_RELATIONSHIP.value());
+        cmisTypes.add(BaseTypeId.CMIS_POLICY.value());
+
+        if (session.getRepositoryInfo().getCmisVersion() != CmisVersion.CMIS_1_0) {
+            cmisTypes.add(BaseTypeId.CMIS_ITEM.value());
+            cmisTypes.add(BaseTypeId.CMIS_SECONDARY.value());
+        }
+
+        for (TypeDefinition typeDef : session.getTypeChildren(null, false)) {
+            String typeId = typeDef.getId();
+
+            if (typeId == null || !cmisTypes.contains(typeId)) {
+                addResult(createResult(FAILURE, "Base type has an invalid id: " + typeId));
+            }
+
+            if (typeDef.getPropertyDefinitions() != null) {
+                addResult(createResult(WARNING, "Property type definitions were not requested but delivered. Type id: "
+                        + typeId));
+            }
+        }
 
         // document
         try {
