@@ -97,7 +97,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     public void appendContent(ContentStream content) {
         if (null == content) {
             return;
-        } if (null != fContent) {
+        } if (null == fContent) {
             setContent(content, true);
         } else {
             try {
