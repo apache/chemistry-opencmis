@@ -40,7 +40,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
 
     /* This constructor is just for creating the root document */
     public InMemoryRelationshipTypeDefinition() {
-        init(BaseTypeId.CMIS_RELATIONSHIP.value(), "CMIS Relation");
+        init(BaseTypeId.CMIS_RELATIONSHIP.value(), "CMIS Relation", true);
         setParentTypeId(null);
 
         Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
@@ -48,14 +48,14 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
     }
 
     public InMemoryRelationshipTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(RELATIONSHIP_TYPE.getId());
     }
 
     public InMemoryRelationshipTypeDefinition(String id, String displayName,
             InMemoryRelationshipTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -76,7 +76,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
@@ -102,8 +102,8 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
         // relationship specifics

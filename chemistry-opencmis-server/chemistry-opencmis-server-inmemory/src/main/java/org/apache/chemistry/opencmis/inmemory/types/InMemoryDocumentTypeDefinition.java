@@ -45,7 +45,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
     /* This constructor is just for creating the root document */
     public InMemoryDocumentTypeDefinition() {
-        init(BaseTypeId.CMIS_DOCUMENT.value(), "CMIS Document");
+        init(BaseTypeId.CMIS_DOCUMENT.value(), "CMIS Document", true);
         setParentTypeId(null);
         // set base properties
         Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
@@ -53,13 +53,13 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
     }
 
     public InMemoryDocumentTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(DOCUMENT_TYPE.getId());
     }
 
     public InMemoryDocumentTypeDefinition(String id, String displayName, InMemoryDocumentTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -80,7 +80,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
         }
@@ -106,8 +106,8 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();

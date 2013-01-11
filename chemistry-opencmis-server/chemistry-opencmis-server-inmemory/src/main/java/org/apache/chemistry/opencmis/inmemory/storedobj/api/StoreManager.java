@@ -141,9 +141,10 @@ public interface StoreManager {
      * 
      * @param repositoryId
      *            id of repository
+     * @param inclPropDefs 
      * @return list of root types
      */
-    List<TypeDefinitionContainer> getRootTypes(String repositoryId);
+    List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean inclPropDefs);
 
     /**
      * Retrieve the repository information for a repository

@@ -80,7 +80,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         List<TypeDefinitionContainer> children;
         if (typeId == null) {
             // spec says that base types must be returned in this case
-            children = fStoreManager.getRootTypes(repositoryId);
+            children = fStoreManager.getRootTypes(repositoryId, inclPropDefs);
         } else {
             children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
                     inclPropDefs, null);

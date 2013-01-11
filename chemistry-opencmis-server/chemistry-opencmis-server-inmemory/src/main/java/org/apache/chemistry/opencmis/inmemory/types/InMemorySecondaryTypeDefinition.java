@@ -39,18 +39,18 @@ public class InMemorySecondaryTypeDefinition extends SecondaryTypeDefinitionImpl
 
     /* This constructor is just for creating the root document */
     public InMemorySecondaryTypeDefinition() {
-        init(BaseTypeId.CMIS_SECONDARY.value(), "Secondary Type");
+        init(BaseTypeId.CMIS_SECONDARY.value(), "Secondary Type", true);
         setParentTypeId(null);
     }
 
     public InMemorySecondaryTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(SECONDARY_TYPE.getId());
     }
 
     public InMemorySecondaryTypeDefinition(String id, String displayName, InMemoryDocumentTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -71,7 +71,7 @@ public class InMemorySecondaryTypeDefinition extends SecondaryTypeDefinitionImpl
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
         }
@@ -97,8 +97,8 @@ public class InMemorySecondaryTypeDefinition extends SecondaryTypeDefinitionImpl
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();
