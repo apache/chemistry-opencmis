@@ -204,7 +204,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
 
         String tokenizer = "[\\s;]";
         if (null==renditionFilter)
-            renditionFilter = "*";
+            return null;
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
 
@@ -303,16 +303,19 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
     }
 
     private boolean isWord(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
+                mimeType.equals("application/ms-word");
     }
 
     private boolean isExcel(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ||
+                mimeType.equals("application/vnd.ms-excel");
     }
     
     private boolean isPowerpoint(String mimeType) {
         return mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.slideshow") ||
-        mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation") ||
+                mimeType.equals("application/vnd.ms-powerpoint");
     }
     
     private boolean isPDF(String mimeType) {
