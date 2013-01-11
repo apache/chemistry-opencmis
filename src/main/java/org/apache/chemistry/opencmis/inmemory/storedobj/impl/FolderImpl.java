@@ -268,7 +268,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
 
     public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
         if (null==renditionFilter)
-            renditionFilter = "*";
+            return null;
         String tokenizer = "[\\s;]";
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
