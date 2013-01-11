@@ -17,6 +17,15 @@
     <build>
         <plugins>
             <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <target>1.6</target>
+                    <source>1.6</source>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
@@ -47,6 +56,25 @@
                 <configuration>
                     <wtpversion>2.0</wtpversion>
                     <wtpContextName>\${artifactId}</wtpContextName>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                    <linkedResources>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/sun-jaxws.xml</name>
+                            <type>1</type>
+                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/sun-jaxws.xml</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/web.xml</name>
+                            <type>1</type>
+                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/web.xml</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/wsdl</name>
+                            <type>2</type>
+                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/wsdl</location>
+                        </linkedResource>
+                    </linkedResources>
                 </configuration>
             </plugin>
         </plugins>
