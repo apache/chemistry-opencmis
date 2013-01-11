@@ -40,7 +40,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
 
     /* This constructor is just for creating the root document */
     public InMemoryPolicyTypeDefinition() {
-        init(BaseTypeId.CMIS_POLICY.value(), "CMIS Policy");
+        init(BaseTypeId.CMIS_POLICY.value(), "CMIS Policy", true);
         setParentTypeId(null);
 
         Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
@@ -48,13 +48,13 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
     }
 
     public InMemoryPolicyTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(POLICY_TYPE.getId());
     }
 
     public InMemoryPolicyTypeDefinition(String id, String displayName, InMemoryPolicyTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -75,7 +75,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
@@ -101,8 +101,8 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
 

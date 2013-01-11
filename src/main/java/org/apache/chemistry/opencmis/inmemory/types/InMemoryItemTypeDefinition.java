@@ -39,7 +39,7 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
 
     /* This constructor is just for creating the root document */
     public InMemoryItemTypeDefinition() {
-        init(BaseTypeId.CMIS_ITEM.value(), "CMIS Item");
+        init(BaseTypeId.CMIS_ITEM.value(), "CMIS Item", true);
         setParentTypeId(null);
         // set base properties
         Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
@@ -47,13 +47,13 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
     }
 
     public InMemoryItemTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(ITEM_TYPE.getId());
     }
 
     public InMemoryItemTypeDefinition(String id, String displayName, InMemoryDocumentTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -74,7 +74,7 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_ID);
         }
@@ -100,8 +100,8 @@ public class InMemoryItemTypeDefinition extends ItemTypeDefinitionImpl {
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();

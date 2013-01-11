@@ -40,7 +40,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
     /* This constructor is just for creating the root document */
     public InMemoryFolderTypeDefinition() {
-        init(BaseTypeId.CMIS_FOLDER.value(), "CMIS Folder");
+        init(BaseTypeId.CMIS_FOLDER.value(), "CMIS Folder", true);
         setParentTypeId(null);
         // set base properties
         Map<String, PropertyDefinition<?>> props = getPropertyDefinitions();
@@ -48,13 +48,13 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
     }
 
     public InMemoryFolderTypeDefinition(String id, String displayName) {
-        init(id, displayName);
+        init(id, displayName, false);
         setParentTypeId(FOLDER_TYPE.getId());
     }
 
     public InMemoryFolderTypeDefinition(String id, String displayName, InMemoryFolderTypeDefinition parentType) {
         // get root type
-        init(id, displayName);
+        init(id, displayName, false);
         if (parentType != null) {
             setBaseTypeId(parentType.getBaseTypeId());
         } else {
@@ -75,7 +75,7 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
         DocumentTypeCreationHelper.mergePropertyDefinitions(getPropertyDefinitions(), propertyDefinitions);
     }
 
-    private void init(String id, String displayName) {
+    private void init(String id, String displayName, boolean isBaseType) {
         if (!NameValidator.isValidId(id)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
@@ -101,8 +101,8 @@ public class InMemoryFolderTypeDefinition extends FolderTypeDefinitionImpl {
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
-        typeMutability.setCanDelete(false);
-        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(!isBaseType);
+        typeMutability.setCanUpdate(!isBaseType);
         setTypeMutability (typeMutability);
 
 

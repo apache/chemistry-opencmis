@@ -193,29 +193,31 @@ public class StoreManagerImpl implements StoreManager {
 
     public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
             boolean includePropertyDefinitions) {
-        Collection<TypeDefinitionContainer> result;
+//        Collection<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
-        Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId);
-        if (includePropertyDefinitions) {
-            result = typeColl;
-        } else {
-            result = new ArrayList<TypeDefinitionContainer>(typeColl.size());
-            // copy list and omit properties
-            for (TypeDefinitionContainer c : typeColl) {
-                AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
-                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-                tdc.setChildren(c.getChildren());
-                td.setPropertyDefinitions(null);
-                result.add(tdc);
-            }
-        }
-        return result;
+        Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId, includePropertyDefinitions);
+//        if (includePropertyDefinitions) {
+//            result = typeColl;
+//        } else {
+//            result = new ArrayList<TypeDefinitionContainer>(typeColl.size());
+//            // copy list and omit properties
+//            for (TypeDefinitionContainer c : typeColl) {
+//                AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
+//                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+//                tdc.setChildren(c.getChildren());
+//                td.setPropertyDefinitions(null);
+//                result.add(tdc);
+//            }
+//        }
+//        return result;
+        return typeColl;
     }
 
-    public List<TypeDefinitionContainer> getRootTypes(String repositoryId) {
+    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
+        List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
@@ -239,7 +241,20 @@ public class StoreManagerImpl implements StoreManager {
                 rootTypes.remove(tcSecondary);
         }
         
-        return rootTypes;
+        if (includePropertyDefinitions) {
+            result = rootTypes;
+        } else {
+            result = new ArrayList<TypeDefinitionContainer>(rootTypes.size());
+            // copy list and omit properties
+            for (TypeDefinitionContainer c : rootTypes) {
+                AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
+                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+                tdc.setChildren(c.getChildren());
+                td.setPropertyDefinitions(null);
+                result.add(tdc);
+            }
+        }
+        return result;
     }
 
     public RepositoryInfo getRepositoryInfo(String repositoryId) {
