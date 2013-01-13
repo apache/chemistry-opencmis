@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeTok
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
+import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
@@ -115,6 +117,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionFeatureImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
@@ -203,6 +206,32 @@ public final class JSONConverter {
 
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous(), result);
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone(), result);
+
+        if (repositoryInfo.getExtensionFeatures() != null && !repositoryInfo.getExtensionFeatures().isEmpty()) {
+            JSONArray extendedFeatures = new JSONArray();
+
+            for (ExtensionFeature feature : repositoryInfo.getExtensionFeatures()) {
+                JSONObject jsonFeature = new JSONObject();
+
+                setIfNotNull(JSON_FEATURE_ID, feature.getId(), jsonFeature);
+                setIfNotNull(JSON_FEATURE_URL, feature.getUrl(), jsonFeature);
+                setIfNotNull(JSON_FEATURE_COMMON_NAME, feature.getCommonName(), jsonFeature);
+                setIfNotNull(JSON_FEATURE_VERSION_LABEL, feature.getVersionLabel(), jsonFeature);
+                setIfNotNull(JSON_FEATURE_DESCRIPTION, feature.getDescription(), jsonFeature);
+
+                if (feature.getFeatureData() != null && !feature.getFeatureData().isEmpty()) {
+                    JSONObject data = new JSONObject();
+                    data.putAll(feature.getFeatureData());
+                    jsonFeature.put(JSON_FEATURE_DATA, data);
+                }
+
+                convertExtension(feature, jsonFeature);
+
+                extendedFeatures.add(jsonFeature);
+            }
+
+            result.put(JSON_REPINFO_EXTENDED_FEATURES, extendedFeatures);
+        }
 
         result.put(JSON_REPINFO_REPOSITORY_URL, repositoryUrl);
         result.put(JSON_REPINFO_ROOT_FOLDER_URL, rootUrl);
@@ -389,6 +418,42 @@ public final class JSONConverter {
 
         result.setPrincipalAnonymous(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS));
         result.setPrincipalAnyone(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANYONE));
+
+        List<Object> extendedFeatures = getList(json.get(JSON_REPINFO_EXTENDED_FEATURES));
+        if (extendedFeatures != null) {
+            List<ExtensionFeature> features = new ArrayList<ExtensionFeature>();
+
+            for (Object extendedFeature : extendedFeatures) {
+                Map<String, Object> jsonFeature = getMap(extendedFeature);
+
+                ExtensionFeatureImpl feature = new ExtensionFeatureImpl();
+                feature.setId(getString(jsonFeature, JSON_FEATURE_ID));
+                feature.setUrl(getString(jsonFeature, JSON_FEATURE_URL));
+                feature.setCommonName(getString(jsonFeature, JSON_FEATURE_COMMON_NAME));
+                feature.setVersionLabel(getString(jsonFeature, JSON_FEATURE_VERSION_LABEL));
+                feature.setDescription(getString(jsonFeature, JSON_FEATURE_DESCRIPTION));
+
+                Map<String, Object> data = getMap(jsonFeature.get(JSON_FEATURE_DATA));
+                if (data != null) {
+                    LinkedHashMap<String, String> dataMap = new LinkedHashMap<String, String>();
+                    for (Map.Entry<String, Object> e : data.entrySet()) {
+                        dataMap.put(e.getKey(), (e.getValue() == null ? null : e.getValue().toString()));
+                    }
+
+                    if (!dataMap.isEmpty()) {
+                        feature.setFeatureData(dataMap);
+                    }
+                }
+
+                convertExtension(jsonFeature, feature, FEATURE_KEYS);
+
+                features.add(feature);
+            }
+
+            if (!features.isEmpty()) {
+                result.setExtensionFeature(features);
+            }
+        }
 
         // handle extensions
         convertExtension(json, result, REPINFO_KEYS);

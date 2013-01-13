@@ -50,6 +50,7 @@ public final class JSONConstants {
     public static final String JSON_REPINFO_CHANGES_ON_TYPE = "changesOnType";
     public static final String JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS = "principalIdAnonymous";
     public static final String JSON_REPINFO_PRINCIPAL_ID_ANYONE = "principalIdAnyone";
+    public static final String JSON_REPINFO_EXTENDED_FEATURES = "extendedFeatures";
 
     public static final Set<String> REPINFO_KEYS = new HashSet<String>();
     static {
@@ -71,6 +72,7 @@ public final class JSONConstants {
         REPINFO_KEYS.add(JSON_REPINFO_CHANGES_ON_TYPE);
         REPINFO_KEYS.add(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS);
         REPINFO_KEYS.add(JSON_REPINFO_PRINCIPAL_ID_ANYONE);
+        REPINFO_KEYS.add(JSON_REPINFO_EXTENDED_FEATURES);
     }
 
     public static final String JSON_CAP_CONTENT_STREAM_UPDATES = "capabilityContentStreamUpdatability";
@@ -176,6 +178,23 @@ public final class JSONConstants {
     static {
         ACLCAP_MAPPING_KEYS.add(JSON_ACLCAP_MAPPING_KEY);
         ACLCAP_MAPPING_KEYS.add(JSON_ACLCAP_MAPPING_PERMISSION);
+    }
+
+    public static final String JSON_FEATURE_ID = "id";
+    public static final String JSON_FEATURE_URL = "url";
+    public static final String JSON_FEATURE_COMMON_NAME = "commonName";
+    public static final String JSON_FEATURE_VERSION_LABEL = "versionLabel";
+    public static final String JSON_FEATURE_DESCRIPTION = "description";
+    public static final String JSON_FEATURE_DATA = "featureData";
+
+    public static final Set<String> FEATURE_KEYS = new HashSet<String>();
+    static {
+        FEATURE_KEYS.add(JSON_FEATURE_ID);
+        FEATURE_KEYS.add(JSON_FEATURE_URL);
+        FEATURE_KEYS.add(JSON_FEATURE_COMMON_NAME);
+        FEATURE_KEYS.add(JSON_FEATURE_VERSION_LABEL);
+        FEATURE_KEYS.add(JSON_FEATURE_DESCRIPTION);
+        FEATURE_KEYS.add(JSON_FEATURE_DATA);
     }
 
     public static final String JSON_OBJECT_PROPERTIES = "properties";
