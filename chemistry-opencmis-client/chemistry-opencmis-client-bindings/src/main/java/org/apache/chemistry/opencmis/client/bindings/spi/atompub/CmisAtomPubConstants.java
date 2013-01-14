@@ -18,12 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import javax.xml.bind.annotation.XmlType;
-
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
 
 /**
  * Constants for AtomPub.
@@ -65,10 +59,12 @@ public final class CmisAtomPubConstants {
     public static final String TAG_CONTENT_BASE64 = "base64";
     public static final String TAG_CONTENT_FILENAME = "filename";
 
-    public static final String ATTR_DOCUMENT_TYPE = CmisTypeDocumentDefinitionType.class.getAnnotation(XmlType.class).name();
-    public static final String ATTR_FOLDER_TYPE = CmisTypeFolderDefinitionType.class.getAnnotation(XmlType.class).name();
-    public static final String ATTR_RELATIONSHIP_TYPE = CmisTypeRelationshipDefinitionType.class.getAnnotation(XmlType.class).name();
-    public static final String ATTR_POLICY_TYPE = CmisTypePolicyDefinitionType.class.getAnnotation(XmlType.class).name();
+    public static final String ATTR_DOCUMENT_TYPE = "cmisTypeDocumentDefinitionType";
+    public static final String ATTR_FOLDER_TYPE = "cmisTypeFolderDefinitionType";
+    public static final String ATTR_RELATIONSHIP_TYPE = "cmisTypeRelationshipDefinitionType";
+    public static final String ATTR_POLICY_TYPE = "cmisTypePolicyDefinitionType";
+    public static final String ATTR_ITEM_TYPE = "cmisTypeItemDefinitionType";
+    public static final String ATTR_SECONDARY_TYPE = "cmisTypeSecondaryDefinitionType";
 
     // allowable actions
     public static final String TAG_ALLOWABLEACTIONS = "allowableActions";
