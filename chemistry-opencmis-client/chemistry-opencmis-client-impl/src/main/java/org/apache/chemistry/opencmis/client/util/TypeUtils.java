@@ -33,8 +33,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
@@ -54,7 +52,7 @@ public class TypeUtils {
      * 
      * The XML is UTF-8 encoded and the stream is not closed.
      */
-    public static void writeToXML(ObjectType type, OutputStream stream) throws Exception {
+    public static void writeToXML(TypeDefinition type, OutputStream stream) throws Exception {
         if (type == null) {
             throw new IllegalArgumentException("Type must be set!");
         }
@@ -75,7 +73,7 @@ public class TypeUtils {
      * 
      * The JSON is UTF-8 encoded and the stream is not closed.
      */
-    public static void writeToJSON(ObjectType type, OutputStream stream) throws Exception {
+    public static void writeToJSON(TypeDefinition type, OutputStream stream) throws Exception {
         if (type == null) {
             throw new IllegalArgumentException("Type must be set!");
         }
@@ -93,7 +91,7 @@ public class TypeUtils {
      * 
      * The stream must be UTF-8 encoded.
      */
-    public static ObjectType readFromXML(InputStream stream) throws Exception {
+    public static TypeDefinition readFromXML(InputStream stream) throws Exception {
         if (stream == null) {
             throw new IllegalArgumentException("Input stream must be set!");
         }
@@ -103,10 +101,7 @@ public class TypeUtils {
         @SuppressWarnings("unchecked")
         JAXBElement<CmisTypeDefinitionType> jaxb = (JAXBElement<CmisTypeDefinitionType>) u.unmarshal(stream);
 
-        TypeDefinition typeDef = Converter.convert(jaxb.getValue());
-
-        ObjectFactoryImpl of = new ObjectFactoryImpl();
-        return of.convertTypeDefinition(typeDef);
+        return Converter.convert(jaxb.getValue());
     }
 
     /**
@@ -114,7 +109,8 @@ public class TypeUtils {
      * 
      * The stream must be UTF-8 encoded.
      */
-    public static ObjectType readFromJSON(InputStream stream) throws Exception {
+    @SuppressWarnings("unchecked")
+    public static TypeDefinition readFromJSON(InputStream stream) throws Exception {
         if (stream == null) {
             throw new IllegalArgumentException("Input stream must be set!");
         }
@@ -126,10 +122,6 @@ public class TypeUtils {
             throw new CmisRuntimeException("Invalid stream! Not a type definition!");
         }
 
-        @SuppressWarnings("unchecked")
-        TypeDefinition typeDef = JSONConverter.convertTypeDefinition((Map<String, Object>) json);
-
-        ObjectFactoryImpl of = new ObjectFactoryImpl();
-        return of.convertTypeDefinition(typeDef);
+        return JSONConverter.convertTypeDefinition((Map<String, Object>) json);
     }
 }

@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -158,12 +159,12 @@ public interface Session extends Serializable {
     /**
      * Creates a new type.
      */
-    ObjectType createType(ObjectType type);
+    ObjectType createType(TypeDefinition type);
 
     /**
      * Updates an existing type.
      */
-    ObjectType updateType(ObjectType type);
+    ObjectType updateType(TypeDefinition type);
 
     /**
      * Deletes a type.

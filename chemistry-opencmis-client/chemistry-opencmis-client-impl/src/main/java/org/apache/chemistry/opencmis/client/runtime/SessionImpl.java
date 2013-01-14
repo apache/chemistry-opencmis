@@ -549,7 +549,7 @@ public class SessionImpl implements Session {
         return result;
     }
 
-    public ObjectType createType(ObjectType type) {
+    public ObjectType createType(TypeDefinition type) {
         if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }
@@ -558,7 +558,7 @@ public class SessionImpl implements Session {
                 type, null));
     }
 
-    public ObjectType updateType(ObjectType type) {
+    public ObjectType updateType(TypeDefinition type) {
         if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }

@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.util.TypeUtils;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
@@ -95,12 +96,12 @@ public class TypesFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        
+
         ImageIcon icon = ClientHelper.getIcon("icon.png");
         if (icon != null) {
             setIconImage(icon.getImage());
         }
-        
+
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(200, 60));
         setLayout(new BorderLayout());
@@ -182,7 +183,7 @@ public class TypesFrame extends JFrame {
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
-                        ObjectType type = TypeUtils.readFromXML(in);
+                        TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
                         model.getClientSession().getSession().updateType(type);
                     } catch (Exception e) {
@@ -203,7 +204,7 @@ public class TypesFrame extends JFrame {
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
-                        ObjectType type = TypeUtils.readFromJSON(in);
+                        TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
                         model.getClientSession().getSession().updateType(type);
                     } catch (Exception e) {
@@ -261,7 +262,7 @@ public class TypesFrame extends JFrame {
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
-                        ObjectType type = TypeUtils.readFromXML(in);
+                        TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
                         model.getClientSession().getSession().createType(type);
                     } catch (Exception e) {
@@ -282,7 +283,7 @@ public class TypesFrame extends JFrame {
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
-                        ObjectType type = TypeUtils.readFromJSON(in);
+                        TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
                         model.getClientSession().getSession().createType(type);
                     } catch (Exception e) {
