@@ -56,6 +56,8 @@ public class LoginDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String SYSPROP_LOGIN_TAB = ClientSession.WORKBENCH_PREFIX + "logintab";
+
     private static ServiceLoader<AbstractLoginTab> TAB_SERVICE_LOADER = ServiceLoader.load(AbstractLoginTab.class);
 
     private JTabbedPane loginTabs;
@@ -201,6 +203,18 @@ public class LoginDialog extends JDialog {
 
         expertLoginTab = new ExpertLoginTab();
         loginTabs.addTab(expertLoginTab.getTabTitle(), expertLoginTab);
+
+        loginTabs.setSelectedIndex(0);
+
+        String startTab = System.getProperty(SYSPROP_LOGIN_TAB, "0");
+        try {
+            int tab = Integer.parseInt(startTab);
+            if (tab >= 0 && tab < loginTabs.getTabCount()) {
+                loginTabs.setSelectedIndex(tab);
+            }
+        } catch (NumberFormatException nfe) {
+            // do nothing
+        }
 
         currentTab = (AbstractLoginTab) loginTabs.getSelectedComponent();
 
