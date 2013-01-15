@@ -405,7 +405,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         List<FileEntry> result = ClientHelper.readFileProperties(propFile);
 
-        if (result == null) {
+        if (result == null || result.isEmpty()) {
             result = Collections.singletonList(new FileEntry("Groovy Console", null));
         }
 

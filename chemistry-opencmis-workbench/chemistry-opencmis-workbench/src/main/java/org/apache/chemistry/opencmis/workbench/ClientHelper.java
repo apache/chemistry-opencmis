@@ -549,7 +549,7 @@ public class ClientHelper {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Cannot open library file: " + propertiesFile, e);
             return null;
         }
 
@@ -559,6 +559,18 @@ public class ClientHelper {
             int x = path.lastIndexOf('/');
             if (x > -1) {
                 classpathParent = path.substring(0, x);
+            }
+        }
+
+        if ("jar".equalsIgnoreCase(propertiesFile.getScheme())) {
+            String path = propertiesFile.getSchemeSpecificPart();
+            int x = path.lastIndexOf('/');
+            if (x > -1) {
+                path = path.substring(0, x);
+                x = path.indexOf("!/");
+                if (x > -1) {
+                    classpathParent = path.substring(x + 1);
+                }
             }
         }
 
@@ -579,7 +591,10 @@ public class ClientHelper {
                     URI uri = null;
 
                     if (classpathParent != null) {
-                        uri = ClientHelper.class.getResource(classpathParent + "/" + file).toURI();
+                        URL url = ClientHelper.class.getResource(classpathParent + "/" + file);
+                        if (url != null) {
+                            uri = url.toURI();
+                        }
                     }
 
                     if (fileParent != null) {
@@ -588,6 +603,8 @@ public class ClientHelper {
 
                     if (uri != null) {
                         result.add(new FileEntry(properties.getProperty(file), uri));
+                    } else {
+                        LOG.error("Cannot find library entry: " + file);
                     }
                 } catch (URISyntaxException e) {
                     // ignore entry
@@ -597,7 +614,7 @@ public class ClientHelper {
 
             return result;
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Cannot read library file: " + propertiesFile);
             return null;
         } finally {
             try {
