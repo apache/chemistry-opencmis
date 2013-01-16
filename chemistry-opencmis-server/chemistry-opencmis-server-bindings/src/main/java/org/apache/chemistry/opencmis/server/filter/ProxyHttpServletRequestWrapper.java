@@ -31,8 +31,11 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private String scheme;
     private String serverName;
     private int serverPort;
+    private final String contextPath;
+    private final String servletPath;
+    private final String requestURI;
 
-    public ProxyHttpServletRequestWrapper(HttpServletRequest request) {
+    public ProxyHttpServletRequestWrapper(HttpServletRequest request, String basePath) {
         super(request);
 
         scheme = request.getHeader(FORWARDED_PROTO_HEADER);
@@ -59,6 +62,19 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
                 }
             }
         }
+
+        servletPath = request.getServletPath();
+
+        if (basePath != null) {
+            final String path = request.getRequestURI().substring(
+                    request.getContextPath().length() + request.getServletPath().length());
+
+            contextPath = (basePath.startsWith("/") ? basePath : "/" + basePath);
+            requestURI = contextPath + servletPath + path;
+        } else {
+            contextPath = request.getContextPath();
+            requestURI = request.getRequestURI();
+        }
     }
 
     private int getDefaultPort(String scheme) {
@@ -82,5 +98,33 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public int getServerPort() {
         return serverPort;
+    }
+
+    @Override
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    @Override
+    public String getServletPath() {
+        return servletPath;
+    }
+
+    @Override
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    @Override
+    public StringBuffer getRequestURL() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(scheme);
+        sb.append("://");
+        sb.append(serverName);
+        sb.append(":");
+        sb.append(serverPort);
+        sb.append(getRequestURI());
+
+        return sb;
     }
 }

@@ -35,11 +35,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ProxyFilter implements Filter {
 
+    public static final String PARAM_BASE_PATH = "basePath";
     public static final String PARAM_TRUSTED_PROXIES = "trustedProxies";
 
+    private String basePath;
     private Pattern trustedProxies;
 
     public void init(FilterConfig filterConfig) throws ServletException {
+        basePath = filterConfig.getInitParameter(PARAM_BASE_PATH);
+
         trustedProxies = null;
         String trustedProxiesString = filterConfig.getInitParameter(PARAM_TRUSTED_PROXIES);
         if (trustedProxiesString != null) {
@@ -57,7 +61,7 @@ public class ProxyFilter implements Filter {
         // check for trusted proxy
         if (trustedProxies != null && (request instanceof HttpServletRequest)
                 && trustedProxies.matcher(request.getRemoteAddr()).matches()) {
-            request = new ProxyHttpServletRequestWrapper((HttpServletRequest) request);
+            request = new ProxyHttpServletRequestWrapper((HttpServletRequest) request, basePath);
         }
 
         // call next

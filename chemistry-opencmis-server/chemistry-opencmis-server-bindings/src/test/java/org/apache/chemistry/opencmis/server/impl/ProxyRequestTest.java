@@ -59,6 +59,7 @@ public class ProxyRequestTest {
         when(this.request.getServerPort()).thenReturn(BACKEND_SERVER_PORT);
         when(this.request.getContextPath()).thenReturn(CONTEXT_PATH);
         when(this.request.getServletPath()).thenReturn(SERVLET_PATH);
+        when(this.request.getRequestURI()).thenReturn(CONTEXT_PATH + "/" + SERVLET_PATH);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class ProxyRequestTest {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_PROTO_HEADER)).thenReturn(
                 FORWARDED_HTTPS_PROTO);
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
 
@@ -85,7 +86,7 @@ public class ProxyRequestTest {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(
                 FORWARDED_SERVER_NAME);
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
@@ -103,7 +104,7 @@ public class ProxyRequestTest {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(
                 FORWARDED_SERVER_NAME);
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
 
@@ -116,10 +117,29 @@ public class ProxyRequestTest {
     }
 
     @Test
+    public void testGetProxiedHostBaseAddressAndPath() throws URISyntaxException {
+        String path = "/test";
+
+        when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(
+                FORWARDED_SERVER_NAME);
+
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, path);
+
+        assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
+
+        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+
+        assertEquals(BACKEND_SERVER_PROTO, baseUri.getScheme());
+        assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
+        assertEquals(-1, baseUri.getPort());
+        assertEquals(path + "/" + SERVLET_PATH + "/" + REPOSITORY_ID, baseUri.getPath());
+    }
+
+    @Test
     public void testGetProxiedHostAndPortBaseAddress() throws URISyntaxException {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(FORWARDED_HOST);
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
 
@@ -137,7 +157,7 @@ public class ProxyRequestTest {
                 FORWARDED_HTTPS_PROTO);
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(FORWARDED_HOST);
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
@@ -157,7 +177,7 @@ public class ProxyRequestTest {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(
                 FORWARDED_SERVER_NAME + ":noportnumber");
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_HTTP_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
@@ -177,7 +197,7 @@ public class ProxyRequestTest {
         when(this.request.getHeader(ProxyHttpServletRequestWrapper.FORWARDED_HOST_HEADER)).thenReturn(
                 FORWARDED_SERVER_NAME + ":noportnumber");
 
-        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request);
+        ProxyHttpServletRequestWrapper proxyRequest = new ProxyHttpServletRequestWrapper(request, null);
 
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
