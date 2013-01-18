@@ -1084,7 +1084,9 @@ public final class JSONConverter {
             JSONObject changeEventInfo = new JSONObject();
 
             ChangeEventInfo cei = object.getChangeEventInfo();
-            changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONStringValue(cei.getChangeType().value()));
+            if (cei.getChangeType() != null) {
+                changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONStringValue(cei.getChangeType().value()));
+            }
             changeEventInfo.put(JSON_CHANGE_EVENT_TIME, getJSONValue(cei.getChangeTime()));
 
             convertExtension(object.getChangeEventInfo(), changeEventInfo);
