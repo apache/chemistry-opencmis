@@ -27,13 +27,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -123,5 +132,150 @@ public class TypeUtils {
         }
 
         return JSONConverter.convertTypeDefinition((Map<String, Object>) json);
+    }
+
+    private static boolean checkQueryName(String queryName) {
+        return queryName != null && queryName.length() > 0 && queryName.indexOf(' ') < 0 && queryName.indexOf(',') < 0
+                && queryName.indexOf('"') < 0 && queryName.indexOf('\'') < 0 && queryName.indexOf('\\') < 0
+                && queryName.indexOf('.') < 0 && queryName.indexOf('(') < 0 && queryName.indexOf(')') < 0;
+    }
+
+    /**
+     * Validates a type definition.
+     * 
+     * @return the list of validation errors
+     */
+    public static List<ValidationError> validateTypeDefinition(TypeDefinition type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type is null!");
+        }
+
+        List<ValidationError> errors = new ArrayList<TypeUtils.ValidationError>();
+
+        if (type.getId() == null || type.getId().length() == 0) {
+            errors.add(new ValidationError("id", "Type id must be set."));
+        }
+
+        if (type.getLocalName() == null || type.getLocalName().length() == 0) {
+            errors.add(new ValidationError("localName", "Local name must be set."));
+        }
+
+        if (type.getQueryName() != null) {
+            if (type.getQueryName().length() == 0) {
+                errors.add(new ValidationError("queryName", "Query name must not be empty."));
+            } else if (!checkQueryName(type.getQueryName())) {
+                errors.add(new ValidationError("queryName", "Query name contains invalid characters."));
+            }
+        }
+
+        if (type.isCreatable() == null) {
+            errors.add(new ValidationError("creatable", "Creatable flag must be set."));
+        }
+
+        if (type.isFileable() == null) {
+            errors.add(new ValidationError("fileable", "Fileable flag must be set."));
+        }
+
+        if (type.isQueryable() == null) {
+            errors.add(new ValidationError("queryable", "Queryable flag must be set."));
+        } else if (type.isQueryable().booleanValue()) {
+            if (type.getQueryName() == null || type.getQueryName().length() == 0) {
+                errors.add(new ValidationError("queryable",
+                        "Queryable flag is set to TRUE, but the query name is not set."));
+            }
+        }
+
+        if (type.isControllablePolicy() == null) {
+            errors.add(new ValidationError("controllablePolicy", "ControllablePolicy flag must be set."));
+        }
+
+        if (type.isControllableAcl() == null) {
+            errors.add(new ValidationError("controllableACL", "ControllableACL flag must be set."));
+        }
+
+        if (type.isFulltextIndexed() == null) {
+            errors.add(new ValidationError("fulltextIndexed", "FulltextIndexed flag must be set."));
+        }
+
+        if (type.isIncludedInSupertypeQuery() == null) {
+            errors.add(new ValidationError("includedInSupertypeQuery", "IncludedInSupertypeQuery flag must be set."));
+        }
+
+        if (type.getBaseTypeId() == null) {
+            errors.add(new ValidationError("baseId", "Base type id must be set."));
+        } else if (!type.getBaseTypeId().value().equals(type.getParentTypeId())) {
+            if (type.getParentTypeId() == null || type.getParentTypeId().length() == 0) {
+                errors.add(new ValidationError("parentTypeId", "Parent type id must be set."));
+            }
+        }
+
+        if (type instanceof DocumentTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+            DocumentTypeDefinition docType = (DocumentTypeDefinition) type;
+
+            if (docType.isVersionable() == null) {
+                errors.add(new ValidationError("versionable", "Versionable flag must be set."));
+            }
+
+            if (docType.getContentStreamAllowed() == null) {
+                errors.add(new ValidationError("contentStreamAllowed", "ContentStreamAllowed flag must be set."));
+            }
+
+        } else if (type instanceof FolderTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_FOLDER) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+        } else if (type instanceof RelationshipTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_RELATIONSHIP) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+        } else if (type instanceof PolicyTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_POLICY) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+        } else if (type instanceof ItemTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_ITEM) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+        } else if (type instanceof SecondaryTypeDefinition) {
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_SECONDARY) {
+                errors.add(new ValidationError("baseId", "Base type id does not match the type."));
+            }
+
+        } else {
+            errors.add(new ValidationError("baseId", "Unknown base interface."));
+        }
+
+        return errors;
+    }
+
+    public static class ValidationError {
+        private final String attribute;
+        private final String error;
+
+        public ValidationError(String attribute, String error) {
+            this.attribute = attribute;
+            this.error = error;
+        }
+
+        public String getAttribute() {
+            return attribute;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        @Override
+        public String toString() {
+            return attribute + ": " + error;
+        }
     }
 }
