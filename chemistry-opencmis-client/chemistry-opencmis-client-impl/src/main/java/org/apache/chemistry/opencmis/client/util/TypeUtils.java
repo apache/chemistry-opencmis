@@ -39,10 +39,21 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -251,6 +262,104 @@ public class TypeUtils {
 
         } else {
             errors.add(new ValidationError("baseId", "Unknown base interface."));
+        }
+
+        return errors;
+    }
+
+    /**
+     * Validates a property definition.
+     * 
+     * @return the list of validation errors
+     */
+    public static List<ValidationError> validatePropertyDefinition(PropertyDefinition<?> propDef) {
+        if (propDef == null) {
+            throw new IllegalArgumentException("Type is null!");
+        }
+
+        List<ValidationError> errors = new ArrayList<TypeUtils.ValidationError>();
+
+        if (propDef.getId() == null || propDef.getId().length() == 0) {
+            errors.add(new ValidationError("id", "Type id must be set."));
+        }
+
+        if (propDef.getQueryName() != null) {
+            if (propDef.getQueryName().length() == 0) {
+                errors.add(new ValidationError("queryName", "Query name must not be empty."));
+            } else if (!checkQueryName(propDef.getQueryName())) {
+                errors.add(new ValidationError("queryName", "Query name contains invalid characters."));
+            }
+        }
+
+        if (propDef.getCardinality() == null) {
+            errors.add(new ValidationError("cardinality", "Cardinality must be set."));
+        }
+
+        if (propDef.getUpdatability() == null) {
+            errors.add(new ValidationError("updatability", "Updatability must be set."));
+        }
+
+        if (propDef.isInherited() == null) {
+            errors.add(new ValidationError("inherited", "Inherited flag must be set."));
+        }
+
+        if (propDef.isRequired() == null) {
+            errors.add(new ValidationError("required", "Required flag must be set."));
+        }
+
+        if (propDef.isQueryable() == null) {
+            errors.add(new ValidationError("queryable", "Queryable flag must be set."));
+        } else if (propDef.isQueryable().booleanValue()) {
+            if (propDef.getQueryName() == null || propDef.getQueryName().length() == 0) {
+                errors.add(new ValidationError("queryable",
+                        "Queryable flag is set to TRUE, but the query name is not set."));
+            }
+        }
+
+        if (propDef.isQueryable() == null) {
+            errors.add(new ValidationError("orderable", "Orderable flag must be set."));
+        } else if (propDef.isQueryable().booleanValue()) {
+            if (propDef.getCardinality() == Cardinality.MULTI) {
+                errors.add(new ValidationError("orderable", "Orderable flag is set to TRUE for a multi-value property."));
+            }
+        }
+
+        if (propDef.getPropertyType() == null) {
+            errors.add(new ValidationError("propertyType", "Property type id must be set."));
+        }
+
+        if (propDef instanceof PropertyIdDefinition) {
+            if (propDef.getPropertyType() != PropertyType.ID) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyStringDefinition) {
+            if (propDef.getPropertyType() != PropertyType.STRING) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyIntegerDefinition) {
+            if (propDef.getPropertyType() != PropertyType.INTEGER) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyDecimalDefinition) {
+            if (propDef.getPropertyType() != PropertyType.DECIMAL) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyBooleanDefinition) {
+            if (propDef.getPropertyType() != PropertyType.BOOLEAN) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyDateTimeDefinition) {
+            if (propDef.getPropertyType() != PropertyType.DATETIME) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyHtmlDefinition) {
+            if (propDef.getPropertyType() != PropertyType.HTML) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
+        } else if (propDef instanceof PropertyUriDefinition) {
+            if (propDef.getPropertyType() != PropertyType.URI) {
+                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+            }
         }
 
         return errors;

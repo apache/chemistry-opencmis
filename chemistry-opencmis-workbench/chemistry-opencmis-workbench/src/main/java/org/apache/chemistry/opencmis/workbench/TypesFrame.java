@@ -53,7 +53,9 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.util.TypeUtils;
+import org.apache.chemistry.opencmis.client.util.TypeUtils.ValidationError;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -185,7 +187,10 @@ public class TypesFrame extends JFrame {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
                         TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
-                        model.getClientSession().getSession().updateType(type);
+
+                        if (checkTypeDefinition(type)) {
+                            model.getClientSession().getSession().updateType(type);
+                        }
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -206,7 +211,10 @@ public class TypesFrame extends JFrame {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
                         TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
-                        model.getClientSession().getSession().updateType(type);
+
+                        if (checkTypeDefinition(type)) {
+                            model.getClientSession().getSession().updateType(type);
+                        }
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -264,7 +272,10 @@ public class TypesFrame extends JFrame {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
                         TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
-                        model.getClientSession().getSession().createType(type);
+
+                        if (checkTypeDefinition(type)) {
+                            model.getClientSession().getSession().createType(type);
+                        }
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -285,7 +296,10 @@ public class TypesFrame extends JFrame {
                         InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
                         TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
-                        model.getClientSession().getSession().createType(type);
+
+                        if (checkTypeDefinition(type)) {
+                            model.getClientSession().getSession().createType(type);
+                        }
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -394,6 +408,49 @@ public class TypesFrame extends JFrame {
         }
 
         return "type";
+    }
+
+    private boolean checkTypeDefinition(TypeDefinition type) {
+        StringBuilder sb = new StringBuilder();
+
+        List<ValidationError> typeResult = TypeUtils.validateTypeDefinition(type);
+
+        if (typeResult.size() > 0) {
+            sb.append("\nType Definition:\n");
+
+            for (ValidationError error : typeResult) {
+                sb.append("- ");
+                sb.append(error.toString());
+                sb.append("\n");
+            }
+        }
+
+        if (type.getPropertyDefinitions() != null) {
+            for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
+                List<ValidationError> propResult = TypeUtils.validatePropertyDefinition(propDef);
+
+                if (propResult.size() > 0) {
+                    sb.append("\nProperty Definition '" + propDef.getId() + "':\n");
+
+                    for (ValidationError error : propResult) {
+                        sb.append("- ");
+                        sb.append(error.toString());
+                        sb.append("\n");
+                    }
+                }
+            }
+        }
+
+        if (sb.length() == 0) {
+            return true;
+        }
+
+        int answer = JOptionPane.showConfirmDialog(this,
+                "The type defintion has the following issues.\n" + sb.toString()
+                        + "\n\nDo you want to proceed anyway?", "Type Definition Validation",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        return answer == JOptionPane.YES_OPTION;
     }
 
     private void loadData() {
