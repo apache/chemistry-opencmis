@@ -191,6 +191,8 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
                         }
+                        
+                        loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -215,6 +217,8 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
                         }
+                        
+                        loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -276,6 +280,8 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().createType(type);
                         }
+                        
+                        loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
@@ -300,6 +306,8 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().createType(type);
                         }
+                        
+                        loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
                     }
