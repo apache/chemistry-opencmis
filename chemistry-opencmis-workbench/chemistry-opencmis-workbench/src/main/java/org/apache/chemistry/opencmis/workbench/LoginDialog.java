@@ -113,6 +113,9 @@ public class LoginDialog extends JDialog {
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                    currentTab.beforeLoadRepositories();
+
                     createClientSession();
 
                     List<Repository> repositories = clientSession.getRepositories();
@@ -147,7 +150,7 @@ public class LoginDialog extends JDialog {
                         getRootPane().setDefaultButton(loadRepositoryButton);
                     }
 
-                    currentTab.repositoriesLoaded(repositories);
+                    currentTab.afterLoadRepositories(repositories);
                 } catch (Exception ex) {
                     repositoryBox.setEnabled(false);
                     loginButton.setEnabled(false);
@@ -165,9 +168,11 @@ public class LoginDialog extends JDialog {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+                    currentTab.beforeLogin(clientSession.getRepositories().get(repositoryBox.getSelectedIndex()));
+
                     clientSession.createSession(repositoryBox.getSelectedIndex());
 
-                    currentTab.loggedIn(clientSession.getSession());
+                    currentTab.afterLogin(clientSession.getSession());
 
                     canceled = false;
                     hideDialog();
@@ -277,7 +282,8 @@ public class LoginDialog extends JDialog {
     }
 
     public void createClientSession() {
-        setClientSession(new ClientSession(currentTab.getSessionParameters()));
+        setClientSession(new ClientSession(currentTab.getSessionParameters(), currentTab.getObjectFactory(),
+                currentTab.getAuthenticationProvider(), currentTab.getCache()));
     }
 
     public void showDialog() {

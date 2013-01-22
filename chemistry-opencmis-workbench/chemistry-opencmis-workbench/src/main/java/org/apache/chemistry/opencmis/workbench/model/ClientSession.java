@@ -33,12 +33,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -47,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 public class ClientSession {
 
@@ -97,12 +100,13 @@ public class ClientSession {
     private OperationContext folderOperationContext;
     private OperationContext versionOperationContext;
 
-    public ClientSession(Map<String, String> sessionParameters) {
+    public ClientSession(Map<String, String> sessionParameters, ObjectFactory objectFactory,
+            AuthenticationProvider authenticationProvider, Cache cache) {
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Parameters must not be null!");
         }
 
-        connect(sessionParameters);
+        connect(sessionParameters, objectFactory, authenticationProvider, cache);
     }
 
     public static Map<String, String> createSessionParameters(String url, BindingType binding, String username,
@@ -172,7 +176,8 @@ public class ClientSession {
         return parameters;
     }
 
-    private void connect(Map<String, String> sessionParameters) {
+    private void connect(Map<String, String> sessionParameters, ObjectFactory objectFactory,
+            AuthenticationProvider authenticationProvider, Cache cache) {
         this.sessionParameters = sessionParameters;
 
         // set a new dummy authenticator
@@ -184,7 +189,8 @@ public class ClientSession {
             acceptSelfSignedCertificates();
         }
 
-        repositories = SessionFactoryImpl.newInstance().getRepositories(sessionParameters);
+        repositories = SessionFactoryImpl.newInstance().getRepositories(sessionParameters, objectFactory,
+                authenticationProvider, cache);
     }
 
     public List<Repository> getRepositories() {
@@ -193,7 +199,9 @@ public class ClientSession {
 
     public Session createSession(int index) {
         session = repositories.get(index).createSession();
-        createOperationContexts();
+        objectOperationContext = null;
+        folderOperationContext = null;
+        versionOperationContext = null;
         return getSession();
     }
 
@@ -205,15 +213,24 @@ public class ClientSession {
         return Collections.unmodifiableMap(sessionParameters);
     }
 
-    public OperationContext getObjectOperationContext() {
+    public synchronized OperationContext getObjectOperationContext() {
+        if (objectOperationContext == null) {
+            createOperationContexts();
+        }
         return objectOperationContext;
     }
 
-    public OperationContext getFolderOperationContext() {
+    public synchronized OperationContext getFolderOperationContext() {
+        if (folderOperationContext == null) {
+            createOperationContexts();
+        }
         return folderOperationContext;
     }
 
-    public OperationContext getVersionOperationContext() {
+    public synchronized OperationContext getVersionOperationContext() {
+        if (versionOperationContext == null) {
+            createOperationContexts();
+        }
         return versionOperationContext;
     }
 

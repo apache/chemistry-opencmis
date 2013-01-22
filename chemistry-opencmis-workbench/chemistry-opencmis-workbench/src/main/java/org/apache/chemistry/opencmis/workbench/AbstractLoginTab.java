@@ -23,8 +23,11 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
+import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 /**
  * Abstract Login Tab.
@@ -49,6 +52,30 @@ public abstract class AbstractLoginTab extends JPanel {
     public abstract Map<String, String> getSessionParameters();
 
     /**
+     * Returns an <code>ObjectFactory</code> instance or <code>null</code> for
+     * the default object factory.
+     */
+    public ObjectFactory getObjectFactory() {
+        return null;
+    }
+
+    /**
+     * Returns an <code>AuthenticationProvider</code> instance or
+     * <code>null</code> for the default authentication provider.
+     */
+    public AuthenticationProvider getAuthenticationProvider() {
+        return null;
+    }
+
+    /**
+     * Returns a <code>Cache</code> instance or <code>null</code> for the
+     * default cache.
+     */
+    public Cache getCache() {
+        return null;
+    }
+
+    /**
      * Defines if the session parameters should be transfered to the expert tab
      * when the user switches from the this tab to the expert tab. The default
      * is <code>false</code>.
@@ -58,14 +85,26 @@ public abstract class AbstractLoginTab extends JPanel {
     }
 
     /**
+     * Called before the list of repositories is loaded.
+     */
+    public void beforeLoadRepositories() {
+    }
+
+    /**
      * Called after the list of repositories has been loaded.
      */
-    public void repositoriesLoaded(List<Repository> repositories) {
+    public void afterLoadRepositories(List<Repository> repositories) {
+    }
+
+    /**
+     * Called before the Workbench session is created.
+     */
+    public void beforeLogin(Repository repository) {
     }
 
     /**
      * Called after the Workbench session has been created.
      */
-    public void loggedIn(Session session) {
+    public void afterLogin(Session session) {
     }
 }
