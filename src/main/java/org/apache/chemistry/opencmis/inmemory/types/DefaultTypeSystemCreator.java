@@ -48,6 +48,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     public static final String ITEM_TYPE = "MyItemType";
     public static final String LEVEL1_TYPE = "DocumentLevel1";
     public static final String LEVEL2_TYPE = "DocumentLevel2";
+    public static final String SECONDARY_TYPE_ID = "MySecondaryType";
 
     /**
      * in the public interface of this class we return the singleton containing
@@ -298,6 +299,22 @@ public class DefaultTypeSystemCreator implements TypeCreator {
         cmisItemType.addCustomPropertyDefinitions(propertyDefinitions);
         // add type to types collection
         typesList.add(cmisItemType);
+        
+
+        InMemorySecondaryTypeDefinition cmisSecondaryType = new InMemorySecondaryTypeDefinition(SECONDARY_TYPE_ID, 
+                "MySecondaryType");
+        // create a single String property definition
+        Map<String, PropertyDefinition<?>> secondaryPropertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        PropertyStringDefinitionImpl propS1 = PropertyCreationHelper.createStringDefinition("SecondaryStringProp",
+                "Secondary String Property", Updatability.READWRITE);
+        secondaryPropertyDefinitions.put(propS1.getId(), propS1);
+        PropertyIntegerDefinitionImpl propS2 = PropertyCreationHelper.createIntegerDefinition("SecondaryIntegerProp",
+                "Secondary Integer Property", Updatability.READWRITE);
+        propS2.setIsRequired(true);
+        secondaryPropertyDefinitions.put(propS2.getId(), propS2);
+        cmisSecondaryType.addCustomPropertyDefinitions(secondaryPropertyDefinitions);
+        // add type to types collection
+        typesList.add(cmisSecondaryType);
 
         return typesList;
     }
