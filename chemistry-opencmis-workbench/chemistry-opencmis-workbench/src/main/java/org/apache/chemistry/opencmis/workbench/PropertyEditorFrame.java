@@ -62,6 +62,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
@@ -120,6 +121,8 @@ public class PropertyEditorFrame extends JFrame {
         propertyPanels = new ArrayList<PropertyEditorFrame.PropertyInputPanel>();
 
         int position = 0;
+
+        // primary type
         for (PropertyDefinition<?> propDef : object.getType().getPropertyDefinitions().values()) {
             boolean isUpdatable = (propDef.getUpdatability() == Updatability.READWRITE)
                     || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object.getAllowableActions()
@@ -131,6 +134,27 @@ public class PropertyEditorFrame extends JFrame {
 
                 propertyPanels.add(propertyPanel);
                 panel.add(propertyPanel);
+            }
+        }
+
+        // secondary types
+        if (object.getSecondaryTypes() != null) {
+            for (ObjectType secType : object.getSecondaryTypes()) {
+                if (secType.getPropertyDefinitions() != null) {
+                    for (PropertyDefinition<?> propDef : secType.getPropertyDefinitions().values()) {
+                        boolean isUpdatable = (propDef.getUpdatability() == Updatability.READWRITE)
+                                || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object
+                                        .getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN));
+
+                        if (isUpdatable) {
+                            PropertyInputPanel propertyPanel = new PropertyInputPanel(propDef,
+                                    object.getPropertyValue(propDef.getId()), position++);
+
+                            propertyPanels.add(propertyPanel);
+                            panel.add(propertyPanel);
+                        }
+                    }
+                }
             }
         }
 
