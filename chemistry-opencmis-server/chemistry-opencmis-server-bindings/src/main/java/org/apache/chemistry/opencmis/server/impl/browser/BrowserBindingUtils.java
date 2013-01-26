@@ -230,8 +230,12 @@ public final class BrowserBindingUtils {
                 }
             }
 
-            if (PropertyIds.SECONDARY_OBJECT_TYPE_IDS.equals(propertId) && multiValuePropertyMap != null) {
-                Map<Integer, String> values = multiValuePropertyMap.get(i);
+            if (PropertyIds.SECONDARY_OBJECT_TYPE_IDS.equals(propertId)) {
+                Map<Integer, String> values = null;
+
+                if (multiValuePropertyMap != null) {
+                    values = multiValuePropertyMap.get(i);
+                }
 
                 if (values != null) {
                     for (String secTypeId : values.values()) {
@@ -306,12 +310,25 @@ public final class BrowserBindingUtils {
             int i = 0;
             for (String propertId : propertyIds) {
                 if (PropertyIds.SECONDARY_OBJECT_TYPE_IDS.equals(propertId)) {
-                    Map<Integer, String> values = multiValuePropertyMap.get(i);
+                    Map<Integer, String> values = null;
+
+                    if (multiValuePropertyMap != null) {
+                        values = multiValuePropertyMap.get(i);
+                    }
+
                     if (values != null) {
                         for (String secTypeId : values.values()) {
                             TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
                             if (typeDef == null) {
                                 throw new CmisInvalidArgumentException("Invalid secondary type: " + secTypeId);
+                            }
+                        }
+                    } else if (singleValuePropertyMap != null) {
+                        String value = singleValuePropertyMap.get(i);
+                        if (value != null) {
+                            TypeDefinition typeDef = typeCache.getTypeDefinition(value);
+                            if (typeDef == null) {
+                                throw new CmisInvalidArgumentException("Invalid secondary type: " + value);
                             }
                         }
                     }
