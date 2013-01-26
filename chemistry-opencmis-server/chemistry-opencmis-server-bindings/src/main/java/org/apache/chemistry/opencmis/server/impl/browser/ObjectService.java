@@ -63,6 +63,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -163,9 +164,12 @@ public final class ObjectService {
             throw new CmisRuntimeException("Source object has no type!?!");
         }
 
-        String newObjectId = service.createDocumentFromSource(repositoryId, sourceId,
-                createUpdateProperties(cp, sourceTypeId.getFirstValue().toString(), null, null, typeCache), folderId,
-                versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+        String newObjectId = service.createDocumentFromSource(
+                repositoryId,
+                sourceId,
+                createUpdateProperties(cp, sourceTypeId.getFirstValue().toString(), null,
+                        Collections.singletonList(sourceId), typeCache), folderId, versioningState, createPolicies(cp),
+                createAddAcl(cp), createRemoveAcl(cp), null);
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
@@ -328,7 +332,7 @@ public final class ObjectService {
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
 
         service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder,
-                createUpdateProperties(cp, typeId, null, null, typeCache), null);
+                createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache), null);
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

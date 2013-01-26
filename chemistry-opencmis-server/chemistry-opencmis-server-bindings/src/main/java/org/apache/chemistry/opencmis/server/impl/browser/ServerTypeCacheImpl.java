@@ -64,8 +64,8 @@ public class ServerTypeCacheImpl implements TypeCache {
         TypeDefinition type = objectToTypeDefinitions.get(objectId);
         if (type == null) {
             ObjectData obj = service.getObject(repositoryId, objectId,
-                    "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none",
-                    false, false, null);
+                    "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId,cmis:secondaryObjectTypeIds", false,
+                    IncludeRelationships.NONE, "cmis:none", false, false, null);
 
             if (obj != null && obj.getProperties() != null) {
                 PropertyData<?> typeProp = obj.getProperties().getProperties().get(PropertyIds.OBJECT_TYPE_ID);
@@ -73,6 +73,16 @@ public class ServerTypeCacheImpl implements TypeCache {
                     String typeId = ((PropertyId) typeProp).getFirstValue();
                     if (typeId != null) {
                         type = getTypeDefinition(typeId);
+                    }
+                }
+
+                PropertyData<?> secTypeProp = obj.getProperties().getProperties()
+                        .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+                if ((secTypeProp instanceof PropertyId) && (secTypeProp.getValues() != null)) {
+                    for (String secTypeId : ((PropertyId) secTypeProp).getValues()) {
+                        if (secTypeId != null) {
+                            getTypeDefinition(secTypeId);
+                        }
                     }
                 }
             }

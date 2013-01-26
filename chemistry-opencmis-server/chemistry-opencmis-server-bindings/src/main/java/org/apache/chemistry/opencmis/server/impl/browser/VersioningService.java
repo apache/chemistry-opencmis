@@ -42,6 +42,7 @@ import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUt
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -134,7 +135,8 @@ public final class VersioningService {
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-        service.checkIn(repositoryId, objectIdHolder, major, createUpdateProperties(cp, typeId, null, null, typeCache),
+        service.checkIn(repositoryId, objectIdHolder, major,
+                createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
                 createContentStream(request), checkinComment, createPolicies(cp), createAddAcl(cp),
                 createRemoveAcl(cp), null);
 
