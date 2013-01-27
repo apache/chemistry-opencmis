@@ -153,7 +153,8 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         
         TypeValidator.checkType(typeManager, type);
-        TypeValidator.checkProperties(typeManager, type.getPropertyDefinitions().values());
+        if (null != type.getPropertyDefinitions())
+            TypeValidator.checkProperties(typeManager, type.getPropertyDefinitions().values());
         
         typeManager.addTypeDefinition(type);
         return type;
