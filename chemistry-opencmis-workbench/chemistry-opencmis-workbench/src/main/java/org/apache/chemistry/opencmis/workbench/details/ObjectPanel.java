@@ -51,6 +51,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
@@ -72,10 +73,11 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField idField;
     private JTextField typeField;
     private JTextField basetypeField;
+    private InfoList secondaryTypesList;
     private JTextField versionLabelField;
     private JTextField pwcField;
     private JTextField contentUrlField;
-    private InfoList paths;
+    private InfoList pathsList;
     private InfoList allowableActionsList;
     private JPanel buttonPanel;
     private JButton refreshButton;
@@ -109,9 +111,10 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             idField.setText("");
             typeField.setText("");
             basetypeField.setText("");
+            secondaryTypesList.removeAll();
             versionLabelField.setText("");
             pwcField.setText("");
-            paths.removeAll();
+            pathsList.removeAll();
             contentUrlField.setText("");
             allowableActionsList.removeAll();
             refreshButton.setEnabled(false);
@@ -123,6 +126,17 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 idField.setText(object.getId());
                 typeField.setText(object.getType().getId());
                 basetypeField.setText(object.getBaseTypeId().toString());
+
+                if (object.getSecondaryTypes() != null) {
+                    List<String> secTypeIds = new ArrayList<String>();
+                    for (SecondaryType type : object.getSecondaryTypes()) {
+                        secTypeIds.add(type.getId());
+                    }
+                    secondaryTypesList.setList(secTypeIds);
+                } else {
+                    secondaryTypesList.removeAll();
+                }
+
                 if (object instanceof Document) {
                     Document doc = (Document) object;
 
@@ -146,22 +160,22 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                 if (object instanceof FileableCmisObject) {
                     if (object instanceof Folder) {
-                        paths.setList(Collections.singletonList(((Folder) object).getPath()));
+                        pathsList.setList(Collections.singletonList(((Folder) object).getPath()));
                     } else {
-                        paths.setList(Collections.singletonList(""));
+                        pathsList.setList(Collections.singletonList(""));
                         final FileableCmisObject pathObject = (FileableCmisObject) object;
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    List<String> pathsList = pathObject.getPaths();
-                                    if ((pathsList == null) || (pathsList.size() == 0)) {
-                                        paths.setList(Collections.singletonList("(unfiled)"));
+                                    List<String> paths = pathObject.getPaths();
+                                    if ((paths == null) || (paths.size() == 0)) {
+                                        pathsList.setList(Collections.singletonList("(unfiled)"));
                                     } else {
-                                        paths.setList(pathsList);
+                                        pathsList.setList(paths);
                                     }
                                 } catch (Exception e) {
-                                    paths.setList(Collections.singletonList("(???)"));
+                                    pathsList.setList(Collections.singletonList("(???)"));
                                     // ClientHelper.showError(null, e);
                                 }
                                 ObjectPanel.this.revalidate();
@@ -169,7 +183,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         });
                     }
                 } else {
-                    paths.setList(Collections.singletonList("(not filable)"));
+                    pathsList.setList(Collections.singletonList("(not filable)"));
                 }
 
                 String docUrl = getDocumentURL(object, getClientModel().getClientSession().getSession());
@@ -213,7 +227,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         idField = addId("Id:");
         typeField = addLine("Type:");
         basetypeField = addLine("Base Type:");
-        paths = addComponent("Paths:", new InfoList());
+        secondaryTypesList = addComponent("Secondary Types:", new InfoList());
+        pathsList = addComponent("Paths:", new InfoList());
         versionLabelField = addLine("Version Label:");
         pwcField = addId("PWC:");
         contentUrlField = addLink("Content URL:");
