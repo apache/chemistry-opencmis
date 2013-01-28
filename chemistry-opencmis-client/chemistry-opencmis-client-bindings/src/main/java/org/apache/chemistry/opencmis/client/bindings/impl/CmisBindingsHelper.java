@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 /**
@@ -75,7 +76,7 @@ public final class CmisBindingsHelper {
             // ok, we have to create it...
             try {
                 String spiName = (String) session.get(SessionParameter.BINDING_SPI_CLASS);
-                Constructor<?> c = Class.forName(spiName).getConstructor(BindingSession.class);
+                Constructor<?> c = ClassLoaderUtil.loadClass(spiName).getConstructor(BindingSession.class);
                 spi = (CmisSpi) c.newInstance(session);
             } catch (CmisBaseException e) {
                 throw e;
@@ -113,7 +114,7 @@ public final class CmisBindingsHelper {
             // ok, we have to create it...
             try {
                 String invokerName = (String) session.get(SessionParameter.HTTP_INVOKER_CLASS);
-                invoker = (HttpInvoker) Class.forName(invokerName).newInstance();
+                invoker = (HttpInvoker) ClassLoaderUtil.loadClass(invokerName).newInstance();
             } catch (CmisBaseException e) {
                 throw e;
             } catch (Exception e) {

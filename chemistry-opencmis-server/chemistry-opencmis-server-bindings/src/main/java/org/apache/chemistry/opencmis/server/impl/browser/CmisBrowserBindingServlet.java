@@ -108,6 +108,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -151,7 +152,8 @@ public class CmisBrowserBindingServlet extends HttpServlet {
         String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
         if (callContextHandlerClass != null) {
             try {
-                callContextHandler = (CallContextHandler) Class.forName(callContextHandlerClass).newInstance();
+                callContextHandler = (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass)
+                        .newInstance();
             } catch (Exception e) {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }

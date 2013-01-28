@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
@@ -201,7 +202,7 @@ public abstract class AbstractRunner {
             return;
         }
 
-        Class<?> clazz = Class.forName(groupClass);
+        Class<?> clazz = ClassLoaderUtil.loadClass(groupClass);
         Object o = clazz.newInstance();
         CmisTestGroup group = null;
 

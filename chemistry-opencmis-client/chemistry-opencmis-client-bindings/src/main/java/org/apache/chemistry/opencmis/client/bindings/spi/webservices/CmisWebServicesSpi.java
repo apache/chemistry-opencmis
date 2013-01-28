@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
@@ -67,7 +68,7 @@ public class CmisWebServicesSpi implements CmisSpi {
             Object portProviderObj = null;
 
             try {
-                portProviderObj = Class.forName(portProviderClass).newInstance();
+                portProviderObj = ClassLoaderUtil.loadClass(portProviderClass).newInstance();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Could not load port provider: " + e, e);
             }

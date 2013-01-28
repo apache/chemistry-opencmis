@@ -73,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
@@ -207,7 +208,7 @@ public class SessionImpl implements Session {
             if (classname == null) {
                 objectFactoryClass = ObjectFactoryImpl.class;
             } else {
-                objectFactoryClass = Class.forName(classname);
+                objectFactoryClass = ClassLoaderUtil.loadClass(classname);
             }
 
             Object of = objectFactoryClass.newInstance();
@@ -231,7 +232,7 @@ public class SessionImpl implements Session {
             if (classname == null) {
                 cacheClass = CacheImpl.class;
             } else {
-                cacheClass = Class.forName(classname);
+                cacheClass = ClassLoaderUtil.loadClass(classname);
             }
 
             Object of = cacheClass.newInstance();

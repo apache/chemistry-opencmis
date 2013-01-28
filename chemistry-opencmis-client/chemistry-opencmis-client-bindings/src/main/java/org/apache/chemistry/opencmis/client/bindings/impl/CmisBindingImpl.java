@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.SessionAwareAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
@@ -90,7 +91,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
                 Object authProviderObj = null;
 
                 try {
-                    authProviderObj = Class.forName(authProviderClassName).newInstance();
+                    authProviderObj = ClassLoaderUtil.loadClass(authProviderClassName).newInstance();
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
                 }

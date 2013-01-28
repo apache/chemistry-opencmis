@@ -22,6 +22,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -87,7 +88,7 @@ public abstract class AbstractBridgeServiceFactory extends AbstractServiceFactor
         }
 
         try {
-            serviceClass = Class.forName(className);
+            serviceClass = ClassLoaderUtil.loadClass(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Service class name cannot be found: " + e.getMessage(), e);
         }

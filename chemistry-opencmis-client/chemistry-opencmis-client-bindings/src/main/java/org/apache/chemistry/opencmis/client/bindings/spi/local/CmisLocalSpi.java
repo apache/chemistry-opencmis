@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -84,7 +85,7 @@ public class CmisLocalSpi implements CmisSpi {
             }
 
             // create and initialize factory
-            factory = (CmisServiceFactory) Class.forName(serviceFactoryClassname).newInstance();
+            factory = (CmisServiceFactory) ClassLoaderUtil.loadClass(serviceFactoryClassname).newInstance();
             factory.init(parameters);
         } catch (Exception e) {
             throw new CmisConnectionException("Factory cannot be created: " + e.getMessage(), e);

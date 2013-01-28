@@ -28,6 +28,7 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         // create a factory instance
         Object object = null;
         try {
-            object = Class.forName(className).newInstance();
+            object = ClassLoaderUtil.loadClass(className).newInstance();
         } catch (Exception e) {
             LOG.warn("Could not create a services factory instance: " + e, e);
             return null;

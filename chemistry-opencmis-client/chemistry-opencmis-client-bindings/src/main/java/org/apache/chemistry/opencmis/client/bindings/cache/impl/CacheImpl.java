@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.bindings.cache.Cache;
 import org.apache.chemistry.opencmis.client.bindings.cache.CacheLevel;
+import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class CacheImpl implements Cache {
         // get the class
         Class<?> clazz;
         try {
-            clazz = Class.forName(className);
+            clazz = ClassLoaderUtil.loadClass(className, this.getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Class '" + className + "' not found!", e);
         }
