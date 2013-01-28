@@ -55,12 +55,15 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
+import org.apache.chemistry.opencmis.server.shared.CappedInputStream;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
 
 /**
  * Parser for Atom Entries.
  */
 public class AtomEntryParser {
+
+    private static final long MAX_STREAM_LENGTH = 10 * 1024 * 1024;
 
     private static final String TAG_ENTRY = "entry";
     private static final String TAG_TITLE = "title";
@@ -74,6 +77,8 @@ public class AtomEntryParser {
     private static final String ATTR_TYPE = "type";
 
     protected boolean ignoreAtomContentSrc;
+
+    private CappedInputStream cappedStream;
 
     private final File tempDir;
     private final int memoryThreshold;
@@ -184,10 +189,12 @@ public class AtomEntryParser {
             return;
         }
 
+        cappedStream = new CappedInputStream(stream, MAX_STREAM_LENGTH);
+
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-        XMLStreamReader parser = factory.createXMLStreamReader(stream);
+        XMLStreamReader parser = factory.createXMLStreamReader(cappedStream);
 
         while (true) {
             int event = parser.getEventType();
@@ -296,17 +303,21 @@ public class AtomEntryParser {
             }
         }
 
+        ThresholdOutputStream ths = null;
         byte[] bytes = null;
         if (type.equals("text") || type.equals("html")) {
-            bytes = readText(parser).getBytes("UTF-8");
+            ths = readContentBytes(parser);
         } else if (type.equals("xhtml")) {
             bytes = copy(parser);
         } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
             bytes = copy(parser);
         } else if (type.startsWith("text/")) {
-            bytes = readText(parser).getBytes("UTF-8");
+            ths = readContentBytes(parser);
         } else {
-            ThresholdOutputStream ths = readBase64(parser);
+            ths = readBase64(parser);
+        }
+
+        if (ths != null) {
             atomContentStream.setStream(ths.getInputStream());
             atomContentStream.setLength(BigInteger.valueOf(ths.getSize()));
         }
@@ -314,6 +325,7 @@ public class AtomEntryParser {
         if (bytes != null) {
             atomContentStream.setStream(new ByteArrayInputStream(bytes));
             atomContentStream.setLength(BigInteger.valueOf(bytes.length));
+            cappedStream.deductBytes(bytes.length);
         }
     }
 
@@ -365,7 +377,7 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains text.
      */
-    private static String readText(XMLStreamReader parser) throws Exception {
+    private String readText(XMLStreamReader parser) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         next(parser);
@@ -394,6 +406,40 @@ public class AtomEntryParser {
     }
 
     /**
+     * Parses a tag that contains content bytes.
+     */
+    private ThresholdOutputStream readContentBytes(XMLStreamReader parser) throws Exception {
+        ThresholdOutputStream bufferStream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize,
+                encrypt);
+
+        next(parser);
+
+        while (true) {
+            int event = parser.getEventType();
+            if (event == XMLStreamReader.END_ELEMENT) {
+                break;
+            } else if (event == XMLStreamReader.CHARACTERS) {
+                String s = parser.getText();
+                if (s != null) {
+                    byte[] bytes = s.getBytes("UTF-8");
+                    bufferStream.write(bytes);
+                    cappedStream.deductBytes(bytes.length);
+                }
+            } else if (event == XMLStreamReader.START_ELEMENT) {
+                throw new RuntimeException("Unexpected tag: " + parser.getName());
+            }
+
+            if (!next(parser)) {
+                break;
+            }
+        }
+
+        next(parser);
+
+        return bufferStream;
+    }
+
+    /**
      * Parses a tag that contains base64 encoded content.
      */
     private ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
@@ -412,7 +458,9 @@ public class AtomEntryParser {
                 } else if (event == XMLStreamReader.CHARACTERS) {
                     String s = parser.getText();
                     if (s != null) {
-                        b64stream.write(s.getBytes("US-ASCII"));
+                        byte[] bytes = s.getBytes("US-ASCII");
+                        b64stream.write(bytes);
+                        cappedStream.deductBytes(bytes.length);
                     }
                 } else if (event == XMLStreamReader.START_ELEMENT) {
                     throw new RuntimeException("Unexpected tag: " + parser.getName());
