@@ -208,79 +208,40 @@ public final class BrowserBindingUtils {
     }
 
     public static Properties createNewProperties(ControlParser controlParser, TypeCache typeCache) {
-        List<String> propertyIds = controlParser.getValues(Constants.CONTROL_PROP_ID);
-        if (propertyIds == null) {
+        Map<String, List<String>> properties = controlParser.getProperties();
+        if (properties == null) {
             return null;
         }
 
-        Map<Integer, String> singleValuePropertyMap = controlParser.getOneDimMap(Constants.CONTROL_PROP_VALUE);
-        Map<Integer, Map<Integer, String>> multiValuePropertyMap = controlParser
-                .getTwoDimMap(Constants.CONTROL_PROP_VALUE);
+        // load primary type
+        List<String> objectTypeIdsValues = properties.get(PropertyIds.OBJECT_TYPE_ID);
+        if (objectTypeIdsValues != null && !objectTypeIdsValues.isEmpty()) {
+            TypeDefinition typeDef = typeCache.getTypeDefinition(objectTypeIdsValues.get(0));
+            if (typeDef == null) {
+                throw new CmisInvalidArgumentException("Invalid type: " + objectTypeIdsValues.get(0));
+            }
+        }
 
-        // load types
-        int i = 0;
-        for (String propertId : propertyIds) {
-            if (PropertyIds.OBJECT_TYPE_ID.equals(propertId) && singleValuePropertyMap != null) {
-                String typeId = singleValuePropertyMap.get(i);
-                if (typeId != null) {
-                    TypeDefinition typeDef = typeCache.getTypeDefinition(typeId);
-                    if (typeDef == null) {
-                        throw new CmisInvalidArgumentException("Invalid type: " + typeId);
-                    }
+        // load secondary types
+        List<String> secondaryObjectTypeIdsValues = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        if (secondaryObjectTypeIdsValues != null && !secondaryObjectTypeIdsValues.isEmpty()) {
+            for (String secTypeId : secondaryObjectTypeIdsValues) {
+                TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
+                if (typeDef == null) {
+                    throw new CmisInvalidArgumentException("Invalid type: " + secTypeId);
                 }
             }
-
-            if (PropertyIds.SECONDARY_OBJECT_TYPE_IDS.equals(propertId)) {
-                Map<Integer, String> values = null;
-
-                if (multiValuePropertyMap != null) {
-                    values = multiValuePropertyMap.get(i);
-                }
-
-                if (values != null) {
-                    for (String secTypeId : values.values()) {
-                        TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
-                        if (typeDef == null) {
-                            throw new CmisInvalidArgumentException("Invalid secondary type: " + secTypeId);
-                        }
-                    }
-                } else if (singleValuePropertyMap != null) {
-                    String value = singleValuePropertyMap.get(i);
-                    if (value != null) {
-                        TypeDefinition typeDef = typeCache.getTypeDefinition(value);
-                        if (typeDef == null) {
-                            throw new CmisInvalidArgumentException("Invalid secondary type: " + value);
-                        }
-                    }
-                }
-            }
-
-            i++;
         }
 
         // create properties
         PropertiesImpl result = new PropertiesImpl();
-
-        i = 0;
-        for (String propertyId : propertyIds) {
-            PropertyDefinition<?> propDef = typeCache.getPropertyDefinition(propertyId);
+        for (Map.Entry<String, List<String>> property : properties.entrySet()) {
+            PropertyDefinition<?> propDef = typeCache.getPropertyDefinition(property.getKey());
             if (propDef == null) {
-                throw new CmisInvalidArgumentException(propertyId + " is unknown!");
+                throw new CmisInvalidArgumentException(property.getKey() + " is unknown!");
             }
 
-            PropertyData<?> propertyData = null;
-
-            if (singleValuePropertyMap != null && singleValuePropertyMap.containsKey(i)) {
-                propertyData = createPropertyData(propDef, singleValuePropertyMap.get(i));
-            } else if (multiValuePropertyMap != null && multiValuePropertyMap.containsKey(i)) {
-                propertyData = createPropertyData(propDef, controlParser.getValues(Constants.CONTROL_PROP_VALUE, i));
-            } else {
-                propertyData = createPropertyData(propDef, null);
-            }
-
-            result.addProperty(propertyData);
-
-            i++;
+            result.addProperty(createPropertyData(propDef, property.getValue()));
         }
 
         return result;
@@ -288,16 +249,12 @@ public final class BrowserBindingUtils {
 
     public static Properties createUpdateProperties(ControlParser controlParser, String typeId,
             List<String> secondaryTypeIds, List<String> objectIds, TypeCache typeCache) {
-        List<String> propertyIds = controlParser.getValues(Constants.CONTROL_PROP_ID);
-        if (propertyIds == null) {
+        Map<String, List<String>> properties = controlParser.getProperties();
+        if (properties == null) {
             return null;
         }
 
-        Map<Integer, String> singleValuePropertyMap = controlParser.getOneDimMap(Constants.CONTROL_PROP_VALUE);
-        Map<Integer, Map<Integer, String>> multiValuePropertyMap = controlParser
-                .getTwoDimMap(Constants.CONTROL_PROP_VALUE);
-
-        // get type definition
+        // load primary type
         if (typeId != null) {
             TypeDefinition typeDef = typeCache.getTypeDefinition(typeId);
             if (typeDef == null) {
@@ -305,36 +262,15 @@ public final class BrowserBindingUtils {
             }
         }
 
-        // get secondary type definition
-        int i = 0;
-        for (String propertId : propertyIds) {
-            if (PropertyIds.SECONDARY_OBJECT_TYPE_IDS.equals(propertId)) {
-                Map<Integer, String> values = null;
-
-                if (multiValuePropertyMap != null) {
-                    values = multiValuePropertyMap.get(i);
+        // load secondary types
+        List<String> secondaryObjectTypeIdsValues = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        if (secondaryObjectTypeIdsValues != null && !secondaryObjectTypeIdsValues.isEmpty()) {
+            for (String secTypeId : secondaryObjectTypeIdsValues) {
+                TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
+                if (typeDef == null) {
+                    throw new CmisInvalidArgumentException("Invalid type: " + secTypeId);
                 }
-
-                if (values != null) {
-                    for (String secTypeId : values.values()) {
-                        TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
-                        if (typeDef == null) {
-                            throw new CmisInvalidArgumentException("Invalid secondary type: " + secTypeId);
-                        }
-                    }
-                } else if (singleValuePropertyMap != null) {
-                    String value = singleValuePropertyMap.get(i);
-                    if (value != null) {
-                        TypeDefinition typeDef = typeCache.getTypeDefinition(value);
-                        if (typeDef == null) {
-                            throw new CmisInvalidArgumentException("Invalid secondary type: " + value);
-                        }
-                    }
-                }
-                break;
             }
-
-            i++;
         }
 
         if (secondaryTypeIds != null) {
@@ -348,36 +284,22 @@ public final class BrowserBindingUtils {
 
         // create properties
         PropertiesImpl result = new PropertiesImpl();
-
-        i = 0;
-        for (String propertyId : propertyIds) {
-            PropertyDefinition<?> propDef = typeCache.getPropertyDefinition(propertyId);
+        for (Map.Entry<String, List<String>> property : properties.entrySet()) {
+            PropertyDefinition<?> propDef = typeCache.getPropertyDefinition(property.getKey());
             if (propDef == null && objectIds != null) {
                 for (String objectId : objectIds) {
                     typeCache.getTypeDefinitionForObject(objectId);
-                    propDef = typeCache.getPropertyDefinition(propertyId);
+                    propDef = typeCache.getPropertyDefinition(property.getKey());
                     if (propDef != null) {
                         break;
                     }
                 }
             }
             if (propDef == null) {
-                throw new CmisInvalidArgumentException(propertyId + " is unknown!");
+                throw new CmisInvalidArgumentException(property.getKey() + " is unknown!");
             }
 
-            PropertyData<?> propertyData = null;
-
-            if (singleValuePropertyMap != null && singleValuePropertyMap.containsKey(i)) {
-                propertyData = createPropertyData(propDef, singleValuePropertyMap.get(i));
-            } else if (multiValuePropertyMap != null && multiValuePropertyMap.containsKey(i)) {
-                propertyData = createPropertyData(propDef, controlParser.getValues(Constants.CONTROL_PROP_VALUE, i));
-            } else {
-                propertyData = createPropertyData(propDef, null);
-            }
-
-            result.addProperty(propertyData);
-
-            i++;
+            result.addProperty(createPropertyData(propDef, property.getValue()));
         }
 
         return result;

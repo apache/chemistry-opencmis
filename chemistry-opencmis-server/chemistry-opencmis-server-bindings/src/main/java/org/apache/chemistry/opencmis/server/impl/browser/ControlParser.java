@@ -19,7 +19,9 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,11 +29,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 
 /**
  * Parses HTML form controls.
  */
 public class ControlParser {
+
+    public static final String CONTROL_PROP_ID_LOWER = "propertyid";
+    private static final String CONTROL_PROP_VALUE_LOWER = "propertyvalue";
 
     private final HttpServletRequest request;
 
@@ -192,5 +198,51 @@ public class ControlParser {
         }
 
         return twoDim.get(controlName.toLowerCase(Locale.ENGLISH));
+    }
+
+    public Map<String, List<String>> getProperties() {
+        Map<Integer, String> propertyIds = oneDim.get(CONTROL_PROP_ID_LOWER);
+        if (propertyIds == null) {
+            return null;
+        }
+
+        Map<Integer, String> oneDimPropValues = oneDim.get(CONTROL_PROP_VALUE_LOWER);
+        Map<Integer, Map<Integer, String>> twoDimPropValues = twoDim.get(CONTROL_PROP_VALUE_LOWER);
+
+        int count = propertyIds.size();
+        Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
+
+        for (int i = 0; i < count; i++) {
+            String propertyId = propertyIds.get(i);
+            if (propertyId == null) {
+                throw new CmisInvalidArgumentException(Constants.CONTROL_PROP_ID + " has gaps!");
+            }
+
+            List<String> values = null;
+            if (oneDimPropValues != null && oneDimPropValues.containsKey(i)) {
+                values = Collections.singletonList(oneDimPropValues.get(i));
+            } else if (twoDimPropValues != null && twoDimPropValues.containsKey(i)) {
+                values = new ArrayList<String>();
+
+                Map<Integer, String> valuesMap = twoDimPropValues.get(i);
+                if (valuesMap != null) {
+                    int valueCount = valuesMap.size();
+
+                    for (int j = 0; j < valueCount; j++) {
+                        String value = valuesMap.get(j);
+                        if (value == null) {
+                            throw new CmisInvalidArgumentException(Constants.CONTROL_PROP_VALUE + "[" + i
+                                    + "] has gaps!");
+                        }
+
+                        values.add(value);
+                    }
+                }
+            }
+
+            result.put(propertyId, values);
+        }
+
+        return result;
     }
 }
