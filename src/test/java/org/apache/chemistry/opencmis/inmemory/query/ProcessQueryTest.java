@@ -420,8 +420,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
         // initialize query object with type manager
         queryProcessor = new TestQueryProcessor();
-        QueryObject qo = new QueryObject(tm);
-        super.setUp(qo, queryProcessor);
+        super.setUp(tm, queryProcessor);
     }
 
     @Test
