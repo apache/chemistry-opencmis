@@ -34,7 +34,7 @@ public class TestParserStrict extends AbstractParserTest{
 
     @Before
     public void setUp() {
-        super.setUp(CmisQlStrictLexer.class, CmisQlStrictParser.class, "CmisBaseGrammar");
+        super.setUp(CmisQlStrictLexer.class, CmisQlStrictParser.class, "CmisBaseGrammar", "CmisBaseLexer");
     }
 
     @Override

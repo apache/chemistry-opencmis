@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -32,19 +31,46 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
 /**
- * Utility class providing convenience methods for parsing CMIS queries. 
+ * Support class to assist in parsing and processing CMIS queries.
+ * This class inherits from QueryUtilBase to use the error handling
+ * methods. It does not follow its design and is only maintained for
+ * backwards compatibility.
+ * 
+ * @deprecated 
  *
  */
-public class QueryUtil {
+public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
+    
+    public QueryUtil() {
+        super(null, null, null);
+    }
+    
+    @Override
+    public CommonTree parseStatement() throws RecognitionException {
+        throw new CmisRuntimeException("Not supported, use getWalker to parse a query using this legacy class.");        
+    }
 
-    private CmisQueryWalker walker;
+    @Override
+    public void walkStatement() throws CmisQueryException, RecognitionException {
+        throw new CmisRuntimeException("Not supported, use getWalker to parse a query using this legacy class.");
+    }
 
-    // convenience method because everybody needs this piece of code
+    /**
+     * Parse a CMISQL statement and return a tree that can be walked to evaluate the expression
+     * of the query (usually not used directly but through traverseStatement)
+     * 
+     * @param statement
+     *      CMISQL statement
+     * @return
+     *      an AntLR tree grammar that can be traversed to evaluate the query
+     *      
+     * @throws RecognitionException
+     */
     public static CmisQueryWalker getWalker(String statement) throws RecognitionException {
-        
         CharStream input = new ANTLRStringStream(statement);
         TokenSource lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -63,42 +89,44 @@ public class QueryUtil {
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
         nodes.setTokenStream(tokens);
         CmisQueryWalker walker = new CmisQueryWalker(nodes);
-        return walker;
+        return walker;               
     }
-
-    public CmisQueryWalker traverseStatement(String statement, QueryObject queryObj, PredicateWalkerBase pw) throws UnsupportedEncodingException, IOException, RecognitionException {
+    
+    /**
+     * Parse and process a CMISQL statement using the higher level support classes
+     * 
+     * @param statement
+     *      CMISQL statement
+     * @param queryObj
+     *      CMIS query object filled with information what data need to be retrieved
+     * @param pw
+     *      predicate walker that evaluates the where clause
+     * @return
+     *      AntLR tree grammar created by this statement
+     *      
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws RecognitionException
+     */
+    public CmisQueryWalker traverseStatement(String statement, QueryObject queryObj, PredicateWalkerBase pw)
+            throws UnsupportedEncodingException, IOException, RecognitionException {
         walker = getWalker(statement);
         walker.query(queryObj, pw);
         walker.getWherePredicateTree();
         return walker;        
     }
-    
+
     public CmisQueryWalker traverseStatementAndCatchExc(String statement, QueryObject queryObj, PredicateWalkerBase pw) {
         try {
             return traverseStatement(statement, queryObj, pw);
         } catch (RecognitionException e) {
             String errorMsg = queryObj.getErrorMessage();
-            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg);
+            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg, e);
         } catch (CmisBaseException e) {
             throw e;
         } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Walking of statement failed with exception: \n   " + e);
+            throw new CmisInvalidArgumentException("Walking of statement failed with exception: \n   ", e);
         }
     }
 
-    public String getErrorMessage(RecognitionException e) {
-        if (null == walker)
-            return e.toString();
-        else
-            return getErrorMessage(walker, e);
-    }
-    
-    private static String getErrorMessage(BaseRecognizer recognizer, RecognitionException e) {
-        String[] tokenNames = recognizer.getTokenNames();
-        // String hdr = walker.getErrorHeader(e);
-        String hdr = "Line "+e.line+":"+e.charPositionInLine;
-        String msg = recognizer.getErrorMessage(e, tokenNames);
-        return hdr + " " + msg;
-    }
-    
 }

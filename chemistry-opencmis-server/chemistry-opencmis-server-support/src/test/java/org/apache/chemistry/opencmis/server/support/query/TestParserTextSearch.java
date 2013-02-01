@@ -28,7 +28,7 @@ public class TestParserTextSearch extends AbstractParserTest{
 
     @Before
     public void setUp() {
-        super.setUp(TextSearchLexer.class, TextSearchParser.class, null);
+        super.setUp(TextSearchLexer.class, TextSearchParser.class, null, "CmisBaseLexer");
     }
 
     @Override

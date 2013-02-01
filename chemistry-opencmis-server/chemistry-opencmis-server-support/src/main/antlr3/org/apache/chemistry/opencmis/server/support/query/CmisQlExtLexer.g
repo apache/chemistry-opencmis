@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,22 +18,18 @@
  * under the License.
  *
  * Authors:
+ *     Stefane Fermigier, Nuxeo
  *     Florent Guillaume, Nuxeo
  */
-/**
- * CMISQL tree grammar, walker for the inmemory implementation.
- * This aims at implementing proper semantics without any speed
- * optimization.
- */
-tree grammar CmisQueryWalker;
+ 
+lexer grammar CmisQlExtLexer;
 
-options {
-    tokenVocab = CmisQlStrictLexer;
-    ASTLabelType = CommonTree;
-    output = AST;
+import CmisBaseLexer;
+
+tokens {
+    FUNC;
+    OP_ANY;
 }
-
-import CmisBaseWalker;
 
 @header {
 /*
@@ -56,49 +53,14 @@ import CmisBaseWalker;
  * under the License.
  *
  * Authors:
+ *     Stefane Fermigier, Nuxeo
  *     Florent Guillaume, Nuxeo
  *
  * THIS FILE IS AUTO-GENERATED, DO NOT EDIT.
  */
+
 package org.apache.chemistry.opencmis.server.support.query;
 
-import java.math.BigDecimal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 }
 
-
-@members {
-    public Tree getWherePredicateTree() {
-        return gCmisBaseWalker.getWherePredicateTree();
-    }
-
-    protected void mismatch(IntStream input, int ttype, BitSet follow) throws RecognitionException
-    {
-        gCmisBaseWalker.mismatch(input, ttype, follow);
-    }
-
-    public void recoverFromMismatchedSet(IntStream input, RecognitionException e, antlr.collections.impl.BitSet follow) throws RecognitionException
-    {
-        gCmisBaseWalker.recoverFromMismatchedSet(input, e, follow);
-    }
-
-    public void setDoFullTextParse(boolean value) {
-        gCmisBaseWalker.setDoFullTextParse(value);
-    }
-	
-    public boolean getDoFullTextParse() {
-        return gCmisBaseWalker.getDoFullTextParse();
-    }
-	
-}
-
-// For CMIS SQL it will be sufficient to stop on first error:
-@rulecatch {
-    catch (RecognitionException e) {
-        throw e;
-    }
-}
-
-root [QueryObject go, PredicateWalkerBase pw] throws CmisQueryException:
-      query [go, pw];
+DISTINCT : ('D'|'d')('I'|'i')('S'|'s')('T'|'t')('I'|'i')('N'|'n')('C'|'c')('T'|'t');

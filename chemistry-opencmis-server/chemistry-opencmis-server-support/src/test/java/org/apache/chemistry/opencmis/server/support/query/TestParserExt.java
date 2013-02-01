@@ -30,7 +30,7 @@ public class TestParserExt extends AbstractParserTest {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp(CmisQlStrictLexer.class, CmisQlExtParser.class, null);
+        super.setUp(CmisQlExtLexer.class, CmisQlExtParser.class, null, "CmisBaseLexer");
     }
 
     @Override

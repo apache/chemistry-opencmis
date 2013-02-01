@@ -61,7 +61,7 @@ import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
-import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 import org.apache.chemistry.opencmis.server.support.query.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,8 +93,7 @@ public class InMemoryQueryProcessor {
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
-        queryObj = new QueryObject(tm);
-        processQueryAndCatchExc(statement); // calls query processor
+        processQueryAndCatchExc(statement, tm ); // calls query processor
 
         // iterate over all the objects and check for each if the query matches
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
@@ -108,9 +107,11 @@ public class InMemoryQueryProcessor {
         return objList;
     }
 
-    public void processQueryAndCatchExc(String statement) {
-        QueryUtil queryUtil = new QueryUtil();
-        CmisQueryWalker walker = queryUtil.traverseStatementAndCatchExc(statement, queryObj, null);
+    public void processQueryAndCatchExc(String statement, TypeManager tm) {
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, tm, null);
+        queryUtil.processStatementUsingCmisExceptions();
+        CmisQueryWalker walker = queryUtil.getWalker();
+        queryObj = queryUtil.getQueryObject();
         whereTree = walker.getWherePredicateTree();
     }
 

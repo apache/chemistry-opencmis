@@ -78,7 +78,7 @@
                 <version>3.4</version>    
                 <configuration>
 		           <excludes>
-			          <exclude>**/CmisBaseGrammar.g</exclude>
+			          <exclude>**/CmisBase*.g</exclude>
 			          <exclude>**/Java*.g</exclude>
 		           </excludes>
                 </configuration>

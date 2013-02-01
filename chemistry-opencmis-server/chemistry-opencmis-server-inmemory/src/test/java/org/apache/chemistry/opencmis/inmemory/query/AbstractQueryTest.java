@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
@@ -37,19 +36,18 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
-import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 
 public abstract class AbstractQueryTest {
 
-    protected CmisQueryWalker walker; // the walker object
+    protected PredicateWalkerBase predicateWalker;
+    protected TypeManager typeManager;
     protected QueryObject queryObj;
-    PredicateWalkerBase predicateWalker;
     protected TypeDefinition myType, myTypeCopy, bookType;
-    protected QueryUtil queryUtil;
 
     protected static final String MY_DOC_TYPE = "MyDocType";
     protected static final String MY_DOC_TYPE_COPY = "MyDocTypeCopy";
@@ -63,38 +61,30 @@ public abstract class AbstractQueryTest {
     protected static final String ISBN_PROP = "ISBN";
     protected static final String PUB_DATE_PROP = "PublishingDate";
 
-    protected void setUp(QueryObject qo, PredicateWalkerBase pw) {
-        queryObj = qo;
+    protected void setUp(TypeManager tm, PredicateWalkerBase pw) {
+        typeManager = tm;
         predicateWalker = pw;
-        queryUtil = new QueryUtil();
     }
 
-    protected CmisQueryWalker traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        walker =  queryUtil.traverseStatement(statement, queryObj, predicateWalker);
-        return walker;
+    protected QueryUtilStrict traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
+        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+        queryUtil.processStatement();
+        return queryUtil;
     }
 
-    protected CmisQueryWalker traverseStatementAndCatchExc(String statement) {
-        walker = queryUtil.traverseStatementAndCatchExc(statement, queryObj, predicateWalker);
-        return walker;
+    protected QueryUtilStrict traverseStatementAndCatchExc(String statement) {
+        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+        queryUtil.processStatementUsingCmisExceptions();
+        return queryUtil;
     }
 
     protected CmisQueryWalker getWalker(String statement) throws RecognitionException {
-        walker = QueryUtil.getWalker(statement);
-        return walker;
+        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+        queryUtil.processStatementUsingCmisExceptions();
+        queryObj = queryUtil.getQueryObject();
+        return queryUtil.getWalker();
     }
-
-//    protected Tree getWhereTree(Tree root) {
-//        int count = root.getChildCount();
-//        for (int i=0; i<count; i++) {
-//            Tree child = root.getChild(i);
-//            if (child.getType() == CmisQlStrictLexer.WHERE) {
-//                return child;
-//            }
-//        }
-//        return null;
-//    }
-
+    
     // Helper to create some types for testing
 
     protected  List<TypeDefinition> createTypes() {

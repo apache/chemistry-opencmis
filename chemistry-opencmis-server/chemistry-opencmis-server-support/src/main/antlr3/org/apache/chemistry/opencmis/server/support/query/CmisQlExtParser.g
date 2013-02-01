@@ -26,16 +26,11 @@
 parser grammar CmisQlExtParser;
 
 options {
-    tokenVocab = CmisQlStrictLexer;
+    tokenVocab = CmisQlExtLexer;
     output = AST;
 }
 
 import CmisBaseGrammar;
-
-tokens {
-    FUNC;
-    OP_ANY;
-}
 
 @header {
 /*

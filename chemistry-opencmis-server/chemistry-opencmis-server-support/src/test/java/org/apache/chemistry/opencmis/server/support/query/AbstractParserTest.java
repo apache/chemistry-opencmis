@@ -28,6 +28,7 @@ import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.Lexer;
+import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.stringtemplate.StringTemplate;
@@ -45,14 +46,16 @@ public class AbstractParserTest{
     private static final Logger log = LoggerFactory.getLogger(AbstractParserTest.class);
 
     protected String superGrammarName;
+    protected String baseLexerName;
     Class<?> lexer;
     Class<?> parser;
     protected String treeParserPath;
 
-    protected void setUp(Class<?> lexerClass, Class<?> parserClass, String baseGrammar)  {
+    protected void setUp(Class<?> lexerClass, Class<?> parserClass, String baseGrammar, String baseLexer)  {
         lexer = lexerClass;
         parser = parserClass;
         this.superGrammarName = baseGrammar;
+        this.baseLexerName = baseLexer;
     }
 
     protected void tearDown() {
@@ -118,9 +121,19 @@ public class AbstractParserTest{
         Constructor<?> lexConstructor = lexer.getConstructor(lexArgTypes);
         Object[] lexArgs = new Object[]{input};                             // assign value to lexer's args
         Object lexObj = lexConstructor.newInstance(lexArgs);                // makes new instance of lexer
-
-        Method ruleName = lexer.getMethod("m"+testRuleName, new Class[0]);
-
+        Method ruleName = null;
+                
+        try {
+            ruleName = lexer.getMethod("m"+testRuleName, new Class[0]);
+        } catch (NoSuchMethodException e) {
+            // try superclass lexers
+            Class<?>lexerSuper = Class.forName(lexer.getName() + "_" + baseLexerName);
+            ruleName = lexerSuper.getMethod("m"+testRuleName, new Class[0]);
+            lexArgTypes = new Class[]{CharStream.class, CmisQlStrictLexer.class};
+            lexArgs = new Object[]{input, lexObj };     
+            lexConstructor = lexerSuper.getConstructor(lexArgTypes);
+            lexObj = lexConstructor.newInstance(lexArgs);     
+        }
         /** Invoke lexer rule, and get the current index in CharStream */
         ruleName.invoke(lexObj, new Object[0]);
         Method ruleName2 = lexer.getMethod("getCharIndex", new Class[0]);
