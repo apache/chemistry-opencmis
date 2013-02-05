@@ -1997,143 +1997,35 @@ public final class JSONConverter {
                 switch (propertyType) {
                 case STRING:
                     property = new PropertyStringImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyStringImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyStringImpl) property).setValues(copyStringValues(values));
                     break;
                 case ID:
                     property = new PropertyIdImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyIdImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyIdImpl) property).setValues(copyStringValues(values));
                     break;
                 case BOOLEAN:
                     property = new PropertyBooleanImpl();
-                    {
-                        List<Boolean> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<Boolean>();
-                            for (Object obj : values) {
-                                if (obj instanceof Boolean) {
-                                    propertyValues.add((Boolean) obj);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyBooleanImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyBooleanImpl) property).setValues(copyBooleanValues(values));
                     break;
                 case INTEGER:
                     property = new PropertyIntegerImpl();
-                    {
-                        List<BigInteger> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<BigInteger>();
-                            for (Object obj : values) {
-                                if (obj instanceof BigInteger) {
-                                    propertyValues.add((BigInteger) obj);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyIntegerImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyIntegerImpl) property).setValues(copyIntegerValues(values));
                     break;
                 case DECIMAL:
                     property = new PropertyDecimalImpl();
-                    {
-                        List<BigDecimal> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<BigDecimal>();
-                            for (Object obj : values) {
-                                if (obj instanceof BigDecimal) {
-                                    propertyValues.add((BigDecimal) obj);
-                                } else if (obj instanceof BigInteger) {
-                                    propertyValues.add(new BigDecimal((BigInteger) obj));
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyDecimalImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyDecimalImpl) property).setValues(copyDecimalValues(values));
                     break;
                 case DATETIME:
                     property = new PropertyDateTimeImpl();
-                    {
-                        List<GregorianCalendar> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<GregorianCalendar>();
-                            for (Object obj : values) {
-                                if (obj instanceof Number) {
-                                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-                                    cal.setTimeInMillis(((Number) obj).longValue());
-                                    propertyValues.add(cal);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyDateTimeImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyDateTimeImpl) property).setValues(copyDateTimeValues(values));
                     break;
                 case HTML:
                     property = new PropertyHtmlImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyHtmlImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyHtmlImpl) property).setValues(copyStringValues(values));
                     break;
                 case URI:
                     property = new PropertyUriImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyUriImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyUriImpl) property).setValues(copyStringValues(values));
                     break;
                 }
 
@@ -2174,7 +2066,20 @@ public final class JSONConverter {
 
         for (Map.Entry<String, Object> entry : json.entrySet()) {
             String id = entry.getKey();
-            PropertyDefinition<?> propDef = (typeDef == null ? null : typeDef.getPropertyDefinitions().get(id));
+
+            PropertyDefinition<?> propDef = null;
+            if (typeDef != null) {
+                propDef = typeDef.getPropertyDefinitions().get(id);
+            }
+
+            if (propDef == null) {
+                propDef = typeCache.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value()).getPropertyDefinitions()
+                        .get(id);
+            }
+
+            if (propDef == null) {
+                propDef = typeCache.getTypeDefinition(BaseTypeId.CMIS_FOLDER.value()).getPropertyDefinitions().get(id);
+            }
 
             List<Object> values = null;
             if (entry.getValue() instanceof List) {
@@ -2189,143 +2094,35 @@ public final class JSONConverter {
                 switch (propDef.getPropertyType()) {
                 case STRING:
                     property = new PropertyStringImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyStringImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyStringImpl) property).setValues(copyStringValues(values));
                     break;
                 case ID:
                     property = new PropertyIdImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyIdImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyIdImpl) property).setValues(copyStringValues(values));
                     break;
                 case BOOLEAN:
                     property = new PropertyBooleanImpl();
-                    {
-                        List<Boolean> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<Boolean>();
-                            for (Object obj : values) {
-                                if (obj instanceof Boolean) {
-                                    propertyValues.add((Boolean) obj);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyBooleanImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyBooleanImpl) property).setValues(copyBooleanValues(values));
                     break;
                 case INTEGER:
                     property = new PropertyIntegerImpl();
-                    {
-                        List<BigInteger> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<BigInteger>();
-                            for (Object obj : values) {
-                                if (obj instanceof BigInteger) {
-                                    propertyValues.add((BigInteger) obj);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyIntegerImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyIntegerImpl) property).setValues(copyIntegerValues(values));
                     break;
                 case DECIMAL:
                     property = new PropertyDecimalImpl();
-                    {
-                        List<BigDecimal> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<BigDecimal>();
-                            for (Object obj : values) {
-                                if (obj instanceof BigDecimal) {
-                                    propertyValues.add((BigDecimal) obj);
-                                } else if (obj instanceof BigInteger) {
-                                    propertyValues.add(new BigDecimal((BigInteger) obj));
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyDecimalImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyDecimalImpl) property).setValues(copyDecimalValues(values));
                     break;
                 case DATETIME:
                     property = new PropertyDateTimeImpl();
-                    {
-                        List<GregorianCalendar> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<GregorianCalendar>();
-                            for (Object obj : values) {
-                                if (obj instanceof Number) {
-                                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-                                    cal.setTimeInMillis(((Number) obj).longValue());
-                                    propertyValues.add(cal);
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyDateTimeImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyDateTimeImpl) property).setValues(copyDateTimeValues(values));
                     break;
                 case HTML:
                     property = new PropertyHtmlImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyHtmlImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyHtmlImpl) property).setValues(copyStringValues(values));
                     break;
                 case URI:
                     property = new PropertyUriImpl();
-                    {
-                        List<String> propertyValues = null;
-                        if (values != null) {
-                            propertyValues = new ArrayList<String>();
-                            for (Object obj : values) {
-                                if (obj instanceof String) {
-                                    propertyValues.add(obj.toString());
-                                } else {
-                                    throw new CmisRuntimeException("Invalid property value: " + obj);
-                                }
-                            }
-                        }
-                        ((PropertyUriImpl) property).setValues(propertyValues);
-                    }
+                    ((PropertyUriImpl) property).setValues(copyStringValues(values));
                     break;
                 }
 
@@ -2344,50 +2141,16 @@ public final class JSONConverter {
                     Object firstValue = values.get(0);
                     if (firstValue instanceof Boolean) {
                         property = new PropertyBooleanImpl();
-                        List<Boolean> propertyValues = new ArrayList<Boolean>();
-                        for (Object obj : values) {
-                            if (obj instanceof Boolean) {
-                                propertyValues.add((Boolean) obj);
-                            } else {
-                                throw new CmisRuntimeException("Invalid property value: " + obj);
-                            }
-                        }
-                        ((PropertyBooleanImpl) property).setValues(propertyValues);
+                        ((PropertyBooleanImpl) property).setValues(copyBooleanValues(values));
                     } else if (firstValue instanceof BigInteger) {
                         property = new PropertyIntegerImpl();
-                        List<BigInteger> propertyValues = new ArrayList<BigInteger>();
-                        for (Object obj : values) {
-                            if (obj instanceof BigInteger) {
-                                propertyValues.add((BigInteger) obj);
-                            } else {
-                                throw new CmisRuntimeException("Invalid property value: " + obj);
-                            }
-                        }
-                        ((PropertyIntegerImpl) property).setValues(propertyValues);
+                        ((PropertyIntegerImpl) property).setValues(copyIntegerValues(values));
                     } else if (firstValue instanceof BigDecimal) {
                         property = new PropertyDecimalImpl();
-                        List<BigDecimal> propertyValues = new ArrayList<BigDecimal>();
-                        for (Object obj : values) {
-                            if (obj instanceof BigDecimal) {
-                                propertyValues.add((BigDecimal) obj);
-                            } else if (obj instanceof BigInteger) {
-                                propertyValues.add(new BigDecimal((BigInteger) obj));
-                            } else {
-                                throw new CmisRuntimeException("Invalid property value: " + obj);
-                            }
-                        }
-                        ((PropertyDecimalImpl) property).setValues(propertyValues);
+                        ((PropertyDecimalImpl) property).setValues(copyDecimalValues(values));
                     } else {
                         property = new PropertyStringImpl();
-                        List<String> propertyValues = new ArrayList<String>();
-                        for (Object obj : values) {
-                            if (obj instanceof String) {
-                                propertyValues.add((String) obj);
-                            } else {
-                                throw new CmisRuntimeException("Invalid property value: " + obj);
-                            }
-                        }
-                        ((PropertyStringImpl) property).setValues(propertyValues);
+                        ((PropertyStringImpl) property).setValues(copyStringValues(values));
                     }
                 }
 
@@ -2402,6 +2165,90 @@ public final class JSONConverter {
 
         if (extJson != null) {
             convertExtension(extJson, result, Collections.<String> emptySet());
+        }
+
+        return result;
+    }
+
+    private static List<String> copyStringValues(List<Object> source) {
+        List<String> result = null;
+        if (source != null) {
+            result = new ArrayList<String>(source.size());
+            for (Object obj : source) {
+                if (obj instanceof String) {
+                    result.add(obj.toString());
+                } else {
+                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static List<Boolean> copyBooleanValues(List<Object> source) {
+        List<Boolean> result = null;
+        if (source != null) {
+            result = new ArrayList<Boolean>(source.size());
+            for (Object obj : source) {
+                if (obj instanceof Boolean) {
+                    result.add((Boolean) obj);
+                } else {
+                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static List<BigInteger> copyIntegerValues(List<Object> source) {
+        List<BigInteger> result = null;
+        if (source != null) {
+            result = new ArrayList<BigInteger>(source.size());
+            for (Object obj : source) {
+                if (obj instanceof BigInteger) {
+                    result.add((BigInteger) obj);
+                } else {
+                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static List<BigDecimal> copyDecimalValues(List<Object> source) {
+        List<BigDecimal> result = null;
+        if (source != null) {
+            result = new ArrayList<BigDecimal>(source.size());
+            for (Object obj : source) {
+                if (obj instanceof BigDecimal) {
+                    result.add((BigDecimal) obj);
+                } else if (obj instanceof BigInteger) {
+                    result.add(new BigDecimal((BigInteger) obj));
+                } else {
+                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static List<GregorianCalendar> copyDateTimeValues(List<Object> source) {
+        List<GregorianCalendar> result = null;
+        if (source != null) {
+            result = new ArrayList<GregorianCalendar>(source.size());
+            for (Object obj : source) {
+                if (obj instanceof Number) {
+                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                    cal.setTimeInMillis(((Number) obj).longValue());
+                    result.add(cal);
+                } else {
+                    throw new CmisRuntimeException("Invalid property value: " + obj);
+                }
+            }
         }
 
         return result;
