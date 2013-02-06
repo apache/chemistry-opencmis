@@ -47,7 +47,7 @@ public class CmisPermissionDeniedException extends CmisBaseException {
     public CmisPermissionDeniedException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
-    
+
     public CmisPermissionDeniedException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -59,9 +59,9 @@ public class CmisPermissionDeniedException extends CmisBaseException {
     public CmisPermissionDeniedException(String message) {
         super(message, BigInteger.ZERO);
     }
-    
+
     @Override
-    public String getExceptionName() {
+    public final String getExceptionName() {
         return EXCEPTION_NAME;
     }
 }

@@ -61,7 +61,7 @@ public class CmisConstraintException extends CmisBaseException {
     }
 
     @Override
-    public String getExceptionName() {
+    public final String getExceptionName() {
         return EXCEPTION_NAME;
     }
 }

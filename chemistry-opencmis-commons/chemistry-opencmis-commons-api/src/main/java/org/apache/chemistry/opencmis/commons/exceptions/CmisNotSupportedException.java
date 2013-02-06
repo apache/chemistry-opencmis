@@ -47,7 +47,7 @@ public class CmisNotSupportedException extends CmisBaseException {
     public CmisNotSupportedException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
-    
+
     public CmisNotSupportedException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
@@ -59,9 +59,9 @@ public class CmisNotSupportedException extends CmisBaseException {
     public CmisNotSupportedException(String message) {
         super(message, BigInteger.ZERO);
     }
-    
+
     @Override
-    public String getExceptionName() {
+    public final String getExceptionName() {
         return EXCEPTION_NAME;
     }
 }
