@@ -33,7 +33,17 @@ import java.util.Map;
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
 public class JSONObject extends HashMap<String, Object> implements Map<String, Object>, JSONAware, JSONStreamAware {
-    private static final long serialVersionUID = -503443796854799292L;
+
+    private static final long serialVersionUID = 1;
+
+    @Override
+    public Object put(String key, Object value) {
+        if (key == null) {
+            throw new NullPointerException("JSON key must not be null!");
+        }
+
+        return super.put(key, value);
+    }
 
     /**
      * Encode a map into JSON text and write it to out. If this map is also a
@@ -62,7 +72,11 @@ public class JSONObject extends HashMap<String, Object> implements Map<String, O
             }
 
             out.write('\"');
-            out.write(escape(entry.getKey()));
+            if (entry.getKey() == null) {
+                out.write("null");
+            } else {
+                out.write(escape(entry.getKey()));
+            }
             out.write('\"');
             out.write(':');
             JSONValue.writeJSONString(entry.getValue(), out);
