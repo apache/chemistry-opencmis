@@ -128,6 +128,7 @@ public class RepositoryInfoFrame extends JFrame {
                 addYesNoLabel("Multifiling supported:").setValue(is(cap.isMultifilingSupported()));
                 addYesNoLabel("Version specific filing supported:")
                         .setValue(is(cap.isVersionSpecificFilingSupported()));
+                addLine("Order by:").setText(str(cap.getOrderByCapability()));
                 addLine("Query:").setText(str(cap.getQueryCapability()));
                 addLine("Joins:").setText(str(cap.getJoinCapability()));
                 addYesNoLabel("All versions searchable:").setValue(is(cap.isAllVersionsSearchableSupported()));
