@@ -246,8 +246,9 @@ public class TypeSplitPane extends JSplitPane {
 
         private static final String[] COLUMN_NAMES = { "Name", "Id", "Description", "Local Namespace", "Local Name",
                 "Query Name", "Type", "Cardinality", "Updatability", "Queryable", "Orderable", "Required", "Inherited",
-                "Default Value", "Choices" };
-        private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200, 200, 200, 80, 80, 80, 50, 50, 50, 50, 200, 200 };
+                "Default Value", "Open Choice", "Choices" };
+        private static final int[] COLUMN_WIDTHS = { 200, 200, 200, 200, 200, 200, 80, 80, 80, 50, 50, 50, 50, 200, 50,
+                200 };
 
         private ObjectType type;
         private List<PropertyDefinition<?>> propertyDefintions;
@@ -380,6 +381,8 @@ public class TypeSplitPane extends JSplitPane {
                 case 13:
                     return propDef.getDefaultValue();
                 case 14:
+                    return propDef.isOpenChoice();
+                case 15:
                     return propDef.getChoices();
                 }
 
@@ -388,7 +391,7 @@ public class TypeSplitPane extends JSplitPane {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if ((columnIndex == 13) || (columnIndex == 14)) {
+                if ((columnIndex == 13) || (columnIndex == 15)) {
                     return Collection.class;
                 }
 
