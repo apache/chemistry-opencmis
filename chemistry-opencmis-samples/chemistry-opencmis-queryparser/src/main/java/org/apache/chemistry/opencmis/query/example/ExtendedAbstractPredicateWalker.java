@@ -23,6 +23,11 @@ import java.util.List;
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 
+/**
+ * An extended walker approach with more fine grained control and more callback
+ * hooks. This class is independent of the target output.
+ *
+ */
 public abstract class ExtendedAbstractPredicateWalker extends AbstractPredicateWalker {
 
     protected abstract void onStartProcessing(Tree whereNode);

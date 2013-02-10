@@ -30,6 +30,13 @@ import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 
+/**
+ * Main entry point for the parser example. It takes a CMISQL query as input,
+ * parses it and generates again CMISQL as output when traversing the tree.
+ * Runs standalone without a server. Usually this code would be called from
+ * the CMIS Discovery Service in a CMIS server implementation.
+ *
+ */
 public class ExampleQueryProcessor {
     
     public static void main(String[] args) {

@@ -45,6 +45,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionCont
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
+/**
+ * This class implements a minmimal type system for the example parser
+ * consisting of a single type cmis:document. An implementation of the
+ * interface TypeManager must be provided to use the parser framework.
+ * 
+ * @see org.apache.chemistry.opencmis.server.support.TypeManager
+ */
 public class ExampleTypeManager implements TypeManager {
     
     private static ExampleTypeManager INSTANCE = new ExampleTypeManager();

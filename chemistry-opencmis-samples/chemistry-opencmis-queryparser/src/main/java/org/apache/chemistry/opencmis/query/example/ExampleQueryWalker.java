@@ -25,6 +25,12 @@ import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.server.support.query.StringUtil;
 import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
 
+/**
+ * A class extending the {@link ExtendedAbstractPredicateWalker} class and generating
+ * CMISQL strings as output while traversing the trees. On each hit of a certain
+ * node or token the corresponding output of CMISQL is appended to a string
+ * buffer.
+ */
 public class ExampleQueryWalker extends ExtendedAbstractPredicateWalker {
 
     private StringBuffer result = new StringBuffer();

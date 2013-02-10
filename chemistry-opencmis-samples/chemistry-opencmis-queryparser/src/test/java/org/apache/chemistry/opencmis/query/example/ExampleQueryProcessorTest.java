@@ -23,6 +23,11 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Unit test for the sample parser. Calls the main entry point and compares output
+ * against the expected result.
+ *
+ */
 public class ExampleQueryProcessorTest {
     
     private ExampleQueryProcessor queryProcessor;
