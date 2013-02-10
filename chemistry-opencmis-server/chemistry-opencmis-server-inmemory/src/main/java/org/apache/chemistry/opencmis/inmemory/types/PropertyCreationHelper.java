@@ -427,7 +427,7 @@ public class PropertyCreationHelper {
         prop.setIsOpenChoice(false);
         prop.setIsQueryable(true);
         prop.setIsRequired(false);
-        prop.setIsOrderable(true);
+        prop.setIsOrderable(card == Cardinality.SINGLE ? true : false);
         prop.setPropertyType(propType);
         prop.setUpdatability(upd);
     }
