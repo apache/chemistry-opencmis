@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.FunctionReference;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 
 public class ExampleQueryProcessor {
@@ -56,6 +57,7 @@ public class ExampleQueryProcessor {
             
             String whereClause = walker.getResult();
             generatedResponse.append(whereClause);
+            generatedResponse.append(getOrderBy(qo));
             
             return generatedResponse.toString();
             
@@ -78,14 +80,7 @@ public class ExampleQueryProcessor {
             } else 
                 result.append(", ");
 
-            result.append(sel.getName());
-            if (sel instanceof FunctionReference)
-                result.append("()");
-            
-            if (null != sel.getAliasName()) {
-                result.append(" AS ");
-                result.append(sel.getAliasName());
-            }                
+            appendSelector(result, sel);                
         }
         
         result.append(" FROM");
@@ -100,6 +95,40 @@ public class ExampleQueryProcessor {
             result.append(from);
         }
         result.append(" ");
+        return result.toString();
+    }
+
+    private void appendSelector(StringBuffer result, CmisSelector sel) {
+        result.append(sel.getName());
+        if (sel instanceof FunctionReference)
+            result.append("()");
+        
+        if (null != sel.getAliasName()) {
+            result.append(" AS ");
+            result.append(sel.getAliasName());
+        }
+    }
+    
+    private String getOrderBy(QueryObject qo) {
+        List<SortSpec> orderBys = qo.getOrderBys();
+        if (null == orderBys || orderBys.size() == 0) 
+            return "";
+        
+        StringBuffer result = new StringBuffer();
+        result.append(" ORDER BY");
+        boolean first = true;
+        for (SortSpec sp : orderBys) {
+            if (first) {
+                first = false;
+                result.append(" ");
+            } else 
+                result.append(", ");
+
+            CmisSelector sel = sp.getSelector();
+            appendSelector(result, sel);
+            if (!sp.ascending)
+                result.append(" DESC");
+        }
         return result.toString();
     }
 }

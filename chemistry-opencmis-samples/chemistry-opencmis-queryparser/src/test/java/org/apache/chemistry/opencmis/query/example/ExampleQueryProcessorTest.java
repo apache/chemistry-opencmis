@@ -262,4 +262,16 @@ public class ExampleQueryProcessorTest {
         assertEquals(expected, response);        
     }
 
+    @Test 
+    public void testOrderBy() {
+        String queryString = queryPrefix + "cmis:name = 'MyDocument' ORDER BY cmis:objectId";
+        String response = queryProcessor.parseQuery(queryString);
+        String expected = expectedPrefix + "(cmis:name = 'MyDocument') ORDER BY cmis:objectId";
+        assertEquals(expected, response);
+        
+        queryString = queryPrefix + "cmis:name = 'MyDocument' ORDER BY cmis:name ASC, cmis:objectId DESC";
+        response = queryProcessor.parseQuery(queryString);
+        expected = expectedPrefix + "(cmis:name = 'MyDocument') ORDER BY cmis:name, cmis:objectId DESC";
+        assertEquals(expected, response);
+    }
 }
