@@ -90,10 +90,34 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
             } else {
                 return walkInTree(node, node.getChild(0), node.getChild(1));
             }
+        case CmisQlStrictLexer.BOOL_LIT:
+            walkBoolean(node);
+            return false;
+        case CmisQlStrictLexer.NUM_LIT:
+            walkNumber(node);
+            return false;
+        case CmisQlStrictLexer.STRING_LIT:
+            walkString(node);
+            return false;
+        case CmisQlStrictLexer.TIME_LIT:
+            walkTimestamp(node);
+            return false;
+        case CmisQlStrictLexer.IN_LIST:
+            walkList(node);
+            return false;
+        case CmisQlStrictLexer.COL:
+            walkCol(node);
+            return false;
+        case CmisQlStrictLexer.ID:
+            walkId(node);
+            return false;
+        case CmisQlStrictLexer.SCORE:
+            return walkScore(node);
         default:
             return walkOtherPredicate(node);
         }
     }
+
 
     /** For extensibility. */
     protected Boolean walkOtherPredicate(Tree node) {
@@ -335,4 +359,9 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
     protected Boolean walkTextPhrase(Tree node) {
         return null;
     }
+    
+    protected Boolean walkScore(Tree node) {
+       return false;        
+    }
+
 }

@@ -331,14 +331,14 @@ public class ProcessQueryTest extends AbstractQueryTest {
        }
 
        @Override
-       public void onTextAnd(Tree node, List<Tree> conjunctionNodes) {
+       public void onTextAnd(Tree node, List<Tree> conjunctionNodes, int index) {
            assertEquals(TextSearchLexer.TEXT_AND, node.getType());
            assertTrue(conjunctionNodes.size() >= 2);
            rulesTrackerMap.put(ON_TEXT_AND, counter++);
        }
 
        @Override
-       public void onTextOr(Tree node, List<Tree> termNodes) {
+       public void onTextOr(Tree node, List<Tree> termNodes, int index) {
            assertEquals(TextSearchLexer.TEXT_OR, node.getType());
            assertTrue(termNodes.size() >= 2);
            rulesTrackerMap.put(ON_TEXT_OR, counter++);
@@ -401,6 +401,10 @@ public class ProcessQueryTest extends AbstractQueryTest {
                return null;
            }
        }
+
+        @Override
+        public void onColNode(Tree node) {
+        }
 
     }
 
