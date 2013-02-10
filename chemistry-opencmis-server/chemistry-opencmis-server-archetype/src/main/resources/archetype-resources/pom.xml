@@ -93,6 +93,19 @@
             <artifactId>chemistry-opencmis-server-support</artifactId>
             <version>\${opencmis.version}</version>
         </dependency>
+        <dependency><!-- for development only -->
+            <groupId>org.apache.chemistry.opencmis</groupId>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <version>\${opencmis.version}</version>
+            <classifier>classes</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency><!-- for development only -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>
