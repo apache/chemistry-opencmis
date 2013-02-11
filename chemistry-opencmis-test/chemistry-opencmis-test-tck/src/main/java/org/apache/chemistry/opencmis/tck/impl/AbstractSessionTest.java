@@ -1987,7 +1987,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                     // cmis:secondaryObjectTypeIds
                     cpd = new CmisPropertyDefintion(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, null, PropertyType.ID,
-                            Cardinality.MULTI, null, null, null);
+                            Cardinality.MULTI, null, null, false);
                     addResult(results, cpd.check(type));
 
                     if (BaseTypeId.CMIS_DOCUMENT.equals(type.getBaseTypeId())) {
@@ -2081,7 +2081,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                     // cmis:allowedChildObjectTypeIds
                     cpd = new CmisPropertyDefintion(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, false, PropertyType.ID,
-                            Cardinality.MULTI, Updatability.READONLY, null, null);
+                            Cardinality.MULTI, Updatability.READONLY, null, false);
                     addResult(results, cpd.check(type));
                 } else if (BaseTypeId.CMIS_RELATIONSHIP.equals(type.getBaseTypeId())) {
                     // cmis:sourceId
@@ -2988,7 +2988,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             this.cardinality = cardinality;
             this.updatability = updatability;
             this.queryable = queryable;
-            this.orderable = orderable;
+            this.orderable = (cardinality == Cardinality.MULTI ? Boolean.FALSE : orderable);
         }
 
         public CmisTestResult check(TypeDefinition type) {
