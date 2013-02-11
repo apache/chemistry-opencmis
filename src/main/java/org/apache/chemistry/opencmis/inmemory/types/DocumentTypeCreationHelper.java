@@ -209,9 +209,8 @@ public class DocumentTypeCreationHelper {
                 "Parent Id", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
+        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
                 "Allowed Child Types", Updatability.READONLY);
-        propId.setCardinality(Cardinality.MULTI);
         propertyDefinitions.put(propId.getId(), propId);
 
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH,
