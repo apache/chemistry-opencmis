@@ -49,23 +49,35 @@ public class ExampleQueryProcessor {
     
     public String parseQuery(String queryString) {
         StringBuffer generatedResponse = new StringBuffer();
+        
+        // Instantiate a walker traversing the WHERE clause and generating the output string
         ExampleQueryWalker walker = new ExampleQueryWalker();
 
         // create type definitions, for this example we just create cmis:document
         TypeManager typeManager = ExampleTypeManager.getInstance();
 
+        // create the parser helper class with type manager and walker
         QueryUtilStrict queryUtil= new QueryUtilStrict(queryString, typeManager, walker);
         try {
+            // parse the statement, then traverse it using out query walker
             queryUtil.processStatement();
             
             QueryObject qo = queryUtil.getQueryObject();
+            
+            // The SELECT and FROM part is handled in the QueryObject, we just need to retrieve
+            // the results, and generte the SELECT string
             String selFromPart = getSelectFromString(qo);
             generatedResponse.append(selFromPart);
             
+            // get the generated string from our query walker and append it
             String whereClause = walker.getResult();
             generatedResponse.append(whereClause);
+            
+            // The ORDER BY part is handled in the QueryObject, we just need to retrieve
+            // the results, and generte the ORDER BY string
             generatedResponse.append(getOrderBy(qo));
             
+            // Finally we have the full statement and return is as result
             return generatedResponse.toString();
             
         } catch (RecognitionException e) {
