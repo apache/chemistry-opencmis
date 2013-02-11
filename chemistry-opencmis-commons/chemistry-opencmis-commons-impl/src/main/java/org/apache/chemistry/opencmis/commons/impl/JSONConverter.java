@@ -92,6 +92,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
@@ -191,7 +192,7 @@ public final class JSONConverter {
         result.put(JSON_REPINFO_ROOT_FOLDER_ID, repositoryInfo.getRootFolderId());
         result.put(JSON_REPINFO_CAPABILITIES, convert(repositoryInfo.getCapabilities()));
         setIfNotNull(JSON_REPINFO_ACL_CAPABILITIES, convert(repositoryInfo.getAclCapabilities()), result);
-        result.put(JSON_REPINFO_CHANGE_LOCK_TOKEN, repositoryInfo.getLatestChangeLogToken());
+        result.put(JSON_REPINFO_CHANGE_LOG_TOKEN, repositoryInfo.getLatestChangeLogToken());
         result.put(JSON_REPINFO_CMIS_VERSION_SUPPORTED, repositoryInfo.getCmisVersionSupported());
         setIfNotNull(JSON_REPINFO_THIN_CLIENT_URI, repositoryInfo.getThinClientUri(), result);
         setIfNotNull(JSON_REPINFO_CHANGES_INCOMPLETE, repositoryInfo.getChangesIncomplete(), result);
@@ -199,7 +200,9 @@ public final class JSONConverter {
         JSONArray changesOnType = new JSONArray();
         if (repositoryInfo.getChangesOnType() != null) {
             for (BaseTypeId type : repositoryInfo.getChangesOnType()) {
-                changesOnType.add(getJSONStringValue(type.value()));
+                if (type != null) {
+                    changesOnType.add(getJSONStringValue(type.value()));
+                }
             }
         }
         result.put(JSON_REPINFO_CHANGES_ON_TYPE, changesOnType);
@@ -251,10 +254,9 @@ public final class JSONConverter {
 
         JSONObject result = new JSONObject();
 
-        result.put(JSON_CAP_CONTENT_STREAM_UPDATES, getJSONStringValue(capabilities.getContentStreamUpdatesCapability()
-                .value()));
-        result.put(JSON_CAP_CHANGES, getJSONStringValue(capabilities.getChangesCapability().value()));
-        result.put(JSON_CAP_RENDITIONS, getJSONStringValue(capabilities.getRenditionsCapability().value()));
+        result.put(JSON_CAP_CONTENT_STREAM_UPDATABILITY, getJSONEnumValue((capabilities.getContentStreamUpdatesCapability())));
+        result.put(JSON_CAP_CHANGES, getJSONEnumValue(capabilities.getChangesCapability()));
+        result.put(JSON_CAP_RENDITIONS, getJSONEnumValue(capabilities.getRenditionsCapability()));
         result.put(JSON_CAP_GET_DESCENDANTS, capabilities.isGetDescendantsSupported());
         result.put(JSON_CAP_GET_FOLDER_TREE, capabilities.isGetFolderTreeSupported());
         result.put(JSON_CAP_MULTIFILING, capabilities.isMultifilingSupported());
@@ -263,9 +265,10 @@ public final class JSONConverter {
         result.put(JSON_CAP_PWC_SEARCHABLE, capabilities.isPwcSearchableSupported());
         result.put(JSON_CAP_PWC_UPDATABLE, capabilities.isPwcUpdatableSupported());
         result.put(JSON_CAP_ALL_VERSIONS_SEARCHABLE, capabilities.isAllVersionsSearchableSupported());
-        result.put(JSON_CAP_QUERY, getJSONStringValue(capabilities.getQueryCapability().value()));
-        result.put(JSON_CAP_JOIN, getJSONStringValue(capabilities.getJoinCapability().value()));
-        result.put(JSON_CAP_ACL, getJSONStringValue(capabilities.getAclCapability().value()));
+        result.put(JSON_CAP_ORDER_BY, getJSONEnumValue(capabilities.getOrderByCapability()));
+        result.put(JSON_CAP_QUERY, getJSONEnumValue(capabilities.getQueryCapability()));
+        result.put(JSON_CAP_JOIN, getJSONEnumValue(capabilities.getJoinCapability()));
+        result.put(JSON_CAP_ACL, getJSONEnumValue(capabilities.getAclCapability()));
 
         if (capabilities.getCreatablePropertyTypes() != null) {
             CreatablePropertyTypes creatablePropertyTypes = capabilities.getCreatablePropertyTypes();
@@ -275,7 +278,9 @@ public final class JSONConverter {
             if (creatablePropertyTypes.canCreate() != null) {
                 JSONArray canCreate = new JSONArray();
                 for (PropertyType propType : creatablePropertyTypes.canCreate()) {
-                    canCreate.add(propType.value());
+                    if (propType != null) {
+                        canCreate.add(propType.value());
+                    }
                 }
                 creatablePropertyTypesJson.put(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE, canCreate);
             }
@@ -336,9 +341,8 @@ public final class JSONConverter {
 
         JSONObject result = new JSONObject();
 
-        result.put(JSON_ACLCAP_SUPPORTED_PERMISSIONS,
-                getJSONStringValue(capabilities.getSupportedPermissions().value()));
-        result.put(JSON_ACLCAP_ACL_PROPAGATION, getJSONStringValue(capabilities.getAclPropagation().value()));
+        result.put(JSON_ACLCAP_SUPPORTED_PERMISSIONS, getJSONEnumValue(capabilities.getSupportedPermissions()));
+        result.put(JSON_ACLCAP_ACL_PROPAGATION, getJSONEnumValue(capabilities.getAclPropagation()));
 
         // permissions
         if (capabilities.getPermissions() != null) {
@@ -400,7 +404,7 @@ public final class JSONConverter {
         result.setRootUrl(getString(json, JSON_REPINFO_ROOT_FOLDER_URL));
         result.setCapabilities(convertRepositoryCapabilities(getMap(json.get(JSON_REPINFO_CAPABILITIES))));
         result.setAclCapabilities(convertAclCapabilities(getMap(json.get(JSON_REPINFO_ACL_CAPABILITIES))));
-        result.setLatestChangeLogToken(getString(json, JSON_REPINFO_CHANGE_LOCK_TOKEN));
+        result.setLatestChangeLogToken(getString(json, JSON_REPINFO_CHANGE_LOG_TOKEN));
         result.setCmisVersionSupported(getString(json, JSON_REPINFO_CMIS_VERSION_SUPPORTED));
         result.setThinClientUri(getString(json, JSON_REPINFO_THIN_CLIENT_URI));
         result.setChangesIncomplete(getBoolean(json, JSON_REPINFO_CHANGES_INCOMPLETE));
@@ -468,7 +472,7 @@ public final class JSONConverter {
 
         RepositoryCapabilitiesImpl result = new RepositoryCapabilitiesImpl();
 
-        result.setCapabilityContentStreamUpdates(getEnum(json, JSON_CAP_CONTENT_STREAM_UPDATES,
+        result.setCapabilityContentStreamUpdates(getEnum(json, JSON_CAP_CONTENT_STREAM_UPDATABILITY,
                 CapabilityContentStreamUpdates.class));
         result.setCapabilityChanges(getEnum(json, JSON_CAP_CHANGES, CapabilityChanges.class));
         result.setCapabilityRendition(getEnum(json, JSON_CAP_RENDITIONS, CapabilityRenditions.class));
@@ -480,6 +484,7 @@ public final class JSONConverter {
         result.setIsPwcSearchable(getBoolean(json, JSON_CAP_PWC_SEARCHABLE));
         result.setIsPwcUpdatable(getBoolean(json, JSON_CAP_PWC_UPDATABLE));
         result.setAllVersionsSearchable(getBoolean(json, JSON_CAP_ALL_VERSIONS_SEARCHABLE));
+        result.setOrderByCapability(getEnum(json, JSON_CAP_ORDER_BY, CapabilityOrderBy.class));
         result.setCapabilityQuery(getEnum(json, JSON_CAP_QUERY, CapabilityQuery.class));
         result.setCapabilityJoin(getEnum(json, JSON_CAP_JOIN, CapabilityJoin.class));
         result.setCapabilityAcl(getEnum(json, JSON_CAP_ACL, CapabilityAcl.class));
@@ -1084,9 +1089,7 @@ public final class JSONConverter {
             JSONObject changeEventInfo = new JSONObject();
 
             ChangeEventInfo cei = object.getChangeEventInfo();
-            if (cei.getChangeType() != null) {
-                changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONStringValue(cei.getChangeType().value()));
-            }
+            changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONEnumValue(cei.getChangeType()));
             changeEventInfo.put(JSON_CHANGE_EVENT_TIME, getJSONValue(cei.getChangeTime()));
 
             convertExtension(object.getChangeEventInfo(), changeEventInfo);
@@ -1223,8 +1226,8 @@ public final class JSONConverter {
             setIfNotNull(JSON_PROPERTY_QUERYNAME, property.getQueryName(), result);
 
             if (propDef != null) {
-                result.put(JSON_PROPERTY_DATATYPE, propDef.getPropertyType().value());
-                result.put(JSON_PROPERTY_CARDINALITY, propDef.getCardinality().value());
+                result.put(JSON_PROPERTY_DATATYPE, getJSONEnumValue(propDef.getPropertyType()));
+                result.put(JSON_PROPERTY_CARDINALITY, getJSONEnumValue(propDef.getCardinality()));
 
                 if ((property.getValues() == null) || (property.getValues().size() == 0)) {
                     result.put(JSON_PROPERTY_VALUE, null);
@@ -1484,7 +1487,7 @@ public final class JSONConverter {
         setIfNotNull(JSON_TYPE_DISPLAYNAME, type.getDisplayName(), result);
         setIfNotNull(JSON_TYPE_QUERYNAME, type.getQueryName(), result);
         setIfNotNull(JSON_TYPE_DESCRIPTION, type.getDescription(), result);
-        result.put(JSON_TYPE_BASE_ID, type.getBaseTypeId().value());
+        result.put(JSON_TYPE_BASE_ID, getJSONEnumValue(type.getBaseTypeId()));
         setIfNotNull(JSON_TYPE_PARENT_ID, type.getParentTypeId(), result);
         result.put(JSON_TYPE_CREATABLE, type.isCreatable());
         result.put(JSON_TYPE_FILEABLE, type.isFileable());
@@ -1509,8 +1512,8 @@ public final class JSONConverter {
 
         if (type instanceof DocumentTypeDefinition) {
             result.put(JSON_TYPE_VERSIONABLE, ((DocumentTypeDefinition) type).isVersionable());
-            result.put(JSON_TYPE_CONTENTSTREAM_ALLOWED, ((DocumentTypeDefinition) type).getContentStreamAllowed()
-                    .value());
+            result.put(JSON_TYPE_CONTENTSTREAM_ALLOWED,
+                    getJSONEnumValue(((DocumentTypeDefinition) type).getContentStreamAllowed()));
         }
 
         if (type instanceof RelationshipTypeDefinition) {
@@ -1603,9 +1606,9 @@ public final class JSONConverter {
         setIfNotNull(JSON_PROPERTY_TYPE_DISPLAYNAME, propertyDefinition.getDisplayName(), result);
         setIfNotNull(JSON_PROPERTY_TYPE_QUERYNAME, propertyDefinition.getQueryName(), result);
         setIfNotNull(JSON_PROPERTY_TYPE_DESCRIPTION, propertyDefinition.getDescription(), result);
-        result.put(JSON_PROPERTY_TYPE_PROPERTY_TYPE, propertyDefinition.getPropertyType().value());
-        result.put(JSON_PROPERTY_TYPE_CARDINALITY, propertyDefinition.getCardinality().value());
-        result.put(JSON_PROPERTY_TYPE_UPDATABILITY, propertyDefinition.getUpdatability().value());
+        result.put(JSON_PROPERTY_TYPE_PROPERTY_TYPE, getJSONEnumValue(propertyDefinition.getPropertyType()));
+        result.put(JSON_PROPERTY_TYPE_CARDINALITY, getJSONEnumValue(propertyDefinition.getCardinality()));
+        result.put(JSON_PROPERTY_TYPE_UPDATABILITY, getJSONEnumValue(propertyDefinition.getUpdatability()));
         setIfNotNull(JSON_PROPERTY_TYPE_INHERITED, propertyDefinition.isInherited(), result);
         result.put(JSON_PROPERTY_TYPE_REQUIRED, propertyDefinition.isRequired());
         result.put(JSON_PROPERTY_TYPE_QUERYABLE, propertyDefinition.isQueryable());
@@ -2706,6 +2709,23 @@ public final class JSONConverter {
         }
 
         return value;
+    }
+
+    public static String getJSONEnumValue(final Object obj) {
+        if (obj == null) {
+            return null;
+        }
+
+        try {
+            Method m = obj.getClass().getMethod("value", new Class[0]);
+            return (String) m.invoke(obj, new Object[0]);
+        } catch (Exception e) {
+            if (e instanceof IllegalArgumentException) {
+                return null;
+            } else {
+                throw new CmisRuntimeException("Could not get enum value!", e);
+            }
+        }
     }
 
     public static Object getCMISValue(final Object value, final PropertyType propertyType) {

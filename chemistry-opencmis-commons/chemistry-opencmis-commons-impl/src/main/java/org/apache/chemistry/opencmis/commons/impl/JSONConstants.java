@@ -43,7 +43,7 @@ public final class JSONConstants {
     public static final String JSON_REPINFO_ROOT_FOLDER_URL = "rootFolderUrl";
     public static final String JSON_REPINFO_CAPABILITIES = "capabilities";
     public static final String JSON_REPINFO_ACL_CAPABILITIES = "aclCapabilities";
-    public static final String JSON_REPINFO_CHANGE_LOCK_TOKEN = "latestChangeLogToken";
+    public static final String JSON_REPINFO_CHANGE_LOG_TOKEN = "latestChangeLogToken";
     public static final String JSON_REPINFO_CMIS_VERSION_SUPPORTED = "cmisVersionSupported";
     public static final String JSON_REPINFO_THIN_CLIENT_URI = "thinClientURI";
     public static final String JSON_REPINFO_CHANGES_INCOMPLETE = "changesIncomplete";
@@ -65,7 +65,7 @@ public final class JSONConstants {
         REPINFO_KEYS.add(JSON_REPINFO_ROOT_FOLDER_URL);
         REPINFO_KEYS.add(JSON_REPINFO_CAPABILITIES);
         REPINFO_KEYS.add(JSON_REPINFO_ACL_CAPABILITIES);
-        REPINFO_KEYS.add(JSON_REPINFO_CHANGE_LOCK_TOKEN);
+        REPINFO_KEYS.add(JSON_REPINFO_CHANGE_LOG_TOKEN);
         REPINFO_KEYS.add(JSON_REPINFO_CMIS_VERSION_SUPPORTED);
         REPINFO_KEYS.add(JSON_REPINFO_THIN_CLIENT_URI);
         REPINFO_KEYS.add(JSON_REPINFO_CHANGES_INCOMPLETE);
@@ -75,7 +75,7 @@ public final class JSONConstants {
         REPINFO_KEYS.add(JSON_REPINFO_EXTENDED_FEATURES);
     }
 
-    public static final String JSON_CAP_CONTENT_STREAM_UPDATES = "capabilityContentStreamUpdatability";
+    public static final String JSON_CAP_CONTENT_STREAM_UPDATABILITY = "capabilityContentStreamUpdatability";
     public static final String JSON_CAP_CHANGES = "capabilityChanges";
     public static final String JSON_CAP_RENDITIONS = "capabilityRenditions";
     public static final String JSON_CAP_GET_DESCENDANTS = "capabilityGetDescendants";
@@ -86,6 +86,7 @@ public final class JSONConstants {
     public static final String JSON_CAP_PWC_SEARCHABLE = "capabilityPWCSearchable";
     public static final String JSON_CAP_PWC_UPDATABLE = "capabilityPWCUpdatable";
     public static final String JSON_CAP_ALL_VERSIONS_SEARCHABLE = "capabilityAllVersionsSearchable";
+    public static final String JSON_CAP_ORDER_BY = "capabilityOrderBy";
     public static final String JSON_CAP_QUERY = "capabilityQuery";
     public static final String JSON_CAP_JOIN = "capabilityJoin";
     public static final String JSON_CAP_ACL = "capabilityACL";
@@ -94,7 +95,7 @@ public final class JSONConstants {
 
     public static final Set<String> CAP_KEYS = new HashSet<String>();
     static {
-        CAP_KEYS.add(JSON_CAP_CONTENT_STREAM_UPDATES);
+        CAP_KEYS.add(JSON_CAP_CONTENT_STREAM_UPDATABILITY);
         CAP_KEYS.add(JSON_CAP_CHANGES);
         CAP_KEYS.add(JSON_CAP_RENDITIONS);
         CAP_KEYS.add(JSON_CAP_GET_DESCENDANTS);
@@ -105,6 +106,7 @@ public final class JSONConstants {
         CAP_KEYS.add(JSON_CAP_PWC_SEARCHABLE);
         CAP_KEYS.add(JSON_CAP_PWC_UPDATABLE);
         CAP_KEYS.add(JSON_CAP_ALL_VERSIONS_SEARCHABLE);
+        CAP_KEYS.add(JSON_CAP_ORDER_BY);
         CAP_KEYS.add(JSON_CAP_QUERY);
         CAP_KEYS.add(JSON_CAP_JOIN);
         CAP_KEYS.add(JSON_CAP_ACL);
