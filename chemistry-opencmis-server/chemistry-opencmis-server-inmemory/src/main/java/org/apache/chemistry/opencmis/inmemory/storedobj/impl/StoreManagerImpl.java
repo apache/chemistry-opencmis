@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -481,6 +482,7 @@ public class StoreManagerImpl implements StoreManager {
             CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
             creatablePropertyTypes.setCanCreate(propertyTypeSet);
             caps.setCreatablePropertyTypes(creatablePropertyTypes);
+            caps.setOrderByCapability(CapabilityOrderBy.COMMON);
         } else {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
