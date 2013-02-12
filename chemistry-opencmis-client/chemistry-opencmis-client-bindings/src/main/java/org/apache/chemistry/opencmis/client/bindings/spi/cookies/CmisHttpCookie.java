@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+
 /**
  * This class represents a http cookie, which indicates the status information
  * between the client agent side and the server side. According to RFC, there
@@ -362,7 +364,6 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         });
 
         attributeSet.put("expires", new Setter() {
-            @SuppressWarnings("deprecation")
             @Override
             void setValue(String value, CmisHttpCookie cookie) {
                 cookie.setVersion(0);
@@ -373,9 +374,11 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
                         cookie.setMaxAge(0);
                         return;
                     }
-                    try {
-                        cookie.setMaxAge((Date.parse(value) - System.currentTimeMillis()) / 1000);
-                    } catch (IllegalArgumentException e) {
+
+                    Date date = DateTimeHelper.parseHttpDateTime(value);
+                    if (date != null) {
+                        cookie.setMaxAge((date.getTime() - System.currentTimeMillis()) / 1000);
+                    } else {
                         cookie.setMaxAge(0);
                     }
                 }

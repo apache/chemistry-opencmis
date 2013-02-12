@@ -18,11 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.tube.server;
 
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.tube.AbstractWssTube;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,8 +56,6 @@ public class WssTube extends AbstractWssTube {
         }
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             long created = System.currentTimeMillis();
             long expires = created + 24 * 60 * 60 * 1000; // 24 hours
 
@@ -71,11 +67,11 @@ public class WssTube extends AbstractWssTube {
             wsseSecurityElement.appendChild(wsuTimestampElement);
 
             Element tsCreatedElement = document.createElementNS(WSU_NAMESPACE, "Created");
-            tsCreatedElement.setTextContent(sdf.format(created));
+            tsCreatedElement.setTextContent(DateTimeHelper.formatXmlDateTime(created));
             wsuTimestampElement.appendChild(tsCreatedElement);
 
             Element tsExpiresElement = document.createElementNS(WSU_NAMESPACE, "Expires");
-            tsExpiresElement.setTextContent(sdf.format(expires));
+            tsExpiresElement.setTextContent(DateTimeHelper.formatXmlDateTime(expires));
             wsuTimestampElement.appendChild(tsExpiresElement);
 
             HeaderList headers = message.getHeaders();

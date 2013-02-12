@@ -60,8 +60,6 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -87,6 +85,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -548,29 +547,22 @@ public final class ObjectService {
             if (lastModified != null) {
                 long lastModifiedSecs = (long) Math.floor((double) lastModified.getTimeInMillis() / 1000);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+                Date modifiedSince = DateTimeHelper.parseHttpDateTime(request.getHeader("If-Modified-Since"));
+                if (modifiedSince != null) {
+                    long modifiedSinceSecs = (long) Math.floor((double) modifiedSince.getTime() / 1000);
 
-                String modifiedSinceStr = request.getHeader("If-Modified-Since");
-                if (modifiedSinceStr != null) {
-                    try {
-                        Date modifiedSince = sdf.parse(modifiedSinceStr);
-                        long modifiedSinceSecs = (long) Math.floor((double) modifiedSince.getTime() / 1000);
+                    if (modifiedSinceSecs >= lastModifiedSecs) {
+                        // close stream
+                        content.getStream().close();
 
-                        if (modifiedSinceSecs >= lastModifiedSecs) {
-                            // close stream
-                            content.getStream().close();
-
-                            // send not modified status code
-                            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                            response.setContentLength(0);
-                            return;
-                        }
-                    } catch (ParseException e) {
-                        // ignore
+                        // send not modified status code
+                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                        response.setContentLength(0);
+                        return;
                     }
                 }
 
-                response.setHeader("Last-Modified", sdf.format(lastModifiedSecs * 1000));
+                response.setHeader("Last-Modified", DateTimeHelper.formateHttpDateTime(lastModifiedSecs * 1000));
             }
         }
 

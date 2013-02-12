@@ -19,13 +19,11 @@
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.chemistry.opencmis.client.bindings.spi.cookies.CmisCookieManager;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -153,8 +152,6 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         }
 
         // set time
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         long created = System.currentTimeMillis();
         long expires = created + 24 * 60 * 60 * 1000; // 24 hours
 
@@ -168,11 +165,11 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             wsseSecurityElement.appendChild(wsuTimestampElement);
 
             Element tsCreatedElement = document.createElementNS(WSU_NAMESPACE, "Created");
-            tsCreatedElement.appendChild(document.createTextNode(sdf.format(created)));
+            tsCreatedElement.appendChild(document.createTextNode(DateTimeHelper.formatXmlDateTime(created)));
             wsuTimestampElement.appendChild(tsCreatedElement);
 
             Element tsExpiresElement = document.createElementNS(WSU_NAMESPACE, "Expires");
-            tsExpiresElement.appendChild(document.createTextNode(sdf.format(expires)));
+            tsExpiresElement.appendChild(document.createTextNode(DateTimeHelper.formatXmlDateTime(expires)));
             wsuTimestampElement.appendChild(tsExpiresElement);
 
             Element usernameTokenElement = document.createElementNS(WSSE_NAMESPACE, "UsernameToken");
@@ -189,7 +186,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             usernameTokenElement.appendChild(passwordElement);
 
             Element createdElement = document.createElementNS(WSU_NAMESPACE, "Created");
-            createdElement.appendChild(document.createTextNode(sdf.format(created)));
+            createdElement.appendChild(document.createTextNode(DateTimeHelper.formatXmlDateTime(created)));
             usernameTokenElement.appendChild(createdElement);
 
             return wsseSecurityElement;
