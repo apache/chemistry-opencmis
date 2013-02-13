@@ -31,9 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
@@ -55,10 +54,10 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 public class TypeUtils {
@@ -116,12 +115,16 @@ public class TypeUtils {
             throw new IllegalArgumentException("Input stream must be set!");
         }
 
-        Unmarshaller u = JaxBHelper.createUnmarshaller();
+        XMLStreamReader parser = XMLUtils.createParser(stream);
+        if (!XMLUtils.findNextStartElemenet(parser)) {
+            return null;
+        }
 
-        @SuppressWarnings("unchecked")
-        JAXBElement<CmisTypeDefinitionType> jaxb = (JAXBElement<CmisTypeDefinitionType>) u.unmarshal(stream);
+        TypeDefinition typeDef = XMLConverter.convertTypeDefinition(parser);
 
-        return Converter.convert(jaxb.getValue());
+        parser.close();
+
+        return typeDef;
     }
 
     /**
