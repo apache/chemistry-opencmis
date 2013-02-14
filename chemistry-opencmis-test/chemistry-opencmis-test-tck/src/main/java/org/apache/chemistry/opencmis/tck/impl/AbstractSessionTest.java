@@ -926,6 +926,21 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             if (object.getRenditions() != null) {
                 addResult(results, checkRenditions(session, object, "Rendition check"));
             }
+
+            // check path
+            if (object instanceof FileableCmisObject) {
+                List<String> paths = ((FileableCmisObject) object).getPaths();
+                if (object instanceof Folder) {
+                    f = createResult(FAILURE, "Folder does not have excatly one path! This is an OpenCMIS bug!");
+                    addResult(results, assertEquals(1, paths.size(), null, f));
+                } else {
+                    if (Boolean.FALSE.equals(session.getRepositoryInfo().getCapabilities().isMultifilingSupported())) {
+                        f = createResult(FAILURE,
+                                "Repository does not support multi-filing, but the object has more than one parent!");
+                        addResult(results, assertIsTrue(paths.size() < 2, null, f));
+                    }
+                }
+            }
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);

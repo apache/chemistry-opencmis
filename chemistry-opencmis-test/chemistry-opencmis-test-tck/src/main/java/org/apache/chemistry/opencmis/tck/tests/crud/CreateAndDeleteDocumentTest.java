@@ -24,8 +24,10 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -61,11 +63,13 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
         try {
             Map<String, Document> documents = new HashMap<String, Document>();
+            Set<String> versionSeriesIds = new HashSet<String>();
 
             // create documents
             for (int i = 0; i < numOfDocuments; i++) {
                 Document newDocument = createDocument(session, testFolder, "doc" + i, CONTENT);
                 documents.put(newDocument.getId(), newDocument);
+                versionSeriesIds.add(newDocument.getVersionSeriesId());
             }
 
             // simple children test
@@ -84,7 +88,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                 }
             }
 
-            f = createResult(FAILURE, "Number of created folders does not match the number of existing folders!");
+            f = createResult(FAILURE, "Number of created documents does not match the number of existing documents!");
             addResult(assertEquals(numOfDocuments, childrenIds.size(), null, f));
 
             for (Document document : documents.values()) {
@@ -93,6 +97,10 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                             + document.getId()));
                 }
             }
+
+            // check version series ids
+            f = createResult(FAILURE, "Although the created documents are independent, some share a Version Series Id!");
+            addResult(assertEquals(numOfDocuments, versionSeriesIds.size(), null, f));
 
             // check paging
             int pageSize = 5;
