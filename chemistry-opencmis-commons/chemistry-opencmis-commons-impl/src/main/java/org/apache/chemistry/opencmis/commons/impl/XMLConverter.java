@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
@@ -44,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
@@ -53,6 +55,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
@@ -63,7 +66,12 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
@@ -71,9 +79,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionFeatureIm
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
@@ -91,6 +102,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
@@ -107,6 +119,10 @@ public class XMLConverter {
 
     public static TypeDefinition convertTypeDefinition(XMLStreamReader parser) throws XMLStreamException {
         return TYPE_DEF_PARSER.walk(parser);
+    }
+
+    public static ObjectData convertObject(XMLStreamReader parser) throws XMLStreamException {
+        return OBJECT_PARSER.walk(parser);
     }
 
     // ------------------------------
@@ -824,7 +840,6 @@ public class XMLConverter {
         protected boolean read(XMLStreamReader parser, QName name, AbstractPropertyDefinition<?> target)
                 throws XMLStreamException {
             if (isCmisNamespace(name)) {
-
                 if (isTag(name, TAG_PROPERTY_TYPE_ID)) {
                     target.setId(readText(parser));
                     return true;
@@ -1169,9 +1184,316 @@ public class XMLConverter {
         protected abstract void addChoice(XMLStreamReader parser, ChoiceImpl<T> target) throws XMLStreamException;
     };
 
-    // --------------------------------
+    // ---------------------------------
     // --- objects and lists parsers ---
-    // --------------------------------
+    // ---------------------------------
+
+    private static final XMLWalker<ObjectDataImpl> OBJECT_PARSER = new XMLWalker<ObjectDataImpl>() {
+        @Override
+        protected ObjectDataImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new ObjectDataImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, ObjectDataImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_OBJECT_PROPERTIES)) {
+                    target.setProperties(PROPERTIES_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_ALLOWABLE_ACTIONS)) {
+                    target.setAllowableActions(ALLOWABLE_ACTIONS_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_RELATIONSHIP)) {
+                    target.setRelationships(addToList(target.getRelationships(), OBJECT_PARSER.walk(parser)));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_CHANGE_EVENT_INFO)) {
+                    target.setChangeEventInfo(CHANGE_EVENT_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_ACL)) {
+                    target.setAcl(ACL_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_EXACT_ACL)) {
+                    target.setIsExactAcl(readBoolean(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_POLICY_IDS)) {
+                    target.setPolicyIds(POLICY_IDS_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_OBJECT_RENDITION)) {
+                    target.setRenditions(addToList(target.getRenditions(), RENDITION_PARSER.walk(parser)));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<PropertiesImpl> PROPERTIES_PARSER = new XMLWalker<PropertiesImpl>() {
+        @Override
+        protected PropertiesImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new PropertiesImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, PropertiesImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_PROP_STRING)) {
+                    target.addProperty(PROPERTY_STRING_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_ID)) {
+                    target.addProperty(PROPERTY_ID_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_BOOLEAN)) {
+                    target.addProperty(PROPERTY_BOOLEAN_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_INTEGER)) {
+                    target.addProperty(PROPERTY_INTEGER_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_DATETIME)) {
+                    target.addProperty(PROPERTY_DATETIME_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_DECIMAL)) {
+                    target.addProperty(PROPERTY_DECIMAL_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_HTML)) {
+                    target.addProperty(PROPERTY_HTML_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_PROP_URI)) {
+                    target.addProperty(PROPERTY_URI_PARSER.walk(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<AllowableActionsImpl> ALLOWABLE_ACTIONS_PARSER = new XMLWalker<AllowableActionsImpl>() {
+        @Override
+        protected AllowableActionsImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new AllowableActionsImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, AllowableActionsImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                try {
+                    Action action = Action.fromValue(name.getLocalPart());
+
+                    Set<Action> actions = target.getAllowableActions();
+                    if (actions == null) {
+                        actions = new HashSet<Action>();
+                        target.setAllowableActions(actions);
+                    }
+
+                    actions.add(action);
+
+                } catch (IllegalArgumentException e) {
+                    // extension tag -> ignore
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<ChangeEventInfoDataImpl> CHANGE_EVENT_PARSER = new XMLWalker<ChangeEventInfoDataImpl>() {
+        @Override
+        protected ChangeEventInfoDataImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new ChangeEventInfoDataImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, ChangeEventInfoDataImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_CHANGE_EVENT_TYPE)) {
+                    target.setChangeType(readEnum(parser, ChangeType.class));
+                    return true;
+                }
+
+                if (isTag(name, TAG_CHANGE_EVENT_TIME)) {
+                    target.setChangeTime(readDateTime(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<AccessControlListImpl> ACL_PARSER = new XMLWalker<AccessControlListImpl>() {
+        @Override
+        protected AccessControlListImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new AccessControlListImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, AccessControlListImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_ACL_PERMISSISONS)) {
+                    target.setAces(addToList(target.getAces(), ACE_PARSER.walk(parser)));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<AccessControlEntryImpl> ACE_PARSER = new XMLWalker<AccessControlEntryImpl>() {
+        @Override
+        protected AccessControlEntryImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new AccessControlEntryImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, AccessControlEntryImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_ACE_PRINCIPAL)) {
+                    target.setPrincipal(PRINCIPAL_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_ACE_PERMISSIONS)) {
+                    target.setPermissions(addToList(target.getPermissions(), readText(parser)));
+                    return true;
+                }
+
+                if (isTag(name, TAG_ACE_IS_DIRECT)) {
+                    target.setDirect(readBoolean(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<AccessControlPrincipalDataImpl> PRINCIPAL_PARSER = new XMLWalker<AccessControlPrincipalDataImpl>() {
+        @Override
+        protected AccessControlPrincipalDataImpl prepareTarget(XMLStreamReader parser, QName name)
+                throws XMLStreamException {
+            return new AccessControlPrincipalDataImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, AccessControlPrincipalDataImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_ACE_PRINCIPAL_ID)) {
+                    target.setPrincipalId(readText(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<PolicyIdListImpl> POLICY_IDS_PARSER = new XMLWalker<PolicyIdListImpl>() {
+        @Override
+        protected PolicyIdListImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new PolicyIdListImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, PolicyIdListImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_POLICY_ID)) {
+                    target.setPolicyIds(addToList(target.getPolicyIds(), readText(parser)));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<RenditionDataImpl> RENDITION_PARSER = new XMLWalker<RenditionDataImpl>() {
+        @Override
+        protected RenditionDataImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new RenditionDataImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, RenditionDataImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_RENDITION_STREAM_ID)) {
+                    target.setStreamId(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_MIMETYPE)) {
+                    target.setMimeType(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_LENGTH)) {
+                    target.setBigLength(readInteger(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_KIND)) {
+                    target.setKind(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_TITLE)) {
+                    target.setTitle(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_HEIGHT)) {
+                    target.setBigHeight(readInteger(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_WIDTH)) {
+                    target.setBigWidth(readInteger(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_RENDITION_DOCUMENT_ID)) {
+                    target.setRenditionDocumentId(readText(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
 
     // ------------------------
     // --- property parsers ---

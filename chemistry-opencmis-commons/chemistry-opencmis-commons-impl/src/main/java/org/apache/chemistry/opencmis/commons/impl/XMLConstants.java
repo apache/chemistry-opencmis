@@ -95,6 +95,15 @@ public class XMLConstants {
     public static final String TAG_FEATURE_DATA_KEY = "key";
     public static final String TAG_FEATURE_DATA_VALUE = "value";
 
+    public static final String TAG_OBJECT_PROPERTIES = "properties";
+    public static final String TAG_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
+    public static final String TAG_OBJECT_RELATIONSHIP = "relationship";
+    public static final String TAG_OBJECT_CHANGE_EVENT_INFO = "changeEventInfo";
+    public static final String TAG_OBJECT_ACL = "acl";
+    public static final String TAG_OBJECT_EXACT_ACL = "exactACL";
+    public static final String TAG_OBJECT_POLICY_IDS = "policyIds";
+    public static final String TAG_OBJECT_RENDITION = "rendition";
+
     public static final String TAG_PROP_BOOLEAN = "propertyBoolean";
     public static final String TAG_PROP_ID = "propertyId";
     public static final String TAG_PROP_INTEGER = "propertyInteger";
@@ -103,6 +112,26 @@ public class XMLConstants {
     public static final String TAG_PROP_HTML = "propertyHtml";
     public static final String TAG_PROP_STRING = "propertyString";
     public static final String TAG_PROP_URI = "propertyUri";
+
+    public static final String TAG_CHANGE_EVENT_TYPE = "changeType";
+    public static final String TAG_CHANGE_EVENT_TIME = "changeTime";
+
+    public static final String TAG_ACL_PERMISSISONS = "permission";
+    public static final String TAG_ACE_PRINCIPAL = "principal";
+    public static final String TAG_ACE_PRINCIPAL_ID = "principalId";
+    public static final String TAG_ACE_PERMISSIONS = "permission";
+    public static final String TAG_ACE_IS_DIRECT = "direct";
+
+    public static final String TAG_POLICY_ID = "id";
+
+    public static final String TAG_RENDITION_STREAM_ID = "streamId";
+    public static final String TAG_RENDITION_MIMETYPE = "mimetype";
+    public static final String TAG_RENDITION_LENGTH = "length";
+    public static final String TAG_RENDITION_KIND = "kind";
+    public static final String TAG_RENDITION_TITLE = "title";
+    public static final String TAG_RENDITION_HEIGHT = "height";
+    public static final String TAG_RENDITION_WIDTH = "width";
+    public static final String TAG_RENDITION_DOCUMENT_ID = "renditionDocumentId";
 
     public static final String ATTR_PROPERTY_ID = "propertyDefinitionId";
     public static final String ATTR_PROPERTY_LOCALNAME = "localName";
