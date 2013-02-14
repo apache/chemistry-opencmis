@@ -187,7 +187,10 @@ public interface OperationContext extends Serializable {
     String getCacheKey();
 
     /**
-     * Set the max number of items per page for operations that return lists.
+     * Set the max number of items per batch for operations that return lists.
+     * 
+     * This option does not restrict the number of returned items. To retrieve
+     * an excerpt (page) of a list, see {@link ItemIterable#getPage(int)}.
      * 
      * @param maxItemsPerPage
      *            max number of items (must be >0)
@@ -195,7 +198,7 @@ public interface OperationContext extends Serializable {
     void setMaxItemsPerPage(int maxItemsPerPage);
 
     /**
-     * Returns the current max number of items per page.
+     * Returns the current max number of items per batch.
      */
     int getMaxItemsPerPage();
 }

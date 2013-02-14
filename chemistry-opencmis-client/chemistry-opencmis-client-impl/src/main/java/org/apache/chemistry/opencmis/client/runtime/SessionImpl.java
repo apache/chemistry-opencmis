@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
+import org.apache.chemistry.opencmis.client.util.OperationContextUtil;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -355,12 +356,13 @@ public class SessionImpl implements Session {
             boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
             Set<String> renditionFilter, boolean includePathSegments, String orderBy, boolean cacheEnabled,
             int maxItemsPerPage) {
-        return new OperationContextImpl(filter, includeAcls, includeAllowableActions, includePolicies,
-                includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled, maxItemsPerPage);
+        return OperationContextUtil.createOperationContext(filter, includeAcls, includeAllowableActions,
+                includePolicies, includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled,
+                maxItemsPerPage);
     }
 
     public OperationContext createOperationContext() {
-        return new OperationContextImpl();
+        return OperationContextUtil.createOperationContext();
     }
 
     public ObjectId createObjectId(String id) {
