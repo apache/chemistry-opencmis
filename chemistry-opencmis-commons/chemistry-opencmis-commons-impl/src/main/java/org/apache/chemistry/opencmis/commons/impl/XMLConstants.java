@@ -20,6 +20,20 @@ package org.apache.chemistry.opencmis.commons.impl;
 
 public class XMLConstants {
 
+    private XMLConstants() {
+    }
+
+    // namespaces
+    public static final String NAMESPACE_CMIS = "http://docs.oasis-open.org/ns/cmis/core/200908/";
+    public static final String NAMESPACE_ATOM = "http://www.w3.org/2005/Atom";
+    public static final String NAMESPACE_APP = "http://www.w3.org/2007/app";
+    public static final String NAMESPACE_RESTATOM = "http://docs.oasis-open.org/ns/cmis/restatom/200908/";
+    public static final String NAMESPACE_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String NAMESPACE_APACHE_CHEMISTRY = "http://chemistry.apache.org/";
+
+    // tags
+    public static final String TAG_REPOSITORY_INFO = "repositoryInfo";
+
     public static final String TAG_REPINFO_ID = "repositoryId";
     public static final String TAG_REPINFO_NAME = "repositoryName";
     public static final String TAG_REPINFO_DESCRIPTION = "repositoryDescription";
@@ -27,8 +41,6 @@ public class XMLConstants {
     public static final String TAG_REPINFO_PRODUCT = "productName";
     public static final String TAG_REPINFO_PRODUCT_VERSION = "productVersion";
     public static final String TAG_REPINFO_ROOT_FOLDER_ID = "rootFolderId";
-    public static final String TAG_REPINFO_REPOSITORY_URL = "repositoryUrl";
-    public static final String TAG_REPINFO_ROOT_FOLDER_URL = "rootFolderUrl";
     public static final String TAG_REPINFO_CAPABILITIES = "capabilities";
     public static final String TAG_REPINFO_ACL_CAPABILITIES = "aclCapabilities";
     public static final String TAG_REPINFO_CHANGE_LOG_TOKEN = "latestChangeLogToken";

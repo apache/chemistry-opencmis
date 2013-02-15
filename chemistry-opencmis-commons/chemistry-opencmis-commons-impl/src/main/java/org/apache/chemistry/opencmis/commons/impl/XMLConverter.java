@@ -31,7 +31,14 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
+import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
@@ -42,7 +49,9 @@ import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.PropertyUri;
+import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
@@ -56,6 +65,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
@@ -112,6 +122,246 @@ public class XMLConverter {
 
     private XMLConverter() {
     }
+
+    // ---------------
+    // --- writers ---
+    // ---------------
+
+    public static void writeRepositoryInfo(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace,
+            RepositoryInfo source) throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(namespace, TAG_REPOSITORY_INFO);
+
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_ID, source.getId());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_NAME, source.getName());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_DESCRIPTION, source.getDescription());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_VENDOR, source.getVendorName());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_PRODUCT, source.getProductName());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_PRODUCT_VERSION, source.getProductVersion());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_ROOT_FOLDER_ID, source.getRootFolderId());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_CHANGE_LOG_TOKEN, source.getLatestChangeLogToken());
+        writeRepositoryCapabilities(writer, cmisVersion, source.getCapabilities());
+        writeAclCapabilities(writer, cmisVersion, source.getAclCapabilities());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_CMIS_VERSION_SUPPORTED, source.getCmisVersionSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_THIN_CLIENT_URI, source.getThinClientUri());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_CHANGES_INCOMPLETE, source.getChangesIncomplete());
+        if (source.getChangesOnType() != null) {
+            for (BaseTypeId baseType : source.getChangesOnType()) {
+                if (cmisVersion == CmisVersion.CMIS_1_0 && baseType == BaseTypeId.CMIS_ITEM) {
+                    continue;
+                }
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_CHANGES_ON_TYPE, baseType);
+            }
+        }
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_PRINCIPAL_ID_ANONYMOUS, source.getPrincipalIdAnonymous());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_REPINFO_PRINCIPAL_ID_ANYONE, source.getPrincipalIdAnyone());
+        if (cmisVersion != CmisVersion.CMIS_1_0 && source.getExtensionFeatures() != null) {
+            for (ExtensionFeature feature : source.getExtensionFeatures()) {
+                writeExtendedFeatures(writer, cmisVersion, feature);
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeRepositoryCapabilities(XMLStreamWriter writer, CmisVersion cmisVersion,
+            RepositoryCapabilities source) throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(NAMESPACE_CMIS, TAG_REPINFO_CAPABILITIES);
+
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_ACL, source.getAclCapability());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_ALL_VERSIONS_SEARCHABLE,
+                source.isAllVersionsSearchableSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_CHANGES, source.getChangesCapability());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_CONTENT_STREAM_UPDATABILITY,
+                source.getContentStreamUpdatesCapability());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_GET_DESCENDANTS, source.isGetDescendantsSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_GET_FOLDER_TREE, source.isGetFolderTreeSupported());
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_ORDER_BY, source.getOrderByCapability());
+        }
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_MULTIFILING, source.isMultifilingSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_PWC_SEARCHABLE, source.isPwcSearchableSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_PWC_UPDATABLE, source.isPwcUpdatableSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_QUERY, source.getQueryCapability());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_RENDITIONS, source.getRenditionsCapability());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_UNFILING, source.isUnfilingSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_VERSION_SPECIFIC_FILING,
+                source.isVersionSpecificFilingSupported());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_JOIN, source.getJoinCapability());
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            if (source.getCreatablePropertyTypes() != null) {
+                CreatablePropertyTypes creatablePropertyTypes = source.getCreatablePropertyTypes();
+
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_CAP_CREATABLE_PROPERTY_TYPES);
+
+                if (creatablePropertyTypes.canCreate() != null) {
+                    for (PropertyType pt : creatablePropertyTypes.canCreate()) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE, pt);
+                    }
+                }
+
+                writeExtensions(writer, creatablePropertyTypes);
+                writer.writeEndElement();
+            }
+            if (source.getNewTypeSettableAttributes() != null) {
+                NewTypeSettableAttributes newTypeSettableAttributes = source.getNewTypeSettableAttributes();
+
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES);
+
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID,
+                        newTypeSettableAttributes.canSetId());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME,
+                        newTypeSettableAttributes.canSetLocalName());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE,
+                        newTypeSettableAttributes.canSetLocalNamespace());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME,
+                        newTypeSettableAttributes.canSetDisplayName());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME,
+                        newTypeSettableAttributes.canSetQueryName());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION,
+                        newTypeSettableAttributes.canSetDescription());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE,
+                        newTypeSettableAttributes.canSetCreatable());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE,
+                        newTypeSettableAttributes.canSetFileable());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE,
+                        newTypeSettableAttributes.canSetQueryable());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED,
+                        newTypeSettableAttributes.canSetFulltextIndexed());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY,
+                        newTypeSettableAttributes.canSetIncludedInSupertypeQuery());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY,
+                        newTypeSettableAttributes.canSetControllablePolicy());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL,
+                        newTypeSettableAttributes.canSetControllableAcl());
+
+                writeExtensions(writer, newTypeSettableAttributes);
+                writer.writeEndElement();
+            }
+
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeAclCapabilities(XMLStreamWriter writer, CmisVersion cmisVersion, AclCapabilities source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(NAMESPACE_CMIS, TAG_REPINFO_ACL_CAPABILITIES);
+
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACLCAP_SUPPORTED_PERMISSIONS, source.getSupportedPermissions());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAGACLCAP_ACL_PROPAGATION, source.getAclPropagation());
+        if (source.getPermissions() != null) {
+            for (PermissionDefinition pd : source.getPermissions()) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_ACLCAP_PERMISSIONS);
+
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACLCAP_PERMISSION_PERMISSION, pd.getId());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACLCAP_PERMISSION_DESCRIPTION, pd.getDescription());
+
+                writeExtensions(writer, pd);
+                writer.writeEndElement();
+            }
+        }
+        if (source.getPermissionMapping() != null) {
+            for (PermissionMapping pm : source.getPermissionMapping().values()) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_ACLCAP_PERMISSION_MAPPING);
+
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACLCAP_MAPPING_KEY, pm.getKey());
+                if (pm.getPermissions() != null) {
+                    for (String perm : pm.getPermissions()) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACLCAP_MAPPING_PERMISSION, perm);
+                    }
+                }
+
+                writeExtensions(writer, pm);
+                writer.writeEndElement();
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeExtendedFeatures(XMLStreamWriter writer, CmisVersion cmisVersion, ExtensionFeature source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(NAMESPACE_CMIS, TAG_REPINFO_EXTENDED_FEATURES);
+
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_ID, source.getId());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_URL, source.getUrl());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_COMMON_NAME, source.getCommonName());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_VERSION_LABEL, source.getVersionLabel());
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_DESCRIPTION, source.getDescription());
+        if (source.getFeatureData() != null) {
+            for (Map.Entry<String, String> data : source.getFeatureData().entrySet()) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_FEATURE_DATA);
+
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_DATA_KEY, data.getKey());
+                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_FEATURE_DATA_VALUE, data.getValue());
+
+                writer.writeEndElement();
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeExtensions(XMLStreamWriter writer, ExtensionsData source) throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        if (source.getExtensions() != null) {
+            for (CmisExtensionElement element : source.getExtensions()) {
+                writeExtensionElement(writer, element);
+            }
+        }
+    }
+
+    private static void writeExtensionElement(XMLStreamWriter writer, CmisExtensionElement source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        if (source.getValue() != null) {
+            XMLUtils.write(writer, source.getNamespace(), source.getName(), source.getValue());
+        } else {
+            if (source.getNamespace() == null) {
+                writer.writeStartElement(source.getName());
+            } else {
+                writer.writeStartElement(source.getNamespace(), source.getName());
+            }
+
+            if (source.getChildren() != null) {
+                for (CmisExtensionElement child : source.getChildren()) {
+                    writeExtensionElement(writer, child);
+                }
+            }
+
+            writer.writeEndElement();
+        }
+    }
+
+    // ---------------
+    // --- parsers ---
+    // ---------------
 
     public static RepositoryInfo convertRepositoryInfo(XMLStreamReader parser) throws XMLStreamException {
         return REPOSITORY_INFO_PARSER.walk(parser);

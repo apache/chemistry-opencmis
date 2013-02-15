@@ -19,23 +19,174 @@
 package org.apache.chemistry.opencmis.commons.impl;
 
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.GregorianCalendar;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 
 public class XMLUtils {
 
-    public static boolean next(XMLStreamReader parser) throws XMLStreamException {
-        if (parser.hasNext()) {
-            parser.next();
-            return true;
+    public static final String PREFIX_ATOM = "atom";
+    public static final String PREFIX_CMIS = "cmis";
+    public static final String PREFIX_RESTATOM = "cmisra";
+    public static final String PREFIX_APACHE_CHEMISTY = "chemistry";
+
+    // --------------
+    // --- writer ---
+    // --------------
+
+    /**
+     * Creates a new XML writer.
+     */
+    public static XMLStreamWriter createWriter(OutputStream out) throws XMLStreamException {
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        return factory.createXMLStreamWriter(out, "UTF-8");
+    }
+
+    /**
+     * Starts a XML document.
+     */
+    public static void startXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
+        writer.setPrefix(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        writer.setPrefix(PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+
+        writer.writeStartDocument();
+    }
+
+    /**
+     * Starts an AtomPub Entry document.
+     */
+    public static void startEntryDocument(XMLStreamWriter writer, boolean hasContent) throws XMLStreamException {
+        startXmlDocument(writer);
+
+        writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
+        writer.writeNamespace(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.writeNamespace(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        if (hasContent) {
+            writer.writeNamespace(PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+        }
+    }
+
+    /**
+     * Starts an AtomPub Feed document.
+     */
+    public static void startFeedDocument(XMLStreamWriter writer, String tag, boolean hasContent)
+            throws XMLStreamException {
+        startXmlDocument(writer);
+
+        writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "feed");
+        writer.writeNamespace(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.writeNamespace(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+    }
+
+    /**
+     * Ends a XML document.
+     */
+    public static void endXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeEndDocument();
+        writer.flush();
+    }
+
+    /**
+     * Writes a String tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, String value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
         }
 
-        return false;
+        if (namespace == null) {
+            writer.writeStartElement(tag);
+        } else {
+            writer.writeStartElement(namespace, tag);
+        }
+        writer.writeCharacters(value);
+        writer.writeEndElement();
     }
+
+    /**
+     * Writes an Integer tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, BigInteger value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
+        }
+
+        write(writer, namespace, tag, value.toString());
+    }
+
+    /**
+     * Writes a Decimal tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, BigDecimal value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
+        }
+
+        write(writer, namespace, tag, value.toString());
+    }
+
+    /**
+     * Writes a DateTime tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, GregorianCalendar value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
+        }
+
+        write(writer, namespace, tag, DateTimeHelper.formatXmlDateTime(value));
+    }
+
+    /**
+     * Writes a Boolean tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, Boolean value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
+        }
+
+        write(writer, namespace, tag, value ? "true" : "false");
+    }
+
+    /**
+     * Writes an Enum tag.
+     */
+    public static void write(XMLStreamWriter writer, String namespace, String tag, Enum<?> value)
+            throws XMLStreamException {
+        if (value == null) {
+            return;
+        }
+
+        Object enumValue;
+        try {
+            enumValue = value.getClass().getMethod("value", new Class[0]).invoke(value, new Object[0]);
+        } catch (Exception e) {
+            throw new XMLStreamException("Cannot get enum value", e);
+        }
+
+        write(writer, namespace, tag, enumValue.toString());
+    }
+
+    // ---------------
+    // ---- parser ---
+    // ---------------
 
     /**
      * Creates a new XML parser with OpenCMIS default settings.
@@ -45,6 +196,18 @@ public class XMLUtils {
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
         return factory.createXMLStreamReader(stream);
+    }
+
+    /**
+     * Moves the parser to the next element.
+     */
+    public static boolean next(XMLStreamReader parser) throws XMLStreamException {
+        if (parser.hasNext()) {
+            parser.next();
+            return true;
+        }
+
+        return false;
     }
 
     /**
