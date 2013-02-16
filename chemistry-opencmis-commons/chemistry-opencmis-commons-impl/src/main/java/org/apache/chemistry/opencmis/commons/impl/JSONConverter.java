@@ -254,7 +254,8 @@ public final class JSONConverter {
 
         JSONObject result = new JSONObject();
 
-        result.put(JSON_CAP_CONTENT_STREAM_UPDATABILITY, getJSONEnumValue((capabilities.getContentStreamUpdatesCapability())));
+        result.put(JSON_CAP_CONTENT_STREAM_UPDATABILITY,
+                getJSONEnumValue((capabilities.getContentStreamUpdatesCapability())));
         result.put(JSON_CAP_CHANGES, getJSONEnumValue(capabilities.getChangesCapability()));
         result.put(JSON_CAP_RENDITIONS, getJSONEnumValue(capabilities.getRenditionsCapability()));
         result.put(JSON_CAP_GET_DESCENDANTS, capabilities.isGetDescendantsSupported());
@@ -2583,6 +2584,10 @@ public final class JSONConverter {
         }
 
         for (CmisExtensionElement ext : source.getExtensions()) {
+            if (ext == null) {
+                continue;
+            }
+
             if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
                 target.put(ext.getName(), convertExtensionList(ext.getChildren()));
             } else {
@@ -2599,6 +2604,10 @@ public final class JSONConverter {
         JSONObject result = new JSONObject();
 
         for (CmisExtensionElement ext : extensionList) {
+            if (ext == null) {
+                continue;
+            }
+
             if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
                 result.put(ext.getName(), convertExtensionList(ext.getChildren()));
             } else {
