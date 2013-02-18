@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 
 public class XMLUtils {
 
+    public static final String PREFIX_XSI = "xsi";
     public static final String PREFIX_ATOM = "atom";
     public static final String PREFIX_CMIS = "cmis";
     public static final String PREFIX_RESTATOM = "cmisra";
@@ -70,6 +71,7 @@ public class XMLUtils {
         startXmlDocument(writer);
 
         writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
+        writer.writeNamespace(PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
         writer.writeNamespace(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);

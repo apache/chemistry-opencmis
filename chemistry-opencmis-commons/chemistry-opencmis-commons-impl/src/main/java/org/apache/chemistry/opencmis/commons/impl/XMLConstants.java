@@ -151,6 +151,8 @@ public class XMLConstants {
     public static final String ATTR_PROPERTY_QUERYNAME = "queryName";
     public static final String TAG_PROPERTY_VALUE = "value";
 
+    public static final String TAG_TYPE = "type";
+    
     public static final String ATTR_DOCUMENT_TYPE = "cmisTypeDocumentDefinitionType";
     public static final String ATTR_FOLDER_TYPE = "cmisTypeFolderDefinitionType";
     public static final String ATTR_RELATIONSHIP_TYPE = "cmisTypeRelationshipDefinitionType";
