@@ -107,6 +107,8 @@ public class XMLConstants {
     public static final String TAG_FEATURE_DATA_KEY = "key";
     public static final String TAG_FEATURE_DATA_VALUE = "value";
 
+    public static final String TAG_OBJECT = "object";
+    
     public static final String TAG_OBJECT_PROPERTIES = "properties";
     public static final String TAG_OBJECT_ALLOWABLE_ACTIONS = "allowableActions";
     public static final String TAG_OBJECT_RELATIONSHIP = "relationship";

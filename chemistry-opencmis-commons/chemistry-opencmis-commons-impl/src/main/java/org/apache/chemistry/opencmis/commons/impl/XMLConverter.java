@@ -34,7 +34,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
 import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
@@ -42,6 +46,9 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
+import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
+import org.apache.chemistry.opencmis.commons.data.Principal;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
@@ -51,6 +58,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.PropertyUri;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
@@ -588,9 +596,143 @@ public class XMLConverter {
         writer.writeEndElement();
     }
 
-    // ------------------------
-    // --- property writers ---
-    // ------------------------
+    // -----------------------
+    // --- object writers ---
+    // -----------------------
+
+    public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace, ObjectData source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(namespace, TAG_OBJECT);
+
+        if (source.getProperties() != null) {
+            Properties properties = source.getProperties();
+
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_PROPERTIES);
+
+            if (properties.getPropertyList() != null) {
+                for (PropertyData<?> property : properties.getPropertyList()) {
+                    writeProperty(writer, property);
+                }
+            }
+
+            writeExtensions(writer, properties);
+            writer.writeEndElement();
+        }
+        if (source.getAllowableActions() != null) {
+            AllowableActions allowableActions = source.getAllowableActions();
+
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_ALLOWABLE_ACTIONS);
+
+            if (allowableActions.getAllowableActions() != null) {
+                for (Action action : allowableActions.getAllowableActions()) {
+                    if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
+                        continue;
+                    }
+                    XMLUtils.write(writer, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
+                }
+            }
+
+            writeExtensions(writer, allowableActions);
+            writer.writeEndElement();
+        }
+        if (source.getRelationships() != null) {
+            for (ObjectData rel : source.getRelationships()) {
+                if (rel != null) {
+                    writeObject(writer, cmisVersion, NAMESPACE_CMIS, rel);
+                }
+            }
+        }
+        if (source.getChangeEventInfo() != null) {
+            ChangeEventInfo info = source.getChangeEventInfo();
+
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_CHANGE_EVENT_INFO);
+
+            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CHANGE_EVENT_TYPE, info.getChangeType());
+            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_CHANGE_EVENT_TIME, info.getChangeTime());
+
+            writeExtensions(writer, info);
+            writer.writeEndElement();
+        }
+        if (source.getAcl() != null) {
+            Acl acl = source.getAcl();
+
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_ACL);
+
+            if (acl.getAces() != null) {
+                for (Ace ace : acl.getAces()) {
+                    if (ace != null) {
+                        writer.writeStartElement(NAMESPACE_CMIS, TAG_ACL_PERMISSISONS);
+
+                        if (ace.getPrincipal() != null) {
+                            Principal principal = ace.getPrincipal();
+
+                            writer.writeStartElement(NAMESPACE_CMIS, TAG_ACE_PRINCIPAL);
+
+                            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACE_PRINCIPAL_ID, principal.getId());
+
+                            writeExtensions(writer, principal);
+                            writer.writeEndElement();
+                        }
+                        if (ace.getPermissions() != null) {
+                            for (String perm : ace.getPermissions()) {
+                                XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACE_PERMISSIONS, perm);
+                            }
+                        }
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_ACE_IS_DIRECT, ace.isDirect());
+
+                        writeExtensions(writer, ace);
+                        writer.writeEndElement();
+                    }
+                }
+            }
+
+            writeExtensions(writer, acl);
+            writer.writeEndElement();
+        }
+        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_OBJECT_EXACT_ACL, source.isExactAcl());
+        if (source.getPolicyIds() != null) {
+            PolicyIdList pids = source.getPolicyIds();
+
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_POLICY_IDS);
+
+            if (pids.getPolicyIds() != null) {
+                for (String id : pids.getPolicyIds()) {
+                    if (id != null) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_POLICY_ID, id);
+                    }
+                }
+            }
+
+            writeExtensions(writer, pids);
+            writer.writeEndElement();
+        }
+        if (source.getRenditions() != null) {
+            for (RenditionData rend : source.getRenditions()) {
+                if (rend != null) {
+                    writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_RENDITION);
+
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_STREAM_ID, rend.getStreamId());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_MIMETYPE, rend.getMimeType());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_LENGTH, rend.getBigLength());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_KIND, rend.getKind());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_TITLE, rend.getTitle());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_HEIGHT, rend.getBigHeight());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_WIDTH, rend.getBigWidth());
+                    XMLUtils.write(writer, NAMESPACE_CMIS, TAG_RENDITION_DOCUMENT_ID, rend.getRenditionDocumentId());
+
+                    writeExtensions(writer, rend);
+                    writer.writeEndElement();
+                }
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
 
     @SuppressWarnings("unchecked")
     public static void writeProperty(XMLStreamWriter writer, PropertyData<?> source) throws XMLStreamException {
