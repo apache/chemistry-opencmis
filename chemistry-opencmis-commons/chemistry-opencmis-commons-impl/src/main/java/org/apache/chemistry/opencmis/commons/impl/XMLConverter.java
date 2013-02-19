@@ -62,6 +62,7 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
@@ -72,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
@@ -363,17 +365,18 @@ public class XMLConverter {
         writer.writeStartElement(namespace, TAG_TYPE);
 
         if (source.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_DOCUMENT_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":" + ATTR_DOCUMENT_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_FOLDER_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":" + ATTR_FOLDER_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_RELATIONSHIP_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":"
+                    + ATTR_RELATIONSHIP_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_POLICY_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":" + ATTR_POLICY_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_ITEM_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":" + ATTR_ITEM_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", ATTR_SECONDARY_TYPE);
+            writer.writeAttribute(NAMESPACE_XSI, "type", writer.getPrefix(NAMESPACE_CMIS) + ":" + ATTR_SECONDARY_TYPE);
         } else {
             throw new CmisRuntimeException("Type definition has no base type id!");
         }
@@ -408,6 +411,30 @@ public class XMLConverter {
         if (source.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> pd : source.getPropertyDefinitions().values()) {
                 writePropertyDefinition(writer, cmisVersion, pd);
+            }
+        }
+
+        if (source instanceof DocumentTypeDefinition) {
+            DocumentTypeDefinition docDef = (DocumentTypeDefinition) source;
+            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_TYPE_VERSIONABLE, docDef.isVersionable());
+            XMLUtils.write(writer, NAMESPACE_CMIS, TAG_TYPE_CONTENTSTREAM_ALLOWED, docDef.getContentStreamAllowed());
+        }
+
+        if (source instanceof RelationshipTypeDefinition) {
+            RelationshipTypeDefinition relDef = (RelationshipTypeDefinition) source;
+            if (relDef.getAllowedSourceTypeIds() != null) {
+                for (String id : relDef.getAllowedSourceTypeIds()) {
+                    if (id != null) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_TYPE_ALLOWED_SOURCE_TYPES, id);
+                    }
+                }
+            }
+            if (relDef.getAllowedTargetTypeIds() != null) {
+                for (String id : relDef.getAllowedTargetTypeIds()) {
+                    if (id != null) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, TAG_TYPE_ALLOWED_TARGET_TYPES, id);
+                    }
+                }
             }
         }
 
@@ -923,7 +950,7 @@ public class XMLConverter {
                 }
 
                 if (isTag(name, TAG_REPINFO_CHANGE_LOG_TOKEN)) {
-                    target.setRootFolder(readText(parser));
+                    target.setLatestChangeLogToken(readText(parser));
                     return true;
                 }
 

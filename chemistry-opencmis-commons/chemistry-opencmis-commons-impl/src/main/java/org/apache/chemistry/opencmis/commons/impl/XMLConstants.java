@@ -42,7 +42,7 @@ public class XMLConstants {
     public static final String TAG_REPINFO_PRODUCT_VERSION = "productVersion";
     public static final String TAG_REPINFO_ROOT_FOLDER_ID = "rootFolderId";
     public static final String TAG_REPINFO_CAPABILITIES = "capabilities";
-    public static final String TAG_REPINFO_ACL_CAPABILITIES = "aclCapabilities";
+    public static final String TAG_REPINFO_ACL_CAPABILITIES = "aclCapability";
     public static final String TAG_REPINFO_CHANGE_LOG_TOKEN = "latestChangeLogToken";
     public static final String TAG_REPINFO_CMIS_VERSION_SUPPORTED = "cmisVersionSupported";
     public static final String TAG_REPINFO_THIN_CLIENT_URI = "thinClientURI";
