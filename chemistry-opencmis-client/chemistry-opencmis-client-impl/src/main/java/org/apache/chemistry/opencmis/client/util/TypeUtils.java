@@ -18,10 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.util;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -31,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
@@ -52,10 +49,11 @@ import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
@@ -79,11 +77,11 @@ public class TypeUtils {
             throw new IllegalArgumentException("Output stream must be set!");
         }
 
-        try {
-            JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createTypeDefinition(convert(type)), stream, false);
-        } catch (JAXBException e) {
-            throw new IOException("Marshaling failed!", e);
-        }
+        XMLStreamWriter writer = XMLUtils.createWriter(stream);
+        XMLUtils.startXmlDocument(writer);
+        XMLConverter.writeTypeDefinition(writer, CmisVersion.CMIS_1_1, XMLConstants.NAMESPACE_CMIS, type);
+        XMLUtils.endXmlDocument(writer);
+        writer.close();
     }
 
     /**

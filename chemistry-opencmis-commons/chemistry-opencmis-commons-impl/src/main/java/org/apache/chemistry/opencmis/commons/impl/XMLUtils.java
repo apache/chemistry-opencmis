@@ -49,6 +49,7 @@ public class XMLUtils {
      */
     public static XMLStreamWriter createWriter(OutputStream out) throws XMLStreamException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
         return factory.createXMLStreamWriter(out, "UTF-8");
     }
 
@@ -56,6 +57,7 @@ public class XMLUtils {
      * Starts a XML document.
      */
     public static void startXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
+        writer.setPrefix(PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
         writer.setPrefix(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.setPrefix(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);

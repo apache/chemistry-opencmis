@@ -55,7 +55,7 @@ import javax.xml.validation.Validator;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -65,7 +65,7 @@ public abstract class AbstractXMLConverterTest {
     protected final static String TEST_NAMESPACE = "http://chemistry.apache.org/test/schema";
     protected final static String TEST_PREFIX = "test";
 
-    private Logger LOG = LoggerFactory.getLogger(AbstractXMLConverterTest.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AbstractXMLConverterTest.class);
 
     private final static long SEED = 1234567890;
 
@@ -90,25 +90,25 @@ public abstract class AbstractXMLConverterTest {
             + "<xs:element name=\"test\" type=\"test:testType\"/>" //
             + "</xs:schema>";
 
-    protected static Schema schema10;
-    protected static Schema schema11;
-    protected static Random rnd;
+    protected Schema schema10;
+    protected Schema schema11;
+    protected Random rnd;
 
     /**
      * Sets up the schema.
      */
-    @BeforeClass
-    public static void init() throws SAXException, UnsupportedEncodingException {
+    @Before
+    public void init() throws SAXException, UnsupportedEncodingException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-        InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
+        InputStream schema10stream = this.getClass().getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
         if (schema10stream == null) {
             throw new RuntimeException("Cannot find CMIS 1.0 schema file!");
         }
         StreamSource core10 = new StreamSource(schema10stream);
         StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
-        InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
+        InputStream schema11stream = this.getClass().getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
         if (schema11stream == null) {
             throw new RuntimeException("Cannot find CMIS 1.1 schema file!");
         }
