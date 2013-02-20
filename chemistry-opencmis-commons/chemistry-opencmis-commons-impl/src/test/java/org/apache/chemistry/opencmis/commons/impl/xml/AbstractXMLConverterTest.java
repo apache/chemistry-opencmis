@@ -46,6 +46,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.junit.BeforeClass;
@@ -81,7 +82,8 @@ public abstract class AbstractXMLConverterTest {
             + "<xs:element name=\"test\" type=\"test:testType\"/>" //
             + "</xs:schema>";
 
-    protected static Schema schema;
+    protected static Schema schema10;
+    protected static Schema schema11;
 
     /**
      * Sets up the schema.
@@ -89,10 +91,17 @@ public abstract class AbstractXMLConverterTest {
     @BeforeClass
     public static void init() throws SAXException, UnsupportedEncodingException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        StreamSource core = new StreamSource(AbstractXMLConverterTest.class.getResourceAsStream("/wsdl/CMIS-core.xsd"));
-        StreamSource test = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
-        schema = sf.newSchema(new Source[] { core, test });
+        StreamSource core10 = new StreamSource(
+                AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd"));
+        StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+
+        StreamSource core11 = new StreamSource(
+                AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd"));
+        StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+        
+        schema10 = sf.newSchema(new Source[] { core10, test10 });
+        schema11 = sf.newSchema(new Source[] { core11, test11 });
     }
 
     /**
@@ -159,8 +168,14 @@ public abstract class AbstractXMLConverterTest {
     /**
      * Validates the given XML.
      */
-    protected void validate(byte[] xmlDocument) {
-        Validator validator = schema.newValidator();
+    protected void validate(byte[] xmlDocument, CmisVersion cmisVersion) {
+        Validator validator = null;
+        if (cmisVersion == CmisVersion.CMIS_1_0) {
+            validator = schema10.newValidator();
+        } else {
+            validator = schema11.newValidator();
+        }
+
         Source source = new StreamSource(new ByteArrayInputStream(xmlDocument));
 
         try {
@@ -171,7 +186,7 @@ public abstract class AbstractXMLConverterTest {
                 System.out.println(format(xmlDocument));
             } catch (TransformerException e1) {
             }
-            fail("Schema validation failed: " + e);
+            fail("Schema " + cmisVersion.value() + " validation failed: " + e);
         }
     }
 

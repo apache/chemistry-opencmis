@@ -93,7 +93,7 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         byte[] xml = out.toByteArray();
 
         if (validate) {
-            validate(xml);
+            validate(xml, CmisVersion.CMIS_1_0);
         }
 
         XMLStreamReader parser = createParser(xml);
