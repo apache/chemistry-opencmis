@@ -23,14 +23,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimeZone;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -61,6 +67,8 @@ public abstract class AbstractXMLConverterTest {
 
     private Logger LOG = LoggerFactory.getLogger(AbstractXMLConverterTest.class);
 
+    private final static long SEED = 1234567890;
+
     protected final static String TEST_SCHEMA = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" targetNamespace=\""
             + TEST_NAMESPACE
@@ -84,6 +92,7 @@ public abstract class AbstractXMLConverterTest {
 
     protected static Schema schema10;
     protected static Schema schema11;
+    protected static Random rnd;
 
     /**
      * Sets up the schema.
@@ -92,16 +101,24 @@ public abstract class AbstractXMLConverterTest {
     public static void init() throws SAXException, UnsupportedEncodingException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-        StreamSource core10 = new StreamSource(
-                AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd"));
+        InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
+        if (schema10stream == null) {
+            throw new RuntimeException("Cannot find CMIS 1.0 schema file!");
+        }
+        StreamSource core10 = new StreamSource(schema10stream);
         StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
-        StreamSource core11 = new StreamSource(
-                AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd"));
+        InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
+        if (schema11stream == null) {
+            throw new RuntimeException("Cannot find CMIS 1.1 schema file!");
+        }
+        StreamSource core11 = new StreamSource(schema11stream);
         StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
-        
+
         schema10 = sf.newSchema(new Source[] { core10, test10 });
         schema11 = sf.newSchema(new Source[] { core11, test11 });
+
+        rnd = new Random(SEED);
     }
 
     /**
@@ -207,10 +224,65 @@ public abstract class AbstractXMLConverterTest {
         return result.getWriter().toString();
     }
 
+    protected String randomString() {
+        StringBuilder sb = new StringBuilder();
+
+        int length = rnd.nextInt(21) + 3;
+        for (int i = 0; i < length; i++) {
+            sb.append((char) (rnd.nextInt(94) + 32));
+        }
+
+        return sb.toString();
+    }
+
+    protected String randomUri() {
+        StringBuilder sb = new StringBuilder("urn:test:");
+
+        int length = rnd.nextInt(21) + 3;
+        for (int i = 0; i < length; i++) {
+            sb.append((char) (rnd.nextInt(26) + 97));
+        }
+
+        return sb.toString();
+    }
+
+    protected Boolean randomBoolean() {
+        return Boolean.valueOf(rnd.nextBoolean());
+    }
+
+    protected BigInteger randomInteger() {
+        return BigInteger.valueOf(rnd.nextInt());
+    }
+
+    protected BigDecimal randomDecimal() {
+        return BigDecimal.valueOf(rnd.nextDouble() * rnd.nextInt());
+    }
+
+    protected GregorianCalendar randomDateTime() {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT" + (rnd.nextBoolean() ? "+" : "-") + (rnd.nextInt(23) - 12) + ":00"));
+        cal.set(rnd.nextInt(9998) + 1, rnd.nextInt(12), rnd.nextInt(31) + 1, rnd.nextInt(23), rnd.nextInt(60),
+                rnd.nextInt(60));
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Enum<?>> T randomEnum(Class<T> enumClass) {
+        T[] values = null;
+        try {
+            values = (T[]) enumClass.getMethod("values", new Class<?>[0]).invoke(null, new Object[0]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return values[rnd.nextInt(values.length)];
+    }
+
     /**
      * Compares two data objects.
      */
-    protected void assertDataObjectsEquals(String name, Object expected, Object actual) {
+    protected void assertDataObjectsEquals(String name, Object expected, Object actual, Set<String> ignoreMethods) {
 
         LOG.debug(name + ": " + expected + " / " + actual);
 
@@ -228,6 +300,11 @@ public abstract class AbstractXMLConverterTest {
             assertEquals(expected, actual);
 
             return;
+        } else if (expected instanceof GregorianCalendar) {
+            assertEquals(((GregorianCalendar) expected).getTimeInMillis(),
+                    ((GregorianCalendar) actual).getTimeInMillis());
+
+            return;
         } else if (expected instanceof List<?>) {
             List<?> expectedList = (List<?>) expected;
             List<?> actualList = (List<?>) actual;
@@ -235,7 +312,7 @@ public abstract class AbstractXMLConverterTest {
             assertEquals(expectedList.size(), actualList.size());
 
             for (int i = 0; i < expectedList.size(); i++) {
-                assertDataObjectsEquals(name + "[" + i + "]", expectedList.get(i), actualList.get(i));
+                assertDataObjectsEquals(name + "[" + i + "]", expectedList.get(i), actualList.get(i), ignoreMethods);
             }
 
             return;
@@ -248,7 +325,7 @@ public abstract class AbstractXMLConverterTest {
             for (Map.Entry<?, ?> entry : expectedMap.entrySet()) {
                 assertTrue(actualMap.containsKey(entry.getKey()));
                 assertDataObjectsEquals(name + "[" + entry.getKey() + "]", entry.getValue(),
-                        actualMap.get(entry.getKey()));
+                        actualMap.get(entry.getKey()), ignoreMethods);
             }
 
             return;
@@ -256,6 +333,10 @@ public abstract class AbstractXMLConverterTest {
 
         for (Method m : expected.getClass().getMethods()) {
             if (!m.getName().startsWith("get") && !m.getName().startsWith("is") && !m.getName().startsWith("supports")) {
+                continue;
+            }
+
+            if (ignoreMethods != null && ignoreMethods.contains(m.getName())) {
                 continue;
             }
 
@@ -271,7 +352,7 @@ public abstract class AbstractXMLConverterTest {
                 Object expectedValue = m.invoke(expected, new Object[0]);
                 Object actualValue = m.invoke(actual, new Object[0]);
 
-                assertDataObjectsEquals(name + "." + m.getName(), expectedValue, actualValue);
+                assertDataObjectsEquals(name + "." + m.getName(), expectedValue, actualValue, ignoreMethods);
             } catch (Exception e) {
                 fail(e.toString());
             }

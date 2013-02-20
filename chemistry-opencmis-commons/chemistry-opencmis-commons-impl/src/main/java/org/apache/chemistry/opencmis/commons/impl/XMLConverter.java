@@ -496,7 +496,7 @@ public class XMLConverter {
             PropertyStringDefinition def = (PropertyStringDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyStringImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyStringImpl(null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_LENGTH, def.getMaxLength());
@@ -504,13 +504,13 @@ public class XMLConverter {
             PropertyIdDefinition def = (PropertyIdDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyIntegerDefinition) {
             PropertyIntegerDefinition def = (PropertyIntegerDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIntegerImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyIntegerImpl(null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_VALUE, def.getMaxValue());
@@ -519,13 +519,13 @@ public class XMLConverter {
             PropertyBooleanDefinition def = (PropertyBooleanDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyBooleanImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyBooleanImpl(null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyDateTimeDefinition) {
             PropertyDateTimeDefinition def = (PropertyDateTimeDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyDateTimeImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyDateTimeImpl(null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_RESOLUTION, def.getDateTimeResolution());
@@ -533,7 +533,7 @@ public class XMLConverter {
             PropertyDecimalDefinition def = (PropertyDecimalDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyDecimalImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyDecimalImpl(null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_VALUE, def.getMaxValue());
@@ -543,13 +543,13 @@ public class XMLConverter {
             PropertyHtmlDefinition def = (PropertyHtmlDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyUriDefinition) {
             PropertyUriDefinition def = (PropertyUriDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()));
+                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
             }
         }
 
@@ -642,7 +642,7 @@ public class XMLConverter {
 
             if (properties.getPropertyList() != null) {
                 for (PropertyData<?> property : properties.getPropertyList()) {
-                    writeProperty(writer, property);
+                    writeProperty(writer, property, false);
                 }
             }
 
@@ -762,29 +762,34 @@ public class XMLConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static void writeProperty(XMLStreamWriter writer, PropertyData<?> source) throws XMLStreamException {
+    public static void writeProperty(XMLStreamWriter writer, PropertyData<?> source, boolean isDefaultValue)
+            throws XMLStreamException {
         if (source == null) {
             return;
         }
 
-        if (source instanceof PropertyString) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_STRING);
-        } else if (source instanceof PropertyId) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_ID);
-        } else if (source instanceof PropertyInteger) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_INTEGER);
-        } else if (source instanceof PropertyBoolean) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_BOOLEAN);
-        } else if (source instanceof PropertyDateTime) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_DATETIME);
-        } else if (source instanceof PropertyDecimal) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_DECIMAL);
-        } else if (source instanceof PropertyHtml) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_HTML);
-        } else if (source instanceof PropertyUri) {
-            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_URI);
+        if (isDefaultValue) {
+            writer.writeStartElement(NAMESPACE_CMIS, TAG_PROPERTY_TYPE_DEAULT_VALUE);
         } else {
-            throw new CmisRuntimeException("Invalid property!");
+            if (source instanceof PropertyString) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_STRING);
+            } else if (source instanceof PropertyId) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_ID);
+            } else if (source instanceof PropertyInteger) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_INTEGER);
+            } else if (source instanceof PropertyBoolean) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_BOOLEAN);
+            } else if (source instanceof PropertyDateTime) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_DATETIME);
+            } else if (source instanceof PropertyDecimal) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_DECIMAL);
+            } else if (source instanceof PropertyHtml) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_HTML);
+            } else if (source instanceof PropertyUri) {
+                writer.writeStartElement(NAMESPACE_CMIS, TAG_PROP_URI);
+            } else {
+                throw new CmisRuntimeException("Invalid property!");
+            }
         }
 
         if (source.getId() != null) {
@@ -1799,7 +1804,12 @@ public class XMLConverter {
                     }
 
                     if (isTag(name, TAG_PROPERTY_TYPE_PRECISION)) {
-                        ((PropertyDecimalDefinitionImpl) target).setPrecision(readEnum(parser, DecimalPrecision.class));
+                        try {
+                            ((PropertyDecimalDefinitionImpl) target).setPrecision(DecimalPrecision
+                                    .fromValue(readInteger(parser)));
+                        } catch (IllegalArgumentException e) {
+                            // invalid enum value - ignore
+                        }
                         return true;
                     }
                 } else if (target instanceof PropertyHtmlDefinitionImpl) {
