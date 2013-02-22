@@ -871,6 +871,15 @@ public class EvalQueryTest extends AbstractServiceTest {
         }
     }
 
+    @Test
+    public void testPredfinedQueryName() {
+        String statement = "SELECT cmis:name as abc, SCORE() FROM " + COMPLEX_TYPE + " ORDER BY SEARCH_SCORE";
+        try {
+            doQuery(statement);
+        } catch (Exception e) {
+            fail("SEARCH_SCORE in ORDER_BY must be supported.");
+        }
+    }
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
         ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
