@@ -101,19 +101,13 @@ public abstract class AbstractXMLConverterTest {
     public void init() throws SAXException, IOException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-        System.out.println(this.getClass().getResource("/"));
+        URL base = this.getClass().getResource("/");
 
-        URL schema10url = this.getClass().getResource("/schema/cmis10/CMIS-core.xsd");
-        if (schema10url == null) {
-            throw new RuntimeException("Cannot find CMIS 1.0 schema file!");
-        }
+        URL schema10url = new URL(base, "schema/cmis10/CMIS-core.xsd");
         StreamSource core10 = new StreamSource(schema10url.openStream());
         StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
-        URL schema11url = this.getClass().getResource("/schema/cmis11/CMIS-core.xsd");
-        if (schema11url == null) {
-            throw new RuntimeException("Cannot find CMIS 1.1 schema file!");
-        }
+        URL schema11url = new URL(base, "schema/cmis11/CMIS-core.xsd");
         StreamSource core11 = new StreamSource(schema11url.openStream());
         StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
