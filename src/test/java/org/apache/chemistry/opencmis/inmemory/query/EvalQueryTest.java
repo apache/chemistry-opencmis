@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.AbstractServiceTest;
 import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
 import org.slf4j.Logger;
@@ -857,6 +858,17 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertFalse(resultContains("docwithsecondary", res));
         assertTrue(resultContains("Secondary Property Value", UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
         assertTrue(resultContains(BigInteger.valueOf(100), UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
+    }
+
+    @Test
+    public void testMultipleContains() {
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('abc') AND CONTAINS('123')";
+        try {
+            doQuery(statement);
+            fail("Multiple CONTAINS clauses should throw CmisInvalidArgumentException");
+        } catch (CmisInvalidArgumentException e) {
+            assertTrue(e.getMessage().contains("More than one CONTAINS"));
+        }
     }
 
     private ObjectList doQuery(String queryString) {
