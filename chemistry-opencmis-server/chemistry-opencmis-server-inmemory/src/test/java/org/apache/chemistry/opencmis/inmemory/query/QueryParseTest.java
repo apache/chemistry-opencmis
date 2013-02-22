@@ -611,6 +611,14 @@ public class QueryParseTest extends AbstractQueryTest {
         printSearchTree(tree, statement);
     }
     
+    @Test
+    public void whereTestMultipleContains2() {
+        String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven') AND CONTAINS('Bach')";
+        checkTreeWhere(statement);
+        int noContains = getNumberOfSearchExpression(statement);
+        assertTrue(2 == noContains);
+    }
+    
     private void checkTreeWhere(String statement) {
         LOG.info("\ncheckTreeWhere: " + statement);
         QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
@@ -622,6 +630,11 @@ public class QueryParseTest extends AbstractQueryTest {
         QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
         Tree whereTree = queryUtil.getWalker().getWherePredicateTree();
         return findTextSearchNode(whereTree);
+    }
+    
+    private int getNumberOfSearchExpression(String statement) {
+        QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
+        return queryUtil.getWalker().getNumberOfContainsClauses();
     }
     
     private Tree findTextSearchNode(Tree node) {

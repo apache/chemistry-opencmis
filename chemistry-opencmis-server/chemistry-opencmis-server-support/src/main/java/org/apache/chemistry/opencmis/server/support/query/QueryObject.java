@@ -71,6 +71,11 @@ public class QueryObject {
 
     // order by part
     protected final List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
+    
+    @SuppressWarnings("serial")
+    protected List<String> predefinedQueryNames = new ArrayList<String> () {{
+        add("SEARCH_SCORE");
+        }};
 
     private String errorMessage;
 
@@ -514,6 +519,10 @@ public class QueryObject {
         // it is property query name without a type, so find type
         int noFound = 0;
         TypeDefinition tdFound = null;
+        
+        if (isPredfinedQueryName(propName))
+            return;
+        
         for (String typeQueryName : froms.values()) {
             TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
             if (null == td) {
@@ -537,6 +546,10 @@ public class QueryObject {
                 validateColumnReferenceAndResolveType(tdFound, colRef);
             }
         }
+    }
+
+    public boolean isPredfinedQueryName(String name) {
+        return predefinedQueryNames.contains(name);
     }
 
     // for a select x.y from x ... check that x has property y and that x is in

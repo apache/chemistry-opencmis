@@ -36,6 +36,7 @@ options {
     private QueryObject queryObj;
     private Tree wherePredicateTree;
     private boolean doFullTextParse = true;
+    private int noContains = 0;
 
     public Tree getWherePredicateTree() {
         return wherePredicateTree;
@@ -59,6 +60,10 @@ options {
 	
 	public boolean getDoFullTextParse() {
 		return doFullTextParse;
+	}
+	
+	public int getNumberOfContainsClauses() {
+	    return noContains;
 	}
 	
     private static CommonTree parseTextSearchPredicate(String expr) throws RecognitionException {
@@ -244,6 +249,7 @@ search_condition
     | ^(CONTAINS qualifier? text_search_expression)
       {
             queryObj.addWhereTypeReference($qualifier.start, $qualifier.value);
+            ++noContains;
       }
     | ^(IN_FOLDER qualifier? search_condition)
       {

@@ -90,6 +90,10 @@ import org.slf4j.LoggerFactory;
     public boolean getDoFullTextParse() {
         return gCmisBaseWalker.getDoFullTextParse();
     }
+    
+    public int getNumberOfContainsClauses() {
+        return gCmisBaseWalker.getNumberOfContainsClauses();
+    }
 	
 }
 

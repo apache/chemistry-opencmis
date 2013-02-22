@@ -113,6 +113,7 @@ public class InMemoryQueryProcessor {
         CmisQueryWalker walker = queryUtil.getWalker();
         queryObj = queryUtil.getQueryObject();
         whereTree = walker.getWherePredicateTree();
+        doAdditionalChecks(walker);
     }
 
     public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
@@ -194,7 +195,10 @@ public class InMemoryQueryProcessor {
                 CmisSelector sel = s.getSelector();
                 int result;
 
-                if (sel instanceof ColumnReference) {
+                if (queryObj.isPredfinedQueryName(sel.getName())) {
+                    // must be SEARCH_SCORE which is currently ignored
+                    result = 0;
+                } else if (sel instanceof ColumnReference) {
                     String propId = ((ColumnReference) sel).getPropertyId();
                     PropertyDefinition<?> pd = ((ColumnReference) sel).getPropertyDefinition();
                     
@@ -734,10 +738,9 @@ public class InMemoryQueryProcessor {
         return typeQueryName;
     }
 
-    private Object xgetPropertyValue(Tree columnNode, StoredObject so) {
-        ColumnReference colRef = getColumnReference(columnNode);
-        PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-        return PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+    private void doAdditionalChecks(CmisQueryWalker walker) {
+        if (walker.getNumberOfContainsClauses() > 1)
+            throw new CmisInvalidArgumentException("More than one CONTAINS clause is not allowed");
     }
 
     // translate SQL wildcards %, _ to Java regex syntax
@@ -780,7 +783,7 @@ public class InMemoryQueryProcessor {
     }
 
     private static void throwIncompatibleTypesException(Object o1, Object o2) {
-        throw new IllegalArgumentException("Incompatible Types to compare: " + o1 + " and " + o2);
+        throw new CmisInvalidArgumentException("Incompatible Types to compare: " + o1 + " and " + o2);
     }
 
 }
