@@ -23,13 +23,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -98,21 +98,23 @@ public abstract class AbstractXMLConverterTest {
      * Sets up the schema.
      */
     @Before
-    public void init() throws SAXException, UnsupportedEncodingException {
+    public void init() throws SAXException, IOException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-        InputStream schema10stream = this.getClass().getClassLoader().getResourceAsStream("schema/cmis10/CMIS-core.xsd");
-        if (schema10stream == null) {
+        System.out.println(this.getClass().getResource("/"));
+
+        URL schema10url = this.getClass().getResource("/schema/cmis10/CMIS-core.xsd");
+        if (schema10url == null) {
             throw new RuntimeException("Cannot find CMIS 1.0 schema file!");
         }
-        StreamSource core10 = new StreamSource(schema10stream);
+        StreamSource core10 = new StreamSource(schema10url.openStream());
         StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
-        InputStream schema11stream = this.getClass().getClassLoader().getResourceAsStream("schema/cmis11/CMIS-core.xsd");
-        if (schema11stream == null) {
+        URL schema11url = this.getClass().getResource("/schema/cmis11/CMIS-core.xsd");
+        if (schema11url == null) {
             throw new RuntimeException("Cannot find CMIS 1.1 schema file!");
         }
-        StreamSource core11 = new StreamSource(schema11stream);
+        StreamSource core11 = new StreamSource(schema11url.openStream());
         StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
 
         schema10 = sf.newSchema(new Source[] { core10, test10 });
