@@ -649,8 +649,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 // known properties that are strings and must be set
                 if (PropertyIds.OBJECT_ID.equals(propId) || PropertyIds.BASE_TYPE_ID.equals(propId)
                         || PropertyIds.OBJECT_TYPE_ID.equals(propId) || PropertyIds.PATH.equals(propId)
-                        || PropertyIds.SOURCE_ID.equals(propId) || PropertyIds.TARGET_ID.equals(propId)
-                        || PropertyIds.POLICY_TEXT.equals(propId)) {
+                        || PropertyIds.SOURCE_ID.equals(propId) || PropertyIds.TARGET_ID.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY;
                 }
 
@@ -661,7 +660,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
 
                 // known properties that are strings and should be set
-                if (PropertyIds.NAME.equals(propId)) {
+                if (PropertyIds.NAME.equals(propId) || PropertyIds.POLICY_TEXT.equals(propId)) {
                     propertyCheck = PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY;
                 }
 
@@ -1511,9 +1510,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, assertNotNull(property.getLocalName(), null, f));
 
             if ((propertyCheck == PropertyCheckEnum.MUST_BE_SET)
-                    || (propertyCheck == PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY)
-                    || (propertyCheck == PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY)) {
+                    || (propertyCheck == PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY)) {
                 f = createResult(FAILURE, "Property has no value!");
+                addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+            } else if (propertyCheck == PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY) {
+                f = createResult(WARNING, "Property has no value!");
                 addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
             } else if (propertyCheck == PropertyCheckEnum.MUST_NOT_BE_SET) {
                 f = createResult(FAILURE, "Property has a value!");
