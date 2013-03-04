@@ -56,10 +56,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
 
     private static Set<String> cmis10ignoreMethods = new HashSet<String>();

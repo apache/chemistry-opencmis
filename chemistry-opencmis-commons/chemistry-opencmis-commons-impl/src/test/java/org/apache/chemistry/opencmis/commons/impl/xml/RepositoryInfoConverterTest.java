@@ -60,10 +60,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefiniti
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
 
     private static Set<String> cmis10ignoreMethods = new HashSet<String>();

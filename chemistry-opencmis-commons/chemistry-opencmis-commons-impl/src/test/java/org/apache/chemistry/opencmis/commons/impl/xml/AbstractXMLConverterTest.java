@@ -24,12 +24,12 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -101,18 +101,19 @@ public abstract class AbstractXMLConverterTest {
     public void init() throws SAXException, IOException {
         SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-        URL base = this.getClass().getResource("/");
+        InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
+        if (schema10stream != null) {
+            StreamSource core10 = new StreamSource(schema10stream);
+            StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+            schema10 = sf.newSchema(new Source[] { core10, test10 });
+        }
 
-        URL schema10url = new URL(base, "schema/cmis10/CMIS-core.xsd");
-        StreamSource core10 = new StreamSource(schema10url.openStream());
-        StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
-
-        URL schema11url = new URL(base, "schema/cmis11/CMIS-core.xsd");
-        StreamSource core11 = new StreamSource(schema11url.openStream());
-        StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
-
-        schema10 = sf.newSchema(new Source[] { core10, test10 });
-        schema11 = sf.newSchema(new Source[] { core11, test11 });
+        InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
+        if (schema11stream != null) {
+            StreamSource core11 = new StreamSource(schema11stream);
+            StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+            schema11 = sf.newSchema(new Source[] { core11, test11 });
+        }
 
         rnd = new Random(SEED);
     }
@@ -184,9 +185,19 @@ public abstract class AbstractXMLConverterTest {
     protected void validate(byte[] xmlDocument, CmisVersion cmisVersion) {
         Validator validator = null;
         if (cmisVersion == CmisVersion.CMIS_1_0) {
-            validator = schema10.newValidator();
+            if (schema10 != null) {
+                validator = schema10.newValidator();
+            } else {
+                LOG.warn("CMIS 1.0 schema not loaded. Cannot validate XML.");
+                return;
+            }
         } else {
-            validator = schema11.newValidator();
+            if (schema11 != null) {
+                validator = schema11.newValidator();
+            } else {
+                LOG.warn("CMIS 1.1 schema not loaded. Cannot validate XML.");
+                return;
+            }
         }
 
         Source source = new StreamSource(new ByteArrayInputStream(xmlDocument));
