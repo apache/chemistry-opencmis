@@ -275,6 +275,10 @@ public abstract class AbstractXMLConverterTest {
         return cal;
     }
 
+    protected int randomInt(int n) {
+        return rnd.nextInt(n);
+    }
+
     @SuppressWarnings("unchecked")
     protected <T extends Enum<?>> T randomEnum(Class<T> enumClass) {
         T[] values = null;

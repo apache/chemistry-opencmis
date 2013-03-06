@@ -629,11 +629,16 @@ public class XMLConverter {
 
     public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace, ObjectData source)
             throws XMLStreamException {
+        writeObject(writer, cmisVersion, TAG_OBJECT, namespace, source);
+    }
+
+    public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, String name, String namespace,
+            ObjectData source) throws XMLStreamException {
         if (source == null) {
             return;
         }
 
-        writer.writeStartElement(namespace, TAG_OBJECT);
+        writer.writeStartElement(namespace, name);
 
         if (source.getProperties() != null) {
             Properties properties = source.getProperties();
@@ -655,11 +660,13 @@ public class XMLConverter {
             writer.writeStartElement(NAMESPACE_CMIS, TAG_OBJECT_ALLOWABLE_ACTIONS);
 
             if (allowableActions.getAllowableActions() != null) {
-                for (Action action : allowableActions.getAllowableActions()) {
+                for (Action action : Action.values()) {
                     if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
                         continue;
                     }
-                    XMLUtils.write(writer, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
+                    if (allowableActions.getAllowableActions().contains(action)) {
+                        XMLUtils.write(writer, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
+                    }
                 }
             }
 
@@ -669,7 +676,7 @@ public class XMLConverter {
         if (source.getRelationships() != null) {
             for (ObjectData rel : source.getRelationships()) {
                 if (rel != null) {
-                    writeObject(writer, cmisVersion, NAMESPACE_CMIS, rel);
+                    writeObject(writer, cmisVersion, TAG_OBJECT_RELATIONSHIP, NAMESPACE_CMIS, rel);
                 }
             }
         }
@@ -794,6 +801,9 @@ public class XMLConverter {
 
         if (source.getId() != null) {
             writer.writeAttribute(ATTR_PROPERTY_ID, source.getId());
+        }
+        if (source.getDisplayName() != null) {
+            writer.writeAttribute(ATTR_PROPERTY_DISPLAYNAME, source.getDisplayName());
         }
         if (source.getLocalName() != null) {
             writer.writeAttribute(ATTR_PROPERTY_LOCALNAME, source.getLocalName());
@@ -1221,7 +1231,6 @@ public class XMLConverter {
     private static final XMLWalker<AclCapabilitiesDataImpl> ACL_CAPABILITIES_PARSER = new XMLWalker<AclCapabilitiesDataImpl>() {
         @Override
         protected AclCapabilitiesDataImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
-
             return new AclCapabilitiesDataImpl();
         }
 
@@ -2100,8 +2109,11 @@ public class XMLConverter {
                         target.setAllowableActions(actions);
                     }
 
-                    actions.add(action);
+                    if (Boolean.TRUE.equals(readBoolean(parser))) {
+                        actions.add(action);
+                    }
 
+                    return true;
                 } catch (IllegalArgumentException e) {
                     // extension tag -> ignore
                 }

@@ -19,14 +19,15 @@
 package org.apache.chemistry.opencmis.commons.enums;
 
 public enum Action {
-
+   
+    // important: do not change the order of these values!
     CAN_DELETE_OBJECT("canDeleteObject"), //
     CAN_UPDATE_PROPERTIES("canUpdateProperties"), //
+    CAN_GET_FOLDER_TREE("canGetFolderTree"), //
     CAN_GET_PROPERTIES("canGetProperties"), //
     CAN_GET_OBJECT_RELATIONSHIPS("canGetObjectRelationships"), //
     CAN_GET_OBJECT_PARENTS("canGetObjectParents"), //
     CAN_GET_FOLDER_PARENT("canGetFolderParent"), //
-    CAN_GET_FOLDER_TREE("canGetFolderTree"), //
     CAN_GET_DESCENDANTS("canGetDescendants"), //
     CAN_MOVE_OBJECT("canMoveObject"), //
     CAN_DELETE_CONTENT_STREAM("canDeleteContentStream"), //

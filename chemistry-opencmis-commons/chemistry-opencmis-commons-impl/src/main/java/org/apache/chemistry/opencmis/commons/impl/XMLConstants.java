@@ -131,6 +131,7 @@ public class XMLConstants {
     public static final String TAG_CHANGE_EVENT_TIME = "changeTime";
 
     public static final String TAG_ACL_PERMISSISONS = "permission";
+    public static final String TAG_ACL_IS_EXACT = "permission";
     public static final String TAG_ACE_PRINCIPAL = "principal";
     public static final String TAG_ACE_PRINCIPAL_ID = "principalId";
     public static final String TAG_ACE_PERMISSIONS = "permission";
