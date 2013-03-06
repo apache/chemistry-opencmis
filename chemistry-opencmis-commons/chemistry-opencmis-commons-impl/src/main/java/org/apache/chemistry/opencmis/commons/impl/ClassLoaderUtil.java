@@ -24,7 +24,16 @@ public class ClassLoaderUtil {
      * Loads a class. If the context class loader is set, it is used.
      */
     public static Class<?> loadClass(String className) throws ClassNotFoundException {
-        return loadClass(className, Thread.currentThread().getContextClassLoader());
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        if (ccl == null) {
+            return loadClass(className, null);
+        }
+
+        try {
+            return loadClass(className, ccl);
+        } catch (ClassNotFoundException cnf) {
+            return loadClass(className, null);
+        }
     }
 
     /**
