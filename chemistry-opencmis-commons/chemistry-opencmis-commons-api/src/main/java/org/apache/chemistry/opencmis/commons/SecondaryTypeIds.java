@@ -29,4 +29,5 @@ public final class SecondaryTypeIds {
     public static final String REPOSITORY_MANAGED_RETENTION = "cmis:rm_repMgtRetention";
     public static final String CLIENT_MANAGED_RETENTION = "cmis:rm_clientMgtRetention";
     public static final String DESTRUCTION_CLIENT_MANAGED_RETENTION = "cmis:rm_destructionRetention.";
+    public static final String HOLD = "cmis:rm_hold";
 }
