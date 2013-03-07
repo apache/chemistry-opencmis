@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.commons.impl.xml;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -34,6 +33,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
@@ -50,6 +50,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
@@ -109,6 +110,7 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
         properties.addProperty(createPropertyData(PropertyType.URI, 0));
         properties.addProperty(createPropertyData(PropertyType.URI, 1));
         properties.addProperty(createPropertyData(PropertyType.URI, randomInt(8) + 2));
+        properties.setExtensions(createExtensions(3));
         result.setProperties(properties);
 
         // allowable actions
@@ -179,6 +181,9 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
             renditions.add(rendition);
         }
         result.setRenditions(renditions);
+
+        // extensions
+        result.setExtensions(createExtensions(5));
 
         return result;
     }
@@ -291,6 +296,27 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
         return result;
     }
 
+    protected List<CmisExtensionElement> createExtensions(int depth) {
+        List<CmisExtensionElement> result = new ArrayList<CmisExtensionElement>();
+
+        String[] namespaces = new String[] { "http://ext1.com", "http://ext2.org", "http://ext3.net" };
+
+        for (int i = 0; i < randomInt(4) + 1; i++) {
+            String ns = namespaces[randomInt(namespaces.length)];
+
+            CmisExtensionElementImpl element;
+            if (randomBoolean() || depth < 1) {
+                element = new CmisExtensionElementImpl(ns, randomTag(), null, randomString());
+            } else {
+                element = new CmisExtensionElementImpl(ns, randomTag(), null, createExtensions(depth - 1));
+            }
+
+            result.add(element);
+        }
+
+        return result;
+    }
+
     protected void assertObjectData10(ObjectData data, boolean validate) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -310,7 +336,7 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         assertNotNull(result);
         assertDataObjectsEquals("ObjectData", data, result, null);
-        assertNull(result.getExtensions());
+        assertNotNull(result.getExtensions());
     }
 
     protected void assertObjectData11(ObjectData data, boolean validate) throws Exception {
@@ -332,6 +358,6 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         assertNotNull(result);
         assertDataObjectsEquals("ObjectData", data, result, null);
-        assertNull(result.getExtensions());
+        assertNotNull(result.getExtensions());
     }
 }

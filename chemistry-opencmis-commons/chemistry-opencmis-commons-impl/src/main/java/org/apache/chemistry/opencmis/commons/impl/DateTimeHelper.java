@@ -192,6 +192,13 @@ public class DateTimeHelper {
         return getFormatter(0).format(cal.getTimeInMillis());
     }
 
+    /**
+     * Clears out cached formatters.
+     */
+    public static void clear() {
+        THREADLOCAL_HTTP_FORMATS.remove();
+    }
+
     private static SimpleDateFormat getFormatter(int x) {
         SoftReference<SimpleDateFormat[]> ref = THREADLOCAL_HTTP_FORMATS.get();
         SimpleDateFormat[] sdfs = ref.get();

@@ -119,6 +119,39 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
         return attributes;
     }
 
+    public String toTreeString(int level) {
+        StringBuilder sb = new StringBuilder();
+        nextTreelevel(sb, level);
+        return sb.toString();
+    }
+
+    private void nextTreelevel(StringBuilder sb, int level) {
+        for (int i = 0; i < level; i++) {
+            sb.append("  ");
+        }
+
+        sb.append((namespace == null ? "" : "{" + namespace + "}") + name + " " + attributes + ": ");
+
+        if (children.isEmpty()) {
+            sb.append(value);
+            sb.append('\n');
+        } else {
+            sb.append('\n');
+
+            for (CmisExtensionElement element : children) {
+                if (element instanceof CmisExtensionElementImpl) {
+                    sb.append(((CmisExtensionElementImpl) element).toTreeString(level + 1));
+                } else if (element != null) {
+                    for (int i = 0; i < level + 1; i++) {
+                        sb.append("  ");
+                    }
+                    sb.append(element.toString());
+                    sb.append('\n');
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return (namespace == null ? "" : "{" + namespace + "}") + name + " " + attributes + ": "

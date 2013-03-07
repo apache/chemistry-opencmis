@@ -138,6 +138,8 @@ public abstract class XMLWalker<T> {
                 }
 
                 children.add(handleExtensionLevel(parser, level + 1));
+                
+                continue;
             }
 
             if (!next(parser)) {

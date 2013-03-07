@@ -40,6 +40,25 @@ public class XMLUtils {
     public static final String PREFIX_RESTATOM = "cmisra";
     public static final String PREFIX_APACHE_CHEMISTY = "chemistry";
 
+    public static final ThreadLocal<XMLInputFactory> THREADLOCAL_XML_INPUT_FACTORY = new ThreadLocal<XMLInputFactory>() {
+        @Override
+        protected XMLInputFactory initialValue() {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+            return factory;
+        }
+    };
+
+    public static final ThreadLocal<XMLOutputFactory> THREADLOCAL_XML_OUTPUT_FACTORY = new ThreadLocal<XMLOutputFactory>() {
+        @Override
+        protected XMLOutputFactory initialValue() {
+            XMLOutputFactory factory = XMLOutputFactory.newInstance();
+            factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
+            return factory;
+        }
+    };
+
     // --------------
     // --- writer ---
     // --------------
@@ -48,9 +67,7 @@ public class XMLUtils {
      * Creates a new XML writer.
      */
     public static XMLStreamWriter createWriter(OutputStream out) throws XMLStreamException {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-        return factory.createXMLStreamWriter(out, "UTF-8");
+        return THREADLOCAL_XML_OUTPUT_FACTORY.get().createXMLStreamWriter(out, "UTF-8");
     }
 
     /**
@@ -196,10 +213,7 @@ public class XMLUtils {
      * Creates a new XML parser with OpenCMIS default settings.
      */
     public static XMLStreamReader createParser(InputStream stream) throws XMLStreamException {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-        return factory.createXMLStreamReader(stream);
+        return THREADLOCAL_XML_INPUT_FACTORY.get().createXMLStreamReader(stream);
     }
 
     /**
@@ -272,5 +286,13 @@ public class XMLUtils {
         next(parser);
 
         return sb == null ? null : sb.toString();
+    }
+
+    /**
+     * Clears out cached XML factories.
+     */
+    public static void clear() {
+        THREADLOCAL_XML_INPUT_FACTORY.remove();
+        THREADLOCAL_XML_OUTPUT_FACTORY.remove();
     }
 }

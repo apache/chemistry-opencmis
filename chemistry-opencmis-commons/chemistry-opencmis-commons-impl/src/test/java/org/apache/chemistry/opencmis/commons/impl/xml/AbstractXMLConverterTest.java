@@ -290,6 +290,17 @@ public abstract class AbstractXMLConverterTest {
         return values[rnd.nextInt(values.length)];
     }
 
+    protected String randomTag() {
+        StringBuilder sb = new StringBuilder();
+
+        int length = rnd.nextInt(7) + 3;
+        for (int i = 0; i < length; i++) {
+            sb.append((char) (rnd.nextInt(26) + 'a'));
+        }
+
+        return sb.toString();
+    }
+
     /**
      * Compares two data objects.
      */
@@ -308,11 +319,11 @@ public abstract class AbstractXMLConverterTest {
         // handle simple types
         if ((expected instanceof String) || (expected instanceof Boolean) || (expected instanceof BigInteger)
                 || (expected instanceof BigDecimal) || (expected instanceof Enum<?>)) {
-            assertEquals(expected, actual);
+            assertEquals(name, expected, actual);
 
             return;
         } else if (expected instanceof GregorianCalendar) {
-            assertEquals(((GregorianCalendar) expected).getTimeInMillis(),
+            assertEquals(name, ((GregorianCalendar) expected).getTimeInMillis(),
                     ((GregorianCalendar) actual).getTimeInMillis());
 
             return;
@@ -320,7 +331,7 @@ public abstract class AbstractXMLConverterTest {
             List<?> expectedList = (List<?>) expected;
             List<?> actualList = (List<?>) actual;
 
-            assertEquals(expectedList.size(), actualList.size());
+            assertEquals(name + ".length", expectedList.size(), actualList.size());
 
             for (int i = 0; i < expectedList.size(); i++) {
                 assertDataObjectsEquals(name + "[" + i + "]", expectedList.get(i), actualList.get(i), ignoreMethods);
@@ -331,7 +342,7 @@ public abstract class AbstractXMLConverterTest {
             Map<?, ?> expectedMap = (Map<?, ?>) expected;
             Map<?, ?> actualMap = (Map<?, ?>) actual;
 
-            assertEquals(expectedMap.size(), actualMap.size());
+            assertEquals(name + ".length", expectedMap.size(), actualMap.size());
 
             for (Map.Entry<?, ?> entry : expectedMap.entrySet()) {
                 assertTrue(actualMap.containsKey(entry.getKey()));
