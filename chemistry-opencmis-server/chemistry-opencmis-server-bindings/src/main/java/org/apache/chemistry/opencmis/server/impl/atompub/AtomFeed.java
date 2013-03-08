@@ -26,6 +26,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
  * Atom Feed class.
@@ -104,11 +106,7 @@ public class AtomFeed extends AtomDocumentBase {
      * Writes a CMIS numItems tag.
      */
     public void writeNumItems(BigInteger numItems) throws XMLStreamException {
-        if (numItems == null) {
-            return;
-        }
-
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "numItems", numItems.toString());
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "numItems", numItems);
     }
 
     /**

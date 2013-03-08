@@ -69,7 +69,6 @@ public class XMLUtils {
      * Starts a XML document.
      */
     public static void startXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
-        writer.setPrefix(XMLConstants.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
         writer.setPrefix(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.setPrefix(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.setPrefix(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
@@ -85,7 +84,6 @@ public class XMLUtils {
         startXmlDocument(writer);
 
         writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
-        writer.writeNamespace(XMLConstants.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
         writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);

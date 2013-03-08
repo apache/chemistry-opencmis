@@ -20,20 +20,20 @@
  */
 package org.apache.chemistry.opencmis.fileshare;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -207,15 +207,21 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
         return result.toString();
     }
 
-    @SuppressWarnings("unchecked")
     private static TypeDefinition loadType(String filename) {
         TypeDefinition result = null;
 
         try {
-            Unmarshaller u = JaxBHelper.createUnmarshaller();
-            JAXBElement<CmisTypeDefinitionType> type = (JAXBElement<CmisTypeDefinitionType>) u.unmarshal(new File(
-                    filename));
-            result = Converter.convert(type.getValue());
+            InputStream stream = new BufferedInputStream(new FileInputStream(filename));
+
+            XMLStreamReader parser = XMLUtils.createParser(stream);
+            if (!XMLUtils.findNextStartElemenet(parser)) {
+                return null;
+            }
+
+            result = XMLConverter.convertTypeDefinition(parser);
+
+            parser.close();
+            stream.close();
         } catch (Exception e) {
             LOG.info("Could not load type: '" + filename + "'", e);
         }

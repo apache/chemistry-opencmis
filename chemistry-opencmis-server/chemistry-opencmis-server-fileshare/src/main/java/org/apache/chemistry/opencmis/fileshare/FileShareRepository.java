@@ -41,8 +41,8 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -76,6 +76,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdate
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -94,6 +95,9 @@ import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -1938,18 +1942,25 @@ public class FileShareRepository {
         }
 
         // create object
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(Converter.convert(properties));
+        ObjectDataImpl object = new ObjectDataImpl();
+        object.setProperties(properties);
 
-        // write it
+        OutputStream stream = null;
         try {
-            JAXBElement<CmisObjectType> objElement = JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(object);
-
-            Marshaller m = JaxBHelper.createMarshaller();
-            m.setProperty("jaxb.formatted.output", true);
-            m.marshal(objElement, propFile);
+            stream = new BufferedOutputStream(new FileOutputStream(propFile));
+            XMLStreamWriter writer = XMLUtils.createWriter(stream);
+            XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, XMLConstants.NAMESPACE_CMIS, object);
+            writer.close();
         } catch (Exception e) {
             throw new CmisStorageException("Couldn't store properties!", e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e2) {
+                    // ignore
+                }
+            }
         }
     }
 

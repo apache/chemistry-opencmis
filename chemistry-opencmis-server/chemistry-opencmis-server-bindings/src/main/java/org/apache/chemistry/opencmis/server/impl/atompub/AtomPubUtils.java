@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -36,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -153,7 +153,8 @@ public final class AtomPubUtils {
      */
     public static void writeObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
             List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
-            String relativePathSegment, UrlBuilder baseUrl, boolean isRoot) throws XMLStreamException, JAXBException {
+            String relativePathSegment, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion)
+            throws XMLStreamException {
         if (object == null) {
             throw new CmisRuntimeException("Object not set!");
         }
@@ -178,7 +179,8 @@ public final class AtomPubUtils {
             contentSrc = contentSrcBuilder.toString();
         }
 
-        entry.writeObject(object, info, contentSrc, info.getContentType(), pathSegment, relativePathSegment);
+        entry.writeObject(object, info, contentSrc, info.getContentType(), pathSegment, relativePathSegment,
+                cmisVersion);
 
         // write links
         entry.writeServiceLink(baseUrl.toString(), repositoryId);
@@ -265,7 +267,7 @@ public final class AtomPubUtils {
 
         // write children
         if ((children != null) && (children.size() > 0)) {
-            writeObjectChildren(service, entry, info, children, repositoryId, baseUrl);
+            writeObjectChildren(service, entry, info, children, repositoryId, baseUrl, cmisVersion);
         }
 
         // we are done
@@ -280,7 +282,8 @@ public final class AtomPubUtils {
      */
     public static void writeContentChangesObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
             List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
-            String relativePathSegment, UrlBuilder baseUrl, boolean isRoot) throws XMLStreamException, JAXBException {
+            String relativePathSegment, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion)
+            throws XMLStreamException {
         if (object == null) {
             throw new CmisRuntimeException("Object not set!");
         }
@@ -294,7 +297,7 @@ public final class AtomPubUtils {
 
         if (info != null) {
             writeObjectEntry(service, entry, object, children, repositoryId, pathSegment, relativePathSegment, baseUrl,
-                    isRoot);
+                    isRoot, cmisVersion);
             return;
         }
 
@@ -302,7 +305,7 @@ public final class AtomPubUtils {
         entry.startEntry(isRoot);
 
         // write object
-        entry.writeDeletedObject(object);
+        entry.writeDeletedObject(object, cmisVersion);
 
         // write links
         entry.writeServiceLink(baseUrl.toString(), repositoryId);
@@ -315,8 +318,8 @@ public final class AtomPubUtils {
      * Writes an objects entry children feed.
      */
     public static void writeObjectChildren(CmisService service, AtomEntry entry, ObjectInfo folderInfo,
-            List<ObjectInFolderContainer> children, String repositoryId, UrlBuilder baseUrl) throws XMLStreamException,
-            JAXBException {
+            List<ObjectInFolderContainer> children, String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion)
+            throws XMLStreamException {
 
         // start
         AtomFeed feed = new AtomFeed(entry.getWriter());
@@ -344,7 +347,7 @@ public final class AtomPubUtils {
         for (ObjectInFolderContainer container : children) {
             if ((container != null) && (container.getObject() != null)) {
                 writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(),
-                        repositoryId, container.getObject().getPathSegment(), null, baseUrl, false);
+                        repositoryId, container.getObject().getPathSegment(), null, baseUrl, false, cmisVersion);
             }
         }
 
@@ -357,13 +360,13 @@ public final class AtomPubUtils {
      * Writes the a type entry.
      */
     public static void writeTypeEntry(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
-            String repositoryId, UrlBuilder baseUrl, boolean isRoot) throws XMLStreamException, JAXBException {
+            String repositoryId, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion) throws XMLStreamException {
 
         // start
         entry.startEntry(isRoot);
 
         // write type
-        entry.writeType(type);
+        entry.writeType(type, cmisVersion);
 
         // write links
         entry.writeServiceLink(baseUrl.toString(), repositoryId);
@@ -383,7 +386,7 @@ public final class AtomPubUtils {
 
         // write children
         if ((children != null) && (children.size() > 0)) {
-            writeTypeChildren(entry, type, children, repositoryId, baseUrl);
+            writeTypeChildren(entry, type, children, repositoryId, baseUrl, cmisVersion);
         }
 
         // we are done
@@ -394,7 +397,7 @@ public final class AtomPubUtils {
      * Writes the a type entry children feed.
      */
     private static void writeTypeChildren(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
-            String repositoryId, UrlBuilder baseUrl) throws XMLStreamException, JAXBException {
+            String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws XMLStreamException {
 
         // start
         AtomFeed feed = new AtomFeed(entry.getWriter());
@@ -425,7 +428,7 @@ public final class AtomPubUtils {
         for (TypeDefinitionContainer container : children) {
             if ((container != null) && (container.getTypeDefinition() != null)) {
                 writeTypeEntry(entry, container.getTypeDefinition(), container.getChildren(), repositoryId, baseUrl,
-                        false);
+                        false, cmisVersion);
             }
         }
 

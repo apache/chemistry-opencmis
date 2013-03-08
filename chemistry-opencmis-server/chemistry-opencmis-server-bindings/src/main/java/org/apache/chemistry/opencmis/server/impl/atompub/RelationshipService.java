@@ -116,7 +116,8 @@ public final class RelationshipService {
             if (object == null) {
                 continue;
             }
-            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                    context.getCmisVersion());
         }
 
         // we are done

@@ -21,22 +21,16 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
  * Base class for XML documents.
  */
 public abstract class XMLDocumentBase {
-
-    public static final String PREFIX_ATOM = "atom";
-    public static final String PREFIX_CMIS = "cmis";
-    public static final String PREFIX_RESTATOM = "cmisra";
-    public static final String PREFIX_APP = "app";
-    public static final String PREFIX_XSI = "xsi";
 
     private XMLStreamWriter writer;
     private Map<String, String> namespaces;
@@ -45,11 +39,10 @@ public abstract class XMLDocumentBase {
      * Sets the namespaces for the document.
      */
     public void setNamespaces(Map<String, String> namespaces) throws XMLStreamException {
-        writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
-        writer.setPrefix(PREFIX_APP, Constants.NAMESPACE_APP);
-        writer.setPrefix(PREFIX_XSI, Constants.NAMESPACE_XSI);
+        writer.setPrefix(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.setPrefix(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.setPrefix(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        writer.setPrefix(XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP);
 
         if (namespaces != null) {
             this.namespaces = namespaces;
@@ -82,8 +75,7 @@ public abstract class XMLDocumentBase {
      */
     public void startDocument(OutputStream out, Map<String, String> namespaces) throws XMLStreamException {
         // create a writer
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        writer = factory.createXMLStreamWriter(out, "UTF-8");
+        writer = XMLUtils.createWriter(out);
 
         // start the document
         writer.writeStartDocument("UTF-8", "1.0");

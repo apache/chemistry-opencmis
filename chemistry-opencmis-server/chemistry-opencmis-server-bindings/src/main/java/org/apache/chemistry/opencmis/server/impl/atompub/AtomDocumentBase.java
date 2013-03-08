@@ -29,6 +29,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
  * Atom base class.
@@ -54,50 +56,17 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
     }
 
     /**
-     * Writes a simple tag.
-     */
-    public void writeSimpleTag(String namespace, String name, String value) throws XMLStreamException {
-        if (value == null) {
-            return;
-        }
-
-        XMLStreamWriter xsw = getWriter();
-
-        xsw.writeStartElement(namespace, name);
-        xsw.writeCharacters(value);
-        xsw.writeEndElement();
-    }
-
-    /**
-     * Writes a simple date tag.
-     */
-    public void writeSimpleDate(String namespace, String name, GregorianCalendar value) throws XMLStreamException {
-        if (value == null) {
-            return;
-        }
-
-        writeSimpleTag(namespace, name, DateTimeHelper.formateHttpDateTime(value.getTimeInMillis()));
-    }
-
-    /**
-     * Writes a simple date tag.
-     */
-    public void writeSimpleDate(String namespace, String name, long millis) throws XMLStreamException {
-        writeSimpleTag(namespace, name, DateTimeHelper.formateHttpDateTime(millis));
-    }
-
-    /**
      * Writes an Atom id tag.
      */
     public void writeId(String id) throws XMLStreamException {
-        writeSimpleTag(Constants.NAMESPACE_ATOM, "id", id);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "id", id);
     }
 
     /**
      * Writes an Atom title tag.
      */
     public void writeTitle(String title) throws XMLStreamException {
-        writeSimpleTag(Constants.NAMESPACE_ATOM, "title", title);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "title", title);
     }
 
     /**
@@ -106,8 +75,8 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
     public void writeAuthor(String author) throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
 
-        xsw.writeStartElement(Constants.NAMESPACE_ATOM, "author");
-        writeSimpleTag(Constants.NAMESPACE_ATOM, "name", author);
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "author", XMLConstants.NAMESPACE_ATOM);
+        XMLUtils.write(xsw, XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "name", author);
         xsw.writeEndElement();
     }
 
@@ -115,44 +84,48 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
      * Writes an Atom updated tag.
      */
     public void writeUpdated(GregorianCalendar updated) throws XMLStreamException {
-        writeSimpleDate(Constants.NAMESPACE_APP, "edited", updated);
-        writeSimpleDate(Constants.NAMESPACE_ATOM, "updated", updated);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP, "edited", updated);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "updated", updated);
     }
 
     /**
      * Writes an Atom updated tag.
      */
     public void writeUpdated(long updated) throws XMLStreamException {
-        writeSimpleDate(Constants.NAMESPACE_APP, "edited", updated);
-        writeSimpleDate(Constants.NAMESPACE_ATOM, "updated", updated);
+        String updatedStr = DateTimeHelper.formateHttpDateTime(updated);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP, "edited", updatedStr);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "updated", updatedStr);
     }
 
     /**
      * Writes an Atom published tag.
      */
     public void writePublished(GregorianCalendar published) throws XMLStreamException {
-        writeSimpleDate(Constants.NAMESPACE_ATOM, "published", published);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "published", published);
     }
 
     /**
      * Writes an Atom published tag.
      */
     public void writePublished(long published) throws XMLStreamException {
-        writeSimpleDate(Constants.NAMESPACE_ATOM, "published", published);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "published",
+                DateTimeHelper.formateHttpDateTime(published));
     }
 
     /**
      * Writes a CMIS pathSegment tag.
      */
     public void writePathSegment(String pathSegment) throws XMLStreamException {
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "pathSegment", pathSegment);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "pathSegment",
+                pathSegment);
     }
 
     /**
      * Writes a CMIS relativePathSegment tag.
      */
     public void writeRelativePathSegment(String relativePathSegment) throws XMLStreamException {
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "relativePathSegment", relativePathSegment);
+        XMLUtils.write(getWriter(), XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM,
+                "relativePathSegment", relativePathSegment);
     }
 
     /**
@@ -162,24 +135,21 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
 
-        xsw.writeStartElement(Constants.NAMESPACE_APP, "collection");
+        xsw.writeStartElement(XMLConstants.PREFIX_APP, "collection", XMLConstants.NAMESPACE_APP);
         xsw.writeAttribute("href", href);
 
         if (collectionType != null) {
-            xsw.writeStartElement(Constants.NAMESPACE_RESTATOM, "collectionType");
-            xsw.writeCharacters(collectionType);
-            xsw.writeEndElement();
+            XMLUtils.write(xsw, XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "collectionType",
+                    collectionType);
         }
 
-        xsw.writeStartElement(Constants.NAMESPACE_ATOM, "title");
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "title", XMLConstants.NAMESPACE_ATOM);
         xsw.writeAttribute("type", "text");
         xsw.writeCharacters(text);
         xsw.writeEndElement();
 
         for (String ct : accept) {
-            xsw.writeStartElement(Constants.NAMESPACE_APP, "accept");
-            xsw.writeCharacters(ct);
-            xsw.writeEndElement();
+            XMLUtils.write(xsw, XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP, "accept", ct);
         }
 
         xsw.writeEndElement();
@@ -191,7 +161,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
     public void writeLink(String rel, String href, String type, String id) throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
 
-        xsw.writeStartElement(Constants.NAMESPACE_ATOM, "link");
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "link", XMLConstants.NAMESPACE_ATOM);
 
         xsw.writeAttribute("rel", rel);
         xsw.writeAttribute("href", href);
@@ -199,7 +169,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             xsw.writeAttribute("type", type);
         }
         if (id != null) {
-            xsw.writeAttribute(Constants.NAMESPACE_RESTATOM, "id", id);
+            xsw.writeAttribute(XMLConstants.NAMESPACE_RESTATOM, "id", id);
         }
 
         xsw.writeEndElement();
@@ -229,7 +199,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
 
-        xsw.writeStartElement(Constants.NAMESPACE_ATOM, "link");
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "link", XMLConstants.NAMESPACE_ATOM);
 
         xsw.writeAttribute("rel", Constants.REL_ALTERNATE);
         xsw.writeAttribute("href", href);
@@ -237,7 +207,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             xsw.writeAttribute("type", type);
         }
         if (kind != null) {
-            xsw.writeAttribute(Constants.NAMESPACE_RESTATOM, "renditionKind", kind);
+            xsw.writeAttribute(XMLConstants.NAMESPACE_RESTATOM, "renditionKind", kind);
         }
         if (title != null) {
             xsw.writeAttribute("title", title);

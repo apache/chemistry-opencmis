@@ -377,19 +377,22 @@ public class XMLConverter {
         }
 
         writer.writeStartElement(namespace, TAG_TYPE);
+        if (writer.getNamespaceContext().getNamespaceURI(NAMESPACE_XSI) == null) {
+            writer.writeNamespace(PREFIX_XSI, NAMESPACE_XSI);
+        }
 
         if (source.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_DOCUMENT_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_DOCUMENT_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_FOLDER_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_FOLDER_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_RELATIONSHIP_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_RELATIONSHIP_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_POLICY_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_POLICY_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_ITEM_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_ITEM_TYPE);
         } else if (source.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY) {
-            writer.writeAttribute(NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_SECONDARY_TYPE);
+            writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_SECONDARY_TYPE);
         } else {
             throw new CmisRuntimeException("Type definition has no base type id!");
         }

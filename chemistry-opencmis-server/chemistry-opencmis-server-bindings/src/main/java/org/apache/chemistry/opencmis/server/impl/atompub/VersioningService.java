@@ -89,7 +89,8 @@ public final class VersioningService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
+                context.getCmisVersion());
         entry.endDocument();
     }
 
@@ -143,7 +144,8 @@ public final class VersioningService {
             if (object == null) {
                 continue;
             }
-            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                    context.getCmisVersion());
         }
 
         // we are done

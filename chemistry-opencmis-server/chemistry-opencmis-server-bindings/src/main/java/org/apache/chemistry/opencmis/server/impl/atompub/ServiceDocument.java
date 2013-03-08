@@ -18,16 +18,14 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
  * Service document class.
@@ -39,11 +37,11 @@ public class ServiceDocument extends AtomDocumentBase {
 
     public void startServiceDocument() throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
-        xsw.writeStartElement(Constants.NAMESPACE_APP, "service");
-        writeNamespace(Constants.NAMESPACE_APP);
-        writeNamespace(Constants.NAMESPACE_ATOM);
-        writeNamespace(Constants.NAMESPACE_CMIS);
-        writeNamespace(Constants.NAMESPACE_RESTATOM);
+        xsw.writeStartElement(XMLConstants.PREFIX_APP, "service", XMLConstants.NAMESPACE_APP);
+        writeNamespace(XMLConstants.NAMESPACE_APP);
+        writeNamespace(XMLConstants.NAMESPACE_ATOM);
+        writeNamespace(XMLConstants.NAMESPACE_CMIS);
+        writeNamespace(XMLConstants.NAMESPACE_RESTATOM);
         writeAllCustomNamespace();
     }
 
@@ -52,30 +50,27 @@ public class ServiceDocument extends AtomDocumentBase {
     }
 
     public void startWorkspace(String title) throws XMLStreamException {
-        getWriter().writeStartElement(Constants.NAMESPACE_APP, "workspace");
-        writeSimpleTag(Constants.NAMESPACE_ATOM, "title", title);
+        XMLStreamWriter xsw = getWriter();
+
+        xsw.writeStartElement(XMLConstants.PREFIX_APP, "workspace", XMLConstants.NAMESPACE_APP);
+        XMLUtils.write(xsw, XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "title", title);
     }
 
     public void endWorkspace() throws XMLStreamException {
         getWriter().writeEndElement();
     }
 
-    public void writeRepositoryInfo(RepositoryInfo repInfo) throws JAXBException {
-        CmisRepositoryInfoType repInfoJaxb = convert(repInfo);
-        if (repInfoJaxb == null) {
-            return;
-        }
-
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createRepositoryInfo(repInfoJaxb), getWriter(), true);
+    public void writeRepositoryInfo(RepositoryInfo repInfo, CmisVersion cmisVersion) throws XMLStreamException {
+        XMLConverter.writeRepositoryInfo(getWriter(), cmisVersion, XMLConstants.NAMESPACE_RESTATOM, repInfo);
     }
 
     public void writeUriTemplate(String template, String type, String mediatype) throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
 
-        xsw.writeStartElement(Constants.NAMESPACE_RESTATOM, "uritemplate");
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "template", template);
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "type", type);
-        writeSimpleTag(Constants.NAMESPACE_RESTATOM, "mediatype", mediatype);
+        xsw.writeStartElement(XMLConstants.PREFIX_RESTATOM, "uritemplate", XMLConstants.NAMESPACE_RESTATOM);
+        XMLUtils.write(xsw, XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "template", template);
+        XMLUtils.write(xsw, XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "type", type);
+        XMLUtils.write(xsw, XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM, "mediatype", mediatype);
         xsw.writeEndElement();
     }
 }

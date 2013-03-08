@@ -182,7 +182,7 @@ public final class NavigationService {
                     continue;
                 }
                 writeObjectEntry(service, entry, object.getObject(), null, repositoryId, object.getPathSegment(), null,
-                        baseUrl, false);
+                        baseUrl, false, context.getCmisVersion());
             }
         }
 
@@ -258,7 +258,7 @@ public final class NavigationService {
                 continue;
             }
             writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
-                    container.getObject().getPathSegment(), null, baseUrl, false);
+                    container.getObject().getPathSegment(), null, baseUrl, false, context.getCmisVersion());
         }
 
         // we are done
@@ -334,7 +334,7 @@ public final class NavigationService {
                 continue;
             }
             writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
-                    container.getObject().getPathSegment(), null, baseUrl, false);
+                    container.getObject().getPathSegment(), null, baseUrl, false, context.getCmisVersion());
         }
 
         // we are done
@@ -396,7 +396,7 @@ public final class NavigationService {
                 continue;
             }
             writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null,
-                    object.getRelativePathSegment(), baseUrl, false);
+                    object.getRelativePathSegment(), baseUrl, false, context.getCmisVersion());
         }
 
         // we are done
@@ -484,7 +484,8 @@ public final class NavigationService {
                 if (object == null) {
                     continue;
                 }
-                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                        context.getCmisVersion());
             }
         }
 

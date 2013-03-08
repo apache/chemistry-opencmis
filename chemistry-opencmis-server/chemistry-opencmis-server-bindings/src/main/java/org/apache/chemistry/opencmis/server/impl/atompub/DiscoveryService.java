@@ -40,13 +40,15 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisQueryType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -170,6 +172,7 @@ public final class DiscoveryService {
         feed.writePagingLinks(pagingUrl, maxItems, skipCount, results.getNumItems(), results.hasMoreItems(),
                 AtomPubUtils.PAGE_SIZE);
 
+        CmisVersion cmisVersion = context.getCmisVersion();
         if (results.getObjects() != null) {
             AtomEntry entry = new AtomEntry(feed.getWriter());
             int idCounter = 0;
@@ -178,7 +181,7 @@ public final class DiscoveryService {
                     continue;
                 }
                 idCounter++;
-                writeQueryResultEntry(entry, result, "id-" + idCounter, now);
+                writeQueryResultEntry(entry, result, "id-" + idCounter, now, cmisVersion);
             }
         }
 
@@ -187,10 +190,9 @@ public final class DiscoveryService {
         feed.endDocument();
     }
 
-    private static void writeQueryResultEntry(AtomEntry entry, ObjectData result, String id, GregorianCalendar now)
-            throws Exception {
-        CmisObjectType resultJaxb = convert(result);
-        if (resultJaxb == null) {
+    private static void writeQueryResultEntry(AtomEntry entry, ObjectData result, String id, GregorianCalendar now,
+            CmisVersion cmisVersion) throws Exception {
+        if (result == null) {
             return;
         }
 
@@ -205,7 +207,8 @@ public final class DiscoveryService {
         entry.writeUpdated(now);
 
         // write query result object
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(resultJaxb), entry.getWriter(), true);
+        XMLConverter.writeObject(entry.getWriter(), cmisVersion, XMLConstants.TAG_OBJECT,
+                XMLConstants.NAMESPACE_RESTATOM, result);
 
         // we are done
         entry.endEntry();
@@ -269,7 +272,8 @@ public final class DiscoveryService {
                 if (object == null) {
                     continue;
                 }
-                writeContentChangesObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false);
+                writeContentChangesObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                        context.getCmisVersion());
             }
         }
 

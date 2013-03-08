@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -104,6 +105,7 @@ public final class RepositoryService {
         serviceDoc.startServiceDocument();
 
         if (infoDataList != null) {
+            CmisVersion cmisVersion = context.getCmisVersion();
             for (RepositoryInfo infoData : infoDataList) {
                 if (infoData == null) {
                     continue;
@@ -178,7 +180,7 @@ public final class RepositoryService {
                 }
 
                 // add repository info
-                serviceDoc.writeRepositoryInfo(infoData);
+                serviceDoc.writeRepositoryInfo(infoData, cmisVersion);
 
                 // add links
 
@@ -313,7 +315,7 @@ public final class RepositoryService {
         if ((typeList != null) && (typeList.getList() != null)) {
             AtomEntry entry = new AtomEntry(feed.getWriter());
             for (TypeDefinition type : typeList.getList()) {
-                writeTypeEntry(entry, type, null, repositoryId, baseUrl, false);
+                writeTypeEntry(entry, type, null, repositoryId, baseUrl, false, context.getCmisVersion());
             }
         }
 
@@ -387,7 +389,7 @@ public final class RepositoryService {
             for (TypeDefinitionContainer container : typeTree) {
                 if ((container != null) && (container.getTypeDefinition() != null)) {
                     writeTypeEntry(entry, container.getTypeDefinition(), container.getChildren(), repositoryId,
-                            baseUrl, false);
+                            baseUrl, false, context.getCmisVersion());
                 }
             }
         }
@@ -414,7 +416,8 @@ public final class RepositoryService {
 
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeTypeEntry(entry, type, null, repositoryId, compileBaseUrl(request, repositoryId), true);
+        writeTypeEntry(entry, type, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                context.getCmisVersion());
         entry.endDocument();
     }
 }

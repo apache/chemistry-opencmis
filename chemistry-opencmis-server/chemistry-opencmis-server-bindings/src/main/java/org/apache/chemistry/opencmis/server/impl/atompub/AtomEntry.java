@@ -18,18 +18,14 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 
 /**
@@ -56,13 +52,13 @@ public class AtomEntry extends AtomDocumentBase {
      * Opens the entry tag.
      */
     public void startEntry(boolean isRoot) throws XMLStreamException {
-        getWriter().writeStartElement(Constants.NAMESPACE_ATOM, "entry");
+        getWriter().writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
 
         if (isRoot) {
-            writeNamespace(Constants.NAMESPACE_ATOM);
-            writeNamespace(Constants.NAMESPACE_CMIS);
-            writeNamespace(Constants.NAMESPACE_RESTATOM);
-            writeNamespace(Constants.NAMESPACE_APP);
+            writeNamespace(XMLConstants.NAMESPACE_ATOM);
+            writeNamespace(XMLConstants.NAMESPACE_CMIS);
+            writeNamespace(XMLConstants.NAMESPACE_RESTATOM);
+            writeNamespace(XMLConstants.NAMESPACE_APP);
             writeAllCustomNamespace();
         }
     }
@@ -78,9 +74,8 @@ public class AtomEntry extends AtomDocumentBase {
      * Writes an object.
      */
     public void writeObject(ObjectData object, ObjectInfo info, String contentSrc, String contentType,
-            String pathSegment, String relativePathSegment) throws XMLStreamException, JAXBException {
-        CmisObjectType objectJaxb = convert(object);
-        if (objectJaxb == null) {
+            String pathSegment, String relativePathSegment, CmisVersion cmisVersion) throws XMLStreamException {
+        if (object == null) {
             return;
         }
 
@@ -92,7 +87,8 @@ public class AtomEntry extends AtomDocumentBase {
 
         writeContent(contentSrc, contentType);
 
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(objectJaxb), getWriter(), true);
+        XMLConverter.writeObject(getWriter(), cmisVersion, XMLConstants.TAG_OBJECT, XMLConstants.NAMESPACE_RESTATOM,
+                object);
 
         writePathSegment(pathSegment);
         writeRelativePathSegment(relativePathSegment);
@@ -101,9 +97,8 @@ public class AtomEntry extends AtomDocumentBase {
     /**
      * Writes a delete object.
      */
-    public void writeDeletedObject(ObjectData object) throws XMLStreamException, JAXBException {
-        CmisObjectType objectJaxb = convert(object);
-        if (objectJaxb == null) {
+    public void writeDeletedObject(ObjectData object, CmisVersion cmisVersion) throws XMLStreamException {
+        if (object == null) {
             return;
         }
 
@@ -115,17 +110,15 @@ public class AtomEntry extends AtomDocumentBase {
         writeTitle(object.getId());
         writeUpdated(now);
 
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createObject(objectJaxb), getWriter(), true);
+        XMLConverter.writeObject(getWriter(), cmisVersion, XMLConstants.TAG_OBJECT, XMLConstants.NAMESPACE_RESTATOM,
+                object);
     }
 
     /**
      * Writes a type.
-     * 
-     * @throws JAXBException
      */
-    public void writeType(TypeDefinition type) throws XMLStreamException, JAXBException {
-        CmisTypeDefinitionType typeJaxb = convert(type);
-        if (typeJaxb == null) {
+    public void writeType(TypeDefinition type, CmisVersion cmisVersion) throws XMLStreamException {
+        if (type == null) {
             return;
         }
 
@@ -136,7 +129,7 @@ public class AtomEntry extends AtomDocumentBase {
         writeTitle(type.getDisplayName());
         writeUpdated(now);
 
-        JaxBHelper.marshal(JaxBHelper.CMIS_EXTRA_OBJECT_FACTORY.createTypeDefinition(typeJaxb), getWriter(), true);
+        XMLConverter.writeTypeDefinition(getWriter(), cmisVersion, XMLConstants.NAMESPACE_RESTATOM, type);
     }
 
     /**
@@ -148,7 +141,7 @@ public class AtomEntry extends AtomDocumentBase {
         }
 
         XMLStreamWriter xsw = getWriter();
-        xsw.writeStartElement(Constants.NAMESPACE_ATOM, "content");
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "content", XMLConstants.NAMESPACE_ATOM);
 
         xsw.writeAttribute("src", src);
         if (type != null) {

@@ -25,14 +25,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 
 /**
@@ -40,12 +34,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
  */
 public final class JaxBHelper {
 
-    private static final QName CMIS_OBJECT = new QName(Constants.NAMESPACE_RESTATOM, "object");
-    private static final QName CMIS_TYPE_DEFINITION = new QName(Constants.NAMESPACE_RESTATOM, "type");
-    private static final QName CMIS_REPOSITORY_INFO = new QName(Constants.NAMESPACE_RESTATOM, "repositoryInfo");
-
     public static final ObjectFactory CMIS_OBJECT_FACTORY = new ObjectFactory();
-    public static final CMISExtraObjectFactory CMIS_EXTRA_OBJECT_FACTORY = new CMISExtraObjectFactory();
     public static final JAXBContext CONTEXT;
     static {
         JAXBContext jc = null;
@@ -53,31 +42,13 @@ public final class JaxBHelper {
         try {
             Thread.currentThread().setContextClassLoader(JaxBHelper.class.getClassLoader());
 
-            jc = JAXBContext.newInstance(ObjectFactory.class, CMISExtraObjectFactory.class);
+            jc = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
             e.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
         CONTEXT = jc;
-    }
-
-    @XmlRegistry
-    public static class CMISExtraObjectFactory {
-        @XmlElementDecl(namespace = Constants.NAMESPACE_RESTATOM, name = "object")
-        public JAXBElement<CmisObjectType> createObject(CmisObjectType value) {
-            return new JAXBElement<CmisObjectType>(CMIS_OBJECT, CmisObjectType.class, value);
-        }
-
-        @XmlElementDecl(namespace = Constants.NAMESPACE_RESTATOM, name = "type")
-        public JAXBElement<CmisTypeDefinitionType> createTypeDefinition(CmisTypeDefinitionType value) {
-            return new JAXBElement<CmisTypeDefinitionType>(CMIS_TYPE_DEFINITION, CmisTypeDefinitionType.class, value);
-        }
-
-        @XmlElementDecl(namespace = Constants.NAMESPACE_RESTATOM, name = "repositoryInfo")
-        public JAXBElement<CmisRepositoryInfoType> createRepositoryInfo(CmisRepositoryInfoType value) {
-            return new JAXBElement<CmisRepositoryInfoType>(CMIS_REPOSITORY_INFO, CmisRepositoryInfoType.class, value);
-        }
     }
 
     /**

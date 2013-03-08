@@ -94,7 +94,8 @@ public final class MultiFilingService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
+                context.getCmisVersion());
         entry.endDocument();
     }
 
@@ -134,7 +135,8 @@ public final class MultiFilingService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true);
+        writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
+                context.getCmisVersion());
         entry.endDocument();
     }
 }

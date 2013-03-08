@@ -34,6 +34,7 @@ public class XMLConstants {
     // prefixes
     public static final String PREFIX_XSI = "xsi";
     public static final String PREFIX_ATOM = "atom";
+    public static final String PREFIX_APP = "app";
     public static final String PREFIX_CMIS = "cmis";
     public static final String PREFIX_RESTATOM = "cmisra";
     public static final String PREFIX_APACHE_CHEMISTY = "chemistry";

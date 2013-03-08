@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -95,7 +96,8 @@ public final class PolicyService {
             if (policy == null) {
                 continue;
             }
-            writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl);
+            writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl,
+                    context.getCmisVersion());
         }
 
         // we are done
@@ -140,7 +142,7 @@ public final class PolicyService {
         // write XML
         AtomEntry entry = new AtomEntry();
         entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl);
+        writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl, context.getCmisVersion());
         entry.endDocument();
     }
 
@@ -164,7 +166,7 @@ public final class PolicyService {
      * Writes an entry that is attached to an object.
      */
     private static void writePolicyEntry(CmisService service, AtomEntry entry, String objectId, ObjectData policy,
-            String repositoryId, UrlBuilder baseUrl) throws Exception {
+            String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws Exception {
         CmisObjectType resultJaxb = convert(policy);
         if (resultJaxb == null) {
             return;
@@ -179,7 +181,7 @@ public final class PolicyService {
         entry.startEntry(false);
 
         // write the object
-        entry.writeObject(policy, info, null, null, null, null);
+        entry.writeObject(policy, info, null, null, null, null, cmisVersion);
 
         // write links
         UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
