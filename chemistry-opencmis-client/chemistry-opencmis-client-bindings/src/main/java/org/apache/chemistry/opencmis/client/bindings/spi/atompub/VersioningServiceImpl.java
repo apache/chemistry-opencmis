@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertPolicyIds;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 
@@ -77,7 +75,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         UrlBuilder url = new UrlBuilder(link);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),
+                getCmisVersion(repositoryId));
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -156,16 +155,9 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         url.addParameter(Constants.PARAM_MAJOR, major);
         url.addParameter(Constants.PARAM_CHECK_IN, "true");
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        if (object.getProperties() == null) {
-            object.setProperties(new CmisPropertiesType());
-        }
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, contentStream);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId), contentStream);
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -198,7 +190,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
                 } else if (element.getObject() instanceof CmisObjectType) {
                     // extract current ACL
-                    object = (CmisObjectType) element.getObject();
+                    CmisObjectType object = (CmisObjectType) element.getObject();
                     originalAces = convert(object.getAcl(), object.isExactACL());
                 }
             }

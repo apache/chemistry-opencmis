@@ -124,8 +124,8 @@ public abstract class AbstractXMLConverterTest {
     protected void writeRootTag(XMLStreamWriter writer) throws XMLStreamException {
         writer.setPrefix(TEST_PREFIX, TEST_NAMESPACE);
         writer.writeStartElement(TEST_NAMESPACE, TEST_PREFIX);
-        writer.writeNamespace(XMLUtils.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
-        writer.writeNamespace(XMLUtils.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(XMLConstants.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
+        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(TEST_PREFIX, TEST_NAMESPACE);
     }
 
@@ -345,7 +345,7 @@ public abstract class AbstractXMLConverterTest {
             assertEquals(name + ".length", expectedMap.size(), actualMap.size());
 
             for (Map.Entry<?, ?> entry : expectedMap.entrySet()) {
-                assertTrue(actualMap.containsKey(entry.getKey()));
+                assertTrue(name + ".contains[" + entry.getKey() + "]", actualMap.containsKey(entry.getKey()));
                 assertDataObjectsEquals(name + "[" + entry.getKey() + "]", entry.getValue(),
                         actualMap.get(entry.getKey()), ignoreMethods);
             }

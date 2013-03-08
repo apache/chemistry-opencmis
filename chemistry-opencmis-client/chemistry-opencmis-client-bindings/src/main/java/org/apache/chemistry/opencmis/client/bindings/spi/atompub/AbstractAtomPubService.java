@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
+import org.apache.chemistry.opencmis.client.bindings.impl.RepositoryInfoCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
@@ -49,9 +50,11 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -77,10 +80,12 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
@@ -132,6 +137,24 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         return null;
+    }
+
+    /**
+     * Return the CMIS version of the given repository.
+     */
+    protected CmisVersion getCmisVersion(String repositoryId) {
+        RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
+        RepositoryInfo info = cache.get(repositoryId);
+
+        if (info == null) {
+            List<RepositoryInfo> infoList = getRepositoriesInternal(repositoryId);
+            if (!infoList.isEmpty()) {
+                info = infoList.get(0);
+                cache.put(info);
+            }
+        }
+
+        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
     }
 
     // ---- link cache ----
@@ -512,18 +535,35 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
-     * Creates a CMIS object that only contains an id in the property list.
+     * Creates a CMIS object with properties and policy ids.
      */
-    protected CmisObjectType createIdObject(String objectId) {
-        CmisObjectType object = new CmisObjectType();
+    protected ObjectDataImpl createObject(Properties properties, List<String> policies) {
+        ObjectDataImpl object = new ObjectDataImpl();
 
-        CmisPropertiesType properties = new CmisPropertiesType();
+        if (properties == null) {
+            properties = new PropertiesImpl();
+        }
         object.setProperties(properties);
 
-        CmisPropertyId idProperty = new CmisPropertyId();
-        properties.getProperty().add(idProperty);
-        idProperty.setPropertyDefinitionId(PropertyIds.OBJECT_ID);
-        idProperty.getValue().add(objectId);
+        if (policies != null && !policies.isEmpty()) {
+            PolicyIdListImpl policyIdList = new PolicyIdListImpl();
+            policyIdList.setPolicyIds(policies);
+            object.setPolicyIds(policyIdList);
+        }
+
+        return object;
+    }
+
+    /**
+     * Creates a CMIS object that only contains an id in the property list.
+     */
+    protected ObjectData createIdObject(String objectId) {
+        ObjectDataImpl object = new ObjectDataImpl();
+
+        PropertiesImpl properties = new PropertiesImpl();
+        object.setProperties(properties);
+
+        properties.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, objectId));
 
         return object;
     }

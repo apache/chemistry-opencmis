@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertPolicyIds;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -110,12 +109,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
         url.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, contentStream);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId), contentStream);
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -152,12 +148,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -202,12 +195,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -248,12 +238,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -295,12 +282,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-        object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -337,11 +321,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
         }
 
-        // set up object and writer
-        CmisObjectType object = new CmisObjectType();
-        object.setProperties(convert(properties));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null),
+                getCmisVersion(repositoryId));
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -377,7 +359,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 } else if (element.getObject() instanceof CmisObjectType) {
                     // extract new change token
                     if (changeToken != null) {
-                        object = (CmisObjectType) element.getObject();
+                        CmisObjectType object = (CmisObjectType) element.getObject();
 
                         if (object.getProperties() != null) {
                             for (CmisProperty property : object.getProperties().getProperty()) {
@@ -622,7 +604,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         url.addParameter(Constants.PARAM_SOURCE_FOLDER_ID, sourceFolderId);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),
+                getCmisVersion(repositoryId));
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {

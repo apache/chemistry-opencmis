@@ -25,8 +25,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -304,11 +306,16 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
         for (int i = 0; i < randomInt(4) + 1; i++) {
             String ns = namespaces[randomInt(namespaces.length)];
 
+            Map<String, String> attr = new HashMap<String, String>();
+            for (int j = 0; j < randomInt(3); j++) {
+                attr.put(randomTag(), randomString());
+            }
+
             CmisExtensionElementImpl element;
             if (randomBoolean() || depth < 1) {
-                element = new CmisExtensionElementImpl(ns, randomTag(), null, randomString());
+                element = new CmisExtensionElementImpl(ns, randomTag(), attr, randomString());
             } else {
-                element = new CmisExtensionElementImpl(ns, randomTag(), null, createExtensions(depth - 1));
+                element = new CmisExtensionElementImpl(ns, randomTag(), attr, createExtensions(depth - 1));
             }
 
             result.add(element);

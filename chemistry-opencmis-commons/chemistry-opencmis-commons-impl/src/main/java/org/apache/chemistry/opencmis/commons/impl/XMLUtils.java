@@ -34,18 +34,13 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 
 public class XMLUtils {
 
-    public static final String PREFIX_XSI = "xsi";
-    public static final String PREFIX_ATOM = "atom";
-    public static final String PREFIX_CMIS = "cmis";
-    public static final String PREFIX_RESTATOM = "cmisra";
-    public static final String PREFIX_APACHE_CHEMISTY = "chemistry";
-
     public static final ThreadLocal<XMLInputFactory> THREADLOCAL_XML_INPUT_FACTORY = new ThreadLocal<XMLInputFactory>() {
         @Override
         protected XMLInputFactory initialValue() {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+            factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
             return factory;
         }
     };
@@ -54,7 +49,7 @@ public class XMLUtils {
         @Override
         protected XMLOutputFactory initialValue() {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
+            factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
             return factory;
         }
     };
@@ -74,11 +69,11 @@ public class XMLUtils {
      * Starts a XML document.
      */
     public static void startXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
-        writer.setPrefix(PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
-        writer.setPrefix(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.setPrefix(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-        writer.setPrefix(PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+        writer.setPrefix(XMLConstants.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
+        writer.setPrefix(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.setPrefix(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.setPrefix(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        writer.setPrefix(XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
 
         writer.writeStartDocument();
     }
@@ -90,12 +85,12 @@ public class XMLUtils {
         startXmlDocument(writer);
 
         writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
-        writer.writeNamespace(PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
-        writer.writeNamespace(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.writeNamespace(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        writer.writeNamespace(XMLConstants.PREFIX_XSI, XMLConstants.NAMESPACE_XSI);
+        writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
         if (hasContent) {
-            writer.writeNamespace(PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+            writer.writeNamespace(XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
         }
     }
 
@@ -107,9 +102,9 @@ public class XMLUtils {
         startXmlDocument(writer);
 
         writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "feed");
-        writer.writeNamespace(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.writeNamespace(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
     }
 
     /**
@@ -117,13 +112,13 @@ public class XMLUtils {
      */
     public static void endXmlDocument(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeEndDocument();
-        writer.flush();
+        writer.close();
     }
 
     /**
      * Writes a String tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, String value)
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag, String value)
             throws XMLStreamException {
         if (value == null) {
             return;
@@ -132,7 +127,7 @@ public class XMLUtils {
         if (namespace == null) {
             writer.writeStartElement(tag);
         } else {
-            writer.writeStartElement(namespace, tag);
+            writer.writeStartElement(prefix, tag, namespace);
         }
         writer.writeCharacters(value);
         writer.writeEndElement();
@@ -141,55 +136,55 @@ public class XMLUtils {
     /**
      * Writes an Integer tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, BigInteger value)
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag, BigInteger value)
             throws XMLStreamException {
         if (value == null) {
             return;
         }
 
-        write(writer, namespace, tag, value.toString());
+        write(writer, prefix, namespace, tag, value.toString());
     }
 
     /**
      * Writes a Decimal tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, BigDecimal value)
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag, BigDecimal value)
             throws XMLStreamException {
         if (value == null) {
             return;
         }
 
-        write(writer, namespace, tag, value.toString());
+        write(writer, prefix, namespace, tag, value.toString());
     }
 
     /**
      * Writes a DateTime tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, GregorianCalendar value)
-            throws XMLStreamException {
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag,
+            GregorianCalendar value) throws XMLStreamException {
         if (value == null) {
             return;
         }
 
-        write(writer, namespace, tag, DateTimeHelper.formatXmlDateTime(value));
+        write(writer, prefix, namespace, tag, DateTimeHelper.formatXmlDateTime(value));
     }
 
     /**
      * Writes a Boolean tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, Boolean value)
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag, Boolean value)
             throws XMLStreamException {
         if (value == null) {
             return;
         }
 
-        write(writer, namespace, tag, value ? "true" : "false");
+        write(writer, prefix, namespace, tag, value ? "true" : "false");
     }
 
     /**
      * Writes an Enum tag.
      */
-    public static void write(XMLStreamWriter writer, String namespace, String tag, Enum<?> value)
+    public static void write(XMLStreamWriter writer, String prefix, String namespace, String tag, Enum<?> value)
             throws XMLStreamException {
         if (value == null) {
             return;
@@ -202,7 +197,7 @@ public class XMLUtils {
             throw new XMLStreamException("Cannot get enum value", e);
         }
 
-        write(writer, namespace, tag, enumValue.toString());
+        write(writer, prefix, namespace, tag, enumValue.toString());
     }
 
     // ---------------
