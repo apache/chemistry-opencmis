@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.support;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,7 @@ public class TypeValidator {
         /**
          * Calculate the list of allowed values for this property definition by
          * recursively collecting all choice values from property definition
-         *
+         * 
          * @param propDef
          *            property definition
          * @return list of possible values in complete hierarchy
@@ -233,8 +234,7 @@ public class TypeValidator {
 
             long maxLen = ((PropertyStringDefinition) propDef).getMaxLength() == null ? -1
                     : ((PropertyStringDefinition) propDef).getMaxLength().longValue();
-            long len = property.getFirstValue() == null ? -1
-                    : property.getFirstValue().length();
+            long len = property.getFirstValue() == null ? -1 : property.getFirstValue().length();
 
             // check max length
             if (maxLen >= 0 && len >= 0 && maxLen < len) {
@@ -245,18 +245,13 @@ public class TypeValidator {
     }
 
     public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory) {
-        validateProperties(typeDef, properties, false, checkMandatory, false);
+        validateProperties(typeDef, properties, checkMandatory, false);
     }
 
     public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory, boolean cmis11) {
-
-        validateProperties(typeDef, properties, false, checkMandatory, cmis11);
-    }
-
-    public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean allowUnknowns, boolean checkMandatory, boolean cmis11) {
         List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
 
-        if(properties != null) {
+        if (properties != null) {
             for (PropertyData<?> prop : properties.getProperties().values()) {
                 String propertyId = prop.getId();
                 BaseTypeId baseTypeId = typeDef.getBaseTypeId();
@@ -273,23 +268,75 @@ public class TypeValidator {
                 // Check if all properties are known in the type
                 if (typeContainsProperty(typeDef, propertyId)) {
                     // check all type specific constraints:
-                    PropertyDefinition<T> propDef = getPropertyDefinition(typeDef,
-                            propertyId);
+                    PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);
                     PropertyValidator<T> validator = createPropertyValidator(propDef);
                     validator.validate(propDef, (PropertyData<T>) prop);
-                }
-                else if (!allowUnknowns) {
-                    throw new CmisConstraintException("Unknown property "
-                            + propertyId + " in type " + typeDef.getId());
+                } else {
+                    throw new CmisConstraintException("Unknown property " + propertyId + " in type " + typeDef.getId());
                 }
             }
         }
 
         if (checkMandatory && !propDefsRequired.isEmpty()) {
             throw new CmisConstraintException("The following mandatory properties are missing: " + propDefsRequired);
-        }    
+        }
     }
-    
+
+    public static <T> void validateProperties(List<TypeDefinition> typeDefs, Properties properties,
+            boolean checkMandatory) {
+        if (properties == null)
+            return;
+
+        Map<String, Boolean> checkedProperties = new HashMap<String, Boolean>();
+        for (String propId : properties.getProperties().keySet()) {
+            checkedProperties.put(propId, false);
+        }
+
+        for (TypeDefinition typeDef : typeDefs) {
+
+            List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
+
+            for (PropertyData<?> prop : properties.getProperties().values()) {
+                String propertyId = prop.getId();
+                BaseTypeId baseTypeId = typeDef.getBaseTypeId();
+
+                // check that all mandatory attributes are present
+                if (checkMandatory && propDefsRequired.contains(propertyId)) {
+                    propDefsRequired.remove(propertyId);
+                }
+
+                if (isSystemProperty(baseTypeId, propertyId, true)) {
+                    checkedProperties.put(prop.getId(), true); // ignore system properties for validation
+                } else if (typeContainsProperty(typeDef, propertyId)) {
+                    // Check if all properties are known in the type
+                    // marked the property as found in a type of primary or
+                    // secondary types
+                    checkedProperties.put(prop.getId(), true);
+
+                    // check all type specific constraints:
+                    PropertyDefinition<T> propDef = getPropertyDefinition(typeDef, propertyId);
+                    PropertyValidator<T> validator = createPropertyValidator(propDef);
+                    validator.validate(propDef, (PropertyData<T>) prop);
+                }
+            }
+
+            if (checkMandatory && !propDefsRequired.isEmpty()) {
+                throw new CmisConstraintException("The following mandatory properties are missing: " + propDefsRequired);
+            }
+        }
+
+        // check if all properties are known in a type definition
+        List<String> unknownProperties = new ArrayList<String>();
+        for (String propId : properties.getProperties().keySet()) {
+            if (!checkedProperties.get(propId))
+                unknownProperties.add(propId);
+        }
+        if (!unknownProperties.isEmpty()) {
+            throw new CmisConstraintException(
+                    "The following properties are not known in any of the types of this object: " + unknownProperties);
+        }
+    }
+
     public static void validateVersionStateForCreate(DocumentTypeDefinition typeDef, VersioningState verState) {
         if (null == verState) {
             return;
@@ -303,44 +350,43 @@ public class TypeValidator {
 
     public static void validateAllowedChildObjectTypes(TypeDefinition childTypeDef, List<String> allowedChildTypes) {
 
-     	validateAllowedTypes(childTypeDef, allowedChildTypes, "in this folder");
+        validateAllowedTypes(childTypeDef, allowedChildTypes, "in this folder");
     }
-    
-    public static void validateAllowedRelationshipTypes (RelationshipTypeDefinition relationshipTypeDef, TypeDefinition sourceTypeDef,
- 		   TypeDefinition targetTypeDef)
-    {
-    	List<String> allowedSourceTypes = relationshipTypeDef.getAllowedSourceTypeIds();	
-    	validateAllowedTypes(sourceTypeDef, allowedSourceTypes, " as source type in this relationship");
-      	List<String> allowedTargetTypes = relationshipTypeDef.getAllowedTargetTypeIds();
-        validateAllowedTypes(targetTypeDef, allowedTargetTypes, " as target type in this relationship");	
-    }
-    
-    protected static void validateAllowedTypes(TypeDefinition typeDef, List<String> allowedTypes, String description)
-    {
-    	 if (null == allowedTypes || allowedTypes.size() == 0)
-             return; // all types are allowed
 
-         for (String allowedType : allowedTypes) {
-             if (allowedType.equals(typeDef.getId()))
-                 return;
-         }
-         throw new CmisConstraintException("The requested type " + typeDef.getId() + " is not allowed " + description);
-     }
-    	 
-    public static void  validateAcl(TypeDefinition typeDef, Acl addACEs, Acl removeACEs)
-    {
-    	if (!typeDef.isControllableAcl() && (addACEs != null || removeACEs != null))
-    	{
-    		throw new CmisConstraintException("acl set for type: " + typeDef.getDisplayName() + " that is not controllableACL");
-    	}
+    public static void validateAllowedRelationshipTypes(RelationshipTypeDefinition relationshipTypeDef,
+            TypeDefinition sourceTypeDef, TypeDefinition targetTypeDef) {
+        List<String> allowedSourceTypes = relationshipTypeDef.getAllowedSourceTypeIds();
+        validateAllowedTypes(sourceTypeDef, allowedSourceTypes, " as source type in this relationship");
+        List<String> allowedTargetTypes = relationshipTypeDef.getAllowedTargetTypeIds();
+        validateAllowedTypes(targetTypeDef, allowedTargetTypes, " as target type in this relationship");
     }
-    
+
+    protected static void validateAllowedTypes(TypeDefinition typeDef, List<String> allowedTypes, String description) {
+        if (null == allowedTypes || allowedTypes.size() == 0)
+            return; // all types are allowed
+
+        for (String allowedType : allowedTypes) {
+            if (allowedType.equals(typeDef.getId()))
+                return;
+        }
+        throw new CmisConstraintException("The requested type " + typeDef.getId() + " is not allowed " + description);
+    }
+
+    public static void validateAcl(TypeDefinition typeDef, Acl addACEs, Acl removeACEs) {
+        if (!typeDef.isControllableAcl() && (addACEs != null || removeACEs != null)) {
+            throw new CmisConstraintException("acl set for type: " + typeDef.getDisplayName()
+                    + " that is not controllableACL");
+        }
+    }
+
     public static void validateContentAllowed(DocumentTypeDefinition typeDef, boolean hasContent) {
         ContentStreamAllowed contentAllowed = typeDef.getContentStreamAllowed();
         if (ContentStreamAllowed.REQUIRED == contentAllowed && !hasContent) {
-            throw new CmisConstraintException("Type " + typeDef.getId() + " requires content but document has no content.");
+            throw new CmisConstraintException("Type " + typeDef.getId()
+                    + " requires content but document has no content.");
         } else if (ContentStreamAllowed.NOTALLOWED == contentAllowed && hasContent) {
-            throw new CmisConstraintException("Type " + typeDef.getId() + " does not allow content but document has content.");
+            throw new CmisConstraintException("Type " + typeDef.getId()
+                    + " does not allow content but document has content.");
         }
     }
 

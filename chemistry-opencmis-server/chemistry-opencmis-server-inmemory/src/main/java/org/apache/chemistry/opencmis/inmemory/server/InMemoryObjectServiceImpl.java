@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1242,30 +1243,28 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             typeDef = getTypeDefinition(repositoryId, properties);
             
         // check properties for validity
-        TypeValidator.validateProperties(typeDef, properties, cmis11, checkMandatory, cmis11);
-        
-        if (!cmis11)
+        if (!cmis11) {
+            TypeValidator.validateProperties(typeDef, properties, checkMandatory, cmis11);
             return;
+        }
         
         // CMIS 1.1 secondary types
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
         
         @SuppressWarnings("unchecked")
         List<String> secondaryTypeIds = (List<String>) (pd == null ? null : pd.getValues());
+        // if no secondary types are passed use the existing ones:
         if (null != so && (null == secondaryTypeIds || secondaryTypeIds.size() == 0)) {
             secondaryTypeIds = so.getSecondaryTypeIds();
         }
         
         if (null != secondaryTypeIds && secondaryTypeIds.size() != 0) {
-            // check if they are all valid
-            for (String typeId : secondaryTypeIds) {
-                TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
-                typeDef =  typeDefC == null ? null : typeDefC.getTypeDefinition();
-                if (null == typeDef) {
-                    throw new CmisInvalidArgumentException("Cannot set secondary type, a type with id " + typeId + " is unknown");                    
-                }
-                TypeValidator.validateProperties(typeDef, properties, true, checkMandatory, true);
-            }
+            List<String> allTypeIds = new ArrayList<String>(secondaryTypeIds);
+            allTypeIds.add(typeDef.getId());
+            List<TypeDefinition> typeDefs = getTypeDefinition(repositoryId, allTypeIds);
+            TypeValidator.validateProperties(typeDefs, properties, checkMandatory);
+        } else {
+            TypeValidator.validateProperties(typeDef, properties, checkMandatory, true);
         }
     }
     
