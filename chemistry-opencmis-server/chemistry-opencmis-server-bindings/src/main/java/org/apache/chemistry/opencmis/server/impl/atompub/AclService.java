@@ -23,17 +23,24 @@ import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanPa
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
+import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -67,8 +74,7 @@ public class AclService {
         response.setContentType(Constants.MEDIATYPE_ACL);
 
         // write XML
-        AclDocument aclDocument = new AclDocument();
-        aclDocument.writeAcl(acl, response.getOutputStream());
+        writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
     }
 
     /**
@@ -106,7 +112,13 @@ public class AclService {
         response.setContentType(Constants.MEDIATYPE_ACL);
 
         // write XML
-        AclDocument aclDocument = new AclDocument();
-        aclDocument.writeAcl(acl, response.getOutputStream());
+        writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
+    }
+
+    private static void writeAclXML(Acl acl, CmisVersion cmisVersion, OutputStream out) throws XMLStreamException {
+        XMLStreamWriter writer = XMLUtils.createWriter(out);
+        XMLUtils.startXmlDocument(writer);
+        XMLConverter.writeAcl(writer, cmisVersion, true, acl);
+        XMLUtils.endXmlDocument(writer);
     }
 }

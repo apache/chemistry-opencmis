@@ -377,9 +377,7 @@ public class XMLConverter {
         }
 
         writer.writeStartElement(namespace, TAG_TYPE);
-        if (writer.getNamespaceContext().getNamespaceURI(NAMESPACE_XSI) == null) {
-            writer.writeNamespace(PREFIX_XSI, NAMESPACE_XSI);
-        }
+        writer.writeNamespace(PREFIX_XSI, NAMESPACE_XSI);
 
         if (source.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
             writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_DOCUMENT_TYPE);
@@ -675,23 +673,7 @@ public class XMLConverter {
             writer.writeEndElement();
         }
         if (source.getAllowableActions() != null) {
-            AllowableActions allowableActions = source.getAllowableActions();
-
-            writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ALLOWABLE_ACTIONS, NAMESPACE_CMIS);
-
-            if (allowableActions.getAllowableActions() != null) {
-                for (Action action : Action.values()) {
-                    if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
-                        continue;
-                    }
-                    if (allowableActions.getAllowableActions().contains(action)) {
-                        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
-                    }
-                }
-            }
-
-            writeExtensions(writer, allowableActions);
-            writer.writeEndElement();
+            writeAllowableActions(writer, cmisVersion, false, source.getAllowableActions());
         }
         if (source.getRelationships() != null) {
             for (ObjectData rel : source.getRelationships()) {
@@ -712,40 +694,7 @@ public class XMLConverter {
             writer.writeEndElement();
         }
         if (source.getAcl() != null) {
-            Acl acl = source.getAcl();
-
-            writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ACL, NAMESPACE_CMIS);
-
-            if (acl.getAces() != null) {
-                for (Ace ace : acl.getAces()) {
-                    if (ace != null) {
-                        writer.writeStartElement(PREFIX_CMIS, TAG_ACL_PERMISSISONS, NAMESPACE_CMIS);
-
-                        if (ace.getPrincipal() != null) {
-                            Principal principal = ace.getPrincipal();
-
-                            writer.writeStartElement(PREFIX_CMIS, TAG_ACE_PRINCIPAL, NAMESPACE_CMIS);
-
-                            XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_PRINCIPAL_ID, principal.getId());
-
-                            writeExtensions(writer, principal);
-                            writer.writeEndElement();
-                        }
-                        if (ace.getPermissions() != null) {
-                            for (String perm : ace.getPermissions()) {
-                                XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_PERMISSIONS, perm);
-                            }
-                        }
-                        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_IS_DIRECT, ace.isDirect());
-
-                        writeExtensions(writer, ace);
-                        writer.writeEndElement();
-                    }
-                }
-            }
-
-            writeExtensions(writer, acl);
-            writer.writeEndElement();
+            writeAcl(writer, cmisVersion, false, source.getAcl());
         }
         XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_OBJECT_EXACT_ACL, source.isExactAcl());
         if (source.getPolicyIds() != null) {
@@ -867,6 +816,79 @@ public class XMLConverter {
             if (values != null) {
                 for (BigDecimal value : values) {
                     XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_PROPERTY_VALUE, value);
+                }
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeAllowableActions(XMLStreamWriter writer, CmisVersion cmisVersion, boolean root,
+            AllowableActions source) throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        if (root) {
+            writer.writeStartElement(NAMESPACE_CMIS, "allowableActions");
+            writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
+        } else {
+            writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ALLOWABLE_ACTIONS, NAMESPACE_CMIS);
+        }
+
+        if (source.getAllowableActions() != null) {
+            for (Action action : Action.values()) {
+                if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
+                    continue;
+                }
+                if (source.getAllowableActions().contains(action)) {
+                    XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
+                }
+            }
+        }
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
+    public static void writeAcl(XMLStreamWriter writer, CmisVersion cmisVersion, boolean root, Acl source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        if (root) {
+            writer.writeStartElement(NAMESPACE_CMIS, "acl");
+            writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
+        } else {
+            writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ACL, NAMESPACE_CMIS);
+        }
+
+        if (source.getAces() != null) {
+            for (Ace ace : source.getAces()) {
+                if (ace != null) {
+                    writer.writeStartElement(PREFIX_CMIS, TAG_ACL_PERMISSISONS, NAMESPACE_CMIS);
+
+                    if (ace.getPrincipal() != null) {
+                        Principal principal = ace.getPrincipal();
+
+                        writer.writeStartElement(PREFIX_CMIS, TAG_ACE_PRINCIPAL, NAMESPACE_CMIS);
+
+                        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_PRINCIPAL_ID, principal.getId());
+
+                        writeExtensions(writer, principal);
+                        writer.writeEndElement();
+                    }
+                    if (ace.getPermissions() != null) {
+                        for (String perm : ace.getPermissions()) {
+                            XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_PERMISSIONS, perm);
+                        }
+                    }
+                    XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACE_IS_DIRECT, ace.isDirect());
+
+                    writeExtensions(writer, ace);
+                    writer.writeEndElement();
                 }
             }
         }

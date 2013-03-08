@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -55,6 +56,8 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -393,8 +396,10 @@ public final class ObjectService {
         response.setContentType(Constants.MEDIATYPE_ALLOWABLEACTION);
 
         // write XML
-        AllowableActionsDocument allowableActionsDocument = new AllowableActionsDocument();
-        allowableActionsDocument.writeAllowableActions(allowableActions, response.getOutputStream());
+        XMLStreamWriter writer = XMLUtils.createWriter(response.getOutputStream());
+        XMLUtils.startXmlDocument(writer);
+        XMLConverter.writeAllowableActions(writer, context.getCmisVersion(), true, allowableActions);
+        XMLUtils.endXmlDocument(writer);
     }
 
     /**

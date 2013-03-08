@@ -52,7 +52,7 @@ import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
  */
 public class AtomEntryWriter {
 
-    private static final int BUFFER_SIZE = 64 * 1024;
+    private static final int BUFFER_SIZE = 8 * 1024;
 
     private final ObjectData object;
     private final CmisVersion cmisVersion;
@@ -159,12 +159,18 @@ public class AtomEntryWriter {
     private void writeContent(XMLStreamWriter writer) throws Exception {
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
-        byte[] buffer = new byte[BUFFER_SIZE * 3 / 4];
+        char[] buffer = new char[BUFFER_SIZE];
+        int pos = 0;
         int b;
-        while ((b = b64stream.read(buffer)) > -1) {
-            if (b > 0) {
-                writer.writeCharacters(new String(buffer, 0, b, "US-ASCII"));
+        while ((b = b64stream.read()) > -1) {
+            buffer[pos++] = (char) (b & 0xFF);
+            if (pos == buffer.length) {
+                writer.writeCharacters(buffer, 0, buffer.length);
+                pos = 0;
             }
+        }
+        if (pos > 0) {
+            writer.writeCharacters(buffer, 0, pos);
         }
     }
 }

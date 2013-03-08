@@ -83,7 +83,7 @@ public class XMLUtils {
     public static void startEntryDocument(XMLStreamWriter writer, boolean hasContent) throws XMLStreamException {
         startXmlDocument(writer);
 
-        writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
+        writer.writeStartElement(XMLConstants.PREFIX_ATOM, "entry", XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
@@ -99,7 +99,7 @@ public class XMLUtils {
             throws XMLStreamException {
         startXmlDocument(writer);
 
-        writer.writeStartElement(XMLConstants.NAMESPACE_ATOM, "feed");
+        writer.writeStartElement(XMLConstants.PREFIX_ATOM, "feed", XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
