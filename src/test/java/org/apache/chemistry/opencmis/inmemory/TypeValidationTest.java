@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -398,6 +399,64 @@ public class TypeValidationTest extends TestCase {
             fail("TypeValidator should not throw exception if string length is valid" + e);
         }
     }
+
+    @Test
+    public void testAllPropertiesKnown() {
+
+        String unknownPropertyId = "UnknownProperty";
+        List<PropertyData<?>> properties = createPropertiesWithNameAndTypeId(MY_DOC_TYPE);
+        properties.add(FACTORY.createPropertyBooleanData("BooleanProp", true));
+        // add unknown property
+        properties.add(FACTORY.createPropertyStringData(unknownPropertyId, "SomeValue"));
+        Properties props = FACTORY.createPropertiesData(properties);
+
+        // validate properties according to type
+        TypeDefinition typeDef = buildMyType();
+
+        try {
+            TypeValidator.validateProperties(typeDef, props, true);
+            fail("TypeValidator should throw CMISConstraintException if property is not known in type.");
+        } catch (CmisConstraintException e) {
+            assertTrue(e.getMessage().contains("Unknown property"));
+            assertTrue(e.getMessage().contains(unknownPropertyId));
+        }
+    }
+
+    @Test
+    public void testAllPropertiesKnownSecondaryTypes() {
+
+        TypeDefinition primaryType = buildTypeWithStringProp();
+        TypeDefinition secondaryType1 = buildTypeWithIntegerProp();
+        TypeDefinition secondaryType2 = buildTypeWithDecimalProp();
+        
+        String unknownPropertyId = "UnknownProperty";
+        List<PropertyData<?>> properties = createPropertiesWithSecondaryTypes(MY_DOC_TYPE, Arrays.asList(INT_DOC_TYPE, DECIMAL_DOC_TYPE));
+        
+        // add unknown property
+        properties.add(FACTORY.createPropertyStringData(unknownPropertyId, "SomeValue"));
+        Properties props = FACTORY.createPropertiesData(properties);
+
+        // validate properties according to type
+        try {
+            TypeValidator.validateProperties(Arrays.asList(primaryType, secondaryType1, secondaryType2), props, true);
+            fail("TypeValidator should throw CMISConstraintException if property is not known in type.");
+        } catch (CmisConstraintException e) {
+            assertTrue(e.getMessage().contains("properties are not known in any of the types"));
+            assertTrue(e.getMessage().contains(unknownPropertyId));
+        }
+    }
+
+    private static List<PropertyData<?>> createPropertiesWithSecondaryTypes(String typeIdPrimary, List<String> secondaryTypeIds) {
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(FACTORY.createPropertyIdData(PropertyIds.NAME, "Document_1"));
+        properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeIdPrimary));
+        properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, secondaryTypeIds));
+        properties.add(FACTORY.createPropertyBooleanData("BooleanProp", true));
+        properties.add(FACTORY.createPropertyIntegerData(INT_PROP_TYPE, BigInteger.valueOf(0)));
+        properties.add(FACTORY.createPropertyDecimalData(DECIMAL_PROP_TYPE, BigDecimal.valueOf(0.5)));       
+        return properties;
+    }
+
 
     /**
      * create sample type
