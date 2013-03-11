@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.impl.RepositoryInfoCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -74,9 +76,10 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -84,7 +87,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
@@ -922,7 +924,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     /**
      * Updates the ACL of an object.
      */
-    protected AtomAcl updateAcl(String repositoryId, String objectId, Acl acl, AclPropagation aclPropagation) {
+    protected AtomAcl updateAcl(String repositoryId, String objectId, final Acl acl, AclPropagation aclPropagation) {
 
         // find the link
         String link = loadLink(repositoryId, objectId, Constants.REL_ACL, Constants.MEDIATYPE_ACL);
@@ -934,13 +936,15 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         UrlBuilder aclUrl = new UrlBuilder(link);
         aclUrl.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
-        // set up object and writer
-        final CmisAccessControlListType aclJaxb = convert(acl);
+        final CmisVersion cmisVersion = getCmisVersion(repositoryId);
 
         // update
         Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new Output() {
             public void write(OutputStream out) throws Exception {
-                JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createAcl(aclJaxb), out, false);
+                XMLStreamWriter writer = XMLUtils.createWriter(out);
+                XMLUtils.startXmlDocument(writer);
+                XMLConverter.writeAcl(writer, cmisVersion, true, acl);
+                XMLUtils.endXmlDocument(writer);
             }
         });
 

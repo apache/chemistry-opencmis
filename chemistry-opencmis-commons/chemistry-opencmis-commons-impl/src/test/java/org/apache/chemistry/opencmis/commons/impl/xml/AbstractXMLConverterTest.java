@@ -85,6 +85,7 @@ public abstract class AbstractXMLConverterTest {
             + "<xs:element name=\"repositoryInfo\" type=\"cmis:cmisRepositoryInfoType\" minOccurs=\"0\" maxOccurs=\"1\" />"
             + "<xs:element name=\"type\" type=\"cmis:cmisTypeDefinitionType\" minOccurs=\"0\" maxOccurs=\"1\" />"
             + "<xs:element name=\"object\" type=\"cmis:cmisObjectType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "<xs:element name=\"query\" type=\"cmis:cmisQueryType\" minOccurs=\"0\" maxOccurs=\"1\" />"
             + "</xs:sequence>" //
             + "</xs:complexType>" //
             + "<xs:element name=\"test\" type=\"test:testType\"/>" //

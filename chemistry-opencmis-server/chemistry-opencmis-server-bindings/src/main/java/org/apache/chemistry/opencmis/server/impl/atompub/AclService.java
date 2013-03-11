@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -27,9 +26,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -38,10 +36,8 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
@@ -86,23 +82,23 @@ public class AclService {
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
 
-        Object aclRequest = null;
+        Acl aces = null;
+        XMLStreamReader parser = null;
         try {
-            Unmarshaller u = JaxBHelper.createUnmarshaller();
-            aclRequest = u.unmarshal(request.getInputStream());
-        } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Invalid ACL request: " + e, e);
+            parser = XMLUtils.createParser(request.getInputStream());
+            XMLUtils.findNextStartElemenet(parser);
+            aces = XMLConverter.convertAcl(parser);
+        } catch (XMLStreamException e) {
+            throw new CmisInvalidArgumentException("Invalid request!");
+        } finally {
+            if (parser != null) {
+                try {
+                    parser.close();
+                } catch (XMLStreamException e2) {
+                    // ignore
+                }
+            }
         }
-
-        if (!(aclRequest instanceof JAXBElement<?>)) {
-            throw new CmisInvalidArgumentException("Not an ACL document!");
-        }
-
-        if (!(((JAXBElement<?>) aclRequest).getValue() instanceof CmisAccessControlListType)) {
-            throw new CmisInvalidArgumentException("Not an ACL document!");
-        }
-
-        Acl aces = convert((CmisAccessControlListType) ((JAXBElement<?>) aclRequest).getValue(), null);
 
         // execute
         Acl acl = service.applyAcl(repositoryId, objectId, aces, aclPropagation);

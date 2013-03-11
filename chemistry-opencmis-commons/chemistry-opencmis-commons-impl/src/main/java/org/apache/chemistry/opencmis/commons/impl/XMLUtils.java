@@ -214,7 +214,12 @@ public class XMLUtils {
      */
     public static boolean next(XMLStreamReader parser) throws XMLStreamException {
         if (parser.hasNext()) {
-            parser.next();
+            try {
+                parser.next();
+            } catch (XMLStreamException e) {
+                // EOF exceptions
+                return false;
+            }
             return true;
         }
 

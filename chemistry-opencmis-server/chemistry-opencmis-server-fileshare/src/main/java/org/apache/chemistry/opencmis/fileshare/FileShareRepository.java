@@ -40,8 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -92,8 +91,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -124,8 +121,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
@@ -1499,7 +1494,6 @@ public class FileShareRepository {
     /**
      * Reads and adds properties.
      */
-    @SuppressWarnings("unchecked")
     private void readCustomProperties(File file, PropertiesImpl properties, Set<String> filter,
             ObjectInfoImpl objectInfo) {
         File propFile = getPropertiesFile(file);
@@ -1510,22 +1504,32 @@ public class FileShareRepository {
         }
 
         // parse it
-        JAXBElement<CmisObjectType> obj = null;
+        ObjectData obj = null;
+        InputStream stream = null;
         try {
-            Unmarshaller u = JaxBHelper.createUnmarshaller();
-            obj = (JAXBElement<CmisObjectType>) u.unmarshal(propFile);
+            stream = new BufferedInputStream(new FileInputStream(file));
+            XMLStreamReader parser = XMLUtils.createParser(stream);
+            XMLUtils.findNextStartElemenet(parser);
+            obj = XMLConverter.convertObject(parser);
+            parser.close();
         } catch (Exception e) {
             warn("Unvalid CMIS properties: " + propFile.getAbsolutePath(), e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ioe) {
+                    // ignore
+                }
+            }
         }
 
-        if ((obj == null) || (obj.getValue() == null) || (obj.getValue().getProperties() == null)) {
+        if ((obj == null) || (obj.getProperties() == null)) {
             return;
         }
 
         // add it to properties
-        for (CmisProperty cmisProp : obj.getValue().getProperties().getProperty()) {
-            PropertyData<?> prop = Converter.convert(cmisProp);
-
+        for (PropertyData<?> prop : obj.getProperties().getPropertyList()) {
             // overwrite object info
             if (prop instanceof PropertyString) {
                 String firstValueStr = ((PropertyString) prop).getFirstValue();

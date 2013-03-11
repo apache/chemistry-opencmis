@@ -93,6 +93,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -136,6 +137,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
@@ -897,6 +899,33 @@ public class XMLConverter {
         writer.writeEndElement();
     }
 
+    // -------------
+    // --- query ---
+    // -------------
+
+    public static void writeQuery(XMLStreamWriter writer, CmisVersion cmisVersion, QueryTypeImpl source)
+            throws XMLStreamException {
+        if (source == null) {
+            return;
+        }
+
+        writer.writeStartElement(NAMESPACE_CMIS, TAG_QUERY);
+        writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
+
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_STATEMENT, source.getStatement());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_SEARCHALLVERSIONS, source.getSearchAllVersions());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_INCLUDEALLOWABLEACTIONS,
+                source.getIncludeAllowableActions());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_INCLUDERELATIONSHIPS,
+                source.getIncludeRelationships());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_RENDITIONFILTER, source.getRenditionFilter());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_MAXITEMS, source.getMaxItems());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_QUERY_SKIPCOUNT, source.getSkipCount());
+
+        writeExtensions(writer, source);
+        writer.writeEndElement();
+    }
+
     // -------------------------
     // --- extension writers ---
     // -------------------------
@@ -987,6 +1016,18 @@ public class XMLConverter {
 
     public static ObjectData convertObject(XMLStreamReader parser) throws XMLStreamException {
         return OBJECT_PARSER.walk(parser);
+    }
+
+    public static QueryTypeImpl convertQuery(XMLStreamReader parser) throws XMLStreamException {
+        return QUERY_PARSER.walk(parser);
+    }
+
+    public static AllowableActions convertAllowableActions(XMLStreamReader parser) throws XMLStreamException {
+        return ALLOWABLE_ACTIONS_PARSER.walk(parser);
+    }
+
+    public static Acl convertAcl(XMLStreamReader parser) throws XMLStreamException {
+        return ACL_PARSER.walk(parser);
     }
 
     // ------------------------------
@@ -2495,4 +2536,57 @@ public class XMLConverter {
             target.setValues(addToList(target.getValues(), readText(parser)));
         }
     }
+
+    // --------------------
+    // --- query parser ---
+    // --------------------
+
+    private static final XMLWalker<QueryTypeImpl> QUERY_PARSER = new XMLWalker<QueryTypeImpl>() {
+        @Override
+        protected QueryTypeImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new QueryTypeImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, QueryTypeImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_QUERY_STATEMENT)) {
+                    target.setStatement(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_SEARCHALLVERSIONS)) {
+                    target.setSearchAllVersions(readBoolean(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_INCLUDEALLOWABLEACTIONS)) {
+                    target.setIncludeAllowableActions(readBoolean(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_INCLUDERELATIONSHIPS)) {
+                    target.setIncludeRelationships(readEnum(parser, IncludeRelationships.class));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_RENDITIONFILTER)) {
+                    target.setRenditionFilter(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_MAXITEMS)) {
+                    target.setMaxItems(readInteger(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_QUERY_SKIPCOUNT)) {
+                    target.setSkipCount(readInteger(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
 }

@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
@@ -35,8 +34,8 @@ import java.util.GregorianCalendar;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -45,11 +44,11 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisQueryType;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -83,28 +82,29 @@ public final class DiscoveryService {
 
         if (METHOD_POST.equals(request.getMethod())) {
             // POST -> read from stream
-            Object queryRequest = null;
+
+            QueryTypeImpl queryType = null;
+            XMLStreamReader parser = null;
             try {
-                Unmarshaller u = JaxBHelper.createUnmarshaller();
-                queryRequest = u.unmarshal(request.getInputStream());
-            } catch (Exception e) {
-                throw new CmisInvalidArgumentException("Invalid query request: " + e, e);
+                parser = XMLUtils.createParser(request.getInputStream());
+                XMLUtils.findNextStartElemenet(parser);
+                queryType = XMLConverter.convertQuery(parser);
+            } catch (XMLStreamException e) {
+                throw new CmisInvalidArgumentException("Invalid query request!");
+            } finally {
+                if (parser != null) {
+                    try {
+                        parser.close();
+                    } catch (XMLStreamException e2) {
+                        // ignore
+                    }
+                }
             }
-
-            if (!(queryRequest instanceof JAXBElement<?>)) {
-                throw new CmisInvalidArgumentException("Not a query document!");
-            }
-
-            if (!(((JAXBElement<?>) queryRequest).getValue() instanceof CmisQueryType)) {
-                throw new CmisInvalidArgumentException("Not a query document!");
-            }
-
-            CmisQueryType queryType = (CmisQueryType) ((JAXBElement<?>) queryRequest).getValue();
 
             statement = queryType.getStatement();
-            searchAllVersions = queryType.isSearchAllVersions();
-            includeAllowableActions = queryType.isIncludeAllowableActions();
-            includeRelationships = convert(IncludeRelationships.class, queryType.getIncludeRelationships());
+            searchAllVersions = queryType.getSearchAllVersions();
+            includeAllowableActions = queryType.getIncludeAllowableActions();
+            includeRelationships = queryType.getIncludeRelationships();
             renditionFilter = queryType.getRenditionFilter();
             maxItems = queryType.getMaxItems();
             skipCount = queryType.getSkipCount();

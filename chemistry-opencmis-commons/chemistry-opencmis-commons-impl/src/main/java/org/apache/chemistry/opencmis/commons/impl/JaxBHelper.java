@@ -18,14 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-import java.io.OutputStream;
-
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 
@@ -62,44 +57,5 @@ public final class JaxBHelper {
      */
     public static Unmarshaller createUnmarshaller() throws JAXBException {
         return CONTEXT.createUnmarshaller();
-    }
-
-    /**
-     * Creates an Marshaller.
-     */
-    public static Marshaller createMarshaller() throws JAXBException {
-        return CONTEXT.createMarshaller();
-    }
-
-    /**
-     * Marshals an object to a stream.
-     */
-    public static <T> void marshal(JAXBElement<T> object, OutputStream out, boolean fragment) throws JAXBException {
-        if (object == null) {
-            return;
-        }
-
-        Marshaller m = CONTEXT.createMarshaller();
-        if (fragment) {
-            m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-        }
-
-        m.marshal(object, out);
-    }
-
-    /**
-     * Marshals an object to a XMLStreamWriter.
-     */
-    public static void marshal(Object object, XMLStreamWriter out, boolean fragment) throws JAXBException {
-        if (object == null) {
-            return;
-        }
-
-        Marshaller m = CONTEXT.createMarshaller();
-        if (fragment) {
-            m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-        }
-
-        m.marshal(object, out);
     }
 }

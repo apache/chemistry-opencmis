@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
@@ -34,15 +36,16 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisQueryType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -130,19 +133,24 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         UrlBuilder url = new UrlBuilder(link);
 
         // compile query request
-        final CmisQueryType query = new CmisQueryType();
+        final QueryTypeImpl query = new QueryTypeImpl();
         query.setStatement(statement);
         query.setSearchAllVersions(searchAllVersions);
         query.setIncludeAllowableActions(includeAllowableActions);
-        query.setIncludeRelationships(convert(EnumIncludeRelationships.class, includeRelationships));
+        query.setIncludeRelationships(includeRelationships);
         query.setRenditionFilter(renditionFilter);
         query.setMaxItems(maxItems);
         query.setSkipCount(skipCount);
 
+        final CmisVersion cmisVersion = getCmisVersion(repositoryId);
+
         // post the query and parse results
         Response resp = post(url, Constants.MEDIATYPE_QUERY, new Output() {
             public void write(OutputStream out) throws Exception {
-                JaxBHelper.marshal(JaxBHelper.CMIS_OBJECT_FACTORY.createQuery(query), out, false);
+                XMLStreamWriter writer = XMLUtils.createWriter(out);
+                XMLUtils.startXmlDocument(writer);
+                XMLConverter.writeQuery(writer, cmisVersion, query);
+                XMLUtils.endXmlDocument(writer);
             }
         });
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);

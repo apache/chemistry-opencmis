@@ -232,4 +232,13 @@ public class XMLConstants {
     public static final String TAG_TYPE_TYPE_MUTABILITY_CREATE = "create";
     public static final String TAG_TYPE_TYPE_MUTABILITY_UPDATE = "update";
     public static final String TAG_TYPE_TYPE_MUTABILITY_DELETE = "delete";
+
+    public static final String TAG_QUERY = "query";
+    public static final String TAG_QUERY_STATEMENT = "statement";
+    public static final String TAG_QUERY_SEARCHALLVERSIONS = "searchAllVersions";
+    public static final String TAG_QUERY_INCLUDEALLOWABLEACTIONS = "includeAllowableActions";
+    public static final String TAG_QUERY_INCLUDERELATIONSHIPS = "includeRelationships";
+    public static final String TAG_QUERY_RENDITIONFILTER = "renditionFilter";
+    public static final String TAG_QUERY_MAXITEMS = "maxItems";
+    public static final String TAG_QUERY_SKIPCOUNT = "skipCount";
 }
