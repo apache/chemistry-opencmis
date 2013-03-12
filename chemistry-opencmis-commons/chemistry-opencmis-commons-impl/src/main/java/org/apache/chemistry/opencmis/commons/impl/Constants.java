@@ -171,6 +171,7 @@ public final class Constants {
     public static final String PARAM_ACL = "includeACL";
     public static final String PARAM_ALLOWABLE_ACTIONS = "includeAllowableActions";
     public static final String PARAM_ALL_VERSIONS = "allVersions";
+    public static final String PARAM_APPEND = "append";
     public static final String PARAM_CHANGE_LOG_TOKEN = "changeLogToken";
     public static final String PARAM_CHANGE_TOKEN = "changeToken";
     public static final String PARAM_CHECKIN_COMMENT = "checkinComment";
@@ -183,6 +184,7 @@ public final class Constants {
     public static final String PARAM_SUCCINCT = "succinct";
     public static final String PARAM_FOLDER_ID = "folderId";
     public static final String PARAM_ID = "id";
+    public static final String PARAM_IS_LAST_CHUNK = "isLastChunk";
     public static final String PARAM_MAJOR = "major";
     public static final String PARAM_MAX_ITEMS = "maxItems";
     public static final String PARAM_OBJECT_ID = "objectId";

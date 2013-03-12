@@ -209,14 +209,16 @@ public final class ObjectService {
     }
 
     /**
-     * Set content stream.
+     * Set or append content stream.
      */
-    public static void setContentStream(CallContext context, CmisService service, String repositoryId,
+    public static void setOrAppendContentStream(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
         String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+        Boolean appendFlag = getBooleanParameter(request, Constants.PARAM_APPEND);
         Boolean overwriteFlag = getBooleanParameter(request, Constants.PARAM_OVERWRITE_FLAG);
+        Boolean isLastChunk = getBooleanParameter(request, Constants.PARAM_IS_LAST_CHUNK);
 
         ContentStreamImpl contentStream = new ContentStreamImpl();
         contentStream.setStream(request.getInputStream());
@@ -235,8 +237,13 @@ public final class ObjectService {
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
-        service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeToken == null ? null
-                : new Holder<String>(changeToken), contentStream, null);
+        if (Boolean.TRUE.equals(appendFlag)) {
+            service.appendContentStream(repositoryId, objectIdHolder, changeToken == null ? null : new Holder<String>(
+                    changeToken), contentStream, (Boolean.TRUE.equals(isLastChunk) ? true : false), null);
+        } else {
+            service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeToken == null ? null
+                    : new Holder<String>(changeToken), contentStream, null);
+        }
 
         // set headers
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());

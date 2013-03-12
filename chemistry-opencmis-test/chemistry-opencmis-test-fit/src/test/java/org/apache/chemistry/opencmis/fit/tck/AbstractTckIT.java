@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
@@ -49,6 +50,8 @@ public abstract class AbstractTckIT extends AbstractRunner {
     public abstract Map<String, String> getSessionParameters();
 
     public abstract BindingType getBindingType();
+
+    public abstract CmisVersion getCmisVersion();
 
     public Map<String, String> getBaseSessionParameters() {
         Map<String, String> parameters = new HashMap<String, String>();
@@ -77,7 +80,7 @@ public abstract class AbstractTckIT extends AbstractRunner {
 
         CmisTestReport report = new TextReport();
         report.createReport(getParameters(), getGroups(), new File(target, "tck-result-" + getBindingType().value()
-                + ".txt"));
+                + "-" + getCmisVersion().value() + ".txt"));
 
         // find failures
         for (CmisTestGroup group : getGroups()) {

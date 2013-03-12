@@ -126,10 +126,6 @@ public class CmisAtomPubServlet extends HttpServlet {
         if (cmisVersionStr != null) {
             try {
                 cmisVersion = CmisVersion.fromValue(cmisVersionStr);
-
-                // !!! As long as CMIS 1.1 is not implemented, we have to set
-                // the CMIS version to 1.0 !!!
-                cmisVersion = CmisVersion.CMIS_1_0;
             } catch (IllegalArgumentException e) {
                 LOG.warn("CMIS version is invalid! Setting it to CMIS 1.0.");
                 cmisVersion = CmisVersion.CMIS_1_0;
@@ -169,7 +165,7 @@ public class CmisAtomPubServlet extends HttpServlet {
             dispatcher.addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class, "getObjectByPath");
             dispatcher.addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class, "getAllowableActions");
             dispatcher.addResource(RESOURCE_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setContentStream");
+            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setOrAppendContentStream");
             dispatcher.addResource(RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class, "deleteContentStream");
             dispatcher.addResource(RESOURCE_CHILDREN, METHOD_POST, ObjectService.class, "create");
             dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class, "createRelationship");

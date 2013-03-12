@@ -610,62 +610,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-        // we need an object id
-        if ((objectId == null) || (objectId.getValue() == null)) {
-            throw new CmisInvalidArgumentException("Object ID must be set!");
-        }
-
-        // we need content
-        if ((contentStream == null) || (contentStream.getStream() == null) || (contentStream.getMimeType() == null)) {
-            throw new CmisInvalidArgumentException("Content must be set!");
-        }
-
-        // find the link
-        String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
-
-        if (link == null) {
-            throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
-        }
-
-        UrlBuilder url = new UrlBuilder(link);
-        if (changeToken != null) {
-            url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
-        }
-        url.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
-
-        final InputStream stream = contentStream.getStream();
-
-        // Content-Disposition header for the filename
-        Map<String, String> headers = null;
-        if (contentStream.getFileName() != null) {
-            headers = Collections
-                    .singletonMap(
-                            MimeHelper.CONTENT_DISPOSITION,
-                            MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT,
-                                    contentStream.getFileName()));
-        }
-
-        // send content
-        Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
-            public void write(OutputStream out) throws Exception {
-                int b;
-                byte[] buffer = new byte[4096];
-
-                while ((b = stream.read(buffer)) > -1) {
-                    out.write(buffer, 0, b);
-                }
-            }
-        });
-
-        // check response code further
-        if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201) && (resp.getResponseCode() != 204)) {
-            throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
-        }
-
-        objectId.setValue(null);
-        if (changeToken != null) {
-            changeToken.setValue(null);
-        }
+        setOrAppendContent(repositoryId, objectId, overwriteFlag, changeToken, contentStream, true, false, extension);
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -697,7 +642,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        setOrAppendContent(repositoryId, objectId, null, changeToken, contentStream, isLastChunk, true, extension);
     }
 
     // ---- internal ----
@@ -732,6 +677,76 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             if (newACL != null) {
                 updateAcl(repositoryId, entry.getId(), newACL, null);
             }
+        }
+    }
+
+    /**
+     * Sets or appends content.
+     */
+    private void setOrAppendContent(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
+            Holder<String> changeToken, ContentStream contentStream, boolean isLastChunk, boolean append,
+            ExtensionsData extension) {
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null)) {
+            throw new CmisInvalidArgumentException("Object ID must be set!");
+        }
+
+        // we need content
+        if ((contentStream == null) || (contentStream.getStream() == null) || (contentStream.getMimeType() == null)) {
+            throw new CmisInvalidArgumentException("Content must be set!");
+        }
+
+        // find the link
+        String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
+
+        if (link == null) {
+            throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
+        }
+
+        UrlBuilder url = new UrlBuilder(link);
+        if (changeToken != null) {
+            url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
+        }
+
+        if (append) {
+            url.addParameter(Constants.PARAM_APPEND, Boolean.TRUE);
+            url.addParameter(Constants.PARAM_IS_LAST_CHUNK, isLastChunk);
+        } else {
+            url.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
+        }
+
+        final InputStream stream = contentStream.getStream();
+
+        // Content-Disposition header for the filename
+        Map<String, String> headers = null;
+        if (contentStream.getFileName() != null) {
+            headers = Collections
+                    .singletonMap(
+                            MimeHelper.CONTENT_DISPOSITION,
+                            MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT,
+                                    contentStream.getFileName()));
+        }
+
+        // send content
+        Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
+            public void write(OutputStream out) throws Exception {
+                int b;
+                byte[] buffer = new byte[4096];
+
+                while ((b = stream.read(buffer)) > -1) {
+                    out.write(buffer, 0, b);
+                }
+            }
+        });
+
+        // check response code further
+        if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201) && (resp.getResponseCode() != 204)) {
+            throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
+        }
+
+        objectId.setValue(null);
+        if (changeToken != null) {
+            changeToken.setValue(null);
         }
     }
 }
