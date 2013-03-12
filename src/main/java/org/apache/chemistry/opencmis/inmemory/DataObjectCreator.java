@@ -68,6 +68,8 @@ public class DataObjectCreator {
         boolean hasContent = so instanceof Content && ((Content) so).hasContent();
         boolean isRootFolder = isFolder && ((Folder)so).getParent() == null;
         boolean hasRendition = so.hasRendition(user);
+        boolean canGetAcl = user != null && (isDocument || isFolder);
+        boolean canSetAcl = canGetAcl;
         
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
@@ -140,6 +142,11 @@ public class DataObjectCreator {
             set.add(Action.CAN_GET_RENDITIONS);
         }
         
+        if (canSetAcl) 
+            set.add(Action.CAN_APPLY_ACL);
+        if (canGetAcl) 
+            set.add(Action.CAN_GET_ACL);
+       
         allowableActions.setAllowableActions(set);
         return allowableActions;
     }
