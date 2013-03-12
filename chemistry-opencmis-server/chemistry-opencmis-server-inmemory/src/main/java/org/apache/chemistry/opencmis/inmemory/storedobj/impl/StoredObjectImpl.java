@@ -188,8 +188,6 @@ public class StoredObjectImpl implements StoredObject {
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
         
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
-
         if (FilterParser.isContainedInFilter(PropertyIds.NAME, requestedIds)) {
             properties.put(PropertyIds.NAME, objFactory.createPropertyStringData(PropertyIds.NAME, getName()));
         }
@@ -228,10 +226,15 @@ public class StoredObjectImpl implements StoredObject {
                     token));
         }
         
-        if (cmis11 && FilterParser.isContainedInFilter(PropertyIds.DESCRIPTION, requestedIds)) {
+        // CMIS 1.1 properties:
+        if (FilterParser.isContainedInFilter(PropertyIds.DESCRIPTION, requestedIds)) {
             properties.put(PropertyIds.DESCRIPTION, objFactory.createPropertyStringData(PropertyIds.DESCRIPTION,
                     description));
         }
+        if (FilterParser.isContainedInFilter(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, requestedIds)) {
+            properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, objFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS,
+                    secondaryTypeIds));
+        }            
 
         // add custom properties of type definition to the collection
         if (null != fProperties) {
