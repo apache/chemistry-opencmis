@@ -207,6 +207,10 @@ public class TckDialog {
                     BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
+            final JComboBox itemComboBox = addComboBox(configPanel, "Test item type:", BaseTypeId.CMIS_ITEM.value(),
+                    TestParameters.DEFAULT_ITEM_TYPE_VALUE);
+            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+
             configPanel.add(new JLabel("Test folder path:"));
             final JTextField testParentFolderField = new JTextField(TestParameters.DEFAULT_TEST_FOLDER_PARENT_VALUE);
             testParentFolderField.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
@@ -243,6 +247,9 @@ public class TckDialog {
                         if (relationshipComboBox.isEnabled()) {
                             parameters.put(TestParameters.DEFAULT_RELATIONSHIP_TYPE,
                                     (String) relationshipComboBox.getSelectedItem());
+                        }
+                        if (itemComboBox.isEnabled()) {
+                            parameters.put(TestParameters.DEFAULT_ITEM_TYPE, (String) itemComboBox.getSelectedItem());
                         }
                         parameters.put(TestParameters.DEFAULT_TEST_FOLDER_PARENT, testParentFolderField.getText());
 

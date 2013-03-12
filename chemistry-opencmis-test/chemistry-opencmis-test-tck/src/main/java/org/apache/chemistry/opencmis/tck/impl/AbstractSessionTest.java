@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.Item;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -114,6 +115,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     private Boolean supportsRelationships;
     private Boolean supportsPolicies;
+    private Boolean supportsItems;
 
     public BindingType getBinding() {
         if (getParameters() == null) {
@@ -180,6 +182,15 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         String objectTypeId = getParameters().get(TestParameters.DEFAULT_DOCUMENT_TYPE);
         if (objectTypeId == null) {
             objectTypeId = TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
+    protected String getItemTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_ITEM_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_ITEM_TYPE_VALUE;
         }
 
         return objectTypeId;
@@ -254,7 +265,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         try {
             CmisTestResult f;
 
-            // check document name
+            // check folder name
             f = createResult(FAILURE, "Folder name does not match!", false);
             addResult(assertEquals(name, result.getName(), null, f));
 
@@ -479,6 +490,63 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     }
 
     /**
+     * Creates a item.
+     */
+    protected Item createItem(Session session, Folder parent, String name) {
+        return createItem(session, parent, name, getItemTestTypeId());
+    }
+
+    /**
+     * Creates a item.
+     */
+    protected Item createItem(Session session, Folder parent, String name, String objectTypeId) {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+
+        Item result = null;
+        try {
+            // create the item
+            result = parent.createItem(properties, null, null, null, SELECT_ALL_NO_CACHE_OC);
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Item could not be created! Exception: " + e.getMessage(), e,
+                    true));
+            return null;
+        }
+
+        try {
+            CmisTestResult f;
+
+            // check item name
+            f = createResult(FAILURE, "Item name does not match!", false);
+            addResult(assertEquals(name, result.getName(), null, f));
+
+            addResult(checkObject(session, result, getAllProperties(result), "New item object spec compliance"));
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Newly created Item is invalid! Exception: " + e.getMessage(),
+                    e, true));
+        }
+
+        if (parent != null) {
+            List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
+            boolean found = false;
+            for (Folder folder : parents) {
+                if (parent.getId().equals(folder.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                addResult(createResult(FAILURE,
+                        "The folder the item has been created in is not in the list of the item parents!"));
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Deletes an object and checks if it is deleted.
      */
     protected void deleteObject(CmisObject object) {
@@ -622,6 +690,20 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         return supportsPolicies.booleanValue();
+    }
+
+    protected boolean hasItems(Session session) {
+        if (supportsItems == null) {
+            supportsItems = Boolean.FALSE;
+            for (ObjectType type : session.getTypeChildren(null, false)) {
+                if (BaseTypeId.CMIS_ITEM.value().equals(type.getId())) {
+                    supportsItems = Boolean.TRUE;
+                    break;
+                }
+            }
+        }
+
+        return supportsItems.booleanValue();
     }
 
     protected CmisTestResult checkObject(Session session, CmisObject object, String[] properties, String message) {

@@ -160,7 +160,7 @@ public class CreateAndDeleteRelationshipTest extends AbstractSessionTest {
 			}
 		} else {
 			addResult(createResult(SKIPPED,
-					"Relationships not supported. Test Skipped!"));
+					"Relationships not supported. Test skipped!"));
 		}
 	}
 }
