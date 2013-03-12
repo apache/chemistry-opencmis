@@ -1437,8 +1437,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertFalse(actions.contains(Action.CAN_CREATE_FOLDER));
         assertFalse(actions.contains(Action.CAN_CREATE_RELATIONSHIP));
         assertFalse(actions.contains(Action.CAN_DELETE_TREE));
-        assertFalse(actions.contains(Action.CAN_GET_ACL));
-        assertFalse(actions.contains(Action.CAN_APPLY_ACL));
+        assertTrue(actions.contains(Action.CAN_GET_ACL));
+        assertTrue(actions.contains(Action.CAN_APPLY_ACL));
     }
 
     private String retrieveDocument(String id) {
