@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -62,9 +60,6 @@ import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyString;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -356,23 +351,16 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisObjectType) {
+                } else if (element.getObject() instanceof ObjectData) {
                     // extract new change token
                     if (changeToken != null) {
-                        CmisObjectType object = (CmisObjectType) element.getObject();
+                        ObjectData object = (ObjectData) element.getObject();
 
                         if (object.getProperties() != null) {
-                            for (CmisProperty property : object.getProperties().getProperty()) {
-                                if (PropertyIds.CHANGE_TOKEN.equals(property.getPropertyDefinitionId())
-                                        && (property instanceof CmisPropertyString)) {
-
-                                    CmisPropertyString changeTokenProperty = (CmisPropertyString) property;
-                                    if (!changeTokenProperty.getValue().isEmpty()) {
-                                        changeToken.setValue(changeTokenProperty.getValue().get(0));
-                                    }
-
-                                    break;
-                                }
+                            Object changeTokenStr = object.getProperties().getProperties()
+                                    .get(PropertyIds.CHANGE_TOKEN);
+                            if (changeTokenStr instanceof String) {
+                                changeToken.setValue((String) changeTokenStr);
                             }
                         }
                     }
@@ -500,7 +488,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         Response resp = read(url);
         AtomAllowableActions allowableActions = parse(resp.getStream(), AtomAllowableActions.class);
 
-        return convert(allowableActions.getAllowableActions());
+        return allowableActions.getAllowableActions();
     }
 
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,

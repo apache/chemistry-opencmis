@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -45,7 +43,6 @@ import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -104,8 +101,8 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
                 // walk through the entry
                 for (AtomElement element : entry.getElements()) {
-                    if (element.getObject() instanceof CmisObjectType) {
-                        hit = convert((CmisObjectType) element.getObject());
+                    if (element.getObject() instanceof ObjectData) {
+                        hit = (ObjectData) element.getObject();
                     }
                 }
 
@@ -175,8 +172,8 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
                 // walk through the entry
                 for (AtomElement element : entry.getElements()) {
-                    if (element.getObject() instanceof CmisObjectType) {
-                        hit = convert((CmisObjectType) element.getObject());
+                    if (element.getObject() instanceof ObjectData) {
+                        hit = (ObjectData) element.getObject();
                     }
                 }
 

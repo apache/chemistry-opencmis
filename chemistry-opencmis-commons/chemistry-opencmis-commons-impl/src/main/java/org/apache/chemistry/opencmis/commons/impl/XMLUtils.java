@@ -272,7 +272,7 @@ public class XMLUtils {
      * Parses a tag that contains text.
      */
     public static String readText(XMLStreamReader parser, int maxLength) throws XMLStreamException {
-        StringBuilder sb = null;
+        StringBuilder sb = new StringBuilder();
 
         next(parser);
 
@@ -283,10 +283,6 @@ public class XMLUtils {
             } else if (event == XMLStreamReader.CHARACTERS) {
                 int len = parser.getTextLength();
                 if (len > 0) {
-                    if (sb == null) {
-                        sb = new StringBuilder();
-                    }
-
                     if (sb.length() + len > maxLength) {
                         throw new CmisInvalidArgumentException("String limit exceeded!");
                     }
@@ -307,7 +303,7 @@ public class XMLUtils {
 
         next(parser);
 
-        return sb == null ? null : sb.toString();
+        return sb.toString();
     }
 
     /**

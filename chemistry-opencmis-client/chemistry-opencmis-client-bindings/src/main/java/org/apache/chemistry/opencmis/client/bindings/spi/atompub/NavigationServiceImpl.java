@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +46,10 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderData
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 
 /**
  * Navigation Service AtomPub client.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
 public class NavigationServiceImpl extends AbstractAtomPubService implements NavigationService {
 
@@ -121,9 +116,9 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
                             addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
                         } else if (isStr(NAME_PATH_SEGMENT, element)) {
                             pathSegment = (String) element.getObject();
-                        } else if (element.getObject() instanceof CmisObjectType) {
+                        } else if (element.getObject() instanceof ObjectData) {
                             child = new ObjectInFolderDataImpl();
-                            child.setObject(convert((CmisObjectType) element.getObject()));
+                            child.setObject((ObjectData) element.getObject());
                         }
                     }
                 } finally {
@@ -211,8 +206,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisObjectType) {
-                    result = convert((CmisObjectType) element.getObject());
+                } else if (element.getObject() instanceof ObjectData) {
+                    result = (ObjectData) element.getObject();
                 }
             }
         } finally {
@@ -316,8 +311,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisObjectType) {
-                    result = new ObjectParentDataImpl(convert((CmisObjectType) element.getObject()));
+                } else if (element.getObject() instanceof ObjectData) {
+                    result = new ObjectParentDataImpl((ObjectData) element.getObject());
                 } else if (is(NAME_RELATIVE_PATH_SEGMENT, element)) {
                     relativePathSegment = (String) element.getObject();
                 }
@@ -386,8 +381,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
                     for (AtomElement element : entry.getElements()) {
                         if (element.getObject() instanceof AtomLink) {
                             addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                        } else if (element.getObject() instanceof CmisObjectType) {
-                            child = convert((CmisObjectType) element.getObject());
+                        } else if (element.getObject() instanceof ObjectData) {
+                            child = (ObjectData) element.getObject();
                         }
                     }
                 } finally {
@@ -428,8 +423,8 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
                 for (AtomElement element : entry.getElements()) {
                     if (element.getObject() instanceof AtomLink) {
                         addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                    } else if (element.getObject() instanceof CmisObjectType) {
-                        objectInFolder = new ObjectInFolderDataImpl(convert((CmisObjectType) element.getObject()));
+                    } else if (element.getObject() instanceof ObjectData) {
+                        objectInFolder = new ObjectInFolderDataImpl((ObjectData) element.getObject());
                     } else if (is(NAME_PATH_SEGMENT, element)) {
                         pathSegment = (String) element.getObject();
                     } else if (element.getObject() instanceof AtomFeed) {

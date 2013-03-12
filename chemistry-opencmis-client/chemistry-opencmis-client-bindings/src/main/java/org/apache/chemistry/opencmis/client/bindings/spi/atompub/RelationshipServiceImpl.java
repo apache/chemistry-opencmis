@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -36,7 +34,6 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 
 /**
@@ -103,8 +100,8 @@ public class RelationshipServiceImpl extends AbstractAtomPubService implements R
                     for (AtomElement element : entry.getElements()) {
                         if (element.getObject() instanceof AtomLink) {
                             addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                        } else if (element.getObject() instanceof CmisObjectType) {
-                            relationship = convert((CmisObjectType) element.getObject());
+                        } else if (element.getObject() instanceof ObjectData) {
+                            relationship = (ObjectData) element.getObject();
                         }
                     }
                 } finally {

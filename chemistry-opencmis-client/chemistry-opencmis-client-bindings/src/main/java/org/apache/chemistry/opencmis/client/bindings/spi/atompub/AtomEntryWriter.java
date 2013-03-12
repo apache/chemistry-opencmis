@@ -157,6 +157,7 @@ public class AtomEntryWriter {
     }
 
     private void writeContent(XMLStreamWriter writer) throws Exception {
+        @SuppressWarnings("resource")
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
         char[] buffer = new char[BUFFER_SIZE];

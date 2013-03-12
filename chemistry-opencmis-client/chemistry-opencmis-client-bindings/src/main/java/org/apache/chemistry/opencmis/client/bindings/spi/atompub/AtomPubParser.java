@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_DOCUMENT_TYPE;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_FOLDER_TYPE;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_POLICY_TYPE;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_RELATIONSHIP_TYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.CONTENT_SRC;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.LINK_HREF;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.LINK_REL;
@@ -53,8 +49,6 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
@@ -68,23 +62,13 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLin
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.HtmlDoc;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
-import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumPropertiesBase;
 
 /**
  * AtomPub Parser.
@@ -221,8 +205,8 @@ public class AtomPubParser {
                 AtomElement element = parseWorkspaceElement(parser);
 
                 // check if we can extract the workspace id
-                if ((element != null) && (element.getObject() instanceof CmisRepositoryInfoType)) {
-                    workspace.setId(((CmisRepositoryInfoType) element.getObject()).getRepositoryId());
+                if ((element != null) && (element.getObject() instanceof RepositoryInfo)) {
+                    workspace.setId(((RepositoryInfo) element.getObject()).getId());
                 }
 
                 // add to workspace
@@ -303,14 +287,10 @@ public class AtomPubParser {
                     result.addElement(element);
 
                     // find and set object id
-                    if (element.getObject() instanceof CmisObjectType) {
-                        for (CmisProperty prop : ((CmisObjectType) element.getObject()).getProperties().getProperty()) {
-                            if (EnumPropertiesBase.CMIS_OBJECT_ID.value().equals(prop.getPropertyDefinitionId())) {
-                                result.setId(((CmisPropertyId) prop).getValue().get(0));
-                            }
-                        }
-                    } else if (element.getObject() instanceof CmisTypeDefinitionType) {
-                        result.setId(((CmisTypeDefinitionType) element.getObject()).getId());
+                    if (element.getObject() instanceof ObjectData) {
+                        result.setId(((ObjectData) element.getObject()).getId());
+                    } else if (element.getObject() instanceof TypeDefinition) {
+                        result.setId(((TypeDefinition) element.getObject()).getId());
                     }
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
@@ -331,16 +311,14 @@ public class AtomPubParser {
      * Parses an Allowable Actions document.
      */
     private static AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
-        AtomElement elemenet = unmarshalElement(parser, CmisAllowableActionsType.class);
-        return new AtomAllowableActions((CmisAllowableActionsType) elemenet.getObject());
+        return new AtomAllowableActions(XMLConverter.convertAllowableActions(parser));
     }
 
     /**
      * Parses an ACL document.
      */
     private static AtomAcl parseACL(XMLStreamReader parser) throws Exception {
-        AtomElement elemenet = unmarshalElement(parser, CmisAccessControlListType.class);
-        return new AtomAcl((CmisAccessControlListType) elemenet.getObject());
+        return new AtomAcl(XMLConverter.convertAcl(parser));
     }
 
     /**
@@ -351,25 +329,12 @@ public class AtomPubParser {
 
         if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
             if (TAG_OBJECT.equals(name.getLocalPart())) {
-                return unmarshalElement(parser, CmisObjectType.class);
+                return new AtomElement(name, XMLConverter.convertObject(parser));
             } else if (TAG_PATH_SEGMENT.equals(name.getLocalPart())
                     || TAG_RELATIVE_PATH_SEGMENT.equals(name.getLocalPart())) {
                 return parseText(parser);
             } else if (TAG_TYPE.equals(name.getLocalPart())) {
-                // workaround for old Chemistry code - ignore the type namespace
-                String typeAttr = parser.getAttributeValue(XMLConstants.NAMESPACE_XSI, "type");
-                if (typeAttr == null) {
-                    return unmarshalElement(parser, CmisTypeDefinitionType.class);
-                } else if (typeAttr.endsWith(ATTR_DOCUMENT_TYPE)) {
-                    return unmarshalElement(parser, CmisTypeDocumentDefinitionType.class);
-                } else if (typeAttr.endsWith(ATTR_FOLDER_TYPE)) {
-                    return unmarshalElement(parser, CmisTypeFolderDefinitionType.class);
-                } else if (typeAttr.endsWith(ATTR_RELATIONSHIP_TYPE)) {
-                    return unmarshalElement(parser, CmisTypeRelationshipDefinitionType.class);
-                } else if (typeAttr.endsWith(ATTR_POLICY_TYPE)) {
-                    return unmarshalElement(parser, CmisTypePolicyDefinitionType.class);
-                }
-                throw new CmisRuntimeException("Cannot read type definition!");
+                return new AtomElement(name, XMLConverter.convertTypeDefinition(parser));
             } else if (TAG_CHILDREN.equals(name.getLocalPart())) {
                 return parseChildren(parser);
             }
@@ -385,18 +350,6 @@ public class AtomPubParser {
         XMLUtils.skip(parser);
 
         return null;
-    }
-
-    /**
-     * Unmarshals a JAXB element.
-     */
-    private static <T> AtomElement unmarshalElement(XMLStreamReader parser, Class<T> cmisType) throws Exception {
-        QName name = parser.getName();
-
-        Unmarshaller u = JaxBHelper.createUnmarshaller();
-        JAXBElement<T> object = u.unmarshal(parser, cmisType);
-
-        return new AtomElement(name, object.getValue());
     }
 
     /**
@@ -445,7 +398,7 @@ public class AtomPubParser {
 
         if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
             if (TAG_REPOSITORY_INFO.equals(name.getLocalPart())) {
-                return unmarshalElement(parser, CmisRepositoryInfoType.class);
+                return new AtomElement(name, XMLConverter.convertRepositoryInfo(parser));
             } else if (TAG_URI_TEMPLATE.equals(name.getLocalPart())) {
                 return parseTemplate(parser);
             }
@@ -482,7 +435,7 @@ public class AtomPubParser {
                 QName tagName = parser.getName();
                 if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())
                         && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
-                    result.put("collectionType", readText(parser));
+                    result.put("collectionType", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                 } else {
                     XMLUtils.skip(parser);
                 }
@@ -515,9 +468,9 @@ public class AtomPubParser {
                 QName tagName = parser.getName();
                 if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())) {
                     if (TAG_TEMPLATE_TEMPLATE.equals(tagName.getLocalPart())) {
-                        result.put("template", readText(parser));
+                        result.put("template", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else if (TAG_TEMPLATE_TYPE.equals(tagName.getLocalPart())) {
-                        result.put("type", readText(parser));
+                        result.put("type", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else {
                         XMLUtils.skip(parser);
                     }
@@ -588,7 +541,7 @@ public class AtomPubParser {
      */
     private static AtomElement parseText(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
-        return new AtomElement(name, readText(parser));
+        return new AtomElement(name, XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
     }
 
     /**
@@ -596,37 +549,6 @@ public class AtomPubParser {
      */
     private static AtomElement parseBigInteger(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
-        return new AtomElement(name, new BigInteger(readText(parser)));
-    }
-
-    /**
-     * Parses a tag that contains text.
-     */
-    private static String readText(XMLStreamReader parser) throws Exception {
-        StringBuilder sb = new StringBuilder();
-
-        XMLUtils.next(parser);
-
-        while (true) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.END_ELEMENT) {
-                break;
-            } else if (event == XMLStreamReader.CHARACTERS) {
-                String s = parser.getText();
-                if (s != null) {
-                    sb.append(s);
-                }
-            } else if (event == XMLStreamReader.START_ELEMENT) {
-                throw new RuntimeException("Unexpected tag: " + parser.getName());
-            }
-
-            if (!XMLUtils.next(parser)) {
-                break;
-            }
-        }
-
-        XMLUtils.next(parser);
-
-        return sb.toString();
+        return new AtomElement(name, new BigInteger(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH)));
     }
 }

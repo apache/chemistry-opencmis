@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
+import org.apache.chemistry.opencmis.commons.data.Acl;
 
 /**
  * AtomAcl.
@@ -27,13 +27,13 @@ public class AtomAcl extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private CmisAccessControlListType acl;
+    private Acl acl;
 
     public AtomAcl() {
         super();
     }
 
-    public AtomAcl(CmisAccessControlListType acl) {
+    public AtomAcl(Acl acl) {
         this();
         setACL(acl);
     }
@@ -43,11 +43,11 @@ public class AtomAcl extends AtomBase {
         return "ACL";
     }
 
-    public CmisAccessControlListType getACL() {
+    public Acl getACL() {
         return acl;
     }
 
-    public void setACL(CmisAccessControlListType acl) {
+    public void setACL(Acl acl) {
         this.acl = acl;
     }
 }

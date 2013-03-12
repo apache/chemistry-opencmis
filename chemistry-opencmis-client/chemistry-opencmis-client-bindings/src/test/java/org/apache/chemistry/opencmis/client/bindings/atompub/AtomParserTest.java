@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.client.bindings.atompub;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -35,6 +34,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -43,8 +43,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
 
 /**
  * Minimal test for AtomEntryWriter and AtomPubParser.
@@ -96,11 +94,11 @@ public class AtomParserTest extends TestCase {
         assertTrue(entry.getElements().size() > 0);
 
         // find the object
-        CmisObjectType object2 = null;
+        ObjectData object2 = null;
         for (AtomElement element : entry.getElements()) {
-            if (element.getObject() instanceof CmisObjectType) {
+            if (element.getObject() instanceof ObjectData) {
                 assertNull(object2);
-                object2 = (CmisObjectType) element.getObject();
+                object2 = (ObjectData) element.getObject();
             }
         }
 
@@ -109,23 +107,14 @@ public class AtomParserTest extends TestCase {
 
         // compare properties
         for (PropertyData<?> property1 : object1.getProperties().getPropertyList()) {
-            boolean found = false;
+            PropertyData<?> property2 = object2.getProperties().getProperties().get(property1.getId());
 
-            for (CmisProperty property2 : object2.getProperties().getProperty()) {
-                if (property1.getId().equals(property2.getPropertyDefinitionId())) {
-                    found = true;
-
-                    // TODO: fix test
-                    //assertEquals(property1.getValues(), property2.);
-                    break;
-                }
-            }
-
-            assertTrue(found);
+            assertNotNull(property2);
+            assertEquals(property1, property2);
         }
     }
 
-    protected void assertEquals(CmisProperty expected, CmisProperty actual) throws Exception {
+    protected void assertEquals(PropertyData<?> expected, PropertyData<?> actual) throws Exception {
         if (expected == null && actual == null) {
             return;
         }
@@ -134,16 +123,14 @@ public class AtomParserTest extends TestCase {
             fail("Property is null!");
         }
 
-        assertEquals(expected.getPropertyDefinitionId(), actual.getPropertyDefinitionId());
+        assertEquals(expected.getId(), actual.getId());
         assertSame(expected.getClass(), actual.getClass());
 
-        Method m1 = expected.getClass().getMethod("getValue");
-        List<?> values1 = (List<?>) m1.invoke(expected);
+        List<?> values1 = expected.getValues();
         assertNotNull(values1);
         assertFalse(values1.isEmpty());
 
-        Method m2 = actual.getClass().getMethod("getValue");
-        List<?> values2 = (List<?>) m2.invoke(actual);
+        List<?> values2 = actual.getValues();
         assertNotNull(values2);
         assertFalse(values2.isEmpty());
 

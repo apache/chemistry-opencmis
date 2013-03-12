@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -56,7 +54,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
         // update ACL
         AtomAcl acl = updateAcl(repositoryId, objectId, newACL, aclPropagation);
-        Acl result = convert(acl.getACL(), null);
+        Acl result = acl.getACL();
 
         return result;
     }
@@ -67,7 +65,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
 
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
         AtomAcl acl = updateAcl(repositoryId, objectId, aces, AclPropagation.OBJECTONLY);
-        Acl result = convert(acl.getACL(), null);
+        Acl result = acl.getACL();
 
         return result;
     }

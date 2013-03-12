@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +39,6 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 /**
@@ -138,8 +135,8 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
                     for (AtomElement element : entry.getElements()) {
                         if (element.getObject() instanceof AtomLink) {
                             addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                        } else if (element.getObject() instanceof CmisTypeDefinitionType) {
-                            child = convert((CmisTypeDefinitionType) element.getObject());
+                        } else if (element.getObject() instanceof TypeDefinition) {
+                            child = (TypeDefinition) element.getObject();
                         }
                     }
                 } finally {
@@ -204,9 +201,8 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
                 for (AtomElement element : entry.getElements()) {
                     if (element.getObject() instanceof AtomLink) {
                         addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                    } else if (element.getObject() instanceof CmisTypeDefinitionType) {
-                        childContainer = new TypeDefinitionContainerImpl(
-                                convert((CmisTypeDefinitionType) element.getObject()));
+                    } else if (element.getObject() instanceof TypeDefinition) {
+                        childContainer = new TypeDefinitionContainerImpl((TypeDefinition) element.getObject());
                     } else if (element.getObject() instanceof AtomFeed) {
                         addTypeDescendantsLevel(repositoryId, (AtomFeed) element.getObject(), childContainerList);
                     }
@@ -221,7 +217,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
             }
         }
     }
-    
+
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }

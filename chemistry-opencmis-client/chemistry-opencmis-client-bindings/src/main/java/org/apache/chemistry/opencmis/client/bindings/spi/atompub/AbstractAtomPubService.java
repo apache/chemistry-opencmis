@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -87,9 +85,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
 /**
  * Base class for all AtomPub client services.
@@ -785,8 +780,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
                 } else if (is(NAME_URI_TEMPLATE, element)) {
                     Map<String, String> tempMap = (Map<String, String>) element.getObject();
                     addTemplate(ws.getId(), tempMap.get("type"), tempMap.get("template"));
-                } else if (element.getObject() instanceof CmisRepositoryInfoType) {
-                    repInfos.add(convert((CmisRepositoryInfoType) element.getObject()));
+                } else if (element.getObject() instanceof RepositoryInfo) {
+                    repInfos.add((RepositoryInfo) element.getObject());
                 }
             }
         }
@@ -844,8 +839,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisObjectType) {
-                    result = convert((CmisObjectType) element.getObject());
+                } else if (element.getObject() instanceof ObjectData) {
+                    result = (ObjectData) element.getObject();
                 }
             }
         } finally {
@@ -887,8 +882,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisTypeDefinitionType) {
-                    result = convert((CmisTypeDefinitionType) element.getObject());
+                } else if (element.getObject() instanceof TypeDefinition) {
+                    result = (TypeDefinition) element.getObject();
                 }
             }
         } finally {
@@ -918,7 +913,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         Response resp = read(url);
         AtomAcl acl = parse(resp.getStream(), AtomAcl.class);
 
-        return convert(acl.getACL(), null);
+        return acl.getACL();
     }
 
     /**

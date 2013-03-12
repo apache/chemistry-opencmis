@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 
 /**
  * AtomAllowableActions.
@@ -27,13 +27,13 @@ public class AtomAllowableActions extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private CmisAllowableActionsType allowableActions;
+    private AllowableActions allowableActions;
 
     public AtomAllowableActions() {
         super();
     }
 
-    public AtomAllowableActions(CmisAllowableActionsType allowableActions) {
+    public AtomAllowableActions(AllowableActions allowableActions) {
         this();
         setAllowableActions(allowableActions);
     }
@@ -43,11 +43,11 @@ public class AtomAllowableActions extends AtomBase {
         return "Allowable Actions";
     }
 
-    public CmisAllowableActionsType getAllowableActions() {
+    public AllowableActions getAllowableActions() {
         return allowableActions;
     }
 
-    public void setAllowableActions(CmisAllowableActionsType allowableActions) {
+    public void setAllowableActions(AllowableActions allowableActions) {
         this.allowableActions = allowableActions;
     }
 }

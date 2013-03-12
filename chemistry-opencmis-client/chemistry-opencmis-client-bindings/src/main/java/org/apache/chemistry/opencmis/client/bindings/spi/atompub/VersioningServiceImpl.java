@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 
@@ -177,7 +175,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         // set object id
         objectId.setValue(entry.getId());
 
-        Acl originalAces = null;
+        AccessControlListImpl originalAces = null;
 
         lockLinks();
         try {
@@ -188,10 +186,13 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
             for (AtomElement element : entry.getElements()) {
                 if (element.getObject() instanceof AtomLink) {
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                } else if (element.getObject() instanceof CmisObjectType) {
+                } else if (element.getObject() instanceof ObjectData) {
                     // extract current ACL
-                    CmisObjectType object = (CmisObjectType) element.getObject();
-                    originalAces = convert(object.getAcl(), object.isExactACL());
+                    ObjectData object = (ObjectData) element.getObject();
+                    if (object.getAcl() != null) {
+                        originalAces = new AccessControlListImpl(object.getAcl().getAces());
+                        originalAces.setExact(object.isExactAcl());
+                    }
                 }
             }
         } finally {
@@ -241,8 +242,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
                     for (AtomElement element : entry.getElements()) {
                         if (element.getObject() instanceof AtomLink) {
                             addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
-                        } else if (element.getObject() instanceof CmisObjectType) {
-                            version = convert((CmisObjectType) element.getObject());
+                        } else if (element.getObject() instanceof ObjectData) {
+                            version = (ObjectData) element.getObject();
                         }
                     }
                 } finally {

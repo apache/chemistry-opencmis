@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +35,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisProperty;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyId;
 import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 
 /**
@@ -100,8 +95,8 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
 
                 // walk through the entry
                 for (AtomElement element : entry.getElements()) {
-                    if (element.getObject() instanceof CmisObjectType) {
-                        policy = convert((CmisObjectType) element.getObject());
+                    if (element.getObject() instanceof ObjectData) {
+                        policy = (ObjectData) element.getObject();
                     }
                 }
 
@@ -147,8 +142,8 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
                         if (Constants.REL_SELF.equals(atomLink.getRel())) {
                             policyLink = atomLink.getHref();
                         }
-                    } else if (element.getObject() instanceof CmisObjectType) {
-                        String id = findIdProperty((CmisObjectType) element.getObject());
+                    } else if (element.getObject() instanceof ObjectData) {
+                        String id = ((ObjectData) element.getObject()).getId();
                         if (policyId.equals(id)) {
                             found = true;
                         }
@@ -165,26 +160,5 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         if (found && (policyLink != null)) {
             delete(new UrlBuilder(policyLink));
         }
-    }
-
-    /**
-     * Finds the id property within a CMIS object.
-     */
-    private static String findIdProperty(CmisObjectType object) {
-        if ((object == null) || (object.getProperties() == null)) {
-            return null;
-        }
-
-        for (CmisProperty property : object.getProperties().getProperty()) {
-            if (PropertyIds.OBJECT_ID.equals(property.getPropertyDefinitionId())
-                    && (property instanceof CmisPropertyId)) {
-                List<String> values = ((CmisPropertyId) property).getValue();
-                if (values.size() == 1) {
-                    return values.get(0);
-                }
-            }
-        }
-
-        return null;
     }
 }
