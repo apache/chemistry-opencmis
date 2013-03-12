@@ -36,7 +36,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
     private String localName;
     private String queryName;
 
-    private List<T> values;
+    private List<T> values = Collections.emptyList();
 
     public String getId() {
         return id;

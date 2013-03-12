@@ -92,9 +92,11 @@ public class TypeValidator {
         public void validate(PropertyDefinition<T> propDef, PropertyData<T> prop) {
 
             // check general constraints for all property types
-            if (propDef.getCardinality() == Cardinality.SINGLE && prop.getValues().size() > 1) {
-                throw new CmisConstraintException("The property with id " + propDef.getId()
+            if (propDef.getCardinality() == Cardinality.SINGLE) {
+                if(prop.getValues() != null && prop.getValues().size() > 1) {
+                    throw new CmisConstraintException("The property with id " + propDef.getId()
                         + " is single valued, but multiple values are passed " + prop.getValues());
+                }
             }
 
             if (propDef.getChoices() != null && propDef.getChoices().size() > 0) {

@@ -138,7 +138,7 @@ public abstract class XMLWalker<T> {
                 }
 
                 children.add(handleExtensionLevel(parser, level + 1));
-                
+
                 continue;
             }
 
@@ -157,7 +157,7 @@ public abstract class XMLWalker<T> {
     }
 
     protected <S> List<S> addToList(List<S> list, S value) {
-        if (list == null) {
+        if (list == null || list.isEmpty()) {
             list = new ArrayList<S>();
         }
         list.add(value);

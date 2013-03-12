@@ -56,7 +56,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
@@ -72,6 +71,8 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Service
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JaxBHelper;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
@@ -108,8 +109,7 @@ public class AtomPubParser {
      * Parses the stream.
      */
     public void parse() throws Exception {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader parser = factory.createXMLStreamReader(stream);
+        XMLStreamReader parser = XMLUtils.createParser(stream);
 
         try {
             while (true) {
@@ -144,7 +144,7 @@ public class AtomPubParser {
                     }
                 }
 
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
@@ -179,7 +179,7 @@ public class AtomPubParser {
     private static ServiceDoc parseServiceDoc(XMLStreamReader parser) throws Exception {
         ServiceDoc result = new ServiceDoc();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -190,15 +190,15 @@ public class AtomPubParser {
                     if (TAG_WORKSPACE.equals(name.getLocalPart())) {
                         result.addWorkspace(parseWorkspace(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
@@ -213,7 +213,7 @@ public class AtomPubParser {
     private static RepositoryWorkspace parseWorkspace(XMLStreamReader parser) throws Exception {
         RepositoryWorkspace workspace = new RepositoryWorkspace();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -230,13 +230,13 @@ public class AtomPubParser {
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return workspace;
     }
@@ -247,7 +247,7 @@ public class AtomPubParser {
     private AtomFeed parseFeed(XMLStreamReader parser) throws Exception {
         AtomFeed result = new AtomFeed();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -260,27 +260,27 @@ public class AtomPubParser {
                     } else if (TAG_ENTRY.equals(name.getLocalPart())) {
                         result.addEntry(parseEntry(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
                     if (TAG_NUM_ITEMS.equals(name.getLocalPart())) {
                         result.addElement(parseBigInteger(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -291,7 +291,7 @@ public class AtomPubParser {
     private AtomEntry parseEntry(XMLStreamReader parser) throws Exception {
         AtomEntry result = new AtomEntry();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         // walk through all tags in entry
         while (true) {
@@ -316,13 +316,13 @@ public class AtomPubParser {
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -357,7 +357,7 @@ public class AtomPubParser {
                 return parseText(parser);
             } else if (TAG_TYPE.equals(name.getLocalPart())) {
                 // workaround for old Chemistry code - ignore the type namespace
-                String typeAttr = parser.getAttributeValue(Constants.NAMESPACE_XSI, "type");
+                String typeAttr = parser.getAttributeValue(XMLConstants.NAMESPACE_XSI, "type");
                 if (typeAttr == null) {
                     return unmarshalElement(parser, CmisTypeDefinitionType.class);
                 } else if (typeAttr.endsWith(ATTR_DOCUMENT_TYPE)) {
@@ -382,7 +382,7 @@ public class AtomPubParser {
         }
 
         // we don't know it - skip it
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return null;
     }
@@ -406,7 +406,7 @@ public class AtomPubParser {
         AtomElement result = null;
         QName childName = parser.getName();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         // walk through the children tag
         while (true) {
@@ -418,21 +418,21 @@ public class AtomPubParser {
                     if (TAG_FEED.equals(name.getLocalPart())) {
                         result = new AtomElement(childName, parseFeed(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -460,7 +460,7 @@ public class AtomPubParser {
         }
 
         // we don't know it - skip it
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return null;
     }
@@ -474,7 +474,7 @@ public class AtomPubParser {
 
         result.put("href", parser.getAttributeValue(null, "href"));
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -484,18 +484,18 @@ public class AtomPubParser {
                         && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
                     result.put("collectionType", readText(parser));
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return new AtomElement(name, result);
     }
@@ -507,7 +507,7 @@ public class AtomPubParser {
         QName name = parser.getName();
         Map<String, String> result = new HashMap<String, String>();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -519,21 +519,21 @@ public class AtomPubParser {
                     } else if (TAG_TEMPLATE_TYPE.equals(tagName.getLocalPart())) {
                         result.put("type", readText(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return new AtomElement(name, result);
     }
@@ -557,7 +557,7 @@ public class AtomPubParser {
         }
 
         // skip enclosed tags, if any
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return new AtomElement(name, result);
     }
@@ -578,7 +578,7 @@ public class AtomPubParser {
         }
 
         // skip enclosed tags, if any
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return new AtomElement(name, result);
     }
@@ -605,7 +605,7 @@ public class AtomPubParser {
     private static String readText(XMLStreamReader parser) throws Exception {
         StringBuilder sb = new StringBuilder();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -620,42 +620,13 @@ public class AtomPubParser {
                 throw new RuntimeException("Unexpected tag: " + parser.getName());
             }
 
-            if (!next(parser)) {
+            if (!XMLUtils.next(parser)) {
                 break;
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return sb.toString();
-    }
-
-    /**
-     * Skips a tag or subtree.
-     */
-    private static void skip(XMLStreamReader parser) throws Exception {
-        int level = 1;
-        while (next(parser)) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
-                level++;
-            } else if (event == XMLStreamReader.END_ELEMENT) {
-                level--;
-                if (level == 0) {
-                    break;
-                }
-            }
-        }
-
-        next(parser);
-    }
-
-    private static boolean next(XMLStreamReader parser) throws Exception {
-        if (parser.hasNext()) {
-            parser.next();
-            return true;
-        }
-
-        return false;
     }
 }

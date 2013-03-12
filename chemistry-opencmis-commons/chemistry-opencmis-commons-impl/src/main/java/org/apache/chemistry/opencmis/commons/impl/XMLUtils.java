@@ -227,6 +227,26 @@ public class XMLUtils {
     }
 
     /**
+     * Skips a tag or subtree.
+     */
+    public static void skip(XMLStreamReader parser) throws Exception {
+        int level = 1;
+        while (next(parser)) {
+            int event = parser.getEventType();
+            if (event == XMLStreamReader.START_ELEMENT) {
+                level++;
+            } else if (event == XMLStreamReader.END_ELEMENT) {
+                level--;
+                if (level == 0) {
+                    break;
+                }
+            }
+        }
+
+        next(parser);
+    }
+
+    /**
      * Moves the parser to the next start element.
      * 
      * @return <code>true</code> if another start element has been found,
@@ -261,16 +281,20 @@ public class XMLUtils {
             if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else if (event == XMLStreamReader.CHARACTERS) {
-                String s = parser.getText();
-                if (s != null) {
+                int len = parser.getTextLength();
+                if (len > 0) {
                     if (sb == null) {
                         sb = new StringBuilder();
                     }
 
-                    if (sb.length() + s.length() > maxLength) {
+                    if (sb.length() + len > maxLength) {
                         throw new CmisInvalidArgumentException("String limit exceeded!");
                     }
-                    sb.append(s);
+
+                    char[] chars = parser.getTextCharacters();
+                    int offset = parser.getTextStart();
+
+                    sb.append(chars, offset, len);
                 }
             } else if (event == XMLStreamReader.START_ELEMENT) {
                 throw new RuntimeException("Unexpected tag: " + parser.getName());
