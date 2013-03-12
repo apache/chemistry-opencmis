@@ -29,14 +29,6 @@ public final class Constants {
     private Constants() {
     }
 
-    // namespaces
-    public static final String NAMESPACE_CMIS = "http://docs.oasis-open.org/ns/cmis/core/200908/";
-    public static final String NAMESPACE_ATOM = "http://www.w3.org/2005/Atom";
-    public static final String NAMESPACE_APP = "http://www.w3.org/2007/app";
-    public static final String NAMESPACE_RESTATOM = "http://docs.oasis-open.org/ns/cmis/restatom/200908/";
-    public static final String NAMESPACE_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-    public static final String NAMESPACE_APACHE_CHEMISTRY = "http://chemistry.apache.org/";
-
     // media types
     public static final String MEDIATYPE_SERVICE = "application/atomsvc+xml";
     public static final String MEDIATYPE_FEED = "application/atom+xml;type=feed";

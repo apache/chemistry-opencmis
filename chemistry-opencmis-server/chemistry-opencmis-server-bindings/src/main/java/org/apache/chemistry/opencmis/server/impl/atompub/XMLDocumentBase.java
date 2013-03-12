@@ -53,13 +53,6 @@ public abstract class XMLDocumentBase {
     }
 
     /**
-     * Writes the namespace declaration of the given URI to the current tag.
-     */
-    public void writeNamespace(String namespaceUri) throws XMLStreamException {
-        writer.writeNamespace(writer.getPrefix(namespaceUri), namespaceUri);
-    }
-
-    /**
      * Writes custom namespace declaration to the current tag.
      */
     public void writeAllCustomNamespace() throws XMLStreamException {

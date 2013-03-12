@@ -37,11 +37,14 @@ public class ServiceDocument extends AtomDocumentBase {
 
     public void startServiceDocument() throws XMLStreamException {
         XMLStreamWriter xsw = getWriter();
+        
         xsw.writeStartElement(XMLConstants.PREFIX_APP, "service", XMLConstants.NAMESPACE_APP);
-        writeNamespace(XMLConstants.NAMESPACE_APP);
-        writeNamespace(XMLConstants.NAMESPACE_ATOM);
-        writeNamespace(XMLConstants.NAMESPACE_CMIS);
-        writeNamespace(XMLConstants.NAMESPACE_RESTATOM);
+
+        xsw.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        xsw.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        xsw.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        xsw.writeNamespace(XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP);
+
         writeAllCustomNamespace();
     }
 

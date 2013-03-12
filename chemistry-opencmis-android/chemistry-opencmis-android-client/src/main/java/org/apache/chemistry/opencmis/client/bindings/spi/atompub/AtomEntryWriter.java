@@ -58,6 +58,7 @@ import org.apache.chemistry.opencmis.commons.enums.AtomPropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
@@ -119,43 +120,43 @@ public class AtomEntryWriter {
 
         // start doc
         writer.startDocument(ENCODING, false);
-        writer.setPrefix(PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.setPrefix(PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        writer.setPrefix(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
 
         // start entry
-        writer.startTag(Constants.NAMESPACE_ATOM, TAG_ENTRY);
-        writer.attribute("", PREFIX_ATOM, Constants.NAMESPACE_ATOM);
-        writer.attribute("", PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.attribute("", PREFIX_RESTATOM, Constants.NAMESPACE_RESTATOM);
+        writer.startTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
+        writer.attribute("", PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.attribute("", PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.attribute("", PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
 
         // atom:id
-        writeTag(writer, Constants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");
+        writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");
 
         // atom:title
-        writeTag(writer, Constants.NAMESPACE_ATOM, TAG_ATOM_TITLE, getTitle());
+        writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_TITLE, getTitle());
 
         // atom:updated
-        writeTag(writer, Constants.NAMESPACE_ATOM, TAG_ATOM_UPDATED, getUpdated());
+        writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_UPDATED, getUpdated());
 
         // content
         if (stream != null) {
-            writer.startTag(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
+            writer.startTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT);
 
-            writeTag(writer, Constants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE, mediaType);
+            writeTag(writer, XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE, mediaType);
 
-            writer.startTag(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
+            writer.startTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
             writeContent(writer);
-            writer.endTag(Constants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
+            writer.endTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
 
-            writer.endTag(Constants.NAMESPACE_RESTATOM, TAG_CONTENT);
+            writer.endTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT);
         }
 
         // object
         writeObject(writer, object);
 
         // end entry
-        writer.endTag(Constants.NAMESPACE_ATOM, TAG_ENTRY);
+        writer.endTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
 
         // end document
         writer.endDocument();
@@ -166,46 +167,46 @@ public class AtomEntryWriter {
     public static void writeQuery(OutputStream out, Map<String, String> queryParams) throws Exception {
         XmlSerializer writer = Xml.newSerializer();
         writer.setOutput(out, ENCODING);
-        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.startTag(Constants.NAMESPACE_CMIS, TAG_QUERY);
-        writer.attribute(null, PREFIX_CMIS, Constants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.startTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY);
+        writer.attribute(null, PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
 
-        writer.startTag(Constants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
+        writer.startTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
         writer.cdsect(queryParams.get(TAG_QUERY_STATEMENT));
-        writer.endTag(Constants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_SEARCH_ALL_VERSIONS,
+        writer.endTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_SEARCH_ALL_VERSIONS,
                 queryParams.get(Constants.PARAM_SEARCH_ALL_VERSIONS));
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_ALLOWABLE_ACTIONS,
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_ALLOWABLE_ACTIONS,
                 queryParams.get(Constants.PARAM_ALLOWABLE_ACTIONS));
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_RELATIONSHIPS,
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_RELATIONSHIPS,
                 queryParams.get(Constants.PARAM_RELATIONSHIPS));
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_RENDITION_FILTER,
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_RENDITION_FILTER,
                 queryParams.get(Constants.PARAM_RENDITION_FILTER));
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_MAX_ITEMS,
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_MAX_ITEMS,
                 queryParams.get(Constants.PARAM_MAX_ITEMS));
-        writeTagIfNotNull(writer, Constants.NAMESPACE_CMIS, Constants.PARAM_SKIP_COUNT,
+        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_SKIP_COUNT,
                 queryParams.get(Constants.PARAM_SKIP_COUNT));
 
-        writer.endTag(Constants.NAMESPACE_CMIS, TAG_QUERY);
+        writer.endTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY);
         writer.flush();
     }
 
     public static void writeACL(OutputStream out, Acl acl) throws Exception {
         XmlSerializer writer = Xml.newSerializer();
         writer.setOutput(out, ENCODING);
-        writer.setPrefix(PREFIX_CMIS, Constants.NAMESPACE_CMIS);
-        writer.startTag(Constants.NAMESPACE_CMIS, "acl");
-        writer.attribute(null, PREFIX_CMIS, Constants.NAMESPACE_CMIS);
+        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.startTag(XMLConstants.NAMESPACE_CMIS, "acl");
+        writer.attribute(null, PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
 
-        writer.startTag(Constants.NAMESPACE_CMIS, "permission");
+        writer.startTag(XMLConstants.NAMESPACE_CMIS, "permission");
 
         // TODO Implements
         // writeTag(writer, Constants.NAMESPACE_CMIS, "direct",
         // acl.getAces().get(0).)
 
-        writer.endTag(Constants.NAMESPACE_CMIS, "permission");
+        writer.endTag(XMLConstants.NAMESPACE_CMIS, "permission");
 
-        writer.endTag(Constants.NAMESPACE_CMIS, "acl");
+        writer.endTag(XMLConstants.NAMESPACE_CMIS, "acl");
         writer.flush();
     }
 
@@ -249,9 +250,9 @@ public class AtomEntryWriter {
     }
 
     private static void writeObject(XmlSerializer writer, ObjectData object) throws Exception {
-        writer.startTag(Constants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
+        writer.startTag(XMLConstants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
         if (object.getProperties() != null) {
-            writer.startTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
+            writer.startTag(XMLConstants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
             writeProperties(writer, object.getProperties().getPropertyList());
 
             if (object.getProperties().getExtensions() != null
@@ -259,9 +260,9 @@ public class AtomEntryWriter {
                 writeExtensions(writer, object.getProperties().getExtensions());
             }
 
-            writer.endTag(Constants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
+            writer.endTag(XMLConstants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
         }
-        writer.endTag(Constants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
+        writer.endTag(XMLConstants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
     }
 
     private static void writeTagIfNotNull(XmlSerializer writer, String tagNameSpace, String tagName, String text)
@@ -285,10 +286,10 @@ public class AtomEntryWriter {
     }
 
     private static void writeProperty(XmlSerializer writer, PropertyData<?> prop) throws Exception {
-        writer.startTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
+        writer.startTag(XMLConstants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
         writer.attribute(null, ATTR_PROPERTY_DEFINITION_ID, prop.getId());
         writeValues(writer, prop.getValues());
-        writer.endTag(Constants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
+        writer.endTag(XMLConstants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
     }
 
     private static void writeExtensions(XmlSerializer writer, List<CmisExtensionElement> extensions) throws Exception {
@@ -312,7 +313,7 @@ public class AtomEntryWriter {
 
     private static void writeValues(XmlSerializer writer, List<?> values) throws Exception {
         for (Object value : values) {
-            writeTag(writer, Constants.NAMESPACE_CMIS, TAG_VALUE, convertPropertyValue(value));
+            writeTag(writer, XMLConstants.NAMESPACE_CMIS, TAG_VALUE, convertPropertyValue(value));
         }
     }
 

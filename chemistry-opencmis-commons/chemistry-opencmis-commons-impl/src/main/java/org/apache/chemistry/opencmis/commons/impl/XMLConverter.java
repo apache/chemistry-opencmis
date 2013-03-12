@@ -1853,7 +1853,7 @@ public class XMLConverter {
                     }
 
                     if (isTag(name, TAG_PROPERTY_TYPE_CHOICE)) {
-                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyStringDefinitionImpl) target);
+                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyIdDefinitionImpl) target);
                         return true;
                     }
                 } else if (target instanceof PropertyBooleanDefinitionImpl) {
@@ -1944,7 +1944,7 @@ public class XMLConverter {
                     }
 
                     if (isTag(name, TAG_PROPERTY_TYPE_CHOICE)) {
-                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyStringDefinitionImpl) target);
+                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyHtmlDefinitionImpl) target);
                         return true;
                     }
                 } else if (target instanceof PropertyUriDefinitionImpl) {
@@ -1955,7 +1955,7 @@ public class XMLConverter {
                     }
 
                     if (isTag(name, TAG_PROPERTY_TYPE_CHOICE)) {
-                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyStringDefinitionImpl) target);
+                        CHOICE_STRING_PARSER.addToChoiceList(parser, (PropertyUriDefinitionImpl) target);
                         return true;
                     }
                 }

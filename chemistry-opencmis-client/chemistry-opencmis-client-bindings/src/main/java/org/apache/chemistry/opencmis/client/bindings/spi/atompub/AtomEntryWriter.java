@@ -101,7 +101,16 @@ public class AtomEntryWriter {
     public void write(OutputStream out) throws Exception {
         XMLStreamWriter writer = XMLUtils.createWriter(out);
 
-        XMLUtils.startEntryDocument(writer, contentStream != null && contentStream.getFileName() != null);
+        XMLUtils.startXmlDocument(writer);
+
+        writer.writeStartElement(XMLConstants.PREFIX_ATOM, "entry", XMLConstants.NAMESPACE_ATOM);
+        
+        writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        if (contentStream != null && contentStream.getFileName() != null) {
+            writer.writeNamespace(XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+        }
 
         // atom:id
         XMLUtils.write(writer, XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID,

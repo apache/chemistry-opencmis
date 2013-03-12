@@ -22,10 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 
 @XmlRootElement
@@ -33,7 +32,7 @@ public class TypeDefinitions {
 
     protected List<CmisTypeDefinitionType> type;
 
-    @XmlElement(namespace = Constants.NAMESPACE_RESTATOM, name = "type")
+    @XmlElement(namespace = XMLConstants.NAMESPACE_RESTATOM, name = "type")
     public List<CmisTypeDefinitionType> getTypeDefinitions() {
         if (type == null) {
             type = new ArrayList<CmisTypeDefinitionType>();

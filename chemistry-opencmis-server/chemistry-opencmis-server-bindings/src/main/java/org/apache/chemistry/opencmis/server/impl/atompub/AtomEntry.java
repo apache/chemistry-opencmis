@@ -52,13 +52,16 @@ public class AtomEntry extends AtomDocumentBase {
      * Opens the entry tag.
      */
     public void startEntry(boolean isRoot) throws XMLStreamException {
-        getWriter().writeStartElement(XMLConstants.NAMESPACE_ATOM, "entry");
+        XMLStreamWriter xsw = getWriter();
+
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "entry", XMLConstants.NAMESPACE_ATOM);
 
         if (isRoot) {
-            writeNamespace(XMLConstants.NAMESPACE_ATOM);
-            writeNamespace(XMLConstants.NAMESPACE_CMIS);
-            writeNamespace(XMLConstants.NAMESPACE_RESTATOM);
-            writeNamespace(XMLConstants.NAMESPACE_APP);
+            xsw.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+            xsw.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+            xsw.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+            xsw.writeNamespace(XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP);
+
             writeAllCustomNamespace();
         }
     }

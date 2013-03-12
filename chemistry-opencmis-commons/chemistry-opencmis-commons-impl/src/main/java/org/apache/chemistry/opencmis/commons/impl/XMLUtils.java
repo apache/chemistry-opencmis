@@ -78,34 +78,6 @@ public class XMLUtils {
     }
 
     /**
-     * Starts an AtomPub Entry document.
-     */
-    public static void startEntryDocument(XMLStreamWriter writer, boolean hasContent) throws XMLStreamException {
-        startXmlDocument(writer);
-
-        writer.writeStartElement(XMLConstants.PREFIX_ATOM, "entry", XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-        if (hasContent) {
-            writer.writeNamespace(XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
-        }
-    }
-
-    /**
-     * Starts an AtomPub Feed document.
-     */
-    public static void startFeedDocument(XMLStreamWriter writer, String tag, boolean hasContent)
-            throws XMLStreamException {
-        startXmlDocument(writer);
-
-        writer.writeStartElement(XMLConstants.PREFIX_ATOM, "feed", XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-    }
-
-    /**
      * Ends a XML document.
      */
     public static void endXmlDocument(XMLStreamWriter writer) throws XMLStreamException {

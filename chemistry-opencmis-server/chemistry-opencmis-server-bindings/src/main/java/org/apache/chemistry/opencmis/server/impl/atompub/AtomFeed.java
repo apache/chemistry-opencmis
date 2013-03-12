@@ -31,9 +31,6 @@ import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
  * Atom Feed class.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class AtomFeed extends AtomDocumentBase {
 
@@ -56,13 +53,16 @@ public class AtomFeed extends AtomDocumentBase {
      * Opens the feed tag.
      */
     public void startFeed(boolean isRoot) throws XMLStreamException {
-        getWriter().writeStartElement(Constants.NAMESPACE_ATOM, "feed");
+        XMLStreamWriter xsw = getWriter();
+
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "feed", XMLConstants.NAMESPACE_ATOM);
 
         if (isRoot) {
-            writeNamespace(Constants.NAMESPACE_ATOM);
-            writeNamespace(Constants.NAMESPACE_CMIS);
-            writeNamespace(Constants.NAMESPACE_RESTATOM);
-            writeNamespace(Constants.NAMESPACE_APP);
+            xsw.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+            xsw.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+            xsw.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+            xsw.writeNamespace(XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP);
+
             writeAllCustomNamespace();
         }
     }
@@ -72,7 +72,7 @@ public class AtomFeed extends AtomDocumentBase {
      */
     public void startChildren() throws XMLStreamException {
         XMLStreamWriter writer = getWriter();
-        writer.writeStartElement(Constants.NAMESPACE_RESTATOM, "children");
+        writer.writeStartElement(XMLConstants.PREFIX_RESTATOM, "children", XMLConstants.NAMESPACE_RESTATOM);
     }
 
     /**

@@ -68,13 +68,13 @@ public abstract class XMLWalker<T> {
     }
 
     protected boolean isCmisNamespace(QName name) {
-        return Constants.NAMESPACE_CMIS.hashCode() == name.getNamespaceURI().hashCode()
-                && Constants.NAMESPACE_CMIS.equals(name.getNamespaceURI());
+        return XMLConstants.NAMESPACE_CMIS.hashCode() == name.getNamespaceURI().hashCode()
+                && XMLConstants.NAMESPACE_CMIS.equals(name.getNamespaceURI());
     }
 
     protected boolean isAtomNamespace(QName name) {
-        return Constants.NAMESPACE_ATOM.hashCode() == name.getNamespaceURI().hashCode()
-                && Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI());
+        return XMLConstants.NAMESPACE_ATOM.hashCode() == name.getNamespaceURI().hashCode()
+                && XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI());
     }
 
     protected boolean isTag(QName name, String tag) {

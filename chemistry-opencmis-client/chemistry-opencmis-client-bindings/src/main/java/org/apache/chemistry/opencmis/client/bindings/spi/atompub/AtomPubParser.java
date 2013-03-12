@@ -65,7 +65,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Service
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
@@ -101,7 +101,7 @@ public class AtomPubParser {
                 if (event == XMLStreamReader.START_ELEMENT) {
                     QName name = parser.getName();
 
-                    if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+                    if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
                         if (TAG_FEED.equals(name.getLocalPart())) {
                             parseResult = parseFeed(parser);
                             break;
@@ -109,7 +109,7 @@ public class AtomPubParser {
                             parseResult = parseEntry(parser);
                             break;
                         }
-                    } else if (Constants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
+                    } else if (XMLConstants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
                         if (TAG_ALLOWABLEACTIONS.equals(name.getLocalPart())) {
                             parseResult = parseAllowableActions(parser);
                             break;
@@ -117,7 +117,7 @@ public class AtomPubParser {
                             parseResult = parseACL(parser);
                             break;
                         }
-                    } else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+                    } else if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
                         if (TAG_SERVICE.equals(name.getLocalPart())) {
                             parseResult = parseServiceDoc(parser);
                             break;
@@ -170,7 +170,7 @@ public class AtomPubParser {
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName name = parser.getName();
 
-                if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+                if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
                     if (TAG_WORKSPACE.equals(name.getLocalPart())) {
                         result.addWorkspace(parseWorkspace(parser));
                     } else {
@@ -238,7 +238,7 @@ public class AtomPubParser {
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName name = parser.getName();
 
-                if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+                if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
                     if (TAG_LINK.equals(name.getLocalPart())) {
                         result.addElement(parseLink(parser));
                     } else if (TAG_ENTRY.equals(name.getLocalPart())) {
@@ -246,7 +246,7 @@ public class AtomPubParser {
                     } else {
                         XMLUtils.skip(parser);
                     }
-                } else if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+                } else if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
                     if (TAG_NUM_ITEMS.equals(name.getLocalPart())) {
                         result.addElement(parseBigInteger(parser));
                     } else {
@@ -327,7 +327,7 @@ public class AtomPubParser {
     private AtomElement parseElement(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
 
-        if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+        if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
             if (TAG_OBJECT.equals(name.getLocalPart())) {
                 return new AtomElement(name, XMLConverter.convertObject(parser));
             } else if (TAG_PATH_SEGMENT.equals(name.getLocalPart())
@@ -338,7 +338,7 @@ public class AtomPubParser {
             } else if (TAG_CHILDREN.equals(name.getLocalPart())) {
                 return parseChildren(parser);
             }
-        } else if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+        } else if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
             if (TAG_LINK.equals(name.getLocalPart())) {
                 return parseLink(parser);
             } else if (TAG_CONTENT.equals(name.getLocalPart())) {
@@ -367,7 +367,7 @@ public class AtomPubParser {
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName name = parser.getName();
 
-                if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+                if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
                     if (TAG_FEED.equals(name.getLocalPart())) {
                         result = new AtomElement(childName, parseFeed(parser));
                     } else {
@@ -396,17 +396,17 @@ public class AtomPubParser {
     private static AtomElement parseWorkspaceElement(XMLStreamReader parser) throws Exception {
         QName name = parser.getName();
 
-        if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+        if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
             if (TAG_REPOSITORY_INFO.equals(name.getLocalPart())) {
                 return new AtomElement(name, XMLConverter.convertRepositoryInfo(parser));
             } else if (TAG_URI_TEMPLATE.equals(name.getLocalPart())) {
                 return parseTemplate(parser);
             }
-        } else if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+        } else if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
             if (TAG_LINK.equals(name.getLocalPart())) {
                 return parseLink(parser);
             }
-        } else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+        } else if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
             if (TAG_COLLECTION.equals(name.getLocalPart())) {
                 return parseCollection(parser);
             }
@@ -433,7 +433,7 @@ public class AtomPubParser {
             int event = parser.getEventType();
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName tagName = parser.getName();
-                if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())
+                if (XMLConstants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())
                         && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
                     result.put("collectionType", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                 } else {
@@ -466,7 +466,7 @@ public class AtomPubParser {
             int event = parser.getEventType();
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName tagName = parser.getName();
-                if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())) {
+                if (XMLConstants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())) {
                     if (TAG_TEMPLATE_TEMPLATE.equals(tagName.getLocalPart())) {
                         result.put("template", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else if (TAG_TEMPLATE_TYPE.equals(tagName.getLocalPart())) {

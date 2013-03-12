@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -359,8 +360,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                         if (object.getProperties() != null) {
                             Object changeTokenStr = object.getProperties().getProperties()
                                     .get(PropertyIds.CHANGE_TOKEN);
-                            if (changeTokenStr instanceof String) {
-                                changeToken.setValue((String) changeTokenStr);
+                            if (changeTokenStr instanceof PropertyString) {
+                                changeToken.setValue(((PropertyString) changeTokenStr).getFirstValue());
                             }
                         }
                     }

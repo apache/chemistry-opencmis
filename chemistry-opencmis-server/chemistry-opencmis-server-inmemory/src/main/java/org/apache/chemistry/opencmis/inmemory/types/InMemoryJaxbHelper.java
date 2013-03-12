@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 
 public class InMemoryJaxbHelper {
     private static final QName CMIS_TYPE_DEFINITIONS = new QName("http://chemistry.apache.org/schemas/TypeDefnitions", "typeDefinitions");
-    private static final QName CMIS_TYPE_DEFINITION = new QName(Constants.NAMESPACE_RESTATOM, "type");
+    private static final QName CMIS_TYPE_DEFINITION = new QName(XMLConstants.NAMESPACE_RESTATOM, "type");
 
     public static final ObjectFactory CMIS_OBJECT_FACTORY = new ObjectFactory();
     public static final CMISExtraObjectFactory CMIS_EXTRA_OBJECT_FACTORY = new CMISExtraObjectFactory();
@@ -58,7 +58,7 @@ public class InMemoryJaxbHelper {
             return new JAXBElement<TypeDefinitions>(CMIS_TYPE_DEFINITIONS, TypeDefinitions.class, value);
         }
 
-        @XmlElementDecl(namespace = Constants.NAMESPACE_RESTATOM, name = "type")
+        @XmlElementDecl(namespace = XMLConstants.NAMESPACE_RESTATOM, name = "type")
         public JAXBElement<CmisTypeDefinitionType> createTypeDefinition(CmisTypeDefinitionType value) {
             return new JAXBElement<CmisTypeDefinitionType>(CMIS_TYPE_DEFINITION, CmisTypeDefinitionType.class, value);
         }

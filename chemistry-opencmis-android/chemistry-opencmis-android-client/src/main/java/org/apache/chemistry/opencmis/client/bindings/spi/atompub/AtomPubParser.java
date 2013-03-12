@@ -108,6 +108,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.AtomPubConverter;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -153,7 +154,7 @@ public class AtomPubParser {
 				if (event == XmlPullParser.START_TAG) {
 					QName name = new QName(parser.getNamespace(), parser.getName());
 
-					if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+					if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
 						if (TAG_FEED.equals(name.getLocalPart())) {
 							parseResult = parseFeed(parser);
 							break;
@@ -161,7 +162,7 @@ public class AtomPubParser {
 							parseResult = parseEntry(parser);
 							break;
 						}
-					} else if (Constants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
+					} else if (XMLConstants.NAMESPACE_CMIS.equals(name.getNamespaceURI())) {
 						if (TAG_ALLOWABLEACTIONS.equals(name.getLocalPart())) {
 							parseResult = new AtomAllowableActions(parseAllowableActions(parser));
 							break;
@@ -169,7 +170,7 @@ public class AtomPubParser {
 							parseResult = new AtomAcl(parseACL(parser));
 							break;
 						}
-					} else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+					} else if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
 						if (TAG_SERVICE.equals(name.getLocalPart())) {
 							parseResult = parseServiceDoc(parser);
 							break;
@@ -218,7 +219,7 @@ public class AtomPubParser {
 			if (event == XmlPullParser.START_TAG) {
 				QName name = new QName(parser.getNamespace(), parser.getName());
 
-				if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+				if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
 					if (TAG_WORKSPACE.equals(name.getLocalPart())) {
 						result.addWorkspace(parseWorkspace(parser));
 					} else {
@@ -286,7 +287,7 @@ public class AtomPubParser {
 			if (event == XmlPullParser.START_TAG) {
 				QName name = new QName(parser.getNamespace(), parser.getName());
 
-				if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+				if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
 					if (TAG_LINK.equals(name.getLocalPart())) {
 						result.addElement(parseLink(parser));
 					} else if (TAG_ENTRY.equals(name.getLocalPart())) {
@@ -294,7 +295,7 @@ public class AtomPubParser {
 					} else {
 						skip(parser);
 					}
-				} else if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+				} else if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
 					if (TAG_NUM_ITEMS.equals(name.getLocalPart())) {
 						result.addElement(parseBigInteger(parser));
 					} else {
@@ -361,14 +362,14 @@ public class AtomPubParser {
 	private AtomElement parseElement(XmlPullParser parser) throws Exception {
 		QName name = new QName(parser.getNamespace(), parser.getName());
 
-		if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+		if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
 			if (TAG_OBJECT.equals(name.getLocalPart())) {
 				return new AtomElement(name, parseObject(parser));
 			} else if (TAG_PATH_SEGMENT.equals(name.getLocalPart()) || TAG_RELATIVE_PATH_SEGMENT.equals(name.getLocalPart())) {
 				return parseText(parser);
 			} else if (TAG_TYPE.equals(name.getLocalPart())) {
 				// workaround for old Chemistry code - ignore the type namespace
-				String typeAttr = parser.getAttributeValue(Constants.NAMESPACE_XSI, "type");
+				String typeAttr = parser.getAttributeValue(XMLConstants.NAMESPACE_XSI, "type");
 				if (typeAttr == null) {
 					return new AtomElement(name, parseTypeDefinition(parser, null));
 				} else if (typeAttr.endsWith(ATTR_DOCUMENT_TYPE)) {
@@ -384,7 +385,7 @@ public class AtomPubParser {
 			} else if (TAG_CHILDREN.equals(name.getLocalPart())) {
 				return parseChildren(parser);
 			}
-		} else if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+		} else if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
 			if (TAG_LINK.equals(name.getLocalPart())) {
 				return parseLink(parser);
 			} else if (TAG_CONTENT.equals(name.getLocalPart())) {
@@ -413,7 +414,7 @@ public class AtomPubParser {
 			if (event == XmlPullParser.START_TAG) {
 				QName name = new QName(parser.getNamespace(), parser.getName());
 
-				if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+				if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
 					if (TAG_FEED.equals(name.getLocalPart())) {
 						result = new AtomElement(childName, parseFeed(parser));
 					} else {
@@ -442,17 +443,17 @@ public class AtomPubParser {
 	private static AtomElement parseWorkspaceElement(XmlPullParser parser) throws Exception {
 		QName name = new QName(parser.getNamespace(), parser.getName());
 
-		if (Constants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
+		if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
 			if (TAG_REPOSITORY_INFO.equals(name.getLocalPart())) {
 				return new AtomElement(name, parseRepositoryInfo(parser));
 			} else if (TAG_URI_TEMPLATE.equals(name.getLocalPart())) {
 				return parseTemplate(parser);
 			}
-		} else if (Constants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
+		} else if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())) {
 			if (TAG_LINK.equals(name.getLocalPart())) {
 				return parseLink(parser);
 			}
-		} else if (Constants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
+		} else if (XMLConstants.NAMESPACE_APP.equals(name.getNamespaceURI())) {
 			if (TAG_COLLECTION.equals(name.getLocalPart())) {
 				return parseCollection(parser);
 			}
@@ -479,7 +480,7 @@ public class AtomPubParser {
 			int event = parser.getEventType();
 			if (event == XmlPullParser.START_TAG) {
 				QName tagName = new QName(parser.getNamespace(), parser.getName());
-				if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI()) && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
+				if (XMLConstants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI()) && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
 					result.put("collectionType", readText(parser));
 				} else {
 					skip(parser);
@@ -511,7 +512,7 @@ public class AtomPubParser {
 			int event = parser.getEventType();
 			if (event == XmlPullParser.START_TAG) {
 				QName tagName = new QName(parser.getNamespace(), parser.getName());
-				if (Constants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())) {
+				if (XMLConstants.NAMESPACE_RESTATOM.equals(tagName.getNamespaceURI())) {
 					if (TAG_TEMPLATE_TEMPLATE.equals(tagName.getLocalPart())) {
 						result.put("template", readText(parser));
 					} else if (TAG_TEMPLATE_TYPE.equals(tagName.getLocalPart())) {
@@ -705,7 +706,7 @@ public class AtomPubParser {
 				} else if (TAG_REPINFO_CHANGES_ON_TYPE.equals(name)) {
 					parser.next();
 					changesOnType.add(parser.getText());
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					repositoryInfoRawValues.put(name, parser.getText());
 				}
@@ -738,7 +739,7 @@ public class AtomPubParser {
 			case XmlPullParser.START_TAG:
 				if (name.startsWith(TAG_PROPERTY)) {
 					propertyDefinitionList.add(parsePropertyDefinition(parser));
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					definitionRawValues.put(name, parser.getText());
 				} else {
@@ -780,7 +781,7 @@ public class AtomPubParser {
 		while (!(eventType == XmlPullParser.END_TAG && id.equals(name))) {
 			switch (eventType) {
 			case XmlPullParser.START_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					propertyTypeRawValues.put(name, parser.getText());
 				} else {
@@ -889,7 +890,7 @@ public class AtomPubParser {
 			case XmlPullParser.START_TAG:
 
 				// Extension
-				if (!Constants.NAMESPACE_CMIS.equals(nameSpace)) {
+				if (!XMLConstants.NAMESPACE_CMIS.equals(nameSpace)) {
 					extensions.addAll(parseExtensions(parser));
 					eventType = parser.next();
 					if (XmlPullParser.TEXT == eventType) {
@@ -1069,7 +1070,7 @@ public class AtomPubParser {
 		while (!(eventType == XmlPullParser.END_TAG && TAG_RENDITION.equals(name))) {
 			switch (eventType) {
 			case XmlPullParser.START_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					rendition.put(name, parser.getText());
 				} else {
@@ -1105,7 +1106,7 @@ public class AtomPubParser {
 		while (!(eventType == XmlPullParser.END_TAG && Constants.SELECTOR_ALLOWABLEACTIONS.equals(name))) {
 			switch (eventType) {
 			case XmlPullParser.START_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					allowableActionsRawValues.put(name, parser.getText());
 				} else {
@@ -1144,17 +1145,17 @@ public class AtomPubParser {
 		while (!(eventType == XmlPullParser.END_TAG && TAG_REPINFO_ACL_CAPABILITY.equals(name))) {
 			switch (eventType) {
 			case XmlPullParser.START_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSIONS.equals(name)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSIONS.equals(name)) {
 
 					String permission = null, description = null;
 					// Permissions
 					while (!(eventType == XmlPullParser.END_TAG && TAG_ACLCAP_PERMISSIONS.equals(name))) {
 						switch (eventType) {
 						case XmlPullParser.START_TAG:
-							if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
+							if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
 								parser.next();
 								permission = parser.getText();
-							} else if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_DESCRIPTION.equals(name)) {
+							} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_DESCRIPTION.equals(name)) {
 								parser.next();
 								description = parser.getText();
 							}
@@ -1172,7 +1173,7 @@ public class AtomPubParser {
 
 					permissionDefinitionList.add(permDef);
 
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING.equals(name)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING.equals(name)) {
 
 					String key = null;
 					List<String> permList = new ArrayList<String>();
@@ -1180,10 +1181,10 @@ public class AtomPubParser {
 					while (!(eventType == XmlPullParser.END_TAG && TAG_ACLCAP_MAPPING.equals(name))) {
 						switch (eventType) {
 						case XmlPullParser.START_TAG:
-							if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING_KEY.equals(name)) {
+							if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING_KEY.equals(name)) {
 								parser.next();
 								key = parser.getText();
-							} else if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING_PERMISSION.equals(name)) {
+							} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_MAPPING_PERMISSION.equals(name)) {
 								parser.next();
 								permList.add(parser.getText());
 							}
@@ -1201,7 +1202,7 @@ public class AtomPubParser {
 
 					permMap.put(key, mapping);
 
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace)) {
 					parser.next();
 					AclCapabilitiesRawValues.put(name, parser.getText());
 				}
@@ -1229,7 +1230,7 @@ public class AtomPubParser {
 		while (!(eventType == XmlPullParser.END_TAG && Constants.SELECTOR_ACL.equals(name))) {
 			switch (eventType) {
 			case XmlPullParser.START_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
 					if (isPermissionRootTag == false) {
 						isPermissionRootTag = true;
 						permissions = new ArrayList<String>();
@@ -1239,12 +1240,12 @@ public class AtomPubParser {
 						permissions.add(parser.getText());
 						parser.next();
 					}
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_PRINCIPAL.equals(name)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_PRINCIPAL.equals(name)) {
 					AccessControlPrincipalDataImpl principal = null;
 					while (!(eventType == XmlPullParser.END_TAG && TAG_ACE_PRINCIPAL.equals(name))) {
 						switch (eventType) {
 						case XmlPullParser.START_TAG:
-							if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_PRINCIPAL_ID.equals(name)) {
+							if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_PRINCIPAL_ID.equals(name)) {
 								parser.next();
 								principal = new AccessControlPrincipalDataImpl();
 								principal.setPrincipalId(parser.getText());
@@ -1258,14 +1259,14 @@ public class AtomPubParser {
 					// convertExtension(jsonPrincipal, principal,
 					// PRINCIPAL_KEYS);
 					ace.setPrincipal(principal);
-				} else if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_DIRECT.equals(name)) {
+				} else if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACE_DIRECT.equals(name)) {
 					parser.next();
 					Boolean isDirect = Boolean.parseBoolean(parser.getText());
 					ace.setDirect(isDirect != null ? isDirect.booleanValue() : true);
 				}
 				break;
 			case XmlPullParser.END_TAG:
-				if (Constants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
+				if (XMLConstants.NAMESPACE_CMIS.equals(namespace) && TAG_ACLCAP_PERMISSION_PERMISSION.equals(name)) {
 					isPermissionRootTag = false;
 					ace.setPermissions(permissions);
 					aces.add(ace);
