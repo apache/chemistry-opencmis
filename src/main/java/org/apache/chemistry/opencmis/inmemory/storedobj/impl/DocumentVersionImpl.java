@@ -271,9 +271,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
 
         // CMIS 1.1
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
-
-        if (cmis11 && FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
             properties.put(PropertyIds.IS_PRIVATE_WORKING_COPY,
                     objFactory.createPropertyBooleanData(PropertyIds.IS_PRIVATE_WORKING_COPY, isPwc()));
         }

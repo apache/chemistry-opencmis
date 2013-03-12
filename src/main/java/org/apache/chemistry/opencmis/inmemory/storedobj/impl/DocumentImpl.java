@@ -149,7 +149,7 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         // overwrite the version related properties
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
             properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(
-                    PropertyIds.VERSION_SERIES_ID, (String)null));
+                    PropertyIds.VERSION_SERIES_ID, getId()));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
             properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(
@@ -185,11 +185,9 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         }
         
         // CMIS 1.1
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
-
-        if (cmis11 && FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
+        if (FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
             properties.put(PropertyIds.IS_PRIVATE_WORKING_COPY,
-                    objFactory.createPropertyBooleanData(PropertyIds.IS_PRIVATE_WORKING_COPY, (Boolean) null));
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_PRIVATE_WORKING_COPY, false));
         }
         
     }
