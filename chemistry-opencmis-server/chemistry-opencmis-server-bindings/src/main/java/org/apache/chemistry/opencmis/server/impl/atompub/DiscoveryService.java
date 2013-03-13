@@ -207,7 +207,7 @@ public final class DiscoveryService {
         entry.writeUpdated(now);
 
         // write query result object
-        XMLConverter.writeObject(entry.getWriter(), cmisVersion, XMLConstants.TAG_OBJECT,
+        XMLConverter.writeObject(entry.getWriter(), cmisVersion, false, XMLConstants.TAG_OBJECT,
                 XMLConstants.NAMESPACE_RESTATOM, result);
 
         // we are done

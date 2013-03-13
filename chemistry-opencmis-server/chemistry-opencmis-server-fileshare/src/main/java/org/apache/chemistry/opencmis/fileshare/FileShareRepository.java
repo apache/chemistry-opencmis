@@ -1415,6 +1415,10 @@ public class FileShareRepository {
             // change token - always null
             addPropertyString(result, typeId, filter, PropertyIds.CHANGE_TOKEN, null);
 
+            // CMIS 1.1 properties
+            addPropertyString(result, typeId, filter, PropertyIds.DESCRIPTION, null);
+            addPropertyIdList(result, typeId, filter, PropertyIds.SECONDARY_OBJECT_TYPE_IDS, null);
+
             // directory or file
             if (file.isDirectory()) {
                 // base type and type name
@@ -1507,7 +1511,7 @@ public class FileShareRepository {
         ObjectData obj = null;
         InputStream stream = null;
         try {
-            stream = new BufferedInputStream(new FileInputStream(file));
+            stream = new BufferedInputStream(new FileInputStream(propFile));
             XMLStreamReader parser = XMLUtils.createParser(stream);
             XMLUtils.findNextStartElemenet(parser);
             obj = XMLConverter.convertObject(parser);
@@ -1575,7 +1579,7 @@ public class FileShareRepository {
             }
 
             // add it
-            properties.addProperty(prop);
+            properties.replaceProperty(prop);
         }
     }
 
@@ -1871,7 +1875,7 @@ public class FileShareRepository {
         addAction(aas, Action.CAN_GET_OBJECT_PARENTS, !isRoot);
         addAction(aas, Action.CAN_GET_PROPERTIES, true);
         addAction(aas, Action.CAN_UPDATE_PROPERTIES, !userReadOnly && !isReadOnly);
-        addAction(aas, Action.CAN_MOVE_OBJECT, !userReadOnly);
+        addAction(aas, Action.CAN_MOVE_OBJECT, !userReadOnly && !isRoot);
         addAction(aas, Action.CAN_DELETE_OBJECT, !userReadOnly && !isReadOnly && !isRoot);
         addAction(aas, Action.CAN_GET_ACL, true);
 
@@ -1953,8 +1957,9 @@ public class FileShareRepository {
         try {
             stream = new BufferedOutputStream(new FileOutputStream(propFile));
             XMLStreamWriter writer = XMLUtils.createWriter(stream);
-            XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, XMLConstants.NAMESPACE_CMIS, object);
-            writer.close();
+            XMLUtils.startXmlDocument(writer);
+            XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, true, "object", XMLConstants.NAMESPACE_CMIS, object);
+            XMLUtils.endXmlDocument(writer);
         } catch (Exception e) {
             throw new CmisStorageException("Couldn't store properties!", e);
         } finally {

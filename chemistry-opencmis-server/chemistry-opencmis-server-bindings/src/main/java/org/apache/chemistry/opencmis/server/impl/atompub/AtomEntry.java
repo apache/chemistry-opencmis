@@ -90,8 +90,8 @@ public class AtomEntry extends AtomDocumentBase {
 
         writeContent(contentSrc, contentType);
 
-        XMLConverter.writeObject(getWriter(), cmisVersion, XMLConstants.TAG_OBJECT, XMLConstants.NAMESPACE_RESTATOM,
-                object);
+        XMLConverter.writeObject(getWriter(), cmisVersion, false, XMLConstants.TAG_OBJECT,
+                XMLConstants.NAMESPACE_RESTATOM, object);
 
         writePathSegment(pathSegment);
         writeRelativePathSegment(relativePathSegment);
@@ -113,8 +113,8 @@ public class AtomEntry extends AtomDocumentBase {
         writeTitle(object.getId());
         writeUpdated(now);
 
-        XMLConverter.writeObject(getWriter(), cmisVersion, XMLConstants.TAG_OBJECT, XMLConstants.NAMESPACE_RESTATOM,
-                object);
+        XMLConverter.writeObject(getWriter(), cmisVersion, false, XMLConstants.TAG_OBJECT,
+                XMLConstants.NAMESPACE_RESTATOM, object);
     }
 
     /**

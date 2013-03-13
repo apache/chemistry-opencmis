@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.tck.tests.basics;
+package org.apache.chemistry.opencmis.tck.tests.types;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
@@ -39,10 +39,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
-/**
- * Types test.
- */
-public class TypesTest extends AbstractSessionTest {
+public class BaseTypesTest extends AbstractSessionTest {
     @Override
     public void init(Map<String, String> parameters) {
         super.init(parameters);
@@ -258,4 +255,5 @@ public class TypesTest extends AbstractSessionTest {
 
         return numOfTypes;
     }
+
 }

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -99,7 +101,13 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
             }
 
             // check version series ids
-            f = createResult(FAILURE, "Although the created documents are independent, some share a Version Series Id!");
+            if (Boolean.TRUE.equals(((DocumentType) documents.values().iterator().next().getType()).isVersionable())) {
+                f = createResult(FAILURE,
+                        "Although the created documents are independent, some documents share a Version Series Id!");
+            } else {
+                f = createResult(INFO, "Some documents share the same Version Series Id.");
+            }
+
             addResult(assertEquals(numOfDocuments, versionSeriesIds.size(), null, f));
 
             // check paging

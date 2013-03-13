@@ -16,26 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.tck.tests.basics;
+package org.apache.chemistry.opencmis.tck.tests.types;
 
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTestGroup;
 
 /**
- * This test group contains tests that check the CMIS basics such the repository
- * info or types.
+ * This test group contains tests that check type operations.
  */
-public class BasicsTestGroup extends AbstractSessionTestGroup {
+public class TypesTestGroup extends AbstractSessionTestGroup {
     @Override
     public void init(Map<String, String> parameters) throws Exception {
         super.init(parameters);
 
-        setName("Basics Test Group");
-        setDescription("Basic tests.");
+        setName("Types Test Group");
+        setDescription("Types tests.");
 
-        addTest(new SecurityTest());
-        addTest(new RepositoryInfoTest());
-        addTest(new RootFolderTest());
+        addTest(new BaseTypesTest());
     }
 }

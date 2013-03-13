@@ -649,16 +649,21 @@ public class XMLConverter {
 
     public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace, ObjectData source)
             throws XMLStreamException {
-        writeObject(writer, cmisVersion, TAG_OBJECT, namespace, source);
+        writeObject(writer, cmisVersion, false, TAG_OBJECT, namespace, source);
     }
 
-    public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, String name, String namespace,
-            ObjectData source) throws XMLStreamException {
+    public static void writeObject(XMLStreamWriter writer, CmisVersion cmisVersion, boolean root, String name,
+            String namespace, ObjectData source) throws XMLStreamException {
         if (source == null) {
             return;
         }
 
-        writer.writeStartElement(namespace, name);
+        if (root) {
+            writer.writeStartElement(PREFIX_CMIS, name, NAMESPACE_CMIS);
+            writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
+        } else {
+            writer.writeStartElement(namespace, name);
+        }
 
         if (source.getProperties() != null) {
             Properties properties = source.getProperties();
@@ -680,7 +685,7 @@ public class XMLConverter {
         if (source.getRelationships() != null) {
             for (ObjectData rel : source.getRelationships()) {
                 if (rel != null) {
-                    writeObject(writer, cmisVersion, TAG_OBJECT_RELATIONSHIP, NAMESPACE_CMIS, rel);
+                    writeObject(writer, cmisVersion, false, TAG_OBJECT_RELATIONSHIP, NAMESPACE_CMIS, rel);
                 }
             }
         }
@@ -833,7 +838,7 @@ public class XMLConverter {
         }
 
         if (root) {
-            writer.writeStartElement(NAMESPACE_CMIS, "allowableActions");
+            writer.writeStartElement(PREFIX_CMIS, "allowableActions", NAMESPACE_CMIS);
             writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
         } else {
             writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ALLOWABLE_ACTIONS, NAMESPACE_CMIS);
@@ -861,7 +866,7 @@ public class XMLConverter {
         }
 
         if (root) {
-            writer.writeStartElement(NAMESPACE_CMIS, "acl");
+            writer.writeStartElement(PREFIX_CMIS, "acl", NAMESPACE_CMIS);
             writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
         } else {
             writer.writeStartElement(PREFIX_CMIS, TAG_OBJECT_ACL, NAMESPACE_CMIS);
