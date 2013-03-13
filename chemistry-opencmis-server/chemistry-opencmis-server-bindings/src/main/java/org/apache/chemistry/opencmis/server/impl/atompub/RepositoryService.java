@@ -420,4 +420,75 @@ public final class RepositoryService {
                 context.getCmisVersion());
         entry.endDocument();
     }
+
+    /**
+     * Creates a type.
+     */
+    public static void createType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // parse entry
+        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
+                context.getMaxContentSize(), context.encryptTempFiles());
+        parser.parse(request.getInputStream());
+
+        // execute
+        TypeDefinition newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
+
+        // set headers
+        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(Constants.MEDIATYPE_ENTRY);
+        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
+
+        // write XML
+        AtomEntry entry = new AtomEntry();
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
+        writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                context.getCmisVersion());
+        entry.endDocument();
+    }
+
+    /**
+     * Updates a type.
+     */
+    public static void updateType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // parse entry
+        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
+                context.getMaxContentSize(), context.encryptTempFiles());
+        parser.parse(request.getInputStream());
+
+        // execute
+        TypeDefinition newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
+
+        // set headers
+        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType(Constants.MEDIATYPE_ENTRY);
+        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
+
+        // write XML
+        AtomEntry entry = new AtomEntry();
+        entry.startDocument(response.getOutputStream(), getNamespaces(service));
+        writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                context.getCmisVersion());
+        entry.endDocument();
+    }
+
+    /**
+     * Deletes a type.
+     */
+    public static void deleteType(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // get parameters
+        String typeId = getStringParameter(request, Constants.PARAM_ID);
+
+        // execute
+        service.deleteType(repositoryId, typeId, null);
+
+        // set headers
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
 }

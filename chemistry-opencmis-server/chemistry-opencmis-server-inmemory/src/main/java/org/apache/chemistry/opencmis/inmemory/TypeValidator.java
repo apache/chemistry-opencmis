@@ -46,6 +46,10 @@ public class TypeValidator {
 
 	public static void checkType(TypeManager tm, TypeDefinition td) {
 
+	    if(null == td) {
+	        throw new CmisInvalidArgumentException("Cannot add type, because the type defintion is null.");  
+	    }
+	    
         if (null == tm.getTypeById(td.getParentTypeId())) {
             throw new CmisInvalidArgumentException("Cannot add type, because parent with id " + td.getParentTypeId()
                     + " does not exist.");

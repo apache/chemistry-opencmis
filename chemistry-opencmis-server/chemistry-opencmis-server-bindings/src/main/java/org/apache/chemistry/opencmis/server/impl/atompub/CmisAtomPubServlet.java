@@ -153,8 +153,11 @@ public class CmisAtomPubServlet extends HttpServlet {
 
         try {
             dispatcher.addResource(RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
+            dispatcher.addResource(RESOURCE_TYPES, METHOD_POST, RepositoryService.class, "createType");
             dispatcher.addResource(RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class, "getTypeDescendants");
             dispatcher.addResource(RESOURCE_TYPE, METHOD_GET, RepositoryService.class, "getTypeDefinition");
+            dispatcher.addResource(RESOURCE_TYPE, METHOD_PUT, RepositoryService.class, "updateType");
+            dispatcher.addResource(RESOURCE_TYPE, METHOD_DELETE, RepositoryService.class, "deleteType");
             dispatcher.addResource(RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
             dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
             dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class, "getFolderTree");

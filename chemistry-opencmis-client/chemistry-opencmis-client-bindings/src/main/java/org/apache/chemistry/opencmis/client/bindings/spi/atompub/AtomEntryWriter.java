@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
@@ -54,20 +55,21 @@ public class AtomEntryWriter {
 
     private static final int BUFFER_SIZE = 8 * 1024;
 
-    private final ObjectData object;
     private final CmisVersion cmisVersion;
+    private final ObjectData object;
     private final ContentStream contentStream;
     private final InputStream stream;
+    private final TypeDefinition typeDef;
 
     /**
-     * Constructor.
+     * Constructor for objects.
      */
     public AtomEntryWriter(ObjectData object, CmisVersion cmisVersion) {
         this(object, cmisVersion, null);
     }
 
     /**
-     * Constructor.
+     * Constructor for objects.
      */
     public AtomEntryWriter(ObjectData object, CmisVersion cmisVersion, ContentStream contentStream) {
         if ((object == null) || (object.getProperties() == null)) {
@@ -93,6 +95,22 @@ public class AtomEntryWriter {
         } else {
             stream = null;
         }
+        this.typeDef = null;
+    }
+
+    /**
+     * Constructor for types.
+     */
+    public AtomEntryWriter(TypeDefinition type, CmisVersion cmisVersion) {
+        if (type == null) {
+            throw new CmisInvalidArgumentException("Type must not be null!");
+        }
+
+        this.typeDef = type;
+        this.cmisVersion = cmisVersion;
+        this.object = null;
+        this.contentStream = null;
+        this.stream = null;
     }
 
     /**
@@ -104,7 +122,7 @@ public class AtomEntryWriter {
         XMLUtils.startXmlDocument(writer);
 
         writer.writeStartElement(XMLConstants.PREFIX_ATOM, "entry", XMLConstants.NAMESPACE_ATOM);
-        
+
         writer.writeNamespace(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.writeNamespace(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.writeNamespace(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
@@ -143,7 +161,14 @@ public class AtomEntryWriter {
         }
 
         // object
-        XMLConverter.writeObject(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, object);
+        if (object != null) {
+            XMLConverter.writeObject(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, object);
+        }
+
+        // type
+        if (typeDef != null) {
+            XMLConverter.writeTypeDefinition(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, typeDef);
+        }
 
         // end entry
         writer.writeEndElement();
@@ -157,9 +182,17 @@ public class AtomEntryWriter {
     private String getTitle() {
         String result = "";
 
-        PropertyData<?> nameProperty = object.getProperties().getProperties().get(PropertyIds.NAME);
-        if (nameProperty instanceof PropertyString) {
-            result = ((PropertyString) nameProperty).getFirstValue();
+        if (object != null) {
+            PropertyData<?> nameProperty = object.getProperties().getProperties().get(PropertyIds.NAME);
+            if (nameProperty instanceof PropertyString) {
+                result = ((PropertyString) nameProperty).getFirstValue();
+            }
+        }
+
+        if (typeDef != null) {
+            if (typeDef.getDisplayName() != null) {
+                result = typeDef.getDisplayName();
+            }
         }
 
         return result;

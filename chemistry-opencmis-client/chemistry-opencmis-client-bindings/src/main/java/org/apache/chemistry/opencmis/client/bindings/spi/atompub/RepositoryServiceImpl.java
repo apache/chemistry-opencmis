@@ -18,22 +18,27 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -219,14 +224,128 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
     }
 
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (type == null) {
+            throw new CmisInvalidArgumentException("Type definition must be set!");
+        }
+
+        String parentId = type.getParentTypeId();
+        if (parentId == null) {
+            throw new CmisInvalidArgumentException("Type definition has no parent type id!");
+        }
+
+        // find the link
+        String link = loadTypeLink(repositoryId, parentId, Constants.REL_DOWN, Constants.MEDIATYPE_CHILDREN);
+
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or parent type!");
+        }
+
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(type, getCmisVersion(repositoryId));
+
+        // post the new type definition
+        Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+
+        // parse the response
+        AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
+
+        // we expect a CMIS entry
+        if (entry.getId() == null) {
+            throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
+        }
+
+        lockTypeLinks();
+        TypeDefinition result = null;
+        try {
+            // clean up cache
+            removeTypeLinks(repositoryId, entry.getId());
+
+            // walk through the entry
+            for (AtomElement element : entry.getElements()) {
+                if (element.getObject() instanceof AtomLink) {
+                    addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+                } else if (element.getObject() instanceof TypeDefinition) {
+                    result = (TypeDefinition) element.getObject();
+                }
+            }
+        } finally {
+            unlockTypeLinks();
+        }
+
+        return result;
     }
 
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (type == null) {
+            throw new CmisInvalidArgumentException("Type definition must be set!");
+        }
+
+        String typeId = type.getId();
+        if (typeId == null) {
+            throw new CmisInvalidArgumentException("Type definition has no type id!");
+        }
+
+        // find the link
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(Constants.PARAM_ID, typeId);
+
+        String link = loadTemplateLink(repositoryId, Constants.TEMPLATE_TYPE_BY_ID, parameters);
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or type!");
+        }
+
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(type, getCmisVersion(repositoryId));
+
+        // post the new type definition
+        Response resp = put(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+
+        // parse the response
+        AtomEntry entry = parse(resp.getStream(), AtomEntry.class);
+
+        // we expect a CMIS entry
+        if (entry.getId() == null) {
+            throw new CmisConnectionException("Received Atom entry is not a CMIS entry!");
+        }
+
+        lockTypeLinks();
+        TypeDefinition result = null;
+        try {
+            // clean up cache
+            removeTypeLinks(repositoryId, entry.getId());
+
+            // walk through the entry
+            for (AtomElement element : entry.getElements()) {
+                if (element.getObject() instanceof AtomLink) {
+                    addTypeLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
+                } else if (element.getObject() instanceof TypeDefinition) {
+                    result = (TypeDefinition) element.getObject();
+                }
+            }
+        } finally {
+            unlockTypeLinks();
+        }
+
+        return result;
     }
 
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(Constants.PARAM_ID, typeId);
+
+        String link = loadTemplateLink(repositoryId, Constants.TEMPLATE_TYPE_BY_ID, parameters);
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository!");
+        }
+
+        delete(new UrlBuilder(link));
     }
 }

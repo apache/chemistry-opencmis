@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
@@ -68,6 +69,7 @@ public class AtomEntryParser {
     private static final String TAG_BASE64 = "base64";
     private static final String TAG_MEDIATYPE = "mediatype";
     private static final String TAG_FILENAME = "filename";
+    private static final String TAG_TYPE = "type";
 
     private static final String ATTR_SRC = "src";
     private static final String ATTR_TYPE = "type";
@@ -84,6 +86,7 @@ public class AtomEntryParser {
     private ObjectData object;
     private ContentStreamImpl atomContentStream;
     private ContentStreamImpl cmisContentStream;
+    private TypeDefinition typeDef;
 
     /**
      * Constructor.
@@ -174,6 +177,13 @@ public class AtomEntryParser {
     }
 
     /**
+     * Returns the type definition.
+     */
+    public TypeDefinition getTypeDefinition() {
+        return typeDef;
+    }
+
+    /**
      * Parses the stream.
      */
     public void parse(InputStream stream) throws Exception {
@@ -227,6 +237,8 @@ public class AtomEntryParser {
                 if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
                     if (TAG_OBJECT.equals(name.getLocalPart())) {
                         parseObject(parser);
+                    } else if (TAG_TYPE.equals(name.getLocalPart())) {
+                        parseTypeDefinition(parser);
                     } else if (TAG_CONTENT.equals(name.getLocalPart())) {
                         parseCmisContent(parser);
                     } else {
@@ -264,6 +276,13 @@ public class AtomEntryParser {
      */
     private void parseObject(XMLStreamReader parser) throws Exception {
         object = XMLConverter.convertObject(parser);
+    }
+
+    /**
+     * Parses a CMIS type.
+     */
+    private void parseTypeDefinition(XMLStreamReader parser) throws Exception {
+        typeDef = XMLConverter.convertTypeDefinition(parser);
     }
 
     /**
