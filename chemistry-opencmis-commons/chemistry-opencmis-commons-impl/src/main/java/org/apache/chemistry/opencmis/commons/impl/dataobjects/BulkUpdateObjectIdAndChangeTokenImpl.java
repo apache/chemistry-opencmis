@@ -27,9 +27,13 @@ public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData 
         BulkUpdateObjectIdAndChangeToken {
 
     private static final long serialVersionUID = 1L;
+
     private String id;
     private String newId;
     private String changeToken = null;
+
+    public BulkUpdateObjectIdAndChangeTokenImpl() {
+    }
 
     public BulkUpdateObjectIdAndChangeTokenImpl(String id, String changeToken) {
         this.id = id;
@@ -61,6 +65,18 @@ public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData 
 
     public String getChangeToken() {
         return changeToken;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setNewId(String newId) {
+        this.newId = newId;
+    }
+
+    public void setChangeToken(String changeToken) {
+        this.changeToken = changeToken;
     }
 
     @Override

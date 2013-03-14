@@ -30,8 +30,10 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -52,9 +54,23 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +85,7 @@ public abstract class AbstractXMLConverterTest {
 
     private final static long SEED = 1234567890;
 
-    protected final static String TEST_SCHEMA = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    protected final static String TEST_SCHEMA10 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" targetNamespace=\""
             + TEST_NAMESPACE
             + "\" xmlns:test=\""
@@ -91,6 +107,29 @@ public abstract class AbstractXMLConverterTest {
             + "<xs:element name=\"test\" type=\"test:testType\"/>" //
             + "</xs:schema>";
 
+    protected final static String TEST_SCHEMA11 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" targetNamespace=\""
+            + TEST_NAMESPACE
+            + "\" xmlns:test=\""
+            + TEST_NAMESPACE
+            + "\" xmlns:cmis=\""
+            + XMLConstants.NAMESPACE_CMIS
+            + "\" version=\"1.0\">"
+            + "<xs:import namespace=\""
+            + XMLConstants.NAMESPACE_CMIS
+            + "\"/>"
+            + "<xs:complexType name=\"testType\">"
+            + "<xs:sequence>"
+            + "<xs:element name=\"repositoryInfo\" type=\"cmis:cmisRepositoryInfoType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "<xs:element name=\"type\" type=\"cmis:cmisTypeDefinitionType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "<xs:element name=\"object\" type=\"cmis:cmisObjectType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "<xs:element name=\"query\" type=\"cmis:cmisQueryType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "<xs:element name=\"bulkUpdate\" type=\"cmis:cmisBulkUpdateType\" minOccurs=\"0\" maxOccurs=\"1\" />"
+            + "</xs:sequence>" //
+            + "</xs:complexType>" //
+            + "<xs:element name=\"test\" type=\"test:testType\"/>" //
+            + "</xs:schema>";
+
     protected Schema schema10;
     protected Schema schema11;
     protected Random rnd;
@@ -105,14 +144,14 @@ public abstract class AbstractXMLConverterTest {
         InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
         if (schema10stream != null) {
             StreamSource core10 = new StreamSource(schema10stream);
-            StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+            StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA10.getBytes("UTF-8")));
             schema10 = sf.newSchema(new Source[] { core10, test10 });
         }
 
         InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
         if (schema11stream != null) {
             StreamSource core11 = new StreamSource(schema11stream);
-            StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA.getBytes("UTF-8")));
+            StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA11.getBytes("UTF-8")));
             schema11 = sf.newSchema(new Source[] { core11, test11 });
         }
 
@@ -230,6 +269,140 @@ public abstract class AbstractXMLConverterTest {
         transformer.transform(source, result);
 
         return result.getWriter().toString();
+    }
+
+    protected PropertyData<?> createPropertyData(PropertyType propertyType, int numValues) {
+        AbstractPropertyData<?> result;
+
+        switch (propertyType) {
+        case BOOLEAN:
+            result = new PropertyBooleanImpl();
+            if (numValues > 0) {
+                List<Boolean> values = new ArrayList<Boolean>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomBoolean());
+                }
+                ((PropertyBooleanImpl) result).setValues(values);
+            }
+            break;
+        case DATETIME:
+            result = new PropertyDateTimeImpl();
+            if (numValues > 0) {
+                List<GregorianCalendar> values = new ArrayList<GregorianCalendar>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomDateTime());
+                }
+                ((PropertyDateTimeImpl) result).setValues(values);
+            }
+            break;
+        case DECIMAL:
+            result = new PropertyDecimalImpl();
+            if (numValues > 0) {
+                List<BigDecimal> values = new ArrayList<BigDecimal>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomDecimal());
+                }
+                ((PropertyDecimalImpl) result).setValues(values);
+            }
+            break;
+        case HTML:
+            result = new PropertyHtmlImpl();
+            if (numValues > 0) {
+                List<String> values = new ArrayList<String>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomString());
+                }
+                ((PropertyHtmlImpl) result).setValues(values);
+            }
+            break;
+        case ID:
+            result = new PropertyIdImpl();
+            if (numValues > 0) {
+                List<String> values = new ArrayList<String>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomString());
+                }
+                ((PropertyIdImpl) result).setValues(values);
+            }
+            break;
+        case INTEGER:
+            result = new PropertyIntegerImpl();
+            if (numValues > 0) {
+                List<BigInteger> values = new ArrayList<BigInteger>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomInteger());
+                }
+                ((PropertyIntegerImpl) result).setValues(values);
+            }
+            break;
+        case STRING:
+            result = new PropertyStringImpl();
+            if (numValues > 0) {
+                List<String> values = new ArrayList<String>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomString());
+                }
+                ((PropertyStringImpl) result).setValues(values);
+            }
+            break;
+        case URI:
+            result = new PropertyUriImpl();
+            if (numValues > 0) {
+                List<String> values = new ArrayList<String>();
+                for (int i = 0; i < numValues; i++) {
+                    values.add(randomUri());
+                }
+                ((PropertyUriImpl) result).setValues(values);
+            }
+            break;
+        default:
+            return null;
+        }
+
+        result.setId(randomString());
+        result.setDisplayName(randomString());
+        result.setLocalName(randomString());
+        result.setQueryName(randomString());
+
+        return result;
+    }
+
+    protected PropertyId createIdPropertyData(String id, String value) {
+        PropertyIdImpl result = new PropertyIdImpl();
+
+        result.setId(id);
+        result.setDisplayName(id);
+        result.setLocalName(id);
+        result.setQueryName(id);
+        result.setValue(value);
+
+        return result;
+    }
+
+    protected List<CmisExtensionElement> createExtensions(int depth) {
+        List<CmisExtensionElement> result = new ArrayList<CmisExtensionElement>();
+
+        String[] namespaces = new String[] { "http://ext1.com", "http://ext2.org", "http://ext3.net" };
+
+        for (int i = 0; i < randomInt(4) + 1; i++) {
+            String ns = namespaces[randomInt(namespaces.length)];
+
+            Map<String, String> attr = new HashMap<String, String>();
+            for (int j = 0; j < randomInt(3); j++) {
+                attr.put(randomTag(), randomString());
+            }
+
+            CmisExtensionElementImpl element;
+            if (randomBoolean() || depth < 1) {
+                element = new CmisExtensionElementImpl(ns, randomTag(), attr, randomString());
+            } else {
+                element = new CmisExtensionElementImpl(ns, randomTag(), attr, createExtensions(depth - 1));
+            }
+
+            result.add(element);
+        }
+
+        return result;
     }
 
     protected String randomString() {

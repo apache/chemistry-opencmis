@@ -241,4 +241,14 @@ public class XMLConstants {
     public static final String TAG_QUERY_RENDITIONFILTER = "renditionFilter";
     public static final String TAG_QUERY_MAXITEMS = "maxItems";
     public static final String TAG_QUERY_SKIPCOUNT = "skipCount";
+
+    public static final String TAG_BULK_UPDATE = "bulkUpdate";
+    public static final String TAG_BULK_UPDATE_ID_AND_TOKEN = "objectIdAndChangeToken";
+    public static final String TAG_BULK_UPDATE_PROPERTIES = "properties";
+    public static final String TAG_BULK_UPDATE_ADD_SECONDARY_TYPES = "addSecondaryTypeIds";
+    public static final String TAG_BULK_UPDATE_REMOVE_SECONDARY_TYPES = "removeSecondaryTypeIds";
+
+    public static final String TAG_IDANDTOKEN_ID = "id";
+    public static final String TAG_IDANDTOKEN_NEWID = "newId";
+    public static final String TAG_IDANDTOKEN_CHANGETOKEN = "changeToken";
 }

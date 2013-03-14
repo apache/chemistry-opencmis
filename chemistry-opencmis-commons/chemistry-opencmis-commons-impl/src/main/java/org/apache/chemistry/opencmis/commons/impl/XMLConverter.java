@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
@@ -107,6 +108,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
@@ -931,6 +934,61 @@ public class XMLConverter {
         writer.writeEndElement();
     }
 
+    // -------------------
+    // --- bulk update ---
+    // -------------------
+
+    public static void writeBulkUpdate(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) throws XMLStreamException {
+        if (objectIdAndChangeToken == null) {
+            return;
+        }
+
+        writer.writeStartElement(namespace, TAG_BULK_UPDATE);
+
+        for (BulkUpdateObjectIdAndChangeToken idAndToken : objectIdAndChangeToken) {
+            if (idAndToken == null) {
+                continue;
+            }
+
+            writer.writeStartElement(PREFIX_CMIS, TAG_BULK_UPDATE_ID_AND_TOKEN, NAMESPACE_CMIS);
+
+            XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_IDANDTOKEN_ID, idAndToken.getId());
+            XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_IDANDTOKEN_CHANGETOKEN, idAndToken.getChangeToken());
+
+            writeExtensions(writer, idAndToken);
+            writer.writeEndElement();
+        }
+
+        if (properties != null) {
+            writer.writeStartElement(PREFIX_CMIS, TAG_BULK_UPDATE_PROPERTIES, NAMESPACE_CMIS);
+
+            if (properties.getPropertyList() != null) {
+                for (PropertyData<?> property : properties.getPropertyList()) {
+                    writeProperty(writer, property, false);
+                }
+            }
+
+            writeExtensions(writer, properties);
+            writer.writeEndElement();
+        }
+
+        if (addSecondaryTypeIds != null) {
+            for (String id : addSecondaryTypeIds) {
+                XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_BULK_UPDATE_ADD_SECONDARY_TYPES, id);
+            }
+        }
+
+        if (removeSecondaryTypeIds != null) {
+            for (String id : removeSecondaryTypeIds) {
+                XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_BULK_UPDATE_REMOVE_SECONDARY_TYPES, id);
+            }
+        }
+
+        writer.writeEndElement();
+    }
+
     // -------------------------
     // --- extension writers ---
     // -------------------------
@@ -1033,6 +1091,10 @@ public class XMLConverter {
 
     public static Acl convertAcl(XMLStreamReader parser) throws XMLStreamException {
         return ACL_PARSER.walk(parser);
+    }
+
+    public static BulkUpdateImpl convertBulkUpdate(XMLStreamReader parser) throws XMLStreamException {
+        return BULK_UPDATE_PARSER.walk(parser);
     }
 
     // ------------------------------
@@ -2587,6 +2649,76 @@ public class XMLConverter {
 
                 if (isTag(name, TAG_QUERY_SKIPCOUNT)) {
                     target.setSkipCount(readInteger(parser));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    // --------------------------
+    // --- bulk update parser ---
+    // --------------------------
+
+    private static final XMLWalker<BulkUpdateImpl> BULK_UPDATE_PARSER = new XMLWalker<BulkUpdateImpl>() {
+        @Override
+        protected BulkUpdateImpl prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException {
+            return new BulkUpdateImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, BulkUpdateImpl target) throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_BULK_UPDATE_ID_AND_TOKEN)) {
+                    target.setObjectIdAndChangeToken(addToList(target.getObjectIdAndChangeToken(),
+                            ID_AND_TOKEN_PARSER.walk(parser)));
+                    return true;
+                }
+
+                if (isTag(name, TAG_BULK_UPDATE_PROPERTIES)) {
+                    target.setProperties(PROPERTIES_PARSER.walk(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_BULK_UPDATE_ADD_SECONDARY_TYPES)) {
+                    target.setAddSecondaryTypeIds(addToList(target.getAddSecondaryTypeIds(), readText(parser)));
+                    return true;
+                }
+
+                if (isTag(name, TAG_BULK_UPDATE_REMOVE_SECONDARY_TYPES)) {
+                    target.setRemoveSecondaryTypeIds(addToList(target.getRemoveSecondaryTypeIds(), readText(parser)));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    private static final XMLWalker<BulkUpdateObjectIdAndChangeTokenImpl> ID_AND_TOKEN_PARSER = new XMLWalker<BulkUpdateObjectIdAndChangeTokenImpl>() {
+        @Override
+        protected BulkUpdateObjectIdAndChangeTokenImpl prepareTarget(XMLStreamReader parser, QName name)
+                throws XMLStreamException {
+            return new BulkUpdateObjectIdAndChangeTokenImpl();
+        }
+
+        @Override
+        protected boolean read(XMLStreamReader parser, QName name, BulkUpdateObjectIdAndChangeTokenImpl target)
+                throws XMLStreamException {
+            if (isCmisNamespace(name)) {
+                if (isTag(name, TAG_IDANDTOKEN_ID)) {
+                    target.setId(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_IDANDTOKEN_NEWID)) {
+                    target.setNewId(readText(parser));
+                    return true;
+                }
+
+                if (isTag(name, TAG_IDANDTOKEN_CHANGETOKEN)) {
+                    target.setChangeToken(readText(parser));
                     return true;
                 }
             }

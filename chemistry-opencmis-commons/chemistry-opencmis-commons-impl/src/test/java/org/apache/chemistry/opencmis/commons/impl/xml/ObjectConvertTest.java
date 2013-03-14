@@ -21,24 +21,16 @@ package org.apache.chemistry.opencmis.commons.impl.xml;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
-import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -46,24 +38,14 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.junit.Test;
 
@@ -186,140 +168,6 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         // extensions
         result.setExtensions(createExtensions(5));
-
-        return result;
-    }
-
-    protected PropertyData<?> createPropertyData(PropertyType propertyType, int numValues) {
-        AbstractPropertyData<?> result;
-
-        switch (propertyType) {
-        case BOOLEAN:
-            result = new PropertyBooleanImpl();
-            if (numValues > 0) {
-                List<Boolean> values = new ArrayList<Boolean>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomBoolean());
-                }
-                ((PropertyBooleanImpl) result).setValues(values);
-            }
-            break;
-        case DATETIME:
-            result = new PropertyDateTimeImpl();
-            if (numValues > 0) {
-                List<GregorianCalendar> values = new ArrayList<GregorianCalendar>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomDateTime());
-                }
-                ((PropertyDateTimeImpl) result).setValues(values);
-            }
-            break;
-        case DECIMAL:
-            result = new PropertyDecimalImpl();
-            if (numValues > 0) {
-                List<BigDecimal> values = new ArrayList<BigDecimal>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomDecimal());
-                }
-                ((PropertyDecimalImpl) result).setValues(values);
-            }
-            break;
-        case HTML:
-            result = new PropertyHtmlImpl();
-            if (numValues > 0) {
-                List<String> values = new ArrayList<String>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomString());
-                }
-                ((PropertyHtmlImpl) result).setValues(values);
-            }
-            break;
-        case ID:
-            result = new PropertyIdImpl();
-            if (numValues > 0) {
-                List<String> values = new ArrayList<String>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomString());
-                }
-                ((PropertyIdImpl) result).setValues(values);
-            }
-            break;
-        case INTEGER:
-            result = new PropertyIntegerImpl();
-            if (numValues > 0) {
-                List<BigInteger> values = new ArrayList<BigInteger>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomInteger());
-                }
-                ((PropertyIntegerImpl) result).setValues(values);
-            }
-            break;
-        case STRING:
-            result = new PropertyStringImpl();
-            if (numValues > 0) {
-                List<String> values = new ArrayList<String>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomString());
-                }
-                ((PropertyStringImpl) result).setValues(values);
-            }
-            break;
-        case URI:
-            result = new PropertyUriImpl();
-            if (numValues > 0) {
-                List<String> values = new ArrayList<String>();
-                for (int i = 0; i < numValues; i++) {
-                    values.add(randomUri());
-                }
-                ((PropertyUriImpl) result).setValues(values);
-            }
-            break;
-        default:
-            return null;
-        }
-
-        result.setId(randomString());
-        result.setDisplayName(randomString());
-        result.setLocalName(randomString());
-        result.setQueryName(randomString());
-
-        return result;
-    }
-
-    protected PropertyId createIdPropertyData(String id, String value) {
-        PropertyIdImpl result = new PropertyIdImpl();
-
-        result.setId(id);
-        result.setDisplayName(id);
-        result.setLocalName(id);
-        result.setQueryName(id);
-        result.setValue(value);
-
-        return result;
-    }
-
-    protected List<CmisExtensionElement> createExtensions(int depth) {
-        List<CmisExtensionElement> result = new ArrayList<CmisExtensionElement>();
-
-        String[] namespaces = new String[] { "http://ext1.com", "http://ext2.org", "http://ext3.net" };
-
-        for (int i = 0; i < randomInt(4) + 1; i++) {
-            String ns = namespaces[randomInt(namespaces.length)];
-
-            Map<String, String> attr = new HashMap<String, String>();
-            for (int j = 0; j < randomInt(3); j++) {
-                attr.put(randomTag(), randomString());
-            }
-
-            CmisExtensionElementImpl element;
-            if (randomBoolean() || depth < 1) {
-                element = new CmisExtensionElementImpl(ns, randomTag(), attr, randomString());
-            } else {
-                element = new CmisExtensionElementImpl(ns, randomTag(), attr, createExtensions(depth - 1));
-            }
-
-            result.add(element);
-        }
 
         return result;
     }
