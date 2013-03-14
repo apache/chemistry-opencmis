@@ -90,6 +90,13 @@ public class AtomFeed extends AtomDocumentBase {
     }
 
     /**
+     * Writes an feed self link.
+     */
+    public void writeSelfLink(String href, String id) throws XMLStreamException {
+        writeSelfLink(href, Constants.MEDIATYPE_FEED, id);
+    }
+
+    /**
      * Writes the feed elements that are required by Atom.
      */
     public void writeFeedElements(String id, String atomId, String author, String title, GregorianCalendar updated,

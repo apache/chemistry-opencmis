@@ -254,6 +254,15 @@ public final class DiscoveryService {
 
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
+        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_CHANGES, null);
+        selfLink.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, changeLogToken);
+        selfLink.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
+        selfLink.addParameter(Constants.PARAM_FILTER, filter);
+        selfLink.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
+        selfLink.addParameter(Constants.PARAM_ACL, includeAcl);
+        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        feed.writeSelfLink(selfLink.toString(), null);
+
         if (changeLogTokenHolder.getValue() != null) {
             UrlBuilder nextLink = compileUrlBuilder(baseUrl, RESOURCE_CHANGES, null);
             nextLink.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());

@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
@@ -88,7 +87,9 @@ public final class PolicyService {
 
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
-        feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_POLICIES, objectInfo.getId()), null);
+        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectInfo.getId());
+        selfLink.addParameter(Constants.PARAM_FILTER, filter);
+        feed.writeSelfLink(selfLink.toString(), null);
 
         // write entries
         AtomEntry entry = new AtomEntry(feed.getWriter());

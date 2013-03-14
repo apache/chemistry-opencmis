@@ -183,8 +183,8 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
         }
     }
 
-    public void writeSelfLink(String href, String id) throws XMLStreamException {
-        writeLink(Constants.REL_SELF, href, Constants.MEDIATYPE_ENTRY, id);
+    public void writeSelfLink(String href, String type, String id) throws XMLStreamException {
+        writeLink(Constants.REL_SELF, href, type, id);
     }
 
     public void writeEnclosureLink(String href) throws XMLStreamException {

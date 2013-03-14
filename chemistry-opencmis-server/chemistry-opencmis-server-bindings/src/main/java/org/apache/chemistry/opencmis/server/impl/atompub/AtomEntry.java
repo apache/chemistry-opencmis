@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
@@ -71,6 +72,13 @@ public class AtomEntry extends AtomDocumentBase {
      */
     public void endEntry() throws XMLStreamException {
         getWriter().writeEndElement();
+    }
+
+    /**
+     * Writes an entry self link.
+     */
+    public void writeSelfLink(String href, String id) throws XMLStreamException {
+        writeSelfLink(href, Constants.MEDIATYPE_ENTRY, id);
     }
 
     /**

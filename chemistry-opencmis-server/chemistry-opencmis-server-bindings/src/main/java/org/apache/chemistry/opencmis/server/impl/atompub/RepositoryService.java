@@ -288,6 +288,8 @@ public final class RepositoryService {
         UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
         selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
         selfLink.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
         feed.writeSelfLink(selfLink.toString(), typeId);
 
         feed.writeViaLink(compileUrl(baseUrl, RESOURCE_TYPE, typeId));

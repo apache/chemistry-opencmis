@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_RELATIONSHIPS;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
@@ -99,7 +98,15 @@ public final class RelationshipService {
 
         feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
-        feed.writeSelfLink(compileUrl(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId()), null);
+        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId());
+        selfLink.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
+        selfLink.addParameter(Constants.PARAM_RELATIONSHIP_DIRECTION, relationshipDirection);
+        selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
+        selfLink.addParameter(Constants.PARAM_FILTER, filter);
+        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+        selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        feed.writeSelfLink(selfLink.toString(), null);
 
         UrlBuilder pagingUrl = new UrlBuilder(compileUrlBuilder(baseUrl, RESOURCE_RELATIONSHIPS, objectInfo.getId()));
         pagingUrl.addParameter(Constants.PARAM_SUB_RELATIONSHIP_TYPES, includeSubRelationshipTypes);
