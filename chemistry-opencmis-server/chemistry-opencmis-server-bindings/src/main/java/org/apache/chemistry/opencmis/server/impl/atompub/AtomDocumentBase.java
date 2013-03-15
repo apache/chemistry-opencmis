@@ -92,7 +92,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
      * Writes an Atom updated tag.
      */
     public void writeUpdated(long updated) throws XMLStreamException {
-        String updatedStr = DateTimeHelper.formateHttpDateTime(updated);
+        String updatedStr = DateTimeHelper.formatHttpDateTime(updated);
         XMLUtils.write(getWriter(), XMLConstants.PREFIX_APP, XMLConstants.NAMESPACE_APP, "edited", updatedStr);
         XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "updated", updatedStr);
     }
@@ -109,7 +109,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
      */
     public void writePublished(long published) throws XMLStreamException {
         XMLUtils.write(getWriter(), XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, "published",
-                DateTimeHelper.formateHttpDateTime(published));
+                DateTimeHelper.formatHttpDateTime(published));
     }
 
     /**

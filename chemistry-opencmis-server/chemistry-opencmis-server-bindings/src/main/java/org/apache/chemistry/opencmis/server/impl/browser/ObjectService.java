@@ -562,7 +562,7 @@ public final class ObjectService {
                     }
                 }
 
-                response.setHeader("Last-Modified", DateTimeHelper.formateHttpDateTime(lastModifiedSecs * 1000));
+                response.setHeader("Last-Modified", DateTimeHelper.formatHttpDateTime(lastModifiedSecs * 1000));
             }
         }
 

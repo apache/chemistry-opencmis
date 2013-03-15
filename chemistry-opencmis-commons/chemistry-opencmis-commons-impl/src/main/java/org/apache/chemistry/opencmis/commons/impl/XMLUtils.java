@@ -31,28 +31,36 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XMLUtils {
 
-    public static final ThreadLocal<XMLInputFactory> THREADLOCAL_XML_INPUT_FACTORY = new ThreadLocal<XMLInputFactory>() {
-        @Override
-        protected XMLInputFactory initialValue() {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
-            factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-            factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
-            return factory;
-        }
-    };
+    private static final Logger LOG = LoggerFactory.getLogger(XMLUtils.class);
 
-    public static final ThreadLocal<XMLOutputFactory> THREADLOCAL_XML_OUTPUT_FACTORY = new ThreadLocal<XMLOutputFactory>() {
-        @Override
-        protected XMLOutputFactory initialValue() {
-            XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
-            return factory;
+    private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
+    static {
+        try {
+            XML_INPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
+            LOG.warn("You are using an unsupported StAX parser.");
+        } catch (IllegalArgumentException ex) {
         }
-    };
+
+        XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+        XML_INPUT_FACTORY.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+        XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+    }
+
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
+    static {
+        try {
+            XML_OUTPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
+            LOG.warn("You are using an unsupported StAX parser.");
+        } catch (IllegalArgumentException ex) {
+        }
+
+        XML_OUTPUT_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
+    }
 
     // --------------
     // --- writer ---
@@ -62,7 +70,7 @@ public class XMLUtils {
      * Creates a new XML writer.
      */
     public static XMLStreamWriter createWriter(OutputStream out) throws XMLStreamException {
-        return THREADLOCAL_XML_OUTPUT_FACTORY.get().createXMLStreamWriter(out, "UTF-8");
+        return XML_OUTPUT_FACTORY.createXMLStreamWriter(out, "UTF-8");
     }
 
     /**
@@ -178,7 +186,7 @@ public class XMLUtils {
      * Creates a new XML parser with OpenCMIS default settings.
      */
     public static XMLStreamReader createParser(InputStream stream) throws XMLStreamException {
-        return THREADLOCAL_XML_INPUT_FACTORY.get().createXMLStreamReader(stream);
+        return XML_INPUT_FACTORY.createXMLStreamReader(stream);
     }
 
     /**
@@ -276,13 +284,5 @@ public class XMLUtils {
         next(parser);
 
         return sb.toString();
-    }
-
-    /**
-     * Clears out cached XML factories.
-     */
-    public static void clear() {
-        THREADLOCAL_XML_INPUT_FACTORY.remove();
-        THREADLOCAL_XML_OUTPUT_FACTORY.remove();
     }
 }

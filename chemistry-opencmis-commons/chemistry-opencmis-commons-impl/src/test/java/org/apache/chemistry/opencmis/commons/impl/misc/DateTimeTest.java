@@ -143,7 +143,7 @@ public class DateTimeTest {
         cal1.set(2012, 11, 24, 9, 10, 11);
         cal1.set(Calendar.MILLISECOND, 0);
 
-        String dateStr1 = DateTimeHelper.formateHttpDateTime(cal1.getTime());
+        String dateStr1 = DateTimeHelper.formatHttpDateTime(cal1.getTime());
         assertEquals("Mon, 24 Dec 2012 09:10:11 GMT", dateStr1);
 
         Date date1 = DateTimeHelper.parseHttpDateTime(dateStr1);
@@ -154,7 +154,7 @@ public class DateTimeTest {
         cal2.set(2013, 0, 1, 2, 3, 4);
         cal2.set(Calendar.MILLISECOND, 0);
 
-        String dateStr2 = "  '" + DateTimeHelper.formateHttpDateTime(cal2.getTimeInMillis()) + "' ";
+        String dateStr2 = "  '" + DateTimeHelper.formatHttpDateTime(cal2.getTimeInMillis()) + "' ";
         Date date2 = DateTimeHelper.parseHttpDateTime(dateStr2);
 
         assertEquals(cal2.getTime(), date2);
@@ -163,7 +163,7 @@ public class DateTimeTest {
         cal3.set(2012, 11, 24, 9, 10, 11);
         cal3.set(Calendar.MILLISECOND, 0);
 
-        String dateStr3 = DateTimeHelper.formateHttpDateTime(cal3);
+        String dateStr3 = DateTimeHelper.formatHttpDateTime(cal3);
         Date date3 = DateTimeHelper.parseHttpDateTime(dateStr3);
 
         assertEquals(cal3.getTime(), date3);
@@ -183,6 +183,14 @@ public class DateTimeTest {
         String dateStr5 = "Sun Nov  6 08:49:37 1994";
 
         assertEquals(cal5.getTime(), DateTimeHelper.parseHttpDateTime(dateStr5));
+
+        GregorianCalendar cal6 = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        cal6.set(1994, 10, 16, 8, 49, 37);
+        cal6.set(Calendar.MILLISECOND, 0);
+
+        String dateStr6 = "Sun Nov 16 08:49:37 1994";
+
+        assertEquals(cal6.getTime(), DateTimeHelper.parseHttpDateTime(dateStr6));
     }
 
     @Test
@@ -204,8 +212,5 @@ public class DateTimeTest {
 
         // invalid day
         assertNull(DateTimeHelper.parseHttpDateTime("Mon, xy Dec 2012 09:10:11 GMT"));
-
-        // invalid week day
-        assertNull(DateTimeHelper.parseHttpDateTime("abc, 24 Dec 2012 09:10:11 GMT"));
     }
 }

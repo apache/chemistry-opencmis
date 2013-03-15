@@ -18,14 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,15 +36,26 @@ public class DateTimeHelper {
             .compile("(\\d{4,9})-([01]\\d)-([0-3]\\d)T([0-2]\\d):([0-5]\\d):([0-5]\\d)(\\.(\\d+))?(([+-][0-2]\\d:[0-5]\\d)|Z)?");
     private static final BigDecimal BD1000 = new BigDecimal(1000);
 
-    private static final String[] HTTP_DATETIME = new String[] { "EEE, dd MMM yyyy HH:mm:ss zzz",
-            "EEE, dd-MMM-yy HH:mm:ss zzz", "EEE MMM d HH:mm:ss yyyy" };
+    private static final String[] WDAYS = new String[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
-    private static final ThreadLocal<SoftReference<SimpleDateFormat[]>> THREADLOCAL_HTTP_FORMATS = new ThreadLocal<SoftReference<SimpleDateFormat[]>>() {
-        @Override
-        protected SoftReference<SimpleDateFormat[]> initialValue() {
-            return new SoftReference<SimpleDateFormat[]>(new SimpleDateFormat[HTTP_DATETIME.length]);
+    private static final String[] MONTHS = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+            "Sep", "Oct", "Nov", "Dec" };
+
+    private static final Map<String, Integer> MONTHS_MAP = new HashMap<String, Integer>();
+    static {
+        for (int i = 0; i < MONTHS.length; i++) {
+            MONTHS_MAP.put(MONTHS[i], i);
         }
-    };
+    }
+
+    private static final Pattern HTTP_DATETIME1 = Pattern
+            .compile("\\w{3}, ([0-3]\\d) (\\w{3}) (\\d{4}) ([0-2]\\d):([0-5]\\d):([0-5]\\d) GMT");
+
+    private static final Pattern HTTP_DATETIME2 = Pattern
+            .compile("\\w{6,9}, ([0-3]\\d)-(\\w{3})-(\\d{2}) ([0-2]\\d):([0-5]\\d):([0-5]\\d) GMT");
+
+    private static final Pattern HTTP_DATETIME3 = Pattern
+            .compile("\\w{3} (\\w{3}) ([0-3 ]\\d) ([0-2]\\d):([0-5]\\d):([0-5]\\d) (\\d{4})");
 
     /**
      * Parses a xsd:dateTime string.
@@ -56,7 +65,7 @@ public class DateTimeHelper {
             return null;
         }
 
-        Matcher m = XML_DATETIME.matcher(s);
+        final Matcher m = XML_DATETIME.matcher(s);
 
         if (!m.matches()) {
             return null;
@@ -81,7 +90,7 @@ public class DateTimeHelper {
                 tz = TimeZone.getTimeZone("GMT" + m.group(10));
             }
 
-            GregorianCalendar result = new GregorianCalendar();
+            final GregorianCalendar result = new GregorianCalendar();
             result.clear();
 
             result.setTimeZone(tz);
@@ -98,7 +107,7 @@ public class DateTimeHelper {
      * Returns a xsd:dateTime string.
      */
     public static String formatXmlDateTime(long millis) {
-        GregorianCalendar cal = new GregorianCalendar(GMT);
+        final GregorianCalendar cal = new GregorianCalendar(GMT);
         cal.setTimeInMillis(millis);
 
         return formatXmlDateTime(cal);
@@ -112,18 +121,26 @@ public class DateTimeHelper {
             throw new IllegalArgumentException();
         }
 
-        StringBuilder sb = new StringBuilder(String.format("%04d-%02d-%02dT%02d:%02d:%02d", cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY),
-                cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND)));
+        final StringBuilder sb = new StringBuilder();
+        add4d(sb, cal.get(Calendar.YEAR));
+        sb.append('-');
+        add2d(sb, cal.get(Calendar.MONTH) + 1);
+        sb.append('-');
+        add2d(sb, cal.get(Calendar.DAY_OF_MONTH));
+        sb.append('T');
+        add2d(sb, cal.get(Calendar.HOUR_OF_DAY));
+        sb.append(':');
+        add2d(sb, cal.get(Calendar.MINUTE));
+        sb.append(':');
+        add2d(sb, cal.get(Calendar.SECOND));
 
         int ms = cal.get(Calendar.MILLISECOND);
         if (ms > 0) {
-            StringBuilder mssb = new StringBuilder(String.format("%03d", ms));
-            while (mssb.charAt(mssb.length() - 1) == '0') {
-                mssb.deleteCharAt(mssb.length() - 1);
+            sb.append('.');
+            add3d(sb, ms);
+            while (sb.charAt(sb.length() - 1) == '0') {
+                sb.deleteCharAt(sb.length() - 1);
             }
-            sb.append(".");
-            sb.append(mssb);
         }
 
         int tz = cal.getTimeZone().getRawOffset();
@@ -136,10 +153,10 @@ public class DateTimeHelper {
                 sb.append("-");
                 tz *= -1;
             }
-            sb.append(String.format("%02d", tz / 3600000));
+            add2d(sb, tz / 3600000);
             sb.append(":");
             int tzm = tz % 3600000;
-            sb.append(String.format("%02d", tzm == 0 ? 0 : tzm / 60000));
+            add2d(sb, tzm == 0 ? 0 : tzm / 60000);
         }
 
         return sb.toString();
@@ -158,14 +175,66 @@ public class DateTimeHelper {
             s = s.substring(1, s.length() - 1);
         }
 
-        for (int i = 0; i < HTTP_DATETIME.length; i++) {
-            SimpleDateFormat sdf = getFormatter(i);
+        final GregorianCalendar cal = new GregorianCalendar(GMT);
+        cal.set(Calendar.MILLISECOND, 0);
 
-            try {
-                return sdf.parse(s);
-            } catch (ParseException e) {
-                // try next
+        Matcher m = null;
+
+        m = HTTP_DATETIME1.matcher(s);
+        if (m.matches()) {
+            final Integer month = MONTHS_MAP.get(m.group(2));
+            if (month == null) {
+                return null;
             }
+
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(m.group(1)));
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.YEAR, Integer.parseInt(m.group(3)));
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(m.group(5)));
+            cal.set(Calendar.SECOND, Integer.parseInt(m.group(6)));
+
+            return cal.getTime();
+        }
+
+        m = HTTP_DATETIME2.matcher(s);
+        if (m.matches()) {
+            final Integer month = MONTHS_MAP.get(m.group(2));
+            if (month == null) {
+                return null;
+            }
+
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(m.group(1)));
+            cal.set(Calendar.MONTH, month);
+            int year = Integer.parseInt(m.group(3));
+            if (year < 100) {
+                final int thisYear = (new GregorianCalendar(GMT)).get(Calendar.YEAR);
+                final int testYear = year + thisYear - thisYear % 100;
+                year = (testYear < thisYear + 20 ? testYear : testYear - 100);
+            }
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(m.group(5)));
+            cal.set(Calendar.SECOND, Integer.parseInt(m.group(6)));
+
+            return cal.getTime();
+        }
+
+        m = HTTP_DATETIME3.matcher(s);
+        if (m.matches()) {
+            final Integer month = MONTHS_MAP.get(m.group(1));
+            if (month == null) {
+                return null;
+            }
+
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(m.group(2).trim()));
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.YEAR, Integer.parseInt(m.group(6)));
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(3)));
+            cal.set(Calendar.MINUTE, Integer.parseInt(m.group(4)));
+            cal.set(Calendar.SECOND, Integer.parseInt(m.group(5)));
+
+            return cal.getTime();
         }
 
         return null;
@@ -174,47 +243,71 @@ public class DateTimeHelper {
     /**
      * Returns a HTTP date.
      */
-    public static String formateHttpDateTime(long millis) {
-        return getFormatter(0).format(millis);
+    public static String formatHttpDateTime(long millis) {
+        final GregorianCalendar cal = new GregorianCalendar(GMT);
+        cal.setTimeInMillis(millis);
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(WDAYS[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+        sb.append(", ");
+        add2d(sb, cal.get(Calendar.DAY_OF_MONTH));
+        sb.append(' ');
+        sb.append(MONTHS[cal.get(Calendar.MONTH)]);
+        sb.append(' ');
+        add4d(sb, cal.get(Calendar.YEAR));
+        sb.append(' ');
+        add2d(sb, cal.get(Calendar.HOUR_OF_DAY));
+        sb.append(':');
+        add2d(sb, cal.get(Calendar.MINUTE));
+        sb.append(':');
+        add2d(sb, cal.get(Calendar.SECOND));
+        sb.append(" GMT");
+
+        return sb.toString();
     }
 
     /**
      * Returns a HTTP date.
      */
-    public static String formateHttpDateTime(Date date) {
-        return getFormatter(0).format(date);
+    public static String formatHttpDateTime(final Date date) {
+        return formatHttpDateTime(date.getTime());
     }
 
     /**
      * Returns a HTTP date.
      */
-    public static String formateHttpDateTime(GregorianCalendar cal) {
-        return getFormatter(0).format(cal.getTimeInMillis());
+    public static String formatHttpDateTime(final GregorianCalendar cal) {
+        return formatHttpDateTime(cal.getTimeInMillis());
     }
 
-    /**
-     * Clears out cached formatters.
-     */
-    public static void clear() {
-        THREADLOCAL_HTTP_FORMATS.remove();
-    }
-
-    private static SimpleDateFormat getFormatter(int x) {
-        SoftReference<SimpleDateFormat[]> ref = THREADLOCAL_HTTP_FORMATS.get();
-        SimpleDateFormat[] sdfs = ref.get();
-        if (sdfs == null) {
-            ref = new SoftReference<SimpleDateFormat[]>(new SimpleDateFormat[HTTP_DATETIME.length]);
-            THREADLOCAL_HTTP_FORMATS.set(ref);
-            sdfs = ref.get();
+    private static void add2d(final StringBuilder sb, int value) {
+        if (value < 10) {
+            sb.append('0');
         }
-
-        SimpleDateFormat sdf = sdfs[x];
-        if (sdf == null) {
-            sdf = new SimpleDateFormat(HTTP_DATETIME[x], Locale.US);
-            sdf.setTimeZone(GMT);
-            sdfs[x] = sdf;
-        }
-
-        return sdf;
+        sb.append(value);
     }
+
+    private static void add3d(final StringBuilder sb, int value) {
+        if (value < 10) {
+            sb.append('0');
+        }
+        if (value < 100) {
+            sb.append('0');
+        }
+        sb.append(value);
+    }
+
+    private static void add4d(final StringBuilder sb, int value) {
+        if (value < 10) {
+            sb.append('0');
+        }
+        if (value < 100) {
+            sb.append('0');
+        }
+        if (value < 1000) {
+            sb.append('0');
+        }
+        sb.append(value);
+    }
+
 }

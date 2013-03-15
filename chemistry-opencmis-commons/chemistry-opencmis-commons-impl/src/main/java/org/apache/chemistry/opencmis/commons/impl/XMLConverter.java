@@ -147,8 +147,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XMLConverter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XMLConverter.class);
 
     private XMLConverter() {
     }
@@ -184,6 +188,8 @@ public class XMLConverter {
         if (source.getChangesOnType() != null) {
             for (BaseTypeId baseType : source.getChangesOnType()) {
                 if (cmisVersion == CmisVersion.CMIS_1_0 && baseType == BaseTypeId.CMIS_ITEM) {
+                    LOG.warn("Receiver only understands CMIS 1.0 but the Changes On Type list in the Repository info contains the base type Item. "
+                            + "The Item base type has been removed from the list.");
                     continue;
                 }
                 XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_REPINFO_CHANGES_ON_TYPE, baseType);
@@ -375,10 +381,12 @@ public class XMLConverter {
             return;
         }
 
-        // suppress cmis:item and cmis:secondary type for CMIS 1.0 repositories
-        if (cmisVersion == CmisVersion.CMIS_1_0
-                && (source.getBaseTypeId() == BaseTypeId.CMIS_ITEM || source.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY)) {
-            return;
+        if (cmisVersion == CmisVersion.CMIS_1_0) {
+            if (source.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
+                LOG.warn("Receiver only understands CMIS 1.0. It may not able to handle an Item type definition.");
+            } else if (source.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY) {
+                LOG.warn("Receiver only understands CMIS 1.0. It may not able to handle a Secondary type definition.");
+            }
         }
 
         writer.writeStartElement(namespace, TAG_TYPE);
@@ -661,6 +669,12 @@ public class XMLConverter {
             return;
         }
 
+        if (cmisVersion == CmisVersion.CMIS_1_0) {
+            if (source.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
+                LOG.warn("Receiver only understands CMIS 1.0. It may not be able to handle an Item object.");
+            }
+        }
+
         if (root) {
             writer.writeStartElement(PREFIX_CMIS, name, NAMESPACE_CMIS);
             writer.writeNamespace(PREFIX_CMIS, NAMESPACE_CMIS);
@@ -850,6 +864,8 @@ public class XMLConverter {
         if (source.getAllowableActions() != null) {
             for (Action action : Action.values()) {
                 if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
+                    LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
+                            + "The canCreateItem action has been removed from the Allowable Actions.");
                     continue;
                 }
                 if (source.getAllowableActions().contains(action)) {
