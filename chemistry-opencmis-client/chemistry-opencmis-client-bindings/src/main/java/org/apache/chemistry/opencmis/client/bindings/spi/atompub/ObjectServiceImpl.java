@@ -59,6 +59,8 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -375,7 +377,60 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // find link
+        String link = loadCollection(repositoryId, Constants.COLLECTION_BULK_UPDATE);
+
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or bulk update properties is not supported!");
+        }
+
+        // set up writer
+        final BulkUpdateImpl bulkUpdate = new BulkUpdateImpl();
+        bulkUpdate.setObjectIdAndChangeToken(objectIdAndChangeToken);
+        bulkUpdate.setProperties(properties);
+        bulkUpdate.setAddSecondaryTypeIds(addSecondaryTypeIds);
+        bulkUpdate.setRemoveSecondaryTypeIds(removeSecondaryTypeIds);
+
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(bulkUpdate);
+
+        // post the new folder object
+        Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>(feed
+                .getEntries().size());
+
+        // get the results
+        if (!feed.getEntries().isEmpty()) {
+
+            for (AtomEntry entry : feed.getEntries()) {
+                // walk through the entry
+                // we are not interested in the links this time because they
+                // could belong to a new document version
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof ObjectData) {
+                        ObjectData object = (ObjectData) element.getObject();
+                        String id = object.getId();
+                        if (id != null) {
+                            String changeToken = null;
+                            PropertyData<?> changeTokenProp = object.getProperties().getProperties()
+                                    .get(PropertyIds.CHANGE_TOKEN);
+                            if (changeTokenProp instanceof PropertyString) {
+                                changeToken = ((PropertyString) changeTokenProp).getFirstValue();
+                            }
+
+                            result.add(new BulkUpdateObjectIdAndChangeTokenImpl(id, changeToken));
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {

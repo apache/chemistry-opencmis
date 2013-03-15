@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ACL;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ALLOWABLEACIONS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_BULK_UPDATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
@@ -191,6 +192,7 @@ public class CmisAtomPubServlet extends HttpServlet {
             dispatcher.addResource(RESOURCE_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
             dispatcher.addResource(RESOURCE_POLICIES, METHOD_POST, PolicyService.class, "applyPolicy");
             dispatcher.addResource(RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class, "removePolicy");
+            dispatcher.addResource(RESOURCE_BULK_UPDATE, METHOD_POST, ObjectService.class, "bulkUpdateProperties");
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot initialize dispatcher!", e);
         }

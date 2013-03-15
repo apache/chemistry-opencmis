@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 
 /**
  * Writes a CMIS Atom entry to an output stream.
@@ -60,6 +61,7 @@ public class AtomEntryWriter {
     private final ContentStream contentStream;
     private final InputStream stream;
     private final TypeDefinition typeDef;
+    private final BulkUpdateImpl bulkUpdate;
 
     /**
      * Constructor for objects.
@@ -96,6 +98,7 @@ public class AtomEntryWriter {
             stream = null;
         }
         this.typeDef = null;
+        this.bulkUpdate = null;
     }
 
     /**
@@ -108,6 +111,23 @@ public class AtomEntryWriter {
 
         this.typeDef = type;
         this.cmisVersion = cmisVersion;
+        this.object = null;
+        this.contentStream = null;
+        this.stream = null;
+        this.bulkUpdate = null;
+    }
+
+    /**
+     * Constructor for bulk updates.
+     */
+    public AtomEntryWriter(BulkUpdateImpl bulkUpdate) {
+        if (bulkUpdate == null) {
+            throw new CmisInvalidArgumentException("Bulk update data must not be null!");
+        }
+
+        this.bulkUpdate = bulkUpdate;
+        this.typeDef = null;
+        this.cmisVersion = CmisVersion.CMIS_1_1;
         this.object = null;
         this.contentStream = null;
         this.stream = null;
@@ -170,6 +190,11 @@ public class AtomEntryWriter {
             XMLConverter.writeTypeDefinition(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, typeDef);
         }
 
+        // bulk update
+        if (bulkUpdate != null) {
+            XMLConverter.writeBulkUpdate(writer, XMLConstants.NAMESPACE_RESTATOM, bulkUpdate);
+        }
+
         // end entry
         writer.writeEndElement();
 
@@ -193,6 +218,10 @@ public class AtomEntryWriter {
             if (typeDef.getDisplayName() != null) {
                 result = typeDef.getDisplayName();
             }
+        }
+
+        if (bulkUpdate != null) {
+            result = "Bulk Update Properties";
         }
 
         return result;

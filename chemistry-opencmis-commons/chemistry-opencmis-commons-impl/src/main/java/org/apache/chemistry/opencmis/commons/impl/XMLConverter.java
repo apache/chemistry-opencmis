@@ -954,16 +954,15 @@ public class XMLConverter {
     // --- bulk update ---
     // -------------------
 
-    public static void writeBulkUpdate(XMLStreamWriter writer, CmisVersion cmisVersion, String namespace,
-            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
-            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) throws XMLStreamException {
-        if (objectIdAndChangeToken == null) {
+    public static void writeBulkUpdate(XMLStreamWriter writer, String namespace, BulkUpdateImpl bulkUpdate)
+            throws XMLStreamException {
+        if (bulkUpdate == null || bulkUpdate.getObjectIdAndChangeToken() == null) {
             return;
         }
 
         writer.writeStartElement(namespace, TAG_BULK_UPDATE);
 
-        for (BulkUpdateObjectIdAndChangeToken idAndToken : objectIdAndChangeToken) {
+        for (BulkUpdateObjectIdAndChangeToken idAndToken : bulkUpdate.getObjectIdAndChangeToken()) {
             if (idAndToken == null) {
                 continue;
             }
@@ -977,7 +976,8 @@ public class XMLConverter {
             writer.writeEndElement();
         }
 
-        if (properties != null) {
+        if (bulkUpdate.getProperties() != null) {
+            Properties properties = bulkUpdate.getProperties();
             writer.writeStartElement(PREFIX_CMIS, TAG_BULK_UPDATE_PROPERTIES, NAMESPACE_CMIS);
 
             if (properties.getPropertyList() != null) {
@@ -990,14 +990,14 @@ public class XMLConverter {
             writer.writeEndElement();
         }
 
-        if (addSecondaryTypeIds != null) {
-            for (String id : addSecondaryTypeIds) {
+        if (bulkUpdate.getAddSecondaryTypeIds() != null) {
+            for (String id : bulkUpdate.getAddSecondaryTypeIds()) {
                 XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_BULK_UPDATE_ADD_SECONDARY_TYPES, id);
             }
         }
 
-        if (removeSecondaryTypeIds != null) {
-            for (String id : removeSecondaryTypeIds) {
+        if (bulkUpdate.getRemoveSecondaryTypeIds() != null) {
+            for (String id : bulkUpdate.getRemoveSecondaryTypeIds()) {
                 XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_BULK_UPDATE_REMOVE_SECONDARY_TYPES, id);
             }
         }

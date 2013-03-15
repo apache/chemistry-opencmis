@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
@@ -70,6 +71,7 @@ public class AtomEntryParser {
     private static final String TAG_MEDIATYPE = "mediatype";
     private static final String TAG_FILENAME = "filename";
     private static final String TAG_TYPE = "type";
+    private static final String TAG_BULK_UPDATE = "bulkUpdate";
 
     private static final String ATTR_SRC = "src";
     private static final String ATTR_TYPE = "type";
@@ -87,6 +89,7 @@ public class AtomEntryParser {
     private ContentStreamImpl atomContentStream;
     private ContentStreamImpl cmisContentStream;
     private TypeDefinition typeDef;
+    private BulkUpdateImpl bulkUpdate;
 
     /**
      * Constructor.
@@ -184,6 +187,13 @@ public class AtomEntryParser {
     }
 
     /**
+     * Returns the bulk update data.
+     */
+    public BulkUpdateImpl getBulkUpdate() {
+        return bulkUpdate;
+    }
+
+    /**
      * Parses the stream.
      */
     public void parse(InputStream stream) throws Exception {
@@ -239,6 +249,8 @@ public class AtomEntryParser {
                         parseObject(parser);
                     } else if (TAG_TYPE.equals(name.getLocalPart())) {
                         parseTypeDefinition(parser);
+                    } else if (TAG_BULK_UPDATE.equals(name.getLocalPart())) {
+                        parseBulkUpdate(parser);
                     } else if (TAG_CONTENT.equals(name.getLocalPart())) {
                         parseCmisContent(parser);
                     } else {
@@ -283,6 +295,13 @@ public class AtomEntryParser {
      */
     private void parseTypeDefinition(XMLStreamReader parser) throws Exception {
         typeDef = XMLConverter.convertTypeDefinition(parser);
+    }
+
+    /**
+     * Parses a bluk update.
+     */
+    private void parseBulkUpdate(XMLStreamReader parser) throws Exception {
+        bulkUpdate = XMLConverter.convertBulkUpdate(parser);
     }
 
     /**

@@ -80,9 +80,7 @@ public class BukUpdateConverterTest extends AbstractXMLConverterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         XMLStreamWriter writer = createWriter(out);
-        XMLConverter.writeBulkUpdate(writer, CmisVersion.CMIS_1_1, TEST_NAMESPACE,
-                bulkUpdate.getObjectIdAndChangeToken(), bulkUpdate.getProperties(),
-                bulkUpdate.getAddSecondaryTypeIds(), bulkUpdate.getRemoveSecondaryTypeIds());
+        XMLConverter.writeBulkUpdate(writer, TEST_NAMESPACE, bulkUpdate);
         closeWriter(writer);
 
         byte[] xml = out.toByteArray();

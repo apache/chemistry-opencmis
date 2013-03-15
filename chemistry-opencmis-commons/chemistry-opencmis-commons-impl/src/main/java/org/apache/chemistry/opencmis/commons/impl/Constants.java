@@ -47,6 +47,7 @@ public final class Constants {
     public static final String COLLECTION_QUERY = "query";
     public static final String COLLECTION_CHECKEDOUT = "checkedout";
     public static final String COLLECTION_UNFILED = "unfiled";
+    public static final String COLLECTION_BULK_UPDATE = "update";
 
     // URI templates
     public static final String TEMPLATE_OBJECT_BY_ID = "objectbyid";

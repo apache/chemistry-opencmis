@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.PAGE_SIZE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_BULK_UPDATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
@@ -176,8 +177,11 @@ public final class RepositoryService {
                 if (supportsUnFiling || supportsMultifiling) {
                     serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_UNFILED, null),
                             Constants.COLLECTION_UNFILED, "Unfiled Collection", Constants.MEDIATYPE_CMISATOM);
-
                 }
+
+                // - bulk update collection
+                serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_BULK_UPDATE, null),
+                        Constants.COLLECTION_BULK_UPDATE, "Bulk Update Collection", Constants.MEDIATYPE_CMISATOM);
 
                 // add repository info
                 serviceDoc.writeRepositoryInfo(infoData, cmisVersion);

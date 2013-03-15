@@ -18,10 +18,12 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_BULK_UPDATE;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
@@ -34,7 +36,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +47,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -51,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
@@ -58,7 +65,12 @@ import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
@@ -512,6 +524,75 @@ public final class ObjectService {
         writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
                 context.getCmisVersion());
         entry.endDocument();
+    }
+
+    /**
+     * BulkUpdateProperties.
+     */
+    public static void bulkUpdateProperties(CallContext context, CmisService service, String repositoryId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
+                context.getMaxContentSize(), context.encryptTempFiles());
+        parser.parse(request.getInputStream());
+
+        BulkUpdateImpl bulkUpdate = parser.getBulkUpdate();
+        if (bulkUpdate == null) {
+            throw new CmisInvalidArgumentException("Bulk update data is missing!");
+        }
+
+        List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
+                bulkUpdate.getObjectIdAndChangeToken(), bulkUpdate.getProperties(),
+                bulkUpdate.getAddSecondaryTypeIds(), bulkUpdate.getRemoveSecondaryTypeIds(), null);
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(Constants.MEDIATYPE_FEED);
+
+        // write XML
+        AtomFeed feed = new AtomFeed();
+        feed.startDocument(response.getOutputStream(), getNamespaces(service));
+        feed.startFeed(true);
+
+        // write basic Atom feed elements
+        feed.writeFeedElements(null, null, null, "Bulk Update Properties",
+                new GregorianCalendar(TimeZone.getTimeZone("GMT")), null,
+                (result == null ? null : BigInteger.valueOf(result.size())));
+
+        // write links
+        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+        feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_BULK_UPDATE, null);
+        feed.writeSelfLink(selfLink.toString(), null);
+
+        // write entries
+        if (result != null) {
+            AtomEntry entry = new AtomEntry(feed.getWriter());
+            for (BulkUpdateObjectIdAndChangeToken idAndToken : result) {
+                if ((idAndToken == null) || (idAndToken.getId() == null)) {
+                    continue;
+                }
+
+                ObjectDataImpl object = new ObjectDataImpl();
+                PropertiesImpl properties = new PropertiesImpl();
+                object.setProperties(properties);
+
+                properties.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, idAndToken.getId()));
+
+                if (idAndToken.getChangeToken() != null) {
+                    properties
+                            .addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, idAndToken.getChangeToken()));
+                }
+
+                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                        context.getCmisVersion());
+            }
+        }
+
+        // we are done
+        feed.endFeed();
+        feed.endDocument();
     }
 
     /**

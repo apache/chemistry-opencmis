@@ -71,6 +71,7 @@ public final class AtomPubUtils {
     public static final String RESOURCE_UNFILED = "unfiled";
     public static final String RESOURCE_CHANGES = "changes";
     public static final String RESOURCE_CONTENT = "content";
+    public static final String RESOURCE_BULK_UPDATE = "update";
 
     public static final String REPOSITORY_PLACEHOLDER = "{repositoryId}";
 
