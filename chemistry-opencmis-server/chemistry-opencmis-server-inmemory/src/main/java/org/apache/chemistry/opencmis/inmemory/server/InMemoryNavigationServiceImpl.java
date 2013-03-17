@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -52,6 +53,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Children;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
@@ -281,7 +283,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
         StoredObject so = fs.getObjectById(folderId);
         Folder folder = null;
-
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+;
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + folderId);
         }
@@ -297,6 +300,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 .getChildren(maxItems, skipCount, user);
 
         for (StoredObject spo : children.getChildren()) {
+            if (cmis11 && spo instanceof Item)
+                continue; // ignore items for CMIS 1.1‚
+            
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             if (includePathSegments != null && includePathSegments) {
                 oifd.setPathSegment(spo.getName());

@@ -30,17 +30,19 @@ import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
-import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
+import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Version;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -61,6 +63,7 @@ public class DataObjectCreator {
 
         boolean isFolder = so instanceof Folder;
         boolean isDocument = so instanceof Content;
+        boolean isItem = so instanceof Item;
         boolean isCheckedOut = false;
         boolean canCheckOut = false;
         boolean canCheckIn = false;
@@ -70,6 +73,7 @@ public class DataObjectCreator {
         boolean hasRendition = so.hasRendition(user);
         boolean canGetAcl = user != null && (isDocument || isFolder);
         boolean canSetAcl = canGetAcl;
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;        
         
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
@@ -83,13 +87,12 @@ public class DataObjectCreator {
         
         AllowableActionsImpl allowableActions = new AllowableActionsImpl();
         Set<Action> set = allowableActions.getAllowableActions();
-
         if (!isRootFolder) {
             set.add(Action.CAN_DELETE_OBJECT);
             set.add(Action.CAN_UPDATE_PROPERTIES);
         }
 
-        if (isFolder || isDocument) {
+        if (isFolder || isDocument || isItem) {
             set.add(Action.CAN_GET_PROPERTIES);
             if (!isRootFolder) {
                 set.add(Action.CAN_GET_OBJECT_PARENTS);   
@@ -107,6 +110,8 @@ public class DataObjectCreator {
 
             set.add(Action.CAN_CREATE_DOCUMENT);
             set.add(Action.CAN_CREATE_FOLDER);
+            if (cmis11)
+                set.add(Action.CAN_CREATE_ITEM);
             set.add(Action.CAN_GET_CHILDREN);
         }
 
@@ -126,11 +131,12 @@ public class DataObjectCreator {
             set.add(Action.CAN_GET_ALL_VERSIONS);
         }
 
-        if (isDocument) {
+        if (isDocument || isItem) {
             if (so instanceof Filing && ((Filing)so).hasParent()) {
                 set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
                 set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
             }
+        if (isDocument)
             if (isVersioned) {
                 if (canCheckIn)
                     set.add(Action.CAN_SET_CONTENT_STREAM);

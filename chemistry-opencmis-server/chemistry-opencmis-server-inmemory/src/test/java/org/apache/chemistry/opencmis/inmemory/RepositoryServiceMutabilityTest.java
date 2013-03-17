@@ -160,7 +160,9 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         // test illegal type id
         InMemoryDocumentTypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setId(typeDefRef.getId() + "!!!");
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        TypeDefinition typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        assertEquals(TYPE_ID_MUTABILITY + "___", typeDefNew.getId());
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY+"___", null);
 
         // test illegal parent type id
         typeDefRef = createTypeForAddingAtRuntime();
@@ -170,27 +172,37 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         // test null type id
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setId(null);
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        assertTrue(null != typeDefNew.getId() && typeDefNew.getId().length() > 0);
+        fRepSvc.deleteType(repositoryId, typeDefNew.getId(), null);
         
         // test null query name
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setQueryName(null);
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        assertEquals(TYPE_ID_MUTABILITY, typeDefNew.getQueryName());
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
 
         // test illegal query name
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setQueryName(typeDefRef.getQueryName() + "!!!");
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        assertEquals(TYPE_ID_MUTABILITY, typeDefNew.getQueryName());
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
 
         // test null local name
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setLocalName(null);
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        assertEquals(TYPE_ID_MUTABILITY, typeDefNew.getLocalName());
+        typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
 
         // test illegal local name
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setLocalName(typeDefRef.getLocalName() + "!!!");
-        checkAddingType(repositoryId, typeDefRef, CmisInvalidArgumentException.class);
+        assertEquals(TYPE_ID_MUTABILITY, typeDefNew.getLocalName());
+        typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
 
         log.info("... testTypeMutabilityTypeNameConstraints() finished.");              
     }
