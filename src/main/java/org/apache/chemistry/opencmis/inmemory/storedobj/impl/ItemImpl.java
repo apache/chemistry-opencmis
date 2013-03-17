@@ -18,11 +18,13 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
+
 /**
  * itemImpl is used for CMIS:item objects. Items are fileable  but do not have content
  *
  */
-public class ItemImpl extends AbstractMultiFilingImpl {
+public class ItemImpl extends AbstractMultiFilingImpl implements Item {
 
     ItemImpl(ObjectStoreImpl objStore) {
         super(objStore);
