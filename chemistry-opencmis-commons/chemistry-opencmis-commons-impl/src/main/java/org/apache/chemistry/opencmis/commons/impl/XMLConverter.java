@@ -863,12 +863,12 @@ public class XMLConverter {
 
         if (source.getAllowableActions() != null) {
             for (Action action : Action.values()) {
-                if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
-                    LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
-                            + "The canCreateItem action has been removed from the Allowable Actions.");
-                    continue;
-                }
                 if (source.getAllowableActions().contains(action)) {
+                    if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
+                        LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
+                                + "The canCreateItem action has been removed from the Allowable Actions.");
+                        continue;
+                    }
                     XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, action.value(), Boolean.TRUE);
                 }
             }
