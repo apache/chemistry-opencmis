@@ -284,7 +284,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = fs.getObjectById(folderId);
         Folder folder = null;
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
-;
+        
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + folderId);
         }
@@ -300,7 +300,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 .getChildren(maxItems, skipCount, user);
 
         for (StoredObject spo : children.getChildren()) {
-            if (cmis11 && spo instanceof Item)
+            if (!cmis11 && spo instanceof Item)
                 continue; // ignore items for CMIS 1.1‚
             
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
