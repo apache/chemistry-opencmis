@@ -36,6 +36,8 @@ public class AtomEntry extends AtomDocumentBase {
 
     private static final String DEFAULT_AUTHOR = "unknown";
 
+    private boolean contentTagAdded;
+
     /**
      * Creates an Atom entry document.
      */
@@ -65,12 +67,18 @@ public class AtomEntry extends AtomDocumentBase {
 
             writeAllCustomNamespace();
         }
+
+        contentTagAdded = false;
     }
 
     /**
      * Closes the entry tag.
      */
     public void endEntry() throws XMLStreamException {
+        if (!contentTagAdded) {
+            writeEmptyContent(); // for Atom spec compliance
+        }
+
         getWriter().writeEndElement();
     }
 
@@ -160,5 +168,18 @@ public class AtomEntry extends AtomDocumentBase {
         }
 
         xsw.writeEndElement();
+
+        contentTagAdded = true;
+    }
+
+    /**
+     * Writes an empty content tag for Atom spec compliance.
+     */
+    public void writeEmptyContent() throws XMLStreamException {
+        XMLStreamWriter xsw = getWriter();
+        xsw.writeStartElement(XMLConstants.PREFIX_ATOM, "content", XMLConstants.NAMESPACE_ATOM);
+        xsw.writeEndElement();
+
+        contentTagAdded = true;
     }
 }
