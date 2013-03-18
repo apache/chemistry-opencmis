@@ -936,13 +936,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results, assertNotAllowableAction(object, Action.CAN_CREATE_FOLDER, null, f));
                 }
 
-                if (!(object instanceof Document) && !(object instanceof Policy)) {
+                if (!(object instanceof FileableCmisObject) || (object instanceof Folder)) {
                     f = createResult(FAILURE,
-                            "Non-Document/Policy object has CAN_ADD_OBJECT_TO_FOLDER allowable action!");
+                            "Non-Filable object or folder has CAN_ADD_OBJECT_TO_FOLDER allowable action!");
                     addResult(results, assertNotAllowableAction(object, Action.CAN_ADD_OBJECT_TO_FOLDER, null, f));
 
                     f = createResult(FAILURE,
-                            "Non-Document/Policy object has CAN_REMOVE_OBJECT_FROM_FOLDER allowable action!");
+                            "Non-Filable object or folder has CAN_REMOVE_OBJECT_FROM_FOLDER allowable action!");
                     addResult(results, assertNotAllowableAction(object, Action.CAN_REMOVE_OBJECT_FROM_FOLDER, null, f));
                 }
 

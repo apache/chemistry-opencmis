@@ -83,7 +83,7 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
         try {
             newType = session.createType(newTypeDef);
         } catch (CmisBaseException e) {
-            addResult(createResult(FAILURE, "Creating type '" + newType.getId() + "' failed: " + e.getMessage()));
+            addResult(createResult(FAILURE, "Creating type '" + newTypeDef.getId() + "' failed: " + e.getMessage()));
             return;
         }
 
