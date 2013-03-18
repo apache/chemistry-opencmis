@@ -94,6 +94,7 @@ public class TypeValidator {
         checkTypeId(tm, td.getId());
         checkTypeQueryName(tm, td.getQueryName());
         checkTypeLocalName(tm, td.getLocalName());
+        checkBaseAndParentType(tm, td);
         
         if (null != td.getPropertyDefinitions())
             TypeValidator.checkProperties(tm, td.getPropertyDefinitions().values());        
@@ -155,7 +156,9 @@ public class TypeValidator {
         td.setTypeMutability(tm);
         td.setExtensions(td.getExtensions());
         
-        if (null != td.getPropertyDefinitions()) {
+        if (null == td.getPropertyDefinitions()) {
+            td.setPropertyDefinitions(new HashMap<String, PropertyDefinition<?>>());
+        } else {
             Map<String, PropertyDefinition<?>> propDefsNew = new HashMap<String, PropertyDefinition<?>>();
             Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
             for (PropertyDefinition<?> pd : propDefs.values()) {
@@ -477,6 +480,14 @@ public class TypeValidator {
                 throw new CmisConstraintException("You cannot add type with local name " + localName
                         + " because it already exists.");                       
         }
+    }
+
+    private static void checkBaseAndParentType(TypeManager tm, TypeDefinition td) {
+        if (null == td.getBaseTypeId()) 
+            throw new CmisInvalidArgumentException("You canno create a type without a base type id: " + td.getId());
+        if (null == td.getParentTypeId()) 
+            throw new CmisInvalidArgumentException("You canno create a type without a parent type id: " + td.getId());
+        
     }
 
 }
