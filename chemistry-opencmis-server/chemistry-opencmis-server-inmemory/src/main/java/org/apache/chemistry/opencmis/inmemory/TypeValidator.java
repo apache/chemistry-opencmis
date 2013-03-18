@@ -155,14 +155,16 @@ public class TypeValidator {
         td.setTypeMutability(tm);
         td.setExtensions(td.getExtensions());
         
-        Map<String, PropertyDefinition<?>> propDefsNew = new HashMap<String, PropertyDefinition<?>>();
-        Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
-        for (PropertyDefinition<?> pd : propDefs.values()) {
-            AbstractPropertyDefinition<?> pdNew = completePropertyDef(pd);
-            adjustPropertyNamesAndId(pdNew);
-            propDefsNew.put(pdNew.getId(), pd);
+        if (null != td.getPropertyDefinitions()) {
+            Map<String, PropertyDefinition<?>> propDefsNew = new HashMap<String, PropertyDefinition<?>>();
+            Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
+            for (PropertyDefinition<?> pd : propDefs.values()) {
+                AbstractPropertyDefinition<?> pdNew = completePropertyDef(pd);
+                adjustPropertyNamesAndId(pdNew);
+                propDefsNew.put(pdNew.getId(), pd);
+            }
+            td.setPropertyDefinitions(propDefsNew);
         }
-        td.setPropertyDefinitions(propDefsNew);
     }
 
     private static void checkProperties(TypeManager tm, Collection<PropertyDefinition<?>> pds) {
