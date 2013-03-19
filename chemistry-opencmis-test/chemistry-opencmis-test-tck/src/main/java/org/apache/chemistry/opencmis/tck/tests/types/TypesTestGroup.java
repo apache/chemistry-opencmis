@@ -34,6 +34,6 @@ public class TypesTestGroup extends AbstractSessionTestGroup {
         setDescription("Types tests.");
 
         addTest(new BaseTypesTest());
-        // addTest(new CreateAndDeleteTypeTest());
+        addTest(new CreateAndDeleteTypeTest());
     }
 }
