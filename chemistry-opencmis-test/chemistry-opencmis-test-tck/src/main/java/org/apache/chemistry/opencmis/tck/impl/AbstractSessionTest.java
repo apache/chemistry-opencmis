@@ -64,6 +64,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -582,6 +583,80 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return true;
         } catch (CmisObjectNotFoundException e) {
             return false;
+        }
+    }
+
+    // --- type helpers ---
+
+    /**
+     * Creates a new type.
+     */
+    protected ObjectType createType(Session session, TypeDefinition typeDef) {
+
+        NewTypeSettableAttributes settableAttributes = session.getRepositoryInfo().getCapabilities()
+                .getNewTypeSettableAttributes();
+        if (settableAttributes == null) {
+            addResult(createResult(WARNING, "Repository Info does not indicate, which type attributes can be set!"));
+        } else {
+            // TODO: add more tests
+        }
+
+        ObjectType newType = null;
+        try {
+            newType = session.createType(typeDef);
+            addResult(createInfoResult("Created type '" + typeDef.getId()
+                    + "'. Repository assigned the following type id: " + newType.getId()));
+        } catch (CmisBaseException e) {
+            addResult(createResult(FAILURE, "Creating type '" + typeDef.getId() + "' failed: " + e.getMessage(), e,
+                    false));
+            return null;
+        }
+
+        addResult(checkTypeDefinition(session, newType, "Newly created type spec compliance."));
+
+        if (newType.getTypeMutability() == null) {
+            addResult(createResult(FAILURE,
+                    "Newly created type does not provide type mutability data! Id: " + newType.getId()));
+        }
+
+        return newType;
+    }
+
+    /**
+     * Deletes a type.
+     */
+    protected void deleteType(Session session, String typeId) {
+        ObjectType type = session.getTypeDefinition(typeId);
+
+        if (type == null) {
+            addResult(createResult(FAILURE, "Type does not exist and therefore cannot be deleted! Id: " + typeId));
+            return;
+        }
+
+        // check if type can be deleted
+        if (type.getTypeMutability() == null) {
+            addResult(createResult(FAILURE, "Type does not provide type mutability data! Id: " + typeId));
+        } else {
+            if (!Boolean.TRUE.equals(type.getTypeMutability().canDelete())) {
+                addResult(createResult(WARNING, "Type indicates that it cannot be deleted. Trying it anyway. Id: "
+                        + typeId));
+            }
+        }
+
+        // delete it
+        try {
+            session.deleteType(typeId);
+        } catch (CmisBaseException e) {
+            addResult(createResult(FAILURE, "Deleting type '" + typeId + "' failed: " + e.getMessage(), e, false));
+            return;
+        }
+
+        // check if the type still exists
+        try {
+            session.getTypeDefinition(typeId);
+            addResult(createResult(FAILURE, "Type should not exist anymore but it is still there! Id: " + typeId, true));
+        } catch (CmisObjectNotFoundException e) {
+            // expected result
         }
     }
 

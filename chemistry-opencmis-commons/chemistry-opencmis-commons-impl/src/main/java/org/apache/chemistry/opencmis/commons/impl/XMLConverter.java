@@ -477,6 +477,10 @@ public class XMLConverter {
             return;
         }
 
+        if (source.getPropertyType() == null) {
+            throw new CmisRuntimeException("Property type for property definition '" + source.getId() + "' is not set!");
+        }
+
         switch (source.getPropertyType()) {
         case STRING:
             writer.writeStartElement(PREFIX_CMIS, TAG_TYPE_PROP_DEF_STRING, NAMESPACE_CMIS);

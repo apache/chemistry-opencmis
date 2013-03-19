@@ -20,17 +20,31 @@ package org.apache.chemistry.opencmis.tck.tests.types;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
-import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -51,69 +65,168 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
 
         ObjectType parentType = session.getTypeDefinition(getDocumentTestTypeId());
         if (parentType.getTypeMutability() == null || !Boolean.TRUE.equals(parentType.getTypeMutability().canCreate())) {
-            addResult(createResult(SKIPPED, "Test type doesn't allow creating a sub-type. Test skipped!"));
+            addResult(createResult(SKIPPED, "Test document type doesn't allow creating a sub-type. Test skipped!"));
             return;
         }
 
+        createTypeWithoutProperties(session, parentType);
+        createTypeWithProperties(session, parentType);
+    }
+
+    private void createTypeWithoutProperties(Session session, ObjectType parentType) {
         CmisTestResult failure = null;
 
         // define the type
-        DocumentTypeDefinitionImpl newTypeDef = new DocumentTypeDefinitionImpl();
-
-        newTypeDef.setId("tck:testid");
-        newTypeDef.setBaseTypeId(parentType.getBaseTypeId());
-        newTypeDef.setParentTypeId(parentType.getId());
-        newTypeDef.setLocalName("tck:testlocal");
-        newTypeDef.setLocalNamespace("tck:testlocalnamespace");
-        newTypeDef.setDisplayName("TCK Document Type");
-        newTypeDef.setDescription("This is the TCK document type");
-        newTypeDef.setQueryName("tck:testqueryname");
-        newTypeDef.setIsQueryable(false);
-        newTypeDef.setIsFulltextIndexed(false);
-        newTypeDef.setIsIncludedInSupertypeQuery(true);
-        newTypeDef.setIsControllableAcl(false);
-        newTypeDef.setIsControllablePolicy(false);
-        newTypeDef.setIsCreatable(true);
-        newTypeDef.setIsFileable(true);
-        newTypeDef.setIsVersionable(false);
-        newTypeDef.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
+        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition("tck:testid_without_properties",
+                parentType);
 
         // create the type
-        ObjectType newType = null;
-        try {
-            newType = session.createType(newTypeDef);
-        } catch (CmisBaseException e) {
-            addResult(createResult(FAILURE, "Creating type '" + newTypeDef.getId() + "' failed: " + e.getMessage()));
+        ObjectType newType = createType(session, newTypeDef);
+        if (newType == null) {
             return;
         }
-
-        // check type
-        addResult(checkTypeDefinition(session, newType, "Newly created type spec compliance."));
 
         // get the type
         ObjectType newType2 = null;
         try {
             newType2 = session.getTypeDefinition(newType.getId());
+
+            // assert type definitions
+            failure = createResult(FAILURE,
+                    "The type definition returned by createType() doesn't match the type definition returned by getTypeDefinition()!");
+            addResult(assertEquals(newType, newType2, null, failure));
         } catch (CmisObjectNotFoundException e) {
-            addResult(createResult(FAILURE, "Newly created type '" + newType.getId() + "' can not be fetched."));
-        }
-
-        // assert type definitions
-        failure = createResult(FAILURE,
-                "The type definition returned by createType() doesn't match the type definition returned by getTypeDefinition()!");
-        addResult(assertEquals(newType, newType2, null, failure));
-
-        // check if type can be deleted
-        if (newType.getTypeMutability() == null || !Boolean.TRUE.equals(newType.getTypeMutability().canDelete())) {
-            addResult(createResult(WARNING, "Newly created type indicates that it cannot be deleted. Trying it anyway."));
+            addResult(createResult(FAILURE, "Newly created type can not be fetched. Id: " + newType.getId(), e, false));
         }
 
         // delete the type
-        try {
-            session.deleteType(newType.getId());
-        } catch (CmisBaseException e) {
-            addResult(createResult(FAILURE, "Deleting type '" + newType.getId() + "' failed: " + e.getMessage()));
-        }
+        deleteType(session, newType.getId());
     }
 
+    private void createTypeWithProperties(Session session, ObjectType parentType) {
+        CmisTestResult failure = null;
+
+        CreatablePropertyTypes cpt = session.getRepositoryInfo().getCapabilities().getCreatablePropertyTypes();
+        if (cpt == null || cpt.canCreate() == null || cpt.canCreate().isEmpty()) {
+            addResult(createResult(FAILURE, "Repository Info does not indicate, which property types can be created!"));
+            return;
+        }
+
+        // define the type
+        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition("tck:testid_with_properties", parentType);
+
+        // add a property for each creatable property type
+        for (PropertyType propType : PropertyType.values()) {
+            if (!cpt.canCreate().contains(propType)) {
+                continue;
+            }
+
+            newTypeDef.addPropertyDefinition(createPropertyDefinition(propType));
+        }
+
+        // create the type
+        ObjectType newType = createType(session, newTypeDef);
+        if (newType == null) {
+            return;
+        }
+
+        // get the type
+        ObjectType newType2 = null;
+        try {
+            newType2 = session.getTypeDefinition(newType.getId());
+
+            // assert type definitions
+            failure = createResult(FAILURE,
+                    "The type definition returned by createType() doesn't match the type definition returned by getTypeDefinition()!");
+            addResult(assertEquals(newType, newType2, null, failure));
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(FAILURE, "Newly created type can not be fetched. Id: " + newType.getId(), e, false));
+        }
+
+        // check properties
+        List<PropertyDefinition<?>> newPropDefs = new ArrayList<PropertyDefinition<?>>();
+        for (Map.Entry<String, PropertyDefinition<?>> propDef : newType.getPropertyDefinitions().entrySet()) {
+            if (Boolean.FALSE.equals(propDef.getValue().isInherited())) {
+                newPropDefs.add(propDef.getValue());
+            }
+        }
+
+        failure = createResult(FAILURE,
+                "The number of defined properties and the number of non-inherited properties don't match!");
+        addResult(assertEquals(newTypeDef.getPropertyDefinitions().size(), newPropDefs.size(), null, failure));
+
+        // delete the type
+        deleteType(session, newType.getId());
+    }
+
+    private DocumentTypeDefinitionImpl createDocumentTypeDefinition(String typeId, ObjectType parentType) {
+        DocumentTypeDefinitionImpl result = new DocumentTypeDefinitionImpl();
+
+        result.setId(typeId);
+        result.setBaseTypeId(parentType.getBaseTypeId());
+        result.setParentTypeId(parentType.getId());
+        result.setLocalName("tck:testlocal");
+        result.setLocalNamespace("tck:testlocalnamespace");
+        result.setDisplayName("TCK Document Type");
+        result.setDescription("This is the TCK document type");
+        result.setQueryName("tck:testqueryname");
+        result.setIsQueryable(false);
+        result.setIsFulltextIndexed(false);
+        result.setIsIncludedInSupertypeQuery(true);
+        result.setIsControllableAcl(false);
+        result.setIsControllablePolicy(false);
+        result.setIsCreatable(true);
+        result.setIsFileable(true);
+        result.setIsVersionable(false);
+        result.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
+
+        return result;
+    }
+
+    private AbstractPropertyDefinition<?> createPropertyDefinition(PropertyType propertyType) {
+        AbstractPropertyDefinition<?> result = null;
+
+        switch (propertyType) {
+        case BOOLEAN:
+            result = new PropertyBooleanDefinitionImpl();
+            break;
+        case ID:
+            result = new PropertyIdDefinitionImpl();
+            break;
+        case INTEGER:
+            result = new PropertyIntegerDefinitionImpl();
+            break;
+        case DATETIME:
+            result = new PropertyDateTimeDefinitionImpl();
+            break;
+        case DECIMAL:
+            result = new PropertyDecimalDefinitionImpl();
+            break;
+        case HTML:
+            result = new PropertyHtmlDefinitionImpl();
+            break;
+        case URI:
+            result = new PropertyUriDefinitionImpl();
+            break;
+        default:
+            result = new PropertyStringDefinitionImpl();
+        }
+
+        result.setPropertyType(propertyType);
+        result.setId("tck:" + propertyType.value());
+        result.setLocalName("tck:local_" + propertyType.value());
+        result.setLocalNamespace("tck:testlocalnamespace");
+        result.setDisplayName("TCK " + propertyType.value() + " propertry");
+        result.setQueryName("tck:" + propertyType.value());
+        result.setDescription("TCK " + propertyType.value() + " propertry");
+        result.setCardinality(Cardinality.SINGLE);
+        result.setUpdatability(Updatability.READWRITE);
+        result.setIsInherited(false);
+        result.setIsQueryable(false);
+        result.setIsOrderable(false);
+        result.setIsRequired(false);
+        result.setIsOpenChoice(true);
+
+        return result;
+    }
 }
