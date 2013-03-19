@@ -162,6 +162,10 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      * @param typeId
      */
     public void deleteTypeDefinition(String typeId) {
+        TypeDefinitionContainer typeDef = fTypesMap.remove(typeId);  
+        // remove type from children of parent types
+        TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDef.getTypeDefinition().getParentTypeId());
+        parentTypeContainer.getChildren().remove(typeDef);
         fTypesMap.remove(typeId);       
     }
 

@@ -91,6 +91,11 @@ public class TypeValidator {
                     + " does not exist.");
         }
 
+        if (null != tm.getTypeById(td.getId())) {
+            throw new CmisInvalidArgumentException("Cannot add type, because type with id " + td.getId()
+                    + " already exists.");
+        }
+
         checkTypeId(tm, td.getId());
         checkTypeQueryName(tm, td.getQueryName());
         checkTypeLocalName(tm, td.getLocalName());
