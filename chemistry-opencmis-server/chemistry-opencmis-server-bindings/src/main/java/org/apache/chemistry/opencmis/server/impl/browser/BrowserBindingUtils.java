@@ -437,6 +437,16 @@ public final class BrowserBindingUtils {
         return result;
     }
 
+    public static void closeContentStream(ContentStream contentStream) {
+        if (contentStream != null && contentStream.getStream() != null) {
+            try {
+                contentStream.getStream().close();
+            } catch (IOException e) {
+                // we tried our best
+            }
+        }
+    }
+
     protected static ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
         return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
                 false, null);

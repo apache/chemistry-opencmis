@@ -38,6 +38,7 @@ import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.com
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_TYPE_ID;
+import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.closeContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
 import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
@@ -122,9 +123,15 @@ public final class ObjectService {
         ControlParser cp = new ControlParser(request);
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
-        String newObjectId = service.createDocument(repositoryId, createNewProperties(cp, typeCache), folderId,
-                createContentStream(request), versioningState, createPolicies(cp), createAddAcl(cp),
-                createRemoveAcl(cp), null);
+        ContentStream contentStream = createContentStream(request);
+
+        String newObjectId = null;
+        try {
+            newObjectId = service.createDocument(repositoryId, createNewProperties(cp, typeCache), folderId,
+                    contentStream, versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+        } finally {
+            closeContentStream(contentStream);
+        }
 
         ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
         if (object == null) {
@@ -692,8 +699,14 @@ public final class ObjectService {
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
-        service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
-                createContentStream(request), null);
+        ContentStream contentStream = createContentStream(request);
+
+        try {
+            service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder, contentStream,
+                    null);
+        } finally {
+            closeContentStream(contentStream);
+        }
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 
@@ -729,8 +742,14 @@ public final class ObjectService {
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
         Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
-        service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, createContentStream(request),
-                isLastChunk, null);
+        ContentStream contentStream = createContentStream(request);
+
+        try {
+            service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, contentStream, isLastChunk,
+                    null);
+        } finally {
+            closeContentStream(contentStream);
+        }
 
         String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

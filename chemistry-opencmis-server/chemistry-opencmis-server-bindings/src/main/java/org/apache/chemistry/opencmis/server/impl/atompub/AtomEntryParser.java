@@ -410,24 +410,29 @@ public class AtomEntryParser {
 
         XMLUtils.next(parser);
 
-        while (true) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.END_ELEMENT) {
-                break;
-            } else if (event == XMLStreamReader.CHARACTERS) {
-                String s = parser.getText();
-                if (s != null) {
-                    byte[] bytes = s.getBytes("UTF-8");
-                    bufferStream.write(bytes);
-                    cappedStream.deductBytes(bytes.length);
+        try {
+            while (true) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.END_ELEMENT) {
+                    break;
+                } else if (event == XMLStreamReader.CHARACTERS) {
+                    String s = parser.getText();
+                    if (s != null) {
+                        byte[] bytes = s.getBytes("UTF-8");
+                        bufferStream.write(bytes);
+                        cappedStream.deductBytes(bytes.length);
+                    }
+                } else if (event == XMLStreamReader.START_ELEMENT) {
+                    throw new RuntimeException("Unexpected tag: " + parser.getName());
                 }
-            } else if (event == XMLStreamReader.START_ELEMENT) {
-                throw new RuntimeException("Unexpected tag: " + parser.getName());
-            }
 
-            if (!XMLUtils.next(parser)) {
-                break;
+                if (!XMLUtils.next(parser)) {
+                    break;
+                }
             }
+        } catch (Exception e) {
+            bufferStream.destroy(); // remove temp file
+            throw e;
         }
 
         XMLUtils.next(parser);

@@ -32,6 +32,7 @@ import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringPar
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -109,8 +110,13 @@ public final class ObjectService {
 
         if (objectId == null) {
             // create
-            newObjectId = service.create(repositoryId, parser.getProperties(), folderId, parser.getContentStream(),
-                    versioningState, parser.getPolicyIds(), null);
+            ContentStream contentStream = parser.getContentStream();
+            try {
+                newObjectId = service.create(repositoryId, parser.getProperties(), folderId, contentStream,
+                        versioningState, parser.getPolicyIds(), null);
+            } finally {
+                closeContentStream(contentStream);
+            }
         } else {
             if ((sourceFolderId == null) || (sourceFolderId.trim().length() == 0)) {
                 // addObjectToFolder
@@ -490,8 +496,13 @@ public final class ObjectService {
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
         if ((checkin != null) && (checkin.booleanValue())) {
-            service.checkIn(repositoryId, objectIdHolder, major, parser.getProperties(), parser.getContentStream(),
-                    checkinComment, parser.getPolicyIds(), null, null, null);
+            ContentStream contentStream = parser.getContentStream();
+            try {
+                service.checkIn(repositoryId, objectIdHolder, major, parser.getProperties(), contentStream,
+                        checkinComment, parser.getPolicyIds(), null, null, null);
+            } finally {
+                closeContentStream(contentStream);
+            }
         } else {
             String changeToken = extractChangeToken(parser.getProperties());
 
@@ -614,5 +625,15 @@ public final class ObjectService {
         }
 
         return ((PropertyString) changeLogProperty).getFirstValue();
+    }
+
+    public static void closeContentStream(ContentStream contentStream) {
+        if (contentStream != null && contentStream.getStream() != null) {
+            try {
+                contentStream.getStream().close();
+            } catch (IOException e) {
+                // we tried our best
+            }
+        }
     }
 }
