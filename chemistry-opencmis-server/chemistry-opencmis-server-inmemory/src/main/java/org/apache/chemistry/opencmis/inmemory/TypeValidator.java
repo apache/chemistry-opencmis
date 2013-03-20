@@ -20,7 +20,7 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -161,18 +161,16 @@ public class TypeValidator {
         td.setTypeMutability(tm);
         td.setExtensions(td.getExtensions());
         
-        if (null == td.getPropertyDefinitions()) {
-            td.setPropertyDefinitions(new HashMap<String, PropertyDefinition<?>>());
-        } else {
-            Map<String, PropertyDefinition<?>> propDefsNew = new HashMap<String, PropertyDefinition<?>>();
+        Map<String, PropertyDefinition<?>> propDefsNew = new LinkedHashMap<String, PropertyDefinition<?>>();
+        if (null != td.getPropertyDefinitions()) {
             Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
             for (PropertyDefinition<?> pd : propDefs.values()) {
                 AbstractPropertyDefinition<?> pdNew = completePropertyDef(pd);
                 adjustPropertyNamesAndId(pdNew);
                 propDefsNew.put(pdNew.getId(), pd);
             }
-            td.setPropertyDefinitions(propDefsNew);
         }
+        td.setPropertyDefinitions(propDefsNew);
     }
 
     private static void checkProperties(TypeManager tm, Collection<PropertyDefinition<?>> pds) {
