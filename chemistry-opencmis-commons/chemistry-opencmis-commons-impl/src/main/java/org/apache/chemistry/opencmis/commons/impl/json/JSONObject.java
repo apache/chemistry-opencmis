@@ -20,11 +20,11 @@ package org.apache.chemistry.opencmis.commons.impl.json;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A JSON object. Key value pairs are unordered. JSONObject supports
+ * A JSON object. Key value pairs are order by insertion. JSONObject supports
  * java.util.Map interface.
  * 
  * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
@@ -32,7 +32,7 @@ import java.util.Map;
  * 
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
-public class JSONObject extends HashMap<String, Object> implements Map<String, Object>, JSONAware, JSONStreamAware {
+public class JSONObject extends LinkedHashMap<String, Object> implements Map<String, Object>, JSONAware, JSONStreamAware {
 
     private static final long serialVersionUID = 1;
 

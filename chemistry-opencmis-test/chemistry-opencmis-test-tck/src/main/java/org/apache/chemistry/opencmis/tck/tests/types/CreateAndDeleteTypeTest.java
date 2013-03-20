@@ -155,6 +155,22 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
                 "The number of defined properties and the number of non-inherited properties don't match!");
         addResult(assertEquals(newTypeDef.getPropertyDefinitions().size(), newPropDefs.size(), null, failure));
 
+        // check the order of the properties, which must match the order of the original type definition
+        // (OpenCMIS keeps the order of the property definitions.)
+        int i = 0;
+        for (Map.Entry<String, PropertyDefinition<?>> propDef : newTypeDef.getPropertyDefinitions().entrySet()) {
+            PropertyDefinition<?> newPropDef = newPropDefs.get(i);
+
+            failure = createResult(FAILURE, "Property " + (i + 1) + " must be of type "
+                    + propDef.getValue().getPropertyType() + " but is of type " + newPropDef.getPropertyType() + "!");
+            addResult(assertEquals(propDef.getValue().getPropertyType(), newPropDef.getPropertyType(), null, failure));
+
+            addResult(createInfoResult("Repository assigned the property '" + propDef.getValue().getId()
+                    + "' the following property id: " + newPropDef.getId()));
+
+            i++;
+        }
+
         // delete the type
         deleteType(session, newType.getId());
     }
