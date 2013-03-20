@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefini
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
@@ -361,6 +362,7 @@ public class StoreManagerImpl implements StoreManager {
 
     @SuppressWarnings("serial")
     private RepositoryInfo createRepositoryInfo(String repositoryId) {
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
         // repository info
@@ -374,7 +376,6 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setPrincipalAnyone(InMemoryAce.getAnyoneUser());
         repoInfo.setThinClientUri("");
         repoInfo.setChangesIncomplete(Boolean.TRUE);
-        repoInfo.setChangesOnType(null);
         repoInfo.setLatestChangeLogToken(Long.valueOf(new Date(0).getTime()).toString());
         repoInfo.setVendorName("Apache Chemistry");
         repoInfo.setProductName(OPENCMIS_SERVER);
@@ -407,6 +408,23 @@ public class StoreManagerImpl implements StoreManager {
         permissions.add(createPermission(CMIS_READ, "Read"));
         permissions.add(createPermission(CMIS_WRITE, "Write"));
         permissions.add(createPermission(CMIS_ALL, "All"));
+        if (cmis11) {
+            NewTypeSettableAttributesImpl typeAttrs = new NewTypeSettableAttributesImpl();
+            typeAttrs.setCanSetControllableAcl(false);
+            typeAttrs.setCanSetControllablePolicy(false);
+            typeAttrs.setCanSetCreatable(true);
+            typeAttrs.setCanSetDescription(true);
+            typeAttrs.setCanSetDisplayName(true);
+            typeAttrs.setCanSetFileable(false);
+            typeAttrs.setCanSetFulltextIndexed(false);
+            typeAttrs.setCanSetId(true);
+            typeAttrs.setCanSetIncludedInSupertypeQuery(false);
+            typeAttrs.setCanSetLocalName(true);
+            typeAttrs.setCanSetLocalNamespace(true);
+            typeAttrs.setCanSetQueryable(false);
+            typeAttrs.setCanSetQueryName(true);
+            caps.setNewTypeSettableAttributes(typeAttrs);
+        }
         aclCaps.setPermissionDefinitionData(permissions);
 
         // mapping
@@ -456,7 +474,6 @@ public class StoreManagerImpl implements StoreManager {
         }
         
         // CMIS 1.1 extensions
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         if (cmis11) {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_1.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
@@ -487,7 +504,7 @@ public class StoreManagerImpl implements StoreManager {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
         }
-        
+
         aclCaps.setPermissionMappingData(map);
 
         repoInfo.setAclCapabilities(aclCaps);
