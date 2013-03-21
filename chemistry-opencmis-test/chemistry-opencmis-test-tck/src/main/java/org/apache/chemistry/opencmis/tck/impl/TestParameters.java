@@ -31,6 +31,9 @@ public class TestParameters {
     public static final String DEFAULT_ITEM_TYPE = "org.apache.chemistry.opencmis.tck.default.itemType";
     public static final String DEFAULT_ITEM_TYPE_VALUE = "cmis:item";
 
+    public static final String DEFAULT_SECONDARY_TYPE = "org.apache.chemistry.opencmis.tck.default.secondaryType";
+    public static final String DEFAULT_SECONDARY_TYPE_VALUE = "cmis:secondary";
+
     public static final String DEFAULT_TEST_FOLDER_PARENT = "org.apache.chemistry.opencmis.tck.default.testFolderParent";
     public static final String DEFAULT_TEST_FOLDER_PARENT_VALUE = "/";
 

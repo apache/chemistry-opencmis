@@ -59,7 +59,7 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
     @Override
     public void run(Session session) {
         if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
-            addResult(createResult(SKIPPED, "Items are not supporetd by CMIS 1.0. Test skipped!"));
+            addResult(createResult(SKIPPED, "Type mutability is not supporetd by CMIS 1.0. Test skipped!"));
             return;
         }
 
@@ -155,7 +155,8 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
                 "The number of defined properties and the number of non-inherited properties don't match!");
         addResult(assertEquals(newTypeDef.getPropertyDefinitions().size(), newPropDefs.size(), null, failure));
 
-        // check the order of the properties, which must match the order of the original type definition
+        // check the order of the properties, which must match the order of the
+        // original type definition
         // (OpenCMIS keeps the order of the property definitions.)
         int i = 0;
         for (Map.Entry<String, PropertyDefinition<?>> propDef : newTypeDef.getPropertyDefinitions().entrySet()) {

@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -151,6 +152,20 @@ public class BaseTypesTest extends AbstractSessionTest {
                 addResult(createResult(WARNING, "Secondary type not available!", e, false));
             } catch (CmisObjectNotFoundException e) {
                 addResult(createResult(WARNING, "Secondary type not available!", e, false));
+            }
+        } else {
+            try {
+                session.getTypeDefinition(BaseTypeId.CMIS_ITEM.value());
+                addResult(createResult(FAILURE, "CMIS 1.0 repository returns cmis:item type definition!"));
+            } catch (CmisBaseException e) {
+                // expected
+            }
+
+            try {
+                session.getTypeDefinition(BaseTypeId.CMIS_SECONDARY.value());
+                addResult(createResult(FAILURE, "CMIS 1.0 repository returns cmis:secondary type definition!"));
+            } catch (CmisBaseException e) {
+                // expected
             }
         }
 

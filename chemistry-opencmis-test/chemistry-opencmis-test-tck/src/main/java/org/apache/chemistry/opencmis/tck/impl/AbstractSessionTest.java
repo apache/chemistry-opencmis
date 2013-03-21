@@ -117,6 +117,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     private Boolean supportsRelationships;
     private Boolean supportsPolicies;
     private Boolean supportsItems;
+    private Boolean supportsSecondaries;
 
     public BindingType getBinding() {
         if (getParameters() == null) {
@@ -192,6 +193,15 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         String objectTypeId = getParameters().get(TestParameters.DEFAULT_ITEM_TYPE);
         if (objectTypeId == null) {
             objectTypeId = TestParameters.DEFAULT_ITEM_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
+    protected String getSecondaryTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_SECONDARY_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_SECONDARY_TYPE_VALUE;
         }
 
         return objectTypeId;
@@ -779,6 +789,20 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         return supportsItems.booleanValue();
+    }
+
+    protected boolean hasSecondaries(Session session) {
+        if (supportsSecondaries == null) {
+            supportsSecondaries = Boolean.FALSE;
+            for (ObjectType type : session.getTypeChildren(null, false)) {
+                if (BaseTypeId.CMIS_SECONDARY.value().equals(type.getId())) {
+                    supportsSecondaries = Boolean.TRUE;
+                    break;
+                }
+            }
+        }
+
+        return supportsSecondaries.booleanValue();
     }
 
     protected CmisTestResult checkObject(Session session, CmisObject object, String[] properties, String message) {

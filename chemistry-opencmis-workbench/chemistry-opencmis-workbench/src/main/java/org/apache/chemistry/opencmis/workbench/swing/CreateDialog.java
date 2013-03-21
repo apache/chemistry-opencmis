@@ -82,7 +82,7 @@ public abstract class CreateDialog extends JDialog {
     }
 
     protected Object[] getTypes(String rootTypeId) {
-        List<ObjectType> types = model.getCreateableTypes(rootTypeId);
+        List<ObjectType> types = model.getTypesAsList(rootTypeId, true);
 
         Object[] result = new Object[types.size()];
 

@@ -196,19 +196,23 @@ public class TckDialog {
             configPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
             final JComboBox folderComboBox = addComboBox(configPanel, "Test folder type:",
-                    BaseTypeId.CMIS_FOLDER.value(), TestParameters.DEFAULT_FOLDER_TYPE_VALUE);
+                    BaseTypeId.CMIS_FOLDER.value(), TestParameters.DEFAULT_FOLDER_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
             final JComboBox documentComboBox = addComboBox(configPanel, "Test document type:",
-                    BaseTypeId.CMIS_DOCUMENT.value(), TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE);
+                    BaseTypeId.CMIS_DOCUMENT.value(), TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
             final JComboBox relationshipComboBox = addComboBox(configPanel, "Test relationship type:",
-                    BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE);
+                    BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
             final JComboBox itemComboBox = addComboBox(configPanel, "Test item type:", BaseTypeId.CMIS_ITEM.value(),
-                    TestParameters.DEFAULT_ITEM_TYPE_VALUE);
+                    TestParameters.DEFAULT_ITEM_TYPE_VALUE, true);
+            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+
+            final JComboBox secondaryComboBox = addComboBox(configPanel, "Test secondary type:",
+                    BaseTypeId.CMIS_SECONDARY.value(), TestParameters.DEFAULT_SECONDARY_TYPE_VALUE, false);
             configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
 
             configPanel.add(new JLabel("Test folder path:"));
@@ -251,6 +255,10 @@ public class TckDialog {
                         if (itemComboBox.isEnabled()) {
                             parameters.put(TestParameters.DEFAULT_ITEM_TYPE, (String) itemComboBox.getSelectedItem());
                         }
+                        if (secondaryComboBox.isEnabled()) {
+                            parameters.put(TestParameters.DEFAULT_SECONDARY_TYPE,
+                                    (String) secondaryComboBox.getSelectedItem());
+                        }
                         parameters.put(TestParameters.DEFAULT_TEST_FOLDER_PARENT, testParentFolderField.getText());
 
                         runner.setParameters(parameters);
@@ -291,12 +299,13 @@ public class TckDialog {
             model.nodeChanged((TreeNode) model.getRoot());
         }
 
-        private JComboBox addComboBox(JPanel panel, String title, String rootTypeId, String defaultTypeId) {
+        private JComboBox addComboBox(JPanel panel, String title, String rootTypeId, String defaultTypeId,
+                boolean creatableOnly) {
             final JLabel label = new JLabel(title);
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
             panel.add(label);
 
-            List<ObjectType> types = model.getCreateableTypes(rootTypeId);
+            List<ObjectType> types = model.getTypesAsList(rootTypeId, creatableOnly);
             String[] typeIds = new String[types.size()];
 
             int i = 0;

@@ -329,7 +329,7 @@ public class ClientModel {
         return clientSession.getSession().createRelationship(properties, null, null, null);
     }
 
-    public synchronized List<ObjectType> getCreateableTypes(String rootTypeId) {
+    public synchronized List<ObjectType> getTypesAsList(String rootTypeId, boolean creatableOnly) {
         List<ObjectType> result = new ArrayList<ObjectType>();
 
         ObjectType rootType = null;
@@ -340,10 +340,14 @@ public class ClientModel {
         }
 
         List<Tree<ObjectType>> types = clientSession.getSession().getTypeDescendants(rootTypeId, -1, false);
-        addType(types, result);
+        addType(types, result, creatableOnly);
 
-        boolean isCreatable = (rootType.isCreatable() == null ? true : rootType.isCreatable().booleanValue());
-        if (isCreatable) {
+        if (creatableOnly) {
+            boolean isCreatable = (rootType.isCreatable() == null ? true : rootType.isCreatable().booleanValue());
+            if (isCreatable) {
+                result.add(rootType);
+            }
+        } else {
             result.add(rootType);
         }
 
@@ -356,17 +360,20 @@ public class ClientModel {
         return result;
     }
 
-    private void addType(List<Tree<ObjectType>> types, List<ObjectType> resultList) {
+    private void addType(List<Tree<ObjectType>> types, List<ObjectType> resultList, boolean creatableOnly) {
         for (Tree<ObjectType> tt : types) {
             if (tt.getItem() != null) {
-                boolean isCreatable = (tt.getItem().isCreatable() == null ? true : tt.getItem().isCreatable()
-                        .booleanValue());
-
-                if (isCreatable) {
+                if (creatableOnly) {
+                    boolean isCreatable = (tt.getItem().isCreatable() == null ? true : tt.getItem().isCreatable()
+                            .booleanValue());
+                    if (isCreatable) {
+                        resultList.add(tt.getItem());
+                    }
+                } else {
                     resultList.add(tt.getItem());
                 }
 
-                addType(tt.getChildren(), resultList);
+                addType(tt.getChildren(), resultList, creatableOnly);
             }
         }
     }
