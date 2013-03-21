@@ -60,6 +60,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,11 +91,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             List<StoredObject> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
                     orderBy, context.getUsername(), includeRelationships);
             for (StoredObject checkedOut : checkedOuts) {
-                TypeDefinition td = fStoreManager.getTypeById(repositoryId, checkedOut.getTypeId()).getTypeDefinition();
-//                DocumentVersion workingCopy = ((VersionedDocument) checkedOut).getPwc();
-//                if (null == workingCopy)
-//                	throw new CmisConstraintException("document " + checkedOut + " is checked out but has no working copy");       
-                ObjectData od = PropertyCreationHelper.getObjectData(td, checkedOut, filter, user,
+                TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+                ObjectData od = PropertyCreationHelper.getObjectData(tm, checkedOut, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
                 if (context.isObjectInfoRequired()) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();
@@ -308,8 +306,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 oifd.setPathSegment(spo.getName());
             }
 
-            TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, spo.getTypeId()).getTypeDefinition();
-            ObjectData objectData = PropertyCreationHelper.getObjectData(typeDef, spo, filter, user, includeAllowableActions, 
+            TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+            ObjectData objectData = PropertyCreationHelper.getObjectData(tm, spo, filter, user, includeAllowableActions, 
                     includeRelationships, renditionFilter, false, false, null);
 
             oifd.setObject(objectData);
@@ -397,8 +395,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             if (null != parents) {
                 for (Folder parent : parents) {
                     ObjectParentDataImpl parentData = new ObjectParentDataImpl();
-                    TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, parent.getTypeId()).getTypeDefinition();
-                    ObjectData objData = PropertyCreationHelper.getObjectData(typeDef, parent, filter, user, includeAllowableActions, 
+                    TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+                    ObjectData objData = PropertyCreationHelper.getObjectData(tm, parent, filter, user, includeAllowableActions, 
                             includeRelationships, renditionFilter, false, true, null);
 
                     parentData.setObject(objData);
@@ -448,8 +446,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
         objData.setProperties(props);
     }
 

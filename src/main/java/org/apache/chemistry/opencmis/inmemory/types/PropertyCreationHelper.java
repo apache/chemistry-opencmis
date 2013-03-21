@@ -73,6 +73,7 @@ import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,14 +206,15 @@ public class PropertyCreationHelper {
         prop.setDefaultValue(Collections.singletonList(defVal));
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition td, List<String> requestedIds,
+    public static Properties getPropertiesFromObject(StoredObject so, TypeManager typeManager, List<String> requestedIds,
             boolean fillOptionalPropertyData) {
         // build properties collection
 
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
         Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
         so.fillProperties(properties, objectFactory, requestedIds);
-
+        TypeDefinition td = typeManager.getTypeById(so.getTypeId()).getTypeDefinition();
+        
         String typeId = so.getTypeId();
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
             if (td == null) {
@@ -231,6 +233,17 @@ public class PropertyCreationHelper {
         for (PropertyDefinition<?> propDef : propDefs.values()) {
             if (!properties.containsKey(propDef.getId()) && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
                 properties.put(propDef.getId(), getEmptyValue(propDef));
+        }
+        
+        // fill not-set properties from secondary types
+        List<String> secTypeIds = so.getSecondaryTypeIds();
+        for (String secTypeId: secTypeIds) {
+            td = typeManager.getTypeById(secTypeId).getTypeDefinition();
+            propDefs = td.getPropertyDefinitions();
+            for (PropertyDefinition<?> propDef : propDefs.values()) {
+                if (!properties.containsKey(propDef.getId()) && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
+                    properties.put(propDef.getId(), getEmptyValue(propDef));
+            }
         }
 
         List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
@@ -325,7 +338,7 @@ public class PropertyCreationHelper {
         return props;
     }
 
-    public static ObjectData getObjectData(TypeDefinition typeDef, StoredObject so, String filter, String user,
+    public static ObjectData getObjectData(TypeManager tm, StoredObject so, String filter, String user,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -337,7 +350,7 @@ public class PropertyCreationHelper {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        Properties props = getPropertiesFromObject(so, typeDef, requestedIds, true);
+        Properties props = getPropertiesFromObject(so, tm, requestedIds, true);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {

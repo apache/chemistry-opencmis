@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,8 +259,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
 
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, latestVersionObject.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, td,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, tm,
                 requestedIds, true);
 
         return props;
