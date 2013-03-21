@@ -26,9 +26,11 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
+import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -145,6 +147,20 @@ public class RepositoryInfoTest extends AbstractSessionTest {
             addResult(assertIsTrue(ri.getChangesOnType().size() < 5, null, failure));
         }
 
+        // features
+        if (ri.getCmisVersion() != CmisVersion.CMIS_1_0) {
+            success = createResult(OK, "Repository features exposed.");
+            failure = createResult(OK, "No repository features exposed.");
+            addResult(assertNotNull(ri.getExtensionFeatures(), success, failure));
+
+            if (ri.getExtensionFeatures() != null) {
+                for (ExtensionFeature feature : ri.getExtensionFeatures()) {
+                    failure = createResult(FAILURE, "At least one repository features has no id!");
+                    addResult(assertStringNotEmpty(feature.getId(), null, failure));
+                }
+            }
+        }
+
         // capabilities
         if (ri.getCapabilities() == null) {
             addResult(createResult(FAILURE, "Capabilities are not set!"));
@@ -220,6 +236,18 @@ public class RepositoryInfoTest extends AbstractSessionTest {
             success = createResult(OK, "Renditions capability: " + cap.getRenditionsCapability());
             failure = createResult(FAILURE, "Renditions capability is not set!");
             addResult(assertNotNull(cap.getRenditionsCapability(), success, failure));
+
+            if (ri.getCmisVersion() != CmisVersion.CMIS_1_0) {
+                // new type settable attributes
+                success = createResult(OK, "'New type settable attributes' flags are set.");
+                failure = createResult(WARNING, "'New type settable attributes' flags are not set!");
+                addResult(assertNotNull(cap.getNewTypeSettableAttributes(), success, failure));
+
+                // creatable property types
+                success = createResult(OK, "'Creatable property types' flags are set.");
+                failure = createResult(WARNING, "'Creatable property types' flags are not set!");
+                addResult(assertNotNull(cap.getCreatablePropertyTypes(), success, failure));
+            }
         }
 
         // ACL capabilities
