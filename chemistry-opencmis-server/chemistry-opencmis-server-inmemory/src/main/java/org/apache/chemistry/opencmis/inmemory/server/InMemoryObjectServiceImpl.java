@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,6 +84,7 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,8 +130,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
-
-        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
 
         PropertiesImpl newPD = new PropertiesImpl();
         // copy all existing properties
@@ -231,8 +231,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Make a call to getObject to convert the resulting id into an
         // ObjectData
-        TypeDefinition td = typeDefC.getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, context.getUsername(), false,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, context.getUsername(), false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -386,8 +386,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         String user = context.getUsername();
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user, includeAllowableActions,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -426,8 +426,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
 
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, filter, user, includeAllowableActions,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         LOG.debug("stop getObjectByPath()");
@@ -455,8 +455,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, td, requestedIds, true);
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
         LOG.debug("stop getProperties()");
         return props;
     }
@@ -535,8 +535,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         objectId.setValue(so.getId());
         LOG.debug("stop moveObject()");
 
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
@@ -731,8 +731,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             // extension);
         }
 
-        TypeDefinition td = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
-        ObjectData od = PropertyCreationHelper.getObjectData(td, so, null, user, false,
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need

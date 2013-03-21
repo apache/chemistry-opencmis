@@ -1231,6 +1231,40 @@ public class ObjectServiceTest extends AbstractServiceTest {
       
         log.info("... finished testSecondaryTypes()");        
     }
+    @Test
+    public void testSecondaryTypePropertiesNotSet() {
+        log.info("starting testSecondaryTypePropertiesNotSet() ...");
+
+        final String primaryPropVal = "Sample Doc String Property";
+        
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "ObjectWithSecondaryType"));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
+        properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
+        properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, TEST_SECONDARY_TYPE_ID));
+        Properties props = fFactory.createPropertiesData(properties);
+        
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
+                null, null, null);
+        assertNotNull(id);
+        
+        Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
+        assertNotNull(res.getProperties());
+        Map<String, PropertyData<?>> returnedProps = res.getProperties();
+        assertNotNull(returnedProps);
+        boolean hasProp = returnedProps.containsKey(SECONDARY_STRING_PROP);
+        assertTrue(hasProp);
+        hasProp = returnedProps.containsKey(SECONDARY_INTEGER_PROP);
+        assertTrue(hasProp);
+        PropertyData<?> returnedValue = returnedProps.get(SECONDARY_STRING_PROP);
+        assertNotNull(returnedValue);
+        assertTrue(returnedValue.getValues().isEmpty());
+        returnedValue = returnedProps.get(SECONDARY_INTEGER_PROP);
+        assertNotNull(returnedValue);
+        assertTrue(returnedValue.getValues().isEmpty());
+        
+        log.info("... finished testSecondaryTypePropertiesNotSet()");        
+    } 
     
     @Test
     public void testUpdatePropertiesWithTypeCreation () {
