@@ -167,7 +167,17 @@ public class StoreManagerImpl implements StoreManager {
             throw new RuntimeException("Unknown repository " + repositoryId);
         }
 
-        return typeManager.getTypeById(typeId);
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+        TypeDefinitionContainer tdc = typeManager.getTypeById(typeId);
+        if (null != tdc && !cmis11) {
+            TypeDefinition td = tdc.getTypeDefinition();
+            if (td.getBaseTypeId() == BaseTypeId.CMIS_ITEM || td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY
+                    || td.getId().equals(BaseTypeId.CMIS_ITEM.value())
+                    || td.getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
+                tdc = null; // filter new types for CMIS 1.0
+            }
+        }
+        return tdc;
     }
 
     public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
