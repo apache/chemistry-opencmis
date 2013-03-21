@@ -338,7 +338,7 @@ public class InMemoryService extends AbstractCmisService {
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
         return fObjSvc.bulkUpdateProperties(getCallContext(), repositoryId, objectIdAndChangeToken, properties,
-                addSecondaryTypeIds, removeSecondaryTypeIds, extension);
+                addSecondaryTypeIds, removeSecondaryTypeIds, extension, this);
     }
 
     // --- versioning service ---

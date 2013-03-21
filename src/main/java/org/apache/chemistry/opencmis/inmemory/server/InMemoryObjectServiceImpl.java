@@ -788,17 +788,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
-            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension,
+            ObjectInfoHandler objectInfos) {
 
         List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
         for ( BulkUpdateObjectIdAndChangeToken obj: objectIdAndChangeToken) {
             Holder<String> objId = new Holder<String>(obj.getId());
             Holder<String> changeToken = new Holder<String>(obj.getChangeToken());
             try {
-                updateProperties(context, repositoryId, objId, changeToken, properties, null, null, null);
+                updateProperties(context, repositoryId, objId, changeToken, properties, null, null, objectInfos);
                 result.add(new BulkUpdateObjectIdAndChangeTokenImpl(obj.getId(), changeToken.getValue()));
             } catch (Exception e) {
-                LOG.error("updating properties in bulk uapdate failed for object" + obj.getId() + ": ", e);
+                LOG.error("updating properties in bulk upadate failed for object" + obj.getId() + ": ", e);
             }
         }
         return result;
