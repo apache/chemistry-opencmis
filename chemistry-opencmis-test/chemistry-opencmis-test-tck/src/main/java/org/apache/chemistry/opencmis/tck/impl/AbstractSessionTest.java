@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -356,13 +357,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a document.
      */
     protected Document createDocument(Session session, Folder parent, String name, String content) {
-        return createDocument(session, parent, name, getDocumentTestTypeId(), content);
+        return createDocument(session, parent, name, getDocumentTestTypeId(), null, content);
     }
 
     /**
      * Creates a document.
      */
-    protected Document createDocument(Session session, Folder parent, String name, String objectTypeId, String content) {
+    protected Document createDocument(Session session, Folder parent, String name, String objectTypeId,
+            String[] secondaryTypeIds, String content) {
         if (content == null) {
             content = "";
         }
@@ -370,6 +372,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+
+        if (secondaryTypeIds != null) {
+            properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, Arrays.asList(secondaryTypeIds));
+        }
 
         TypeDefinition type = session.getTypeDefinition(objectTypeId);
         if (!(type instanceof DocumentTypeDefinition)) {

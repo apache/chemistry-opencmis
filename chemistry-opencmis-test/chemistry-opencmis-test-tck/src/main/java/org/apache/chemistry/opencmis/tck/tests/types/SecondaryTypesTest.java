@@ -23,12 +23,16 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -76,22 +80,21 @@ public class SecondaryTypesTest extends AbstractSessionTest {
         Folder testFolder = createTestFolder(session);
 
         try {
-            createDocumentAndAttachSecondaryType(session, testFolder);
-            createDocumentWithSecondaryType(session, testFolder);
+            String secondaryTestTypeId = getSecondaryTestTypeId();
+            ObjectType secondaryTestType = session.getTypeDefinition(secondaryTestTypeId);
+
+            createDocumentAndAttachSecondaryType(session, testFolder, secondaryTestType);
+            createDocumentWithSecondaryType(session, testFolder, secondaryTestType);
         } finally {
             // delete the test folder
             deleteTestFolder();
         }
     }
 
-    private void createDocumentAndAttachSecondaryType(Session session, Folder testFolder) {
-        CmisTestResult f;
-
+    private void createDocumentAndAttachSecondaryType(Session session, Folder testFolder, ObjectType secondaryTestType) {
         Document doc = createDocument(session, testFolder, "createandattach.txt", "Secondary Type Test");
 
         try {
-            String secondaryTestTypeId = getSecondaryTestTypeId();
-
             // -- attach secondary type
             List<String> secondaryTypes = new ArrayList<String>();
 
@@ -102,58 +105,22 @@ public class SecondaryTypesTest extends AbstractSessionTest {
                 }
             }
 
-            secondaryTypes.add(secondaryTestTypeId);
+            // add the new secondary type
+            secondaryTypes.add(secondaryTestType.getId());
 
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 
             // attach secondary type
-            Document newDoc = (Document) doc.updateProperties(properties);
+            ObjectId newId = doc.updateProperties(properties);
+            Document newDoc = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
             // check if the secondary type is there
-            boolean found = false;
-            if (newDoc.getSecondaryTypes() == null) {
-                addResult(createResult(FAILURE, "Document does not have the attached secondary type!"));
-            } else {
-                for (SecondaryType secType : newDoc.getSecondaryTypes()) {
-                    if (secondaryTestTypeId.equals(secType.getId())) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                f = createResult(FAILURE, "Document does not have the attached secondary type!");
-                addResult(assertIsTrue(found, null, f));
-            }
+            boolean found = checkSecondaryType(newDoc, secondaryTestType);
 
             // -- detach secondary type
             if (found) {
-                secondaryTypes = new ArrayList<String>();
-
-                for (SecondaryType secType : newDoc.getSecondaryTypes()) {
-                    if (!secondaryTestTypeId.equals(secType.getId())) {
-                        secondaryTypes.add(secType.getId());
-                    }
-                }
-
-                properties = new HashMap<String, Object>();
-                properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
-
-                // attach secondary type
-                Document newDoc2 = (Document) doc.updateProperties(properties);
-
-                found = false;
-                if (newDoc2.getSecondaryTypes() != null) {
-                    for (SecondaryType secType : newDoc2.getSecondaryTypes()) {
-                        if (secondaryTestTypeId.equals(secType.getId())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-
-                f = createResult(FAILURE, "Document still has the detached secondary type!");
-                addResult(assertIsFalse(found, null, f));
+                detachSecondaryType(session, newDoc, secondaryTestType);
             }
 
         } finally {
@@ -161,8 +128,118 @@ public class SecondaryTypesTest extends AbstractSessionTest {
         }
     }
 
-    private void createDocumentWithSecondaryType(Session session, Folder testFolder) {
-        // TODO
+    private void createDocumentWithSecondaryType(Session session, Folder testFolder, ObjectType secondaryTestType) {
+        Document doc = createDocument(session, testFolder, "createwithsecondarytype.txt", getDocumentTestTypeId(),
+                new String[] { secondaryTestType.getId() }, "Secondary Type Test");
+
+        try {
+            // check if the secondary type is there
+            boolean found = checkSecondaryType(doc, secondaryTestType);
+
+            // detach secondary type
+            if (found) {
+                detachSecondaryType(session, doc, secondaryTestType);
+            }
+        } finally {
+            deleteObject(doc);
+        }
     }
 
+    private boolean checkSecondaryType(Document doc, ObjectType secondaryTestType) {
+        CmisTestResult f;
+
+        // check if the secondary type is there
+        boolean found = false;
+        if (doc.getSecondaryTypes() == null) {
+            addResult(createResult(FAILURE, "Document does not have the attached secondary type!"));
+        } else {
+            for (SecondaryType secType : doc.getSecondaryTypes()) {
+                if (secondaryTestType.getId().equals(secType.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            f = createResult(FAILURE, "Document does not have the attached secondary type!");
+            addResult(assertIsTrue(found, null, f));
+        }
+
+        // check properties of secondary type
+        if (found) {
+            Set<String> secondaryTypeProperties = new HashSet<String>();
+
+            if (secondaryTestType.getPropertyDefinitions() != null) {
+                for (PropertyDefinition<?> propDef : secondaryTestType.getPropertyDefinitions().values()) {
+                    secondaryTypeProperties.add(propDef.getId());
+                }
+            }
+
+            for (Property<?> prop : doc.getProperties()) {
+                secondaryTypeProperties.remove(prop.getId());
+            }
+
+            f = createResult(FAILURE, "Documents lacks the following secondary type properties: "
+                    + secondaryTypeProperties);
+            addResult(assertIsTrue(secondaryTypeProperties.isEmpty(), null, f));
+        }
+
+        return found;
+    }
+
+    private void detachSecondaryType(Session session, Document doc, ObjectType secondaryTestType) {
+        CmisTestResult f;
+
+        List<String> secondaryTypesId = new ArrayList<String>();
+
+        for (SecondaryType secType : doc.getSecondaryTypes()) {
+            if (!secondaryTestType.getId().equals(secType.getId())) {
+                secondaryTypesId.add(secType.getId());
+            }
+        }
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypesId);
+
+        // detach secondary type
+        ObjectId newId = doc.updateProperties(properties);
+        Document newDoc = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
+
+        boolean found = false;
+        if (newDoc.getSecondaryTypes() != null) {
+            for (SecondaryType secType : newDoc.getSecondaryTypes()) {
+                if (secondaryTestType.getId().equals(secType.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        f = createResult(FAILURE, "Document still has the detached secondary type!");
+        addResult(assertIsFalse(found, null, f));
+
+        // check properties
+        ObjectType primaryType = newDoc.getType();
+        List<SecondaryType> secondaryTypes = newDoc.getSecondaryTypes();
+
+        for (Property<?> prop : doc.getProperties()) {
+            if (!primaryType.getPropertyDefinitions().containsKey(prop.getId())) {
+                f = createResult(FAILURE, "Property '" + prop.getId()
+                        + "' is neither defined by the primary type nor by a secondary type!");
+
+                if (secondaryTypes == null) {
+                    addResult(f);
+                } else {
+                    boolean foundProperty = false;
+                    for (SecondaryType secondaryType : secondaryTypes) {
+                        if (secondaryType.getPropertyDefinitions() != null
+                                && secondaryType.getPropertyDefinitions().containsKey(prop.getId())) {
+                            foundProperty = true;
+                            break;
+                        }
+                    }
+                    addResult(assertIsTrue(foundProperty, null, f));
+                }
+            }
+        }
+    }
 }
