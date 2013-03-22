@@ -2298,7 +2298,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results, cpd.check(type));
                 } else if (BaseTypeId.CMIS_POLICY.equals(type.getBaseTypeId())) {
                     // cmis:policyText
-                    cpd = new CmisPropertyDefintion(PropertyIds.POLICY_TEXT, true, PropertyType.STRING,
+                    cpd = new CmisPropertyDefintion(PropertyIds.POLICY_TEXT, null, PropertyType.STRING,
                             Cardinality.SINGLE, null, null, null);
                     addResult(results, cpd.check(type));
                 }
