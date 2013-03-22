@@ -28,6 +28,7 @@ public interface PermissionMapping extends Serializable, ExtensionsData {
     String CAN_GET_FOLDER_PARENT_OBJECT = "canGetFolderParent.Object";
     String CAN_CREATE_DOCUMENT_FOLDER = "canCreateDocument.Folder";
     String CAN_CREATE_FOLDER_FOLDER = "canCreateFolder.Folder";
+    String CAN_CREATE_POLICY_FOLDER = "canCreatePolicy.Folder";
     String CAN_CREATE_RELATIONSHIP_SOURCE = "canCreateRelationship.Source";
     String CAN_CREATE_RELATIONSHIP_TARGET = "canCreateRelationship.Target";
     String CAN_GET_PROPERTIES_OBJECT = "canGetProperties.Object";
