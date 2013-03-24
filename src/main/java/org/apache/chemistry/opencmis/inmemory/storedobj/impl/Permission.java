@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
+import org.apache.chemistry.opencmis.commons.BasicPermissions;
 
 
 public enum Permission {
@@ -27,6 +27,31 @@ public enum Permission {
     WRITE("write"),
     ALL("all");
     
+    private enum EnumBasicPermissions {
+
+        CMIS_READ(BasicPermissions.READ),
+        CMIS_WRITE(BasicPermissions.WRITE),
+        CMIS_ALL(BasicPermissions.ALL);
+        private final String value;
+
+        EnumBasicPermissions(String v) {
+            value = v;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public static EnumBasicPermissions fromValue(String v) {
+            for (EnumBasicPermissions c: EnumBasicPermissions.values()) {
+                if (c.value.equals(v)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
+    }
+
     private final String value;
     
     Permission(String v) {

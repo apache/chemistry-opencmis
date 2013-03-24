@@ -30,10 +30,8 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertyDefinitionType;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
@@ -42,6 +40,7 @@ import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,10 +244,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     }
 
     private static PropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> src) {
-        // use JAXB converter to easily clone a property definition
-        CmisPropertyDefinitionType tmp = Converter.convert(src);
-        PropertyDefinition<?> clone = Converter.convert(tmp);
+        PropertyDefinition<?> clone = TypeUtil.clonePropertyDefinition(src);
         return clone;
     }
-
+    
 }
