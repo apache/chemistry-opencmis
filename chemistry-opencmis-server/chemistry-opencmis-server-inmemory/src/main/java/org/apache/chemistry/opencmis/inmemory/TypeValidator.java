@@ -124,23 +124,6 @@ public class TypeValidator {
             return null;        
     }
 
-    public static TypeDefinition cloneType(TypeDefinition type) {
-        if (type instanceof DocumentTypeDefinition)
-            return cloneTypeDoc((DocumentTypeDefinition) type);
-        else if (type instanceof FolderTypeDefinition)
-            return cloneTypeFolder((FolderTypeDefinition) type);
-        else if (type instanceof PolicyTypeDefinition)
-            return cloneTypePolicy((PolicyTypeDefinition) type);
-        else if (type instanceof ItemTypeDefinition)
-            return cloneTypeItem((ItemTypeDefinition) type);
-        else if (type instanceof RelationshipTypeDefinition)
-            return cloneTypeRelationship((RelationshipTypeDefinition) type);
-        else if (type instanceof SecondaryTypeDefinition)
-            return cloneTypeSecondary((SecondaryTypeDefinition) type);
-        else
-            return null;        
-    }
-
     public static void adjustTypeNamesAndId(AbstractTypeDefinition typeDef) {
         if (null == typeDef.getId()) {
             typeDef.setId(UUID.randomUUID().toString());
@@ -264,7 +247,7 @@ public class TypeValidator {
     }
 
     private static DocumentTypeDefinitionImpl completeTypeDoc(DocumentTypeDefinition type) {
-        DocumentTypeDefinitionImpl td = cloneTypeDoc(type);
+        DocumentTypeDefinitionImpl td = TypeUtil.cloneTypeDoc(type);
         completeAbstractTypeDefinition(td);
         td.setIsVersionable(type.isVersionable());
         td.setContentStreamAllowed(type.getContentStreamAllowed());
@@ -275,77 +258,36 @@ public class TypeValidator {
         return td;
     }
 
-    private static DocumentTypeDefinitionImpl cloneTypeDoc(DocumentTypeDefinition type) {
-        DocumentTypeDefinitionImpl td = new DocumentTypeDefinitionImpl();
-        td.initialize(type);
-        completeAbstractTypeDefinition(td);
-        td.setIsVersionable(type.isVersionable());
-        td.setContentStreamAllowed(type.getContentStreamAllowed());
-        return td;
-    }
-
     private static FolderTypeDefinitionImpl completeTypeFolder(FolderTypeDefinition type) {
-        FolderTypeDefinitionImpl td = cloneTypeFolder(type);
+        FolderTypeDefinitionImpl td = TypeUtil.cloneTypeFolder(type);
         completeAbstractTypeDefinition(td);
-        return td;
-    }
-
-    private static FolderTypeDefinitionImpl cloneTypeFolder(FolderTypeDefinition type) {
-        FolderTypeDefinitionImpl td = new FolderTypeDefinitionImpl();
-        td.initialize(type);
         return td;
     }
 
     private static RelationshipTypeDefinitionImpl completeTypeRelationship(RelationshipTypeDefinition type) {
-        RelationshipTypeDefinitionImpl td = cloneTypeRelationship(type);
+        RelationshipTypeDefinitionImpl td = TypeUtil.cloneTypeRelationship(type);
         completeAbstractTypeDefinition(td);
-        td.setAllowedSourceTypes(type.getAllowedSourceTypeIds());
-        td.setAllowedTargetTypes(type.getAllowedTargetTypeIds());
-        return td;
-    }
-
-    private static RelationshipTypeDefinitionImpl cloneTypeRelationship(RelationshipTypeDefinition type) {
-        RelationshipTypeDefinitionImpl td = new RelationshipTypeDefinitionImpl();
-        td.initialize(type);
         td.setAllowedSourceTypes(type.getAllowedSourceTypeIds());
         td.setAllowedTargetTypes(type.getAllowedTargetTypeIds());
         return td;
     }
 
     private static ItemTypeDefinitionImpl completeTypeItem(ItemTypeDefinition type) {
-        ItemTypeDefinitionImpl td = cloneTypeItem(type);
+        ItemTypeDefinitionImpl td = TypeUtil.cloneTypeItem(type);
         td.initialize(type);
         completeAbstractTypeDefinition(td);
         return td;        
     }
 
-    private static ItemTypeDefinitionImpl cloneTypeItem(ItemTypeDefinition type) {
-        ItemTypeDefinitionImpl td = new ItemTypeDefinitionImpl();
-        td.initialize(type);
-        return td;        
-    }
-    
     private static SecondaryTypeDefinitionImpl completeTypeSecondary(SecondaryTypeDefinition type) {
-        SecondaryTypeDefinitionImpl td = cloneTypeSecondary(type);
+        SecondaryTypeDefinitionImpl td = TypeUtil.cloneTypeSecondary(type);
         completeAbstractTypeDefinition(td);
         return td;        
     }
 
-    private static SecondaryTypeDefinitionImpl cloneTypeSecondary(SecondaryTypeDefinition type) {
-        SecondaryTypeDefinitionImpl td = new SecondaryTypeDefinitionImpl();
-        td.initialize(type);
-        return td;        
-    }
-    
     private static PolicyTypeDefinitionImpl completeTypePolicy(PolicyTypeDefinition type) {
-        PolicyTypeDefinitionImpl td = cloneTypePolicy(type);
+        PolicyTypeDefinitionImpl td = TypeUtil.cloneTypePolicy(type);
         completeAbstractTypeDefinition(td);
-        return null;
-    }
-
-    private static PolicyTypeDefinitionImpl cloneTypePolicy(PolicyTypeDefinition type) {
-        PolicyTypeDefinitionImpl td = new PolicyTypeDefinitionImpl();
-        td.initialize(td);
         return null;
     }
 
