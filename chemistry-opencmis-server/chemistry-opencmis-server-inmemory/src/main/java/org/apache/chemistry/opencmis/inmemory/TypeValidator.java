@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
@@ -68,6 +69,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
+import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
@@ -109,15 +111,32 @@ public class TypeValidator {
         if (type instanceof DocumentTypeDefinition)
             return completeTypeDoc((DocumentTypeDefinition) type);
         else if (type instanceof FolderTypeDefinition)
-            return completeTyperFolder((FolderTypeDefinition) type);
+            return completeTypeFolder((FolderTypeDefinition) type);
         else if (type instanceof PolicyTypeDefinition)
-            return null;
+            return completeTypePolicy((PolicyTypeDefinition)type);
         else if (type instanceof ItemTypeDefinition)
             return completeTypeItem((ItemTypeDefinition) type);
         else if (type instanceof RelationshipTypeDefinition)
             return completeTypeRelationship((RelationshipTypeDefinition) type);
         else if (type instanceof SecondaryTypeDefinition)
             return completeTypeSecondary((SecondaryTypeDefinition) type);
+        else
+            return null;        
+    }
+
+    public static TypeDefinition cloneType(TypeDefinition type) {
+        if (type instanceof DocumentTypeDefinition)
+            return cloneTypeDoc((DocumentTypeDefinition) type);
+        else if (type instanceof FolderTypeDefinition)
+            return cloneTypeFolder((FolderTypeDefinition) type);
+        else if (type instanceof PolicyTypeDefinition)
+            return cloneTypePolicy((PolicyTypeDefinition) type);
+        else if (type instanceof ItemTypeDefinition)
+            return cloneTypeItem((ItemTypeDefinition) type);
+        else if (type instanceof RelationshipTypeDefinition)
+            return cloneTypeRelationship((RelationshipTypeDefinition) type);
+        else if (type instanceof SecondaryTypeDefinition)
+            return cloneTypeSecondary((SecondaryTypeDefinition) type);
         else
             return null;        
     }
@@ -245,8 +264,7 @@ public class TypeValidator {
     }
 
     private static DocumentTypeDefinitionImpl completeTypeDoc(DocumentTypeDefinition type) {
-        DocumentTypeDefinitionImpl td = new DocumentTypeDefinitionImpl();
-        td.initialize(type);
+        DocumentTypeDefinitionImpl td = cloneTypeDoc(type);
         completeAbstractTypeDefinition(td);
         td.setIsVersionable(type.isVersionable());
         td.setContentStreamAllowed(type.getContentStreamAllowed());
@@ -257,40 +275,84 @@ public class TypeValidator {
         return td;
     }
 
-    private static FolderTypeDefinitionImpl completeTyperFolder(FolderTypeDefinition type) {
-        FolderTypeDefinitionImpl td = new FolderTypeDefinitionImpl();
+    private static DocumentTypeDefinitionImpl cloneTypeDoc(DocumentTypeDefinition type) {
+        DocumentTypeDefinitionImpl td = new DocumentTypeDefinitionImpl();
         td.initialize(type);
+        completeAbstractTypeDefinition(td);
+        td.setIsVersionable(type.isVersionable());
+        td.setContentStreamAllowed(type.getContentStreamAllowed());
+        return td;
+    }
+
+    private static FolderTypeDefinitionImpl completeTypeFolder(FolderTypeDefinition type) {
+        FolderTypeDefinitionImpl td = cloneTypeFolder(type);
         completeAbstractTypeDefinition(td);
         return td;
     }
 
-    private static RelationshipTypeDefinitionImpl completeTypeRelationship(RelationshipTypeDefinition type) {
-        RelationshipTypeDefinitionImpl td = new RelationshipTypeDefinitionImpl();
+    private static FolderTypeDefinitionImpl cloneTypeFolder(FolderTypeDefinition type) {
+        FolderTypeDefinitionImpl td = new FolderTypeDefinitionImpl();
         td.initialize(type);
+        return td;
+    }
+
+    private static RelationshipTypeDefinitionImpl completeTypeRelationship(RelationshipTypeDefinition type) {
+        RelationshipTypeDefinitionImpl td = cloneTypeRelationship(type);
         completeAbstractTypeDefinition(td);
         td.setAllowedSourceTypes(type.getAllowedSourceTypeIds());
         td.setAllowedTargetTypes(type.getAllowedTargetTypeIds());
         return td;
     }
 
+    private static RelationshipTypeDefinitionImpl cloneTypeRelationship(RelationshipTypeDefinition type) {
+        RelationshipTypeDefinitionImpl td = new RelationshipTypeDefinitionImpl();
+        td.initialize(type);
+        td.setAllowedSourceTypes(type.getAllowedSourceTypeIds());
+        td.setAllowedTargetTypes(type.getAllowedTargetTypeIds());
+        return td;
+    }
+
     private static ItemTypeDefinitionImpl completeTypeItem(ItemTypeDefinition type) {
-        ItemTypeDefinitionImpl td = new ItemTypeDefinitionImpl();
+        ItemTypeDefinitionImpl td = cloneTypeItem(type);
         td.initialize(type);
         completeAbstractTypeDefinition(td);
         return td;        
     }
 
-    private static SecondaryTypeDefinitionImpl completeTypeSecondary(SecondaryTypeDefinition type) {
-        SecondaryTypeDefinitionImpl td = new SecondaryTypeDefinitionImpl();
+    private static ItemTypeDefinitionImpl cloneTypeItem(ItemTypeDefinition type) {
+        ItemTypeDefinitionImpl td = new ItemTypeDefinitionImpl();
         td.initialize(type);
+        return td;        
+    }
+    
+    private static SecondaryTypeDefinitionImpl completeTypeSecondary(SecondaryTypeDefinition type) {
+        SecondaryTypeDefinitionImpl td = cloneTypeSecondary(type);
         completeAbstractTypeDefinition(td);
         return td;        
+    }
+
+    private static SecondaryTypeDefinitionImpl cloneTypeSecondary(SecondaryTypeDefinition type) {
+        SecondaryTypeDefinitionImpl td = new SecondaryTypeDefinitionImpl();
+        td.initialize(type);
+        return td;        
+    }
+    
+    private static PolicyTypeDefinitionImpl completeTypePolicy(PolicyTypeDefinition type) {
+        PolicyTypeDefinitionImpl td = cloneTypePolicy(type);
+        completeAbstractTypeDefinition(td);
+        return null;
+    }
+
+    private static PolicyTypeDefinitionImpl cloneTypePolicy(PolicyTypeDefinition type) {
+        PolicyTypeDefinitionImpl td = new PolicyTypeDefinitionImpl();
+        td.initialize(td);
+        return null;
     }
 
     // When creating types PropertyDefinitions may only be partially filled, fill all fields
     // to make a complete definition
     private static AbstractPropertyDefinition<?> completePropertyDef(PropertyDefinition<?> pdSrc) {
-        AbstractPropertyDefinition<?> newPropDef = clonePropertyDefinition(pdSrc);
+        AbstractPropertyDefinition<?> newPropDef = TypeUtil.clonePropertyDefinition(pdSrc);
         
         if (null == newPropDef.getPropertyType())
             throw new CmisInvalidArgumentException("Property " + pdSrc.getId() + "has no property type.");
@@ -313,92 +375,6 @@ public class TypeValidator {
             newPropDef.setUpdatability(Updatability.READWRITE);
 
         return newPropDef;
-    }
-
-    private static AbstractPropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> pd) {
-        if (pd instanceof PropertyBooleanDefinition) {
-            PropertyBooleanDefinitionImpl pdBoolDef = new PropertyBooleanDefinitionImpl();
-            PropertyBooleanDefinitionImpl pdSrc = (PropertyBooleanDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdBoolDef);
-            pdBoolDef.setChoices(pdSrc.getChoices());
-            pdBoolDef.setDefaultValue(pdSrc.getDefaultValue());
-            return pdBoolDef;
-        } else if (pd instanceof PropertyDateTimeDefinition) {
-            PropertyDateTimeDefinitionImpl pdDateDef = new PropertyDateTimeDefinitionImpl();
-            PropertyDateTimeDefinitionImpl pdSrc = (PropertyDateTimeDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdDateDef);
-            pdDateDef.setChoices(pdSrc.getChoices());
-            pdDateDef.setDefaultValue(pdSrc.getDefaultValue());
-            pdDateDef.setDateTimeResolution(pdSrc.getDateTimeResolution());
-            return pdDateDef;
-        } else if (pd instanceof PropertyDecimalDefinition) {
-            PropertyDecimalDefinitionImpl pdDecDef = new PropertyDecimalDefinitionImpl();
-            PropertyDecimalDefinitionImpl pdSrc = (PropertyDecimalDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdDecDef);
-            pdDecDef.setChoices(pdSrc.getChoices());
-            pdDecDef.setDefaultValue(pdSrc.getDefaultValue());
-            pdDecDef.setMinValue(pdSrc.getMinValue());
-            pdDecDef.setMaxValue(pdSrc.getMaxValue());
-            pdDecDef.setPrecision(pdSrc.getPrecision());
-            return pdDecDef;
-        } else if (pd instanceof PropertyHtmlDefinition) {
-            PropertyHtmlDefinitionImpl pdHtmlDef = new PropertyHtmlDefinitionImpl();
-            PropertyHtmlDefinitionImpl pdSrc = (PropertyHtmlDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdHtmlDef);
-            pdHtmlDef.setChoices(pdSrc.getChoices());
-            pdHtmlDef.setDefaultValue(pdSrc.getDefaultValue());
-            return pdHtmlDef;
-        } else if (pd instanceof PropertyIdDefinition) {
-            PropertyIdDefinitionImpl pdIdDef = new PropertyIdDefinitionImpl();
-            PropertyIdDefinitionImpl pdSrc = (PropertyIdDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdIdDef);
-            pdIdDef.setChoices(pdSrc.getChoices());
-            pdIdDef.setDefaultValue(pdSrc.getDefaultValue());
-            return pdIdDef;
-        } else if (pd instanceof PropertyIntegerDefinition) {
-            PropertyIntegerDefinitionImpl pdIntDef = new PropertyIntegerDefinitionImpl();
-            PropertyIntegerDefinitionImpl pdSrc = (PropertyIntegerDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdIntDef);
-            pdIntDef.setChoices(pdSrc.getChoices());
-            pdIntDef.setDefaultValue(pdSrc.getDefaultValue());
-            pdIntDef.setMinValue(pdSrc.getMinValue());
-            pdIntDef.setMaxValue(pdSrc.getMaxValue());
-            return pdIntDef;
-        } else if (pd instanceof PropertyStringDefinition) {
-            PropertyStringDefinitionImpl pdStringDef = new PropertyStringDefinitionImpl();
-            PropertyStringDefinitionImpl pdSrc = (PropertyStringDefinitionImpl) pd;
-            initializeAbstractPropertyDefinition(pd, pdStringDef);
-            pdStringDef.setChoices(pdSrc.getChoices());
-            pdStringDef.setDefaultValue(pdSrc.getDefaultValue());
-            pdStringDef.setMaxLength(pdSrc.getMaxLength());
-            return pdStringDef;
-        } else if (pd instanceof PropertyUriDefinition) {
-            PropertyUriDefinitionImpl pdUriDef = new PropertyUriDefinitionImpl();
-            PropertyUriDefinition pdSrc = (PropertyUriDefinition) pd;
-            initializeAbstractPropertyDefinition(pd, pdUriDef);
-            pdUriDef.setChoices(pdSrc.getChoices());
-            pdUriDef.setDefaultValue(pdSrc.getDefaultValue());
-            return pdUriDef;
-        } else 
-            return null;
-    }
-
-    private static void initializeAbstractPropertyDefinition(PropertyDefinition<?> pdSrc, AbstractPropertyDefinition<?> pdTarget) {
-        pdTarget.setCardinality(pdSrc.getCardinality());
-        pdTarget.setDescription(pdSrc.getDescription());
-        pdTarget.setDisplayName(pdSrc.getDisplayName());
-        pdTarget.setExtensions(pdSrc.getExtensions());
-        pdTarget.setId(pdSrc.getId());
-        pdTarget.setIsInherited(false);
-        pdTarget.setIsOpenChoice(pdSrc.isOpenChoice());
-        pdTarget.setIsOrderable(pdSrc.isOrderable());
-        pdTarget.setIsQueryable(pdSrc.isQueryable());
-        pdTarget.setIsRequired(pdSrc.isRequired());
-        pdTarget.setLocalName(pdSrc.getLocalName());
-        pdTarget.setLocalNamespace(pdSrc.getLocalNamespace());
-        pdTarget.setPropertyType(pdSrc.getPropertyType());
-        pdTarget.setQueryName(pdSrc.getQueryName());
-        pdTarget.setUpdatability(pdSrc.getUpdatability());
     }
 
     public static Acl expandAclMakros(String user, Acl acl) {

@@ -18,8 +18,12 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
+
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,18 +37,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -56,8 +60,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryJaxbHelper;
-import org.apache.chemistry.opencmis.inmemory.types.TypeDefinitions;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
@@ -249,29 +251,54 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     private void importTypesFromFile(TypeManagerCreatable tmc, String typeDefsFileName) {
 
-        InputStream is = this.getClass().getResourceAsStream("/" + typeDefsFileName);
+        BufferedInputStream stream = null;
+        TypeDefinition typeDef = null;
+        File f = new File(typeDefsFileName);
 
-        if (null == is) {
+        if (!f.canRead()) {
             LOG.warn("Resource file with type definitions " + typeDefsFileName
                     + " could not be found, no types will be created.");
             return;
         }
-
         try {
-            TypeDefinition typeDef = null;
-            Unmarshaller u = InMemoryJaxbHelper.createUnmarshaller();
-            JAXBElement<TypeDefinitions> types = (JAXBElement<TypeDefinitions>) u.unmarshal(is);
-            for (CmisTypeDefinitionType td : types.getValue().getTypeDefinitions()) {
-                LOG.debug("Found type in file: " + td.getLocalName());
-                typeDef = Converter.convert(td);
-                if (typeDef.getPropertyDefinitions() == null) {
-                    ((AbstractTypeDefinition) typeDef)
-                            .setPropertyDefinitions(new LinkedHashMap<String, PropertyDefinition<?>>());
+            stream = new BufferedInputStream(new FileInputStream(f));
+            XMLStreamReader parser = XMLUtils.createParser(stream);
+            XMLUtils.findNextStartElemenet(parser);
+
+            // walk through all nested tags in top element
+            while (true) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    QName name = parser.getName();
+                    if (name.getLocalPart().equals("type")) {
+                        typeDef = XMLConverter.convertTypeDefinition(parser);
+                        LOG.debug("Found type in file: " + typeDef.getLocalName());
+                        if (typeDef.getPropertyDefinitions() == null) {
+                            ((AbstractTypeDefinition) typeDef)
+                                    .setPropertyDefinitions(new LinkedHashMap<String, PropertyDefinition<?>>());
+                        }
+                        tmc.addTypeDefinition(typeDef);
+                    } 
+                    XMLUtils.next(parser);
+                } else if (event == XMLStreamReader.END_ELEMENT) {
+                    break;
+                } else {
+                    if (!next(parser)) {
+                        break;
+                    }
                 }
-                tmc.addTypeDefinition(typeDef);
             }
+            parser.close();
         } catch (Exception e) {
             LOG.error("Could not load type definitions from file '" + typeDefsFileName + "': " + e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ioe) {
+                    // ignore
+                }
+            }
         }
     }
 
