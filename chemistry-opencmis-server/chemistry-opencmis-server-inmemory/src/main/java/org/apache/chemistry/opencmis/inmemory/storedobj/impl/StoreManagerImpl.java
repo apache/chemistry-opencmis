@@ -395,7 +395,7 @@ public class StoreManagerImpl implements StoreManager {
         RepositoryCapabilitiesImpl caps = new RepositoryCapabilitiesImpl();
         caps.setAllVersionsSearchable(false);
         caps.setCapabilityAcl(CapabilityAcl.MANAGE);
-        caps.setCapabilityChanges(CapabilityChanges.NONE);
+        caps.setCapabilityChanges(CapabilityChanges.OBJECTIDSONLY);
         caps.setCapabilityContentStreamUpdates(CapabilityContentStreamUpdates.ANYTIME);
         caps.setCapabilityJoin(CapabilityJoin.NONE);
         caps.setCapabilityQuery(CapabilityQuery.BOTHCOMBINED);
@@ -483,18 +483,16 @@ public class StoreManagerImpl implements StoreManager {
             map.put(pm.getKey(), pm);
         }
         
+        List<BaseTypeId> changesOnType;
         // CMIS 1.1 extensions
         if (cmis11) {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_1.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
-            repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
-            List<BaseTypeId> changesOnType = new ArrayList<BaseTypeId>() {{
+            changesOnType = new ArrayList<BaseTypeId>() {{
                 add(BaseTypeId.CMIS_DOCUMENT);
                 add(BaseTypeId.CMIS_FOLDER);
                 add(BaseTypeId.CMIS_ITEM);
-                add(BaseTypeId.CMIS_SECONDARY);
             }};
-            repoInfo.setChangesOnType(changesOnType);
             
             Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>() {{
                 add(PropertyType.BOOLEAN);
@@ -513,7 +511,12 @@ public class StoreManagerImpl implements StoreManager {
         } else {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
+            changesOnType = new ArrayList<BaseTypeId>() {{
+                add(BaseTypeId.CMIS_DOCUMENT);
+                add(BaseTypeId.CMIS_FOLDER);
+            }};
         }
+        repoInfo.setChangesOnType(changesOnType);
 
         aclCaps.setPermissionMappingData(map);
 
