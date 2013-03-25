@@ -256,12 +256,16 @@ public class AtomLinkInfoProvider {
             if (null != listObjects) {
                 for (ObjectData object : listObjects) {
                     objectInfo = new ObjectInfoImpl();
-                    fillInformationForAtomLinks(repositoryId, object.getId(), objectInfo);
+                    fillInformationForAtomLinks(repositoryId, object, objectInfo);
                     objectInfos.addObjectInfo(objectInfo);
                 }
             }
         }
 
+    }
+
+    private void fillInformationForAtomLinks(String repositoryId, ObjectData od, ObjectInfoImpl objectInfo) {
+            objectInfo.setObject(od); 
     }
 
     /**

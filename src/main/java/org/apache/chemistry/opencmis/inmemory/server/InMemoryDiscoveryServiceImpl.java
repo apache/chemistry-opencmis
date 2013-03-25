@@ -20,19 +20,25 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
@@ -44,7 +50,6 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDiscoveryServiceImpl.class);
 
-    final AtomLinkInfoProvider fAtomLinkProvider;
     final InMemoryNavigationServiceImpl fNavigationService; // real implementation of
     // the service
     final InMemoryRepositoryServiceImpl fRepositoryService;
@@ -52,7 +57,6 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     public InMemoryDiscoveryServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc,
             InMemoryNavigationServiceImpl navSvc) {
         super(storeManager);
-        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
         fNavigationService = navSvc;
         fRepositoryService = repSvc;
     }
@@ -72,14 +76,33 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         // convert ObjectInFolderContainerList to objectList
         List<ObjectData> lod = new ArrayList<ObjectData>();
         for (ObjectInFolderContainer obj : tempRes) {
-            convertList(lod, obj);
+//            convertList(lod, obj);
         }
+
+        // add a dummy delete event
+        ObjectDataImpl odImpl = new ObjectDataImpl();
+        PropertiesImpl props = new PropertiesImpl();
+        props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, UUID.randomUUID().toString()));
+        props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
+        props.addProperty(new PropertyIdImpl(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
+        odImpl.setProperties(props);
+        ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
+        changeEventInfo.setChangeType(ChangeType.DELETED);
+        changeEventInfo.setChangeTime(new GregorianCalendar());
+        odImpl.setChangeEventInfo(changeEventInfo);
+        lod.add(odImpl);
+
         objList.setObjects(lod);
         objList.setNumItems(BigInteger.valueOf(lod.size()));
+        
+        String changeToken = Long.valueOf(new Date().getTime()).toString();
+        changeLogToken.setValue(changeToken);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
-        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
+        if (objectInfos != null) {
+            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
+        }
         return objList;
     }
 
