@@ -90,7 +90,7 @@ public final class VersioningService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         // set headers
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
@@ -154,7 +154,7 @@ public final class VersioningService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
 
@@ -189,7 +189,7 @@ public final class VersioningService {
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
         JSONArray jsonVersions = new JSONArray();
         for (ObjectData version : versions) {
-            jsonVersions.add(JSONConverter.convert(version, typeCache, false, succinct));
+            jsonVersions.add(JSONConverter.convert(version, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
         }
 
         response.setStatus(HttpServletResponse.SC_OK);

@@ -63,7 +63,7 @@ public class PolicyService {
         if (policies != null) {
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             for (ObjectData policy : policies) {
-                jsonPolicies.add(JSONConverter.convert(policy, typeCache, false, succinct));
+                jsonPolicies.add(JSONConverter.convert(policy, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
             }
         }
 
@@ -93,7 +93,7 @@ public class PolicyService {
         response.setStatus(HttpServletResponse.SC_OK);
 
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -120,7 +120,7 @@ public class PolicyService {
         response.setStatus(HttpServletResponse.SC_OK);
 
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }

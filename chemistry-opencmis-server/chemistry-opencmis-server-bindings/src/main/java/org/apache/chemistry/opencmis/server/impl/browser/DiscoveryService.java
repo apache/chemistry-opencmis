@@ -81,7 +81,7 @@ public final class DiscoveryService {
         }
 
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonResults = JSONConverter.convert(results, typeCache, true, succinct);
+        JSONObject jsonResults = JSONConverter.convert(results, typeCache, JSONConverter.PropertyMode.QUERY, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonResults, request, response);
@@ -106,7 +106,7 @@ public final class DiscoveryService {
                 includePolicyIds, includeAcl, maxItems, null);
 
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, false, succinct);
+        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, JSONConverter.PropertyMode.CHANGE, succinct);
         jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 
         response.setStatus(HttpServletResponse.SC_OK);

@@ -74,7 +74,7 @@ public class RelationshipService {
         }
 
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, false, succinct);
+        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         BrowserBindingUtils.writeJSON(jsonChildren, request, response);

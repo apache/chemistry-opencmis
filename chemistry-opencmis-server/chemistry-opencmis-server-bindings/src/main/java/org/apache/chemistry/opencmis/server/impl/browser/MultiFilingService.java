@@ -77,7 +77,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -111,7 +111,7 @@ public class MultiFilingService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }

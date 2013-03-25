@@ -139,7 +139,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -183,7 +183,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -215,7 +215,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -247,7 +247,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -279,7 +279,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -310,7 +310,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         setStatus(request, response, HttpServletResponse.SC_CREATED);
         setCookie(request, response, repositoryId, token,
@@ -348,7 +348,7 @@ public final class ObjectService {
         }
 
         // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         int status = HttpServletResponse.SC_OK;
         if (!objectId.equals(newObjectId)) {
@@ -439,7 +439,8 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache,
+                JSONConverter.PropertyMode.OBJECT, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -480,7 +481,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         response.setStatus(HttpServletResponse.SC_OK);
         writeJSON(jsonObject, request, response);
@@ -680,7 +681,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -723,7 +724,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -766,7 +767,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
@@ -801,7 +802,7 @@ public final class ObjectService {
 
         // return object
         TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, false, succinct);
+        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
 
         writeJSON(jsonObject, request, response);
     }
