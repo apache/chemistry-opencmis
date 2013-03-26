@@ -68,11 +68,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryNavigationServiceImpl.class);
 
-    final AtomLinkInfoProvider fAtomLinkProvider;
-
     public InMemoryNavigationServiceImpl(StoreManager storeManager) {
         super(storeManager);
-        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
     public ObjectList getCheckedOutDocs(CallContext context, String repositoryId, String folderId, String filter,

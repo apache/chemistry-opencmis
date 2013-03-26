@@ -34,11 +34,9 @@ import org.slf4j.LoggerFactory;
 public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryAclService.class.getName());
-    final AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryAclService(StoreManager storeManager) {
         super(storeManager);
-        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
     public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
