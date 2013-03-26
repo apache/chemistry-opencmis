@@ -1160,7 +1160,7 @@ public final class JSONConverter {
                 }
             }
 
-            if (type == null && objectId != null) {
+            if (type == null && objectId != null && propertyMode != PropertyMode.CHANGE) {
                 type = typeCache.getTypeDefinitionForObject(objectId);
             }
         }
