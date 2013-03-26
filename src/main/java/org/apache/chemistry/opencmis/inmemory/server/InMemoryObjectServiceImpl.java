@@ -1053,8 +1053,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
        pd = propMap.get(PropertyIds.NAME);
        String name = (String) pd.getFirstValue();
 
-       StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1],
-                propMap, user, addACEs,  removeACEs);
+       StoredObject storedObject = objStore.createRelationship( relationObjects[0], relationObjects[1],
+               propMap, user, addACEs,  removeACEs);
+//        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1],
+//                propMap, user, addACEs,  removeACEs);
        return storedObject;
     }
 
