@@ -92,11 +92,8 @@ import org.slf4j.LoggerFactory;
 public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryServiceFactoryImpl.class.getName());
 
-    final AtomLinkInfoProvider fAtomLinkProvider;
-
     public InMemoryObjectServiceImpl(StoreManager storeManager) {
         super(storeManager);
-        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
     public String createDocument(CallContext context, String repositoryId, Properties properties, String folderId,
@@ -1052,9 +1049,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
        TypeDefinition targetTypeDef = fStoreManager.getTypeById(repositoryId, objStore.getObjectById(targetId).getTypeId()).getTypeDefinition();
        TypeValidator.validateAllowedRelationshipTypes(typeDef,  sourceTypeDef, targetTypeDef);
 
-        StoredObject storedObject = objStore.createRelationship( relationObjects[0], relationObjects[1],
+       // get name from properties
+       pd = propMap.get(PropertyIds.NAME);
+       String name = (String) pd.getFirstValue();
+
+       StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1],
                 propMap, user, addACEs,  removeACEs);
-        return storedObject;
+       return storedObject;
     }
 
     private StoredObject createItemIntern(CallContext context, String repositoryId, Properties properties, String folderId,

@@ -35,11 +35,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryMultiFilingServiceImpl.class.getName());
 
-    final AtomLinkInfoProvider fAtomLinkProvider;
-
     public InMemoryMultiFilingServiceImpl(StoreManager storeMgr) {
         super(storeMgr);
-        fAtomLinkProvider = new AtomLinkInfoProvider(storeMgr);
     }
 
     public void addObjectToFolder(CallContext context, String repositoryId, String objectId, String folderId,
