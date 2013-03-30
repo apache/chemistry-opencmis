@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.XMLConstants.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1620,6 +1621,8 @@ public class XMLConverter {
                     result = new FolderTypeDefinitionImpl();
                 } else if (typeAttr.endsWith(ATTR_RELATIONSHIP_TYPE)) {
                     result = new RelationshipTypeDefinitionImpl();
+                    ((RelationshipTypeDefinitionImpl) result).setAllowedSourceTypes(new ArrayList<String>());
+                    ((RelationshipTypeDefinitionImpl) result).setAllowedTargetTypes(new ArrayList<String>());
                 } else if (typeAttr.endsWith(ATTR_POLICY_TYPE)) {
                     result = new PolicyTypeDefinitionImpl();
                 } else if (typeAttr.endsWith(ATTR_ITEM_TYPE)) {

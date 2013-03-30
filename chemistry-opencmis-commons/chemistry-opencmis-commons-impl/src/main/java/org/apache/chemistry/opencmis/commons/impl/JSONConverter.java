@@ -415,15 +415,15 @@ public final class JSONConverter {
         result.setChangesIncomplete(getBoolean(json, JSON_REPINFO_CHANGES_INCOMPLETE));
 
         List<Object> changesOnType = getList(json.get(JSON_REPINFO_CHANGES_ON_TYPE));
-        List<BaseTypeId> types = new ArrayList<BaseTypeId>();
         if (changesOnType != null) {
+            List<BaseTypeId> types = new ArrayList<BaseTypeId>();
             for (Object type : changesOnType) {
                 if (type != null) {
                     types.add(BaseTypeId.fromValue(type.toString()));
                 }
             }
+            result.setChangesOnType(types);
         }
-        result.setChangesOnType(types);
 
         result.setPrincipalAnonymous(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS));
         result.setPrincipalAnyone(getString(json, JSON_REPINFO_PRINCIPAL_ID_ANYONE));
