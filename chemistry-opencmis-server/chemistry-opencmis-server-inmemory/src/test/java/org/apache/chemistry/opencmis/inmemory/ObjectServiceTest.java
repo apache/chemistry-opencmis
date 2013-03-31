@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +74,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
@@ -95,21 +98,23 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_FOLDER_TYPE_WITH_DEFAULTS_ID = "FolderTypeWithDefault";
     public static final String TEST_FOLDER_STRING_PROP_ID = "MyFolderStringProp";
     public static final String TEST_DOCUMENT_STRING_PROP_ID = "MyDocumentStringProp";
-    private static final String TEST_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomDocumentType";
-    private static final String TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomInheritedDocType";
-    private static final String TEST_CUSTOM_NO_CONTENT_TYPE_ID = "NoContentType";
-    private static final String TEST_CUSTOM_MUST_CONTENT_TYPE_ID = "MustHaveContentType";
-    private static final String TEST_DOCUMENT_MY_STRING_PROP_ID = "MyCustomDocumentStringProp";
-    private static final String TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
-    private static final String TEST_DOCUMENT_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
-    private static final String TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
-    private static final String TEST_FOLDER_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
-    private static final String TEST_FOLDER_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
-    private static final String TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
-    private static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
-    private static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
-    private static final String TEST_ITEM_TYPE_ID = "MyItemType";
-    private static final String ITEM_STRING_PROP = "ItemStringProp";
+    public static final String TEST_VERSION_DOCUMENT_TYPE_ID = "MyVersionedType";
+    public static final String TEST_VER_PROPERTY_ID = "VerStringProp";
+    public static final String TEST_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomDocumentType";
+    public static final String TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID = "MyCustomInheritedDocType";
+    public static final String TEST_CUSTOM_NO_CONTENT_TYPE_ID = "NoContentType";
+    public static final String TEST_CUSTOM_MUST_CONTENT_TYPE_ID = "MustHaveContentType";
+    public static final String TEST_DOCUMENT_MY_STRING_PROP_ID = "MyCustomDocumentStringProp";
+    public static final String TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
+    public static final String TEST_DOCUMENT_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
+    public static final String TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
+    public static final String TEST_FOLDER_MY_MULTI_STRING_PROP_ID = "MyCustomDocumentMultiStringProp";
+    public static final String TEST_FOLDER_MY_INT_PROP_ID = "MyCustomDocumentIntProp";
+    public static final String TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT = "MyCustomDocumentIntPropMandatoryDefault";
+    public static final String TEST_DOCUMENT_MY_SUB_STRING_PROP_ID = "MyInheritedStringProp";
+    public static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
+    public static final String TEST_ITEM_TYPE_ID = "MyItemType";
+    public static final String ITEM_STRING_PROP = "ItemStringProp";
     private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
     private static final String DOCUMENT_ID = "Document_1";
     private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
@@ -123,6 +128,12 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_SECONDARY_TYPE_ID = "MySecondaryType";
     public static final String SECONDARY_STRING_PROP = "SecondaryStringProp";
     public static final String SECONDARY_INTEGER_PROP = "SecondaryIntegerProp";
+    public static final String REL_STRING_PROP = "CrossReferenceKind";
+    public static final String TEST_RELATION_TYPE_ID = "CrossReferenceType";
+    public static final String TEST_RESTRICTED_RELATION_TYPE_ID = "RestrictedRelationType";
+    public static final String TEST_POLICY_TYPE_ID = "AuditPolicy";
+    public static final String TEST_POLICY_PROPERTY_ID = "AuditSettings";
+
 
     ObjectCreator fCreator;
 
@@ -1463,8 +1474,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertFalse(actions.contains(Action.CAN_GET_ALL_VERSIONS));
         }
         assertTrue(actions.contains(Action.CAN_SET_CONTENT_STREAM));
-//        assertFalse(actions.contains(Action.CAN_ADD_POLICY));
-        assertFalse(actions.contains(Action.CAN_GET_APPLIED_POLICIES));
+        assertTrue(actions.contains(Action.CAN_APPLY_POLICY));
+        assertTrue(actions.contains(Action.CAN_GET_APPLIED_POLICIES));
         assertFalse(actions.contains(Action.CAN_REMOVE_POLICY));
         assertFalse(actions.contains(Action.CAN_GET_CHILDREN));
         assertFalse(actions.contains(Action.CAN_CREATE_DOCUMENT));
@@ -1697,7 +1708,10 @@ public class ObjectServiceTest extends AbstractServiceTest {
             InMemoryDocumentTypeDefinition customDocType = createCustomTypeWithStringIntProperty();
             InMemoryDocumentTypeDefinition noContentType = createCustomTypeNoContent();
             InMemoryDocumentTypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
-
+            InMemoryRelationshipTypeDefinition relType = createRelationshipType();
+            InMemoryRelationshipTypeDefinition relTypeRestricted = createRelationshipTypeRestricted();
+            InMemoryDocumentTypeDefinition verType = createVersionableType();
+            InMemoryPolicyTypeDefinition polType = createPolicyType();
             
             // add type to types collection
             typesList.add(cmisDocumentType);
@@ -1710,7 +1724,10 @@ public class ObjectServiceTest extends AbstractServiceTest {
             typesList.add(createFolderTypeWithDefault());
             typesList.add(createItemType());
             typesList.add(createSecondaryType());
-            
+            typesList.add(relType);
+            typesList.add(relTypeRestricted);
+            typesList.add(verType);
+            typesList.add(polType);
             return typesList;
         }
 
@@ -1832,7 +1849,32 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisFolderType;
         }
         
-        private static InMemoryItemTypeDefinition createItemType() {
+        private InMemoryRelationshipTypeDefinition createRelationshipType() {
+            InMemoryRelationshipTypeDefinition cmisRelType = new InMemoryRelationshipTypeDefinition(
+                    TEST_RELATION_TYPE_ID, "MyRelationshipType");
+            // create a single String property definition
+
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(REL_STRING_PROP,
+                    "CrossReferenceType", Updatability.READWRITE);
+            propertyDefinitions.put(prop1.getId(), prop1);
+            cmisRelType.addCustomPropertyDefinitions(propertyDefinitions);
+            
+            return cmisRelType;            
+        }
+
+        private InMemoryRelationshipTypeDefinition createRelationshipTypeRestricted() {
+            InMemoryRelationshipTypeDefinition cmisRelType = new InMemoryRelationshipTypeDefinition(
+                    TEST_RESTRICTED_RELATION_TYPE_ID, "RestrictedRelationshipType");
+
+            List<String> allowedTypeIds = Collections.singletonList(TEST_CUSTOM_DOCUMENT_TYPE_ID);
+            cmisRelType.setAllowedSourceTypes(allowedTypeIds);
+            cmisRelType.setAllowedTargetTypes(allowedTypeIds);
+            return cmisRelType;            
+        }
+
+       private static InMemoryItemTypeDefinition createItemType() {
             //CMIS 1.1 create an item item type
 
             InMemoryItemTypeDefinition cmisItemType = new InMemoryItemTypeDefinition(TEST_ITEM_TYPE_ID, "MyItemType");
@@ -1867,6 +1909,41 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisSecondaryType.addCustomPropertyDefinitions(propertyDefinitions);
 
             return cmisSecondaryType;            
+        }
+        
+        private static InMemoryDocumentTypeDefinition createVersionableType() {
+            // create a complex type with properties
+            InMemoryDocumentTypeDefinition verType = new InMemoryDocumentTypeDefinition(
+                    TEST_VERSION_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
+
+            // create a String property definition
+
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(TEST_VER_PROPERTY_ID,
+                    "Sample String Property", Updatability.WHENCHECKEDOUT);
+            propertyDefinitions.put(prop1.getId(), prop1);
+
+            verType.addCustomPropertyDefinitions(propertyDefinitions);
+            verType.setIsVersionable(true); // make it a versionable type;
+            return verType;
+        }
+        
+        private static InMemoryPolicyTypeDefinition createPolicyType() {
+            
+            InMemoryPolicyTypeDefinition polType = new InMemoryPolicyTypeDefinition(
+                    TEST_POLICY_TYPE_ID, "Audit Policy", InMemoryPolicyTypeDefinition.getRootPolicyType());
+
+            // create a String property definition
+
+            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(TEST_POLICY_PROPERTY_ID,
+                    "Audit Kind Property", Updatability.READWRITE);
+            propertyDefinitions.put(prop1.getId(), prop1);
+
+            polType.addCustomPropertyDefinitions(propertyDefinitions);
+            return polType;            
         }
     }
 

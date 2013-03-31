@@ -94,7 +94,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         setIsControllableAcl(false);
         setIsControllablePolicy(false);
         setIsCreatable(true);
-        setIsFileable(true);
+        setIsFileable(false);
         setIsFulltextIndexed(false);
         setIsIncludedInSupertypeQuery(true);
         setIsQueryable(false);

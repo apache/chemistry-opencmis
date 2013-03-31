@@ -424,7 +424,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         copyFilteredProperties(repositoryId, parentFolder, filter, parent);
         
-        parent.setRelationships(DataObjectCreator.getRelationships(includeRelationships, parentFolder, user));
+        TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+        parent.setRelationships(DataObjectCreator.getRelationships(tm, includeRelationships, parentFolder, user));
         
         if (includeAllowableActions != null && includeAllowableActions) {
             //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);

@@ -52,7 +52,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryVersioningServiceImpl.class.getName());
 
-    final InMemoryObjectServiceImpl fObjectService; // real implementation of the
+    final InMemoryObjectServiceImpl fObjectService; // real implementation of
+                                                    // the
     // service
     final AtomLinkInfoProvider fAtomLinkProvider;
 
@@ -70,7 +71,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
 
         verDoc.cancelCheckOut(user);
-        
+
         // if this is the last version delete the document itself
         if (verDoc.getAllVersions().size() == 0)
             fStoreManager.getObjectStore(repositoryId).deleteObject(verDoc.getId(), true, user);
@@ -80,10 +81,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStream, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-    	addAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
-    	removeAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeAces);
+        addAces = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        removeAces = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeAces);
 
-    	StoredObject so = validator.checkIn(context, repositoryId, objectId, addAces, removeAces, extension);
+        StoredObject so = validator.checkIn(context, repositoryId, objectId, addAces, removeAces, policies, extension);
 
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
@@ -92,8 +94,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // Note Bworser binding sets an empty object
         if (contentStream != null && contentStream.getStream() == null)
             contentStream = null;
-        
-        verDoc.checkIn(major, properties, contentStream, checkinComment, user);
+
+        verDoc.checkIn(major, properties, contentStream, checkinComment, policies, user);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -104,8 +106,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
     }
 
-    public void checkOut(CallContext context, String repositoryId, Holder<String> objectId,
-            ExtensionsData extension, Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
+    public void checkOut(CallContext context, String repositoryId, Holder<String> objectId, ExtensionsData extension,
+            Holder<Boolean> contentCopied, ObjectInfoHandler objectInfos) {
 
         StoredObject so = validator.checkOut(context, repositoryId, objectId, extension, contentCopied);
 
@@ -140,7 +142,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         objectId.setValue(pwc.getId()); // return the id of the created pwc
         if (null != contentCopied) // Note: always null in AtomPub binding
             contentCopied.setValue(true);
-        
+
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (context.isObjectInfoRequired()) {
@@ -150,10 +152,12 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
     }
 
-    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String objectId, String versionSeriesId,
-            String filter, Boolean includeAllowableActions, ExtensionsData extension, ObjectInfoHandler objectInfos) {
-        
-        // Note that in AtomPub object id is null and versionSeriesId is set and in SOAP bindinf versionSeriesId is set
+    public List<ObjectData> getAllVersions(CallContext context, String repositoryId, String objectId,
+            String versionSeriesId, String filter, Boolean includeAllowableActions, ExtensionsData extension,
+            ObjectInfoHandler objectInfos) {
+
+        // Note that in AtomPub object id is null and versionSeriesId is set and
+        // in SOAP bindinf versionSeriesId is set
         // and objectId is null
         StoredObject so;
         List<ObjectData> res = new ArrayList<ObjectData>();
@@ -169,18 +173,19 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         if (!(so instanceof VersionedDocument)) {
             if (!(so instanceof DocumentVersion))
                 throw new CmisInvalidArgumentException("getAllVersions requires an id of a versioned document.");
-            so = ((DocumentVersion)so).getParentDocument();
+            so = ((DocumentVersion) so).getParentDocument();
         }
-//        ObjectData objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
-//                IncludeRelationships.NONE,extension, objectInfos);
-//        res.add(objData);
+        // ObjectData objData = getObject(context, repositoryId, so.getId(),
+        // filter, includeAllowableActions,
+        // IncludeRelationships.NONE,extension, objectInfos);
+        // res.add(objData);
 
         VersionedDocument verDoc = (VersionedDocument) so;
         res = new ArrayList<ObjectData>();
         List<DocumentVersion> versions = verDoc.getAllVersions();
         for (DocumentVersion version : versions) {
             ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,
-                    IncludeRelationships.NONE,extension, objectInfos);
+                    IncludeRelationships.NONE, false, extension, objectInfos);
             res.add(objData);
         }
 
@@ -200,28 +205,29 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         return res;
     }
 
-    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String objectId, String versionSeriesId,
-            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension,
-            ObjectInfoHandler objectInfos) {
+    public ObjectData getObjectOfLatestVersion(CallContext context, String repositoryId, String objectId,
+            String versionSeriesId, Boolean major, String filter, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
+            Boolean includeAcl, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        StoredObject so = validator.getObjectOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension);
+        StoredObject so = validator.getObjectOfLatestVersion(context, repositoryId, objectId, versionSeriesId,
+                extension);
 
         ObjectData objData = null;
 
         // In AtomPu8b you do not get the version series id, only the object id
         if (so instanceof DocumentVersion) {
-            so = ((DocumentVersion)so).getParentDocument();
+            so = ((DocumentVersion) so).getParentDocument();
         }
-        
+
         if (so instanceof VersionedDocument) {
             VersionedDocument verDoc = (VersionedDocument) so;
             DocumentVersion latestVersion = verDoc.getLatestVersion(major);
             objData = getObject(context, repositoryId, latestVersion.getId(), filter, includeAllowableActions,
-                    includeRelationships, extension, objectInfos);
+                    includeRelationships, includePolicyIds, extension, objectInfos);
         } else if (so instanceof Document) {
             objData = getObject(context, repositoryId, so.getId(), filter, includeAllowableActions,
-                    includeRelationships, extension, objectInfos);
+                    includeRelationships, includePolicyIds, extension, objectInfos);
         } else {
             throw new CmisInvalidArgumentException("Object is not instance of a document (version series)");
         }
@@ -236,16 +242,17 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         return objData;
     }
 
-    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String objectId, String versionSeriesId,
-            Boolean major, String filter, ExtensionsData extension) {
+    public Properties getPropertiesOfLatestVersion(CallContext context, String repositoryId, String objectId,
+            String versionSeriesId, Boolean major, String filter, ExtensionsData extension) {
 
-        StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId, extension);
+        StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId,
+                extension);
 
         StoredObject latestVersionObject = null;
 
         // In AtomPu8b you do not get the version series id, only the object id
         if (so instanceof DocumentVersion) {
-            so = ((DocumentVersion)so).getParentDocument();
+            so = ((DocumentVersion) so).getParentDocument();
         }
 
         if (so instanceof VersionedDocument) {
@@ -261,17 +268,16 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
 
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, tm,
-                requestedIds, true);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, tm, requestedIds, true);
 
         return props;
     }
 
     private ObjectData getObject(CallContext context, String repositoryId, String objectId, String filter,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, ExtensionsData extension,
-            ObjectInfoHandler objectInfos) {
+            Boolean includeAllowableActions, IncludeRelationships includeRelationships, Boolean includePolicies,
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         return fObjectService.getObject(context, repositoryId, objectId, filter, includeAllowableActions,
-                includeRelationships, null, false, includeAllowableActions, extension, objectInfos);
+                includeRelationships, null, includePolicies, includeAllowableActions, extension, objectInfos);
     }
 }

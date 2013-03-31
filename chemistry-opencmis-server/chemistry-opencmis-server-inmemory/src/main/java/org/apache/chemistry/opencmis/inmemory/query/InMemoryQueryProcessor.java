@@ -153,7 +153,7 @@ public class InMemoryQueryProcessor {
             String queryName = queryObj.getTypes().values().iterator().next();
             TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
 
-            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(td, so, user, props, funcs,
+            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(tm, td, so, user, props, funcs,
                     fromType, includeAllowableActions, includeRelationships, renditionFilter);
 
             objDataList.add(od);
@@ -243,19 +243,15 @@ public class InMemoryQueryProcessor {
     private void match(StoredObject so, String user, boolean searchAllVersions) {
         // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
-        String queryName = queryObj.getTypes().values().iterator().next(); // as
-                                                                           // we
-                                                                           // don't
-                                                                           // support
-                                                                           // JOINS
-                                                                           // take
-                                                                           // first
-                                                                           // type
+
+        // as we don't support joins take first type
+        String queryName = queryObj.getTypes().values().iterator().next(); 
+
         TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
-        boolean skip = so instanceof VersionedDocument; // we are only
-                                                        // interested in
-                                                        // versions not in the
-                                                        // series
+        
+        // we are only interested in versions not in the series
+        boolean skip = so instanceof VersionedDocument; 
+
         boolean typeMatches = typeMatches(td, so);
         if (!searchAllVersions && so instanceof DocumentVersion
                 && ((DocumentVersion) so).getParentDocument().getLatestVersion(false) != so) {

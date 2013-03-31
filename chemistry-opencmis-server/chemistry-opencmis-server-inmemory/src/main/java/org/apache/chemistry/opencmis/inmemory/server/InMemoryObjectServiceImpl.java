@@ -104,8 +104,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // Attach the CallContext to a thread local context that can be
         // accessed from everywhere
 
-        StoredObject so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState,
-                policies, addAces, removeAces, extension);
+        StoredObject so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream,
+                versioningState, policies, addAces, removeAces, extension);
         LOG.debug("stop createDocument()");
         return so.getId();
     }
@@ -115,8 +115,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             Acl addAces, Acl removeAces, ExtensionsData extension) {
 
         LOG.debug("start createDocumentFromSource()");
-        StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, extension);
-        TypeDefinition td = getTypeDefinition(repositoryId, so);  // type definition may be copied from source object
+        StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, policies,
+                extension);
+        TypeDefinition td = getTypeDefinition(repositoryId, so); // type
+                                                                 // definition
+                                                                 // may be
+                                                                 // copied from
+                                                                 // source
+                                                                 // object
 
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
@@ -163,8 +169,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // TODO to be completed if policies are implemented
         LOG.debug("start createPolicy()");
-        StoredObject so = createPolicyIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces,
-                extension);
+        StoredObject so = createPolicyIntern(context, repositoryId, properties, folderId, policies, addAces,
+                removeAces, extension);
         LOG.debug("stop createPolicy()");
         return so == null ? null : so.getId();
     }
@@ -172,17 +178,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     public String createRelationship(CallContext context, String repositoryId, Properties properties,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        // TODO to be completed if relationships are implemented
         LOG.debug("start createRelationship()");
-        StoredObject so = createRelationshipIntern(context, repositoryId, properties, policies, addAces, removeAces, extension);
+        StoredObject so = createRelationshipIntern(context, repositoryId, properties, policies, addAces, removeAces,
+                extension);
         LOG.debug("stop createRelationship()");
         return so == null ? null : so.getId();
     }
 
     // CMIS 1.1
-    public String createItem(CallContext context, String repositoryId, Properties properties, String folderId, List<String> policies,
-            Acl addAces, Acl removeAces, ExtensionsData extension) {
-        StoredObject so = createItemIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+    public String createItem(CallContext context, String repositoryId, Properties properties, String folderId,
+            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
+        StoredObject so = createItemIntern(context, repositoryId, properties, folderId, policies, addAces, removeAces,
+                extension);
         return so.getId();
     }
 
@@ -212,8 +219,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
         StoredObject so = null;
         if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
-            so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState, null, null,
-                    null, null);
+            so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState,
+                    null, null, null, null);
         } else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
             so = createFolderIntern(context, repositoryId, properties, folderId, null, null, null, null);
         } else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
@@ -250,9 +257,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
         }
 
-        if ( so.getChangeToken() != null && ( changeToken == null || !so.getChangeToken().equals( changeToken.getValue() ) ) )
-            throw new CmisUpdateConflictException( "deleteContentStream failed, ChangeToken does not match." );
-             
+        if (so.getChangeToken() != null && (changeToken == null || !so.getChangeToken().equals(changeToken.getValue())))
+            throw new CmisUpdateConflictException("deleteContentStream failed, ChangeToken does not match.");
+
         if (!(so instanceof Content)) {
             throw new CmisObjectNotFoundException("Id" + objectId
                     + " does not refer to a document, but only documents can have content");
@@ -262,8 +269,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop deleteContentStream()");
     }
 
-    public void deleteObject(CallContext context, String repositoryId, String objectId,
-            Boolean allVersions, ExtensionsData extension) {
+    public void deleteObject(CallContext context, String repositoryId, String objectId, Boolean allVersions,
+            ExtensionsData extension) {
 
         LOG.debug("start deleteObject()");
         validator.deleteObject(context, repositoryId, objectId, allVersions, extension);
@@ -300,7 +307,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         if (null == so) {
-            throw new CmisInvalidArgumentException("Cannot delete object with id  " + folderId + ". Object does not exist.");
+            throw new CmisInvalidArgumentException("Cannot delete object with id  " + folderId
+                    + ". Object does not exist.");
         }
 
         if (!(so instanceof Folder)) {
@@ -318,7 +326,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // recursively delete folder
-        deleteRecursive(objectStore, (Folder) so, continueOnFailure, allVersions, failedToDeleteIds, context.getUsername());
+        deleteRecursive(objectStore, (Folder) so, continueOnFailure, allVersions, failedToDeleteIds,
+                context.getUsername());
 
         result.setIds(failedToDeleteIds);
         LOG.debug("stop deleteTree()");
@@ -338,7 +347,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         String user = context.getUsername();
-//      AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(so, user);
+        // AllowableActions allowableActions =
+        // DataObjectCreator.fillAllowableActions(so, user);
         AllowableActions allowableActions = so.getAllowableActions(user);
         LOG.debug("stop getAllowableActions()");
         return allowableActions;
@@ -349,7 +359,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getContentStream()");
         StoredObject so = validator.getContentStream(context, repositoryId, objectId, streamId, extension);
-
 
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -402,8 +411,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         extElements.add(new CmisExtensionElementImpl(ns, "objectId", attr, objectId));
         extElements.add(new CmisExtensionElementImpl(ns, "name", null, so.getName()));
-        od.setExtensions(Collections.singletonList(
-                (CmisExtensionElement) new CmisExtensionElementImpl(ns, "exampleExtension",null,  extElements)));
+        od.setExtensions(Collections.singletonList((CmisExtensionElement) new CmisExtensionElementImpl(ns,
+                "exampleExtension", null, extElements)));
 
         LOG.debug("stop getObject()");
 
@@ -468,7 +477,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
         }
 
-        List<RenditionData> renditions = so.getRenditions(renditionFilter, maxItems==null ? 0 : maxItems.longValue(), skipCount==null ? 0: skipCount.longValue());
+        List<RenditionData> renditions = so.getRenditions(renditionFilter, maxItems == null ? 0 : maxItems.longValue(),
+                skipCount == null ? 0 : skipCount.longValue());
         LOG.debug("stop getRenditions()");
         return renditions;
     }
@@ -477,7 +487,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             String targetFolderId, String sourceFolderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("start moveObject()");
-        StoredObject[] sos = validator.moveObject(context, repositoryId, objectId, targetFolderId, sourceFolderId, extension);
+        StoredObject[] sos = validator.moveObject(context, repositoryId, objectId, targetFolderId, sourceFolderId,
+                extension);
         StoredObject so = sos[0];
         Folder targetFolder = null;
         Folder sourceFolder = null;
@@ -533,8 +544,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop moveObject()");
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false, IncludeRelationships.NONE,
+                null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -552,7 +563,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start setContentStream()");
         Content content;
-        if ( null == overwriteFlag ) {
+        if (null == overwriteFlag) {
             overwriteFlag = Boolean.TRUE;
         }
 
@@ -562,7 +573,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
             throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
         }
-             
+
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
             throw new CmisObjectNotFoundException("Id" + objectId
                     + " does not refer to a document, but only documents can have content");
@@ -572,7 +583,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
         if (!(typeDef instanceof DocumentTypeDefinition))
             throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
-        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef , null != contentStream);
+        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
         if (so instanceof Document) {
             content = ((Document) so);
@@ -587,7 +598,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         if (!overwriteFlag && content.getContent(0, -1) != null) {
-            throw new CmisContentAlreadyExistsException("cannot overwrite existing content if overwrite flag is not set");
+            throw new CmisContentAlreadyExistsException(
+                    "cannot overwrite existing content if overwrite flag is not set");
         }
 
         content.setContent(contentStream, true);
@@ -625,7 +637,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // Find secondary type definitions to consider for update
         List<String> existingSecondaryTypeIds = so.getSecondaryTypeIds();
         @SuppressWarnings("unchecked")
-        PropertyData<String> pdSec = (PropertyData<String>) properties.getProperties().get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        PropertyData<String> pdSec = (PropertyData<String>) properties.getProperties().get(
+                PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
         List<String> newSecondaryTypeIds = pdSec == null ? null : pdSec.getValues();
         Set<String> secondaryTypeIds = new HashSet<String>();
         if (null != existingSecondaryTypeIds)
@@ -633,72 +646,76 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (null != newSecondaryTypeIds)
             secondaryTypeIds.addAll(newSecondaryTypeIds);
 
-        // Find secondary type definitions to delete (null means not set --> do not change, empty --> remove all secondary types)
+        // Find secondary type definitions to delete (null means not set --> do
+        // not change, empty --> remove all secondary types)
         if (null != newSecondaryTypeIds) {
-            List<String> propertiesIdToDelete = getListOfPropertiesToDeleteFromRemovedSecondaryTypes(repositoryId, so, newSecondaryTypeIds);
+            List<String> propertiesIdToDelete = getListOfPropertiesToDeleteFromRemovedSecondaryTypes(repositoryId, so,
+                    newSecondaryTypeIds);
             for (String propIdToRemove : propertiesIdToDelete) {
                 so.getProperties().remove(propIdToRemove);
             }
         }
 
         // update properties:
-        if(properties != null) {
-        	for (String key : properties.getProperties().keySet()) {
-        		if (key.equals(PropertyIds.NAME)) {
-        			continue; // ignore here
-        		}
+        if (properties != null) {
+            for (String key : properties.getProperties().keySet()) {
+                if (key.equals(PropertyIds.NAME)) {
+                    continue; // ignore here
+                }
 
-        		PropertyData<?> value = properties.getProperties().get(key);
+                PropertyData<?> value = properties.getProperties().get(key);
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-        		if (null == propDef && cmis11) {
-        		    TypeDefinition typeDefSecondary= getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
-        		    if (null == typeDefSecondary)
-        		        throw new CmisInvalidArgumentException("Cannot update property " + key + ": not contained in type");
-        		    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
-        		}
+                if (null == propDef && cmis11) {
+                    TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
+                    if (null == typeDefSecondary)
+                        throw new CmisInvalidArgumentException("Cannot update property " + key
+                                + ": not contained in type");
+                    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+                }
 
-        		if (value.getValues() == null || value.getFirstValue() == null) {
-        			// delete property
-        			// check if a required a property
-        			if (propDef.isRequired()) {
-        				throw new CmisConstraintException(
-        						"updateProperties failed, following property can't be deleted, because it is required: "
-        								+ key);
-        			}
-        			oldProperties.remove(key);
-        			hasUpdatedProp = true;
-        		} else {
-        			if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
-        				if (!isCheckedOut)
-        					throw new CmisUpdateConflictException(
-        							"updateProperties failed, following property can't be updated, because it is not checked-out: "
-        									+ key);
-        			} else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
-        				throw new CmisConstraintException(
-        						"updateProperties failed, following property can't be updated, because it is not writable: "
-        								+ key);
-        			}
-        			oldProperties.put(key, value);
-        			hasUpdatedProp = true;
-        		}
-        	}
+                if (value.getValues() == null || value.getFirstValue() == null) {
+                    // delete property
+                    // check if a required a property
+                    if (propDef.isRequired()) {
+                        throw new CmisConstraintException(
+                                "updateProperties failed, following property can't be deleted, because it is required: "
+                                        + key);
+                    }
+                    oldProperties.remove(key);
+                    hasUpdatedProp = true;
+                } else {
+                    if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
+                        if (!isCheckedOut)
+                            throw new CmisUpdateConflictException(
+                                    "updateProperties failed, following property can't be updated, because it is not checked-out: "
+                                            + key);
+                    } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
+                        throw new CmisConstraintException(
+                                "updateProperties failed, following property can't be updated, because it is not writable: "
+                                        + key);
+                    }
+                    oldProperties.put(key, value);
+                    hasUpdatedProp = true;
+                }
+            }
 
-        	// get name from properties and perform special rename to check if
-        	// path already exists
-        	PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
-        	if (pd != null && so instanceof Filing) {
-        		String newName = (String) pd.getFirstValue();
-        		List<Folder> parents = ((Filing) so).getParents(user);
-        		if (so instanceof Folder && parents.isEmpty()) {
-        			throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
-        		}
-        		if (newName == null || newName.equals("")) {
-        			throw new CmisConstraintException("updateProperties failed, name must not be empty.");
-        		}
+            // get name from properties and perform special rename to check if
+            // path already exists
+            PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+            if (pd != null && so instanceof Filing) {
+                String newName = (String) pd.getFirstValue();
+                List<Folder> parents = ((Filing) so).getParents(user);
+                if (so instanceof Folder && parents.isEmpty()) {
+                    throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
+                }
+                if (newName == null || newName.equals("")) {
+                    throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+                }
 
-        		so.rename((String) pd.getFirstValue()); // note: this does persist
-        		hasUpdatedProp = true;
-        	}
+                so.rename((String) pd.getFirstValue()); // note: this does
+                                                        // persist
+                hasUpdatedProp = true;
+            }
         }
 
         if (hasUpdatedProp) {
@@ -729,8 +746,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false,
-                IncludeRelationships.NONE, null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false, IncludeRelationships.NONE,
+                null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -744,11 +761,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     // CMIS 1.1
-    public void appendContentStream(CallContext context, String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, ExtensionsData extension) {
+    public void appendContentStream(CallContext context, String repositoryId, Holder<String> objectId,
+            Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
 
         Content content;
-        
+
         LOG.debug("start appendContentStream()");
         StoredObject so = validator.appendContentStream(context, repositoryId, objectId, extension);
 
@@ -756,7 +773,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
             throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
         }
-             
+
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
             throw new CmisObjectNotFoundException("Id" + objectId
                     + " does not refer to a document, but only documents can have content");
@@ -766,7 +783,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
         if (!(typeDef instanceof DocumentTypeDefinition))
             throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
-        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef , null != contentStream);
+        TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
         if (so instanceof Document) {
             content = ((Document) so);
@@ -782,14 +799,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         content.appendContent(contentStream);
     }
-    
+
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension,
             ObjectInfoHandler objectInfos) {
 
         List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
-        for ( BulkUpdateObjectIdAndChangeToken obj: objectIdAndChangeToken) {
+        for (BulkUpdateObjectIdAndChangeToken obj : objectIdAndChangeToken) {
             Holder<String> objId = new Holder<String>(obj.getId());
             Holder<String> changeToken = new Holder<String>(obj.getChangeToken());
             try {
@@ -801,18 +818,19 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
         return result;
     }
-    
+
     // ///////////////////////////////////////////////////////
     // private helper methods
 
-    private StoredObject createDocumentIntern(CallContext context, String repositoryId, Properties properties, String folderId,
-            ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
-            Acl removeACEs, ExtensionsData extension) {
+    private StoredObject createDocumentIntern(CallContext context, String repositoryId, Properties properties,
+            String folderId, ContentStream contentStream, VersioningState versioningState, List<String> policies,
+            Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
-    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
+        addACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+        removeACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeACEs);
 
-    	validator.createDocument(context, repositoryId, folderId, extension);
+        validator.createDocument(context, repositoryId, folderId, policies, extension);
 
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
@@ -826,10 +844,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         PropertyData<?> pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
-
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-        
+
         Folder folder = null;
         if (null != folderId) {
             StoredObject so = objectStore.getObjectById(folderId);
@@ -850,7 +867,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check if the given type is a document type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT)) {
-            throw new CmisInvalidArgumentException("Cannot create a document, with a non-document type: " + typeDef.getId());
+            throw new CmisInvalidArgumentException("Cannot create a document, with a non-document type: "
+                    + typeDef.getId());
         }
 
         // check name syntax
@@ -880,9 +898,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         StoredObject so = null;
 
-        // check if content stream parameters are set and if not set some defaults
-        if (null != contentStream && (contentStream.getFileName() == null || contentStream.getFileName().length() == 0 ||
-            contentStream.getMimeType() == null || contentStream.getMimeType().length() == 0)) {
+        // check if content stream parameters are set and if not set some
+        // defaults
+        if (null != contentStream
+                && (contentStream.getFileName() == null || contentStream.getFileName().length() == 0
+                        || contentStream.getMimeType() == null || contentStream.getMimeType().length() == 0)) {
             ContentStreamImpl cs = new ContentStreamImpl();
             cs.setStream(contentStream.getStream());
             if (contentStream.getFileName() == null || contentStream.getFileName().length() == 0) {
@@ -902,12 +922,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Now we are sure to have document type definition:
         if (((DocumentTypeDefinition) typeDef).isVersionable()) {
-            DocumentVersion version = objectStore.createVersionedDocument(name,  propMap,
-                    user, folder, addACEs, removeACEs, contentStream, versioningState);
+            DocumentVersion version = objectStore.createVersionedDocument(name, propMap, user, folder, policies,
+                    addACEs, removeACEs, contentStream, versioningState);
             version.persist();
-            so = version; // return the version and not the version series to caller
+            so = version; // return the version and not the version series to
+                          // caller
         } else {
-            Document doc = objectStore.createDocument(name, propMap, user, folder, addACEs, removeACEs);
+            Document doc = objectStore.createDocument(name, propMap, user, folder, policies, addACEs, removeACEs);
             doc.setContent(contentStream, false);
             doc.persist();
             so = doc;
@@ -919,10 +940,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
-    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
+        addACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+        removeACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeACEs);
 
-    	validator.createFolder(context, repositoryId, folderId, extension);
+        validator.createFolder(context, repositoryId, folderId, policies, extension);
         TypeValidator.validateRequiredSystemProperties(properties);
         String user = context.getUsername();
 
@@ -938,9 +960,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check name syntax
         if (!NameValidator.isValidName(folderName)) {
-            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME  + " Name is: " + folderName);
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME + " Name is: " + folderName);
         }
-
 
         TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
@@ -982,34 +1003,48 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        Folder newFolder = objStore.createFolder(folderName, properties.getProperties(), user, parent,
-        addACEs,  removeACEs);
+        Folder newFolder = objStore.createFolder(folderName, properties.getProperties(), user, parent, policies,
+                addACEs, removeACEs);
         LOG.debug("stop createFolder()");
         newFolder.persist();
         return newFolder;
     }
 
-    private StoredObject createPolicyIntern(CallContext context, String repositoryId, Properties properties, String folderId,
-            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
+    private StoredObject createPolicyIntern(CallContext context, String repositoryId, Properties properties,
+            String folderId, List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-    	addAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
-    	removeAces  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeAces);
-        validator.createPolicy(context, repositoryId, folderId, extension);
-        throw new CmisNotSupportedException("createPolicy is not supported.");
+        validator.createPolicy(context, repositoryId, folderId, addAces, removeAces, policies, extension);
+
+        addAces = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        removeAces = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeAces);
+
+        String user = context.getUsername();
+        Map<String, PropertyData<?>> propMap = properties.getProperties();
+        // get name from properties
+        PropertyData<?> pd = propMap.get(PropertyIds.NAME);
+        String name = (String) pd.getFirstValue();
+        pd = propMap.get(PropertyIds.POLICY_TEXT);
+        String policyText = (String) pd.getFirstValue();
+
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        StoredObject storedObject = objStore.createPolicy(name, policyText, propMap, user);
+
+        return storedObject;
     }
 
-    private StoredObject createRelationshipIntern(CallContext context, String repositoryId,
-            Properties properties, List<String> policies,
-            Acl addACEs, Acl removeACEs, ExtensionsData extension) {
+    private StoredObject createRelationshipIntern(CallContext context, String repositoryId, Properties properties,
+            List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
         TypeValidator.validateRequiredSystemProperties(properties);
 
         String user = context.getUsername();
-        
-    	addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
-    	removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
 
-    	// get required properties
+        addACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+        removeACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeACEs);
+
+        // get required properties
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SOURCE_ID);
         String sourceId = (String) pd.getFirstValue();
         if (null == sourceId || sourceId.length() == 0)
@@ -1020,55 +1055,61 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (null == targetId || targetId.length() == 0)
             throw new CmisInvalidArgumentException("Cannot create a relationship without a targetId.");
 
-        RelationshipTypeDefinition typeDef = (RelationshipTypeDefinition) getTypeDefinition(repositoryId, properties);
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
         // check if the given type is a relationship type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_RELATIONSHIP))
-            throw new CmisInvalidArgumentException("Cannot create a relationship, with a non-relationship type: " + typeDef.getId());
+            throw new CmisInvalidArgumentException("Cannot create a relationship, with a non-relationship type: "
+                    + typeDef.getId());
 
-       StoredObject[] relationObjects = validator.createRelationship(context, repositoryId, sourceId, targetId, extension);
+        StoredObject[] relationObjects = validator.createRelationship(context, repositoryId, sourceId, targetId,
+                policies, extension);
 
+        // set default properties
+        Map<String, PropertyData<?>> propMap = properties.getProperties();
+        Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
+        if (propMapNew != propMap) {
+            properties = new PropertiesImpl(propMapNew.values());
+        }
 
-       // set default properties
-       Map<String, PropertyData<?>> propMap = properties.getProperties();
-       Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
-       if (propMapNew != propMap) {
-           properties = new PropertiesImpl(propMapNew.values());
-       }
+        boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
+        validateProperties(repositoryId, null, properties, false, cmis11);
 
-       boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
-       validateProperties(repositoryId, null, properties, false, cmis11);
+        // validate ACL
+        TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
 
-       // validate ACL
-       TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
+        // validate the allowed types of the relationship
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-       // validate the allowed types of the relationship
-       ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        TypeDefinition sourceTypeDef = fStoreManager.getTypeById(repositoryId,
+                objStore.getObjectById(sourceId).getTypeId()).getTypeDefinition();
+        TypeDefinition targetTypeDef = fStoreManager.getTypeById(repositoryId,
+                objStore.getObjectById(targetId).getTypeId()).getTypeDefinition();
+        TypeValidator.validateAllowedRelationshipTypes((RelationshipTypeDefinition) typeDef, sourceTypeDef,
+                targetTypeDef);
 
-       TypeDefinition sourceTypeDef = fStoreManager.getTypeById(repositoryId, objStore.getObjectById(sourceId).getTypeId()).getTypeDefinition();
-       TypeDefinition targetTypeDef = fStoreManager.getTypeById(repositoryId, objStore.getObjectById(targetId).getTypeId()).getTypeDefinition();
-       TypeValidator.validateAllowedRelationshipTypes(typeDef,  sourceTypeDef, targetTypeDef);
+        // get name from properties
+        pd = propMap.get(PropertyIds.NAME);
+        String name = (String) pd.getFirstValue();
 
-       // get name from properties
-       pd = propMap.get(PropertyIds.NAME);
-       String name = (String) pd.getFirstValue();
-
-       StoredObject storedObject = objStore.createRelationship( relationObjects[0], relationObjects[1],
-               propMap, user, addACEs,  removeACEs);
-//        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1],
-//                propMap, user, addACEs,  removeACEs);
-       return storedObject;
+        // StoredObject storedObject = objStore.createRelationship(
+        // relationObjects[0], relationObjects[1],
+        // propMap, user, addACEs, removeACEs);
+        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1], propMap,
+                user, addACEs, removeACEs);
+        return storedObject;
     }
 
-    private StoredObject createItemIntern(CallContext context, String repositoryId, Properties properties, String folderId,
-            List<String> policies, Acl addACEs, Acl removeACEs,  ExtensionsData extension) {
+    private StoredObject createItemIntern(CallContext context, String repositoryId, Properties properties,
+            String folderId, List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
         validator.createItem(context, repositoryId, properties, folderId, policies, addACEs, removeACEs, extension);
-        
-        addACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
-        removeACEs  = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), removeACEs);
 
-        validator.createDocument(context, repositoryId, folderId, extension);
+        addACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+        removeACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeACEs);
+
+        validator.createDocument(context, repositoryId, folderId, policies, extension);
 
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
@@ -1082,10 +1123,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         PropertyData<?> pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
-
         // validate ACL
         TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
-        
+
         Folder folder = null;
         if (null != folderId) {
             StoredObject so = objectStore.getObjectById(folderId);
@@ -1132,9 +1172,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = null;
 
         // Now we are sure to have document type definition:
-        so = objectStore.createItem(name, propMap, user, folder, addACEs, removeACEs);
+        so = objectStore.createItem(name, propMap, user, folder, policies, addACEs, removeACEs);
         so.persist();
-        
+
         return so;
 
     }
@@ -1143,7 +1183,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         String sourceId = sourceFolder.getId();
         String targetId = targetFolder.getId();
         while (targetId != null) {
-            // log.debug("comparing source id " + sourceId + " with predecessor "
+            // log.debug("comparing source id " + sourceId +
+            // " with predecessor "
             // +
             // targetId);
             if (targetId.equals(sourceId)) {
@@ -1162,7 +1203,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     /**
      * Recursively delete a tree by traversing it and first deleting all
      * children and then the object itself
-     *
+     * 
      * @param folderStore
      * @param parentFolder
      * @param continueOnFailure
@@ -1184,8 +1225,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             if (child instanceof Folder) {
                 boolean mustContinue = deleteRecursive(folderStore, (Folder) child, continueOnFailure, allVersions,
                         failedToDeleteIds, user);
-                if (!mustContinue && !continueOnFailure)
-                 {
+                if (!mustContinue && !continueOnFailure) {
                     return false; // stop further deletions
                 }
             } else {
@@ -1204,64 +1244,70 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         ContentStream csd = null;
         long lOffset = offset == null ? 0 : offset.longValue();
         long lLength = length == null ? -1 : length.longValue();
-        
+
         if (streamId == null) {
             csd = ((Content) so).getContent(lOffset, lLength);
             return csd;
         } else if (streamId.endsWith("-rendition")) {
             csd = so.getRenditionContent(streamId, lOffset, lLength);
         }
-        
+
         return csd;
     }
 
-    private Map<String, PropertyData<?>> setDefaultProperties(TypeDefinition typeDef, Map<String, PropertyData<?>> properties) {
+    private Map<String, PropertyData<?>> setDefaultProperties(TypeDefinition typeDef,
+            Map<String, PropertyData<?>> properties) {
         Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
         boolean hasCopied = false;
 
-        for ( PropertyDefinition<?> propDef : propDefs.values()) {
+        for (PropertyDefinition<?> propDef : propDefs.values()) {
             String propId = propDef.getId();
             List<?> defaultVal = propDef.getDefaultValue();
             if (defaultVal != null && null == properties.get(propId)) {
                 if (!hasCopied) {
-                    properties = new HashMap<String, PropertyData<?>>(properties); // copy because it is an unmodified collection
+                    properties = new HashMap<String, PropertyData<?>>(properties); // copy
+                                                                                   // because
+                                                                                   // it
+                                                                                   // is
+                                                                                   // an
+                                                                                   // unmodified
+                                                                                   // collection
                     hasCopied = true;
                 }
-                Object value = propDef.getCardinality() == Cardinality.SINGLE ? defaultVal.get(0)
-                        : defaultVal;
-                PropertyData<?> pd = fStoreManager.getObjectFactory().createPropertyData(
-                        propDef, value);
+                Object value = propDef.getCardinality() == Cardinality.SINGLE ? defaultVal.get(0) : defaultVal;
+                PropertyData<?> pd = fStoreManager.getObjectFactory().createPropertyData(propDef, value);
                 // set property:
                 properties.put(propId, pd);
             }
         }
         return properties;
     }
-    
-    private void validateProperties(String repositoryId, StoredObject so, Properties properties, boolean checkMandatory, boolean cmis11) {
+
+    private void validateProperties(String repositoryId, StoredObject so, Properties properties,
+            boolean checkMandatory, boolean cmis11) {
         TypeDefinition typeDef;
-        
+
         if (null != so)
             typeDef = getTypeDefinition(repositoryId, so);
         else
             typeDef = getTypeDefinition(repositoryId, properties);
-            
+
         // check properties for validity
         if (!cmis11) {
             TypeValidator.validateProperties(typeDef, properties, checkMandatory, cmis11);
             return;
         }
-        
+
         // CMIS 1.1 secondary types
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
-        
+
         @SuppressWarnings("unchecked")
         List<String> secondaryTypeIds = (List<String>) (pd == null ? null : pd.getValues());
         // if no secondary types are passed use the existing ones:
         if (null != so && (null == secondaryTypeIds || secondaryTypeIds.size() == 0)) {
             secondaryTypeIds = so.getSecondaryTypeIds();
         }
-        
+
         if (null != secondaryTypeIds && secondaryTypeIds.size() != 0) {
             List<String> allTypeIds = new ArrayList<String>(secondaryTypeIds);
             allTypeIds.add(typeDef.getId());
@@ -1271,11 +1317,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             TypeValidator.validateProperties(typeDef, properties, checkMandatory, true);
         }
     }
-    
-    private TypeDefinition getSecondaryTypeDefinition(String repositoryId, Set<String> secondaryTypeIds, String propertyId) {
+
+    private TypeDefinition getSecondaryTypeDefinition(String repositoryId, Set<String> secondaryTypeIds,
+            String propertyId) {
         if (null == secondaryTypeIds || secondaryTypeIds.isEmpty())
             return null;
-        
+
         for (String typeId : secondaryTypeIds) {
             TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
             TypeDefinition typeDef = typeDefC.getTypeDefinition();
@@ -1290,9 +1337,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
     private List<String> getListOfPropertiesToDeleteFromRemovedSecondaryTypes(String repositoryId, StoredObject so,
             List<String> newSecondaryTypeIds) {
-        
-        List<String> propertiesToDelete = new ArrayList<String>(); // properties id to be removed
-        
+
+        List<String> propertiesToDelete = new ArrayList<String>(); // properties
+                                                                   // id to be
+                                                                   // removed
+
         // calculate delta to be removed
         List<String> existingSecondaryTypeIds = so.getSecondaryTypeIds();
         List<String> delta = new ArrayList<String>(existingSecondaryTypeIds);
@@ -1303,7 +1352,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             propertiesToDelete.addAll(typeDef.getPropertyDefinitions().keySet());
         }
 
-        // TODO: the list may contain too many properties, if the same property is also in a type not to be removed
+        // TODO: the list may contain too many properties, if the same property
+        // is also in a type not to be removed
         return propertiesToDelete;
     }
 

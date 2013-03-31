@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
@@ -89,6 +90,8 @@ public interface ObjectStore {
      * 			  the user who creates the document
      * @param folder
      * 			  the parent folder 
+     * @param policies
+     *            list of policies to apply 
      * @param addACEs
      * 			  aces that are added 
      * @param removeACEs 
@@ -96,7 +99,7 @@ public interface ObjectStore {
      * @return document object
      */
      Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
- 			Acl addACEs, Acl removeACEs);
+ 			List<String> policies, Acl addACEs, Acl removeACEs);
 
 
     /**
@@ -113,6 +116,8 @@ public interface ObjectStore {
      * 			  the user who creates the document
      * @param folder
      * 			  the parent folder 
+     * @param policies
+     *            list of policies to apply 
      * @param addACEs
      * 			  aces that are added 
      * @param removeACEs 
@@ -120,7 +125,7 @@ public interface ObjectStore {
      * @return folder object
      */
     Folder createFolder(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
-			Acl addACEs, Acl removeACEs);
+            List<String> policies, Acl addACEs, Acl removeACEs);
 
     /**
      * Create a document that supports versions as initial step. The document is
@@ -136,6 +141,8 @@ public interface ObjectStore {
      * 			  the user who creates the document
      * @param folder
      * 			  the parent folder 
+     * @param policies
+     *            list of policies to apply 
      * @param addACEs
      * 			  aces that are added 
      * @param removeACEs 
@@ -144,7 +151,7 @@ public interface ObjectStore {
      */
     DocumentVersion createVersionedDocument(String name,
 			Map<String, PropertyData<?>> propMap, String user, Folder folder,
-			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState);
+			List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState);
 
     /**
      * Create an item as initial step. The item is created but still
@@ -160,6 +167,8 @@ public interface ObjectStore {
      *            the user who creates the document
      * @param folder
      *            the parent folder 
+     * @param policies
+     *            list of policies to apply 
      * @param addACEs
      *            aces that are added 
      * @param removeACEs 
@@ -167,9 +176,27 @@ public interface ObjectStore {
      * @return document object
      */
     StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
-            Acl addACEs, Acl removeACEs);
+            List<String> policies, Acl addACEs, Acl removeACEs);
 
     /**
+     * Create a policy. The policy is created but still
+     * temporary. It is not yet persisted and does not have an id yet. After this
+     * call additional actions can take place (like assigning properties and a
+     * type) before it is persisted.
+     * 
+     * @param name
+     *            name of the document
+     * @param policyText
+     *            policy text to apply to this policy   
+     * @param propMap
+     *            map of properties   
+     * @param user
+     *            the user who creates the document
+     * @return policy object
+     */
+    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user);
+
+     /**
      * Clear repository and remove all data.
      */
     void clear();
@@ -203,7 +230,7 @@ public interface ObjectStore {
      *            aces that are removed
      * @return versioned document object
      */
-    StoredObject createRelationship(StoredObject sourceObject, StoredObject targetObject, 
+    StoredObject createRelationship(String name, StoredObject sourceObject, StoredObject targetObject, 
     		Map<String, PropertyData<?>> propMap,
 			String user, Acl addACEs, Acl removeACEs);
     
@@ -260,4 +287,18 @@ public interface ObjectStore {
      *      if no objects exist having this type
      */
     boolean isTypeInUse(String typeId);
+
+    /**
+     * Get relationships to and from an object
+     * 
+     * @param objectId
+     *      id of object to get relationships with
+     * @param subTypeIds
+     *      list of all types to be included
+     * @param relationshipDirection
+     *      direction of relationship
+     * @return
+     */
+    List<StoredObject> getRelationships(String objectId, List<String> typeIds,
+            RelationshipDirection direction);
 }

@@ -184,6 +184,6 @@ public class FolderTest extends TestCase {
     }
     
     private Folder createFolder(String name) {
-    	return fStore.createFolder(name, null, "user", null, null, null);    	
+    	return fStore.createFolder(name, null, "user", null, null, null, null);    	
     }
 }

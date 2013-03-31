@@ -157,6 +157,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         InMemoryService inMemoryService = InMemoryServiceContext.getCmisService();
         if (inMemoryService == null) {
+            LOG.debug("Creating new InMemoryService instance!");
             CmisServiceWrapper<InMemoryService> wrapperService;
             inMemoryService = new InMemoryService(inMemoryServiceParameters, storeManager);
             wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
@@ -192,6 +193,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
     @Override
     public void destroy() {
+        LOG.debug("Destroying InMemory service instance.");
         if (null != cleanManager) {
             cleanManager.stopCleanRepositoryJob();
         }

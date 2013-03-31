@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -42,6 +43,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -144,8 +146,6 @@ public class ObjectStoreImpl implements ObjectStore {
                         return so;
                     }
                 }
-            } else {
-                return null;
             }
         }
         return null;
@@ -251,24 +251,25 @@ public class ObjectStoreImpl implements ObjectStore {
         fRootFolder = rootFolder;
     }
 
-    public Document createDocument(String name,
-			Map<String, PropertyData<?>> propMap, String user, Folder folder,
-			Acl addACEs, Acl removeACEs)  {
-    	DocumentImpl doc = new DocumentImpl(this);
+    public Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
+            List<String> policies, Acl addACEs, Acl removeACEs) {
+        DocumentImpl doc = new DocumentImpl(this);
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
         if (null != folder) {
-            ((FolderImpl)folder).addChildDocument(doc); // add document to folder and
+            ((FolderImpl) folder).addChildDocument(doc); // add document to
+                                                         // folder and
         }
-        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
+        doc.setAppliedPolicies(policies);
         return doc;
     }
 
     public StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
-            Acl addACEs, Acl removeACEs) {
+            List<String> policies, Acl addACEs, Acl removeACEs) {
         StoredObjectImpl item = new ItemImpl(this);
         item.createSystemBasePropertiesWhenCreated(propMap, user);
         item.setCustomProperties(propMap);
@@ -277,6 +278,7 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != folder) {
             ((FolderImpl)folder).addChildItem(item); // add document to folder and
         }
+        item.setAppliedPolicies(policies);
         int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
         item.setAclId(aclId);
         return item;
@@ -284,7 +286,7 @@ public class ObjectStoreImpl implements ObjectStore {
     
     public DocumentVersion createVersionedDocument(String name,
     		Map<String, PropertyData<?>> propMap, String user, Folder folder,
-			Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState) {
+    		List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState) {
     	VersionedDocumentImpl doc = new VersionedDocumentImpl(this);
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
@@ -298,13 +300,14 @@ public class ObjectStoreImpl implements ObjectStore {
         version.setCustomProperties(propMap);
         int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
         doc.setAclId(aclId);
+        doc.setAppliedPolicies(policies);
         doc.persist();
         return version;
     }
 
     public Folder createFolder(String name,
 			Map<String, PropertyData<?>> propMap, String user, Folder parent,
-			Acl addACEs, Acl removeACEs) {
+			List<String> policies, Acl addACEs, Acl removeACEs) {
     	
     	FolderImpl folder = new FolderImpl(this, name, null);
         if (null != propMap) {
@@ -318,15 +321,27 @@ public class ObjectStoreImpl implements ObjectStore {
 
         int aclId = getAclId(((FolderImpl)parent), addACEs, removeACEs);
         folder.setAclId(aclId);
-        
+        folder.setAppliedPolicies(policies);
+
         return folder;
     }
 
     public Folder createFolder(String name) {
-  	  Folder folder = new FolderImpl(this, name, null);
+        Folder folder = new FolderImpl(this, name, null);
         folder.setRepositoryId(fRepositoryId);
         return folder;
 	}
+    
+    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user) {
+        PolicyImpl policy = new PolicyImpl(this);
+        policy.createSystemBasePropertiesWhenCreated(propMap, user);
+        policy.setCustomProperties(propMap);
+        policy.setRepositoryId(fRepositoryId);
+        policy.setName(name);
+        policy.setPolicyText(policyText);
+        policy.persist();
+        return policy;
+    }
     
 	public List<StoredObject> getCheckedOutDocuments(String orderBy,
 			String user, IncludeRelationships includeRelationships) {
@@ -344,12 +359,47 @@ public class ObjectStoreImpl implements ObjectStore {
         return res;
     }
 
-	public StoredObject createRelationship(StoredObject sourceObject,
+	public StoredObject createRelationship(String name, StoredObject sourceObject,
 			StoredObject targetObject, Map<String, PropertyData<?>> propMap,
 			String user, Acl addACEs, Acl removeACEs) {
-		// TODO Auto-generated method stub
-		return null;
+
+        RelationshipImpl rel = new RelationshipImpl(this);
+        rel.createSystemBasePropertiesWhenCreated(propMap, user);
+        rel.setCustomProperties(propMap);
+        rel.setRepositoryId(fRepositoryId);
+        rel.setName(name);
+        if (null != sourceObject)
+            rel.setSource(sourceObject.getId());
+        if (null != targetObject)
+            rel.setTarget(targetObject.getId());
+        int aclId = getAclId(null, addACEs, removeACEs);
+        rel.setAclId(aclId);
+        rel.persist();
+        return rel;
 	}
+
+    public List<StoredObject> getRelationships(String objectId, List<String> typeIds, RelationshipDirection direction) {
+    
+        List<StoredObject> res = new ArrayList<StoredObject>();
+        
+        if (typeIds != null && typeIds.size() > 0) {
+            for (String typeId : typeIds) {
+                for (StoredObject so : fStoredObjectMap.values()) {
+                    if (so instanceof Relationship && so.getTypeId().equals(typeId)) {
+                        Relationship ro = (Relationship) so;
+                        if (ro.getSourceObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
+                                res.add(so);
+                        } else if (ro.getTargetObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction
+                                || RelationshipDirection.TARGET == direction)) {
+                            res.add(so);
+                        }
+                    }
+                }
+           }
+        } else
+            res = getAllRelationships(objectId, direction);
+        return res;
+    }
 
     public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
         if (aclPropagation==AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
@@ -603,6 +653,24 @@ public class ObjectStoreImpl implements ObjectStore {
         return result;
     }
 
+    private List<StoredObject> getAllRelationships(String objectId, RelationshipDirection direction) {
+        
+        List<StoredObject> res = new ArrayList<StoredObject>();
+        
+        for (StoredObject so : fStoredObjectMap.values()) {
+            if (so instanceof Relationship) {
+                Relationship ro = (Relationship) so;
+                if (ro.getSourceObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
+                    res.add(so);
+                } else if (ro.getTargetObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction
+                        || RelationshipDirection.TARGET == direction)) {
+                    res.add(so);
+                }
+            }
+        }
+        return res;
+    }
+
     public boolean isTypeInUse(String typeId) {
         // iterate over all the objects and check for each if the type matches
         for (String objectId : getIds()) {
@@ -612,5 +680,6 @@ public class ObjectStoreImpl implements ObjectStore {
         }
         return false;
     }
+
 
 }

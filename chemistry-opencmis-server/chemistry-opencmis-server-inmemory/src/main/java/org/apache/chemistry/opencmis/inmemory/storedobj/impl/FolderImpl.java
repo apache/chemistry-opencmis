@@ -126,16 +126,18 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         List<StoredObject> result = new ArrayList<StoredObject>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
-            Filing pathObj = (Filing) obj;
-            if (fObjStore.hasReadAccess(user, obj) && pathObj.getParents(user).contains(this)) {
-                if (pathObj instanceof VersionedDocument) {
-                    DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-                    result.add(ver);
-                } else if (pathObj instanceof DocumentVersion) {
-                    // ignore
-                } else {
-                    result.add(obj);
-                }
+            if (obj instanceof Filing) {
+                Filing pathObj = (Filing) obj;
+                if (fObjStore.hasReadAccess(user, obj) && pathObj.getParents(user).contains(this)) {
+                    if (pathObj instanceof VersionedDocument) {
+                        DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        result.add(ver);
+                    } else if (pathObj instanceof DocumentVersion) {
+                        // ignore
+                    } else {
+                        result.add(obj);
+                    }
+                }                
             }
         }
         sortFolderList(result);

@@ -63,6 +63,8 @@ public class InMemoryService extends AbstractCmisService {
     private final InMemoryVersioningServiceImpl fVerSvc;
     private final InMemoryDiscoveryServiceImpl fDisSvc;
     private final InMemoryMultiFilingServiceImpl fMultiSvc;
+    private final InMemoryRelationshipServiceImpl fRelSvc;
+    private final InMemoryPolicyServiceImpl fPolSvc;
     private final InMemoryAclService fAclSvc;
 
     public StoreManager getStoreManager() {
@@ -77,6 +79,8 @@ public class InMemoryService extends AbstractCmisService {
         fVerSvc = new InMemoryVersioningServiceImpl(storeManager, fObjSvc);
         fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
         fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
+        fRelSvc = new InMemoryRelationshipServiceImpl(storeManager, fRepSvc);
+        fPolSvc = new InMemoryPolicyServiceImpl(storeManager);
         fAclSvc = new InMemoryAclService(storeManager);
     }
 
@@ -421,8 +425,8 @@ public class InMemoryService extends AbstractCmisService {
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        return super.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes, relationshipDirection,
-                typeId, filter, includeAllowableActions, maxItems, skipCount, extension);
+        return fRelSvc.getObjectRelationships(getCallContext(), repositoryId, objectId, includeSubRelationshipTypes,
+                relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, extension, this);
     }
 
     // --- ACL service ---
@@ -447,18 +451,18 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        super.applyPolicy(repositoryId, policyId, objectId, extension);
+        fPolSvc.applyPolicy(repositoryId, policyId, objectId, extension);
     }
 
     @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
-        return super.getAppliedPolicies(repositoryId, objectId, filter, extension);
+        return fPolSvc.getAppliedPolicies(repositoryId, objectId, filter, extension);
     }
 
     @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        super.removePolicy(repositoryId, policyId, objectId, extension);
+        fPolSvc.removePolicy(repositoryId, policyId, objectId, extension);
     }
 
     // /////////////
