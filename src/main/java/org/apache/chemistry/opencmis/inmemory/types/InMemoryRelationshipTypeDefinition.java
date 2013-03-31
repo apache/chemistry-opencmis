@@ -19,6 +19,7 @@
 
 package org.apache.chemistry.opencmis.inmemory.types;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +96,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         setIsControllableAcl(false);
         setIsControllablePolicy(false);
         setIsCreatable(true);
-        setIsFileable(true);
+        setIsFileable(false);
         setIsFulltextIndexed(false);
         setIsIncludedInSupertypeQuery(true);
         setIsQueryable(false);
@@ -107,8 +108,8 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         setTypeMutability (typeMutability);
 
         // relationship specifics
-        setAllowedSourceTypes(null);
-        setAllowedTargetTypes(null);
+        setAllowedSourceTypes(Collections.<String> emptyList());
+        setAllowedTargetTypes(Collections.<String> emptyList());
 
         // set base properties
         Map<String, PropertyDefinition<?>> props = new HashMap<String, PropertyDefinition<?>>();

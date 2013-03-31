@@ -56,6 +56,8 @@ import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.apache.chemistry.opencmis.commons.spi.PolicyService;
+import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
@@ -78,10 +80,13 @@ public class AbstractServiceTest {
     protected MultiFilingService fMultiSvc;
     protected DiscoveryService fDiscSvc;
     protected AclService fAclSvc;
+    protected RelationshipService fRelSvc;
+    protected PolicyService fPolSvc;
+
     protected CallContext fTestCallContext;
     private String fTypeCreatorClassName;
-
     private CmisBinding binding;
+
 
     public AbstractServiceTest() {
         // The in-memory server unit tests can either be run directly against
@@ -142,7 +147,9 @@ public class AbstractServiceTest {
     }
 
     protected void tearDown() {
+        LOG.debug("Close local binding.");
         binding.close();
+        LOG.debug("Local binding closed.");
     }
 
     public void testDummy() {
@@ -414,6 +421,8 @@ public class AbstractServiceTest {
         fMultiSvc = binding.getMultiFilingService();
         fDiscSvc = binding.getDiscoveryService();
         fAclSvc = binding.getAclService();
+        fRelSvc = binding.getRelationshipService();
+        fPolSvc = binding.getPolicyService();
     }
 
     protected String getStringProperty(ObjectData objData, String propertyKey) {

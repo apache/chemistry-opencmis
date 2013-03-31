@@ -23,7 +23,10 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -47,7 +50,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
      * Check if repository is known and that object exists. To avoid later calls
      * to again retrieve the object from the id return the retrieved object for
      * later use.
-     *
+     * 
      * @param repositoryId
      *            repository id
      * @param objectId
@@ -157,10 +160,22 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected StoredObject[] checkParams(String repositoryId, String objectId1, String objectId2) {
         StoredObject[] so = new StoredObject[2];
-        so[0] = checkStandardParameters(repositoryId, objectId1);
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        so[0] = checkExistingObjectId(objectStore, objectId1);
         so[1] = checkExistingObjectId(objectStore, objectId2);
         return so;
+    }
+    
+    protected void checkPolicies(String repositoryId, List<String> policyIds) {
+        if (policyIds != null && policyIds.size() > 0) {
+            for (String policyId : policyIds) {
+                TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, policyId);
+                if (tdc == null)
+                    throw new CmisInvalidArgumentException("Unknown policy type: " + policyId);
+                if (tdc.getTypeDefinition().getBaseTypeId() != BaseTypeId.CMIS_POLICY)
+                    throw new CmisInvalidArgumentException( policyId + " is not a policy type");
+            }
+        }
     }
 
     public void getRepositoryInfos(CallContext context, ExtensionsData extension) {
@@ -171,20 +186,17 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         checkRepositoryId(repositoryId);
     }
 
-    public void getTypeChildren(CallContext context, String repositoryId, String typeId,
-            ExtensionsData extension) {
+    public void getTypeChildren(CallContext context, String repositoryId, String typeId, ExtensionsData extension) {
 
         checkRepositoryId(repositoryId);
     }
 
-    public void getTypeDescendants(CallContext context, String repositoryId, String typeId,
-            ExtensionsData extension) {
+    public void getTypeDescendants(CallContext context, String repositoryId, String typeId, ExtensionsData extension) {
 
         checkRepositoryId(repositoryId);
     }
 
-    public void getTypeDefinition(CallContext context, String repositoryId, String typeId,
-            ExtensionsData extension) {
+    public void getTypeDefinition(CallContext context, String repositoryId, String typeId, ExtensionsData extension) {
 
         checkRepositoryId(repositoryId);
     }
@@ -231,36 +243,39 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     public StoredObject createDocument(CallContext context, String repositoryId, String folderId,
-            ExtensionsData extension) {
+            List<String> policyIds, ExtensionsData extension) {
         return checkStandardParametersAllowNull(repositoryId, folderId);
     }
 
     public StoredObject createDocumentFromSource(CallContext context, String repositoryId, String sourceId,
-            String folderId, ExtensionsData extension) {
+            String folderId, List<String> policyIds, ExtensionsData extension) {
 
         return checkStandardParametersAllowNull(repositoryId, sourceId);
     }
 
-    public StoredObject createFolder(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
+    public StoredObject createFolder(CallContext context, String repositoryId, String folderId, List<String> policyIds,
+            ExtensionsData extension) {
         return checkStandardParameters(repositoryId, folderId);
     }
 
     public StoredObject[] createRelationship(CallContext context, String repositoryId, String sourceId,
-    		String targetId, ExtensionsData extension) {
+            String targetId, List<String> policyIds, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkStandardParametersAllowNull(repositoryId, null);
         return checkParams(repositoryId, sourceId, targetId);
     }
 
-    public StoredObject createPolicy(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
-    	 return checkStandardParameters(repositoryId, folderId);
+    public StoredObject createPolicy(CallContext context, String repositoryId, String folderId, Acl addAces,
+            Acl removeAces, List<String> policyIds, ExtensionsData extension) {
+
+        return checkStandardParametersAllowNull(repositoryId, null);
     }
 
     // CMIS 1.1
     public StoredObject createItem(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
         return checkStandardParametersAllowNull(repositoryId, folderId);
-   }
+    }
 
     public StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId,
             ExtensionsData extension) {
@@ -289,7 +304,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     public StoredObject getObjectByPath(CallContext context, String repositoryId, String path, ExtensionsData extension) {
 
         return checkStandardParametersByPath(repositoryId, path, context.getUsername());
-   }
+    }
 
     public StoredObject getContentStream(CallContext context, String repositoryId, String objectId, String streamId,
             ExtensionsData extension) {
@@ -307,7 +322,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             String targetFolderId, String sourceFolderId, ExtensionsData extension) {
 
         StoredObject[] res = new StoredObject[3];
-        res [0] = checkStandardParameters(repositoryId, objectId.getValue());
+        res[0] = checkStandardParameters(repositoryId, objectId.getValue());
         res[1] = checkExistingObjectId(fStoreManager.getObjectStore(repositoryId), sourceFolderId);
         res[2] = checkExistingObjectId(fStoreManager.getObjectStore(repositoryId), targetFolderId);
         return res;
@@ -352,8 +367,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         return checkStandardParameters(repositoryId, objectId);
     }
 
-    public StoredObject checkIn(CallContext context, String repositoryId, Holder<String> objectId,
-            Acl addAces, Acl removeAces, ExtensionsData extension) {
+    public StoredObject checkIn(CallContext context, String repositoryId, Holder<String> objectId, Acl addAces,
+            Acl removeAces, List<String> policyIds, ExtensionsData extension) {
         return checkStandardParameters(repositoryId, objectId.getValue());
     }
 
@@ -400,7 +415,24 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     public StoredObject getObjectRelationships(CallContext context, String repositoryId, String objectId,
             RelationshipDirection relationshipDirection, String typeId, ExtensionsData extension) {
 
-        return checkStandardParameters(repositoryId, objectId);
+        StoredObject so = checkStandardParameters(repositoryId, objectId);
+
+        if (relationshipDirection == null) {
+            throw new CmisInvalidArgumentException("Relationship direction cannot be null.");
+        }
+
+        if (typeId != null) {
+            TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, typeId).getTypeDefinition();
+            if (typeDef == null) {
+                throw new CmisInvalidArgumentException("Type Id " + typeId + " is not known in repository "
+                        + repositoryId);
+            }
+
+            if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_RELATIONSHIP)) {
+                throw new CmisInvalidArgumentException("Type Id " + typeId + " is not a relationship type.");
+            }
+        }
+        return so;
     }
 
     public StoredObject getAcl(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {

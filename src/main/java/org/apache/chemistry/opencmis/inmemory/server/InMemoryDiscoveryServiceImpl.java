@@ -90,6 +90,10 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         changeEventInfo.setChangeType(ChangeType.DELETED);
         changeEventInfo.setChangeTime(new GregorianCalendar());
         odImpl.setChangeEventInfo(changeEventInfo);
+        if (includePolicyIds != null && includePolicyIds) {
+            // TODO set policies
+            // odImpl.setPolicyIds(policyIds)
+        }
         lod.add(odImpl);
 
         objList.setObjects(lod);

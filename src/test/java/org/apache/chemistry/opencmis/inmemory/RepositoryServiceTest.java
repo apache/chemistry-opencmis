@@ -121,7 +121,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         int totalSize = getRecursiveSize(types);
 
         assertEquals(expectedSize, totalSize);
-        assertEquals(4, types.size());
+        assertEquals(6, types.size());
 
         for (TypeDefinitionContainer type : types) {
             assertNotNull(type);

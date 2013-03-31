@@ -67,11 +67,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
     public boolean deleteVersion(DocumentVersion version) {
         if (fIsCheckedOut) {
-            // Note: Do not throw an exception here if the document is checked-out. In AtomPub binding cancelCheckout
+            // Note: Do not throw an exception here if the document is
+            // checked-out. In AtomPub binding cancelCheckout
             // mapped to a deleteVersion() call!
             DocumentVersion pwc = getPwc();
             if (pwc == version) {
-                cancelCheckOut(false); // note object is already deleted from map in ObjectStore 
+                cancelCheckOut(false); // note object is already deleted from
+                                       // map in ObjectStore
                 return !fVersions.isEmpty();
             }
         }
@@ -87,7 +89,8 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         cancelCheckOut(true);
     }
 
-    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user) {
+    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
+            List<String> policyIds, String user) {
         if (fIsCheckedOut) {
             if (fCheckedOutUser.equals(user)) {
                 fIsCheckedOut = false;
@@ -102,15 +105,18 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         }
 
         DocumentVersion pwc = getPwc();
-        
+
         if (null != content)
             pwc.setContent(content, false);
 
         if (null != properties && null != properties.getProperties())
-            ((DocumentVersionImpl)pwc).setCustomProperties(properties.getProperties());
+            ((DocumentVersionImpl) pwc).setCustomProperties(properties.getProperties());
 
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);
+        if (policyIds != null && policyIds.size() > 0 ) {
+            ((DocumentVersionImpl) pwc).setAppliedPolicies(policyIds);
+        }
     }
 
     public DocumentVersion checkOut(ContentStream content, String user) {
@@ -132,8 +138,8 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
         DocumentVersion latest = null;
         if (fVersions.size() == 0)
-        	return null;
-        
+            return null;
+
         if (major) {
             for (DocumentVersion ver : fVersions) {
                 if (ver.isMajor()) {
@@ -171,43 +177,44 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
         super.fillProperties(properties, objFactory, requestedIds);
 
-
         if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
-            properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
-                    false));
+            properties.put(PropertyIds.IS_IMMUTABLE,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE, false));
         }
 
         // overwrite the version related properties
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(
-                    PropertyIds.VERSION_SERIES_ID, getId()));
+            properties.put(PropertyIds.VERSION_SERIES_ID,
+                    objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_ID, getId()));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(
-                    PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, isCheckedOut()));
+            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, isCheckedOut()));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(
-                    PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, getCheckedOutBy()));
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
+                    objFactory.createPropertyStringData(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, getCheckedOutBy()));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(
-                    PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, pwc == null ? null : pwc.getId()));
+            properties.put(
+                    PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
+                    objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
+                            pwc == null ? null : pwc.getId()));
         }
 
     }
-    
+
     private void cancelCheckOut(boolean deleteInObjectStore) {
-        
+
         DocumentVersion pwc = getPwc();
         fIsCheckedOut = false;
         fCheckedOutUser = null;
         fVersions.remove(pwc);
         if (fVersions.size() > 0) {
-        	String nameLatestVer = getLatestVersion(false).getName();
-        	if (!getName().equals(nameLatestVer)) {
-        		setName(nameLatestVer);
-        	}        	
+            String nameLatestVer = getLatestVersion(false).getName();
+            if (!getName().equals(nameLatestVer)) {
+                setName(nameLatestVer);
+            }
         }
 
         if (deleteInObjectStore)

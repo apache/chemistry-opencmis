@@ -50,6 +50,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanImpl;
@@ -373,16 +374,24 @@ public class PropertyCreationHelper {
         }
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
+            od.setRelationships(DataObjectCreator.fillRelationships(tm, includeRelationships, so, user));
         }
 
+        if (null != includePolicyIds && includePolicyIds) {
+            List<String> polIds = so.getAppliedPolicies();
+            if (null != polIds) {
+                PolicyIdListImpl policies = new PolicyIdListImpl();
+                policies.setPolicyIds(polIds);
+                od.setPolicyIds(policies);
+            }
+        }
         od.setProperties(props);
 
         // Note: do not set change event info for this call
         return od;
     }
 
-    public static ObjectData getObjectDataQueryResult(TypeDefinition typeDef, StoredObject so, String user,
+    public static ObjectData getObjectDataQueryResult(TypeManager tm, TypeDefinition typeDef, StoredObject so, String user,
             Map<String, String> requestedProperties, Map<String, String> requestedFuncs, TypeDefinition fromType,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter) {
 
@@ -403,7 +412,7 @@ public class PropertyCreationHelper {
         od.setIsExactAcl(true);
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(includeRelationships, so, user));
+            od.setRelationships(DataObjectCreator.fillRelationships(tm, includeRelationships, so, user));
         }
 
         List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);

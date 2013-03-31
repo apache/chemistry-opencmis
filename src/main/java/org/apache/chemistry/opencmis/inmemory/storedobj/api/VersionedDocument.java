@@ -54,7 +54,8 @@ public interface VersionedDocument extends MultiFiling, StoredObject {
 
     DocumentVersion checkOut(ContentStream content, String user);
 
-    void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment, String user);
+    void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
+            List<String> policyIds, String user);
 
     List<DocumentVersion> getAllVersions();
 

@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
@@ -61,11 +62,11 @@ public class DocumentTypeCreationHelper {
         cmisType = InMemoryFolderTypeDefinition.getRootFolderType();
         typesList.add(cmisType);
 
-        // cmisType = RelationshipTypeDefinition.getRootRelationshipType();
-        // typesList.add(cmisType);
-        //
-        // cmisType = PolicyTypeDefinition.getRootPolicyType();
-        // typesList.add(cmisType);
+        cmisType = InMemoryRelationshipTypeDefinition.getRootRelationshipType();
+        typesList.add(cmisType);
+        
+        cmisType = InMemoryPolicyTypeDefinition.getRootPolicyType();
+        typesList.add(cmisType);
 
         // CMIS 1.1
         cmisType = InMemoryItemTypeDefinition.getRootItemType();
@@ -222,7 +223,7 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.POLICY_TEXT,
-                "Policy Text", Updatability.READONLY);
+                "Policy Text", Updatability.READWRITE);
         propS.setIsRequired(true);
         propertyDefinitions.put(propS.getId(), propS);
     }
@@ -231,13 +232,23 @@ public class DocumentTypeCreationHelper {
 
         setBasicPropertyDefinitions(propertyDefinitions);
         PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SOURCE_ID,
-                "Source Id", Updatability.READONLY);
+                "Source Id", Updatability.READWRITE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.TARGET_ID, "Target Id", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.TARGET_ID, "Target Id", Updatability.READWRITE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
+        
+//        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.,
+//                "allowedSourceTypes", Updatability.READWRITE);
+//        propId.setIsRequired(false);
+//        propertyDefinitions.put(propId.getId(), propId);
+//        
+//        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.,
+//                "allowedTargetTypes", Updatability.READWRITE);
+//        propId.setIsRequired(false);
+//        propertyDefinitions.put(propId.getId(), propId);
     }
 
     public static void mergePropertyDefinitions(Map<String, PropertyDefinition<?>> existingPpropertyDefinitions,

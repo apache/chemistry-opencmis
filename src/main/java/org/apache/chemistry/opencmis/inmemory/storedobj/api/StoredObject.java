@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,6 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
-import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -293,11 +290,7 @@ public interface StoredObject {
      * @param user
      * 			the id of the user calling the method 
      */
-	ObjectList getObjectRelationships(
-			Boolean includeSubRelationshipTypes,
-			RelationshipDirection relationshipDirection, String typeId,
-			String filter, Boolean includeAllowableActions,
-			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension, String user);
+    public List<StoredObject> getObjectRelationships(RelationshipDirection relationshipDirection, String user);
 	
 	/*
      * get the allowable actions  of the object
@@ -337,5 +330,14 @@ public interface StoredObject {
      *     ContentStream containing the rendition
      */
     public ContentStream getRenditionContent(String streamId, long offset, long length);
+    
+    /**
+     * get applied policies of this object
+     * 
+     * @return
+     *      list of ids of policies applied to this object
+     */
+    public List<String> getAppliedPolicies();
+
 
 }

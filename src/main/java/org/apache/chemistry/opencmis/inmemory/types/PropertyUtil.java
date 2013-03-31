@@ -29,6 +29,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
@@ -40,6 +42,9 @@ public class PropertyUtil {
         VersionedDocument verDoc = null;
         Folder folder = null;
         Document doc = null;
+        Relationship rel = null;
+        Policy pol = null;
+        
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Content)
@@ -52,6 +57,10 @@ public class PropertyUtil {
             folder = (Folder) so;
         if (so instanceof Document)
             doc = (Document) so;
+        if (so instanceof Relationship)
+            rel = (Relationship) so;
+        if (so instanceof Policy)
+            pol = (Policy) so;
 
         // generic properties:
         if (propertyId.equals(PropertyIds.NAME)) {
@@ -152,6 +161,21 @@ public class PropertyUtil {
             }
         }
 
+        if (rel != null) {
+            if (propertyId.equals(PropertyIds.SOURCE_ID)) {
+                return rel.getSourceObjectId();
+            }
+            if (propertyId.equals(PropertyIds.TARGET_ID)) {
+                return rel.getTargetObjectId();
+            }
+        }
+        
+        if (pol != null) {
+            if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
+                return pol.getPolicyText();
+            }
+        }
+        
        // try custom property:
        PropertyData<?> lVal = so.getProperties().get(propertyId);
        if (null == lVal)
