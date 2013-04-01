@@ -451,18 +451,18 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        fPolSvc.applyPolicy(repositoryId, policyId, objectId, extension);
+        fPolSvc.applyPolicy(getCallContext(), repositoryId, policyId, objectId, extension);
     }
 
     @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
-        return fPolSvc.getAppliedPolicies(repositoryId, objectId, filter, extension);
+        return fPolSvc.getAppliedPolicies(getCallContext(), repositoryId, objectId, filter, extension);
     }
 
     @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
-        fPolSvc.removePolicy(repositoryId, policyId, objectId, extension);
+        fPolSvc.removePolicy(getCallContext(), repositoryId, policyId, objectId, extension);
     }
 
     // /////////////

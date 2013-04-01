@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -455,7 +456,11 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     public StoredObject[] removePolicy(CallContext context, String repositoryId, String policyId, String objectId,
             ExtensionsData extension) {
 
-        return checkParams(repositoryId, policyId, objectId);
+        StoredObject[] sos = checkParams(repositoryId, policyId, objectId);
+        StoredObject pol = sos[0];
+        if (!(pol instanceof Policy))
+            throw new CmisInvalidArgumentException("Id " + policyId + " is not a policy object.");
+        return sos;
     }
 
     public StoredObject getAppliedPolicies(CallContext context, String repositoryId, String objectId,

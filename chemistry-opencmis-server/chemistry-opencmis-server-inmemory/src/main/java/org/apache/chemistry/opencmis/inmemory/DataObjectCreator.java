@@ -177,9 +177,9 @@ public class DataObjectCreator {
     }
 
     public static PolicyIdList fillPolicyIds(StoredObject so) {
-        // TODO: to be completed if policies are implemented
         PolicyIdListImpl polIds = new PolicyIdListImpl();
-        // polIds.setPolicyIds(...);
+        List<String> pols = so.getAppliedPolicies();
+        polIds.setPolicyIds(pols);
         return polIds;
     }
 

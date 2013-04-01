@@ -149,11 +149,36 @@ public class StoredObjectImpl implements StoredObject {
     }
     
     public List<String> getAppliedPolicies() {
-        return policyIds;
+        if (null == policyIds)
+            return null;
+        else
+            return Collections.unmodifiableList(policyIds);
     }
     
     public void setAppliedPolicies(List<String> newPolicies) {
-        policyIds = newPolicies;
+        if (null == newPolicies) {
+            policyIds = null;
+        } else {
+            if (null == policyIds) {
+                policyIds = new ArrayList<String>();
+            }
+            policyIds.addAll(newPolicies);
+        }
+    }
+    
+    public void addAppliedPolicy(String policyId) {
+        if (null == policyIds) {
+            policyIds = new ArrayList<String>();
+        }
+        if (!policyIds.contains(policyId)) {
+            policyIds.add(policyId);
+        }
+    }
+
+    public void removePolicy(String policyId) {
+        if (null != policyIds && policyIds.contains(policyId)) {
+            policyIds.remove(policyId);
+        }
     }
     
     // CMIS 1.1:
