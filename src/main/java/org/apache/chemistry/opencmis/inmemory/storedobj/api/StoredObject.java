@@ -338,6 +338,21 @@ public interface StoredObject {
      *      list of ids of policies applied to this object
      */
     public List<String> getAppliedPolicies();
-
+    
+    /**
+     * add an id of a policy to an object
+     * 
+     * @param policyId
+     *      id of policy to add
+     */
+    public void addAppliedPolicy(String policyId);
+    
+    /**
+     * remove an id of a policy from an object
+     * 
+     * @param policyId
+     *      id of policy to remove
+     */
+    public void removePolicy(String policyId);
 
 }

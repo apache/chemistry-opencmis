@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
@@ -399,7 +400,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
         if (addAces != null || removeAces != null)
             throw new CmisConstraintException("ACLs on policies are not suported.");
 
-        StoredObject so = super.createPolicy(context, repositoryId, folderId, addAces, removeAces, policyIds, extension);
+        StoredObject so = super
+                .createPolicy(context, repositoryId, folderId, addAces, removeAces, policyIds, extension);
         checkAllAccess(repositoryId, context.getUsername(), so);
         return so;
     }
@@ -906,6 +908,13 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             ExtensionsData extension) {
 
         StoredObject[] sos = super.applyPolicy(context, repositoryId, policyId, objectId, extension);
+        if (!(sos[0] instanceof Policy)) {
+            throw new CmisInvalidArgumentException("applyPolicy failed, " + policyId + " is not a policy id");
+        }
+        if (sos[1] instanceof Policy) {
+            throw new CmisInvalidArgumentException("applyPolicy failed, " + objectId
+                    + " is a policy id. Applying policies to policies is not supported.");
+        }
         checkAllAccess(repositoryId, context.getUsername(), sos[1]);
         return sos;
     }

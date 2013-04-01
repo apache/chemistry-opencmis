@@ -264,7 +264,8 @@ public class ObjectStoreImpl implements ObjectStore {
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
-        doc.setAppliedPolicies(policies);
+        if (null != policies)
+            doc.setAppliedPolicies(policies);
         return doc;
     }
 
@@ -278,7 +279,8 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != folder) {
             ((FolderImpl)folder).addChildItem(item); // add document to folder and
         }
-        item.setAppliedPolicies(policies);
+        if (null != policies)
+            item.setAppliedPolicies(policies);
         int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
         item.setAclId(aclId);
         return item;
@@ -300,7 +302,8 @@ public class ObjectStoreImpl implements ObjectStore {
         version.setCustomProperties(propMap);
         int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
         doc.setAclId(aclId);
-        doc.setAppliedPolicies(policies);
+        if (null != policies)
+            doc.setAppliedPolicies(policies);
         doc.persist();
         return version;
     }
@@ -321,7 +324,8 @@ public class ObjectStoreImpl implements ObjectStore {
 
         int aclId = getAclId(((FolderImpl)parent), addACEs, removeACEs);
         folder.setAclId(aclId);
-        folder.setAppliedPolicies(policies);
+        if (null != policies)
+            folder.setAppliedPolicies(policies);
 
         return folder;
     }
