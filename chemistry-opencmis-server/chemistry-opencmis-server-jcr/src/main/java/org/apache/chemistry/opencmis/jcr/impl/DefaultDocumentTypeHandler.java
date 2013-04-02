@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
@@ -46,6 +47,7 @@ import org.apache.chemistry.opencmis.jcr.JcrVersion;
 import org.apache.chemistry.opencmis.jcr.JcrVersionBase;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
 import org.apache.chemistry.opencmis.jcr.type.JcrDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +98,21 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
     }
 
     public boolean canHandle(Node node) throws RepositoryException {
-        return node.isNodeType(NodeType.NT_FILE) && node.isNodeType(NodeType.MIX_SIMPLE_VERSIONABLE);
+        return node.isNodeType(NodeType.NT_FILE) && node.isNodeType(supportedVersioningType(node));
     }
+    
+    protected String supportedVersioningType(Node node) throws RepositoryException {
+    	if (Util.supportOption(node, Repository.OPTION_SIMPLE_VERSIONING_SUPPORTED)) {
+    		return NodeType.MIX_SIMPLE_VERSIONABLE;
+    	}
+    	
+    	if(Util.supportOption(node, Repository.OPTION_VERSIONING_SUPPORTED)) {
+    		return NodeType.MIX_VERSIONABLE;
+    	}
+    	
+    	throw new RepositoryException("The repository does not support versioning!");
+    }
+
 
     public JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties,
                                   ContentStream contentStream, VersioningState versioningState) {
@@ -166,7 +181,7 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
     protected void addFileNodeMixins(Node fileNode, VersioningState versioningState)
             throws RepositoryException {
         if (versioningState != VersioningState.NONE) {
-            fileNode.addMixin(NodeType.MIX_SIMPLE_VERSIONABLE);
+            fileNode.addMixin(supportedVersioningType(fileNode));
         }
     }
 

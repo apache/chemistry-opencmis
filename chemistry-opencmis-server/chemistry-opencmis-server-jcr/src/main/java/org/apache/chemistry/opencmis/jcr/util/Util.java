@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.jcr.util;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 /**
  * Miscellaneous utility functions
  */
@@ -89,6 +92,17 @@ public final class Util {
      */
     public static String escape(String path) {
         return replace(path, " ", "_x0020_"); // fixme do more thorough escaping of path
+    }
+    
+    /**
+     * The repository's support option definition.
+     * @param node JCR node
+     * @param option requested repository's option
+     * @return true if repository supports option, otherwise false.
+     * @throws RepositoryException thrown when any error with repository was occurred.
+     */
+    public static boolean supportOption(Node node, String option) throws RepositoryException {
+    	return Boolean.valueOf(node.getSession().getRepository().getDescriptor(option));
     }
 
 }

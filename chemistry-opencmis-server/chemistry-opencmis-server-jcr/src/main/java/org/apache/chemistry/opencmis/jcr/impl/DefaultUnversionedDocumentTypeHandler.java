@@ -72,7 +72,7 @@ public class DefaultUnversionedDocumentTypeHandler extends DefaultDocumentTypeHa
 
     @Override
     public boolean canHandle(Node node) throws RepositoryException {
-        return node.isNodeType(NodeType.NT_FILE) && !node.isNodeType(NodeType.MIX_SIMPLE_VERSIONABLE);
+        return node.isNodeType(NodeType.NT_FILE) && !node.isNodeType(supportedVersioningType(node));
     }
 
     @Override
