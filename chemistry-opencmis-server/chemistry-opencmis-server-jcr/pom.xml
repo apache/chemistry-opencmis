@@ -26,7 +26,7 @@
     <properties>
         <parentBasedir>../../</parentBasedir>
     </properties>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -62,6 +62,26 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.23</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit4</artifactId>
+                        <version>2.12</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.class</include>
+                    </includes>
+                  <systemProperties>
+                      <org.apache.jackrabbit.repository.conf>${basedir}/src/test/resources/repository.xml</org.apache.jackrabbit.repository.conf>
+                      <org.apache.jackrabbit.repository.home>${basedir}/target/jackrabbit-repo</org.apache.jackrabbit.repository.home>
+                    </systemProperties> 
+                </configuration>
+            </plugin>            
         </plugins>
     </build>
 
@@ -111,6 +131,12 @@
             <artifactId>junit</artifactId>
             <version>4.7</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-core</artifactId>
+        <version>2.5.1</version>
+        <scope>test</scope>
         </dependency>
     </dependencies>
 
