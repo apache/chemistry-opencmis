@@ -102,6 +102,7 @@ public class MimeTypes {
         EXT2MIME.put("jpg", "image/jpeg");
         EXT2MIME.put("js", "application/x-javascript");
         EXT2MIME.put("json", "application/json");
+        EXT2MIME.put("key", "application/vnd.apple.keynote");
         EXT2MIME.put("latex", "application/x-latex");
         EXT2MIME.put("lsf", "video/x-la-asf");
         EXT2MIME.put("lsx", "video/x-la-asf");
@@ -130,6 +131,7 @@ public class MimeTypes {
         EXT2MIME.put("mpv2", "video/mpeg");
         EXT2MIME.put("ms", "application/x-troff-ms");
         EXT2MIME.put("mvb", "application/x-msmediaview");
+        EXT2MIME.put("numbers", "application/vnd.apple.numbers");
         EXT2MIME.put("nws", "message/rfc822");
         EXT2MIME.put("oda", "application/oda");
         EXT2MIME.put("odb", "application/vnd.oasis.opendocument.database");
@@ -162,6 +164,7 @@ public class MimeTypes {
         EXT2MIME.put("p7m", "application/x-pkcs7-mime");
         EXT2MIME.put("p7r", "application/x-pkcs7-certreqresp");
         EXT2MIME.put("p7s", "application/x-pkcs7-signature");
+        EXT2MIME.put("pages", "application/vnd.apple.pages");
         EXT2MIME.put("pbm", "image/x-portable-bitmap");
         EXT2MIME.put("pdf", "application/pdf");
         EXT2MIME.put("pfx", "application/x-pkcs12");
@@ -273,6 +276,9 @@ public class MimeTypes {
         MIME2EXT.put("application/pkix-crl", "crl");
         MIME2EXT.put("application/postscript", "ps");
         MIME2EXT.put("application/rtf", "rtf");
+        MIME2EXT.put("application/vnd.apple.keynote", "key");
+        MIME2EXT.put("application/vnd.apple.numbers", "numbers");
+        MIME2EXT.put("application/vnd.apple.pages", "pages");
         MIME2EXT.put("application/vnd.framemaker", "fm");
         MIME2EXT.put("application/vnd.ms-excel", "xls");
         MIME2EXT.put("application/vnd.ms-pkicertstore", "sst");
