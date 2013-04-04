@@ -316,6 +316,34 @@ public class DefaultTypeSystemCreator implements TypeCreator {
         // add type to types collection
         typesList.add(cmisSecondaryType);
 
+        // add relationship type
+        InMemoryRelationshipTypeDefinition cmisRelType = new InMemoryRelationshipTypeDefinition(
+                "CrossReferenceType", "CrossReferenceRelationshipType");
+        // create a single String property definition
+
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        prop1 = PropertyCreationHelper.createStringDefinition("CrossReferenceKind",
+                "CrossReferenceType", Updatability.READWRITE);
+        propertyDefinitions.put(prop1.getId(), prop1);
+        cmisRelType.addCustomPropertyDefinitions(propertyDefinitions);
+        typesList.add(cmisRelType);            
+
+        // add a policy type
+        InMemoryPolicyTypeDefinition polType = new InMemoryPolicyTypeDefinition(
+                "AuditPolicy", "Audit Policy", InMemoryPolicyTypeDefinition.getRootPolicyType());
+
+        // create a String property definition
+
+        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+
+        prop1 = PropertyCreationHelper.createStringDefinition("AuditSettings",
+                "Audit Kind Property", Updatability.READWRITE);
+        propertyDefinitions.put(prop1.getId(), prop1);
+
+        polType.addCustomPropertyDefinitions(propertyDefinitions);
+        typesList.add(polType);            
+        
         return typesList;
     }
 

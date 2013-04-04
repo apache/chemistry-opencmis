@@ -71,7 +71,7 @@ public class InMemoryPolicyServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = validator.getAppliedPolicies(context, repositoryId, objectId, extension);
 
         List<String> polIds = so.getAppliedPolicies();
-        if (!polIds.contains(policyId)) {
+        if (null == polIds || !(polIds.contains(policyId))) {
             throw new CmisInvalidArgumentException("Policy id " + policyId
                     + "cannot be removed, because it is not applied to object " + objectId);
         }

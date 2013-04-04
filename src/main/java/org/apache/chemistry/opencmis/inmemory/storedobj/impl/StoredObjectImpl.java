@@ -178,6 +178,9 @@ public class StoredObjectImpl implements StoredObject {
     public void removePolicy(String policyId) {
         if (null != policyIds && policyIds.contains(policyId)) {
             policyIds.remove(policyId);
+            if (policyIds.isEmpty()) {
+                policyIds = null;
+            }
         }
     }
     
