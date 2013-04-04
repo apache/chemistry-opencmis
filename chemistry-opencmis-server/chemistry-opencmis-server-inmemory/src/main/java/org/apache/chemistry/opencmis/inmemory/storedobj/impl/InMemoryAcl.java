@@ -35,7 +35,15 @@ public class InMemoryAcl implements Cloneable{
     private static InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(InMemoryAce.getDefaultAce()); }} );
     private static class AceComparator<T extends InMemoryAce> implements Comparator<T> {
 
-        public int compare(T o1, T o2) {            
+        public int compare(T o1, T o2) {
+            if (null == o1 || null == o2) {
+                if (o1 == o2)
+                    return 0;
+                else if (o1 == null)
+                    return 1;
+                else
+                    return -1;
+            }
             int res = o1.getPrincipalId().compareTo(o2.getPrincipalId());
             return res;
         }

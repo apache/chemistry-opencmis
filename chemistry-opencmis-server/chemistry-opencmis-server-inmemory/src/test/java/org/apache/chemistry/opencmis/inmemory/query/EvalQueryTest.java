@@ -53,7 +53,7 @@ public class EvalQueryTest extends AbstractServiceTest {
     private static final Logger log = LoggerFactory.getLogger(EvalQueryTest.class);
     private QueryTestDataCreator dataCreator;
     static int COUNT = 0;
-    
+
     @Override
     @Before
     public void setUp() {
@@ -68,64 +68,64 @@ public class EvalQueryTest extends AbstractServiceTest {
     @Override
     @After
     public void tearDown() {
-        log.debug("tearDown started." );
+        log.debug("tearDown started.");
         super.tearDown();
-        log.debug("tearDown done." );
+        log.debug("tearDown done.");
     }
 
     @Test
     public void testAll() {
-        log.debug("Start testAll..." );
+        log.debug("Start testAll...");
         String statement = "SELECT * FROM cmis:document";
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertFalse(resultContains("jens", res));
-        log.debug("...Stop testAll." );
+        log.debug("...Stop testAll.");
     }
 
-    //////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
     // Boolean tests
 
     @Test
     public void testBooleanEquals() {
-        log.debug("Start testBooleanEquals..." );
+        log.debug("Start testBooleanEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_BOOLEAN + "= true";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testBooleanEquals." );
+        log.debug("...Stop testBooleanEquals.");
     }
 
     @Test
     public void testBooleanNotEquals() {
-        log.debug("Start testBooleanNotEquals..." );
+        log.debug("Start testBooleanNotEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_BOOLEAN + "= false";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testBooleanNotEquals." );
+        log.debug("...Stop testBooleanNotEquals.");
     }
 
-    //////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
     // Integer tests
 
     @Test
     public void testIntegerEquals() {
-        log.debug("Start testIntegerEquals..." );
+        log.debug("Start testIntegerEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 100";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testIntegerEquals." );
+        log.debug("...Stop testIntegerEquals.");
     }
 
     @Test
     public void testIntegerNotEquals() {
-        log.debug("Start testIntegerNotEquals..." );
+        log.debug("Start testIntegerNotEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "<> 100";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
@@ -133,71 +133,71 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testIntegerNotEquals." );
+        log.debug("...Stop testIntegerNotEquals.");
     }
 
     @Test
     public void testIntegerLess() {
-        log.debug("Start testIntegerLess..." );
+        log.debug("Start testIntegerLess...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "< 0";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
-        log.debug("...Stop testIntegerLess." );
+        log.debug("...Stop testIntegerLess.");
     }
 
     @Test
     public void testIntegerLessOrEqual() {
-        log.debug("Start testIntegerLessOrEqual..." );
+        log.debug("Start testIntegerLessOrEqual...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "<= 0";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
-        log.debug("...Stop testIntegerLessOrEqual." );
+        log.debug("...Stop testIntegerLessOrEqual.");
     }
 
     @Test
     public void testIntegerGreater() {
-        log.debug("Start testIntegerGreater..." );
+        log.debug("Start testIntegerGreater...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "> 0";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testIntegerGreater." );
+        log.debug("...Stop testIntegerGreater.");
     }
 
     @Test
     public void testIntegerGreaterOrEqual() {
-        log.debug("Start testIntegerGreaterOrEqual..." );
+        log.debug("Start testIntegerGreaterOrEqual...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + ">= 0";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testIntegerGreaterOrEqual." );
+        log.debug("...Stop testIntegerGreaterOrEqual.");
     }
 
-    //////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
     // Decimal tests
 
     @Test
     public void testDecimalEquals() {
-        log.debug("Start testDecimalEquals..." );
+        log.debug("Start testDecimalEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + "= 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testDecimalEquals." );
+        log.debug("...Stop testDecimalEquals.");
     }
 
     @Test
     public void testDecimalNotEquals() {
-        log.debug("Start testDecimalNotEquals..." );
+        log.debug("Start testDecimalNotEquals...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + "<> 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
@@ -205,230 +205,245 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDecimalNotEquals." );
+        log.debug("...Stop testDecimalNotEquals.");
     }
 
     @Test
     public void testDecimalLess() {
-        log.debug("Start testDecimalLess..." );
+        log.debug("Start testDecimalLess...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + "< 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
-        log.debug("...Stop testDecimalLess." );
+        log.debug("...Stop testDecimalLess.");
     }
 
     @Test
     public void testDecimalLessOrEqual() {
-        log.debug("Start testDecimalLessOrEqual..." );
+        log.debug("Start testDecimalLessOrEqual...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + "<= 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testDecimalLessOrEqual." );
+        log.debug("...Stop testDecimalLessOrEqual.");
     }
 
     @Test
     public void testDecimalGreater() {
-        log.debug("Start testDecimalGreater..." );
+        log.debug("Start testDecimalGreater...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + "> 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDecimalGreater." );
+        log.debug("...Stop testDecimalGreater.");
     }
 
     @Test
     public void testDecimalGreaterOrEqual() {
-        log.debug("Start testDecimalGreaterOrEqual..." );
+        log.debug("Start testDecimalGreaterOrEqual...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DECIMAL + ">= 1.23456E-6";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDecimalGreaterOrEqual." );
+        log.debug("...Stop testDecimalGreaterOrEqual.");
     }
 
-    //////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
     // DateTime tests
 
     @Test
     public void testDateEquals() {
-        log.debug("Start testDateEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + "= TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + "= TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testDateEquals." );
+        log.debug("...Stop testDateEquals.");
     }
 
     @Test
     public void testDateNotEquals() {
-        log.debug("Start testDateNotEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + "<> TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateNotEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + "<> TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDateNotEquals." );
+        log.debug("...Stop testDateNotEquals.");
     }
 
     @Test
     public void testDateLess() {
-        log.debug("Start testDateLess..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + "< TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateLess...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + "< TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
-        log.debug("...Stop testDateLess." );
-}
+        log.debug("...Stop testDateLess.");
+    }
 
     @Test
     public void testDateLessOrEquals() {
-        log.debug("Start testDateLessOrEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + "<= TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateLessOrEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + "<= TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testDateLessOrEquals." );
+        log.debug("...Stop testDateLessOrEquals.");
     }
 
     @Test
     public void testDategreater() {
-        log.debug("Start testDateGreaterOrEqual..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + "> TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateGreaterOrEqual...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + "> TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDateGreaterOrEqual." );
+        log.debug("...Stop testDateGreaterOrEqual.");
     }
 
-    //    @Test
+    // @Test
     public void testDateGreaterOrEqual() {
-        log.debug("Start testDateGreaterOrEqual..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME + ">= TIMESTAMP '2038-01-20T00:00:00.000Z'";
+        log.debug("Start testDateGreaterOrEqual...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_DATETIME
+                + ">= TIMESTAMP '2038-01-20T00:00:00.000Z'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testDateGreaterOrEqual." );
+        log.debug("...Stop testDateGreaterOrEqual.");
     }
 
-    ////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////
     // String tests
 
     @Test
     public void testStringEquals() {
-        log.debug("Start testStringEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "= 'Alpha'";
+        log.debug("Start testStringEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "= 'Alpha'";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
-        log.debug("...Stop testStringEquals." );
+        log.debug("...Stop testStringEquals.");
     }
 
     @Test
     public void testStringNotEquals() {
-        log.debug("Start testStringNotEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "<> 'Gamma'";
+        log.debug("Start testStringNotEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "<> 'Gamma'";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testStringNotEquals." );
+        log.debug("...Stop testStringNotEquals.");
     }
 
     @Test
     public void testStringLess() {
-        log.debug("Start testStringLess..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "< 'Delta'";
+        log.debug("Start testStringLess...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "< 'Delta'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
-        log.debug("...Stop testStringLess." );
+        log.debug("...Stop testStringLess.");
     }
 
     @Test
     public void testStringLessOrEquals() {
-        log.debug("Start testStringLessOrEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "<= 'Delta'";
+        log.debug("Start testStringLessOrEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "<= 'Delta'";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testStringLessOrEquals." );
+        log.debug("...Stop testStringLessOrEquals.");
     }
 
     @Test
     public void testStringGreater() {
-        log.debug("Start testStringGreater..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "> 'Delta'";
+        log.debug("Start testStringGreater...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "> 'Delta'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testStringGreater." );
+        log.debug("...Stop testStringGreater.");
     }
 
     @Test
     public void testStringGreaterOrEquals() {
-        log.debug("Start testStringGreaterOrEquals..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + ">= 'Delta'";
+        log.debug("Start testStringGreaterOrEquals...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + ">= 'Delta'";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testStringGreaterOrEquals." );
+        log.debug("...Stop testStringGreaterOrEquals.");
     }
 
-    ////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////
     // Boolean condition tests
 
     @Test
     public void testAnd() {
-        log.debug("Start testAnd..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 50 AND " + PROP_ID_BOOLEAN + "= true";
+        log.debug("Start testAnd...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 50 AND " + PROP_ID_BOOLEAN
+                + "= true";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("delta", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 50 AND " + PROP_ID_BOOLEAN + "= false";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 50 AND " + PROP_ID_BOOLEAN
+                + "= false";
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
-        log.debug("...Stop testAnd." );
+        log.debug("...Stop testAnd.");
     }
 
     @Test
     public void testOr() {
-        log.debug("Start testOr..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= -50 OR " + PROP_ID_BOOLEAN + "= false";
+        log.debug("Start testOr...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= -50 OR " + PROP_ID_BOOLEAN
+                + "= false";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testOr." );
+        log.debug("...Stop testOr.");
     }
 
     @Test
     public void testNot() {
-        log.debug("Start testNot..." );
+        log.debug("Start testNot...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE NOT " + PROP_ID_INT + "= 50";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
@@ -436,12 +451,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testNot." );
+        log.debug("...Stop testNot.");
     }
 
     @Test
     public void testOrderByString() {
-        log.debug("Start testOrderByString..." );
+        log.debug("Start testOrderByString...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + UnitTestTypeSystemCreator.PROP_ID_STRING;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
@@ -459,12 +474,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsAtPos("delta", 2, res));
         assertTrue(resultContainsAtPos("epsilon", 1, res));
         assertTrue(resultContainsAtPos("gamma", 0, res));
-        log.debug("...Stop testOrderByString." );
+        log.debug("...Stop testOrderByString.");
     }
 
     @Test
     public void testOrderByInteger() {
-        log.debug("Start testOrderByInteger..." );
+        log.debug("Start testOrderByInteger...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_INT;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
@@ -482,12 +497,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsAtPos("gamma", 2, res));
         assertTrue(resultContainsAtPos("delta", 1, res));
         assertTrue(resultContainsAtPos("epsilon", 0, res));
-        log.debug("...Stop testOrderByInteger." );
+        log.debug("...Stop testOrderByInteger.");
     }
 
     @Test
     public void testOrderByDecimal() {
-        log.debug("Start testOrderByDecimal..." );
+        log.debug("Start testOrderByDecimal...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DECIMAL;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
@@ -505,12 +520,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsAtPos("delta", 2, res));
         assertTrue(resultContainsAtPos("gamma", 1, res));
         assertTrue(resultContainsAtPos("epsilon", 0, res));
-        log.debug("...Stop testOrderByDecimal." );
+        log.debug("...Stop testOrderByDecimal.");
     }
 
     @Test
     public void testOrderByDate() {
-        log.debug("Start testOrderByDate..." );
+        log.debug("Start testOrderByDate...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_DATETIME;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
@@ -528,61 +543,67 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsAtPos("gamma", 2, res));
         assertTrue(resultContainsAtPos("delta", 1, res));
         assertTrue(resultContainsAtPos("epsilon", 0, res));
-        log.debug("...Stop testOrderByDate." );
+        log.debug("...Stop testOrderByDate.");
     }
 
     @Test
     public void testOrderByBool() {
-        log.debug("Start testOrderByBool..." );
+        log.debug("Start testOrderByBool...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_BOOLEAN;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
         assertTrue(resultContainsAtPos("beta", 0, res) || resultContainsAtPos("beta", 1, res));
         assertTrue(resultContainsAtPos("epsilon", 0, res) || resultContainsAtPos("epsilon", 1, res));
-        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 3, res) || resultContainsAtPos("alpha", 4, res));
-        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 3, res) || resultContainsAtPos("gamma", 4, res));
-        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 3, res) || resultContainsAtPos("delta", 4, res));
+        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 3, res)
+                || resultContainsAtPos("alpha", 4, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 3, res)
+                || resultContainsAtPos("gamma", 4, res));
+        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 3, res)
+                || resultContainsAtPos("delta", 4, res));
 
         statement = "SELECT * FROM " + COMPLEX_TYPE + " ORDER BY " + PROP_ID_BOOLEAN + " DESC";
         res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
         assertTrue(resultContainsAtPos("beta", 3, res) || resultContainsAtPos("beta", 4, res));
         assertTrue(resultContainsAtPos("epsilon", 3, res) || resultContainsAtPos("epsilon", 4, res));
-        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 1, res) || resultContainsAtPos("alpha", 0, res));
-        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 1, res) || resultContainsAtPos("gamma", 0, res));
-        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 1, res) || resultContainsAtPos("delta", 0, res));
-        log.debug("...Stop testOrderByBool." );
+        assertTrue(resultContainsAtPos("alpha", 2, res) || resultContainsAtPos("alpha", 1, res)
+                || resultContainsAtPos("alpha", 0, res));
+        assertTrue(resultContainsAtPos("gamma", 2, res) || resultContainsAtPos("gamma", 1, res)
+                || resultContainsAtPos("gamma", 0, res));
+        assertTrue(resultContainsAtPos("delta", 2, res) || resultContainsAtPos("delta", 1, res)
+                || resultContainsAtPos("delta", 0, res));
+        log.debug("...Stop testOrderByBool.");
     }
-    
+
     // reported JIRA issue CMIS-510
     @Test
     public void testOrderBySystemProperties() {
-        log.debug("Start testOrderBySystemProperties..." );
-        String statement = "SELECT * from cmis:document ORDER BY "+ PropertyIds.NAME;
+        log.debug("Start testOrderBySystemProperties...");
+        String statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.NAME;
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
         statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.CREATION_DATE + " ASC";
         assertEquals(5, res.getObjects().size());
         statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.LAST_MODIFICATION_DATE + " DESC";
         assertEquals(5, res.getObjects().size());
-        log.debug("...Stop testOrderBySystemProperties." );
+        log.debug("...Stop testOrderBySystemProperties.");
     }
 
     @Test
     public void testIsNull() {
-        log.debug("Start testIsNull..." );
+        log.debug("Start testIsNull...");
 
         dataCreator.createNullTestDocument();
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + " IS NULL";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("nulldoc", res));
-        log.debug("...Stop testIsNull." );
+        log.debug("...Stop testIsNull.");
     }
 
     @Test
     public void testIsNotNull() {
-        log.debug("Start testIsNotNull..." );
+        log.debug("Start testIsNotNull...");
         dataCreator.createNullTestDocument();
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + " IS NOT NULL";
         ObjectList res = doQuery(statement);
@@ -592,12 +613,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testIsNotNull." );
+        log.debug("...Stop testIsNotNull.");
     }
 
     @Test
     public void patternTest() {
-        log.debug("Start patternTest..." );
+        log.debug("Start patternTest...");
         String res = InMemoryQueryProcessor.translatePattern("ABC%def");
         assertEquals("ABC.*def", res);
         res = InMemoryQueryProcessor.translatePattern("%abc");
@@ -627,60 +648,66 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertEquals("abc.def.ghi", res);
         res = InMemoryQueryProcessor.translatePattern("abc_def\\_ghi_jkl");
         assertEquals("abc.def\\_ghi.jkl", res);
-        log.debug("...Stop patternTest." );
+        log.debug("...Stop patternTest.");
     }
 
     @Test
     public void testLike() {
-        log.debug("Start testLike..." );
+        log.debug("Start testLike...");
         dataCreator.createLikeTestDocuments(fRootFolderId);
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE 'ABC%'";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " LIKE 'ABC%'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));
         assertTrue(resultContains("likedoc2", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE '%ABC'";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " LIKE '%ABC'";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("likedoc3", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE '%ABC%'";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " LIKE '%ABC%'";
         res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));
         assertTrue(resultContains("likedoc2", res));
         assertTrue(resultContains("likedoc3", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " LIKE 'AB_DEF'";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " LIKE 'AB_DEF'";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));
-        log.debug("...Stop testLike." );
+        log.debug("...Stop testLike.");
     }
 
     @Test
     public void testNotLike() {
-        log.debug("Start testNotLike..." );
+        log.debug("Start testNotLike...");
         dataCreator.createLikeTestDocuments(fRootFolderId);
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT LIKE 'ABC%'";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " NOT LIKE 'ABC%'";
         ObjectList res = doQuery(statement);
         assertEquals(6, res.getObjects().size());
         assertTrue(resultContains("likedoc3", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT LIKE '%a'";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " NOT LIKE '%a'";
         res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));
         assertTrue(resultContains("likedoc1", res));
         assertTrue(resultContains("likedoc3", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testNotLike." );
+        log.debug("...Stop testNotLike.");
     }
 
     @Test
     public void testInFolder() {
-        log.debug("Start testInFolder..." );
+        log.debug("Start testInFolder...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER('" + fRootFolderId + "')";
         ObjectList res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
@@ -703,7 +730,8 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(UnknownType, '" + dataCreator.getFolder2() + "')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_FOLDER(UnknownType, '" + dataCreator.getFolder2()
+                + "')";
         try {
             res = doQuery(statement);
             fail("Unknown type in folder should throw exception");
@@ -711,15 +739,16 @@ public class EvalQueryTest extends AbstractServiceTest {
             assertTrue(e.toString().contains("is neither a type query name nor an alias"));
             log.debug("expected Exception: " + e);
         }
-        log.debug("...Stop testInFolder." );
+        log.debug("...Stop testInFolder.");
     }
 
     @Test
     public void testInTree() {
-        log.debug("Start testInTree..." );
+        log.debug("Start testInTree...");
         dataCreator.createLikeTestDocuments(dataCreator.getFolder11());
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE(" + COMPLEX_TYPE + ", '" + dataCreator.getFolder1() + "')";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE IN_TREE(" + COMPLEX_TYPE + ", '"
+                + dataCreator.getFolder1() + "')";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("likedoc1", res));
@@ -742,35 +771,39 @@ public class EvalQueryTest extends AbstractServiceTest {
             assertTrue(e.toString().contains("is neither a type query name nor an alias"));
             log.debug("expected Exception: " + e);
         }
-        log.debug("...Stop testInTree." );
-   }
+        log.debug("...Stop testInTree.");
+    }
 
     @Test
     public void testIn() {
-        log.debug("Start testNotIn..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " IN ('Alpha', 'Beta', 'Gamma')";
+        log.debug("Start testNotIn...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " IN ('Alpha', 'Beta', 'Gamma')";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " IN ('Theta', 'Pi', 'Rho')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " IN ('Theta', 'Pi', 'Rho')";
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
-        log.debug("...Stop testNotIn." );
+        log.debug("...Stop testNotIn.");
     }
 
     @Test
     public void testNotIn() {
-        log.debug("Start testNotIn..." );
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT IN ('Alpha', 'Beta', 'Gamma')";
+        log.debug("Start testNotIn...");
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " NOT IN ('Alpha', 'Beta', 'Gamma')";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + " NOT IN ('Theta', 'Pi', 'Rho')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + " NOT IN ('Theta', 'Pi', 'Rho')";
         res = doQuery(statement);
         assertEquals(5, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
@@ -778,69 +811,78 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testNotIn." );
-   }
+        log.debug("...Stop testNotIn.");
+    }
 
     @Test
     public void testMultiValueInAny() {
-        log.debug("Start testMultiValueNotInAny..." );
+        log.debug("Start testMultiValueNotInAny...");
         dataCreator.createMultiValueDocuments();
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('red', 'black', 'grey')";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('red', 'black', 'grey')";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("mv-alpha", res));
         assertTrue(resultContains("mv-beta", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('green', 'black', 'grey')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('green', 'black', 'grey')";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("mv-alpha", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('white', 'black', 'grey')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " IN ('white', 'black', 'grey')";
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
-        log.debug("...Stop testMultiValueNotInAny." );
-   }
+        log.debug("...Stop testMultiValueNotInAny.");
+    }
 
     @Test
     public void testMultiValueNotInAny() {
-        log.debug("Start testMultiValueNotInAny..." );
+        log.debug("Start testMultiValueNotInAny...");
         dataCreator.createMultiValueDocuments();
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('red', 'black', 'grey')";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('red', 'black', 'grey')";
         ObjectList res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('green', 'black', 'grey')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('green', 'black', 'grey')";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("mv-beta", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('white', 'black', 'grey')";
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE + " NOT IN ('white', 'black', 'grey')";
         res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("mv-alpha", res));
         assertTrue(resultContains("mv-beta", res));
-        log.debug("...Stop testMultiValueNotInAny." );
-   }
+        log.debug("...Stop testMultiValueNotInAny.");
+    }
 
     @Test
     public void testMultiValueEqAny() {
-        log.debug("Start testMultiValueEqAny..." );
+        log.debug("Start testMultiValueEqAny...");
         dataCreator.createMultiValueDocuments();
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'red' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE ;
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'red' = ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE;
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("mv-alpha", res));
         assertTrue(resultContains("mv-beta", res));
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE ;
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING_MULTI_VALUE;
         res = doQuery(statement);
         assertEquals(0, res.getObjects().size());
 
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY " + UnitTestTypeSystemCreator.PROP_ID_STRING;
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE 'black' = ANY "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING;
         try {
             doQuery(statement);
             fail("Unknown = ANY with single value prop should throw exception");
@@ -848,12 +890,12 @@ public class EvalQueryTest extends AbstractServiceTest {
             assertTrue(e.toString().contains("only is allowed on multi-value properties"));
             log.debug("expected Exception: " + e);
         }
-        log.debug("...Stop testMultiValueEqAny." );
+        log.debug("...Stop testMultiValueEqAny.");
     }
 
     @Test
     public void testVersionsWithQuery() {
-        log.debug("Start testLastestVersionsWithQuery..." );
+        log.debug("Start testLastestVersionsWithQuery...");
         String id = dataCreator.createVersionedDocument();
         assertNotNull(id);
         String statement = "SELECT * FROM " + UnitTestTypeSystemCreator.VERSIONED_TYPE;
@@ -868,12 +910,12 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertEquals(1, res.getObjects().size());
         assertFalse(resultContains("V 1.0", PropertyIds.VERSION_LABEL, res));
         assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
-        log.debug("...Stop testLastestVersionsWithQuery." );
-   }
+        log.debug("...Stop testLastestVersionsWithQuery.");
+    }
 
     @Test
     public void testLastestVersionsWithQuery() {
-        log.debug("Start testLastestVersionsWithQuery..." );
+        log.debug("Start testLastestVersionsWithQuery...");
         String id = dataCreator.createVersionedDocument();
         assertNotNull(id);
         String statement = "SELECT * FROM " + UnitTestTypeSystemCreator.VERSIONED_TYPE;
@@ -886,45 +928,45 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertEquals(1, res.getObjects().size());
         assertFalse(resultContains("V 1.0", PropertyIds.VERSION_LABEL, res));
         assertTrue(resultContains("V 2.0", PropertyIds.VERSION_LABEL, res));
-        log.debug("...Stop testLastestVersionsWithQuery." );
+        log.debug("...Stop testLastestVersionsWithQuery.");
     }
-    
+
     @Test
     public void testContainsWord() {
-        log.debug("Start testContainsWord..." );
+        log.debug("Start testContainsWord...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat')";
         ObjectList res = doQuery(statement);
         assertEquals(3, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testContainsWord." );
+        log.debug("...Stop testContainsWord.");
     }
 
     @Test
     public void testContainsPhrase() {
-        log.debug("Start testContainsPhrase..." );
+        log.debug("Start testContainsPhrase...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('\\'Kitty Katty\\'')";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("beta", res));
-        log.debug("...Stop testContainsPhrase." );
+        log.debug("...Stop testContainsPhrase.");
     }
 
     @Test
     public void testContainsNot() {
-        log.debug("Start testContainsNot..." );
+        log.debug("Start testContainsNot...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('-cat')";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("epsilon", res));
-        log.debug("...Stop testContainsNot." );
+        log.debug("...Stop testContainsNot.");
     }
 
     @Test
     public void testContainsOr() {
-        log.debug("Start testContainsOr..." );
+        log.debug("Start testContainsOr...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat OR dog')";
         ObjectList res = doQuery(statement);
         assertEquals(4, res.getObjects().size());
@@ -932,55 +974,76 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContains("beta", res));
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testContainsOr." );
+        log.debug("...Stop testContainsOr.");
     }
 
     @Test
     public void testContainsAnd() {
-        log.debug("Start testContainsAnd..." );
+        log.debug("Start testContainsAnd...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('cat dog')";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("delta", res));
-        log.debug("...Stop testContainsAnd." );
+        log.debug("...Stop testContainsAnd.");
     }
 
     @Test
     public void testContainsAndScore() {
-        log.debug("Start testContainsAndScore..." );
+        log.debug("Start testContainsAndScore...");
         String statement = "SELECT cmis:objectId,cmis:name,SCORE() FROM " + COMPLEX_TYPE + " WHERE CONTAINS('dog')";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
         assertTrue(resultContains("gamma", res));
         assertTrue(resultContains("delta", res));
         assertTrue(resultContains(1.0, "SEARCH_SCORE", res));
-        log.debug("...Stop testContainsAndScore." );
-   }
+        log.debug("...Stop testContainsAndScore.");
+    }
 
     @Test
     public void testSecondaryTypes() {
-        log.debug("Start testSecondaryTypes..." );
+        log.debug("Start testSecondaryTypes...");
         // create documents with secondary types in addition
         dataCreator.createSecondaryTestDocuments();
 
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING + "= 'Secondary'";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + UnitTestTypeSystemCreator.PROP_ID_STRING
+                + "= 'Secondary'";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("docwithsecondary", res));
         assertFalse(resultContains(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
 
-        statement = "SELECT * FROM " + SECONDARY_TYPE + " WHERE " + UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP + "= 100";
+        statement = "SELECT * FROM " + SECONDARY_TYPE + " WHERE " + UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP
+                + "= 100";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertFalse(resultContains("docwithsecondary", res));
         assertTrue(resultContains("Secondary Property Value", UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
         assertTrue(resultContains(BigInteger.valueOf(100), UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
-        log.debug("...Stop testSecondaryTypes." );
-   }
+        assertFalse(resultContainsProperty(UnitTestTypeSystemCreator.PROP_ID_STRING, res));
+        log.debug("...Stop testSecondaryTypes.");
+    }
+
+    // @Test
+    private void testSecondaryJoin() {
+        log.debug("Start testSecondaryJoin...");
+        // create documents with secondary types in addition
+        dataCreator.createSecondaryTestDocuments();
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " JOIN SECONDARY_TYPE ON id = id WHERE "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING + "= 'Secondary'";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.PROP_ID_STRING, res));
+        assertTrue(resultContainsProperty(PropertyIds.NAME, res));
+        assertTrue(resultContainsProperty(PropertyIds.OBJECT_ID, res));
+        assertTrue(resultContainsProperty(PropertyIds.OBJECT_TYPE_ID, res));
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
+        log.debug("...Stop testSecondaryJoin.");
+    }
 
     @Test
     public void testMultipleContains() {
-        log.debug("Start testMultipleContains..." );
+        log.debug("Start testMultipleContains...");
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('abc') AND CONTAINS('123')";
         try {
             doQuery(statement);
@@ -988,25 +1051,25 @@ public class EvalQueryTest extends AbstractServiceTest {
         } catch (CmisInvalidArgumentException e) {
             assertTrue(e.getMessage().contains("More than one CONTAINS"));
         }
-        log.debug("...Stop testMultipleContains." );
+        log.debug("...Stop testMultipleContains.");
     }
 
     @Test
     public void testPredfinedQueryName() {
-        log.debug("Start testPredfinedQueryName..." );
+        log.debug("Start testPredfinedQueryName...");
         String statement = "SELECT cmis:name as abc, SCORE() FROM " + COMPLEX_TYPE + " ORDER BY SEARCH_SCORE";
         try {
             doQuery(statement);
         } catch (Exception e) {
             fail("SEARCH_SCORE in ORDER_BY must be supported.");
         }
-        log.debug("...Stop testPredfinedQueryName." );
+        log.debug("...Stop testPredfinedQueryName.");
     }
-    
+
     private ObjectList doQuery(String queryString) {
         log.debug("\nExecuting query: " + queryString);
-        ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false,
-                IncludeRelationships.NONE, null, null, null, null);
+        ObjectList res = fDiscSvc.query(fRepositoryId, queryString, false, false, IncludeRelationships.NONE, null,
+                null, null, null);
         log.debug("Query result, number of matching objects: " + res.getNumItems());
         for (ObjectData od : res.getObjects()) {
             PropertyData<?> propData = od.getProperties().getProperties().get(PropertyIds.NAME);
@@ -1020,11 +1083,12 @@ public class EvalQueryTest extends AbstractServiceTest {
 
     private ObjectList doQueryAllVersions(String queryString) {
         log.debug("\nExecuting query: " + queryString);
-        ObjectList res = fDiscSvc.query(fRepositoryId, queryString, true, false,
-                IncludeRelationships.NONE, null, null, null, null);
+        ObjectList res = fDiscSvc.query(fRepositoryId, queryString, true, false, IncludeRelationships.NONE, null, null,
+                null, null);
         log.debug("Query result, number of matching objects: " + res.getNumItems());
         for (ObjectData od : res.getObjects()) {
-            log.debug("Found matching object: " + od.getProperties().getProperties().get(PropertyIds.NAME).getFirstValue());
+            log.debug("Found matching object: "
+                    + od.getProperties().getProperties().get(PropertyIds.NAME).getFirstValue());
         }
         return res;
     }
@@ -1057,7 +1121,19 @@ public class EvalQueryTest extends AbstractServiceTest {
     }
 
     private static boolean resultContainsAtPos(String name, int index, ObjectList results) {
-        String nameProp = (String) results.getObjects().get(index).getProperties().getProperties().get(PropertyIds.NAME).getFirstValue();
+        String nameProp = (String) results.getObjects().get(index).getProperties().getProperties()
+                .get(PropertyIds.NAME).getFirstValue();
         return name.equals(nameProp);
     }
+
+    private static boolean resultContainsProperty(String propId, ObjectList results) {
+        for (ObjectData od : results.getObjects()) {
+            PropertyData<?> propData = od.getProperties().getProperties().get(propId);
+            if (null != propData) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
