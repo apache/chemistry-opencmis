@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.antlr.runtime.tree.Tree;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.slf4j.Logger;
@@ -389,6 +391,39 @@ public class QueryObject {
         sortSpecs.add(new SortSpec(node.getTokenStartIndex(), ascending));
     }
 
+    /**
+     * Tests if the query has a JOIN from one primary type to only secondary types
+     * (This JOIN does not require a JOIN capability in CMIS).
+     * 
+     * @return list of secondary type ids that are joined or null if the
+     * query has no JOINs or has joins to primary types
+     */
+    public List<TypeDefinition> getJoinedSecondaryTypes() {
+        List<TypeDefinition> secondaryTypeIds = new ArrayList<TypeDefinition>();
+        Map<String, String> froms = getTypes();
+        if (froms.size() == 1)
+            return null; // no JOIN in query
+        String mainTypeQueryName = froms.get(getMainTypeAlias());
+        for (String queryName: froms.values()) {
+            TypeDefinition td = getTypeDefinitionFromQueryName(queryName);
+            if (queryName.equals(mainTypeQueryName))
+                continue;
+            if (td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY) {
+                secondaryTypeIds.add(td);
+            } else {
+                return null;
+            }
+        }
+        for (JoinSpec join : getJoins()) {
+            if (!(null != join.onLeft && null != join.onRight && ((join.onRight.getPropertyId() == null && join.onRight.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY &&
+                    join.onLeft.getPropertyId().equals(PropertyIds.OBJECT_ID)) ||
+                    (join.onLeft.getPropertyId() == null && join.onLeft.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && 
+                    join.onRight.getPropertyId().equals(PropertyIds.OBJECT_ID)  ))))
+                return null;             
+        }
+        return secondaryTypeIds;
+    }
+
     // ///////////////////////////////////////////////////////
     // resolve types after first pass traversing the AST is complete
 
@@ -574,6 +609,8 @@ public class QueryObject {
             hasProp = true;
         } else {
             hasProp = TypeValidator.typeContainsPropertyWithQueryName(td, colRef.getPropertyQueryName());
+            if (!hasProp && td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && colRef.getPropertyQueryName().equals(PropertyIds.OBJECT_ID))
+                hasProp = true; // special handling for object id on secondary types which are required for JOINS
         }
         if (!hasProp) {
             throw new CmisQueryException(colRef.getPropertyQueryName()

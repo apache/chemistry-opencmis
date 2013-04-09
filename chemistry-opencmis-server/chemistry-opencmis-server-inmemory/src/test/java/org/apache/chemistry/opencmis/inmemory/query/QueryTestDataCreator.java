@@ -351,8 +351,7 @@ public class QueryTestDataCreator {
         gc1.set(1945, 4, 8);
 
         final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
-            {
+            new HashMap<String, Object>() {{
                 put(PROP_ID_STRING, "Secondary");
                 put(PROP_ID_INT, Integer.valueOf(-100));
                 put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
@@ -367,19 +366,18 @@ public class QueryTestDataCreator {
         assertNotNull(doc1);
         
         final Map<String, Object> propertyMap2 =
-                new HashMap<String, Object>() {
-                {
-                    put(PROP_ID_STRING, "Secondary 2");
-                    put(PROP_ID_INT, Integer.valueOf(123));
-                    put(PROP_ID_DECIMAL, Double.valueOf(1.23E24d));
-                    put(PROP_ID_BOOLEAN, false);
-                    put(SECONDARY_STRING_PROP, stringPropVal2);
-                    put(SECONDARY_INTEGER_PROP,intPropVal2);
-                    put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
-                }};
-            ContentStream content2 = createContent("Even still some more content.");
-            doc1 = createDocument("docwithsecondary2", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
-            assertNotNull(doc1);
+            new HashMap<String, Object>() {{
+                put(PROP_ID_STRING, "Secondary 2");
+                put(PROP_ID_INT, Integer.valueOf(123));
+                put(PROP_ID_DECIMAL, Double.valueOf(1.23E24d));
+                put(PROP_ID_BOOLEAN, false);
+                put(SECONDARY_STRING_PROP, stringPropVal2);
+                put(SECONDARY_INTEGER_PROP,intPropVal2);
+                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
+            }};
+        ContentStream content2 = createContent("Even still some more content.");
+        doc1 = createDocument("docwithsecondary2", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
+        assertNotNull(doc1);
     }
     
     

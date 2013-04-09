@@ -57,6 +57,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     public static final String VERSION_PROPERTY_ID = "StringProp";
     public static final String FOLDER_TYPE = "FolderType";
     public static final String SECONDARY_TYPE = "MySecondaryType";
+    public static final String SECONDARY_TYPE_2 = "MySecondaryType2";
     
     public static final String PROP_ID_BOOLEAN = "BooleanProp";
     public static final String PROP_ID_DATETIME = "DateTimeProp";
@@ -321,7 +322,6 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                 "MySecondaryType");
         // create a single String property definition
         propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
         PropertyStringDefinitionImpl propStr = PropertyCreationHelper.createStringDefinition(SECONDARY_STRING_PROP,
                 "Secondary String Property", Updatability.READWRITE);
         propertyDefinitions.put(propStr.getId(), propStr);
@@ -331,15 +331,17 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         propertyDefinitions.put(propInt.getId(), propInt);
         cmisSecondaryType.addCustomPropertyDefinitions(propertyDefinitions);
 
+        InMemorySecondaryTypeDefinition cmisSecondaryType2 = new InMemorySecondaryTypeDefinition(SECONDARY_TYPE_2, 
+                "MySecondaryType-2");
 
-        // add type to types collection
+        // add type to types collectio
         typesList.add(cmisDocTypeTopLevel);
         typesList.add(cmisDocTypeLevel1);
         typesList.add(cmisDocTypeLevel2);
         typesList.add(cmisVersionedType);
         typesList.add(cmisFolderType);
         typesList.add(cmisSecondaryType);
-
+        typesList.add(cmisSecondaryType2);
         return typesList;
     }
 

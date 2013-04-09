@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.C
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_BOOLEAN;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DATETIME;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_DECIMAL;
+import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_ID;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.PROP_ID_INT;
 import static org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator.SECONDARY_TYPE;
 import static org.junit.Assert.assertEquals;
@@ -37,7 +38,6 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.AbstractServiceTest;
@@ -1000,6 +1000,24 @@ public class EvalQueryTest extends AbstractServiceTest {
     }
 
     @Test
+    public void testNotSetProperties() {
+        log.debug("Start testNotSetProperties...");
+        // PROP_ID_ID is not set property
+        String statement = "SELECT cmis:name, " + PROP_ID_ID + " FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 100";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("epsilon", res));
+        assertTrue(resultContainsNotSetPropertyValue(PROP_ID_ID, res.getObjects().get(0)));
+
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 100";
+        res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains("epsilon", res));
+        assertTrue(resultContainsNotSetPropertyValue(PROP_ID_ID, res.getObjects().get(0)));
+        log.debug("...Stop testNotSetProperties.");
+    }
+    
+    @Test
     public void testSecondaryTypes() {
         log.debug("Start testSecondaryTypes...");
         // create documents with secondary types in addition
@@ -1023,14 +1041,26 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("...Stop testSecondaryTypes.");
     }
 
-    // @Test
-    private void testSecondaryJoin() {
+    @Test
+    public void testSecondaryJoin() {
         log.debug("Start testSecondaryJoin...");
         // create documents with secondary types in addition
         dataCreator.createSecondaryTestDocuments();
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " JOIN SECONDARY_TYPE ON id = id WHERE "
-                + UnitTestTypeSystemCreator.PROP_ID_STRING + "= 'Secondary'";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " LEFT JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
+                + ".cmis:objectId = " + SECONDARY_TYPE + ".cmis:objectId WHERE cmis:name LIKE 'docwithsecondary%'";
         ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.PROP_ID_STRING, res));
+        assertTrue(resultContainsProperty(PropertyIds.NAME, res));
+        assertTrue(resultContainsProperty(PropertyIds.OBJECT_ID, res));
+        assertTrue(resultContainsProperty(PropertyIds.OBJECT_TYPE_ID, res));
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
+
+        // Test a query with secondary types matching only one document not having this secondary type
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " LEFT JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
+                + ".cmis:objectId = " + SECONDARY_TYPE + ".cmis:objectId WHERE cmis:name = 'alpha'";
+        res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.PROP_ID_STRING, res));
         assertTrue(resultContainsProperty(PropertyIds.NAME, res));
@@ -1038,12 +1068,14 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsProperty(PropertyIds.OBJECT_TYPE_ID, res));
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
+        
         log.debug("...Stop testSecondaryJoin.");
     }
 
     @Test
     public void testMultipleContains() {
         log.debug("Start testMultipleContains...");
+        dataCreator.createSecondaryTestDocuments();
         String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('abc') AND CONTAINS('123')";
         try {
             doQuery(statement);
@@ -1126,14 +1158,19 @@ public class EvalQueryTest extends AbstractServiceTest {
         return name.equals(nameProp);
     }
 
+    private boolean resultContainsNotSetPropertyValue(String propId, ObjectData od) {
+        PropertyData<?> propData = od.getProperties().getProperties().get(propId);
+        return propData != null && propId.equals(propData.getId()) && propData.getValues().isEmpty();
+    }
+
     private static boolean resultContainsProperty(String propId, ObjectList results) {
         for (ObjectData od : results.getObjects()) {
             PropertyData<?> propData = od.getProperties().getProperties().get(propId);
-            if (null != propData) {
-                return true;
+            if (null == propData) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
 }
