@@ -78,7 +78,8 @@ public class ThresholdOutputStream extends OutputStream {
      * Constructor.
      * 
      * @param tempDir
-     *            temp directory
+     *            temp directory or <code>null</code> for the default temp
+     *            directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -92,7 +93,8 @@ public class ThresholdOutputStream extends OutputStream {
      * Constructor.
      * 
      * @param tempDir
-     *            temp directory
+     *            temp directory or <code>null</code> for the default temp
+     *            directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -108,11 +110,14 @@ public class ThresholdOutputStream extends OutputStream {
      * @param initSize
      *            initial internal buffer size
      * @param tempDir
-     *            temp directory
+     *            temp directory or <code>null</code> for the default temp
+     *            directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
      *            max size of the content in bytes (-1 to disable the check)
+     * @param encrypt
+     *            indicates if temporary files must be encrypted
      */
     public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
         if (initSize < 0) {

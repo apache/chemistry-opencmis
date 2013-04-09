@@ -63,6 +63,7 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Repository Service operations.
@@ -433,8 +434,9 @@ public final class RepositoryService {
     public static void createType(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // parse entry
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(streamFactory);
         parser.parse(request.getInputStream());
 
         // execute
@@ -461,8 +463,9 @@ public final class RepositoryService {
     public static void updateType(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // parse entry
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(streamFactory);
         parser.parse(request.getInputStream());
 
         // execute

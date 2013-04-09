@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Simple multi-part parser, following all necessary standards for the CMIS
@@ -55,10 +55,7 @@ public class MultipartParser {
     private static final byte[] BOUNDARY_PREFIX = { CR, LF, DASH, DASH };
 
     private final HttpServletRequest request;
-    private final File tempDir;
-    private final int memoryThreshold;
-    private final long maxContentSize;
-    private final boolean encrypt;
+    private final ThresholdOutputStreamFactory streamFactory;
     private final InputStream requestStream;
 
     private byte[] boundary;
@@ -85,14 +82,9 @@ public class MultipartParser {
     private Map<String, byte[][]> rawFields;
     private String charset = "ISO-8859-1";
 
-    public MultipartParser(HttpServletRequest request, File tempDir, int memoryThreshold, long maxContentSize,
-            boolean encrypt) throws IOException {
+    public MultipartParser(HttpServletRequest request, ThresholdOutputStreamFactory streamFactory) throws IOException {
         this.request = request;
-        this.tempDir = tempDir;
-        this.memoryThreshold = memoryThreshold;
-        this.maxContentSize = maxContentSize;
-        this.encrypt = encrypt;
-
+        this.streamFactory = streamFactory;
         this.requestStream = request.getInputStream();
 
         extractBoundary();
@@ -382,7 +374,7 @@ public class MultipartParser {
     }
 
     private void readBodyAsStream() throws IOException {
-        ThresholdOutputStream stream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize, encrypt);
+        ThresholdOutputStream stream = streamFactory.newOutputStream();
 
         try {
             while (true) {

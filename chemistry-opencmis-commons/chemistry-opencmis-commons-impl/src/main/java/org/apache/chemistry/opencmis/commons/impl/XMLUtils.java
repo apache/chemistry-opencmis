@@ -209,7 +209,7 @@ public class XMLUtils {
     /**
      * Skips a tag or subtree.
      */
-    public static void skip(XMLStreamReader parser) throws Exception {
+    public static void skip(XMLStreamReader parser) throws XMLStreamException {
         int level = 1;
         while (next(parser)) {
             int event = parser.getEventType();

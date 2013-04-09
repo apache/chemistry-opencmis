@@ -70,7 +70,9 @@ public interface CallContext {
     String MAX_CONTENT_SIZE = "maxContentSize";
     /** Key: encrypt temp files (values is a Boolean) */
     String ENCRYPT_TEMP_FILE = "encryptTempFiles";
-
+    /** Key: factory for threshold streams (value is a ThresholdOutputStreamFactory) */
+    String STREAM_FACTORY = "streamFactory";
+    
     /**
      * Returns the binding. Usually it returns
      * {@link CallContext#BINDING_ATOMPUB},

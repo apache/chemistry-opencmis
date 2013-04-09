@@ -28,7 +28,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
+import org.apache.chemistry.opencmis.client.bindings.impl.RepositoryInfoCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -51,20 +55,20 @@ import org.w3c.dom.Node;
  */
 public abstract class AbstractWebServicesService {
 
-    private BindingSession fSession;
+    private BindingSession session;
 
     /**
      * Sets the current session.
      */
     protected void setSession(BindingSession session) {
-        fSession = session;
+        this.session = session;
     }
 
     /**
      * Gets the current session.
      */
     protected BindingSession getSession() {
-        return fSession;
+        return session;
     }
 
     /**
@@ -140,5 +144,23 @@ public abstract class AbstractWebServicesService {
         }
 
         return "";
+    }
+
+    /**
+     * Return the CMIS version of the given repository.
+     */
+    protected CmisVersion getCmisVersion(String repositoryId) {
+        RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
+        RepositoryInfo info = cache.get(repositoryId);
+
+        if (info == null) {
+            info = CmisBindingsHelper.getSPI(session).getRepositoryService().getRepositoryInfo(repositoryId, null);
+            if (info != null) {
+                cache.put(info);
+            }
+        }
+
+        // if the version is unknown try CMIS 1.0
+        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
     }
 }

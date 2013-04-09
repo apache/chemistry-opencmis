@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Versioning Service operations.
@@ -54,8 +55,9 @@ public final class VersioningService {
     public static void checkOut(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(streamFactory);
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 

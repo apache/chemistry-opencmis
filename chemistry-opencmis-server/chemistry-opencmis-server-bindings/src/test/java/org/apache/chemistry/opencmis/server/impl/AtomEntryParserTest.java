@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.junit.Test;
 
 /**
@@ -172,8 +173,9 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomTitle() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), null,
-                THRESHOLD, MAX_SIZE, false);
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), streamFactory);
 
         assertNotNull(aep);
         assertNotNull(aep.getObject());
@@ -189,7 +191,9 @@ public class AtomEntryParserTest {
 
     @Test
     public void testNullStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(null, null, THRESHOLD, MAX_SIZE, false);
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        AtomEntryParser aep = new AtomEntryParser(null, streamFactory);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -200,8 +204,9 @@ public class AtomEntryParserTest {
 
     @Test
     public void testEmptyStream() throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), null, THRESHOLD, MAX_SIZE,
-                false);
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), streamFactory);
 
         assertNotNull(aep);
         assertNull(aep.getId());
@@ -211,7 +216,9 @@ public class AtomEntryParserTest {
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), null, THRESHOLD, MAX_SIZE, false);
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), streamFactory);
         ContentStream contentStream = aep.getContentStream();
 
         assertNotNull(contentStream);

@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.impl.browser.MultipartParser;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -376,7 +377,9 @@ public class MultipartParserTest {
         Mockito.when(request.getContentType()).thenReturn("multipart/form-data; boundary=\"" + boundary + "\"");
         Mockito.when(request.getInputStream()).thenReturn(stream);
 
-        return new MultipartParser(request, null, THRESHOLD, MAX_SIZE, false);
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        return new MultipartParser(request, streamFactory);
     }
 
     private byte[] readBytesFromStream(InputStream is) throws IOException {

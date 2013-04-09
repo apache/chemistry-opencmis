@@ -76,6 +76,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Object Service operations.
@@ -98,8 +99,9 @@ public final class ObjectService {
         VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
                 VersioningState.class);
 
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(streamFactory);
         parser.setIgnoreAtomContentSrc(true); // needed for some clients
         parser.parse(request.getInputStream());
 
@@ -161,8 +163,9 @@ public final class ObjectService {
     public static void createRelationship(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get parameters
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
         // execute
         String newObjectId = service.createRelationship(repositoryId, parser.getProperties(), parser.getPolicyIds(),
@@ -489,8 +492,9 @@ public final class ObjectService {
         String checkinComment = getStringParameter(request, Constants.PARAM_CHECKIN_COMMENT);
         Boolean major = getBooleanParameter(request, Constants.PARAM_MAJOR);
 
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
         // execute
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -543,8 +547,9 @@ public final class ObjectService {
     public static void bulkUpdateProperties(CallContext context, CmisService service, String repositoryId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        AtomEntryParser parser = new AtomEntryParser(context.getTempDirectory(), context.getMemoryThreshold(),
-                context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(streamFactory);
         parser.parse(request.getInputStream());
 
         BulkUpdateImpl bulkUpdate = parser.getBulkUpdate();

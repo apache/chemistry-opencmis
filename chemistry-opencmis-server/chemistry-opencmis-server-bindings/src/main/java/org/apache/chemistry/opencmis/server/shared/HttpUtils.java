@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.shared;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,8 +49,7 @@ public final class HttpUtils {
      */
     public static CallContext createContext(HttpServletRequest request, HttpServletResponse response,
             ServletContext servletContext, String binding, CmisVersion cmisVersion,
-            CallContextHandler callContextHandler, File tempDir, int memoryThreshold, long maxContentSize,
-            boolean encrypt) {
+            CallContextHandler callContextHandler, ThresholdOutputStreamFactory streamFactory) {
         String[] pathFragments = splitPath(request);
 
         String repositoryId = null;
@@ -79,12 +77,13 @@ public final class HttpUtils {
 
         // CMIS version
         context.put(CallContext.CMIS_VERSION, cmisVersion);
-        
+
         // content
-        context.put(CallContext.TEMP_DIR, tempDir);
-        context.put(CallContext.MEMORY_THRESHOLD, memoryThreshold);
-        context.put(CallContext.MAX_CONTENT_SIZE, maxContentSize);
-        context.put(CallContext.ENCRYPT_TEMP_FILE, encrypt);
+        context.put(CallContext.TEMP_DIR, streamFactory.getTempDir());
+        context.put(CallContext.MEMORY_THRESHOLD, streamFactory.getMemoryThreshold());
+        context.put(CallContext.MAX_CONTENT_SIZE, streamFactory.getMaxContentSize());
+        context.put(CallContext.ENCRYPT_TEMP_FILE, streamFactory.isEncrypted());
+        context.put(CallContext.STREAM_FACTORY, streamFactory);
 
         // decode range
         String rangeHeader = request.getHeader("Range");

@@ -83,7 +83,6 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
@@ -123,6 +122,7 @@ import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,11 +134,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingServlet.class.getName());
 
-    private File tempDir;
-    private int memoryThreshold;
-    private long maxContentSize;
-    private boolean encrypt;
-
+    private ThresholdOutputStreamFactory streamFactory;
     private Dispatcher repositoryDispatcher;
     private Dispatcher rootDispatcher;
     private CallContextHandler callContextHandler;
@@ -167,10 +163,9 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");
         }
 
-        tempDir = factory.getTempDirectory();
-        memoryThreshold = factory.getMemoryThreshold();
-        maxContentSize = factory.getMaxContentSize();
-        encrypt = factory.encryptTempFiles();
+        // set up stream factory
+        streamFactory = ThresholdOutputStreamFactory.newInstance(factory.getTempDirectory(),
+                factory.getMemoryThreshold(), factory.getMaxContentSize(), factory.encryptTempFiles());
 
         // initialize the dispatchers
         repositoryDispatcher = new Dispatcher(false);
@@ -278,7 +273,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
-                request = new POSTHttpServletRequestWrapper(request, tempDir, memoryThreshold, maxContentSize, encrypt);
+                request = new POSTHttpServletRequestWrapper(request, streamFactory);
             } else {
                 throw new CmisNotSupportedException("Unsupported method");
             }
@@ -290,7 +285,7 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             }
 
             context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    CmisVersion.CMIS_1_1, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
+                    CmisVersion.CMIS_1_1, callContextHandler, streamFactory);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

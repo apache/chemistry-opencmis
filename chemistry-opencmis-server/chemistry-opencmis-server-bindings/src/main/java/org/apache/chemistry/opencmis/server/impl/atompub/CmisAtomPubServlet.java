@@ -44,7 +44,6 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_PUT;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -80,6 +79,7 @@ import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,11 +98,7 @@ public class CmisAtomPubServlet extends HttpServlet {
 
     private CmisVersion cmisVersion;
 
-    private File tempDir;
-    private int memoryThreshold;
-    private long maxContentSize;
-    private boolean encrypt;
-
+    private ThresholdOutputStreamFactory streamFactory;
     private Dispatcher dispatcher;
     private CallContextHandler callContextHandler;
 
@@ -144,10 +140,9 @@ public class CmisAtomPubServlet extends HttpServlet {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");
         }
 
-        tempDir = factory.getTempDirectory();
-        memoryThreshold = factory.getMemoryThreshold();
-        maxContentSize = factory.getMaxContentSize();
-        encrypt = factory.encryptTempFiles();
+        // set up stream factory
+        streamFactory = ThresholdOutputStreamFactory.newInstance(factory.getTempDirectory(),
+                factory.getMemoryThreshold(), factory.getMaxContentSize(), factory.encryptTempFiles());
 
         // initialize the dispatcher
         dispatcher = new Dispatcher();
@@ -211,7 +206,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         CallContext context = null;
         try {
             context = HttpUtils.createContext(qsRequest, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    cmisVersion, callContextHandler, tempDir, memoryThreshold, maxContentSize, encrypt);
+                    cmisVersion, callContextHandler, streamFactory);
             dispatch(context, qsRequest, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {

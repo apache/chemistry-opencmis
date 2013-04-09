@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Policy Service operations.
@@ -114,8 +115,9 @@ public final class PolicyService {
         // get parameters
         String objectId = getStringParameter(request, Constants.PARAM_ID);
 
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), context.getTempDirectory(),
-                context.getMemoryThreshold(), context.getMaxContentSize(), context.encryptTempFiles());
+        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                .get(CallContext.STREAM_FACTORY);
+        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
         // execute
         service.applyPolicy(repositoryId, parser.getId(), objectId, null);

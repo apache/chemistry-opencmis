@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -29,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
     private final boolean isMultipart;
@@ -37,15 +37,15 @@ public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequest
     private BigInteger size;
     private InputStream stream;
 
-    public POSTHttpServletRequestWrapper(HttpServletRequest request, File tempDir, int memoryThreshold,
-            long maxContentSize, boolean encrypt) throws Exception {
+    public POSTHttpServletRequestWrapper(HttpServletRequest request, ThresholdOutputStreamFactory streamFactory)
+            throws Exception {
         super(request);
 
         // check multipart
         isMultipart = MultipartParser.isMultipartContent(request);
 
         if (isMultipart) {
-            MultipartParser parser = new MultipartParser(request, tempDir, memoryThreshold, maxContentSize, encrypt);
+            MultipartParser parser = new MultipartParser(request, streamFactory);
             parser.parse();
 
             if (parser.hasContent()) {

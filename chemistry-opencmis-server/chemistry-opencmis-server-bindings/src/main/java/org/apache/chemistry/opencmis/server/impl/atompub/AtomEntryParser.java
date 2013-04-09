@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -55,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.server.shared.CappedInputStream;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Parser for Atom Entries.
@@ -80,10 +80,7 @@ public class AtomEntryParser {
 
     private CappedInputStream cappedStream;
 
-    private final File tempDir;
-    private final int memoryThreshold;
-    private final long maxContentSize;
-    private final boolean encrypt;
+    private final ThresholdOutputStreamFactory streamFactory;
 
     private ObjectData object;
     private ContentStreamImpl atomContentStream;
@@ -94,19 +91,15 @@ public class AtomEntryParser {
     /**
      * Constructor.
      */
-    public AtomEntryParser(File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
-        this.tempDir = tempDir;
-        this.memoryThreshold = memoryThreshold;
-        this.maxContentSize = maxContentSize;
-        this.encrypt = encrypt;
+    public AtomEntryParser(ThresholdOutputStreamFactory streamFactory) {
+        this.streamFactory = streamFactory;
     }
 
     /**
      * Constructor that immediately parses the given stream.
      */
-    public AtomEntryParser(InputStream stream, File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt)
-            throws Exception {
-        this(tempDir, memoryThreshold, maxContentSize, encrypt);
+    public AtomEntryParser(InputStream stream, ThresholdOutputStreamFactory streamFactory) throws Exception {
+        this(streamFactory);
         parse(stream);
     }
 
@@ -404,9 +397,7 @@ public class AtomEntryParser {
      * Parses a tag that contains content bytes.
      */
     private ThresholdOutputStream readContentBytes(XMLStreamReader parser) throws Exception {
-        @SuppressWarnings("resource")
-        ThresholdOutputStream bufferStream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize,
-                encrypt);
+        ThresholdOutputStream bufferStream = streamFactory.newOutputStream();
 
         XMLUtils.next(parser);
 
@@ -444,8 +435,7 @@ public class AtomEntryParser {
      * Parses a tag that contains base64 encoded content.
      */
     private ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
-        ThresholdOutputStream bufferStream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize,
-                encrypt);
+        ThresholdOutputStream bufferStream = streamFactory.newOutputStream();
         @SuppressWarnings("resource")
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
