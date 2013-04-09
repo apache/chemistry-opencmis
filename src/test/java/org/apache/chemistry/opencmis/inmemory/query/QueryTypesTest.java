@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.inmemory.query;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -32,6 +33,7 @@ import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
+import org.apache.chemistry.opencmis.inmemory.UnitTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
@@ -526,7 +528,69 @@ public class QueryTypesTest extends AbstractQueryTest {
             }
         }
     }
+    
+    @Test
+    public void testSecondaryJoin() throws RecognitionException {
+        // needs some special types:
+        tm = new TypeManagerImpl();
+        tm.initTypeSystem(null); // create CMIS default types
 
+        // create some types for testing
+        List<TypeDefinition> typeDefs = UnitTestTypeSystemCreator.getTypesList(); 
+        for (TypeDefinition typeDef : typeDefs) {
+            tm.addTypeDefinition(typeDef);
+        }
+        super.setUp(tm, pw);
+
+        String statement = "SELECT * FROM cmis:document JOIN " + UnitTestTypeSystemCreator.SECONDARY_TYPE
+                + " WHERE SecondaryStringProp='groovy'";
+        CmisQueryWalker walker = getWalker(statement);
+        assertNotNull(queryObj);
+        assertNotNull(walker);
+        List<TypeDefinition> secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertNull(secondaryJoinedTypes);
+
+        statement = "SELECT * FROM cmis:document WHERE cmis:name='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertNull(secondaryJoinedTypes);
+        
+        statement = "SELECT * FROM cmis:document JOIN " + UnitTestTypeSystemCreator.COMPLEX_TYPE + " WHERE "
+                + UnitTestTypeSystemCreator.PROP_ID_STRING + "='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertNull(secondaryJoinedTypes);
+        
+        statement = "SELECT * FROM cmis:document JOIN " + UnitTestTypeSystemCreator.SECONDARY_TYPE
+                + " ON cmis:document.cmis:objectId = " + UnitTestTypeSystemCreator.SECONDARY_TYPE
+                + ".cmis:objectId WHERE SecondaryStringProp='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertEquals(1, secondaryJoinedTypes.size());
+        assertEquals(UnitTestTypeSystemCreator.SECONDARY_TYPE, secondaryJoinedTypes.get(0).getId());
+        
+        statement = "SELECT * FROM cmis:document JOIN " + UnitTestTypeSystemCreator.SECONDARY_TYPE
+                + " ON " + UnitTestTypeSystemCreator.SECONDARY_TYPE
+                + ".cmis:objectId = cmis:document.cmis:objectId WHERE SecondaryStringProp='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertEquals(1, secondaryJoinedTypes.size());
+        assertEquals(UnitTestTypeSystemCreator.SECONDARY_TYPE, secondaryJoinedTypes.get(0).getId());
+
+        statement = "SELECT * FROM cmis:document JOIN MySecondaryType ON cmis:document.cmis:objectId = MySecondaryType.cmis:objectId JOIN MySecondaryType2 ON cmis:document.cmis:objectId = MySecondaryType2.cmis:objectId WHERE SecondaryStringProp='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertEquals(2, secondaryJoinedTypes.size());
+        assertEquals(UnitTestTypeSystemCreator.SECONDARY_TYPE, secondaryJoinedTypes.get(0).getId());
+        assertEquals(UnitTestTypeSystemCreator.SECONDARY_TYPE_2, secondaryJoinedTypes.get(1).getId());
+
+        statement = "SELECT a.cmis:objectId, a.cmis:name, b.SecondaryStringProp FROM cmis:document AS a JOIN MySecondaryType AS b ON a.cmis:objectId = b.cmis:objectId WHERE b.SecondaryStringProp='groovy'";
+        walker = getWalker(statement);
+        secondaryJoinedTypes = queryObj.getJoinedSecondaryTypes();
+        assertEquals(1, secondaryJoinedTypes.size());
+        assertEquals(UnitTestTypeSystemCreator.SECONDARY_TYPE, secondaryJoinedTypes.get(0).getId());
+    }
+    
     @Test
     public void resolveTypeQualifiers1() throws Exception {
         String statement = "SELECT Title FROM BookType WHERE IN_TREE(BookType, 'foo')";

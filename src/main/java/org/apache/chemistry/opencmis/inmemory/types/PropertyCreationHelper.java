@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
  * @author Jens
  * 
  */
-public class PropertyCreationHelper {
+public final class PropertyCreationHelper {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyCreationHelper.class);
 
@@ -207,15 +207,15 @@ public class PropertyCreationHelper {
         prop.setDefaultValue(Collections.singletonList(defVal));
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, TypeManager typeManager, List<String> requestedIds,
-            boolean fillOptionalPropertyData) {
+    public static Properties getPropertiesFromObject(StoredObject so, TypeManager typeManager,
+            List<String> requestedIds, boolean fillOptionalPropertyData) {
         // build properties collection
 
         BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
         Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
         so.fillProperties(properties, objectFactory, requestedIds);
         TypeDefinition td = typeManager.getTypeById(so.getTypeId()).getTypeDefinition();
-        
+
         String typeId = so.getTypeId();
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
             if (td == null) {
@@ -232,17 +232,19 @@ public class PropertyCreationHelper {
         // fill not-set properties from type definition (as spec requires)
         Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
         for (PropertyDefinition<?> propDef : propDefs.values()) {
-            if (!properties.containsKey(propDef.getId()) && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
+            if (!properties.containsKey(propDef.getId())
+                    && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
                 properties.put(propDef.getId(), getEmptyValue(propDef));
         }
-        
+
         // fill not-set properties from secondary types
         List<String> secTypeIds = so.getSecondaryTypeIds();
-        for (String secTypeId: secTypeIds) {
+        for (String secTypeId : secTypeIds) {
             td = typeManager.getTypeById(secTypeId).getTypeDefinition();
             propDefs = td.getPropertyDefinitions();
             for (PropertyDefinition<?> propDef : propDefs.values()) {
-                if (!properties.containsKey(propDef.getId()) && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
+                if (!properties.containsKey(propDef.getId())
+                        && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
                     properties.put(propDef.getId(), getEmptyValue(propDef));
             }
         }
@@ -258,9 +260,8 @@ public class PropertyCreationHelper {
         return props;
     }
 
-	public static Properties getPropertiesFromObject(StoredObject so,
-			TypeDefinition td, TypeDefinition fromType,
-			Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
+    public static Properties getPropertiesFromObject(StoredObject so, TypeDefinition primaryType, List<TypeDefinition> secondaryTypes,
+            Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
         // build properties collection
 
         List<String> idList = new ArrayList<String>(requestedIds.values());
@@ -268,75 +269,126 @@ public class PropertyCreationHelper {
         Map<String, PropertyData<?>> properties = new HashMap<String, PropertyData<?>>();
         so.fillProperties(properties, objectFactory, idList);
 
-        String typeId = so.getTypeId();
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, idList)) {
-            if (td == null) {
-                log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
-                        + " is unknown");
-            } else {
-                String baseTypeId = td.getBaseTypeId().value();
-                properties.put(PropertyIds.BASE_TYPE_ID,
-                        objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
-            }
+            String baseTypeId = primaryType.getBaseTypeId().value();
+            properties.put(PropertyIds.BASE_TYPE_ID,
+                    objectFactory.createPropertyIdData(PropertyIds.BASE_TYPE_ID, baseTypeId));
         }
 
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
+        
+        // primary type:
         if (requestedIds.containsValue("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
-            	if (fromType.getPropertyDefinitions().containsKey(prop.getKey())) {
-            		// map property id to property query name
-            		String queryName = td.getPropertyDefinitions().get(prop.getKey()).getQueryName();
-            		String localName = td.getPropertyDefinitions().get(prop.getKey()).getLocalName();
-            		String displayName = td.getPropertyDefinitions().get(prop.getKey()).getDisplayName();
-            		AbstractPropertyData<?> ad = clonePropertyData(prop.getValue()); 
-
-            		ad.setQueryName(queryName);
-            		ad.setLocalName(localName);
-            		ad.setDisplayName(displayName);
-            		mappedProperties.put(queryName, ad);
-            	}
+                addPropertyToMap(mappedProperties, primaryType, prop.getValue(), null);
             }
+            // add all values that are not set:
+            Map<String, PropertyDefinition<?>> propDefs = primaryType.getPropertyDefinitions();
+            for (PropertyDefinition<?> propDef : propDefs.values()) {
+                if (!mappedProperties.containsKey(propDef.getQueryName()))
+                    mappedProperties.put(propDef.getId(), getEmptyValue(propDef));
+            }
+
         } else {
             // replace all ids with query names or alias:
             for (Entry<String, String> propAlias : requestedIds.entrySet()) {
-            	String queryNameOrAlias = propAlias.getKey();
-            	PropertyData<?> prop = properties.get(propAlias.getValue());
-            	if (fromType.getPropertyDefinitions().containsKey(prop.getId())) {
-            		String localName = td.getPropertyDefinitions().get(prop.getId()).getLocalName();
-            		String displayName = td.getPropertyDefinitions().get(prop.getId()).getDisplayName();
-            		AbstractPropertyData<?> ad = clonePropertyData(prop); 
-
-            		ad.setQueryName(queryNameOrAlias);
-            		ad.setLocalName(localName);
-            		ad.setDisplayName(displayName);
-            		mappedProperties.put(queryNameOrAlias, ad);
-            	}
+                String queryNameOrAlias = propAlias.getKey();
+                PropertyData<?> prop = properties.get(propAlias.getValue());
+                if (null != prop) {
+                    addPropertyToMap(mappedProperties, primaryType, prop, queryNameOrAlias);
+                } else {
+                    addNotSetPropertyToMap(mappedProperties, primaryType, propAlias.getValue(), queryNameOrAlias);
+                }
             }
         }
+        
+        // secondary types:
+        if (null != secondaryTypes) {
+            for (TypeDefinition typeDef : secondaryTypes) {
+                if (requestedIds.containsValue("*")) {
+                    for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
+                        addPropertyToMap(mappedProperties, typeDef, prop.getValue(), null);
+                    }
+                    // add all values that are not set:
+                    Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
+                    for (PropertyDefinition<?> propDef : propDefs.values()) {
+                        if (!mappedProperties.containsKey(propDef.getQueryName()))
+                            mappedProperties.put(propDef.getId(), getEmptyValue(propDef));
+                    }
+                } else {
+                    // replace all ids with query names or alias:
+                    for (Entry<String, String> propAlias : requestedIds.entrySet()) {
+                        String queryNameOrAlias = propAlias.getKey();
+                        PropertyData<?> prop = properties.get(propAlias.getValue());
+                        if (null != prop) {
+                            addPropertyToMap(mappedProperties, typeDef, prop, queryNameOrAlias);
+                        } else {
+                            addNotSetPropertyToMap(mappedProperties, typeDef, propAlias.getValue(), queryNameOrAlias);
+                        }
+                    }
+                }            
+            }
+        }
+        
         // add functions:
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
-        	String queryName;
-        	if (funcEntry.getValue().equals("SCORE")) {
-        		queryName = "SEARCH_SCORE";
-        		if (!funcEntry.getKey().equals("SCORE"))
-        			queryName = funcEntry.getKey();
-                
-//        		PropertyDecimal pd = objFactory.createPropertyDecimalData(queryName, BigDecimal.valueOf(1.0));
-        		// does not give me an impl class, so directly use it
+            String queryName;
+            if (funcEntry.getValue().equals("SCORE")) {
+                queryName = "SEARCH_SCORE";
+                if (!funcEntry.getKey().equals("SCORE"))
+                    queryName = funcEntry.getKey();
+
+                // PropertyDecimal pd =
+                // objFactory.createPropertyDecimalData(queryName,
+                // BigDecimal.valueOf(1.0));
+                // does not give me an impl class, so directly use it
                 PropertyDecimalImpl pd = new PropertyDecimalImpl();
 
                 // fixed dummy value
-        		pd.setValue(BigDecimal.valueOf(1.0));
-        		pd.setId(queryName);
-        		pd.setQueryName(queryName);
-        		pd.setLocalName("SCORE");
-        		pd.setDisplayName("Score");
+                pd.setValue(BigDecimal.valueOf(1.0));
+                pd.setId(queryName);
+                pd.setQueryName(queryName);
+                pd.setLocalName("SCORE");
+                pd.setDisplayName("Score");
                 mappedProperties.put(funcEntry.getKey(), pd);
-        	}
+            }
         }
 
         Properties props = new PropertiesImpl(mappedProperties.values());
         return props;
+    }
+
+    private static void addNotSetPropertyToMap(Map<String, PropertyData<?>> mappedProperties, TypeDefinition typeDef,
+            String propId, String queryNameOrAlias) {
+        PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(propId);
+        if (null != propDef) {
+            AbstractPropertyData<?> ad = getEmptyValue(propDef);
+            String localName = propDef.getLocalName();
+            String displayName = propDef.getDisplayName();
+            ad.setQueryName(queryNameOrAlias);
+            ad.setLocalName(localName);
+            ad.setDisplayName(displayName);
+            mappedProperties.put(queryNameOrAlias, ad);
+        }
+    }
+
+    private static void addPropertyToMap(Map<String, PropertyData<?>> mappedProperties, TypeDefinition typeDef,
+            PropertyData<?> propData, String queryNameOrAlias) {
+        String propId = propData.getId();
+        if (typeDef.getPropertyDefinitions().containsKey(propId)) {
+            // map property id to property query name
+            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(propId);
+            String queryName = propDef.getQueryName();
+            String localName = propDef.getLocalName();
+            String displayName = propDef.getDisplayName();
+            
+            AbstractPropertyData<?> ad = clonePropertyData(propData);
+            ad.setQueryName(queryNameOrAlias == null ? queryName : queryNameOrAlias);
+            ad.setLocalName(localName);
+            ad.setDisplayName(displayName);
+            
+            mappedProperties.put(queryName, ad);
+        }
     }
 
     public static ObjectData getObjectData(TypeManager tm, StoredObject so, String filter, String user,
@@ -391,14 +443,15 @@ public class PropertyCreationHelper {
         return od;
     }
 
-    public static ObjectData getObjectDataQueryResult(TypeManager tm, TypeDefinition typeDef, StoredObject so, String user,
-            Map<String, String> requestedProperties, Map<String, String> requestedFuncs, TypeDefinition fromType,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter) {
+    public static ObjectData getObjectDataQueryResult(TypeManager tm, TypeDefinition primaryType, StoredObject so,
+            String user, Map<String, String> requestedProperties, Map<String, String> requestedFuncs,
+            List<TypeDefinition> secondaryTypes, Boolean includeAllowableActions,
+            IncludeRelationships includeRelationships, String renditionFilter) {
 
         ObjectDataImpl od = new ObjectDataImpl();
 
         // build properties collection
-        Properties props = getPropertiesFromObject(so, typeDef, fromType, requestedProperties, requestedFuncs);
+        Properties props = getPropertiesFromObject(so, primaryType, secondaryTypes, requestedProperties, requestedFuncs);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
@@ -472,7 +525,7 @@ public class PropertyCreationHelper {
         }
     }
 
-    private static PropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
+    private static AbstractPropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
         if (propDef.getPropertyType().equals(PropertyType.BOOLEAN))
             return new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
         else if (propDef.getPropertyType().equals(PropertyType.DATETIME))
@@ -492,52 +545,52 @@ public class PropertyCreationHelper {
         else
             return null;
     }
-    
+
     private static AbstractPropertyData<?> clonePropertyData(PropertyData<?> prop) {
         AbstractPropertyData<?> ad = null;
-        
+
         if (prop instanceof PropertyBooleanImpl) {
             PropertyBooleanImpl clone = new PropertyBooleanImpl();
-            clone.setValues(((PropertyBooleanImpl)prop).getValues());
+            clone.setValues(((PropertyBooleanImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyDateTimeImpl) {
             PropertyDateTimeImpl clone = new PropertyDateTimeImpl();
-            clone.setValues(((PropertyDateTimeImpl)prop).getValues());
+            clone.setValues(((PropertyDateTimeImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyDecimalImpl) {
             PropertyDecimalImpl clone = new PropertyDecimalImpl();
-            clone.setValues(((PropertyDecimalImpl)prop).getValues());
+            clone.setValues(((PropertyDecimalImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyHtmlImpl) {
             PropertyHtmlImpl clone = new PropertyHtmlImpl();
-            clone.setValues(((PropertyHtmlImpl)prop).getValues());
+            clone.setValues(((PropertyHtmlImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyIdImpl) {
             PropertyIdImpl clone = new PropertyIdImpl();
-            clone.setValues(((PropertyIdImpl)prop).getValues());
+            clone.setValues(((PropertyIdImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyIntegerImpl) {
             PropertyIntegerImpl clone = new PropertyIntegerImpl();
-            clone.setValues(((PropertyIntegerImpl)prop).getValues());
+            clone.setValues(((PropertyIntegerImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyStringImpl) {
             PropertyStringImpl clone = new PropertyStringImpl();
-            clone.setValues(((PropertyStringImpl)prop).getValues());
+            clone.setValues(((PropertyStringImpl) prop).getValues());
             ad = clone;
         } else if (prop instanceof PropertyUriImpl) {
             PropertyUriImpl clone = new PropertyUriImpl();
-            clone.setValues(((PropertyUriImpl)prop).getValues());
+            clone.setValues(((PropertyUriImpl) prop).getValues());
             ad = clone;
         } else {
             throw new RuntimeException("Unknown property type: " + prop.getClass());
         }
-        
+
         ad.setDisplayName(prop.getDisplayName());
         ad.setId(prop.getId());
         ad.setLocalName(prop.getLocalName());
         ad.setQueryName(prop.getQueryName());
         ad.setExtensions(prop.getExtensions());
 
-        return ad;        
+        return ad;
     }
 }
