@@ -425,6 +425,21 @@ public class MultipartParser {
 
             filename = params.get(MimeHelper.DISPOSITION_FILENAME);
 
+            if (filename != null) {
+                // if the browser sent the full path,
+                // extract the filename segment
+                int pathsep = filename.lastIndexOf('/');
+                if (pathsep > -1) {
+                    filename = filename.substring(pathsep + 1);
+                }
+                pathsep = filename.lastIndexOf('\\');
+                if (pathsep > -1) {
+                    filename = filename.substring(pathsep + 1);
+                }
+
+                filename = filename.trim();
+            }
+
             contentType = headers.get("content-type");
             if (contentType == null) {
                 contentType = Constants.MEDIATYPE_OCTETSTREAM;
