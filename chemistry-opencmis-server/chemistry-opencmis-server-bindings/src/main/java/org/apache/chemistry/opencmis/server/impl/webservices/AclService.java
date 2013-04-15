@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;

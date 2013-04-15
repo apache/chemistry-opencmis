@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtensionHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
 import java.util.ArrayList;
 import java.util.List;

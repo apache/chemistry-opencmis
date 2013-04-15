@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,11 @@ import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
+import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -76,6 +80,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
@@ -88,6 +93,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
@@ -98,10 +104,12 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -120,10 +128,14 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDat
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionFeatureImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
@@ -155,6 +167,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLCapabilityType;
@@ -173,8 +186,12 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChoiceInteger;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChoiceString;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChoiceUri;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisCreatablePropertyTypesType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionFeatureKeyValuePair;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionFeatureType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisListOfIdsType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisNewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderContainerType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderType;
@@ -210,8 +227,10 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListTyp
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeItemDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeSecondaryDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumACLPropagation;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumAllowableActionsKey;
@@ -220,6 +239,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityACL;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityChanges;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityJoin;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityQuery;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCapabilityRendition;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumCardinality;
@@ -230,6 +250,8 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumSupportedPermissions;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumTypeOfChanges;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUpdatability;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -240,15 +262,17 @@ import com.sun.xml.ws.developer.StreamingDataHandler;
 /**
  * Contains converter methods.
  */
-public final class Converter {
+public final class WSConverter {
 
     private static final String DEFAULT_EXTENSION_NS = "http://chemistry.apache.org/opencmis/extension";
     private static final int BUFFER_SIZE = 64 * 1024;
 
+    private static final Logger LOG = LoggerFactory.getLogger(WSConverter.class);
+
     /**
      * Private constructor.
      */
-    private Converter() {
+    private WSConverter() {
     }
 
     // -------------------------------------------------------------------------
@@ -285,6 +309,34 @@ public final class Converter {
         result.setRootFolder(repositoryInfo.getRootFolderId());
         result.setThinClientUri(repositoryInfo.getThinClientURI());
         result.setVendorName(repositoryInfo.getVendorName());
+        if (repositoryInfo.getExtendedFeatures().size() > 0) {
+            List<ExtensionFeature> extensionFeatures = new ArrayList<ExtensionFeature>();
+            result.setExtensionFeature(extensionFeatures);
+
+            for (CmisExtensionFeatureType feature : repositoryInfo.getExtendedFeatures()) {
+                ExtensionFeatureImpl target = new ExtensionFeatureImpl();
+
+                target.setId(feature.getId());
+                target.setUrl(feature.getUrl());
+                target.setCommonName(feature.getCommonName());
+                target.setVersionLabel(feature.getVersionLabel());
+                target.setDescription(feature.getDescription());
+
+                if (feature.getFeatureData().size() > 0) {
+                    Map<String, String> featureData = new HashMap<String, String>();
+
+                    for (CmisExtensionFeatureKeyValuePair keyValue : feature.getFeatureData()) {
+                        featureData.put(keyValue.getKey(), keyValue.getValue());
+                    }
+
+                    target.setFeatureData(featureData);
+                }
+
+                convertExtension(feature, target);
+
+                extensionFeatures.add(target);
+            }
+        }
 
         // handle extensions
         convertExtension(repositoryInfo, result);
@@ -314,9 +366,52 @@ public final class Converter {
         result.setIsPwcUpdatable(capabilities.isCapabilityPWCUpdatable());
         result.setSupportsGetDescendants(capabilities.isCapabilityGetDescendants());
         result.setSupportsGetFolderTree(capabilities.isCapabilityGetFolderTree());
+        result.setOrderByCapability(convert(CapabilityOrderBy.class, capabilities.getCapabilityOrderBy()));
         result.setSupportsMultifiling(capabilities.isCapabilityMultifiling());
         result.setSupportsUnfiling(capabilities.isCapabilityUnfiling());
         result.setSupportsVersionSpecificFiling(capabilities.isCapabilityVersionSpecificFiling());
+        if (capabilities.getCapabilityCreatablePropertyTypes() != null) {
+            CmisCreatablePropertyTypesType creatablePropertyTypes = capabilities.getCapabilityCreatablePropertyTypes();
+
+            CreatablePropertyTypesImpl target = new CreatablePropertyTypesImpl();
+            result.setCreatablePropertyTypes(target);
+
+            if (creatablePropertyTypes.getCanCreate().size() > 0) {
+                Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>();
+                target.setCanCreate(propertyTypeSet);
+                for (EnumPropertyType propType : creatablePropertyTypes.getCanCreate()) {
+                    PropertyType propertyType = convert(PropertyType.class, propType);
+                    if (propertyType != null) {
+                        propertyTypeSet.add(propertyType);
+                    }
+                }
+            }
+
+            convertExtension(creatablePropertyTypes, target);
+        }
+        if (capabilities.getCapabilityNewTypeSettableAttributes() != null) {
+            CmisNewTypeSettableAttributes newTypeSettableAttributes = capabilities
+                    .getCapabilityNewTypeSettableAttributes();
+
+            NewTypeSettableAttributesImpl target = new NewTypeSettableAttributesImpl();
+            result.setNewTypeSettableAttributes(target);
+
+            target.setCanSetId(newTypeSettableAttributes.isId());
+            target.setCanSetLocalName(newTypeSettableAttributes.isLocalName());
+            target.setCanSetLocalNamespace(newTypeSettableAttributes.isLocalNamespace());
+            target.setCanSetDisplayName(newTypeSettableAttributes.isDisplayName());
+            target.setCanSetQueryName(newTypeSettableAttributes.isQueryName());
+            target.setCanSetDescription(newTypeSettableAttributes.isDescription());
+            target.setCanSetCreatable(newTypeSettableAttributes.isCreatable());
+            target.setCanSetFileable(newTypeSettableAttributes.isFileable());
+            target.setCanSetQueryable(newTypeSettableAttributes.isQueryable());
+            target.setCanSetFulltextIndexed(newTypeSettableAttributes.isFulltextIndexed());
+            target.setCanSetIncludedInSupertypeQuery(newTypeSettableAttributes.isIncludedInSupertypeQuery());
+            target.setCanSetControllablePolicy(newTypeSettableAttributes.isControllablePolicy());
+            target.setCanSetControllableAcl(newTypeSettableAttributes.isControllableACL());
+
+            convertExtension(newTypeSettableAttributes, target);
+        }
 
         // handle extensions
         convertExtension(capabilities, result);
@@ -371,7 +466,7 @@ public final class Converter {
     /**
      * Converts a repository info object.
      */
-    public static CmisRepositoryInfoType convert(RepositoryInfo repositoryInfo) {
+    public static CmisRepositoryInfoType convert(RepositoryInfo repositoryInfo, CmisVersion cmisVersion) {
         if (repositoryInfo == null) {
             return null;
         }
@@ -379,7 +474,7 @@ public final class Converter {
         CmisRepositoryInfoType result = new CmisRepositoryInfoType();
 
         result.setAclCapability(convert(repositoryInfo.getAclCapabilities()));
-        result.setCapabilities(convert(repositoryInfo.getCapabilities()));
+        result.setCapabilities(convert(repositoryInfo.getCapabilities(), cmisVersion));
         result.setChangesIncomplete(repositoryInfo.getChangesIncomplete());
         result.setCmisVersionSupported(repositoryInfo.getCmisVersionSupported());
         result.setLatestChangeLogToken(repositoryInfo.getLatestChangeLogToken());
@@ -393,10 +488,40 @@ public final class Converter {
         result.setRootFolderId(repositoryInfo.getRootFolderId());
         result.setThinClientURI(repositoryInfo.getThinClientUri());
         result.setVendorName(repositoryInfo.getVendorName());
-
         if (repositoryInfo.getChangesOnType() != null) {
-            for (BaseTypeId boti : repositoryInfo.getChangesOnType()) {
-                result.getChangesOnType().add(convert(EnumBaseObjectTypeIds.class, boti));
+            for (BaseTypeId baseType : repositoryInfo.getChangesOnType()) {
+                if (cmisVersion == CmisVersion.CMIS_1_0 && baseType == BaseTypeId.CMIS_ITEM) {
+                    LOG.warn("Receiver only understands CMIS 1.0 but the Changes On Type list in the Repository info contains the base type Item. "
+                            + "The Item base type has been removed from the list.");
+                    continue;
+                }
+                result.getChangesOnType().add(convert(EnumBaseObjectTypeIds.class, baseType));
+            }
+        }
+        if (cmisVersion != CmisVersion.CMIS_1_0 && repositoryInfo.getExtensionFeatures() != null) {
+            List<ExtensionFeature> extensionFeatures = repositoryInfo.getExtensionFeatures();
+
+            for (ExtensionFeature feature : extensionFeatures) {
+                CmisExtensionFeatureType target = new CmisExtensionFeatureType();
+
+                target.setId(feature.getId());
+                target.setUrl(feature.getUrl());
+                target.setCommonName(feature.getCommonName());
+                target.setVersionLabel(feature.getVersionLabel());
+                target.setDescription(feature.getDescription());
+
+                if (feature.getFeatureData() != null) {
+                    for (Map.Entry<String, String> entry : feature.getFeatureData().entrySet()) {
+                        CmisExtensionFeatureKeyValuePair keyValue = new CmisExtensionFeatureKeyValuePair();
+                        keyValue.setKey(entry.getKey());
+                        keyValue.setValue(entry.getValue());
+                        target.getFeatureData().add(keyValue);
+                    }
+                }
+
+                convertExtension(feature, target);
+
+                result.getExtendedFeatures().add(target);
             }
         }
 
@@ -409,7 +534,7 @@ public final class Converter {
     /**
      * Converts a repository capability object.
      */
-    public static CmisRepositoryCapabilitiesType convert(RepositoryCapabilities capabilities) {
+    public static CmisRepositoryCapabilitiesType convert(RepositoryCapabilities capabilities, CmisVersion cmisVersion) {
         if (capabilities == null) {
             return null;
         }
@@ -423,6 +548,9 @@ public final class Converter {
                 capabilities.getContentStreamUpdatesCapability()));
         result.setCapabilityGetDescendants(capabilities.isGetDescendantsSupported());
         result.setCapabilityGetFolderTree(capabilities.isGetFolderTreeSupported());
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            result.setCapabilityOrderBy(convert(EnumCapabilityOrderBy.class, capabilities.getOrderByCapability()));
+        }
         result.setCapabilityJoin(convert(EnumCapabilityJoin.class, capabilities.getJoinCapability()));
         result.setCapabilityMultifiling(capabilities.isMultifilingSupported());
         result.setCapabilityPWCSearchable(capabilities.isPwcSearchableSupported());
@@ -431,6 +559,57 @@ public final class Converter {
         result.setCapabilityRenditions(convert(EnumCapabilityRendition.class, capabilities.getRenditionsCapability()));
         result.setCapabilityUnfiling(capabilities.isUnfilingSupported());
         result.setCapabilityVersionSpecificFiling(capabilities.isVersionSpecificFilingSupported());
+
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            if (capabilities.getCreatablePropertyTypes() != null) {
+                CreatablePropertyTypes creatablePropertyTypes = capabilities.getCreatablePropertyTypes();
+
+                CmisCreatablePropertyTypesType target = new CmisCreatablePropertyTypesType();
+                result.setCapabilityCreatablePropertyTypes(target);
+
+                if (creatablePropertyTypes.canCreate() != null) {
+                    for (PropertyType pt : creatablePropertyTypes.canCreate()) {
+                        target.getCanCreate().add(convert(EnumPropertyType.class, pt));
+                    }
+                }
+
+                convertExtension(creatablePropertyTypes, target);
+            }
+            if (capabilities.getNewTypeSettableAttributes() != null) {
+                NewTypeSettableAttributes newTypeSettableAttributes = capabilities.getNewTypeSettableAttributes();
+
+                CmisNewTypeSettableAttributes target = new CmisNewTypeSettableAttributes();
+                result.setCapabilityNewTypeSettableAttributes(target);
+
+                target.setId(newTypeSettableAttributes.canSetId() == null ? true : newTypeSettableAttributes.canSetId());
+                target.setLocalName(newTypeSettableAttributes.canSetLocalName() == null ? true
+                        : newTypeSettableAttributes.canSetLocalName());
+                target.setLocalNamespace(newTypeSettableAttributes.canSetLocalNamespace() == null ? true
+                        : newTypeSettableAttributes.canSetLocalNamespace());
+                target.setDisplayName(newTypeSettableAttributes.canSetDisplayName() == null ? true
+                        : newTypeSettableAttributes.canSetDisplayName());
+                target.setQueryName(newTypeSettableAttributes.canSetQueryName() == null ? true
+                        : newTypeSettableAttributes.canSetQueryName());
+                target.setDescription(newTypeSettableAttributes.canSetDescription() == null ? true
+                        : newTypeSettableAttributes.canSetDescription());
+                target.setCreatable(newTypeSettableAttributes.canSetCreatable() == null ? true
+                        : newTypeSettableAttributes.canSetCreatable());
+                target.setFileable(newTypeSettableAttributes.canSetFileable() == null ? true
+                        : newTypeSettableAttributes.canSetFileable());
+                target.setQueryable(newTypeSettableAttributes.canSetQueryable() == null ? true
+                        : newTypeSettableAttributes.canSetQueryable());
+                target.setFulltextIndexed(newTypeSettableAttributes.canSetFulltextIndexed() == null ? true
+                        : newTypeSettableAttributes.canSetFulltextIndexed());
+                target.setIncludedInSupertypeQuery(newTypeSettableAttributes.canSetIncludedInSupertypeQuery() == null ? true
+                        : newTypeSettableAttributes.canSetIncludedInSupertypeQuery());
+                target.setControllablePolicy(newTypeSettableAttributes.canSetControllablePolicy() == null ? true
+                        : newTypeSettableAttributes.canSetControllablePolicy());
+                target.setControllableACL(newTypeSettableAttributes.canSetControllableAcl() == null ? true
+                        : newTypeSettableAttributes.canSetControllableAcl());
+
+                convertExtension(newTypeSettableAttributes, target);
+            }
+        }
 
         // handle extensions
         convertExtension(capabilities, result);
@@ -521,6 +700,10 @@ public final class Converter {
                             .getAllowedTargetTypes());
         } else if (typeDefinition instanceof CmisTypePolicyDefinitionType) {
             result = new PolicyTypeDefinitionImpl();
+        } else if (typeDefinition instanceof CmisTypeItemDefinitionType) {
+            result = new ItemTypeDefinitionImpl();
+        } else if (typeDefinition instanceof CmisTypeSecondaryDefinitionType) {
+            result = new SecondaryTypeDefinitionImpl();
         } else {
             throw new CmisRuntimeException("Type '" + typeDefinition.getId() + "' does not match a base type!");
         }
@@ -730,6 +913,10 @@ public final class Converter {
             }
         } else if (typeDefinition instanceof PolicyTypeDefinition) {
             result = new CmisTypePolicyDefinitionType();
+        } else if (typeDefinition instanceof ItemTypeDefinition) {
+            result = new CmisTypeItemDefinitionType();
+        } else if (typeDefinition instanceof SecondaryTypeDefinition) {
+            result = new CmisTypeSecondaryDefinitionType();
         } else {
             return null;
         }
@@ -1556,7 +1743,7 @@ public final class Converter {
     /**
      * Converts a CMIS object.
      */
-    public static CmisObjectType convert(ObjectData object) {
+    public static CmisObjectType convert(ObjectData object, CmisVersion cmisVersion) {
         if (object == null) {
             return null;
         }
@@ -1564,7 +1751,7 @@ public final class Converter {
         CmisObjectType result = new CmisObjectType();
 
         result.setAcl(convert(object.getAcl()));
-        result.setAllowableActions(convert(object.getAllowableActions()));
+        result.setAllowableActions(convert(object.getAllowableActions(), cmisVersion));
         if (object.getChangeEventInfo() != null) {
             CmisChangeEventType changeEventInfo = new CmisChangeEventType();
 
@@ -1581,7 +1768,7 @@ public final class Converter {
         result.setProperties(convert(object.getProperties()));
         if (object.getRelationships() != null) {
             for (ObjectData relationship : object.getRelationships()) {
-                result.getRelationship().add(convert(relationship));
+                result.getRelationship().add(convert(relationship, cmisVersion));
             }
         }
         if (object.getRenditions() != null) {
@@ -1721,6 +1908,9 @@ public final class Converter {
         if (Boolean.TRUE.equals(allowableActions.isCanCreateRelationship())) {
             set.add(Action.CAN_CREATE_RELATIONSHIP);
         }
+        if (Boolean.TRUE.equals(allowableActions.isCanCreateItem())) {
+            set.add(Action.CAN_CREATE_ITEM);
+        }
         if (Boolean.TRUE.equals(allowableActions.isCanDeleteContentStream())) {
             set.add(Action.CAN_DELETE_CONTENT_STREAM);
         }
@@ -1793,7 +1983,7 @@ public final class Converter {
     /**
      * Converts an AllowableActions object.
      */
-    public static CmisAllowableActionsType convert(AllowableActions allowableActions) {
+    public static CmisAllowableActionsType convert(AllowableActions allowableActions, CmisVersion cmisVersion) {
         if (allowableActions == null) {
             return null;
         }
@@ -1812,6 +2002,12 @@ public final class Converter {
             result.setCanCreateDocument(set.contains(Action.CAN_CREATE_DOCUMENT));
             result.setCanCreateFolder(set.contains(Action.CAN_CREATE_FOLDER));
             result.setCanCreateRelationship(set.contains(Action.CAN_CREATE_RELATIONSHIP));
+            if (set.contains(Action.CAN_CREATE_ITEM) && cmisVersion == CmisVersion.CMIS_1_0) {
+                LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
+                        + "The canCreateItem action has been removed from the Allowable Actions.");
+            } else {
+                result.setCanCreateItem(set.contains(Action.CAN_CREATE_ITEM));
+            }
             result.setCanDeleteContentStream(set.contains(Action.CAN_DELETE_CONTENT_STREAM));
             result.setCanDeleteObject(set.contains(Action.CAN_DELETE_OBJECT));
             result.setCanDeleteTree(set.contains(Action.CAN_DELETE_TREE));
@@ -2067,14 +2263,14 @@ public final class Converter {
     /**
      * Converts an ObjectInFolder object.
      */
-    public static CmisObjectInFolderType convert(ObjectInFolderData objectInFolder) {
+    public static CmisObjectInFolderType convert(ObjectInFolderData objectInFolder, CmisVersion cmisVersion) {
         if (objectInFolder == null) {
             return null;
         }
 
         CmisObjectInFolderType result = new CmisObjectInFolderType();
 
-        result.setObject(convert(objectInFolder.getObject()));
+        result.setObject(convert(objectInFolder.getObject(), cmisVersion));
         result.setPathSegment(objectInFolder.getPathSegment());
 
         // handle extensions
@@ -2105,14 +2301,14 @@ public final class Converter {
     /**
      * Converts an ObjectParent object.
      */
-    public static CmisObjectParentsType convert(ObjectParentData objectParent) {
+    public static CmisObjectParentsType convert(ObjectParentData objectParent, CmisVersion cmisVersion) {
         if (objectParent == null) {
             return null;
         }
 
         CmisObjectParentsType result = new CmisObjectParentsType();
 
-        result.setObject(convert(objectParent.getObject()));
+        result.setObject(convert(objectParent.getObject(), cmisVersion));
         result.setRelativePathSegment(objectParent.getRelativePathSegment());
 
         // handle extensions
@@ -2149,7 +2345,7 @@ public final class Converter {
     /**
      * Converts an ObjectInFolder list object.
      */
-    public static CmisObjectInFolderListType convert(ObjectInFolderList objectInFolderList) {
+    public static CmisObjectInFolderListType convert(ObjectInFolderList objectInFolderList, CmisVersion cmisVersion) {
         if (objectInFolderList == null) {
             return null;
         }
@@ -2158,7 +2354,7 @@ public final class Converter {
 
         if (objectInFolderList.getObjects() != null) {
             for (ObjectInFolderData object : objectInFolderList.getObjects()) {
-                result.getObjects().add(convert(object));
+                result.getObjects().add(convert(object, cmisVersion));
             }
         }
 
@@ -2199,7 +2395,7 @@ public final class Converter {
     /**
      * Converts an Object list object.
      */
-    public static CmisObjectListType convert(ObjectList objectList) {
+    public static CmisObjectListType convert(ObjectList objectList, CmisVersion cmisVersion) {
         if (objectList == null) {
             return null;
         }
@@ -2208,7 +2404,7 @@ public final class Converter {
 
         if (objectList.getObjects() != null) {
             for (ObjectData object : objectList.getObjects()) {
-                result.getObjects().add(convert(object));
+                result.getObjects().add(convert(object, cmisVersion));
             }
         }
 
@@ -2249,18 +2445,18 @@ public final class Converter {
     /**
      * Converts an ObjectInFolder container object.
      */
-    public static CmisObjectInFolderContainerType convert(ObjectInFolderContainer container) {
+    public static CmisObjectInFolderContainerType convert(ObjectInFolderContainer container, CmisVersion cmisVersion) {
         if (container == null) {
             return null;
         }
 
         CmisObjectInFolderContainerType result = new CmisObjectInFolderContainerType();
 
-        result.setObjectInFolder(convert(container.getObject()));
+        result.setObjectInFolder(convert(container.getObject(), cmisVersion));
 
         if (container.getChildren() != null) {
             for (ObjectInFolderContainer child : container.getChildren()) {
-                result.getChildren().add(convert(child));
+                result.getChildren().add(convert(child, cmisVersion));
             }
         }
 

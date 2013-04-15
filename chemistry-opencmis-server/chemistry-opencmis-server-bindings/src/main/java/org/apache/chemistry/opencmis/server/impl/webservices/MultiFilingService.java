@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtensionHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;

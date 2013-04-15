@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 
 import java.math.BigInteger;
 

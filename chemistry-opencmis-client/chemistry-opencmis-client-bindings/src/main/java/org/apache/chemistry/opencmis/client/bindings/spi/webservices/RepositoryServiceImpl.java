@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertTypeContainerList;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertTypeContainerList;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

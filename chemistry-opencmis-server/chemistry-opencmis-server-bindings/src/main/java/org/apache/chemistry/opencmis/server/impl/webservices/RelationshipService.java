@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 
 import java.math.BigInteger;
 
@@ -27,6 +27,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -49,12 +50,14 @@ public class RelationshipService extends AbstractService implements Relationship
             String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
                     convert(RelationshipDirection.class, relationshipDirection), typeId, filter,
-                    includeAllowableActions, maxItems, skipCount, convert(extension)));
+                    includeAllowableActions, maxItems, skipCount, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

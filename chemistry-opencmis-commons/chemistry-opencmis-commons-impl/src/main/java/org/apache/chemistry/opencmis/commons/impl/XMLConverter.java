@@ -294,7 +294,6 @@ public class XMLConverter {
                 writeExtensions(writer, newTypeSettableAttributes);
                 writer.writeEndElement();
             }
-
         }
 
         writeExtensions(writer, source);

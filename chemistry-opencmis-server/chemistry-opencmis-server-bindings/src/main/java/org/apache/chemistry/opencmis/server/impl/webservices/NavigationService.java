@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -56,12 +57,14 @@ public class NavigationService extends AbstractService implements NavigationServ
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-                    convert(extension)));
+                    convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -74,12 +77,14 @@ public class NavigationService extends AbstractService implements NavigationServ
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension)
             throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePathSegment,
-                    maxItems, skipCount, convert(extension)));
+                    maxItems, skipCount, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -91,8 +96,10 @@ public class NavigationService extends AbstractService implements NavigationServ
             String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
@@ -102,7 +109,7 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             if (serviceResult != null) {
                 for (ObjectInFolderContainer container : serviceResult) {
-                    result.add(convert(container));
+                    result.add(convert(container, cmisVersion));
                 }
             }
 
@@ -117,10 +124,12 @@ public class NavigationService extends AbstractService implements NavigationServ
     public CmisObjectType getFolderParent(String repositoryId, String folderId, String filter,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getFolderParent(repositoryId, folderId, filter, convert(extension)));
+            return convert(service.getFolderParent(repositoryId, folderId, filter, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -132,8 +141,10 @@ public class NavigationService extends AbstractService implements NavigationServ
             String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
@@ -143,7 +154,7 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             if (serviceResult != null) {
                 for (ObjectInFolderContainer container : serviceResult) {
-                    result.add(convert(container));
+                    result.add(convert(container, cmisVersion));
                 }
             }
 
@@ -159,8 +170,10 @@ public class NavigationService extends AbstractService implements NavigationServ
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             List<CmisObjectParentsType> result = new ArrayList<CmisObjectParentsType>();
 
@@ -170,7 +183,7 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             if (serviceResult != null) {
                 for (ObjectParentData parent : serviceResult) {
-                    result.add(convert(parent));
+                    result.add(convert(parent, cmisVersion));
                 }
             }
 

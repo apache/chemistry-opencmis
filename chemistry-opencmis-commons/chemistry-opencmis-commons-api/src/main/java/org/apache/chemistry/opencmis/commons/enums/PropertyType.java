@@ -19,10 +19,7 @@
 package org.apache.chemistry.opencmis.commons.enums;
 
 /**
- * Property Type Enum.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Property Type Enum. 
  */
 public enum PropertyType {
 

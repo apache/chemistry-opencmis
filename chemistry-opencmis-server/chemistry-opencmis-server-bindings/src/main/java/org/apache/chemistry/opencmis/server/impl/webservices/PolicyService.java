@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtensionHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
@@ -69,8 +70,10 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
     public List<CmisObjectType> getAppliedPolicies(String repositoryId, String objectId, String filter,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, convert(extension));
 
@@ -80,7 +83,7 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
 
             List<CmisObjectType> result = new ArrayList<CmisObjectType>();
             for (ObjectData object : policies) {
-                result.add(convert(object));
+                result.add(convert(object, cmisVersion));
             }
 
             return result;

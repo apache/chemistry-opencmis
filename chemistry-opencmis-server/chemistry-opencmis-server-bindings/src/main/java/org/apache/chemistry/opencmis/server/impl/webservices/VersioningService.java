@@ -18,11 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtensionHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValue;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setHolderValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,7 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
@@ -127,8 +128,10 @@ public class VersioningService extends AbstractService implements VersioningServ
     public List<CmisObjectType> getAllVersions(String repositoryId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             List<ObjectData> versions = service.getAllVersions(repositoryId, null, versionSeriesId, filter,
                     includeAllowableActions, convert(extension));
@@ -139,7 +142,7 @@ public class VersioningService extends AbstractService implements VersioningServ
 
             List<CmisObjectType> result = new ArrayList<CmisObjectType>();
             for (ObjectData object : versions) {
-                result.add(convert(object));
+                result.add(convert(object, cmisVersion));
             }
 
             return result;
@@ -155,12 +158,14 @@ public class VersioningService extends AbstractService implements VersioningServ
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension)
             throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getObjectOfLatestVersion(repositoryId, null, versionSeriesId, major, filter,
                     includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
-                    renditionFilter, includePolicyIds, includeAcl, convert(extension)));
+                    renditionFilter, includePolicyIds, includeAcl, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

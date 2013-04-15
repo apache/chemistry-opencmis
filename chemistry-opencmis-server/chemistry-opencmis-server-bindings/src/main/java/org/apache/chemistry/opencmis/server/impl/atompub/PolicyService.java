@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
 import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
@@ -35,7 +34,6 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
@@ -170,11 +168,6 @@ public final class PolicyService {
      */
     private static void writePolicyEntry(CmisService service, AtomEntry entry, String objectId, ObjectData policy,
             String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws Exception {
-        CmisObjectType resultJaxb = convert(policy);
-        if (resultJaxb == null) {
-            return;
-        }
-
         ObjectInfo info = service.getObjectInfo(repositoryId, policy.getId());
         if (info == null) {
             throw new CmisRuntimeException("Object Info not found!");

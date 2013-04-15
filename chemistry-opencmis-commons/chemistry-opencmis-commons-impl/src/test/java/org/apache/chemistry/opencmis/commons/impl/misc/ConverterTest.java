@@ -44,8 +44,9 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdate
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
-import org.apache.chemistry.opencmis.commons.impl.Converter;
+import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
@@ -56,16 +57,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 
 /**
  * Tests converter methods.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class ConverterTest extends TestCase {
 
     public void testRepositoryInfo() throws Exception {
         // dry run
         RepositoryInfoImpl obj1 = new RepositoryInfoImpl();
-        RepositoryInfo obj2 = Converter.convert(Converter.convert(obj1));
+        RepositoryInfo obj2 = WSConverter.convert(WSConverter.convert(obj1, CmisVersion.CMIS_1_1));
 
         assertDataObjectsEquals("RepositoryInfo", obj1, obj2);
 
@@ -127,7 +125,7 @@ public class ConverterTest extends TestCase {
         acl1.setPermissionMappingData(pmd);
         obj1.setAclCapabilities(acl1);
 
-        obj2 = Converter.convert(Converter.convert(obj1));
+        obj2 = WSConverter.convert(WSConverter.convert(obj1, CmisVersion.CMIS_1_1));
 
         assertDataObjectsEquals("RepositoryInfo", obj1, obj2);
     }
@@ -135,7 +133,7 @@ public class ConverterTest extends TestCase {
     public void testTypeDefinition() throws Exception {
         // dry run
         DocumentTypeDefinitionImpl obj1 = new DocumentTypeDefinitionImpl();
-        TypeDefinition obj2 = Converter.convert(Converter.convert(obj1));
+        TypeDefinition obj2 = WSConverter.convert(WSConverter.convert(obj1));
 
         assertDataObjectsEquals("TypeDefinition", obj1, obj2);
 
@@ -158,7 +156,7 @@ public class ConverterTest extends TestCase {
         obj1.setParentTypeId("parentId");
         obj1.setQueryName("queryName");
 
-        obj2 = Converter.convert(Converter.convert(obj1));
+        obj2 = WSConverter.convert(WSConverter.convert(obj1));
 
         assertDataObjectsEquals("TypeDefinition", obj1, obj2);
     }
@@ -166,7 +164,7 @@ public class ConverterTest extends TestCase {
     public void testObject() throws Exception {
         // dry run
         ObjectDataImpl obj1 = new ObjectDataImpl();
-        ObjectData obj2 = Converter.convert(Converter.convert(obj1));
+        ObjectData obj2 = WSConverter.convert(WSConverter.convert(obj1, CmisVersion.CMIS_1_1));
 
         assertDataObjectsEquals("Object", obj1, obj2);
     }
@@ -215,8 +213,8 @@ public class ConverterTest extends TestCase {
 
             for (Map.Entry<?, ?> entry : expectedMap.entrySet()) {
                 assertTrue(actualMap.containsKey(entry.getKey()));
-                assertDataObjectsEquals(name + "[" + entry.getKey() + "]", entry.getValue(), actualMap.get(entry
-                        .getKey()));
+                assertDataObjectsEquals(name + "[" + entry.getKey() + "]", entry.getValue(),
+                        actualMap.get(entry.getKey()));
             }
 
             return;

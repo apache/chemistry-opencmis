@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValue;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setHolderValue;
 
 import java.math.BigInteger;
 
@@ -31,6 +31,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -52,8 +53,10 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
             CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
@@ -61,7 +64,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
                     filter, includePolicyIds, includeAcl, maxItems, convert(extension));
 
             if (objects != null) {
-                objects.value = convert(changesList);
+                objects.value = convert(changesList, cmisVersion);
             }
 
             setHolderValue(changeLogTokenHolder, changeLogToken);
@@ -76,12 +79,14 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-                    convert(extension)));
+                    convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

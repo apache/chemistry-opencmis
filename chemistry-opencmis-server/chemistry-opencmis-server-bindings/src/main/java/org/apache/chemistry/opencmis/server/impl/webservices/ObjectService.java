@@ -18,11 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertExtensionHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setExtensionValues;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValue;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setHolderValue;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -264,10 +265,12 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
     public CmisAllowableActionsType getAllowableActions(String repositoryId, String objectId,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getAllowableActions(repositoryId, objectId, convert(extension)));
+            return convert(service.getAllowableActions(repositoryId, objectId, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -295,12 +298,14 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getObject(repositoryId, objectId, filter, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
-                    includeAcl, convert(extension)));
+                    includeAcl, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -312,12 +317,14 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
+        CmisVersion cmisVersion = null;
         try {
             service = getService(wsContext, repositoryId);
+            cmisVersion = getCmisVersion(wsContext);
 
             return convert(service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
-                    includeAcl, convert(extension)));
+                    includeAcl, convert(extension)), cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convert;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.convertHolder;
-import static org.apache.chemistry.opencmis.commons.impl.Converter.setHolderValue;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setHolderValue;
 
 import java.math.BigInteger;
 
