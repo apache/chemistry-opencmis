@@ -51,6 +51,18 @@ public final class SessionParameter {
     public static final String WEBSERVICES_MULTIFILING_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.MultiFilingService";
     public static final String WEBSERVICES_POLICY_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.PolicyService";
     public static final String WEBSERVICES_ACL_SERVICE = "org.apache.chemistry.opencmis.binding.webservices.ACLService";
+
+    /** Endpoint URLs for Web Services. */
+    public static final String WEBSERVICES_REPOSITORY_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.RepositoryService.endpoint";
+    public static final String WEBSERVICES_NAVIGATION_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.NavigationService.endpoint";
+    public static final String WEBSERVICES_OBJECT_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.ObjectService.endpoint";
+    public static final String WEBSERVICES_VERSIONING_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.VersioningService.endpoint";
+    public static final String WEBSERVICES_DISCOVERY_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.DiscoveryService.endpoint";
+    public static final String WEBSERVICES_RELATIONSHIP_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.RelationshipService.endpoint";
+    public static final String WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.MultiFilingService.endpoint";
+    public static final String WEBSERVICES_POLICY_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.PolicyService.endpoint";
+    public static final String WEBSERVICES_ACL_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.ACLService.endpoint";
+
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";

@@ -18,16 +18,30 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceFeature;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.shared.Dispatcher;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +54,22 @@ import com.sun.xml.ws.transport.http.servlet.WSServletDelegate;
 public class CmisWebServicesServlet extends WSServlet {
 
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
-
     public static final String CMIS_VERSION = "org.apache.chemistry.opencmis.cmisVersion";
-
-    private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesServlet.class.getName());
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesServlet.class.getName());
+
+    private static final String CMIS10_PATH = "/WEB-INF/cmis10/";
+    private static final String CMIS11_PATH = "/WEB-INF/cmis11/";
+
+    private static final Pattern BASE_PATTERN = Pattern.compile("<%cmisbase%>");
+    private static final Pattern CORE_PATTERN = Pattern.compile("<%cmiscore%>");
+    private static final Pattern MSG_PATTERN = Pattern.compile("<%cmismsg%>");
+
     private CmisVersion cmisVersion;
+
+    private Map<String, String> docs;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -57,10 +79,6 @@ public class CmisWebServicesServlet extends WSServlet {
         if (cmisVersionStr != null) {
             try {
                 cmisVersion = CmisVersion.fromValue(cmisVersionStr);
-
-                // !!! As long as CMIS 1.1 is not implemented, we have to set
-                // the CMIS version to 1.0 !!!
-                cmisVersion = CmisVersion.CMIS_1_0;
             } catch (IllegalArgumentException e) {
                 LOG.warn("CMIS version is invalid! Setting it to CMIS 1.0.");
                 cmisVersion = CmisVersion.CMIS_1_0;
@@ -70,9 +88,128 @@ public class CmisWebServicesServlet extends WSServlet {
             cmisVersion = CmisVersion.CMIS_1_0;
         }
 
-        config.getServletContext().setAttribute(CMIS_VERSION, cmisVersion);
+        // set up WSDL and XSD documents
+        docs = new HashMap<String, String>();
+
+        String path = (cmisVersion == CmisVersion.CMIS_1_0 ? CMIS10_PATH : CMIS11_PATH);
+
+        docs.put("wsdl", readFile(config, path + "CMISWS-Service.wsdl.template"));
+        docs.put("core", readFile(config, path + "CMIS-Core.xsd.template"));
+        docs.put("msg", readFile(config, path + "CMIS-Messaging.xsd.template"));
 
         super.init(config);
+    }
+
+    private String readFile(ServletConfig config, String path) throws ServletException {
+        InputStream stream = config.getServletContext().getResourceAsStream(path);
+        if (stream == null) {
+            throw new ServletException("Cannot find file '" + path + "'!");
+        }
+
+        StringBuilder result = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+
+            return result.toString();
+        } catch (IOException e) {
+            throw new ServletException("Cannot read file '" + path + "': " + e.getMessage(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    @Override
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // set CMIS version
+        request.setAttribute(CMIS_VERSION, cmisVersion);
+
+        // handle GET requests
+        if (request.getMethod().equals("GET")) {
+            UrlBuilder baseUrl = compileBaseUrl(request, response);
+
+            String queryString = request.getQueryString();
+            if (queryString != null) {
+                String doc = docs.get(queryString.toLowerCase(Locale.ENGLISH));
+                if (doc != null) {
+                    printXml(request, response, doc, baseUrl);
+                    return;
+                }
+            }
+
+            printPage(request, response, baseUrl);
+            return;
+        }
+
+        super.service(request, response);
+    }
+
+    private void printXml(HttpServletRequest request, HttpServletResponse response, String doc, UrlBuilder baseUrl)
+            throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/xml");
+        response.setCharacterEncoding("UTF-8");
+
+        String respDoc = doc;
+        respDoc = BASE_PATTERN.matcher(respDoc).replaceAll(baseUrl.toString());
+        respDoc = CORE_PATTERN.matcher(respDoc).replaceAll(
+                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("core").toString());
+        respDoc = MSG_PATTERN.matcher(respDoc).replaceAll(
+                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("msg").toString());
+
+        PrintWriter pw = response.getWriter();
+        pw.print(respDoc);
+        pw.flush();
+    }
+
+    private void printPage(HttpServletRequest request, HttpServletResponse response, UrlBuilder baseUrl)
+            throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+
+        String urlEscaped = StringEscapeUtils.escapeHtml((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("wsdl")
+                .toString());
+
+        PrintWriter pw = response.getWriter();
+
+        pw.print("<html><head><title>Apache Chemistry OpenCMIS - CMIS "
+                + cmisVersion.value()
+                + " Web Services</title>"
+                + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
+                + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
+                + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
+        pw.print("<h1>CMIS " + cmisVersion.value() + " Web Services</h1>");
+        pw.print("<p>CMIS WSDL for all services: <a href=\"" + urlEscaped + "\">" + urlEscaped + "</a></p>");
+
+        pw.print("</html></body>");
+        pw.flush();
+    }
+
+    private UrlBuilder compileBaseUrl(HttpServletRequest request, HttpServletResponse response) {
+        UrlBuilder result;
+
+        String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
+        if (baseUrl != null) {
+            result = new UrlBuilder(baseUrl);
+        } else {
+            result = new UrlBuilder(request.getScheme(), request.getServerName(), request.getServerPort(), null);
+            result.addPath(request.getContextPath());
+            result.addPath(request.getServletPath());
+        }
+
+        return result;
     }
 
     @Override
@@ -110,7 +247,7 @@ public class CmisWebServicesServlet extends WSServlet {
             // JAX-WS RI 2.1
             ft.setMemoryThreshold(factory.getMemoryThreshold());
         } catch (NoSuchMethodError e) {
-            // JAX-WS RI 2.2 
+            // JAX-WS RI 2.2
             // see CMIS-626
             try {
                 Method m = ft.getClass().getMethod("setMemoryThreshold", long.class);

@@ -69,7 +69,7 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <wsdlDirectory>${project.basedir}/src/main/resources/wsdl</wsdlDirectory>
+                            <wsdlDirectory>${project.basedir}/src/main/resources/wsdl/cmis11</wsdlDirectory>
                             <wsdlFiles>
                                 <wsdlFile>CMISWS-Service.wsdl</wsdlFile>
                             </wsdlFiles>

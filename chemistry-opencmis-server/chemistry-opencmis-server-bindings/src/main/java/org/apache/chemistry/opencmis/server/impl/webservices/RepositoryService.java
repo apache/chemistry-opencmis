@@ -27,17 +27,20 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
+import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeContainer;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
@@ -138,5 +141,35 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         } finally {
             closeService(service);
         }
+    }
+
+    public void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
+            throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
+    }
+
+    public void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
+            throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
+    }
+
+    public void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension)
+            throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
     }
 }

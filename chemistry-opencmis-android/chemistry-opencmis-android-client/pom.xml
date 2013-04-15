@@ -72,6 +72,7 @@
 										<include name="**/*.java" />
 										<exclude name="**/tube/**" />
 										<exclude name="**/jaxb/**" />
+										<exclude name="**/webservices/**" />
 										<exclude name="**/impl/Converter.*" />
 										<exclude name="**/impl/XMLConverter.*" />										
 									</fileset>

@@ -133,6 +133,25 @@ public class UrlBuilder {
     }
 
     /**
+     * Adds a parameter without value to the URL.
+     * 
+     * @param name
+     *            parameter name
+     */
+    public UrlBuilder addParameter(String name) {
+        if (name == null) {
+            return this;
+        }
+
+        if (queryPart.length() > 0) {
+            queryPart.append('&');
+        }
+        queryPart.append(name);
+
+        return this;
+    }
+
+    /**
      * Adds a path segment to the URL.
      * 
      * @param pathSegment

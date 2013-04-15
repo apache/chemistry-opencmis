@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
@@ -102,14 +101,13 @@ public abstract class AbstractService {
             }
         }
 
-        CmisVersion cmisVersion = (CmisVersion) servletContext.getAttribute(CmisWebServicesServlet.CMIS_VERSION);
-        context.put(CallContext.CMIS_VERSION, cmisVersion);
-
         context.put(CallContext.SERVLET_CONTEXT, servletContext);
 
         HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_REQUEST);
         context.put(CallContext.HTTP_SERVLET_REQUEST, request);
+
+        context.put(CallContext.CMIS_VERSION, request.getAttribute(CmisWebServicesServlet.CMIS_VERSION));
 
         HttpServletResponse response = (HttpServletResponse) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_RESPONSE);

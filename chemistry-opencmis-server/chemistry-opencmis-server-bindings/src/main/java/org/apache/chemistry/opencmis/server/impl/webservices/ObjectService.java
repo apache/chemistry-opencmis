@@ -41,14 +41,18 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisBulkUpdateType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectIdAndChangeTokenType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRenditionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
@@ -188,6 +192,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         } finally {
             closeService(service);
         }
+    }
+
+    public void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
+            CmisAccessControlListType addACEs, CmisAccessControlListType removeACEs,
+            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -393,6 +408,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
+            Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
+            throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
+    }
+
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             CmisPropertiesType properties, Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -414,4 +440,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             closeService(service);
         }
     }
+
+    public void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
+            Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
+            throws CmisException {
+        CmisFaultType fault = new CmisFaultType();
+        fault.setMessage("Not supported!");
+        fault.setCode(BigInteger.ZERO);
+        fault.setType(EnumServiceException.NOT_SUPPORTED);
+
+        throw new CmisException(fault.getMessage(), fault);
+    }
+
 }

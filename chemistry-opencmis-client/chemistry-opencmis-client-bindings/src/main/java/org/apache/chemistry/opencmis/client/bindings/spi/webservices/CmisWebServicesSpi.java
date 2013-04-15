@@ -63,7 +63,7 @@ public class CmisWebServicesSpi implements CmisSpi {
 
         String portProviderClass = (String) session.get(SessionParameter.WEBSERVICES_PORT_PROVIDER_CLASS);
         if (portProviderClass == null) {
-            portProvider = new PortProvider();
+            portProvider = new SunPortProvider();
         } else {
             Object portProviderObj = null;
 
