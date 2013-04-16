@@ -19,7 +19,9 @@
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertTypeContainerList;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -31,17 +33,16 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeContainer;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 
@@ -148,31 +149,48 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 
     public void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
 
-        throw new CmisException(fault.getMessage(), fault);
+            type.value = convert(service.createType(repositoryId, convert(type.value), convert(extension)));
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
 
     public void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
 
-        throw new CmisException(fault.getMessage(), fault);
+            type.value = convert(service.updateType(repositoryId, convert(type.value), convert(extension)));
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
 
     public void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension)
             throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
 
-        throw new CmisException(fault.getMessage(), fault);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
+
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            service.deleteType(repositoryId, typeId, extData);
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
 }

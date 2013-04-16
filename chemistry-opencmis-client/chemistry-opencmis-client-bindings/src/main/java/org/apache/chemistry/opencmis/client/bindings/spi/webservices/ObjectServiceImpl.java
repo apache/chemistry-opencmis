@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -165,8 +166,30 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
     }
 
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
-            Acl addAces, Acl removeAces, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+            Acl addACEs, Acl removeACEs, ExtensionsData extension) {
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
+        ObjectServicePort port = portProvider.getObjectServicePort();
+
+        try {
+            javax.xml.ws.Holder<String> objectId = new javax.xml.ws.Holder<String>();
+            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+
+            port.createItem(repositoryId, convert(properties), folderId, convert(addACEs), convert(removeACEs),
+                    portExtension, objectId);
+
+            setExtensionValues(portExtension, extension);
+
+            return objectId.value;
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
     }
 
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addACEs,
@@ -218,6 +241,10 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
         throw new CmisNotSupportedException("Not supported!");
     }
 
@@ -433,6 +460,29 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
+        ObjectServicePort port = portProvider.getObjectServicePort();
+
+        try {
+            javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
+            javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
+            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+
+            port.appendContentStream(repositoryId, portObjectId, isLastChunk, portChangeToken,
+                    convert(contentStream, false), portExtension);
+
+            setHolderValue(portObjectId, objectId);
+            setHolderValue(portChangeToken, changeToken);
+            setExtensionValues(portExtension, extension);
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
     }
 }

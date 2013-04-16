@@ -19,7 +19,9 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertTypeContainerList;
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -31,11 +33,14 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
@@ -141,16 +146,72 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             portProvider.endCall(port);
         }
     }
-    
+
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+
+        try {
+            javax.xml.ws.Holder<CmisTypeDefinitionType> typeDef = new javax.xml.ws.Holder<CmisTypeDefinitionType>(
+                    convert(type));
+
+            port.createType(repositoryId, typeDef, convert(extension));
+
+            return convert(typeDef.value);
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
     }
 
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+
+        try {
+            javax.xml.ws.Holder<CmisTypeDefinitionType> typeDef = new javax.xml.ws.Holder<CmisTypeDefinitionType>(
+                    convert(type));
+
+            port.updateType(repositoryId, typeDef, convert(extension));
+
+            return convert(typeDef.value);
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
     }
 
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
+        }
+
+        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+
+        try {
+            javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
+
+            port.deleteType(repositoryId, typeId, portExtension);
+
+            setExtensionValues(portExtension, extension);
+        } catch (CmisException e) {
+            throw convertException(e);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+        } finally {
+            portProvider.endCall(port);
+        }
     }
 }

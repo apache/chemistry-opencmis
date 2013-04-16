@@ -97,6 +97,7 @@ import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -170,6 +171,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLCapabilityType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisACLType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlEntryType;
@@ -228,6 +230,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDocumentDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeFolderDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeItemDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeMutabilityCapabilitiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypePolicyDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeRelationshipDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeSecondaryDefinitionType;
@@ -724,6 +727,19 @@ public final class WSConverter {
         result.setParentTypeId(typeDefinition.getParentId());
         result.setQueryName(typeDefinition.getQueryName());
 
+        if (typeDefinition.getTypeMutability() != null) {
+            CmisTypeMutabilityCapabilitiesType typeMutability = typeDefinition.getTypeMutability();
+            TypeMutabilityImpl target = new TypeMutabilityImpl();
+
+            target.setCanCreate(typeMutability.isCreate());
+            target.setCanUpdate(typeMutability.isUpdate());
+            target.setCanDelete(typeMutability.isDelete());
+
+            convertExtension(typeMutability, target);
+
+            result.setTypeMutability(target);
+        }
+
         for (CmisPropertyDefinitionType propertyDefinition : typeDefinition.getPropertyDefinition()) {
             result.addPropertyDefinition(convert(propertyDefinition));
         }
@@ -936,6 +952,19 @@ public final class WSConverter {
         result.setParentId(typeDefinition.getParentTypeId());
         result.setQueryable(convertBoolean(typeDefinition.isQueryable(), false));
         result.setQueryName(typeDefinition.getQueryName());
+
+        if (typeDefinition.getTypeMutability() != null) {
+            TypeMutability typeMutability = typeDefinition.getTypeMutability();
+            CmisTypeMutabilityCapabilitiesType target = new CmisTypeMutabilityCapabilitiesType();
+
+            target.setCreate(typeMutability.canCreate() == null ? true : typeMutability.canCreate());
+            target.setUpdate(typeMutability.canUpdate() == null ? true : typeMutability.canUpdate());
+            target.setDelete(typeMutability.canDelete() == null ? true : typeMutability.canDelete());
+
+            convertExtension(typeMutability, target);
+
+            result.setTypeMutability(target);
+        }
 
         if (typeDefinition.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> propDef : typeDefinition.getPropertyDefinitions().values()) {
