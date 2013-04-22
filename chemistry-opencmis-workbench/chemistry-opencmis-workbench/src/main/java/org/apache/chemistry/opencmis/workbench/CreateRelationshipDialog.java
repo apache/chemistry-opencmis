@@ -22,6 +22,8 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
@@ -62,6 +65,16 @@ public class CreateRelationshipDialog extends CreateDialog {
 
         typeBox = new JComboBox(types);
         typeBox.setSelectedIndex(0);
+        typeBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                TypeDefinition type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType();
+                updateMandatoryFields(type);
+            }
+        });
+
+        ObjectTypeItem type = (ObjectTypeItem) typeBox.getSelectedItem();
+        updateMandatoryFields(type.getObjectType());
+
         createRow("Type:", typeBox, 1);
 
         sourceIdField = new JTextField(60);
@@ -84,7 +97,8 @@ public class CreateRelationshipDialog extends CreateDialog {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    ObjectId objectId = getClientModel().createRelationship(name, type, sourceId, targetId);
+                    ObjectId objectId = getClientModel().createRelationship(name, type, sourceId, targetId,
+                            getMandatoryPropertyValues());
 
                     if (objectId != null) {
                         getClientModel().loadObject(objectId.getId());
@@ -105,7 +119,7 @@ public class CreateRelationshipDialog extends CreateDialog {
                 }
             }
         });
-        createRow("", createButton, 4);
+        createActionRow("", createButton, 4);
 
         getRootPane().setDefaultButton(createButton);
 

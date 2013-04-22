@@ -125,8 +125,12 @@ public class CreateDocumentDialog extends CreateDialog {
                 } else {
                     versioningStateNoneButton.setSelected(true);
                 }
+                updateMandatoryFields(type);
             }
         });
+
+        ObjectTypeItem type = (ObjectTypeItem) typeBox.getSelectedItem();
+        updateMandatoryFields(type.getObjectType());
 
         createRow("Type:", typeBox, 2);
 
@@ -175,7 +179,7 @@ public class CreateDocumentDialog extends CreateDialog {
         });
         filePanel.add(browseButton, BorderLayout.LINE_END);
 
-        createRow("File:", filePanel, 3);
+        createRow("File:", filePanel, 4);
 
         JPanel generateContentPanel = new JPanel();
         generateContentPanel.setLayout(new BoxLayout(generateContentPanel, BoxLayout.X_AXIS));
@@ -194,7 +198,7 @@ public class CreateDocumentDialog extends CreateDialog {
 
         generateContentPanel.add(Box.createHorizontalGlue());
 
-        createRow("Generate content:", generateContentPanel, 4);
+        createRow("Generate content:", generateContentPanel, 5);
 
         versioningStateNoneButton = new JRadioButton("none");
         versioningStateMajorButton = new JRadioButton("major");
@@ -218,10 +222,10 @@ public class CreateDocumentDialog extends CreateDialog {
         } else {
             versioningStateNoneButton.setSelected(true);
         }
-        createRow("Versioning State:", versioningStatePanel, 5);
+        createRow("Versioning State:", versioningStatePanel, 6);
 
         verifyAfterUploadButton = new JCheckBox("Verify content after upload");
-        createRow("", verifyAfterUploadButton, 6);
+        createRow("", verifyAfterUploadButton, 7);
 
         JButton createButton = new JButton("Create Document", ClientHelper.getIcon("newdocument.png"));
         createButton.addActionListener(new ActionListener() {
@@ -245,8 +249,8 @@ public class CreateDocumentDialog extends CreateDialog {
                     ObjectId objectId = null;
                     if (filename.length() > 0) {
                         // create a document from a file
-                        objectId = getClientModel().createDocument(name, type, filename, versioningState,
-                                unfiledButton.isSelected());
+                        objectId = getClientModel().createDocument(name, type, filename, getMandatoryPropertyValues(),
+                                versioningState, unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream(filename);
@@ -264,8 +268,8 @@ public class CreateDocumentDialog extends CreateDialog {
                             }
                         }
 
-                        objectId = getClientModel().createDocument(name, type, length, seed, versioningState,
-                                unfiledButton.isSelected());
+                        objectId = getClientModel().createDocument(name, type, getMandatoryPropertyValues(), length,
+                                seed, versioningState, unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream("", length, seed);
@@ -292,7 +296,7 @@ public class CreateDocumentDialog extends CreateDialog {
                 }
             }
         });
-        createRow("", createButton, 7);
+        createActionRow("", createButton, 7);
 
         if (file != null) {
             setFile(file);
