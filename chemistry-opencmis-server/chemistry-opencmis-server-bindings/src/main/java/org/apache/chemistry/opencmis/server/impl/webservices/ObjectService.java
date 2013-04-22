@@ -34,7 +34,9 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -46,14 +48,12 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisBulkUpdateType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectIdAndChangeTokenType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRenditionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteTreeResponse.FailedToDelete;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumIncludeRelationships;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumUnfileObject;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumVersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
@@ -196,14 +196,27 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
     }
 
     public void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
-            CmisAccessControlListType addACEs, CmisAccessControlListType removeACEs,
+            CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
 
-        throw new CmisException(fault.getMessage(), fault);
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            String id = service.createItem(repositoryId, convert(properties), folderId, null, convert(addAces, null),
+                    convert(removeAces, null), extData);
+
+            if (objectId != null) {
+                objectId.value = id;
+            }
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -418,12 +431,25 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
             throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
 
-        throw new CmisException(fault.getMessage(), fault);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
+            org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, convert(contentStream),
+                    isLastChunk, extData);
+
+            setHolderValue(objectIdHolder, objectId);
+            setHolderValue(changeTokenHolder, changeToken);
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
 
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -451,12 +477,44 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
     public void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
             Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
             throws CmisException {
-        CmisFaultType fault = new CmisFaultType();
-        fault.setMessage("Not supported!");
-        fault.setCode(BigInteger.ZERO);
-        fault.setType(EnumServiceException.NOT_SUPPORTED);
+        CmisService service = null;
+        try {
+            service = getService(wsContext, repositoryId);
 
-        throw new CmisException(fault.getMessage(), fault);
+            ExtensionsData extData = convertExtensionHolder(extension);
+
+            List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens = null;
+            Properties properties = null;
+            List<String> addSecondaryTypeIds = null;
+            List<String> removeSecondaryTypeIds = null;
+            if (bulkUpdateData != null) {
+                if (!bulkUpdateData.getObjectIdAndChangeToken().isEmpty()) {
+                    objectIdsAndChangeTokens = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
+                    for (CmisObjectIdAndChangeTokenType idAndToken : bulkUpdateData.getObjectIdAndChangeToken()) {
+                        objectIdsAndChangeTokens.add(convert(idAndToken));
+                    }
+                }
+                properties = convert(bulkUpdateData.getProperties());
+                if (!bulkUpdateData.getAddSecondaryTypeIds().isEmpty()) {
+                    addSecondaryTypeIds = bulkUpdateData.getAddSecondaryTypeIds();
+                }
+                if (!bulkUpdateData.getRemoveSecondaryTypeIds().isEmpty()) {
+                    removeSecondaryTypeIds = bulkUpdateData.getRemoveSecondaryTypeIds();
+                }
+            }
+
+            List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
+                    objectIdsAndChangeTokens, properties, addSecondaryTypeIds, removeSecondaryTypeIds, extData);
+
+            if (objectIdAndChangeToken != null) {
+                // TODO: fix
+            }
+
+            setExtensionValues(extData, extension);
+        } catch (Exception e) {
+            throw convertException(e);
+        } finally {
+            closeService(service);
+        }
     }
-
 }

@@ -60,7 +60,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
     }
 
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "getRepositories");
 
         List<RepositoryInfo> infos = null;
         try {
@@ -88,7 +88,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
     }
 
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "getRepositoryInfo");
 
         try {
             return convert(port.getRepositoryInfo(repositoryId, convert(extension)));
@@ -102,7 +102,8 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
     }
 
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
+                "getTypeDefinition");
 
         try {
             return convert(port.getTypeDefinition(repositoryId, typeId, convert(extension)));
@@ -117,7 +118,8 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
 
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
+                "getTypeChildren");
 
         try {
             return convert(port.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
@@ -133,7 +135,8 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
 
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
+                "getTypeDescendants");
 
         try {
             return convertTypeContainerList(port.getTypeDescendants(repositoryId, typeId, depth,
@@ -152,7 +155,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
         }
 
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "createType");
 
         try {
             javax.xml.ws.Holder<CmisTypeDefinitionType> typeDef = new javax.xml.ws.Holder<CmisTypeDefinitionType>(
@@ -175,7 +178,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
         }
 
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "updateType");
 
         try {
             javax.xml.ws.Holder<CmisTypeDefinitionType> typeDef = new javax.xml.ws.Holder<CmisTypeDefinitionType>(
@@ -198,7 +201,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
         }
 
-        RepositoryServicePort port = portProvider.getRepositoryServicePort();
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "deleteType");
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);

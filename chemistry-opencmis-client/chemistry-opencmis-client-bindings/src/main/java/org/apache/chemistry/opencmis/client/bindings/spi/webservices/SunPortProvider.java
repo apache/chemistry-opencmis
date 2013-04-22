@@ -91,11 +91,13 @@ public class SunPortProvider extends AbstractPortProvider {
                         : serviceHolder.getServiceObject().getWSDLDocumentLocation().toString());
                 httpHeaders = authProvider.getHTTPHeaders(url);
 
+                // SSL Factory
                 SSLSocketFactory sf = authProvider.getSSLSocketFactory();
                 if (sf != null) {
                     portObject.getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, sf);
                 }
 
+                // Hostname Verifier
                 HostnameVerifier hv = authProvider.getHostnameVerifier();
                 if (hv != null) {
                     portObject.getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, hv);

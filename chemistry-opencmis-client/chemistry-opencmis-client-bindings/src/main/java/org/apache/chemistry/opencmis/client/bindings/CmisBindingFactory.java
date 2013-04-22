@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -153,6 +154,9 @@ public class CmisBindingFactory {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_WEBSERVICES);
+        if (!sessionParameters.containsKey(SessionParameter.HTTP_INVOKER_CLASS)) {
+            sessionParameters.put(SessionParameter.HTTP_INVOKER_CLASS, DEFAULT_HTTP_INVOKER);
+        }
         if (authenticationProvider == null) {
             if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
@@ -166,15 +170,24 @@ public class CmisBindingFactory {
         }
         addDefaultParameters(sessionParameters);
 
-        check(sessionParameters, SessionParameter.WEBSERVICES_ACL_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_DISCOVERY_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_MULTIFILING_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_NAVIGATION_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_OBJECT_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_POLICY_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_REPOSITORY_SERVICE);
-        check(sessionParameters, SessionParameter.WEBSERVICES_VERSIONING_SERVICE);
+        check(sessionParameters, SessionParameter.WEBSERVICES_ACL_SERVICE,
+                SessionParameter.WEBSERVICES_ACL_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_DISCOVERY_SERVICE,
+                SessionParameter.WEBSERVICES_DISCOVERY_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_MULTIFILING_SERVICE,
+                SessionParameter.WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_NAVIGATION_SERVICE,
+                SessionParameter.WEBSERVICES_NAVIGATION_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_OBJECT_SERVICE,
+                SessionParameter.WEBSERVICES_OBJECT_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_POLICY_SERVICE,
+                SessionParameter.WEBSERVICES_POLICY_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE,
+                SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,
+                SessionParameter.WEBSERVICES_REPOSITORY_SERVICE_ENDPOINT);
+        check(sessionParameters, SessionParameter.WEBSERVICES_VERSIONING_SERVICE,
+                SessionParameter.WEBSERVICES_VERSIONING_SERVICE_ENDPOINT);
 
         return new CmisBindingImpl(sessionParameters, authenticationProvider);
     }
@@ -256,9 +269,18 @@ public class CmisBindingFactory {
      * Checks if the given parameter is present. If not, throw an
      * <code>IllegalArgumentException</code>.
      */
-    private static void check(Map<String, String> sessionParameters, String parameter) {
-        if (!sessionParameters.containsKey(parameter)) {
-            throw new IllegalArgumentException("Parameter '" + parameter + "' is missing!");
+    private static void check(Map<String, String> sessionParameters, String... parameters) {
+        for (String parameter : parameters) {
+            if (sessionParameters.containsKey(parameter)) {
+                return;
+            }
+        }
+
+        if (parameters.length == 1) {
+            throw new IllegalArgumentException("Parameter '" + parameters[0] + "' is missing!");
+        } else {
+            throw new IllegalArgumentException("One of the following parameters must be set: "
+                    + Arrays.asList(parameters).toString());
         }
     }
 

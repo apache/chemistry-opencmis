@@ -53,7 +53,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
 
     public Acl applyAcl(String repositoryId, String objectId, Acl addACEs, Acl removeACEs,
             AclPropagation aclPropagation, ExtensionsData extension) {
-        ACLServicePort port = portProvider.getACLServicePort();
+        ACLServicePort port = portProvider.getACLServicePort(getCmisVersion(repositoryId), "applyACL");
 
         try {
             return convert(port.applyACL(repositoryId, objectId, convert(addACEs), convert(removeACEs),
@@ -68,7 +68,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
     }
 
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-        ACLServicePort port = portProvider.getACLServicePort();
+        ACLServicePort port = portProvider.getACLServicePort(getCmisVersion(repositoryId), "getACL");
 
         try {
             return convert(port.getACL(repositoryId, objectId, onlyBasicPermissions, convert(extension)));
@@ -82,28 +82,18 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
     }
 
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
-        ACLServicePort port = portProvider.getACLServicePort();
+        Acl currentAcl = getAcl(repositoryId, objectId, false, null);
 
-        try {
-            Acl currentAcl = convert(port.getACL(repositoryId, objectId, false, null));
-
-            List<Ace> removeAces = new ArrayList<Ace>();
-            if (currentAcl.getAces() != null) {
-                for (Ace ace : currentAcl.getAces()) {
-                    if (ace.isDirect()) {
-                        removeAces.add(ace);
-                    }
+        List<Ace> removeAces = new ArrayList<Ace>();
+        if (currentAcl.getAces() != null) {
+            for (Ace ace : currentAcl.getAces()) {
+                if (ace.isDirect()) {
+                    removeAces.add(ace);
                 }
             }
-
-            return convert(port.applyACL(repositoryId, objectId, convert(aces), convert(new AccessControlListImpl(
-                    removeAces)), convert(EnumACLPropagation.class, AclPropagation.OBJECTONLY), null));
-        } catch (CmisException e) {
-            throw convertException(e);
-        } catch (Exception e) {
-            throw new CmisRuntimeException("Error: " + e.getMessage(), e);
-        } finally {
-            portProvider.endCall(port);
         }
+
+        return applyAcl(repositoryId, objectId, aces, new AccessControlListImpl(removeAces), AclPropagation.OBJECTONLY,
+                null);
     }
 }

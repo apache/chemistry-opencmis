@@ -28,7 +28,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
  */
 @MTOM
 @StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
-@WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.webservices.ObjectServicePort10")
+@WebService(endpointInterface = "org.apache.chemistry.opencmis.server.impl.webservices.ObjectServicePort10")
 public class ObjectService10 extends ObjectService {
 
 }

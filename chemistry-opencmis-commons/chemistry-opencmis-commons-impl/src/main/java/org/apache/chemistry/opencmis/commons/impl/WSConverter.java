@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
@@ -125,6 +126,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
@@ -178,6 +180,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlEntryTyp
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlPrincipalType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAllowableActionsType;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisBulkUpdateType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChangeEventType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChoiceBoolean;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisChoiceDateTime;
@@ -194,6 +197,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionFeatureType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisListOfIdsType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisNewTypeSettableAttributes;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectIdAndChangeTokenType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderContainerType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderType;
@@ -2643,6 +2647,75 @@ public final class WSConverter {
                 return contentStream.getMimeType();
             }
         }));
+
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // --- Bulk update ---
+    // -------------------------------------------------------------------------
+
+    /**
+     * Converts bulk update data.
+     */
+    public static CmisBulkUpdateType convert(List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeTokens,
+            Properties properties, List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
+        if (objectIdAndChangeTokens == null) {
+            return null;
+        }
+
+        CmisBulkUpdateType result = new CmisBulkUpdateType();
+
+        for (BulkUpdateObjectIdAndChangeToken idAndToken : objectIdAndChangeTokens) {
+            result.getObjectIdAndChangeToken().add(convert(idAndToken));
+        }
+        result.setProperties(convert(properties));
+        if (addSecondaryTypeIds != null) {
+            result.getAddSecondaryTypeIds().addAll(addSecondaryTypeIds);
+        }
+        if (removeSecondaryTypeIds != null) {
+            result.getRemoveSecondaryTypeIds().addAll(removeSecondaryTypeIds);
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts bulk update object id and change token.
+     */
+    public static CmisObjectIdAndChangeTokenType convert(BulkUpdateObjectIdAndChangeToken objectIdAndChangeToken) {
+        if (objectIdAndChangeToken == null) {
+            return null;
+        }
+
+        CmisObjectIdAndChangeTokenType result = new CmisObjectIdAndChangeTokenType();
+
+        result.setId(objectIdAndChangeToken.getId());
+        result.setNewId(objectIdAndChangeToken.getNewId());
+        result.setChangeToken(objectIdAndChangeToken.getChangeToken());
+
+        // handle extensions
+        convertExtension(objectIdAndChangeToken, result);
+
+        return result;
+    }
+    
+    /**
+     * Converts bulk update object id and change token.
+     */
+    public static BulkUpdateObjectIdAndChangeToken convert(CmisObjectIdAndChangeTokenType objectIdAndChangeToken) {
+        if (objectIdAndChangeToken == null) {
+            return null;
+        }
+
+        BulkUpdateObjectIdAndChangeTokenImpl result = new BulkUpdateObjectIdAndChangeTokenImpl();
+
+        result.setId(objectIdAndChangeToken.getId());
+        result.setNewId(objectIdAndChangeToken.getNewId());
+        result.setChangeToken(objectIdAndChangeToken.getChangeToken());
+
+        // handle extensions
+        convertExtension(objectIdAndChangeToken, result);
 
         return result;
     }

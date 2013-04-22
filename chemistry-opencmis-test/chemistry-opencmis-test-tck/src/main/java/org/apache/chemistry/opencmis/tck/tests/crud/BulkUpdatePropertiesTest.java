@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -82,8 +84,18 @@ public class BulkUpdatePropertiesTest extends AbstractSessionTest {
                     null);
 
             // check the result
-            failure = createResult(FAILURE, "Bulk Update Properties did not update all test documents!");
-            addResult(assertEquals(documents.size(), updatedIds.size(), null, failure));
+            if (getBinding() == BindingType.WEBSERVICES) {
+                // TODO: review after TC clarification
+                addResult(createResult(INFO, "The Web Services binding does not return the updated ids."
+                        + " This issue has to be clarified by the CMIS TC and the test to adopted later."));
+            } else {
+                if (updatedIds == null || updatedIds.isEmpty()) {
+                    addResult(createResult(FAILURE, "Bulk Update Properties did not update any documents!"));
+                } else {
+                    failure = createResult(FAILURE, "Bulk Update Properties did not update all test documents!");
+                    addResult(assertEquals(documents.size(), updatedIds.size(), null, failure));
+                }
+            }
 
             // check all documents
             for (Folder folder : folders.values()) {

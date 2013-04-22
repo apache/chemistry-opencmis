@@ -84,6 +84,10 @@ public class WebSpherePortProvider extends AbstractPortProvider {
                 String url = (serviceHolder.getEndpointUrl() != null ? serviceHolder.getEndpointUrl().toString()
                         : serviceHolder.getServiceObject().getWSDLDocumentLocation().toString());
                 httpHeaders = authProvider.getHTTPHeaders(url);
+                
+                // TODO: set SSL Factory
+                
+                // TODO: set Hostname Verifier
             }
 
             // set HTTP headers

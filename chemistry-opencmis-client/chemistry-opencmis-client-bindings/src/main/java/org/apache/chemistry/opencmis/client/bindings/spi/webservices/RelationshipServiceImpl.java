@@ -50,7 +50,8 @@ public class RelationshipServiceImpl extends AbstractWebServicesService implemen
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        RelationshipServicePort port = portProvider.getRelationshipServicePort();
+        RelationshipServicePort port = portProvider.getRelationshipServicePort(getCmisVersion(repositoryId),
+                "getObjectRelationships");
 
         try {
             return convert(port.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,

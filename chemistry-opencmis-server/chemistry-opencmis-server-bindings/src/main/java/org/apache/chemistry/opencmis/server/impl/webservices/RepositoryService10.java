@@ -21,13 +21,11 @@ package org.apache.chemistry.opencmis.server.impl.webservices;
 import javax.jws.WebService;
 import javax.xml.ws.soap.MTOM;
 
-import org.apache.chemistry.opencmis.commons.impl.webservices.RepositoryServicePort10;
-
 /**
  * CMIS 1.0 Repository Service. Excludes CMIS 1.1 operations.
  */
 @MTOM
-@WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.webservices.RepositoryServicePort10")
+@WebService(endpointInterface = "org.apache.chemistry.opencmis.server.impl.webservices.RepositoryServicePort10")
 public class RepositoryService10 extends RepositoryService implements RepositoryServicePort10 {
 
 }

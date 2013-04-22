@@ -53,7 +53,8 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
 
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
-        DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
+        DiscoveryServicePort port = portProvider.getDiscoveryServicePort(getCmisVersion(repositoryId),
+                "getContentChanges");
 
         try {
             javax.xml.ws.Holder<String> portChangeLokToken = convertHolder(changeLogToken);
@@ -77,7 +78,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        DiscoveryServicePort port = portProvider.getDiscoveryServicePort();
+        DiscoveryServicePort port = portProvider.getDiscoveryServicePort(getCmisVersion(repositoryId), "query");
 
         try {
             return convert(port.query(repositoryId, statement, searchAllVersions, includeAllowableActions,

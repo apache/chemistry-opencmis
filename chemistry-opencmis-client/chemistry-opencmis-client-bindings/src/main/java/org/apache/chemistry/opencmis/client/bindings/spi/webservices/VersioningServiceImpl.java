@@ -60,7 +60,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId), "checkOut");
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
@@ -82,7 +82,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
     }
 
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
+                "cancelCheckOut");
 
         try {
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
@@ -102,7 +103,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addACEs, Acl removeACEs,
             ExtensionsData extension) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId), "checkIn");
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
@@ -124,7 +125,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
+                "getAllVersions");
 
         try {
             List<CmisObjectType> versionList = port.getAllVersions(repositoryId, versionSeriesId, filter,
@@ -154,7 +156,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
+                "getObjectOfLatestVersion");
 
         try {
             return convert(port.getObjectOfLatestVersion(repositoryId, versionSeriesId, major, filter,
@@ -171,7 +174,8 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
 
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
-        VersioningServicePort port = portProvider.getVersioningServicePort();
+        VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
+                "getPropertiesOfLatestVersion");
 
         try {
             return convert(port.getPropertiesOfLatestVersion(repositoryId, versionSeriesId, major, filter,

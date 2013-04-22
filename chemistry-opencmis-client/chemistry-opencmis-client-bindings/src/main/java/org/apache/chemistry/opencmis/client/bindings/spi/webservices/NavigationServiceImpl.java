@@ -58,7 +58,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId), "getChildren");
 
         try {
             return convert(port.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions,
@@ -76,7 +76,8 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
+                "getDescendants");
 
         try {
             List<CmisObjectInFolderContainerType> containerList = port.getDescendants(repositoryId, folderId, depth,
@@ -105,7 +106,8 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     }
 
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
+                "getFolderParent");
 
         try {
             return convert(port.getFolderParent(repositoryId, folderId, filter, convert(extension)));
@@ -121,7 +123,8 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
+                "getFolderTree");
 
         try {
             List<CmisObjectInFolderContainerType> containerList = port.getFolderTree(repositoryId, folderId, depth,
@@ -152,7 +155,8 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
+                "getObjectParents");
 
         try {
             List<CmisObjectParentsType> parentsList = port.getObjectParents(repositoryId, objectId, filter,
@@ -183,7 +187,8 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        NavigationServicePort port = portProvider.getNavigationServicePort();
+        NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
+                "getCheckedOutDocs");
 
         try {
             return convert(port.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions,
