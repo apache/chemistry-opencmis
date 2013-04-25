@@ -23,9 +23,9 @@ import static org.apache.chemistry.opencmis.commons.impl.XMLConstants.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1337,7 +1337,7 @@ public class XMLConverter {
                 if (isTag(name, TAG_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE)) {
                     Set<PropertyType> ptSet = target.canCreate();
                     if (ptSet == null) {
-                        ptSet = new HashSet<PropertyType>();
+                        ptSet = EnumSet.noneOf(PropertyType.class);
                         target.setCanCreate(ptSet);
                     }
 
@@ -2309,7 +2309,7 @@ public class XMLConverter {
 
                     Set<Action> actions = target.getAllowableActions();
                     if (actions == null) {
-                        actions = new HashSet<Action>();
+                        actions = EnumSet.noneOf(Action.class);
                         target.setAllowableActions(actions);
                     }
 

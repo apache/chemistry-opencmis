@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1870,7 +1871,7 @@ public class FileShareRepository {
         boolean isFolder = file.isDirectory();
         boolean isRoot = root.equals(file);
 
-        Set<Action> aas = new HashSet<Action>();
+        Set<Action> aas = EnumSet.noneOf(Action.class);
 
         addAction(aas, Action.CAN_GET_OBJECT_PARENTS, !isRoot);
         addAction(aas, Action.CAN_GET_PROPERTIES, true);

@@ -25,9 +25,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -501,7 +501,7 @@ public final class JSONConverter {
             List<Object> canCreateJson = getList(creatablePropertyTypesJson
                     .get(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE));
             if (canCreateJson != null) {
-                Set<PropertyType> canCreate = new HashSet<PropertyType>();
+                Set<PropertyType> canCreate = EnumSet.noneOf(PropertyType.class);
 
                 for (Object o : canCreateJson) {
                     try {
@@ -1924,7 +1924,7 @@ public final class JSONConverter {
         }
 
         AllowableActionsImpl result = new AllowableActionsImpl();
-        Set<Action> allowableActions = new HashSet<Action>();
+        Set<Action> allowableActions = EnumSet.noneOf(Action.class);
 
         for (Action action : Action.values()) {
             Boolean value = getBoolean(json, action.value());

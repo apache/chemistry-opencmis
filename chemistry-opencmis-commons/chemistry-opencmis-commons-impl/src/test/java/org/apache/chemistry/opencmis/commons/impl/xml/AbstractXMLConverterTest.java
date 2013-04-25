@@ -525,6 +525,17 @@ public abstract class AbstractXMLConverterTest {
             }
 
             return;
+        } else if (expected instanceof Set<?>) {
+            Set<?> expectedSet = (Set<?>) expected;
+            Set<?> actualSet = (Set<?>) actual;
+
+            assertEquals(name + ".length", expectedSet.size(), actualSet.size());
+
+            for (Object item : expectedSet) {
+                assertTrue(name + ".contains[" + item + "]", actualSet.contains(item));
+            }
+
+            return;
         }
 
         for (Method m : expected.getClass().getMethods()) {

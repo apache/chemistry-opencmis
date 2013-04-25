@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,8 +94,8 @@ public class SessionImpl implements Session {
     private static final OperationContext DEFAULT_CONTEXT = new OperationContextImpl(null, false, true, false,
             IncludeRelationships.NONE, null, true, null, true, 100);
 
-    private static final Set<Updatability> CREATE_UPDATABILITY = new HashSet<Updatability>();
-    private static final Set<Updatability> CREATE_AND_CHECKOUT_UPDATABILITY = new HashSet<Updatability>();
+    private static final Set<Updatability> CREATE_UPDATABILITY = EnumSet.noneOf(Updatability.class);
+    private static final Set<Updatability> CREATE_AND_CHECKOUT_UPDATABILITY = EnumSet.noneOf(Updatability.class);
 
     static {
         CREATE_UPDATABILITY.add(Updatability.ONCREATE);
@@ -1007,7 +1007,7 @@ public class SessionImpl implements Session {
             }
         }
 
-        Set<Updatability> updatebility = new HashSet<Updatability>();
+        Set<Updatability> updatebility = EnumSet.noneOf(Updatability.class);
         updatebility.add(Updatability.READWRITE);
 
         return getBinding().getObjectService().bulkUpdateProperties(getRepositoryId(), objectIdsAndChangeTokens,

@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -405,7 +404,7 @@ public final class WSConverter {
             result.setCreatablePropertyTypes(target);
 
             if (creatablePropertyTypes.getCanCreate().size() > 0) {
-                Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>();
+                Set<PropertyType> propertyTypeSet = EnumSet.noneOf(PropertyType.class);
                 target.setCanCreate(propertyTypeSet);
                 for (EnumPropertyType propType : creatablePropertyTypes.getCanCreate()) {
                     PropertyType propertyType = convert(PropertyType.class, propType);

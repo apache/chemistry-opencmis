@@ -160,6 +160,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
         } catch (Error err) {
             addResult(createResult(UNEXPECTED_EXCEPTION, "Error: " + err, err, true));
+        } finally {
+            testFolder = null;
         }
     }
 

@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -55,14 +56,15 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
     public void testObjectData() throws Exception {
         // run the test a few times with different values
         for (int i = 0; i < 10; i++) {
-            ObjectDataImpl data = createObjectData(true);
+            ObjectDataImpl data10 = createObjectData(true, CmisVersion.CMIS_1_0);
+            assertObjectData10(data10, true);
 
-            assertObjectData10(data, true);
-            assertObjectData11(data, true);
+            ObjectDataImpl data11 = createObjectData(true, CmisVersion.CMIS_1_1);
+            assertObjectData11(data11, true);
         }
     }
 
-    protected ObjectDataImpl createObjectData(boolean addRelationships) {
+    protected ObjectDataImpl createObjectData(boolean addRelationships, CmisVersion cmisVersion) {
         ObjectDataImpl result = new ObjectDataImpl();
 
         // properties
@@ -99,8 +101,11 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         // allowable actions
         AllowableActionsImpl allowableActions = new AllowableActionsImpl();
-        HashSet<Action> actions = new HashSet<Action>();
+        Set<Action> actions = new HashSet<Action>();
         for (Action action : Action.values()) {
+            if (action == Action.CAN_CREATE_ITEM && cmisVersion == CmisVersion.CMIS_1_0) {
+                continue;
+            }
             actions.add(action);
         }
         allowableActions.setAllowableActions(actions);
@@ -110,7 +115,7 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
         if (addRelationships) {
             List<ObjectData> relationships = new ArrayList<ObjectData>();
             for (int i = 0; i < randomInt(4) + 1; i++) {
-                relationships.add(createObjectData(false));
+                relationships.add(createObjectData(false, cmisVersion));
             }
             result.setRelationships(relationships);
         }

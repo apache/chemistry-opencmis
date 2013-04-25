@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -266,7 +266,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
             ObjectFactory of = getObjectFactory();
 
-            Set<Updatability> updatebility = new HashSet<Updatability>();
+            Set<Updatability> updatebility = EnumSet.noneOf(Updatability.class);
             updatebility.add(Updatability.READWRITE);
             updatebility.add(Updatability.WHENCHECKEDOUT);
 

@@ -24,9 +24,12 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -81,6 +84,8 @@ import org.xml.sax.SAXException;
 public abstract class AbstractPortProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPortProvider.class);
+
+    private static final int PORT_CACHE_SIZE = 5;
 
     protected static final int CHUNK_SIZE = (64 * 1024) - 1;
 
@@ -197,6 +202,10 @@ public abstract class AbstractPortProvider {
     protected boolean useCompression;
     protected boolean useClientCompression;
     protected String acceptLanguage;
+
+    private ReentrantLock portObjectLock = new ReentrantLock();
+    private EnumMap<CmisWebSerivcesService, LinkedList<BindingProvider>> portObjectCache = new EnumMap<CmisWebSerivcesService, LinkedList<BindingProvider>>(
+            CmisWebSerivcesService.class);
 
     public BindingSession getSession() {
         return session;
@@ -317,6 +326,46 @@ public abstract class AbstractPortProvider {
                         MessageContext.HTTP_RESPONSE_HEADERS);
                 Integer statusCode = (Integer) bp.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
                 authProvider.putResponseHeaders(url, statusCode == null ? -1 : statusCode, headers);
+            }
+
+            CmisWebSerivcesService service = null;
+
+            if (portObject instanceof RepositoryServicePort) {
+                service = CmisWebSerivcesService.REPOSITORY_SERVICE;
+            } else if (portObject instanceof NavigationServicePort) {
+                service = CmisWebSerivcesService.NAVIGATION_SERVICE;
+            } else if (portObject instanceof ObjectServicePort) {
+                service = CmisWebSerivcesService.OBJECT_SERVICE;
+            } else if (portObject instanceof VersioningServicePort) {
+                service = CmisWebSerivcesService.VERSIONING_SERVICE;
+            } else if (portObject instanceof DiscoveryServicePort) {
+                service = CmisWebSerivcesService.DISCOVERY_SERVICE;
+            } else if (portObject instanceof MultiFilingServicePort) {
+                service = CmisWebSerivcesService.MULTIFILING_SERVICE;
+            } else if (portObject instanceof RelationshipServicePort) {
+                service = CmisWebSerivcesService.RELATIONSHIP_SERVICE;
+            } else if (portObject instanceof PolicyServicePort) {
+                service = CmisWebSerivcesService.POLICY_SERVICE;
+            } else if (portObject instanceof ACLServicePort) {
+                service = CmisWebSerivcesService.ACL_SERVICE;
+            }
+
+            if (service == null) {
+                return;
+            }
+
+            portObjectLock.lock();
+            try {
+                LinkedList<BindingProvider> queue = portObjectCache.get(service);
+                if (queue == null) {
+                    throw new CmisRuntimeException("This is a bug!");
+                }
+
+                if (queue.size() < PORT_CACHE_SIZE) {
+                    queue.push(bp);
+                }
+            } finally {
+                portObjectLock.unlock();
             }
         }
     }
@@ -562,6 +611,21 @@ public abstract class AbstractPortProvider {
      */
     protected BindingProvider createPortObjectFromServiceHolder(CmisServiceHolder serviceHolder,
             WebServiceFeature... features) {
+        portObjectLock.lock();
+        try {
+            LinkedList<BindingProvider> queue = portObjectCache.get(serviceHolder.getService());
+            if (queue == null) {
+                queue = new LinkedList<BindingProvider>();
+                portObjectCache.put(serviceHolder.getService(), queue);
+            }
+
+            if (!queue.isEmpty()) {
+                return queue.pop();
+            }
+        } finally {
+            portObjectLock.unlock();
+        }
+
         return (BindingProvider) serviceHolder.getServiceObject().getPort(serviceHolder.getService().getPortClass(),
                 features);
     }

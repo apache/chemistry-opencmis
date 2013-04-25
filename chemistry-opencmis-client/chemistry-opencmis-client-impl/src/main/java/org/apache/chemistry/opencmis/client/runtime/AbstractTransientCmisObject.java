@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -467,7 +468,7 @@ public abstract class AbstractTransientCmisObject implements TransientCmisObject
     }
 
     protected Properties prepareProperties() {
-        Set<Updatability> updatebility = new HashSet<Updatability>();
+        Set<Updatability> updatebility = EnumSet.noneOf(Updatability.class);
         updatebility.add(Updatability.READWRITE);
 
         // check if checked out

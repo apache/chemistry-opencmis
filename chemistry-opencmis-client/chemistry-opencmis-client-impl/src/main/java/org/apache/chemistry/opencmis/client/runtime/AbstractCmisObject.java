@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -330,7 +330,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             String changeToken = getChangeToken();
             Holder<String> changeTokenHolder = new Holder<String>(changeToken);
 
-            Set<Updatability> updatebility = new HashSet<Updatability>();
+            Set<Updatability> updatebility = EnumSet.noneOf(Updatability.class);
             updatebility.add(Updatability.READWRITE);
 
             // check if checked out
