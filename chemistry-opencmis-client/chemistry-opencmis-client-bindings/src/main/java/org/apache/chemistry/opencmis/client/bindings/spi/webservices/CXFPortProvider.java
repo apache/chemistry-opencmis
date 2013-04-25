@@ -18,63 +18,51 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.MTOMFeature;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.headers.Header;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.sun.xml.ws.api.message.Headers;
-import com.sun.xml.ws.developer.JAXWSProperties;
-import com.sun.xml.ws.developer.StreamingAttachmentFeature;
-import com.sun.xml.ws.developer.WSBindingProvider;
-
 /**
- * Provides CMIS Web Services port objects for JAX-WS RI. Handles authentication
- * headers.
+ * Apache CXF JAX-WS implementation
  */
-public class SunPortProvider extends AbstractPortProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(SunPortProvider.class);
+public class CXFPortProvider extends AbstractPortProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(CXFPortProvider.class);
 
     /**
      * Creates a port object.
      */
     protected BindingProvider createPortObject(CmisServiceHolder serviceHolder) {
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating Web Service port object of " + serviceHolder.getServiceName() + "...");
         }
 
         try {
-            // prepare features
-            WebServiceFeature[] features;
-            if (serviceHolder.getService().handlesContent()) {
-                int threshold = getSession().get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
-                features = new WebServiceFeature[] { new MTOMFeature(),
-                        new StreamingAttachmentFeature(null, true, threshold) };
-            } else {
-                features = new WebServiceFeature[] { new MTOMFeature() };
-            }
-
             // create port object
-            BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, features);
+            BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, new MTOMFeature());
 
-            // set streaming for services that transport content
-            if (serviceHolder.getService().handlesContent()) {
-                ((BindingProvider) portObject).getRequestContext().put(
-                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
-            }
+            Binding binding = ((BindingProvider) portObject).getBinding();
+            ((SOAPBinding) binding).setMTOMEnabled(true);
 
             // add SOAP and HTTP authentication headers
             AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
@@ -83,25 +71,16 @@ public class SunPortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    ((WSBindingProvider) portObject).setOutboundHeaders(Headers.create(soapHeader));
+                    ((BindingProvider) portObject).getRequestContext().put(
+                            Header.HEADER_LIST,
+                            Collections.singletonList(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader
+                                    .getLocalName()), soapHeader)));
                 }
 
                 // HTTP header
                 String url = (serviceHolder.getEndpointUrl() != null ? serviceHolder.getEndpointUrl().toString()
                         : serviceHolder.getServiceObject().getWSDLDocumentLocation().toString());
                 httpHeaders = authProvider.getHTTPHeaders(url);
-
-                // SSL Factory
-                SSLSocketFactory sf = authProvider.getSSLSocketFactory();
-                if (sf != null) {
-                    portObject.getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, sf);
-                }
-
-                // Hostname Verifier
-                HostnameVerifier hv = authProvider.getHostnameVerifier();
-                if (hv != null) {
-                    portObject.getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, hv);
-                }
             }
 
             // set HTTP headers
@@ -110,16 +89,23 @@ public class SunPortProvider extends AbstractPortProvider {
             // set endpoint URL
             setEndpointUrl(portObject, serviceHolder.getEndpointUrl());
 
+            Client client = ClientProxy.getClient(portObject);
+            HTTPConduit http = (HTTPConduit) client.getConduit();
+            HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+            httpClientPolicy.setAllowChunking(true);
+
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
             if (connectTimeout >= 0) {
-                portObject.getRequestContext().put(JAXWSProperties.CONNECT_TIMEOUT, connectTimeout);
+                httpClientPolicy.setConnectionTimeout(connectTimeout);
             }
 
             int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
-                portObject.getRequestContext().put("com.sun.xml.ws.request.timeout", readTimeout);
+                httpClientPolicy.setReceiveTimeout(readTimeout);
             }
+
+            http.setClient(httpClientPolicy);
 
             return portObject;
         } catch (CmisBaseException ce) {

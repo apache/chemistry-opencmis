@@ -53,7 +53,7 @@ public class SecondaryTypesTest extends AbstractSessionTest {
     @Override
     public void run(Session session) {
         if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
-            addResult(createResult(SKIPPED, "Secondary types are not supporetd by CMIS 1.0. Test skipped!"));
+            addResult(createResult(SKIPPED, "Secondary types are not supported by CMIS 1.0. Test skipped!"));
             return;
         }
 

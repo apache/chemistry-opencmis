@@ -39,7 +39,7 @@ for i in *.jar; do
 done
 
 
-JAVA_OPTS="-Djava.net.useSystemProxies=true"
+JAVA_OPTS="-Djava.net.useSystemProxies=true -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=sunjre"
 
 if [ -n "$http_proxy" ]; then
   HTTP_PROXY_HOST=$(echo $http_proxy | sed 's/http:\/\/\(.*\):.*/\1/')

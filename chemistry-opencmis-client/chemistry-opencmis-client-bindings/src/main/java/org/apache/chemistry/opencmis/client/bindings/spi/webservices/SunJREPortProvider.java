@@ -18,19 +18,13 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import java.io.StringWriter;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
@@ -42,11 +36,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.sun.xml.internal.ws.api.message.Headers;
+import com.sun.xml.internal.ws.developer.JAXWSProperties;
+import com.sun.xml.internal.ws.developer.StreamingAttachmentFeature;
+import com.sun.xml.internal.ws.developer.WSBindingProvider;
+
 /**
- * WebSphere JAX-WS implementation
+ * Sun JRE JAX-WS implementation.
  */
-public class WebSpherePortProvider extends AbstractPortProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(WebSpherePortProvider.class);
+public class SunJREPortProvider extends AbstractPortProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(SunJREPortProvider.class);
 
     /**
      * Creates a port object.
@@ -57,8 +56,24 @@ public class WebSpherePortProvider extends AbstractPortProvider {
         }
 
         try {
+            // prepare features
+            WebServiceFeature[] features;
+            if (serviceHolder.getService().handlesContent()) {
+                int threshold = getSession().get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
+                features = new WebServiceFeature[] { new MTOMFeature(),
+                        new StreamingAttachmentFeature(null, true, threshold) };
+            } else {
+                features = new WebServiceFeature[] { new MTOMFeature() };
+            }
+
             // create port object
-            BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, new MTOMFeature());
+            BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, features);
+
+            // set streaming for services that transport content
+            if (serviceHolder.getService().handlesContent()) {
+                ((BindingProvider) portObject).getRequestContext().put(
+                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
+            }
 
             // add SOAP and HTTP authentication headers
             AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
@@ -67,16 +82,7 @@ public class WebSpherePortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    TransformerFactory transFactory = TransformerFactory.newInstance();
-                    Transformer transformer = transFactory.newTransformer();
-                    StringWriter headerXml = new StringWriter();
-                    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-                    transformer.transform(new DOMSource(soapHeader), new StreamResult(headerXml));
-
-                    Map<QName, List<String>> header = new HashMap<QName, List<String>>();
-                    header.put(new QName(soapHeader.getNamespaceURI(), soapHeader.getLocalName()),
-                            Collections.singletonList(headerXml.toString()));
-                    portObject.getRequestContext().put("jaxws.binding.soap.headers.outbound", header);
+                    ((WSBindingProvider) portObject).setOutboundHeaders(Headers.create(soapHeader));
                 }
 
                 // HTTP header
@@ -84,9 +90,17 @@ public class WebSpherePortProvider extends AbstractPortProvider {
                         : serviceHolder.getServiceObject().getWSDLDocumentLocation().toString());
                 httpHeaders = authProvider.getHTTPHeaders(url);
 
-                // TODO: set SSL Factory
+                // SSL Factory
+                SSLSocketFactory sf = authProvider.getSSLSocketFactory();
+                if (sf != null) {
+                    portObject.getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, sf);
+                }
 
-                // TODO: set Hostname Verifier
+                // Hostname Verifier
+                HostnameVerifier hv = authProvider.getHostnameVerifier();
+                if (hv != null) {
+                    portObject.getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, hv);
+                }
             }
 
             // set HTTP headers
@@ -98,12 +112,12 @@ public class WebSpherePortProvider extends AbstractPortProvider {
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
             if (connectTimeout >= 0) {
-                ((BindingProvider) portObject).getRequestContext().put("connection_timeout", connectTimeout);
+                portObject.getRequestContext().put(JAXWSProperties.CONNECT_TIMEOUT, connectTimeout);
             }
 
             int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
-                ((BindingProvider) portObject).getRequestContext().put("request_timeout", readTimeout);
+                portObject.getRequestContext().put(JAXWSProperties.REQUEST_TIMEOUT, readTimeout);
             }
 
             return portObject;

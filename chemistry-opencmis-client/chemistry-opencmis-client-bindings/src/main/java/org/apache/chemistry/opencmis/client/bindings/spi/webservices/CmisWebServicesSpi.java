@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -38,6 +39,11 @@ import org.slf4j.LoggerFactory;
  * CMIS Web Services SPI implementation.
  */
 public class CmisWebServicesSpi implements CmisSpi {
+
+    public static final String JAXWS_IMPL_RI = "sunri";
+    public static final String JAXWS_IMPL_JRE = "sunjre";
+    public static final String JAXWS_IMPL_CXF = "cxf";
+    public static final String JAXWS_IMPL_WEBSPHERE = "websphere";
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesSpi.class);
 
@@ -63,7 +69,23 @@ public class CmisWebServicesSpi implements CmisSpi {
 
         String portProviderClass = (String) session.get(SessionParameter.WEBSERVICES_PORT_PROVIDER_CLASS);
         if (portProviderClass == null) {
-            portProvider = new SunPortProvider();
+            String jaxwsImpl = (String) session.get(SessionParameter.WEBSERVICES_JAXWS_IMPL);
+
+            if (jaxwsImpl == null) {
+                jaxwsImpl = System.getProperty("org.apache.chemistry.opencmis.binding.webservices.jaxws.impl");
+            }
+
+            if (jaxwsImpl == null || JAXWS_IMPL_RI.equals(jaxwsImpl)) {
+                portProvider = new SunRIPortProvider();
+            } else if (JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
+                portProvider = new SunJREPortProvider();
+            } else if (JAXWS_IMPL_CXF.equals(jaxwsImpl)) {
+                portProvider = new CXFPortProvider();
+            } else if (JAXWS_IMPL_WEBSPHERE.equals(jaxwsImpl)) {
+                portProvider = new WebSpherePortProvider();
+            } else {
+                throw new CmisRuntimeException("Unknown JAX-WS implementation specified!");
+            }
         } else {
             Object portProviderObj = null;
 

@@ -48,11 +48,13 @@
     </files>
 	<dependencySets>
 	    <dependencySet>
-              <outputDirectory>/lib</outputDirectory>
+          <outputDirectory>/lib</outputDirectory>
 	      <useProjectArtifact></useProjectArtifact>
 	      <unpack>false</unpack>
 	      <scope>runtime</scope>
+	      <useTransitiveFiltering>true</useTransitiveFiltering>
           <excludes>
+              <exclude>com.sun.xml.ws:jaxws-rt</exclude>
               <exclude>${project.groupId}:chemistry-opencmis-test-util</exclude>
               <exclude>junit:junit</exclude>                       
               <exclude>org.apache.felix:org.osgi.core</exclude>

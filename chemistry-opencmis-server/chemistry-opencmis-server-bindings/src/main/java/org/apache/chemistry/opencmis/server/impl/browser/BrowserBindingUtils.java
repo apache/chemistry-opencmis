@@ -84,6 +84,8 @@ public final class BrowserBindingUtils {
     public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.opencmis.browserbinding.basetypeId";
     public static final String CONTEXT_TOKEN = "org.apache.chemistry.opencmis.browserbinding.token";
 
+    public static final String REPOSITORY_PLACEHOLDER = "{repositoryId}";
+
     public enum CallUrl {
         SERVICE, REPOSITORY, ROOT
     }
@@ -95,10 +97,16 @@ public final class BrowserBindingUtils {
     /**
      * Compiles the base URL for links, collections and templates.
      */
-    public static UrlBuilder compileBaseUrl(HttpServletRequest request) {
+    public static UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
         String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
         if (baseUrl != null) {
-            return new UrlBuilder(baseUrl);
+            int repIdPos = baseUrl.indexOf(REPOSITORY_PLACEHOLDER);
+            if (repIdPos < 0) {
+                return new UrlBuilder(baseUrl);
+            } else {
+                return new UrlBuilder(baseUrl.substring(0, repIdPos) + repositoryId
+                        + baseUrl.substring(repIdPos + REPOSITORY_PLACEHOLDER.length()));
+            }
         }
 
         UrlBuilder url = new UrlBuilder(request.getScheme(), request.getServerName(), request.getServerPort(), null);
@@ -110,7 +118,7 @@ public final class BrowserBindingUtils {
     }
 
     public static UrlBuilder compileRepositoryUrl(HttpServletRequest request, String repositoryId) {
-        return compileBaseUrl(request).addPathSegment(repositoryId);
+        return compileBaseUrl(request, repositoryId).addPathSegment(repositoryId);
     }
 
     public static UrlBuilder compileRootUrl(HttpServletRequest request, String repositoryId) {

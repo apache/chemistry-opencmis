@@ -164,6 +164,9 @@
                                 <descriptor>
                                   src/main/assembly/workbench-assembly.xml
                                 </descriptor>
+                                <descriptor>
+                                  src/main/assembly/workbench-cxf-assembly.xml
+                                </descriptor>   
                             </descriptors>
                         </configuration>
                      </execution>
@@ -236,7 +239,19 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache</groupId>
@@ -274,7 +289,7 @@
                                   <descriptors>
                                       <descriptor>
                                         src/main/assembly/workbench-assembly.xml
-                                      </descriptor>
+                                      </descriptor>                                  
                                   </descriptors>
                               </configuration>
                           </execution>

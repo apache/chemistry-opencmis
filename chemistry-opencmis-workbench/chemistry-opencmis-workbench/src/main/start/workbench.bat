@@ -18,6 +18,6 @@ rem @version@
 
 cd %~dp0\lib
 
-set "JAVA_OPTS=-Djava.net.useSystemProxies=true"
+set "JAVA_OPTS=-Djava.net.useSystemProxies=true -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=sunjre"
 
 start /B javaw %JAVA_OPTS% -classpath ".;*" org.apache.chemistry.opencmis.workbench.Workbench

@@ -66,6 +66,8 @@ public final class SessionParameter {
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
+    
+    public static final String WEBSERVICES_JAXWS_IMPL = "org.apache.chemistry.opencmis.binding.webservices.jaxws.impl";
 
     /** URL of the Browser Binding entry point. */
     public static final String BROWSER_URL = "org.apache.chemistry.opencmis.binding.browser.url";

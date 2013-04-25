@@ -264,8 +264,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.xml.ws.developer.StreamingDataHandler;
-
 /**
  * Contains converter methods.
  */
@@ -275,6 +273,29 @@ public final class WSConverter {
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final Logger LOG = LoggerFactory.getLogger(WSConverter.class);
+
+    private static Class<?> STREAM_DATA_HANDLER_CLASS_1;
+    private static Method STREAM_DATA_HANDLER_READ_METHOD_1;
+    private static Class<?> STREAM_DATA_HANDLER_CLASS_2;
+    private static Method STREAM_DATA_HANDLER_READ_METHOD_2;
+
+    static {
+        try {
+            STREAM_DATA_HANDLER_CLASS_1 = Class.forName("org.jvnet.staxex.StreamingDataHandler");
+            STREAM_DATA_HANDLER_READ_METHOD_1 = STREAM_DATA_HANDLER_CLASS_1.getMethod("readOnce", new Class<?>[0]);
+        } catch (Exception e) {
+            STREAM_DATA_HANDLER_CLASS_1 = null;
+            STREAM_DATA_HANDLER_READ_METHOD_1 = null;
+        }
+
+        try {
+            STREAM_DATA_HANDLER_CLASS_2 = Class.forName("com.sun.xml.internal.org.jvnet.staxex.StreamingDataHandler");
+            STREAM_DATA_HANDLER_READ_METHOD_2 = STREAM_DATA_HANDLER_CLASS_2.getMethod("readOnce", new Class<?>[0]);
+        } catch (Exception e) {
+            STREAM_DATA_HANDLER_CLASS_2 = null;
+            STREAM_DATA_HANDLER_READ_METHOD_2 = null;
+        }
+    }
 
     /**
      * Private constructor.
@@ -2572,20 +2593,21 @@ public final class WSConverter {
         result.setFileName(contentStream.getFilename());
         result.setLength(contentStream.getLength());
         result.setMimeType(contentStream.getMimeType());
-        if (contentStream.getStream() != null) {
+
+        DataHandler streamDataHandler = contentStream.getStream();
+        if (streamDataHandler != null) {
             try {
-                try {
-                    if (contentStream.getStream() instanceof StreamingDataHandler) {
-                        result.setStream(((StreamingDataHandler) contentStream.getStream()).readOnce());
-                    } else {
-                        result.setStream(contentStream.getStream().getInputStream());
-                    }
-                } catch (NoClassDefFoundError cnfe) {
-                    // Fallback in case the JAX-WS RI is not available (optional
-                    // resolution in OSGi)
+                if (STREAM_DATA_HANDLER_CLASS_1 != null && STREAM_DATA_HANDLER_CLASS_1.isInstance(streamDataHandler)) {
+                    result.setStream((InputStream) STREAM_DATA_HANDLER_READ_METHOD_1.invoke(streamDataHandler,
+                            (Object[]) null));
+                } else if (STREAM_DATA_HANDLER_CLASS_2 != null
+                        && STREAM_DATA_HANDLER_CLASS_2.isInstance(streamDataHandler)) {
+                    result.setStream((InputStream) STREAM_DATA_HANDLER_READ_METHOD_2.invoke(streamDataHandler,
+                            (Object[]) null));
+                } else {
                     result.setStream(contentStream.getStream().getInputStream());
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new CmisRuntimeException("Could not get the stream: " + e.getMessage(), e);
             }
         }
@@ -2699,7 +2721,7 @@ public final class WSConverter {
 
         return result;
     }
-    
+
     /**
      * Converts bulk update object id and change token.
      */

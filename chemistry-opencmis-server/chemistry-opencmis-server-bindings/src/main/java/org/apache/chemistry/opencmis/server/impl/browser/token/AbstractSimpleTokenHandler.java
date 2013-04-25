@@ -63,16 +63,17 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
 
     public void service(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response) {
 
+        String repositoryId = null; // TODO: determine repository id
         String login = request.getParameter(PARAM_LOGIN);
         try {
             if (LOGIN_TOKEN.equals(login)) {
                 sendTokens(servletContext, request, response);
             } else if (LOGIN_SCRIPT.equals(login)) {
-                sendJavaScript(servletContext, request, response);
+                sendJavaScript(servletContext, request, response, repositoryId);
             } else if (LOGIN_CONTROLLER.equals(login)) {
-                sendControllerContent(servletContext, request, response);
+                sendControllerContent(servletContext, request, response, repositoryId);
             } else if (LOGIN_LOGIN.equals(login)) {
-                login(servletContext, request, response);
+                login(servletContext, request, response, repositoryId);
             } else if (LOGIN_LOGOUT.equals(login)) {
                 logout(servletContext, request, response);
             } else {
@@ -124,9 +125,9 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
      * Sends the JavaScript file for web clients.
      */
     protected void sendJavaScript(ServletContext servletContext, HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+            HttpServletResponse response, String repositoryId) throws IOException {
 
-        UrlBuilder baseUrl = BrowserBindingUtils.compileBaseUrl(request);
+        UrlBuilder baseUrl = BrowserBindingUtils.compileBaseUrl(request, repositoryId);
         URL url = new URL(baseUrl.toString());
 
         request.setAttribute(ATTR_PREFIX + "domain", encodeJavaScriptString(url.getProtocol() + "://" + url.getHost()
@@ -149,13 +150,14 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
      * Sends the IFrame content.
      */
     protected void sendControllerContent(ServletContext servletContext, HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+            HttpServletResponse response, String repositoryId) throws IOException {
 
         response.setContentType("text/html; charset=UTF-8");
 
-        request.setAttribute(ATTR_PREFIX + "loginUrl",
-                encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request).addParameter(PARAM_LOGIN, "")
-                        .toString()));
+        request.setAttribute(
+                ATTR_PREFIX + "loginUrl",
+                encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request, repositoryId)
+                        .addParameter(PARAM_LOGIN, "").toString()));
 
         RequestDispatcher dispatcher = servletContext.getRequestDispatcher(JSP_PATH + JSP_IFRAME);
         try {
@@ -168,12 +170,12 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
     /**
      * Handles logins.
      */
-    protected void login(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void login(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response,
+            String repositoryId) throws IOException {
         if ("GET".equals(request.getMethod())) {
             showLoginForm(servletContext, request, response, null);
         } else if ("POST".equals(request.getMethod())) {
-            authenticate(servletContext, request, response);
+            authenticate(servletContext, request, response, repositoryId);
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -200,8 +202,8 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
         }
     }
 
-    protected void authenticate(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void authenticate(ServletContext servletContext, HttpServletRequest request,
+            HttpServletResponse response, String repositoryId) throws IOException {
         if (SimpleTokenHandlerSessionHelper.checkFormKey(request)) {
             // login form returns
 
@@ -265,7 +267,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
 
             SimpleTokenHandlerSessionHelper.setLoginKey(request, loginKey, formKey, appURL);
 
-            String formURL = encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request)
+            String formURL = encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request, repositoryId)
                     .addParameter(PARAM_LOGIN, LOGIN_LOGIN)
                     .addParameter(SimpleTokenHandlerSessionHelper.PARAM_KEY, formKey).toString());
 

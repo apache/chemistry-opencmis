@@ -59,7 +59,7 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
     @Override
     public void run(Session session) {
         if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
-            addResult(createResult(SKIPPED, "Type mutability is not supporetd by CMIS 1.0. Test skipped!"));
+            addResult(createResult(SKIPPED, "Type mutability is not supported by CMIS 1.0. Test skipped!"));
             return;
         }
 

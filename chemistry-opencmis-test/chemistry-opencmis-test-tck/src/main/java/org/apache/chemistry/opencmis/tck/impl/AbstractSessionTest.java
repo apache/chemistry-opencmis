@@ -158,6 +158,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             if (!(e instanceof FatalTestException)) {
                 addResult(createResult(UNEXPECTED_EXCEPTION, "Exception: " + e, e, true));
             }
+        } catch (Error err) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Error: " + err, err, true));
         }
     }
 
