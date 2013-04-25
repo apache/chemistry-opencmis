@@ -80,6 +80,16 @@
 							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/wsdl</location>
 						</linkedResource>
 						<linkedResource>
+							<name>src/main/webapp/WEB-INF/cmis10</name>
+							<type>2</type>
+							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/cmis10</location>
+						</linkedResource>
+						<linkedResource>
+							<name>src/main/webapp/WEB-INF/cmis11</name>
+							<type>2</type>
+							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/WEB-INF/cmis11</location>
+						</linkedResource>
+						<linkedResource>
 							<name>src/main/webapp/css</name>
 							<type>2</type>
 							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/webapp/css</location>
