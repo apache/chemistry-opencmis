@@ -162,7 +162,7 @@ public class AtomLinkInfoProvider {
         objInfo.setRelationshipTargetIds(targetIds);
 
         // Policies, currently not supported by in-memory provider
-        objInfo.setSupportsPolicies(false);
+        objInfo.setSupportsPolicies(true);
 
         // ACLs, currently not supported by in-memory provider
         objInfo.setHasAcl(true);
