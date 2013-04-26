@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -172,21 +174,33 @@ public abstract class AbstractPortProvider {
 
     static class CmisServiceHolder {
         private CmisWebSerivcesService service;
-        private Service serviceObject;
+        private SoftReference<Service> serviceObject;
         private URL endpointUrl;
 
-        public CmisServiceHolder(CmisWebSerivcesService service, Service serviceObject, URL endpointUrl) {
+        public CmisServiceHolder(CmisWebSerivcesService service, URL endpointUrl) throws Exception {
             this.service = service;
-            this.serviceObject = serviceObject;
             this.endpointUrl = endpointUrl;
+            this.serviceObject = new SoftReference<Service>(createServiceObject());
+        }
+
+        private Service createServiceObject() throws Exception {
+            Constructor<? extends Service> serviceConstructor = service.getServiceClass().getConstructor(
+                    new Class<?>[] { URL.class, QName.class });
+            return serviceConstructor.newInstance(new Object[] { null, service.getQName() });
         }
 
         public CmisWebSerivcesService getService() {
             return service;
         }
 
-        public Service getServiceObject() {
-            return serviceObject;
+        public Service getServiceObject() throws Exception {
+            Service result = serviceObject.get();
+            if (result == null) {
+                result = createServiceObject();
+                serviceObject = new SoftReference<Service>(result);
+            }
+
+            return result;
         }
 
         public URL getEndpointUrl() {
@@ -204,7 +218,7 @@ public abstract class AbstractPortProvider {
     protected String acceptLanguage;
 
     private ReentrantLock portObjectLock = new ReentrantLock();
-    private EnumMap<CmisWebSerivcesService, LinkedList<BindingProvider>> portObjectCache = new EnumMap<CmisWebSerivcesService, LinkedList<BindingProvider>>(
+    private EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>> portObjectCache = new EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>>(
             CmisWebSerivcesService.class);
 
     public BindingSession getSession() {
@@ -356,13 +370,23 @@ public abstract class AbstractPortProvider {
 
             portObjectLock.lock();
             try {
-                LinkedList<BindingProvider> queue = portObjectCache.get(service);
+                LinkedList<SoftReference<BindingProvider>> queue = portObjectCache.get(service);
                 if (queue == null) {
                     throw new CmisRuntimeException("This is a bug!");
                 }
 
                 if (queue.size() < PORT_CACHE_SIZE) {
-                    queue.push(bp);
+                    queue.push(new SoftReference<BindingProvider>(bp));
+                } else {
+                    Iterator<SoftReference<BindingProvider>> iter = queue.iterator();
+                    while (iter.hasNext()) {
+                        SoftReference<BindingProvider> ref = iter.next();
+                        if (ref.get() == null) {
+                            iter.remove();
+                            queue.push(new SoftReference<BindingProvider>(bp));
+                            break;
+                        }
+                    }
                 }
             } finally {
                 portObjectLock.unlock();
@@ -374,7 +398,7 @@ public abstract class AbstractPortProvider {
 
     @SuppressWarnings("unchecked")
     protected BindingProvider getPortObject(CmisWebSerivcesService service) {
-        Map<String, CmisServiceHolder> serviceMap = (Map<String, CmisServiceHolder>) session
+        Map<CmisWebSerivcesService, CmisServiceHolder> serviceMap = (Map<CmisWebSerivcesService, CmisServiceHolder>) session
                 .get(SpiSessionParameter.SERVICES);
 
         // does the service map exist?
@@ -382,19 +406,19 @@ public abstract class AbstractPortProvider {
             session.writeLock();
             try {
                 // try again
-                serviceMap = (Map<String, CmisServiceHolder>) session.get(SpiSessionParameter.SERVICES);
+                serviceMap = (Map<CmisWebSerivcesService, CmisServiceHolder>) session.get(SpiSessionParameter.SERVICES);
                 if (serviceMap == null) {
-                    serviceMap = Collections.synchronizedMap(new HashMap<String, CmisServiceHolder>());
+                    serviceMap = new EnumMap<CmisWebSerivcesService, CmisServiceHolder>(CmisWebSerivcesService.class);
                     session.put(SpiSessionParameter.SERVICES, serviceMap, true);
                 }
 
-                if (serviceMap.containsKey(service.getServiceName())) {
-                    return createPortObject(serviceMap.get(service.getServiceName()));
+                if (serviceMap.containsKey(service)) {
+                    return createPortObject(serviceMap.get(service));
                 }
 
                 // create service object
                 CmisServiceHolder serviceholder = initServiceObject(service);
-                serviceMap.put(service.getServiceName(), serviceholder);
+                serviceMap.put(service, serviceholder);
 
                 // create port object
                 return createPortObject(serviceholder);
@@ -404,17 +428,17 @@ public abstract class AbstractPortProvider {
         }
 
         // is the service in the service map?
-        if (!serviceMap.containsKey(service.getServiceName())) {
+        if (!serviceMap.containsKey(service)) {
             session.writeLock();
             try {
                 // try again
-                if (serviceMap.containsKey(service.getServiceName())) {
-                    return createPortObject(serviceMap.get(service.getServiceName()));
+                if (serviceMap.containsKey(service)) {
+                    return createPortObject(serviceMap.get(service));
                 }
 
                 // create object
                 CmisServiceHolder serviceholder = initServiceObject(service);
-                serviceMap.put(service.getServiceName(), serviceholder);
+                serviceMap.put(service, serviceholder);
 
                 return createPortObject(serviceholder);
             } finally {
@@ -422,7 +446,7 @@ public abstract class AbstractPortProvider {
             }
         }
 
-        return createPortObject(serviceMap.get(service.getServiceName()));
+        return createPortObject(serviceMap.get(service));
     }
 
     /**
@@ -453,11 +477,7 @@ public abstract class AbstractPortProvider {
             }
 
             // build the requested service object
-            Constructor<? extends Service> serviceConstructor = service.getServiceClass().getConstructor(
-                    new Class<?>[] { URL.class, QName.class });
-            Service serviceObject = serviceConstructor.newInstance(new Object[] { null, service.getQName() });
-
-            return new CmisServiceHolder(service, serviceObject, endpointUrl);
+            return new CmisServiceHolder(service, endpointUrl);
         } catch (CmisBaseException ce) {
             throw ce;
         } catch (Exception e) {
@@ -610,17 +630,20 @@ public abstract class AbstractPortProvider {
      * Creates a simple port object from a CmisServiceHolder object.
      */
     protected BindingProvider createPortObjectFromServiceHolder(CmisServiceHolder serviceHolder,
-            WebServiceFeature... features) {
+            WebServiceFeature... features) throws Exception {
         portObjectLock.lock();
         try {
-            LinkedList<BindingProvider> queue = portObjectCache.get(serviceHolder.getService());
+            LinkedList<SoftReference<BindingProvider>> queue = portObjectCache.get(serviceHolder.getService());
             if (queue == null) {
-                queue = new LinkedList<BindingProvider>();
+                queue = new LinkedList<SoftReference<BindingProvider>>();
                 portObjectCache.put(serviceHolder.getService(), queue);
             }
 
-            if (!queue.isEmpty()) {
-                return queue.pop();
+            while (!queue.isEmpty()) {
+                BindingProvider bp = queue.pop().get();
+                if (bp != null) {
+                    return bp;
+                }
             }
         } finally {
             portObjectLock.unlock();
