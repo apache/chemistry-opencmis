@@ -229,6 +229,10 @@
         <site.staging.folder>/repos/asf/chemistry/site/trunk/content/java/${site.label}/maven</site.staging.folder>
         <site.staging.url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</site.staging.url>
         <parentBasedir>${project.basedir}</parentBasedir>
+        
+        <slf4j.version>1.7.5</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <cxf.version>2.7.4</cxf.version>
     </properties>
 
     <build>
@@ -326,6 +330,10 @@
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
                     <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                    <compilerArgs>
+                        <arg>-XDignore.symbol.file</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -440,7 +448,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.6</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
