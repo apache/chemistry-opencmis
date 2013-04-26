@@ -330,10 +330,7 @@
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
                     <encoding>UTF-8</encoding>
-                    <fork>true</fork>
-                    <compilerArgs>
-                        <arg>-XDignore.symbol.file</arg>
-                    </compilerArgs>
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
