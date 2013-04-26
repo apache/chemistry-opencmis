@@ -80,6 +80,9 @@
                                <descriptor>
                                    src/main/assembly/client-with-dependencies-assembly.xml
                                </descriptor>
+                               <descriptor>
+                                   src/main/assembly/client-with-cxf-dependencies-assembly.xml
+                               </descriptor>
                            </descriptors>
                        </configuration>
                    </execution>
@@ -113,6 +116,18 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
 	        <groupId>log4j</groupId>
