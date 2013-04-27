@@ -95,9 +95,8 @@
         </dependency>
         <dependency><!-- for development only -->
             <groupId>org.apache.chemistry.opencmis</groupId>
-            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings-classes</artifactId>
             <version>\${opencmis.version}</version>
-            <classifier>classes</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency><!-- for development only -->
