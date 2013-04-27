@@ -28,10 +28,10 @@
     
     <fileSets>
          <!-- license, readme, etc. calculated at build time -->
-	        <fileSet>
-	            <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
-	            <outputDirectory>/</outputDirectory>
-	        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
     <files>
         <file>
@@ -39,28 +39,37 @@
             <outputDirectory></outputDirectory>
             <lineEnding>unix</lineEnding>
             <fileMode>0755</fileMode>
-        </file>        
+        </file>
         <file>
             <source>target/start/workbench.bat</source>
             <outputDirectory></outputDirectory>
             <lineEnding>dos</lineEnding>
         </file>
     </files>
-	<dependencySets>
-	    <dependencySet>
-          <outputDirectory>/lib</outputDirectory>
-	      <useProjectArtifact></useProjectArtifact>
-	      <unpack>false</unpack>
-	      <scope>runtime</scope>
-	      <useTransitiveFiltering>true</useTransitiveFiltering>
-          <excludes>
-              <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-              <exclude>${project.groupId}:chemistry-opencmis-test-util</exclude>
-              <exclude>junit:junit</exclude>                       
-              <exclude>org.apache.felix:org.osgi.core</exclude>
-              <exclude>net.sf.jopt-simple:jopt-simple</exclude>
-          </excludes>
-	    </dependencySet>
-	  </dependencySets>
-
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact></useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes>
+                <exclude>junit:junit</exclude>
+                <exclude>org.apache.felix:org.osgi.core</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact></useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>provided</scope>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes>
+                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
+                <exclude>org.apache.cxf:cxf-rt-frontend-jaxws</exclude>
+                <exclude>org.apache.cxf:cxf-rt-transports-http</exclude>
+                <exclude>org.apache:apache-jar-resource-bundle</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
 </assembly>
