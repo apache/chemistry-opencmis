@@ -18,6 +18,7 @@ rem @version@
 
 cd %~dp0\lib
 
+rem use variable CUSTOM_JAVA_OPTS to set additional JAVA options
 set "JAVA_OPTS=-Djava.net.useSystemProxies=true -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=sunjre"
 
-start /B javaw %JAVA_OPTS% -classpath ".;*" org.apache.chemistry.opencmis.workbench.Workbench
+start /B javaw %JAVA_OPTS% %CUSTOM_JAVA_OPTS% -classpath ".;*" org.apache.chemistry.opencmis.workbench.Workbench
