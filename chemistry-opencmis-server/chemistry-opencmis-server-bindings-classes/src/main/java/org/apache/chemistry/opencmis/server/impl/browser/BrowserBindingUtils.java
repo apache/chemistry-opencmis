@@ -113,12 +113,13 @@ public final class BrowserBindingUtils {
 
         url.addPath(request.getContextPath());
         url.addPath(request.getServletPath());
+        url.addPathSegment(repositoryId);
 
         return url;
     }
 
     public static UrlBuilder compileRepositoryUrl(HttpServletRequest request, String repositoryId) {
-        return compileBaseUrl(request, repositoryId).addPathSegment(repositoryId);
+        return compileBaseUrl(request, repositoryId);
     }
 
     public static UrlBuilder compileRootUrl(HttpServletRequest request, String repositoryId) {
