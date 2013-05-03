@@ -184,8 +184,8 @@
         <module>chemistry-opencmis-client/chemistry-opencmis-client-impl</module>
         <module>chemistry-opencmis-client/chemistry-opencmis-client-bindings</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-support</module>
-        <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings-classes</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings</module>
+        <module>chemistry-opencmis-server/chemistry-opencmis-server-bindings-war</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-inmemory</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-fileshare</module>
         <module>chemistry-opencmis-server/chemistry-opencmis-server-jcr</module>

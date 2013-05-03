@@ -19,7 +19,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>chemistry-opencmis-server-bindings</artifactId>
+    <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
     <name>OpenCMIS Server Implementation WAR packaging</name>
     <packaging>war</packaging>
 
@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>chemistry-opencmis-server-bindings-classes</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

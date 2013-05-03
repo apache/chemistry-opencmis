@@ -19,8 +19,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>chemistry-opencmis-server-bindings-classes</artifactId>
-    <name>OpenCMIS Server Implementation Classes</name>
+    <artifactId>chemistry-opencmis-server-bindings</artifactId>
+    <name>OpenCMIS Server Implementation</name>
     <packaging>jar</packaging>
 
     <properties>

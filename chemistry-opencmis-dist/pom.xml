@@ -70,7 +70,7 @@
         <!-- Used for server-assembly.xml -->
         
         <dependency>
-            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
             <type>war</type>

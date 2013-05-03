@@ -195,7 +195,6 @@
 		            <groupId>org.apache.chemistry.opencmis</groupId>
 		            <artifactId>chemistry-opencmis-server-bindings</artifactId>
 		            <version>${project.version}</version>
-		            <classifier>classes</classifier>
 		        </dependency>		
 		        <dependency>
 		            <groupId>org.apache.chemistry.opencmis</groupId>
@@ -251,7 +250,7 @@
             <id>jcr-jackrabbit-inmemory</id>
             <properties>
             	<overlay.groupId>${project.groupId}</overlay.groupId>
-            	<overlay.artifactId>chemistry-opencmis-server-bindings</overlay.artifactId>
+            	<overlay.artifactId>chemistry-opencmis-server-bindings-war</overlay.artifactId>
             	<factory.class>org.apache.chemistry.opencmis.jcr.JcrServiceFactory</factory.class>
             	<!-- Uses in ServiceLoader to look up impl.  -->
             	<service.factory.class>org.apache.jackrabbit.core.RepositoryFactoryImpl</service.factory.class>
@@ -291,7 +290,6 @@
 		            <groupId>org.apache.chemistry.opencmis</groupId>
 		            <artifactId>chemistry-opencmis-server-bindings</artifactId>
 		            <version>${project.version}</version>
-		            <classifier>classes</classifier>
 		        </dependency>		
 		        <dependency>
 		            <groupId>org.apache.chemistry.opencmis</groupId>

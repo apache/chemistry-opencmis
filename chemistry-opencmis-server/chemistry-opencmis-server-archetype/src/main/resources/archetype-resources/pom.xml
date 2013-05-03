@@ -35,7 +35,7 @@
                         <overlay></overlay>
                         <overlay>
                             <groupId>org.apache.chemistry.opencmis</groupId>
-                            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+                            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
                             <excludes>
                                 <!-- exclude everything you don't need -->
                                 <exclude>index.html</exclude> <!-- default index page -->
@@ -84,7 +84,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.chemistry.opencmis</groupId>
-            <artifactId>chemistry-opencmis-server-bindings</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
             <version>\${opencmis.version}</version>
             <type>war</type>
         </dependency>
@@ -95,7 +95,7 @@
         </dependency>
         <dependency><!-- for development only -->
             <groupId>org.apache.chemistry.opencmis</groupId>
-            <artifactId>chemistry-opencmis-server-bindings-classes</artifactId>
+            <artifactId>chemistry-opencmis-server-bindings</artifactId>
             <version>\${opencmis.version}</version>
             <scope>provided</scope>
         </dependency>
