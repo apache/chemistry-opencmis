@@ -63,6 +63,7 @@ public class CappedInputStreamTest {
             byteBuffer[i] = (byte) (i >= goodBegin && i <= goodEnd ? 1 : 0);
         }
 
+        // test read with buffer
         ByteArrayInputStream originStream = new ByteArrayInputStream(byteBuffer);
 
         try {
@@ -80,6 +81,26 @@ public class CappedInputStreamTest {
                 }
 
                 stream.deductBytes(counter);
+            }
+
+            stream.close();
+        } catch (Exception e) {
+            if (success) {
+                fail();
+            }
+        }
+
+        // test single byte read
+        originStream = new ByteArrayInputStream(byteBuffer);
+
+        try {
+            CappedInputStream stream = new CappedInputStream(originStream, max);
+
+            int b = 0;
+            while ((b = stream.read()) > -1) {
+                if (b == 1) {
+                    stream.deductBytes(1);
+                }
             }
 
             stream.close();

@@ -60,6 +60,8 @@ public class CmisWebServicesServlet extends WSServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesServlet.class.getName());
 
+    private static final int MAX_SOAP_SIZE = 10 * 1024 * 1024;
+
     private static final String CMIS10_PATH = "/WEB-INF/cmis10/";
     private static final String CMIS11_PATH = "/WEB-INF/cmis11/";
 
@@ -152,7 +154,7 @@ public class CmisWebServicesServlet extends WSServlet {
             return;
         }
 
-        super.service(request, response);
+        super.service(new ProtectionRequestWrapper(request, MAX_SOAP_SIZE), response);
     }
 
     private void printXml(HttpServletRequest request, HttpServletResponse response, String doc, UrlBuilder baseUrl)

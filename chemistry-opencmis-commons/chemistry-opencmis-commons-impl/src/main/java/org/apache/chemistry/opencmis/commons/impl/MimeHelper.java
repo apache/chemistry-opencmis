@@ -257,7 +257,9 @@ public class MimeHelper {
 
             // check content type
             String multipartContentType = token.getValue();
-            if (multipartContentType == null || !multipartContentType.equalsIgnoreCase("multipart/form-data")) {
+            if (multipartContentType == null
+                    || !(multipartContentType.equalsIgnoreCase("multipart/form-data") || multipartContentType
+                            .equalsIgnoreCase("multipart/related"))) {
                 return null;
             }
 

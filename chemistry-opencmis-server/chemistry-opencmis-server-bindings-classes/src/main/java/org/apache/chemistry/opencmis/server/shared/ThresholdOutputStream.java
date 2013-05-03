@@ -411,6 +411,10 @@ public class ThresholdOutputStream extends OutputStream {
                 return -1;
             }
 
+            if (len == 0) {
+                return 0;
+            }
+
             if ((pos + len) > bufSize) {
                 len = (bufSize - pos);
             }
@@ -427,12 +431,12 @@ public class ThresholdOutputStream extends OutputStream {
                 return -1;
             }
 
-            if ((pos + n) > bufSize) {
-                n = bufSize - pos;
+            if (n <= 0) {
+                return 0;
             }
 
-            if (n < 0) {
-                return 0;
+            if ((pos + n) > bufSize) {
+                n = bufSize - pos;
             }
 
             pos += n;
