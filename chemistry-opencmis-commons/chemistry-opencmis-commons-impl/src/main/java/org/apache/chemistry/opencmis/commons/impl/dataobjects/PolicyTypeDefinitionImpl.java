@@ -22,9 +22,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 
 /**
  * Policy type definition.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements PolicyTypeDefinition {
 

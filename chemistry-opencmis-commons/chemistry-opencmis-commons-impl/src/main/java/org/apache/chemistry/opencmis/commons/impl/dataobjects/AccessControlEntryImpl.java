@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
@@ -62,6 +63,10 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Ace
     }
 
     public List<String> getPermissions() {
+        if (permissions == null) {
+            permissions = new ArrayList<String>();
+        }
+
         return permissions;
     }
 

@@ -1486,7 +1486,7 @@ public class XMLConverter {
                 throws XMLStreamException {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_ACLCAP_PERMISSION_PERMISSION)) {
-                    target.setPermission(readText(parser));
+                    target.setId(readText(parser));
                     return true;
                 }
 

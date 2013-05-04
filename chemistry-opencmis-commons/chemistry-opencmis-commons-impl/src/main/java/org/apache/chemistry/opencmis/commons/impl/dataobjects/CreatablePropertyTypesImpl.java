@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
@@ -30,6 +31,10 @@ public class CreatablePropertyTypesImpl extends ExtensionDataImpl implements Cre
     private Set<PropertyType> propertyTypeSet;
 
     public Set<PropertyType> canCreate() {
+        if (propertyTypeSet == null) {
+            propertyTypeSet = EnumSet.noneOf(PropertyType.class);
+        }
+
         return propertyTypeSet;
     }
 

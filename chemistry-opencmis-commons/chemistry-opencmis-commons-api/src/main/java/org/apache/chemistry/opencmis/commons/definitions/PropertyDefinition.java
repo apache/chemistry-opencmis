@@ -28,9 +28,6 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * Base property definition interface.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
 

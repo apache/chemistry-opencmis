@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -29,13 +30,17 @@ public class FailedToDeleteDataImpl extends AbstractExtensionData implements Fai
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> fIds;
+    private List<String> ids;
 
     public List<String> getIds() {
-        return fIds;
+        if (ids == null) {
+            ids = new ArrayList<String>();
+        }
+
+        return ids;
     }
 
     public void setIds(List<String> ids) {
-        this.fIds = ids;
+        this.ids = ids;
     }
 }

@@ -22,9 +22,6 @@ import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 
 /**
  * Folder type definition.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class FolderTypeDefinitionImpl extends AbstractTypeDefinition implements FolderTypeDefinition {
 

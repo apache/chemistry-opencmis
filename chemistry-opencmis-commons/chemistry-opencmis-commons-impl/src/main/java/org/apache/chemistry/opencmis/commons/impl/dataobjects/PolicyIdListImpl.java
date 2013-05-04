@@ -29,14 +29,14 @@ public class PolicyIdListImpl extends AbstractExtensionData implements PolicyIdL
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> fPolicyIds;
+    private List<String> policyIds;
 
     public List<String> getPolicyIds() {
-        return fPolicyIds;
+        return policyIds;
     }
 
     public void setPolicyIds(List<String> policyIds) {
-        fPolicyIds = policyIds;
+        this.policyIds = policyIds;
     }
 
 }

@@ -23,30 +23,27 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**
  * Document type definition.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  */
-public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition
-        implements DocumentTypeDefinition {
+public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implements DocumentTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private ContentStreamAllowed fContentStreamAllowed = ContentStreamAllowed.NOTALLOWED;
-    private Boolean fIsVersionable = Boolean.FALSE;
+    private ContentStreamAllowed contentStreamAllowed = ContentStreamAllowed.NOTALLOWED;
+    private Boolean isVersionable = Boolean.FALSE;
 
     public ContentStreamAllowed getContentStreamAllowed() {
-        return fContentStreamAllowed;
+        return contentStreamAllowed;
     }
 
     public void setContentStreamAllowed(ContentStreamAllowed contentStreamAllowed) {
-        fContentStreamAllowed = contentStreamAllowed;
+        this.contentStreamAllowed = contentStreamAllowed;
     }
 
     public Boolean isVersionable() {
-        return fIsVersionable;
+        return isVersionable;
     }
 
     public void setIsVersionable(Boolean isVersionable) {
-        fIsVersionable = isVersionable;
+        this.isVersionable = isVersionable;
     }
 }

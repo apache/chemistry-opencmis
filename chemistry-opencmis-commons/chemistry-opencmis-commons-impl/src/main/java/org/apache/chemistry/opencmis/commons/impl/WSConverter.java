@@ -463,7 +463,7 @@ public final class WSConverter {
         List<PermissionDefinition> permissionDefinitionList = new ArrayList<PermissionDefinition>();
         for (CmisPermissionDefinition permDef : aclCapabilities.getPermissions()) {
             PermissionDefinitionDataImpl permDefData = new PermissionDefinitionDataImpl();
-            permDefData.setPermission(permDef.getPermission());
+            permDefData.setId(permDef.getPermission());
             permDefData.setDescription(permDef.getDescription());
             convertExtension(permDef, permDefData);
 

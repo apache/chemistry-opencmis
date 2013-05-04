@@ -41,9 +41,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Factory for CMIS binding objects.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public interface BindingsObjectFactory {
 
@@ -51,8 +48,7 @@ public interface BindingsObjectFactory {
 
     Acl createAccessControlList(List<Ace> aces);
 
-    <T> PropertyData<T> createPropertyData(PropertyDefinition<T> pd,
-            Object value);
+    <T> PropertyData<T> createPropertyData(PropertyDefinition<T> pd, Object value);
 
     PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values);
 

@@ -19,6 +19,7 @@
 
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
@@ -75,6 +76,10 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
     }
 
     public Map<String, String> getFeatureData() {
+        if (featureData == null) {
+            featureData = new HashMap<String, String>();
+        }
+
         return featureData;
     }
 

@@ -18,57 +18,44 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Permission mapping.
  */
 public class PermissionMappingDataImpl extends AbstractExtensionData implements PermissionMapping {
 
     private static final long serialVersionUID = 1L;
 
-    private String fKey;
-    private List<String> fPermissions;
+    private String key;
+    private List<String> permissions;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.provider.PermissionMappingData#getKey()
-     */
     public String getKey() {
-        return fKey;
+        return key;
     }
 
     public void setKey(String key) {
-        fKey = key;
+        this.key = key;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PermissionMappingData#getPermissions
-     * ()
-     */
     public List<String> getPermissions() {
-        return fPermissions;
+        if (permissions == null) {
+            permissions = new ArrayList<String>();
+        }
+
+        return permissions;
     }
 
     public void setPermissions(List<String> permissions) {
-        fPermissions = permissions;
+        this.permissions = permissions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Permission Mapping [key=" + fKey + ", permissions=" + fPermissions + "]" + super.toString();
+        return "Permission Mapping [key=" + key + ", permissions=" + permissions + "]" + super.toString();
     }
 
 }

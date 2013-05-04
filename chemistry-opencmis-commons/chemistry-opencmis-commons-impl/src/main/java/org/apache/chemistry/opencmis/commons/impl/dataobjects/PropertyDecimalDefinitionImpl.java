@@ -25,60 +25,37 @@ import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 
 /**
  * Decimal property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyDecimalDefinitionImpl extends AbstractPropertyDefinition<BigDecimal> implements
         PropertyDecimalDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private BigDecimal fMinValue;
-    private BigDecimal fMaxValue;
-    private DecimalPrecision fPrecision;
+    private BigDecimal minValue;
+    private BigDecimal maxValue;
+    private DecimalPrecision precision;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMinValue
-     * ()
-     */
     public BigDecimal getMinValue() {
-        return fMinValue;
+        return minValue;
     }
 
     public void setMinValue(BigDecimal minValue) {
-        fMinValue = minValue;
+        this.minValue = minValue;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyDecimalDefinitionData#getMaxValue
-     * ()
-     */
     public BigDecimal getMaxValue() {
-        return fMaxValue;
+        return maxValue;
     }
 
     public void setMaxValue(BigDecimal maxValue) {
-        fMaxValue = maxValue;
+        this.maxValue = maxValue;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.PropertyDecimalDefinitionData#
-     * getPrecision()
-     */
     public DecimalPrecision getPrecision() {
-        return fPrecision;
+        return precision;
     }
 
     public void setPrecision(DecimalPrecision precision) {
-        fPrecision = precision;
+        this.precision = precision;
     }
 }

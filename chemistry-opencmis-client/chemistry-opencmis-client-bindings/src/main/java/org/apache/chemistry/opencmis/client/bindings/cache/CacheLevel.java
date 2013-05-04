@@ -24,8 +24,6 @@ import java.util.Map;
 /**
  * Interface for a level of an hierarchical cache.
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  * @see Cache
  */
 public interface CacheLevel extends Serializable {

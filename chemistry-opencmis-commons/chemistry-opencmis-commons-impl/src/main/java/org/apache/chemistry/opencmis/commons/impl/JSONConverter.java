@@ -584,7 +584,7 @@ public final class JSONConverter {
                 if (permissionMap != null) {
                     PermissionDefinitionDataImpl permDef = new PermissionDefinitionDataImpl();
 
-                    permDef.setPermission(getString(permissionMap, JSON_ACLCAP_PERMISSION_PERMISSION));
+                    permDef.setId(getString(permissionMap, JSON_ACLCAP_PERMISSION_PERMISSION));
                     permDef.setDescription(getString(permissionMap, JSON_ACLCAP_PERMISSION_DESCRIPTION));
 
                     convertExtension(permissionMap, permDef, ACLCAP_PERMISSION_KEYS);

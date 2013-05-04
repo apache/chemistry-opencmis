@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons.enums;
 
 /**
  * Capability Enum: Query.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public enum CapabilityQuery {
 

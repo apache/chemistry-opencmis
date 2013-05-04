@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons.enums;
 
 /**
  * Updatability Enum.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public enum Updatability {
 

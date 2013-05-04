@@ -23,31 +23,30 @@ import java.io.Serializable;
 import javax.xml.namespace.QName;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Atom Element.
  */
 public class AtomElement implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final QName fName;
-    private final Object fObject;
+    private final QName name;
+    private final Object object;
 
     public AtomElement(QName name, Object object) {
-        fName = name;
-        fObject = object;
+        this.name = name;
+        this.object = object;
     }
 
     public QName getName() {
-        return fName;
+        return name;
     }
 
     public Object getObject() {
-        return fObject;
+        return object;
     }
 
     @Override
     public String toString() {
-        return fName + ": " + fObject;
+        return name + ": " + object;
     }
 }

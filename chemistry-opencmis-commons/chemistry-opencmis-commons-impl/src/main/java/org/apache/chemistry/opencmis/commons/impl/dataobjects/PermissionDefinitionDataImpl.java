@@ -18,56 +18,45 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
+
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Permission definition.
  */
-public class PermissionDefinitionDataImpl extends AbstractExtensionData implements
-        org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition {
+public class PermissionDefinitionDataImpl extends AbstractExtensionData implements PermissionDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private String fPermission;
-    private String fDescription;
+    private String permission;
+    private String description;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PermissionDefinitionData#getPermission
-     * ()
-     */
     public String getId() {
-        return fPermission;
+        return permission;
     }
 
-    public void setPermission(String permission) {
-        fPermission = permission;
+    public void setId(String permission) {
+        this.permission = permission;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PermissionDefinitionData#getDescription
-     * ()
+    /**
+     * @deprecated use {@link #setId(String)} instead
      */
+    @Deprecated
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
     public String getDescription() {
-        return fDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        fDescription = description;
+        this.description = description;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Permission Definition [permission=" + fPermission + ", description=" + fDescription + "]"
+        return "Permission Definition [permission=" + permission + ", description=" + description + "]"
                 + super.toString();
     }
 

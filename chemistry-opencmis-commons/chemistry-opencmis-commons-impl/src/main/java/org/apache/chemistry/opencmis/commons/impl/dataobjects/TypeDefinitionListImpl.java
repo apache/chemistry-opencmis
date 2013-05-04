@@ -30,10 +30,10 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 public class TypeDefinitionListImpl extends AbstractExtensionData implements TypeDefinitionList {
 
     private static final long serialVersionUID = 1L;
-    
-    private List<TypeDefinition> fList;
-    private Boolean fHasMoreItems = Boolean.FALSE;
-    private BigInteger fNumItems;
+
+    private List<TypeDefinition> list;
+    private Boolean hasMoreItems = Boolean.FALSE;
+    private BigInteger numItems;
 
     /**
      * Default constructor.
@@ -48,38 +48,38 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
      *            the initial list
      */
     public TypeDefinitionListImpl(List<TypeDefinition> list) {
-        fList = list;
-        fHasMoreItems = Boolean.FALSE;
-        fNumItems = BigInteger.valueOf(list.size());
+        this.list = list;
+        this.hasMoreItems = Boolean.FALSE;
+        this.numItems = BigInteger.valueOf(list.size());
     }
 
     public List<TypeDefinition> getList() {
-        return fList;
+        return list;
     }
 
     public void setList(List<TypeDefinition> list) {
-        fList = list;
+        this.list = list;
     }
 
     public Boolean hasMoreItems() {
-        return fHasMoreItems;
+        return hasMoreItems;
     }
 
     public void setHasMoreItems(Boolean hasMoreItems) {
-        fHasMoreItems = hasMoreItems;
+        this.hasMoreItems = hasMoreItems;
     }
 
     public BigInteger getNumItems() {
-        return fNumItems;
+        return numItems;
     }
 
     public void setNumItems(BigInteger numItems) {
-        fNumItems = numItems;
+        this.numItems = numItems;
     }
 
     @Override
     public String toString() {
-        return "Type Definition List [list=" + fList + ", has more items=" + fHasMoreItems + ", num items=" + fNumItems
+        return "Type Definition List [list=" + list + ", has more items=" + hasMoreItems + ", num items=" + numItems
                 + "]" + super.toString();
     }
 }

@@ -18,48 +18,42 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 
 /**
  * Relationship type definition.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition implements RelationshipTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> fAllowedSourceTypes;
-    private List<String> fAllowedTargetTypes;
+    private List<String> allowedSourceTypes;
+    private List<String> allowedTargetTypes;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
-     * getAllowedSourceTypes()
-     */
     public List<String> getAllowedSourceTypeIds() {
-        return fAllowedSourceTypes;
+        if (allowedSourceTypes == null) {
+            allowedSourceTypes = new ArrayList<String>();
+        }
+
+        return allowedSourceTypes;
     }
 
     public void setAllowedSourceTypes(List<String> allowedSourceTypes) {
-        fAllowedSourceTypes = allowedSourceTypes;
+        this.allowedSourceTypes = allowedSourceTypes;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.RelationshipTypeDefinitionData#
-     * getAllowedTargetTypes()
-     */
     public List<String> getAllowedTargetTypeIds() {
-        return fAllowedTargetTypes;
+        if (allowedTargetTypes == null) {
+            allowedTargetTypes = new ArrayList<String>();
+        }
+
+        return allowedTargetTypes;
     }
 
     public void setAllowedTargetTypes(List<String> allowedTargetTypes) {
-        fAllowedTargetTypes = allowedTargetTypes;
+        this.allowedTargetTypes = allowedTargetTypes;
     }
 }

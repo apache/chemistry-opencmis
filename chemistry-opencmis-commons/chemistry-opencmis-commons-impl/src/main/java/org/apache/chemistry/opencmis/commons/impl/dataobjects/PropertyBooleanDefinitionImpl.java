@@ -22,9 +22,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefiniti
 
 /**
  * Boolean property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyBooleanDefinitionImpl extends AbstractPropertyDefinition<Boolean> implements
         PropertyBooleanDefinition {

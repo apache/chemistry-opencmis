@@ -151,11 +151,11 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
             acl1.setAclPropagation(randomEnum(AclPropagation.class));
             List<PermissionDefinition> pddList = new ArrayList<PermissionDefinition>();
             PermissionDefinitionDataImpl pdd1 = new PermissionDefinitionDataImpl();
-            pdd1.setPermission(randomString());
+            pdd1.setId(randomString());
             pdd1.setDescription(randomString());
             pddList.add(pdd1);
             PermissionDefinitionDataImpl pdd2 = new PermissionDefinitionDataImpl();
-            pdd2.setPermission(randomString());
+            pdd2.setId(randomString());
             pdd2.setDescription(randomString());
             pddList.add(pdd2);
             acl1.setPermissionDefinitionData(pddList);

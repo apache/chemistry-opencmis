@@ -31,9 +31,13 @@ public class AllowableActionsImpl extends AbstractExtensionData implements Allow
 
     private static final long serialVersionUID = 1L;
 
-    private Set<Action> allowableActions = EnumSet.noneOf(Action.class);
+    private Set<Action> allowableActions;
 
     public Set<Action> getAllowableActions() {
+        if (allowableActions == null) {
+            allowableActions = EnumSet.noneOf(Action.class);
+        }
+
         return allowableActions;
     }
 

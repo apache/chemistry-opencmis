@@ -51,6 +51,10 @@ public class TypeDefinitionContainerImpl extends AbstractExtensionData implement
     }
 
     public List<TypeDefinitionContainer> getChildren() {
+        if (children == null) {
+            children = new ArrayList<TypeDefinitionContainer>();
+        }
+
         return children;
     }
 

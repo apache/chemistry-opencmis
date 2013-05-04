@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
 
 /**
- * Html property data implementation.
+ * HTML property data implementation.
  */
 public class PropertyHtmlImpl extends AbstractPropertyData<String> implements PropertyHtml {
 

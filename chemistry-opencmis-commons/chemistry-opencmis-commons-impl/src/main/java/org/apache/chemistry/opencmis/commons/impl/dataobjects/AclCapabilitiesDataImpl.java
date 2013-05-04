@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +58,10 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
     }
 
     public Map<String, PermissionMapping> getPermissionMapping() {
+        if (permissionMapping == null) {
+            permissionMapping = new HashMap<String, PermissionMapping>();
+        }
+
         return permissionMapping;
     }
 
@@ -64,6 +70,10 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
     }
 
     public List<PermissionDefinition> getPermissions() {
+        if (permissionDefinitionList == null) {
+            permissionDefinitionList = new ArrayList<PermissionDefinition>();
+        }
+
         return permissionDefinitionList;
     }
 

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
@@ -188,6 +189,10 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
     }
 
     public List<BaseTypeId> getChangesOnType() {
+        if (changesOnType == null) {
+            changesOnType = new ArrayList<BaseTypeId>();
+        }
+
         return changesOnType;
     }
 

@@ -25,28 +25,19 @@ import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
 /**
  * DateTime property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyDateTimeDefinitionImpl extends AbstractPropertyDefinition<GregorianCalendar> implements
         PropertyDateTimeDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private DateTimeResolution fDateTimeResolution;
+    private DateTimeResolution dateTimeResolution;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seeorg.apache.opencmis.client.provider.PropertyDateTimeDefinitionData#
-     * getDateTimeResolution()
-     */
     public DateTimeResolution getDateTimeResolution() {
-        return fDateTimeResolution;
+        return dateTimeResolution;
     }
 
     public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
-        fDateTimeResolution = dateTimeResolution;
+        this.dateTimeResolution = dateTimeResolution;
     }
 }

@@ -53,9 +53,6 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
 /**
  * CMIS binding object factory implementation.
- *
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- *
  */
 public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Serializable {
 
@@ -81,73 +78,56 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
     }
 
     @SuppressWarnings("unchecked")
-    public <T> AbstractPropertyData<T> createPropertyData(
-            PropertyDefinition<T> pd, Object value) {
+    public <T> AbstractPropertyData<T> createPropertyData(PropertyDefinition<T> pd, Object value) {
         String id = pd.getId();
         boolean single = pd.getCardinality() == Cardinality.SINGLE;
         if (pd instanceof PropertyBooleanDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyBooleanData(id,
-                        (Boolean) value);
+                return (AbstractPropertyData<T>) createPropertyBooleanData(id, (Boolean) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyBooleanData(id,
-                        (List<Boolean>) value);
+                return (AbstractPropertyData<T>) createPropertyBooleanData(id, (List<Boolean>) value);
             }
         } else if (pd instanceof PropertyDateTimeDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyDateTimeData(id,
-                        (GregorianCalendar) value);
+                return (AbstractPropertyData<T>) createPropertyDateTimeData(id, (GregorianCalendar) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyDateTimeData(id,
-                        (List<GregorianCalendar>) value);
+                return (AbstractPropertyData<T>) createPropertyDateTimeData(id, (List<GregorianCalendar>) value);
             }
         } else if (pd instanceof PropertyDecimalDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyDecimalData(id,
-                        (BigDecimal) value);
+                return (AbstractPropertyData<T>) createPropertyDecimalData(id, (BigDecimal) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyDecimalData(id,
-                        (List<BigDecimal>) value);
+                return (AbstractPropertyData<T>) createPropertyDecimalData(id, (List<BigDecimal>) value);
             }
         } else if (pd instanceof PropertyHtmlDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyHtmlData(id,
-                        (String) value);
+                return (AbstractPropertyData<T>) createPropertyHtmlData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyHtmlData(id,
-                        (List<String>) value);
+                return (AbstractPropertyData<T>) createPropertyHtmlData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyIdDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyIdData(id,
-                        (String) value);
+                return (AbstractPropertyData<T>) createPropertyIdData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyIdData(id,
-                        (List<String>) value);
+                return (AbstractPropertyData<T>) createPropertyIdData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyIntegerDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyIntegerData(id,
-                        (BigInteger) value);
+                return (AbstractPropertyData<T>) createPropertyIntegerData(id, (BigInteger) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyIntegerData(id,
-                        (List<BigInteger>) value);
+                return (AbstractPropertyData<T>) createPropertyIntegerData(id, (List<BigInteger>) value);
             }
         } else if (pd instanceof PropertyStringDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyStringData(id,
-                        (String) value);
+                return (AbstractPropertyData<T>) createPropertyStringData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyStringData(id,
-                        (List<String>) value);
+                return (AbstractPropertyData<T>) createPropertyStringData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyUriDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyUriData(id,
-                        (String) value);
+                return (AbstractPropertyData<T>) createPropertyUriData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyUriData(id,
-                        (List<String>) value);
+                return (AbstractPropertyData<T>) createPropertyUriData(id, (List<String>) value);
             }
         }
         throw new CmisRuntimeException("Unknown property definition: " + pd);

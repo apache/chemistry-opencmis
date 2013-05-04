@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons.enums;
 
 /**
  * ACL Capability Enum: Supported Permissions.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public enum SupportedPermissions {
 

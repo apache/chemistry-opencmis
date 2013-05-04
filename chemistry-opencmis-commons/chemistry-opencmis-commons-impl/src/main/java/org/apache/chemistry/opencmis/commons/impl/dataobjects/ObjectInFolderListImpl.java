@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -36,6 +37,10 @@ public class ObjectInFolderListImpl extends AbstractExtensionData implements Obj
     private BigInteger numItems;
 
     public List<ObjectInFolderData> getObjects() {
+        if (objects == null) {
+            objects = new ArrayList<ObjectInFolderData>();
+        }
+
         return objects;
     }
 

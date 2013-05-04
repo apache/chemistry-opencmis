@@ -105,11 +105,11 @@ public class ConverterTest extends TestCase {
         acl1.setAclPropagation(AclPropagation.PROPAGATE);
         List<PermissionDefinition> pddList = new ArrayList<PermissionDefinition>();
         PermissionDefinitionDataImpl pdd1 = new PermissionDefinitionDataImpl();
-        pdd1.setPermission("test:perm1");
+        pdd1.setId("test:perm1");
         pdd1.setDescription("Permission1");
         pddList.add(pdd1);
         PermissionDefinitionDataImpl pdd2 = new PermissionDefinitionDataImpl();
-        pdd2.setPermission("test:perm2");
+        pdd2.setId("test:perm2");
         pdd2.setDescription("Permission2");
         pddList.add(pdd2);
         acl1.setPermissionDefinitionData(pddList);

@@ -35,8 +35,6 @@ import java.io.Serializable;
  * <br/>
  * </p>
  * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  * @see CacheLevel
  */
 public interface Cache extends Serializable {
@@ -64,7 +62,8 @@ public interface Cache extends Serializable {
      * 
      * @param keys
      *            the keys
-     * @return the object or <code>null<code> if the branch or leaf doesn't exist
+     * @return the object or
+     *         <code>null<code> if the branch or leaf doesn't exist
      */
     Object get(String... keys);
 

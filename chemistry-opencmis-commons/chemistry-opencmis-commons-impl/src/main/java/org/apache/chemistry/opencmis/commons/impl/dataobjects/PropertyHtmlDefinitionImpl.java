@@ -22,9 +22,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
 
 /**
  * HTML property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyHtmlDefinitionImpl extends AbstractPropertyDefinition<String> implements PropertyHtmlDefinition {
 

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
@@ -45,7 +46,6 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
      */
     public ObjectInFolderContainerImpl(ObjectInFolderData object) {
         setObject(object);
-
     }
 
     public ObjectInFolderData getObject() {
@@ -57,6 +57,10 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
     }
 
     public List<ObjectInFolderContainer> getChildren() {
+        if (children == null) {
+            children = new ArrayList<ObjectInFolderContainer>();
+        }
+
         return children;
     }
 

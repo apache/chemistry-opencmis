@@ -24,45 +24,28 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefiniti
 
 /**
  * Boolean property definition data implementation.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public class PropertyIntegerDefinitionImpl extends AbstractPropertyDefinition<BigInteger> implements
         PropertyIntegerDefinition {
 
     private static final long serialVersionUID = 1L;
 
-    private BigInteger fMinValue;
-    private BigInteger fMaxValue;
+    private BigInteger minValue;
+    private BigInteger maxValue;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMinValue
-     * ()
-     */
     public BigInteger getMinValue() {
-        return fMinValue;
+        return minValue;
     }
 
     public void setMinValue(BigInteger minValue) {
-        fMinValue = minValue;
+        this.minValue = minValue;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.PropertyIntegerDefinitionData#getMaxValue
-     * ()
-     */
     public BigInteger getMaxValue() {
-        return fMaxValue;
+        return maxValue;
     }
 
     public void setMaxValue(BigInteger maxValue) {
-        fMaxValue = maxValue;
+        this.maxValue = maxValue;
     }
 }

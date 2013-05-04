@@ -22,42 +22,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Atom Feed.
  */
 public class AtomFeed extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<AtomEntry> fEntries = new ArrayList<AtomEntry>();
+    private final List<AtomEntry> entries = new ArrayList<AtomEntry>();
 
     public AtomFeed() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
-     * ()
-     */
     @Override
     public String getType() {
         return "Atom Feed";
     }
 
     public List<AtomEntry> getEntries() {
-        return fEntries;
+        return entries;
     }
 
     public void addEntry(AtomEntry entry) {
         if (entry != null) {
-            fEntries.add(entry);
+            entries.add(entry);
         }
     }
 
     @Override
     public String toString() {
-        return "Feed : " + getElements() + " " + fEntries;
+        return "Feed : " + getElements() + " " + entries;
     }
 }
