@@ -530,7 +530,7 @@ public class StoreManagerImpl implements StoreManager {
 
     private static PermissionDefinition createPermission(String permission, String description) {
         PermissionDefinitionDataImpl pd = new PermissionDefinitionDataImpl();
-        pd.setPermission(permission);
+        pd.setId(permission);
         pd.setDescription(description);
 
         return pd;
