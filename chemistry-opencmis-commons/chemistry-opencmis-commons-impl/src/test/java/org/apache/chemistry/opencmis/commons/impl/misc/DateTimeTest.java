@@ -95,6 +95,18 @@ public class DateTimeTest {
         cal5.set(Calendar.MILLISECOND, 0);
 
         assertEquals("2012-12-24T08:10:11Z", DateTimeHelper.formatXmlDateTime(cal5.getTimeInMillis()));
+
+        GregorianCalendar cal6 = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
+        cal6.set(2013, 4, 6, 9, 10, 11);
+        cal6.set(Calendar.MILLISECOND, 0);
+
+        assertEquals("2013-05-06T09:10:11+02:00", DateTimeHelper.formatXmlDateTime(cal6));
+        
+        GregorianCalendar cal7 = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
+        cal7.set(2012, 11, 24, 9, 10, 11);
+        cal7.set(Calendar.MILLISECOND, 0);
+
+        assertEquals("2012-12-24T09:10:11+01:00", DateTimeHelper.formatXmlDateTime(cal7));
     }
 
     @Test

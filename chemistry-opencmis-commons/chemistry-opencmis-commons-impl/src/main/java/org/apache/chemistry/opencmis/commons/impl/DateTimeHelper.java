@@ -143,7 +143,7 @@ public class DateTimeHelper {
             }
         }
 
-        int tz = cal.getTimeZone().getRawOffset();
+        int tz = cal.getTimeZone().getOffset(cal.getTimeInMillis());
         if (tz == 0) {
             sb.append("Z");
         } else {
