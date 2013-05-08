@@ -21,7 +21,8 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.util.GregorianCalendar;
 
 /**
- * Content stream with last modified date. (Browser binding server only.)
+ * Content stream with last modified date. (AtomPub binding and Browser binding
+ * server only.)
  */
 public interface LastModifiedContentStream extends ContentStream {
 

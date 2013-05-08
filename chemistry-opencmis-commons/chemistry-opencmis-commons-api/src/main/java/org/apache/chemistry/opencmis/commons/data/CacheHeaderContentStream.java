@@ -21,7 +21,8 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.util.GregorianCalendar;
 
 /**
- * Content stream with HTTP cache headers. (Browser binding server only.)
+ * Content stream with HTTP cache headers. (AtomPub binding and Browser binding
+ * server only.)
  */
 public interface CacheHeaderContentStream extends ContentStream {
 

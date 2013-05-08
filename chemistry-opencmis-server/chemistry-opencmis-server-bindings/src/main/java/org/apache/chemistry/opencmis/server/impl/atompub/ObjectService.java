@@ -49,7 +49,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
-import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -77,6 +76,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
@@ -450,11 +450,9 @@ public final class ObjectService {
             throw new CmisRuntimeException("Content stream is null!");
         }
 
-        // check if Content-Length header should be set
-        if (content instanceof ContentLengthContentStream) {
-            if (content.getBigLength() != null && content.getBigLength().signum() >= 0) {
-                response.setHeader("Content-Length", content.getBigLength().toString());
-            }
+        // set HTTP headers, if requested by the server implementation
+        if (HttpUtils.setContentStreamHeaders(content, request, response)) {
+            return;
         }
 
         String contentType = content.getMimeType();

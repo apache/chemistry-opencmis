@@ -63,8 +63,6 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,11 +71,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
-import org.apache.chemistry.opencmis.commons.data.CacheHeaderContentStream;
-import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
-import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -88,7 +83,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
-import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -99,6 +93,7 @@ import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 
 /**
  * Object Service operations.
@@ -551,70 +546,9 @@ public final class ObjectService {
             throw new CmisRuntimeException("Content stream is null!");
         }
 
-        // check if Last-Modified header should be set
-        if (content instanceof LastModifiedContentStream) {
-            GregorianCalendar lastModified = ((LastModifiedContentStream) content).getLastModified();
-            if (lastModified != null) {
-                long lastModifiedSecs = (long) Math.floor((double) lastModified.getTimeInMillis() / 1000);
-
-                Date modifiedSince = DateTimeHelper.parseHttpDateTime(request.getHeader("If-Modified-Since"));
-                if (modifiedSince != null) {
-                    long modifiedSinceSecs = (long) Math.floor((double) modifiedSince.getTime() / 1000);
-
-                    if (modifiedSinceSecs >= lastModifiedSecs) {
-                        // close stream
-                        content.getStream().close();
-
-                        // send not modified status code
-                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                        response.setContentLength(0);
-                        return;
-                    }
-                }
-
-                response.setHeader("Last-Modified", DateTimeHelper.formatHttpDateTime(lastModifiedSecs * 1000));
-            }
-        }
-
-        // check if cache headers should be set
-        if (content instanceof CacheHeaderContentStream) {
-            CacheHeaderContentStream chcs = (CacheHeaderContentStream) content;
-
-            if (chcs.getETag() != null) {
-                String etag = request.getHeader("If-None-Match");
-                if (etag != null && !etag.equals("*")) {
-                    if (etag.length() > 2 && etag.startsWith("\"") && etag.endsWith("\"")) {
-                        etag = etag.substring(1, etag.length() - 1);
-                    }
-
-                    if (chcs.getETag().equals(etag)) {
-                        // close stream
-                        content.getStream().close();
-
-                        // send not modified status code
-                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                        response.setContentLength(0);
-                        return;
-                    }
-                }
-
-                response.setHeader("ETag", "\"" + chcs.getETag() + "\"");
-            }
-
-            if (chcs.getCacheControl() != null) {
-                response.setHeader("Cache-Control", chcs.getCacheControl());
-            }
-
-            if (chcs.getExpires() != null) {
-                response.setHeader("Expires", DateTimeHelper.formatHttpDateTime(chcs.getExpires()));
-            }
-        }
-
-        // check if Content-Length header should be set
-        if (content instanceof ContentLengthContentStream) {
-            if (content.getBigLength() != null && content.getBigLength().signum() >= 0) {
-                response.setHeader("Content-Length", content.getBigLength().toString());
-            }
+        // set HTTP headers, if requested by the server implementation
+        if (HttpUtils.setContentStreamHeaders(content, request, response)) {
+            return;
         }
 
         String contentType = content.getMimeType();
