@@ -21,14 +21,31 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.util.GregorianCalendar;
 
 /**
- * Content stream with last modified date. (Browser binding server only.)
+ * Content stream with HTTP cache headers. (Browser binding server only.)
  */
-public interface LastModifiedContentStream extends ContentStream {
+public interface CacheHeaderContentStream extends ContentStream {
 
     /**
-     * Returns the last modified date of this content.
+     * Returns the Cache-Control header.
      * 
-     * @return the date of the last content modification
+     * @return the value of the Cache-Control header or <code>null</code> if the
+     *         header should not be set
      */
-    GregorianCalendar getLastModified();
+    String getCacheControl();
+
+    /**
+     * Returns the ETag header.
+     * 
+     * @return the value of the ETag header or <code>null</code> if the header
+     *         should not be set
+     */
+    String getETag();
+
+    /**
+     * Returns the Expires header.
+     * 
+     * @return the value of the Expires header or <code>null</code> if the
+     *         header should not be set
+     */
+    GregorianCalendar getExpires();
 }

@@ -18,17 +18,10 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
-import java.util.GregorianCalendar;
-
 /**
- * Content stream with last modified date. (Browser binding server only.)
- */
-public interface LastModifiedContentStream extends ContentStream {
+ * Content stream that should not be chunked. (AtomPub binding and Browser
+ * binding server only.)
+ **/
+public interface ContentSizeContentStream extends ContentStream {
 
-    /**
-     * Returns the last modified date of this content.
-     * 
-     * @return the date of the last content modification
-     */
-    GregorianCalendar getLastModified();
 }

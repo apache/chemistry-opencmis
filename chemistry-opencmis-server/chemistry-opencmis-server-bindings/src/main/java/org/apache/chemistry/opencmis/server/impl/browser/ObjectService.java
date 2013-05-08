@@ -73,6 +73,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
+import org.apache.chemistry.opencmis.commons.data.CacheHeaderContentStream;
+import org.apache.chemistry.opencmis.commons.data.ContentSizeContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
@@ -571,6 +573,47 @@ public final class ObjectService {
                 }
 
                 response.setHeader("Last-Modified", DateTimeHelper.formatHttpDateTime(lastModifiedSecs * 1000));
+            }
+        }
+
+        // check if cache headers should be set
+        if (content instanceof CacheHeaderContentStream) {
+            CacheHeaderContentStream chcs = (CacheHeaderContentStream) content;
+
+            if (chcs.getETag() != null) {
+                String etag = request.getHeader("If-None-Match");
+                if (etag != null && !etag.equals("*")) {
+                    if (etag.length() > 2 && etag.startsWith("\"") && etag.endsWith("\"")) {
+                        etag = etag.substring(1, etag.length() - 1);
+                    }
+
+                    if (chcs.getETag().equals(etag)) {
+                        // close stream
+                        content.getStream().close();
+
+                        // send not modified status code
+                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                        response.setContentLength(0);
+                        return;
+                    }
+                }
+
+                response.setHeader("ETag", "\"" + chcs.getETag() + "\"");
+            }
+
+            if (chcs.getCacheControl() != null) {
+                response.setHeader("Cache-Control", chcs.getCacheControl());
+            }
+
+            if (chcs.getExpires() != null) {
+                response.setHeader("Expires", DateTimeHelper.formatHttpDateTime(chcs.getExpires()));
+            }
+        }
+
+        // check if Content-Length header should be set
+        if (content instanceof ContentSizeContentStream) {
+            if (content.getBigLength() != null && content.getBigLength().signum() >= 0) {
+                response.setHeader("Content-Length", content.getBigLength().toString());
             }
         }
 
