@@ -18,9 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.tube.server;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.tube.AbstractWssTube;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -59,7 +58,7 @@ public class WssTube extends AbstractWssTube {
             long created = System.currentTimeMillis();
             long expires = created + 24 * 60 * 60 * 1000; // 24 hours
 
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Document document = XMLUtils.newDomDocument();
 
             Element wsseSecurityElement = document.createElementNS(WSSE_NAMESPACE, "Security");
 

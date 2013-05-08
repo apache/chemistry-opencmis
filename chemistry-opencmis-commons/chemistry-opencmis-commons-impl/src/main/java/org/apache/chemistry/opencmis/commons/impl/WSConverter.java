@@ -41,8 +41,7 @@ import javax.activation.DataSource;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -3019,10 +3018,8 @@ public final class WSConverter {
         Document doc = null;
 
         try {
-            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-            doc = docBuilder.newDocument();
-        } catch (Exception e) {
+            doc = XMLUtils.newDomDocument();
+        } catch (ParserConfigurationException e) {
             throw new CmisRuntimeException("Unable to convert extensions!", e);
         }
 

@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
@@ -56,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationE
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLService;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLServicePort;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DiscoveryService;
@@ -510,12 +509,7 @@ public abstract class AbstractPortProvider {
         }
 
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setValidating(false);
-
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(wsdlResponse.getStream());
+            Document doc = XMLUtils.parseDomDocument(wsdlResponse.getStream());
 
             NodeList serivceList = doc.getElementsByTagName("service");
             for (int i = 0; i < serivceList.getLength(); i++) {

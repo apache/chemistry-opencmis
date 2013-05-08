@@ -18,12 +18,16 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -33,6 +37,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class XMLUtils {
 
@@ -284,5 +290,43 @@ public class XMLUtils {
         next(parser);
 
         return sb.toString();
+    }
+
+    // ------------------
+    // ---- DOM stuff ---
+    // ------------------
+
+    /**
+     * Creates a new {@link DocumentBuilder} object.
+     */
+    private static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        factory.setIgnoringComments(true);
+        factory.setExpandEntityReferences(false);
+        factory.setCoalescing(false);
+
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+        return factory.newDocumentBuilder();
+    }
+
+    /**
+     * Creates a new DOM document.
+     */
+    public static Document newDomDocument() throws ParserConfigurationException {
+        return newDocumentBuilder().newDocument();
+    }
+
+    /**
+     * Parses a stream and returns the DOM document.
+     */
+    public static Document parseDomDocument(InputStream stream) throws ParserConfigurationException, SAXException,
+            IOException {
+        return newDocumentBuilder().parse(stream);
     }
 }

@@ -21,9 +21,7 @@ package org.apache.chemistry.opencmis.server.shared;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,9 +62,7 @@ public final class ExceptionHelper {
         try {
             String st = getStacktraceAsString(t);
             if (st != null) {
-                DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                Document doc = docBuilder.newDocument();
+                Document doc = XMLUtils.newDomDocument();
 
                 Element node = doc.createElementNS("http://chemistry.apache.org/opencmis/exception", "stacktrace");
                 doc.appendChild(node);
