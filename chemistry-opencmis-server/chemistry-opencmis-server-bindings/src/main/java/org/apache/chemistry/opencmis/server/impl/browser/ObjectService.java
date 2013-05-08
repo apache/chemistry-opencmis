@@ -74,7 +74,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.CacheHeaderContentStream;
-import org.apache.chemistry.opencmis.commons.data.ContentSizeContentStream;
+import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
@@ -611,7 +611,7 @@ public final class ObjectService {
         }
 
         // check if Content-Length header should be set
-        if (content instanceof ContentSizeContentStream) {
+        if (content instanceof ContentLengthContentStream) {
             if (content.getBigLength() != null && content.getBigLength().signum() >= 0) {
                 response.setHeader("Content-Length", content.getBigLength().toString());
             }
