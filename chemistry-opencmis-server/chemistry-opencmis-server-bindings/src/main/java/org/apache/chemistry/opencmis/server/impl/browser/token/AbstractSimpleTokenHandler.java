@@ -35,9 +35,11 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONStreamAware;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
-import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils;
+import org.apache.chemistry.opencmis.server.impl.browser.AbstractBrowserServiceCall;
 
 public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serializable {
 
@@ -60,6 +62,8 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
     private static final String LOGIN_LOGIN = "login";
     private static final String LOGIN_LOGOUT = "logout";
     private static final String LOGIN_TOKEN = "token";
+
+    private static final UrlServiceCall URL_SERVICE_CALL = new UrlServiceCall();
 
     public void service(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response) {
 
@@ -127,7 +131,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
     protected void sendJavaScript(ServletContext servletContext, HttpServletRequest request,
             HttpServletResponse response, String repositoryId) throws IOException {
 
-        UrlBuilder baseUrl = BrowserBindingUtils.compileBaseUrl(request, repositoryId);
+        UrlBuilder baseUrl = URL_SERVICE_CALL.compileBaseUrl(request, repositoryId);
         URL url = new URL(baseUrl.toString());
 
         request.setAttribute(ATTR_PREFIX + "domain", encodeJavaScriptString(url.getProtocol() + "://" + url.getHost()
@@ -156,7 +160,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
 
         request.setAttribute(
                 ATTR_PREFIX + "loginUrl",
-                encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request, repositoryId)
+                encodeJavaScriptString(URL_SERVICE_CALL.compileBaseUrl(request, repositoryId)
                         .addParameter(PARAM_LOGIN, "").toString()));
 
         RequestDispatcher dispatcher = servletContext.getRequestDispatcher(JSP_PATH + JSP_IFRAME);
@@ -267,7 +271,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
 
             SimpleTokenHandlerSessionHelper.setLoginKey(request, loginKey, formKey, appURL);
 
-            String formURL = encodeJavaScriptString(BrowserBindingUtils.compileBaseUrl(request, repositoryId)
+            String formURL = encodeJavaScriptString(URL_SERVICE_CALL.compileBaseUrl(request, repositoryId)
                     .addParameter(PARAM_LOGIN, LOGIN_LOGIN)
                     .addParameter(SimpleTokenHandlerSessionHelper.PARAM_KEY, formKey).toString());
 
@@ -394,5 +398,13 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
         }
 
         return sb.toString();
+    }
+
+    static class UrlServiceCall extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // no implementation
+
+        }
     }
 }

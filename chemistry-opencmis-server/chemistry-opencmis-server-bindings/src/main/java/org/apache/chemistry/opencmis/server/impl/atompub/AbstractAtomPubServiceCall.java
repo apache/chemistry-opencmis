@@ -44,12 +44,10 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.NamespaceDefinitions;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
+import org.apache.chemistry.opencmis.server.shared.AbstractServiceCall;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 
-/**
- * This class contains operations used by all services.
- */
-public final class AtomPubUtils {
+public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
 
     public static final String RESOURCE_CHILDREN = "children";
     public static final String RESOURCE_DESCENDANTS = "descendants";
@@ -80,15 +78,9 @@ public final class AtomPubUtils {
     public static final String TYPE_AUTHOR = "unknown";
 
     /**
-     * Private constructor.
-     */
-    private AtomPubUtils() {
-    }
-
-    /**
      * Compiles the base URL for links, collections and templates.
      */
-    public static UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
+    public UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
         String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
         if (baseUrl != null) {
             int repIdPos = baseUrl.indexOf(REPOSITORY_PLACEHOLDER);
@@ -115,14 +107,14 @@ public final class AtomPubUtils {
     /**
      * Compiles a URL for links, collections and templates.
      */
-    public static String compileUrl(UrlBuilder baseUrl, String resource, String id) {
+    public String compileUrl(UrlBuilder baseUrl, String resource, String id) {
         return compileUrlBuilder(baseUrl, resource, id).toString();
     }
 
     /**
      * Compiles a URL for links, collections and templates.
      */
-    public static UrlBuilder compileUrlBuilder(UrlBuilder baseUrl, String resource, String id) {
+    public UrlBuilder compileUrlBuilder(UrlBuilder baseUrl, String resource, String id) {
         UrlBuilder url = new UrlBuilder(baseUrl);
         url.addPathSegment(resource);
 
@@ -137,7 +129,7 @@ public final class AtomPubUtils {
     // --- namespaces ---
     // -------------------------------------------------------------------------
 
-    public static Map<String, String> getNamespaces(Object obj) {
+    public Map<String, String> getNamespaces(Object obj) {
         if (obj instanceof NamespaceDefinitions) {
             return ((NamespaceDefinitions) obj).getNamespaces();
         }
@@ -152,7 +144,7 @@ public final class AtomPubUtils {
     /**
      * Writes the a object entry.
      */
-    public static void writeObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
+    public void writeObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
             List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
             String relativePathSegment, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion)
             throws XMLStreamException {
@@ -281,7 +273,7 @@ public final class AtomPubUtils {
      * Content changes objects need special treatment because some of them could
      * have been deleted and an object info cannot be generated.
      */
-    public static void writeContentChangesObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
+    public void writeContentChangesObjectEntry(CmisService service, AtomEntry entry, ObjectData object,
             List<ObjectInFolderContainer> children, String repositoryId, String pathSegment,
             String relativePathSegment, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion)
             throws XMLStreamException {
@@ -318,7 +310,7 @@ public final class AtomPubUtils {
     /**
      * Writes an objects entry children feed.
      */
-    public static void writeObjectChildren(CmisService service, AtomEntry entry, ObjectInfo folderInfo,
+    public void writeObjectChildren(CmisService service, AtomEntry entry, ObjectInfo folderInfo,
             List<ObjectInFolderContainer> children, String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion)
             throws XMLStreamException {
 
@@ -360,7 +352,7 @@ public final class AtomPubUtils {
     /**
      * Writes the a type entry.
      */
-    public static void writeTypeEntry(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
+    public void writeTypeEntry(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
             String repositoryId, UrlBuilder baseUrl, boolean isRoot, CmisVersion cmisVersion) throws XMLStreamException {
 
         // start
@@ -397,7 +389,7 @@ public final class AtomPubUtils {
     /**
      * Writes the a type entry children feed.
      */
-    private static void writeTypeChildren(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
+    private void writeTypeChildren(AtomEntry entry, TypeDefinition type, List<TypeDefinitionContainer> children,
             String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws XMLStreamException {
 
         // start

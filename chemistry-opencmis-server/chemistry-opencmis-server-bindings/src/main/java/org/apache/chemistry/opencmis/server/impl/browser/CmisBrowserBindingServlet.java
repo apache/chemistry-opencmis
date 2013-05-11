@@ -70,24 +70,13 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.SELECTOR_VERS
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_EXCEPTION;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_MESSAGE;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_STACKTRACE;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_BASETYPE_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_TOKEN;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.HTML_MIME_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.JSON_MIME_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.prepareContext;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -107,154 +96,107 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
-import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
-import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
-import org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CallUrl;
 import org.apache.chemistry.opencmis.server.impl.browser.token.TokenHandler;
-import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
+import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CmisBrowserBindingServlet extends HttpServlet {
+public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
-
     private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingServlet.class.getName());
 
-    private ThresholdOutputStreamFactory streamFactory;
-    private Dispatcher repositoryDispatcher;
-    private Dispatcher rootDispatcher;
-    private CallContextHandler callContextHandler;
+    private final Dispatcher repositoryDispatcher = new Dispatcher(false);
+    private final Dispatcher rootDispatcher = new Dispatcher(false);
+    private final static ErrorServiceCall ERROR_SERTVICE_CALL = new ErrorServiceCall();
+
+    public enum CallUrl {
+        SERVICE, REPOSITORY, ROOT
+    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        // initialize the call context handler
-        callContextHandler = null;
-        String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
-        if (callContextHandlerClass != null) {
-            try {
-                callContextHandler = (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass)
-                        .newInstance();
-            } catch (Exception e) {
-                throw new ServletException("Could not load call context handler: " + e, e);
-            }
-        }
+        // set the binding
+        setBinding(CallContext.BINDING_BROWSER);
 
-        // get memory threshold and temp directory
-        CmisServiceFactory factory = (CmisServiceFactory) config.getServletContext().getAttribute(
-                CmisRepositoryContextListener.SERVICES_FACTORY);
+        // set CMIS version -> can only be 1.1
+        setCmisVersion(CmisVersion.CMIS_1_1);
 
-        if (factory == null) {
-            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
-        }
+        // initialize repository resources
+        addRepositoryResource("", METHOD_GET, new RepositoryService.GetRepositories());
+        addRepositoryResource(SELECTOR_REPOSITORY_INFO, METHOD_GET, new RepositoryService.GetRepositoryInfo());
+        addRepositoryResource(SELECTOR_LAST_RESULT, METHOD_GET, new RepositoryService.GetLastResult());
+        addRepositoryResource(SELECTOR_TYPE_CHILDREN, METHOD_GET, new RepositoryService.GetTypeChildren());
+        addRepositoryResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET, new RepositoryService.GetTypeDescendants());
+        addRepositoryResource(SELECTOR_TYPE_DEFINITION, METHOD_GET, new RepositoryService.GetTypeDefinition());
+        addRepositoryResource(CMISACTION_CREATE_TYPE, METHOD_POST, new RepositoryService.CreateType());
+        addRepositoryResource(CMISACTION_UPDATE_TYPE, METHOD_POST, new RepositoryService.UpdateType());
+        addRepositoryResource(CMISACTION_DELETE_TYPE, METHOD_POST, new RepositoryService.DeleteType());
+        addRepositoryResource(SELECTOR_QUERY, METHOD_GET, new DiscoveryService.Query());
+        addRepositoryResource(SELECTOR_CHECKEDOUT, METHOD_GET, new NavigationService.GetCheckedOutDocs());
+        addRepositoryResource(SELECTOR_CONTENT_CHANGES, METHOD_GET, new DiscoveryService.GetContentChanges());
 
-        // set up stream factory
-        streamFactory = ThresholdOutputStreamFactory.newInstance(factory.getTempDirectory(),
-                factory.getMemoryThreshold(), factory.getMaxContentSize(), factory.encryptTempFiles());
+        addRepositoryResource(CMISACTION_QUERY, METHOD_POST, new DiscoveryService.Query());
+        addRepositoryResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, new ObjectService.CreateDocument());
+        addRepositoryResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST,
+                new ObjectService.CreateDocumentFromSource());
+        addRepositoryResource(CMISACTION_CREATE_POLICY, METHOD_POST, new ObjectService.CreatePolicy());
+        addRepositoryResource(CMISACTION_CREATE_ITEM, METHOD_POST, new ObjectService.CreateItem());
+        addRepositoryResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, new ObjectService.CreateRelationship());
+        addRepositoryResource(CMISACTION_BULK_UPDATE, METHOD_POST, new ObjectService.BulkUpdateProperties());
 
-        // initialize the dispatchers
-        repositoryDispatcher = new Dispatcher(false);
-        rootDispatcher = new Dispatcher(false);
+        // initialize root resources
+        addRootResource(SELECTOR_OBJECT, METHOD_GET, new ObjectService.GetObject());
+        addRootResource(SELECTOR_PROPERTIES, METHOD_GET, new ObjectService.GetProperties());
+        addRootResource(SELECTOR_ALLOWABLEACTIONS, METHOD_GET, new ObjectService.GetAllowableActions());
+        addRootResource(SELECTOR_RENDITIONS, METHOD_GET, new ObjectService.GetRenditions());
+        addRootResource(SELECTOR_CONTENT, METHOD_GET, new ObjectService.GetContentStream());
+        addRootResource(SELECTOR_CHILDREN, METHOD_GET, new NavigationService.GetChildren());
+        addRootResource(SELECTOR_DESCENDANTS, METHOD_GET, new NavigationService.GetDescendants());
+        addRootResource(SELECTOR_FOLDER_TREE, METHOD_GET, new NavigationService.GetFolderTree());
+        addRootResource(SELECTOR_PARENT, METHOD_GET, new NavigationService.GetFolderParent());
+        addRootResource(SELECTOR_PARENTS, METHOD_GET, new NavigationService.GetObjectParents());
+        addRootResource(SELECTOR_VERSIONS, METHOD_GET, new VersioningService.GetAllVersions());
+        addRootResource(SELECTOR_RELATIONSHIPS, METHOD_GET, new RelationshipService.GetObjectRelationships());
+        addRootResource(SELECTOR_CHECKEDOUT, METHOD_GET, new NavigationService.GetCheckedOutDocs());
+        addRootResource(SELECTOR_POLICIES, METHOD_GET, new PolicyService.GetAppliedPolicies());
+        addRootResource(SELECTOR_ACL, METHOD_GET, new AclService.GetACL());
 
-        try {
-            repositoryDispatcher.addResource(SELECTOR_REPOSITORY_INFO, METHOD_GET, RepositoryService.class,
-                    "getRepositoryInfo");
-            repositoryDispatcher
-                    .addResource(SELECTOR_LAST_RESULT, METHOD_GET, RepositoryService.class, "getLastResult");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_CHILDREN, METHOD_GET, RepositoryService.class,
-                    "getTypeChildren");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_DESCENDANTS, METHOD_GET, RepositoryService.class,
-                    "getTypeDescendants");
-            repositoryDispatcher.addResource(SELECTOR_TYPE_DEFINITION, METHOD_GET, RepositoryService.class,
-                    "getTypeDefinition");
-            repositoryDispatcher
-                    .addResource(CMISACTION_CREATE_TYPE, METHOD_POST, RepositoryService.class, "createType");
-            repositoryDispatcher
-                    .addResource(CMISACTION_UPDATE_TYPE, METHOD_POST, RepositoryService.class, "updateType");
-            repositoryDispatcher
-                    .addResource(CMISACTION_DELETE_TYPE, METHOD_POST, RepositoryService.class, "deleteType");
-            repositoryDispatcher.addResource(SELECTOR_QUERY, METHOD_GET, DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, NavigationService.class,
-                    "getCheckedOutDocs");
-            repositoryDispatcher.addResource(SELECTOR_CONTENT_CHANGES, METHOD_GET, DiscoveryService.class,
-                    "getContentChanges");
-            repositoryDispatcher.addResource(CMISACTION_QUERY, METHOD_POST, DiscoveryService.class, "query");
-            repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class,
-                    "createDocument");
-            repositoryDispatcher.addResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST, ObjectService.class,
-                    "createDocumentFromSource");
-            repositoryDispatcher
-                    .addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
-            repositoryDispatcher.addResource(CMISACTION_CREATE_ITEM, METHOD_POST, ObjectService.class, "createItem");
-            repositoryDispatcher.addResource(CMISACTION_CREATE_RELATIONSHIP, METHOD_POST, ObjectService.class,
-                    "createRelationship");
-            repositoryDispatcher.addResource(CMISACTION_BULK_UPDATE, METHOD_POST, ObjectService.class,
-                    "bulkUpdateProperties");
-
-            rootDispatcher.addResource(SELECTOR_OBJECT, METHOD_GET, ObjectService.class, "getObject");
-            rootDispatcher.addResource(SELECTOR_PROPERTIES, METHOD_GET, ObjectService.class, "getProperties");
-            rootDispatcher.addResource(SELECTOR_ALLOWABLEACTIONS, METHOD_GET, ObjectService.class,
-                    "getAllowableActions");
-            rootDispatcher.addResource(SELECTOR_RENDITIONS, METHOD_GET, ObjectService.class, "getRenditions");
-            rootDispatcher.addResource(SELECTOR_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
-            rootDispatcher.addResource(SELECTOR_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
-            rootDispatcher.addResource(SELECTOR_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
-            rootDispatcher.addResource(SELECTOR_FOLDER_TREE, METHOD_GET, NavigationService.class, "getFolderTree");
-            rootDispatcher.addResource(SELECTOR_PARENT, METHOD_GET, NavigationService.class, "getFolderParent");
-            rootDispatcher.addResource(SELECTOR_PARENTS, METHOD_GET, NavigationService.class, "getObjectParents");
-            rootDispatcher.addResource(SELECTOR_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
-            rootDispatcher.addResource(SELECTOR_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
-                    "getObjectRelationships");
-            rootDispatcher.addResource(SELECTOR_CHECKEDOUT, METHOD_GET, NavigationService.class, "getCheckedOutDocs");
-            rootDispatcher.addResource(SELECTOR_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
-            rootDispatcher.addResource(SELECTOR_ACL, METHOD_GET, AclService.class, "getACL");
-
-            rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, ObjectService.class, "createDocument");
-            rootDispatcher.addResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST, ObjectService.class,
-                    "createDocumentFromSource");
-            rootDispatcher.addResource(CMISACTION_CREATE_FOLDER, METHOD_POST, ObjectService.class, "createFolder");
-            rootDispatcher.addResource(CMISACTION_CREATE_POLICY, METHOD_POST, ObjectService.class, "createPolicy");
-            rootDispatcher.addResource(CMISACTION_CREATE_ITEM, METHOD_POST, ObjectService.class, "createItem");
-            rootDispatcher.addResource(CMISACTION_UPDATE_PROPERTIES, METHOD_POST, ObjectService.class,
-                    "updateProperties");
-            rootDispatcher.addResource(CMISACTION_SET_CONTENT, METHOD_POST, ObjectService.class, "setContentStream");
-            rootDispatcher.addResource(CMISACTION_APPEND_CONTENT, METHOD_POST, ObjectService.class,
-                    "appendContentStream");
-            rootDispatcher.addResource(CMISACTION_DELETE_CONTENT, METHOD_POST, ObjectService.class,
-                    "deleteContentStream");
-            rootDispatcher.addResource(CMISACTION_DELETE, METHOD_POST, ObjectService.class, "deleteObject");
-            rootDispatcher.addResource(CMISACTION_DELETE_TREE, METHOD_POST, ObjectService.class, "deleteTree");
-            rootDispatcher.addResource(CMISACTION_MOVE, METHOD_POST, ObjectService.class, "moveObject");
-            rootDispatcher.addResource(CMISACTION_ADD_OBJECT_TO_FOLDER, METHOD_POST, MultiFilingService.class,
-                    "addObjectToFolder");
-            rootDispatcher.addResource(CMISACTION_REMOVE_OBJECT_FROM_FOLDER, METHOD_POST, MultiFilingService.class,
-                    "removeObjectFromFolder");
-            rootDispatcher.addResource(CMISACTION_CHECK_OUT, METHOD_POST, VersioningService.class, "checkOut");
-            rootDispatcher.addResource(CMISACTION_CANCEL_CHECK_OUT, METHOD_POST, VersioningService.class,
-                    "cancelCheckOut");
-            rootDispatcher.addResource(CMISACTION_CHECK_IN, METHOD_POST, VersioningService.class, "checkIn");
-            rootDispatcher.addResource(CMISACTION_APPLY_POLICY, METHOD_POST, PolicyService.class, "applyPolicy");
-            rootDispatcher.addResource(CMISACTION_REMOVE_POLICY, METHOD_POST, PolicyService.class, "removePolicy");
-            rootDispatcher.addResource(CMISACTION_APPLY_ACL, METHOD_POST, AclService.class, "applyACL");
-
-        } catch (NoSuchMethodException e) {
-            LOG.error("Cannot initialize dispatcher!", e);
-        }
+        addRootResource(CMISACTION_CREATE_DOCUMENT, METHOD_POST, new ObjectService.CreateDocument());
+        addRootResource(CMISACTION_CREATE_DOCUMENT_FROM_SOURCE, METHOD_POST,
+                new ObjectService.CreateDocumentFromSource());
+        addRootResource(CMISACTION_CREATE_FOLDER, METHOD_POST, new ObjectService.CreateFolder());
+        addRootResource(CMISACTION_CREATE_POLICY, METHOD_POST, new ObjectService.CreatePolicy());
+        addRootResource(CMISACTION_CREATE_ITEM, METHOD_POST, new ObjectService.CreateItem());
+        addRootResource(CMISACTION_UPDATE_PROPERTIES, METHOD_POST, new ObjectService.UpdateProperties());
+        addRootResource(CMISACTION_SET_CONTENT, METHOD_POST, new ObjectService.SetContentStream());
+        addRootResource(CMISACTION_APPEND_CONTENT, METHOD_POST, new ObjectService.AppendContentStream());
+        addRootResource(CMISACTION_DELETE_CONTENT, METHOD_POST, new ObjectService.DeleteContentStream());
+        addRootResource(CMISACTION_DELETE, METHOD_POST, new ObjectService.DeleteObject());
+        addRootResource(CMISACTION_DELETE_TREE, METHOD_POST, new ObjectService.DeleteTree());
+        addRootResource(CMISACTION_MOVE, METHOD_POST, new ObjectService.MoveObject());
+        addRootResource(CMISACTION_ADD_OBJECT_TO_FOLDER, METHOD_POST, new MultiFilingService.AddObjectToFolder());
+        addRootResource(CMISACTION_REMOVE_OBJECT_FROM_FOLDER, METHOD_POST,
+                new MultiFilingService.RemoveObjectFromFolder());
+        addRootResource(CMISACTION_CHECK_OUT, METHOD_POST, new VersioningService.CheckOut());
+        addRootResource(CMISACTION_CANCEL_CHECK_OUT, METHOD_POST, new VersioningService.CancelCheckOut());
+        addRootResource(CMISACTION_CHECK_IN, METHOD_POST, new VersioningService.CheckIn());
+        addRootResource(CMISACTION_APPLY_POLICY, METHOD_POST, new PolicyService.ApplyPolicy());
+        addRootResource(CMISACTION_REMOVE_POLICY, METHOD_POST, new PolicyService.RemovePolicy());
+        addRootResource(CMISACTION_APPLY_ACL, METHOD_POST, new AclService.ApplyACL());
     }
 
     @Override
@@ -273,19 +215,18 @@ public class CmisBrowserBindingServlet extends HttpServlet {
             if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
-                request = new POSTHttpServletRequestWrapper(request, streamFactory);
+                request = new POSTHttpServletRequestWrapper(request, getThresholdOutputStreamFactory());
             } else {
                 throw new CmisNotSupportedException("Unsupported method");
             }
 
             // invoke token handler, if necessary
-            if (request.getParameter("login") != null && callContextHandler instanceof TokenHandler) {
-                ((TokenHandler) callContextHandler).service(getServletContext(), request, response);
+            if (request.getParameter("login") != null && getCallContextHandler() instanceof TokenHandler) {
+                ((TokenHandler) getCallContextHandler()).service(getServletContext(), request, response);
                 return;
             }
 
-            context = HttpUtils.createContext(request, response, getServletContext(), CallContext.BINDING_BROWSER,
-                    CmisVersion.CMIS_1_1, callContextHandler, streamFactory);
+            context = createContext(getServletContext(), request, response);
             dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -293,10 +234,10 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                     response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
                 } else {
-                    printError(e, request, response, context);
+                    printError(context, e, request, response);
                 }
             } else {
-                printError(e, request, response, context);
+                printError(context, e, request, response);
             }
         }
 
@@ -306,36 +247,42 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
     // --------------------------------------------------------
 
+    /**
+     * Registers a new repository resource.
+     */
+    protected void addRepositoryResource(String resource, String httpMethod, ServiceCall serviceCall) {
+        repositoryDispatcher.addResource(resource, httpMethod, serviceCall);
+    }
+
+    /**
+     * Registers a new root resource.
+     */
+    protected void addRootResource(String resource, String httpMethod, ServiceCall serviceCall) {
+        rootDispatcher.addResource(resource, httpMethod, serviceCall);
+    }
+
     private void dispatch(CallContext context, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        BrowserCallContextImpl browserContext = (BrowserCallContextImpl) context;
         CmisService service = null;
         try {
-            // get services factory
-            CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
-                    CmisRepositoryContextListener.SERVICES_FACTORY);
-
-            if (factory == null) {
-                throw new CmisRuntimeException("Service factory not available! Configuration problem?");
-            }
-
             // get the service
-            service = factory.getService(context);
+            service = getServiceFactory().getService(context);
 
             // analyze the path
             String[] pathFragments = HttpUtils.splitPath(request);
 
             if (pathFragments.length < 1) {
                 // root -> repository infos
-                RepositoryService.getRepositories(context, service, request, response);
+                repositoryDispatcher.dispatch("", METHOD_GET, context, service, null, request, response);
                 return;
             }
 
             // select dispatcher
-
             CallUrl callUrl = null;
             if (pathFragments.length == 1) {
                 callUrl = CallUrl.REPOSITORY;
-            } else if (BrowserBindingUtils.ROOT_PATH_FRAGMENT.equals(pathFragments[1])) {
+            } else if (AbstractBrowserServiceCall.ROOT_PATH_FRAGMENT.equals(pathFragments[1])) {
                 callUrl = CallUrl.ROOT;
             }
 
@@ -345,14 +292,11 @@ public class CmisBrowserBindingServlet extends HttpServlet {
 
             String method = request.getMethod();
             String repositoryId = pathFragments[0];
-            boolean methodFound = false;
+            boolean callServiceFound = false;
 
             if (METHOD_GET.equals(method)) {
-                String selector = getStringParameter(request, Constants.PARAM_SELECTOR);
-                String objectId = getStringParameter(request, PARAM_OBJECT_ID);
-
-                // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, null, request);
+                String selector = HttpUtils.getStringParameter(request, Constants.PARAM_SELECTOR);
+                String objectId = HttpUtils.getStringParameter(request, PARAM_OBJECT_ID);
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
@@ -360,13 +304,16 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                         selector = "";
                     }
 
-                    methodFound = repositoryDispatcher.dispatch(selector, method, context, service, repositoryId,
-                            request, response);
+                    browserContext.setCallDetails(service, objectId, null, null);
+                    callServiceFound = repositoryDispatcher.dispatch(selector, method, browserContext, service,
+                            repositoryId, request, response);
                 } else if (callUrl == CallUrl.ROOT) {
+                    browserContext.setCallDetails(service, objectId, pathFragments, null);
+
                     // set default method if necessary
                     if (selector == null) {
                         try {
-                            BaseTypeId basetype = BaseTypeId.fromValue((String) context.get(CONTEXT_BASETYPE_ID));
+                            BaseTypeId basetype = browserContext.getBaseTypeId();
                             switch (basetype) {
                             case CMIS_DOCUMENT:
                                 selector = SELECTOR_CONTENT;
@@ -383,34 +330,33 @@ public class CmisBrowserBindingServlet extends HttpServlet {
                         }
                     }
 
-                    methodFound = rootDispatcher.dispatch(selector, method, context, service, repositoryId, request,
-                            response);
+                    callServiceFound = rootDispatcher.dispatch(selector, method, browserContext, service, repositoryId,
+                            request, response);
                 }
             } else if (METHOD_POST.equals(method)) {
-                String cmisaction = getStringParameter(request, Constants.CONTROL_CMISACTION);
-                String objectId = getStringParameter(request, Constants.CONTROL_OBJECT_ID);
-                String token = getStringParameter(request, Constants.CONTROL_TOKEN);
+                String cmisaction = HttpUtils.getStringParameter(request, Constants.CONTROL_CMISACTION);
+                String objectId = HttpUtils.getStringParameter(request, Constants.CONTROL_OBJECT_ID);
+                String token = HttpUtils.getStringParameter(request, Constants.CONTROL_TOKEN);
 
                 if (cmisaction == null || cmisaction.length() == 0) {
                     throw new CmisNotSupportedException("Unknown action");
                 }
 
-                // add object id and object base type id to context
-                prepareContext(context, callUrl, service, repositoryId, objectId, token, request);
-
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
-                    methodFound = repositoryDispatcher.dispatch(cmisaction, method, context, service, repositoryId,
-                            request, response);
+                    browserContext.setCallDetails(service, objectId, null, token);
+                    callServiceFound = repositoryDispatcher.dispatch(cmisaction, method, browserContext, service,
+                            repositoryId, request, response);
                 } else if (callUrl == CallUrl.ROOT) {
-                    methodFound = rootDispatcher.dispatch(cmisaction, method, context, service, repositoryId, request,
-                            response);
+                    browserContext.setCallDetails(service, objectId, pathFragments, token);
+                    callServiceFound = rootDispatcher.dispatch(cmisaction, method, browserContext, service,
+                            repositoryId, request, response);
                 }
             }
 
-            // if the dispatcher couldn't find a matching method, return an
-            // error message
-            if (!methodFound) {
+            // if the dispatcher couldn't find a matching service call
+            // -> return an error message
+            if (!callServiceFound) {
                 throw new CmisNotSupportedException("Unknown operation");
             }
         } finally {
@@ -423,81 +369,99 @@ public class CmisBrowserBindingServlet extends HttpServlet {
     /**
      * Translates an exception in an appropriate HTTP error code.
      */
-    private static int getErrorCode(CmisBaseException ex) {
-        if (ex instanceof CmisConstraintException) {
-            return 409;
-        } else if (ex instanceof CmisContentAlreadyExistsException) {
-            return 409;
-        } else if (ex instanceof CmisFilterNotValidException) {
-            return 400;
-        } else if (ex instanceof CmisInvalidArgumentException) {
-            return 400;
-        } else if (ex instanceof CmisNameConstraintViolationException) {
-            return 409;
-        } else if (ex instanceof CmisNotSupportedException) {
-            return 405;
-        } else if (ex instanceof CmisObjectNotFoundException) {
-            return 404;
-        } else if (ex instanceof CmisPermissionDeniedException) {
-            return 403;
-        } else if (ex instanceof CmisStorageException) {
-            return 500;
-        } else if (ex instanceof CmisStreamNotSupportedException) {
-            return 403;
-        } else if (ex instanceof CmisUpdateConflictException) {
-            return 409;
-        } else if (ex instanceof CmisVersioningException) {
-            return 409;
-        }
-
-        return 500;
+    protected int getErrorCode(CmisBaseException ex) {
+        return ERROR_SERTVICE_CALL.getErrorCode(ex);
     }
 
     /**
-     * Prints the error as JSON.
+     * Prints an error as JSON.
      */
-    private static void printError(Exception ex, HttpServletRequest request, HttpServletResponse response,
-            CallContext context) {
-        int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        String exceptionName = "runtime";
+    protected void printError(CallContext context, Exception ex, HttpServletRequest request,
+            HttpServletResponse response) {
+        ERROR_SERTVICE_CALL.printError(context, ex, request, response);
+    }
 
-        if (ex instanceof CmisRuntimeException) {
-            LOG.error(ex.getMessage(), ex);
-        } else if (ex instanceof CmisBaseException) {
-            statusCode = getErrorCode((CmisBaseException) ex);
-            exceptionName = ((CmisBaseException) ex).getExceptionName();
-        } else {
-            LOG.error(ex.getMessage(), ex);
+    static class ErrorServiceCall extends AbstractBrowserServiceCall {
+
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // no implementation
         }
 
-        String token = (context == null ? null : (String) context.get(CONTEXT_TOKEN));
-
-        if (token == null) {
-            setStatus(request, response, statusCode);
-            response.setContentType(JSON_MIME_TYPE);
-
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put(ERROR_EXCEPTION, exceptionName);
-            jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
-
-            String st = ExceptionHelper.getStacktraceAsString(ex);
-            if (st != null) {
-                jsonResponse.put(ERROR_STACKTRACE, st);
+        public int getErrorCode(CmisBaseException ex) {
+            if (ex instanceof CmisConstraintException) {
+                return 409;
+            } else if (ex instanceof CmisContentAlreadyExistsException) {
+                return 409;
+            } else if (ex instanceof CmisFilterNotValidException) {
+                return 400;
+            } else if (ex instanceof CmisInvalidArgumentException) {
+                return 400;
+            } else if (ex instanceof CmisNameConstraintViolationException) {
+                return 409;
+            } else if (ex instanceof CmisNotSupportedException) {
+                return 405;
+            } else if (ex instanceof CmisObjectNotFoundException) {
+                return 404;
+            } else if (ex instanceof CmisPermissionDeniedException) {
+                return 403;
+            } else if (ex instanceof CmisStorageException) {
+                return 500;
+            } else if (ex instanceof CmisStreamNotSupportedException) {
+                return 403;
+            } else if (ex instanceof CmisUpdateConflictException) {
+                return 409;
+            } else if (ex instanceof CmisVersioningException) {
+                return 409;
             }
 
-            try {
-                writeJSON(jsonResponse, request, response);
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-            }
-        } else {
-            setStatus(request, response, HttpServletResponse.SC_OK);
-            response.setContentType(HTML_MIME_TYPE);
-            response.setContentLength(0);
+            return 500;
+        }
 
-            if (context != null) {
-                setCookie(request, response, context.getRepositoryId(), token,
-                        createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
+        public void printError(CallContext context, Exception ex, HttpServletRequest request,
+                HttpServletResponse response) {
+            int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            String exceptionName = "runtime";
+
+            if (ex instanceof CmisRuntimeException) {
+                LOG.error(ex.getMessage(), ex);
+            } else if (ex instanceof CmisBaseException) {
+                statusCode = getErrorCode((CmisBaseException) ex);
+                exceptionName = ((CmisBaseException) ex).getExceptionName();
+            } else {
+                LOG.error(ex.getMessage(), ex);
+            }
+
+            String token = (context instanceof BrowserCallContextImpl ? ((BrowserCallContextImpl) context).getToken()
+                    : null);
+
+            if (token == null) {
+                setStatus(request, response, statusCode);
+                response.setContentType(JSON_MIME_TYPE);
+
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put(ERROR_EXCEPTION, exceptionName);
+                jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
+
+                String st = ExceptionHelper.getStacktraceAsString(ex);
+                if (st != null) {
+                    jsonResponse.put(ERROR_STACKTRACE, st);
+                }
+
+                try {
+                    writeJSON(jsonResponse, request, response);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            } else {
+                setStatus(request, response, HttpServletResponse.SC_OK);
+                response.setContentType(HTML_MIME_TYPE);
+                response.setContentLength(0);
+
+                if (context != null) {
+                    setCookie(request, response, context.getRepositoryId(), token,
+                            createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
+                }
             }
         }
     }

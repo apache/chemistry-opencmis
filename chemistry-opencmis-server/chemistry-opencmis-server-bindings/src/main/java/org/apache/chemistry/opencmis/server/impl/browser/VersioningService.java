@@ -23,25 +23,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHECKIN
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_MAJOR;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_TYPE_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.closeContentStream;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createContentStream;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createCookieValue;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createPolicies;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createUpdateProperties;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setCookie;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeEmpty;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,135 +45,140 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Versioning Service operations.
  */
-public final class VersioningService {
-
-    private VersioningService() {
-    }
+public class VersioningService {
 
     /**
      * checkOut.
      */
-    public static void checkOut(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String token = getStringParameter(request, PARAM_TOKEN);
-        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+    public static class CheckOut extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String token = getStringParameter(request, PARAM_TOKEN);
+            boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
-        // execute
-        Holder<String> checkOutId = new Holder<String>(objectId);
-        service.checkOut(repositoryId, checkOutId, null, null);
+            // execute
+            Holder<String> checkOutId = new Holder<String>(objectId);
+            service.checkOut(repositoryId, checkOutId, null, null);
 
-        ObjectData object = getSimpleObject(service, repositoryId, checkOutId.getValue());
-        if (object == null) {
-            throw new CmisRuntimeException("PWC is null!");
+            ObjectData object = getSimpleObject(service, repositoryId, checkOutId.getValue());
+            if (object == null) {
+                throw new CmisRuntimeException("PWC is null!");
+            }
+
+            // return object
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
+                    succinct);
+
+            // set headers
+            setStatus(request, response, HttpServletResponse.SC_CREATED);
+            response.setHeader("Location", compileObjectLocationUrl(request, repositoryId, object.getId()));
+
+            setCookie(request, response, repositoryId, token,
+                    createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+            writeJSON(jsonObject, request, response);
         }
-
-        // return object
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
-
-        // set headers
-        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
-
-        setStatus(request, response, HttpServletResponse.SC_CREATED);
-        response.setHeader("Location", location);
-
-        setCookie(request, response, repositoryId, token,
-                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
-
-        writeJSON(jsonObject, request, response);
     }
 
     /**
      * checkOut.
      */
-    public static void cancelCheckOut(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
+    public static class CancelCheckOut extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
 
-        // execute
-        service.cancelCheckOut(repositoryId, objectId, null);
+            // execute
+            service.cancelCheckOut(repositoryId, objectId, null);
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        writeEmpty(request, response);
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeEmpty(request, response);
+        }
     }
 
     /**
      * checkIn.
      */
-    public static void checkIn(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String typeId = (String) context.get(CONTEXT_OBJECT_TYPE_ID);
-        Boolean major = getBooleanParameter(request, PARAM_MAJOR);
-        String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
-        String token = getStringParameter(request, PARAM_TOKEN);
-        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+    public static class CheckIn extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String typeId = ((BrowserCallContextImpl) context).getTypeId();
+            Boolean major = getBooleanParameter(request, PARAM_MAJOR);
+            String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
+            String token = getStringParameter(request, PARAM_TOKEN);
+            boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
-        // execute
-        ControlParser cp = new ControlParser(request);
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        Holder<String> objectIdHolder = new Holder<String>(objectId);
-        ContentStream contentStream = createContentStream(request);
+            // execute
+            ControlParser cp = new ControlParser(request);
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            Holder<String> objectIdHolder = new Holder<String>(objectId);
+            ContentStream contentStream = createContentStream(request);
 
-        try {
-            service.checkIn(repositoryId, objectIdHolder, major,
-                    createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
-                    contentStream, checkinComment, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
-        } finally {
-            closeContentStream(contentStream);
+            try {
+                service.checkIn(repositoryId, objectIdHolder, major,
+                        createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
+                        contentStream, checkinComment, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+            } finally {
+                closeContentStream(contentStream);
+            }
+
+            String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+
+            ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
+            if (object == null) {
+                throw new CmisRuntimeException("New version is null!");
+            }
+
+            // return object
+            JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
+                    succinct);
+
+            // set headers
+            setStatus(request, response, HttpServletResponse.SC_CREATED);
+            response.setHeader("Location", compileObjectLocationUrl(request, repositoryId, object.getId()));
+
+            setCookie(request, response, repositoryId, token,
+                    createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
+
+            writeJSON(jsonObject, request, response);
         }
-
-        String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
-
-        ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
-        if (object == null) {
-            throw new CmisRuntimeException("New version is null!");
-        }
-
-        // return object
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
-
-        String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, object.getId());
-
-        setStatus(request, response, HttpServletResponse.SC_CREATED);
-        response.setHeader("Location", location);
-
-        setCookie(request, response, repositoryId, token,
-                createCookieValue(HttpServletResponse.SC_CREATED, object.getId(), null, null));
-
-        writeJSON(jsonObject, request, response);
     }
 
     /**
      * getAllVersions.
      */
-    public static void getAllVersions(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
-        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+    public static class GetAllVersions extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String filter = getStringParameter(request, PARAM_FILTER);
+            Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+            boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
-        // execute
-        List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
-                includeAllowableActions, null);
+            // execute
+            List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
+                    includeAllowableActions, null);
 
-        if (versions == null) {
-            throw new CmisRuntimeException("Versions are null!");
+            if (versions == null) {
+                throw new CmisRuntimeException("Versions are null!");
+            }
+
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONArray jsonVersions = new JSONArray();
+            for (ObjectData version : versions) {
+                jsonVersions
+                        .add(JSONConverter.convert(version, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
+            }
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeJSON(jsonVersions, request, response);
         }
-
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONArray jsonVersions = new JSONArray();
-        for (ObjectData version : versions) {
-            jsonVersions.add(JSONConverter.convert(version, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        writeJSON(jsonVersions, request, response);
     }
 }

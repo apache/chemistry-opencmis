@@ -18,12 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,149 +36,154 @@ import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 /**
  * Policy Service operations.
  */
-public final class PolicyService {
+public class PolicyService {
 
-    private PolicyService() {
+    public static abstract class AbstractPoliciesServiceCall extends AbstractAtomPubServiceCall {
+        /**
+         * Writes an entry that is attached to an object.
+         */
+        protected void writePolicyEntry(CmisService service, AtomEntry entry, String objectId, ObjectData policy,
+                String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws Exception {
+            ObjectInfo info = service.getObjectInfo(repositoryId, policy.getId());
+            if (info == null) {
+                throw new CmisRuntimeException("Object Info not found!");
+            }
+
+            // start
+            entry.startEntry(false);
+
+            // write the object
+            entry.writeObject(policy, info, null, null, null, null, cmisVersion);
+
+            // write links
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
+            selfLink.addParameter(Constants.PARAM_POLICY_ID, info.getId());
+            entry.writeSelfLink(selfLink.toString(), null);
+
+            // we are done
+            entry.endEntry();
+        }
     }
 
     /**
      * Get applied policies.
      */
-    public static void getAppliedPolicies(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
+    public static class GetAppliedPolicies extends AbstractPoliciesServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
 
-        // execute
-        List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
+            // execute
+            List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
 
-        if (policies == null) {
-            throw new CmisRuntimeException("Policies are null!");
-        }
-
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Object Info is missing!");
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
-                objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectInfo.getId());
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        // write entries
-        AtomEntry entry = new AtomEntry(feed.getWriter());
-        for (ObjectData policy : policies) {
-            if (policy == null) {
-                continue;
+            if (policies == null) {
+                throw new CmisRuntimeException("Policies are null!");
             }
-            writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl,
-                    context.getCmisVersion());
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
+            if (objectInfo == null) {
+                throw new CmisRuntimeException("Object Info is missing!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
+                    objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectInfo.getId());
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            // write entries
+            AtomEntry entry = new AtomEntry(feed.getWriter());
+            for (ObjectData policy : policies) {
+                if (policy == null) {
+                    continue;
+                }
+                writePolicyEntry(service, entry, objectInfo.getId(), policy, repositoryId, baseUrl,
+                        context.getCmisVersion());
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Apply policy.
      */
-    public static void applyPolicy(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
+    public static class ApplyPolicy extends AbstractPoliciesServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
 
-        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
-                .get(CallContext.STREAM_FACTORY);
-        AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
+            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                    .get(CallContext.STREAM_FACTORY);
+            AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
-        // execute
-        service.applyPolicy(repositoryId, parser.getId(), objectId, null);
+            // execute
+            service.applyPolicy(repositoryId, parser.getId(), objectId, null);
 
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Object Info is missing!");
+            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());
+            if (objectInfo == null) {
+                throw new CmisRuntimeException("Object Info is missing!");
+            }
+
+            ObjectData policy = objectInfo.getObject();
+            if (policy == null) {
+                throw new CmisRuntimeException("Policy is null!");
+            }
+
+            // set headers
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+            UrlBuilder location = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
+            location.addParameter(Constants.PARAM_POLICY_ID, policy.getId());
+
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.setContentType(Constants.MEDIATYPE_ENTRY);
+            response.setHeader("Content-Location", location.toString());
+            response.setHeader("Location", location.toString());
+
+            // write XML
+            AtomEntry entry = new AtomEntry();
+            entry.startDocument(response.getOutputStream(), getNamespaces(service));
+            writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl, context.getCmisVersion());
+            entry.endDocument();
         }
-
-        ObjectData policy = objectInfo.getObject();
-        if (policy == null) {
-            throw new CmisRuntimeException("Policy is null!");
-        }
-
-        // set headers
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-        UrlBuilder location = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
-        location.addParameter(Constants.PARAM_POLICY_ID, policy.getId());
-
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        response.setContentType(Constants.MEDIATYPE_ENTRY);
-        response.setHeader("Content-Location", location.toString());
-        response.setHeader("Location", location.toString());
-
-        // write XML
-        AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl, context.getCmisVersion());
-        entry.endDocument();
     }
 
     /**
      * Remove policy.
      */
-    public static void removePolicy(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
-        String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);
+    public static class RemovePolicy extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
+            String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);
 
-        // execute
-        service.removePolicy(repositoryId, policyId, objectId, null);
+            // execute
+            service.removePolicy(repositoryId, policyId, objectId, null);
 
-        // set headers
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-    }
-
-    /**
-     * Writes an entry that is attached to an object.
-     */
-    private static void writePolicyEntry(CmisService service, AtomEntry entry, String objectId, ObjectData policy,
-            String repositoryId, UrlBuilder baseUrl, CmisVersion cmisVersion) throws Exception {
-        ObjectInfo info = service.getObjectInfo(repositoryId, policy.getId());
-        if (info == null) {
-            throw new CmisRuntimeException("Object Info not found!");
+            // set headers
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
-
-        // start
-        entry.startEntry(false);
-
-        // write the object
-        entry.writeObject(policy, info, null, null, null, null, cmisVersion);
-
-        // write links
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
-        selfLink.addParameter(Constants.PARAM_POLICY_ID, info.getId());
-        entry.writeSelfLink(selfLink.toString(), null);
-
-        // we are done
-        entry.endEntry();
     }
 }

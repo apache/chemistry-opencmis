@@ -89,10 +89,29 @@ public abstract class AbstractService {
      */
     @SuppressWarnings("unchecked")
     protected CallContext createContext(WebServiceContext wsContext, CmisServiceFactory factory, String repositoryId) {
-        CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, repositoryId, false);
-
         ServletContext servletContext = (ServletContext) wsContext.getMessageContext().get(
                 MessageContext.SERVLET_CONTEXT);
+        HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_REQUEST);
+        HttpServletResponse response = (HttpServletResponse) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_RESPONSE);
+
+        CmisVersion cmisVersion = (CmisVersion) request.getAttribute(CmisWebServicesServlet.CMIS_VERSION);
+
+        CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, cmisVersion, repositoryId,
+                servletContext, request, response, factory, null);
+
+        Map<String, List<String>> headers = (Map<String, List<String>>) wsContext.getMessageContext().get(
+                MessageContext.HTTP_REQUEST_HEADERS);
+        if (headers != null) {
+            for (Map.Entry<String, List<String>> header : headers.entrySet()) {
+                if (header.getKey().equalsIgnoreCase("Accept-Language") && header.getValue() != null
+                        && !header.getValue().isEmpty()) {
+                    context.setAcceptLanguage(header.getValue().get(0));
+                    break;
+                }
+            }
+        }
 
         MessageContext mc = wsContext.getMessageContext();
         Map<String, String> callContextMap = (Map<String, String>) mc.get(CALL_CONTEXT_MAP);
@@ -101,46 +120,6 @@ public abstract class AbstractService {
                 context.put(e.getKey(), e.getValue());
             }
         }
-
-        context.put(CallContext.SERVLET_CONTEXT, servletContext);
-
-        HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
-                MessageContext.SERVLET_REQUEST);
-        context.put(CallContext.HTTP_SERVLET_REQUEST, request);
-
-        context.put(CallContext.CMIS_VERSION, request.getAttribute(CmisWebServicesServlet.CMIS_VERSION));
-
-        HttpServletResponse response = (HttpServletResponse) wsContext.getMessageContext().get(
-                MessageContext.SERVLET_RESPONSE);
-        context.put(CallContext.HTTP_SERVLET_RESPONSE, response);
-
-        Map<String, List<String>> headers = (Map<String, List<String>>) wsContext.getMessageContext().get(
-                MessageContext.HTTP_REQUEST_HEADERS);
-        if (headers != null) {
-            for (Map.Entry<String, List<String>> header : headers.entrySet()) {
-                if (header.getKey().equalsIgnoreCase("Accept-Language") && (header.getValue() != null)) {
-                    String acceptLanguage = header.getValue().get(0);
-                    if (acceptLanguage != null) {
-                        String[] locale = acceptLanguage.split("-");
-                        context.put(CallContext.LOCALE_ISO639_LANGUAGE, locale[0].trim());
-                        if (locale.length > 1) {
-                            int x = locale[1].indexOf(',');
-                            if (x == -1) {
-                                context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1].trim());
-                            } else {
-                                context.put(CallContext.LOCALE_ISO3166_COUNTRY, locale[1].substring(0, x).trim());
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
-        context.put(CallContext.TEMP_DIR, factory.getTempDirectory());
-        context.put(CallContext.MEMORY_THRESHOLD, factory.getMemoryThreshold());
-        context.put(CallContext.MAX_CONTENT_SIZE, -1);
-        context.put(CallContext.ENCRYPT_TEMP_FILE, false);
 
         return context;
     }

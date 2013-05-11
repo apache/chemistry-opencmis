@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
-
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,75 +42,79 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
  */
 public class AclService {
 
-    private AclService() {
+    public static abstract class AclServiceCall extends AbstractAtomPubServiceCall {
+        protected void writeAclXML(Acl acl, CmisVersion cmisVersion, OutputStream out) throws XMLStreamException {
+            XMLStreamWriter writer = XMLUtils.createWriter(out);
+            XMLUtils.startXmlDocument(writer);
+            XMLConverter.writeAcl(writer, cmisVersion, true, acl);
+            XMLUtils.endXmlDocument(writer);
+        }
     }
 
     /**
      * Get ACL.
      */
-    public static void getAcl(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
-        Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
+    public static class GetAcl extends AclServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
+            Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
-        // execute
-        Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
+            // execute
+            Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
 
-        if (acl == null) {
-            throw new CmisRuntimeException("ACL is null!");
+            if (acl == null) {
+                throw new CmisRuntimeException("ACL is null!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_ACL);
+
+            // write XML
+            writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
         }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_ACL);
-
-        // write XML
-        writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
     }
 
     /**
      * Apply ACL.
      */
-    public static void applyAcl(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
-        AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
+    public static class ApplyAcl extends AclServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
+            AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION,
+                    AclPropagation.class);
 
-        Acl aces = null;
-        XMLStreamReader parser = null;
-        try {
-            parser = XMLUtils.createParser(request.getInputStream());
-            XMLUtils.findNextStartElemenet(parser);
-            aces = XMLConverter.convertAcl(parser);
-        } catch (XMLStreamException e) {
-            throw new CmisInvalidArgumentException("Invalid request!");
-        } finally {
-            if (parser != null) {
-                try {
-                    parser.close();
-                } catch (XMLStreamException e2) {
-                    // ignore
+            Acl aces = null;
+            XMLStreamReader parser = null;
+            try {
+                parser = XMLUtils.createParser(request.getInputStream());
+                XMLUtils.findNextStartElemenet(parser);
+                aces = XMLConverter.convertAcl(parser);
+            } catch (XMLStreamException e) {
+                throw new CmisInvalidArgumentException("Invalid request!");
+            } finally {
+                if (parser != null) {
+                    try {
+                        parser.close();
+                    } catch (XMLStreamException e2) {
+                        // ignore
+                    }
                 }
             }
+
+            // execute
+            Acl acl = service.applyAcl(repositoryId, objectId, aces, aclPropagation);
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.setContentType(Constants.MEDIATYPE_ACL);
+
+            // write XML
+            writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
         }
-
-        // execute
-        Acl acl = service.applyAcl(repositoryId, objectId, aces, aclPropagation);
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        response.setContentType(Constants.MEDIATYPE_ACL);
-
-        // write XML
-        writeAclXML(acl, context.getCmisVersion(), response.getOutputStream());
-    }
-
-    private static void writeAclXML(Acl acl, CmisVersion cmisVersion, OutputStream out) throws XMLStreamException {
-        XMLStreamWriter writer = XMLUtils.createWriter(out);
-        XMLUtils.startXmlDocument(writer);
-        XMLConverter.writeAcl(writer, cmisVersion, true, acl);
-        XMLUtils.endXmlDocument(writer);
     }
 }

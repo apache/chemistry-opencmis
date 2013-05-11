@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
@@ -39,7 +40,8 @@ public class SimpleTokenHandler extends AbstractSimpleTokenHandler {
         CmisServiceFactory factory = getCmisServiceFactory(servletContext);
 
         // build a call context
-        CallContextImpl context = new CallContextImpl(CallContext.BINDING_BROWSER, null, false);
+        CallContextImpl context = new CallContextImpl(CallContext.BINDING_BROWSER, CmisVersion.CMIS_1_1, null, null,
+                null, null, null, null);
         context.put(CallContext.USERNAME, user);
         context.put(CallContext.PASSWORD, password);
 

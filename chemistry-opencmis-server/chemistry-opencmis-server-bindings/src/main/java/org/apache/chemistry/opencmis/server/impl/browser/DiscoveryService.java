@@ -23,10 +23,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_CHANGE_
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_IDS;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_PROPERTIES;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
 
@@ -48,68 +44,71 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 /**
  * Discovery Service operations.
  */
-public final class DiscoveryService {
-
-    private DiscoveryService() {
-    }
+public class DiscoveryService {
 
     /**
      * query.
      */
-    public static void query(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        // get parameters
-        String statement = getStringParameter(request, Constants.PARAM_STATEMENT);
-        if (statement == null || statement.length() == 0) {
-            statement = getStringParameter(request, Constants.PARAM_Q);
+    public static class Query extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String statement = getStringParameter(request, Constants.PARAM_STATEMENT);
+            if (statement == null || statement.length() == 0) {
+                statement = getStringParameter(request, Constants.PARAM_Q);
+            }
+            Boolean searchAllVersions = getBooleanParameter(request, Constants.PARAM_SEARCH_ALL_VERSIONS);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+            BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+            boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+
+            // execute
+            ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
+                    includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+            if (results == null) {
+                throw new CmisRuntimeException("Results are null!");
+            }
+
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonResults = JSONConverter.convert(results, typeCache, JSONConverter.PropertyMode.QUERY,
+                    succinct);
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeJSON(jsonResults, request, response);
         }
-        Boolean searchAllVersions = getBooleanParameter(request, Constants.PARAM_SEARCH_ALL_VERSIONS);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
-        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
-
-        // execute
-        ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
-                includeRelationships, renditionFilter, maxItems, skipCount, null);
-
-        if (results == null) {
-            throw new CmisRuntimeException("Results are null!");
-        }
-
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonResults = JSONConverter.convert(results, typeCache, JSONConverter.PropertyMode.QUERY, succinct);
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonResults, request, response);
     }
 
     /**
      * getContentChanges.
      */
-    public static void getContentChanges(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String changeLogToken = getStringParameter(request, PARAM_CHANGE_LOG_TOKEN);
-        Boolean includeProperties = getBooleanParameter(request, PARAM_PROPERTIES);
-        String filter = getStringParameter(request, PARAM_FILTER);
-        Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
-        Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+    public static class GetContentChanges extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String changeLogToken = getStringParameter(request, PARAM_CHANGE_LOG_TOKEN);
+            Boolean includeProperties = getBooleanParameter(request, PARAM_PROPERTIES);
+            String filter = getStringParameter(request, PARAM_FILTER);
+            Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
+            Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
+            BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+            boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
-        Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
-        ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties, filter,
-                includePolicyIds, includeAcl, maxItems, null);
+            Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
+            ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
+                    filter, includePolicyIds, includeAcl, maxItems, null);
 
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, JSONConverter.PropertyMode.CHANGE, succinct);
-        jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, JSONConverter.PropertyMode.CHANGE,
+                    succinct);
+            jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonChanges, request, response);
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeJSON(jsonChanges, request, response);
+        }
     }
 }

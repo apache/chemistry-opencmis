@@ -26,9 +26,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.filter.ProxyHttpServletRequestWrapper;
-import org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils;
+import org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -47,6 +50,8 @@ public class ProxyRequestTest {
     private static final int BACKEND_SERVER_PORT = 8080;
     private static final String BACKEND_SERVER_NAME = "www.backend.be";
     private static final String BACKEND_SERVER_PROTO = ProxyHttpServletRequestWrapper.HTTP_SCHEME;
+
+    private static final UrlSerivceCall URL_SERVICE_CALL = new UrlSerivceCall();
 
     @Mock
     private HttpServletRequest request;
@@ -71,7 +76,7 @@ public class ProxyRequestTest {
 
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(FORWARDED_HTTPS_PROTO, baseUri.getScheme());
         assertEquals(BACKEND_SERVER_NAME, baseUri.getHost());
@@ -91,7 +96,7 @@ public class ProxyRequestTest {
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(FORWARDED_HTTPS_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -108,7 +113,7 @@ public class ProxyRequestTest {
 
         assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(BACKEND_SERVER_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -127,7 +132,7 @@ public class ProxyRequestTest {
 
         assertEquals(FORWARDED_SERVER_NAME, proxyRequest.getServerName());
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(BACKEND_SERVER_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -143,7 +148,7 @@ public class ProxyRequestTest {
 
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(BACKEND_SERVER_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -162,7 +167,7 @@ public class ProxyRequestTest {
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(FORWARDED_HTTPS_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -182,7 +187,7 @@ public class ProxyRequestTest {
         assertEquals(FORWARDED_HTTP_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(FORWARDED_HTTP_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -202,7 +207,7 @@ public class ProxyRequestTest {
         assertEquals(FORWARDED_HTTPS_PROTO, proxyRequest.getScheme());
         assertTrue(FORWARDED_HOST.startsWith(proxyRequest.getServerName()));
 
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(proxyRequest, REPOSITORY_ID).toString());
 
         assertEquals(FORWARDED_HTTPS_PROTO, baseUri.getScheme());
         assertEquals(FORWARDED_SERVER_NAME, baseUri.getHost());
@@ -212,11 +217,19 @@ public class ProxyRequestTest {
 
     @Test
     public void testCompileBaseUrl() throws URISyntaxException {
-        URI baseUri = new URI(AtomPubUtils.compileBaseUrl(request, REPOSITORY_ID).toString());
+        URI baseUri = new URI(URL_SERVICE_CALL.compileBaseUrl(request, REPOSITORY_ID).toString());
 
         assertEquals(BACKEND_SERVER_PROTO, baseUri.getScheme());
         assertEquals(BACKEND_SERVER_NAME, baseUri.getHost());
         assertEquals(BACKEND_SERVER_PORT, baseUri.getPort());
         assertEquals(EXPECTED_PATH, baseUri.getPath());
+    }
+
+    static class UrlSerivceCall extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // no implementation
+
+        }
     }
 }

@@ -20,11 +20,6 @@ package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.getSimpleObject;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.util.List;
 
@@ -49,79 +44,88 @@ public class PolicyService {
     /**
      * getAppliedPolicies.
      */
-    public static void getAppliedPolicies(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String filter = getStringParameter(request, PARAM_FILTER);
-        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+    public static class GetAppliedPolicies extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String filter = getStringParameter(request, PARAM_FILTER);
+            boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
-        // execute
-        List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
+            // execute
+            List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
 
-        JSONArray jsonPolicies = new JSONArray();
-        if (policies != null) {
-            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-            for (ObjectData policy : policies) {
-                jsonPolicies.add(JSONConverter.convert(policy, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
+            JSONArray jsonPolicies = new JSONArray();
+            if (policies != null) {
+                TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+                for (ObjectData policy : policies) {
+                    jsonPolicies.add(JSONConverter.convert(policy, typeCache, JSONConverter.PropertyMode.OBJECT,
+                            succinct));
+                }
             }
-        }
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        writeJSON(jsonPolicies, request, response);
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeJSON(jsonPolicies, request, response);
+        }
     }
 
     /**
      * applyPolicy.
      */
-    public static void applyPolicy(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String policyId = getStringParameter(request, PARAM_POLICY_ID);
-        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+    public static class ApplyPolicy extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String policyId = getStringParameter(request, PARAM_POLICY_ID);
+            boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
-        // execute
-        service.applyPolicy(repositoryId, policyId, objectId, null);
+            // execute
+            service.applyPolicy(repositoryId, policyId, objectId, null);
 
-        ObjectData object = getSimpleObject(service, repositoryId, objectId);
-        if (object == null) {
-            throw new CmisRuntimeException("Object is null!");
+            ObjectData object = getSimpleObject(service, repositoryId, objectId);
+            if (object == null) {
+                throw new CmisRuntimeException("Object is null!");
+            }
+
+            // return object
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
+                    succinct);
+
+            writeJSON(jsonObject, request, response);
         }
-
-        // return object
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
-
-        writeJSON(jsonObject, request, response);
     }
 
     /**
      * removePolicy.
      */
-    public static void removePolicy(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        String policyId = getStringParameter(request, PARAM_POLICY_ID);
-        boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+    public static class RemovePolicy extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            String policyId = getStringParameter(request, PARAM_POLICY_ID);
+            boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
 
-        // execute
-        service.removePolicy(repositoryId, policyId, objectId, null);
+            // execute
+            service.removePolicy(repositoryId, policyId, objectId, null);
 
-        ObjectData object = getSimpleObject(service, repositoryId, objectId);
-        if (object == null) {
-            throw new CmisRuntimeException("Object is null!");
+            ObjectData object = getSimpleObject(service, repositoryId, objectId);
+            if (object == null) {
+                throw new CmisRuntimeException("Object is null!");
+            }
+
+            // return object
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
+                    succinct);
+
+            writeJSON(jsonObject, request, response);
         }
-
-        // return object
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
-
-        writeJSON(jsonObject, request, response);
     }
 }

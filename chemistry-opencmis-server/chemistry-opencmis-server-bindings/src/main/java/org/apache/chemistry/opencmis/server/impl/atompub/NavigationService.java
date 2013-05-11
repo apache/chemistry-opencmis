@@ -18,28 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ACL;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ALLOWABLEACIONS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_DESCENDANTS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_FOLDERTREE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_PARENTS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_RELATIONSHIPS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeObjectEntry;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
-
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -66,467 +44,478 @@ import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 /**
  * Navigation Service operations.
  */
-public final class NavigationService {
-
-    private NavigationService() {
-    }
+public class NavigationService {
 
     /**
      * Children Collection GET.
      */
-    public static void getChildren(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String folderId = getStringParameter(request, Constants.PARAM_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+    public static class GetChildren extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String folderId = getStringParameter(request, Constants.PARAM_ID);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+            String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
+            BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+            BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
-        // execute
-        ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
-                includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
-                skipCount, null);
+            // execute
+            ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
+                    skipCount, null);
 
-        if (children == null) {
-            throw new CmisRuntimeException("Children are null!");
-        }
-
-        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
-        if (folderInfo == null) {
-            throw new CmisRuntimeException("Folder Object Info is missing!");
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
-                folderInfo.getName(), folderInfo.getLastModificationDate(), null, children.getNumItems());
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_CHILDREN, folderInfo.getId());
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        selfLink.addParameter(Constants.PARAM_ORDER_BY, orderBy);
-        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
-        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-        selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        feed.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, folderInfo.getTypeId()));
-
-        feed.writeAllowableActionsLink(compileUrl(baseUrl, RESOURCE_ALLOWABLEACIONS, folderInfo.getId()));
-
-        feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-
-        if (folderInfo.supportsDescendants()) {
-            feed.writeDownLink(compileUrl(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId()),
-                    Constants.MEDIATYPE_DESCENDANTS);
-        }
-
-        if (folderInfo.supportsFolderTree()) {
-            feed.writeFolderTreeLink(compileUrl(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId()));
-        }
-
-        if (folderInfo.hasParent()) {
-            feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-        }
-
-        if (folderInfo.getRenditionInfos() != null) {
-            for (RenditionInfo ri : folderInfo.getRenditionInfos()) {
-                feed.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(),
-                        ri.getKind(), ri.getTitle(), ri.getLength());
+            if (children == null) {
+                throw new CmisRuntimeException("Children are null!");
             }
-        }
 
-        if (folderInfo.hasAcl()) {
-            feed.writeAclLink(compileUrl(baseUrl, RESOURCE_ACL, folderInfo.getId()));
-        }
+            ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
+            if (folderInfo == null) {
+                throw new CmisRuntimeException("Folder Object Info is missing!");
+            }
 
-        if (folderInfo.supportsPolicies()) {
-            feed.writeAclLink(compileUrl(baseUrl, RESOURCE_POLICIES, folderInfo.getId()));
-        }
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
 
-        if (folderInfo.supportsRelationships()) {
-            feed.writeRelationshipsLink(compileUrl(baseUrl, RESOURCE_RELATIONSHIPS, folderInfo.getId()));
-        }
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
 
-        UrlBuilder pagingUrl = new UrlBuilder(compileUrlBuilder(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()));
-        pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
-        pagingUrl.addParameter(Constants.PARAM_ORDER_BY, orderBy);
-        pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        pagingUrl.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        pagingUrl.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        pagingUrl.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
-        feed.writePagingLinks(pagingUrl, maxItems, skipCount, children.getNumItems(), children.hasMoreItems(),
-                AtomPubUtils.PAGE_SIZE);
+            // write basic Atom feed elements
+            feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                    folderInfo.getName(), folderInfo.getLastModificationDate(), null, children.getNumItems());
 
-        // write collection
-        feed.writeCollection(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), null, "Folder collection",
-                Constants.MEDIATYPE_CMISATOM);
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-        // write entries
-        if (children.getObjects() != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (ObjectInFolderData object : children.getObjects()) {
-                if ((object == null) || (object.getObject() == null)) {
-                    continue;
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_CHILDREN, folderInfo.getId());
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            selfLink.addParameter(Constants.PARAM_ORDER_BY, orderBy);
+            selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+            selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+            selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            feed.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, folderInfo.getTypeId()));
+
+            feed.writeAllowableActionsLink(compileUrl(baseUrl, RESOURCE_ALLOWABLEACIONS, folderInfo.getId()));
+
+            feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+
+            if (folderInfo.supportsDescendants()) {
+                feed.writeDownLink(compileUrl(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId()),
+                        Constants.MEDIATYPE_DESCENDANTS);
+            }
+
+            if (folderInfo.supportsFolderTree()) {
+                feed.writeFolderTreeLink(compileUrl(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId()));
+            }
+
+            if (folderInfo.hasParent()) {
+                feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+            }
+
+            if (folderInfo.getRenditionInfos() != null) {
+                for (RenditionInfo ri : folderInfo.getRenditionInfos()) {
+                    feed.writeAlternateLink(compileUrl(baseUrl, RESOURCE_CONTENT, ri.getId()), ri.getContenType(),
+                            ri.getKind(), ri.getTitle(), ri.getLength());
                 }
-                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, object.getPathSegment(), null,
-                        baseUrl, false, context.getCmisVersion());
             }
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            if (folderInfo.hasAcl()) {
+                feed.writeAclLink(compileUrl(baseUrl, RESOURCE_ACL, folderInfo.getId()));
+            }
+
+            if (folderInfo.supportsPolicies()) {
+                feed.writeAclLink(compileUrl(baseUrl, RESOURCE_POLICIES, folderInfo.getId()));
+            }
+
+            if (folderInfo.supportsRelationships()) {
+                feed.writeRelationshipsLink(compileUrl(baseUrl, RESOURCE_RELATIONSHIPS, folderInfo.getId()));
+            }
+
+            UrlBuilder pagingUrl = new UrlBuilder(compileUrlBuilder(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()));
+            pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
+            pagingUrl.addParameter(Constants.PARAM_ORDER_BY, orderBy);
+            pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            pagingUrl.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            pagingUrl.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            pagingUrl.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+            feed.writePagingLinks(pagingUrl, maxItems, skipCount, children.getNumItems(), children.hasMoreItems(),
+                    PAGE_SIZE);
+
+            // write collection
+            feed.writeCollection(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), null, "Folder collection",
+                    Constants.MEDIATYPE_CMISATOM);
+
+            // write entries
+            if (children.getObjects() != null) {
+                AtomEntry entry = new AtomEntry(feed.getWriter());
+                for (ObjectInFolderData object : children.getObjects()) {
+                    if ((object == null) || (object.getObject() == null)) {
+                        continue;
+                    }
+                    writeObjectEntry(service, entry, object.getObject(), null, repositoryId, object.getPathSegment(),
+                            null, baseUrl, false, context.getCmisVersion());
+                }
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Descendants feed GET.
      */
-    public static void getDescendants(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String folderId = getStringParameter(request, Constants.PARAM_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
+    public static class GetDescendants extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String folderId = getStringParameter(request, Constants.PARAM_ID);
+            BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
-        // execute
-        List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
-                includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+            // execute
+            List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
 
-        if (descendants == null) {
-            throw new CmisRuntimeException("Descendants are null!");
-        }
-
-        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
-        if (folderInfo == null) {
-            throw new CmisRuntimeException("Folder Object Info is missing!");
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
-                folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId());
-        selfLink.addParameter(Constants.PARAM_DEPTH, depth);
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, folderInfo.getId()));
-
-        feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-
-        if (folderInfo.supportsFolderTree()) {
-            feed.writeFolderTreeLink(compileUrl(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId()));
-        }
-
-        if (folderInfo.hasParent()) {
-            feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-        }
-
-        // write entries
-        AtomEntry entry = new AtomEntry(feed.getWriter());
-        for (ObjectInFolderContainer container : descendants) {
-            if ((container == null) || (container.getObject() == null) || (container.getObject().getObject() == null)) {
-                continue;
+            if (descendants == null) {
+                throw new CmisRuntimeException("Descendants are null!");
             }
-            writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
-                    container.getObject().getPathSegment(), null, baseUrl, false, context.getCmisVersion());
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
+            if (folderInfo == null) {
+                throw new CmisRuntimeException("Folder Object Info is missing!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                    folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId());
+            selfLink.addParameter(Constants.PARAM_DEPTH, depth);
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, folderInfo.getId()));
+
+            feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+
+            if (folderInfo.supportsFolderTree()) {
+                feed.writeFolderTreeLink(compileUrl(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId()));
+            }
+
+            if (folderInfo.hasParent()) {
+                feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+            }
+
+            // write entries
+            AtomEntry entry = new AtomEntry(feed.getWriter());
+            for (ObjectInFolderContainer container : descendants) {
+                if ((container == null) || (container.getObject() == null)
+                        || (container.getObject().getObject() == null)) {
+                    continue;
+                }
+                writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(),
+                        repositoryId, container.getObject().getPathSegment(), null, baseUrl, false,
+                        context.getCmisVersion());
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Folder tree feed GET.
      */
-    public static void getFolderTree(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String folderId = getStringParameter(request, Constants.PARAM_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
+    public static class GetFolderTree extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String folderId = getStringParameter(request, Constants.PARAM_ID);
+            BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
-        // execute
-        List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
-                includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+            // execute
+            List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
 
-        if (folderTree == null) {
-            throw new CmisRuntimeException("Folder tree is null!");
-        }
-
-        ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
-        if (folderInfo == null) {
-            throw new CmisRuntimeException("Folder Object Info is missing!");
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
-                folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId());
-        selfLink.addParameter(Constants.PARAM_DEPTH, depth);
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, folderInfo.getId()));
-
-        feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-
-        if (folderInfo.supportsDescendants()) {
-            feed.writeDownLink(compileUrl(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId()),
-                    Constants.MEDIATYPE_DESCENDANTS);
-        }
-
-        if (folderInfo.hasParent()) {
-            feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
-        }
-
-        // write entries
-        AtomEntry entry = new AtomEntry(feed.getWriter());
-        for (ObjectInFolderContainer container : folderTree) {
-            if ((container == null) || (container.getObject() == null) || (container.getObject().getObject() == null)) {
-                continue;
+            if (folderTree == null) {
+                throw new CmisRuntimeException("Folder tree is null!");
             }
-            writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(), repositoryId,
-                    container.getObject().getPathSegment(), null, baseUrl, false, context.getCmisVersion());
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            ObjectInfo folderInfo = service.getObjectInfo(repositoryId, folderId);
+            if (folderInfo == null) {
+                throw new CmisRuntimeException("Folder Object Info is missing!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                    folderInfo.getName(), folderInfo.getLastModificationDate(), null, null);
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_FOLDERTREE, folderInfo.getId());
+            selfLink.addParameter(Constants.PARAM_DEPTH, depth);
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            selfLink.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            feed.writeViaLink(compileUrl(baseUrl, RESOURCE_ENTRY, folderInfo.getId()));
+
+            feed.writeDownLink(compileUrl(baseUrl, RESOURCE_CHILDREN, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+
+            if (folderInfo.supportsDescendants()) {
+                feed.writeDownLink(compileUrl(baseUrl, RESOURCE_DESCENDANTS, folderInfo.getId()),
+                        Constants.MEDIATYPE_DESCENDANTS);
+            }
+
+            if (folderInfo.hasParent()) {
+                feed.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, folderInfo.getId()), Constants.MEDIATYPE_FEED);
+            }
+
+            // write entries
+            AtomEntry entry = new AtomEntry(feed.getWriter());
+            for (ObjectInFolderContainer container : folderTree) {
+                if ((container == null) || (container.getObject() == null)
+                        || (container.getObject().getObject() == null)) {
+                    continue;
+                }
+                writeObjectEntry(service, entry, container.getObject().getObject(), container.getChildren(),
+                        repositoryId, container.getObject().getPathSegment(), null, baseUrl, false,
+                        context.getCmisVersion());
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Object parents feed GET.
      */
-    public static void getObjectParents(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = getStringParameter(request, Constants.PARAM_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        Boolean includeRelativePathSegment = getBooleanParameter(request, Constants.PARAM_RELATIVE_PATH_SEGMENT);
+    public static class GetObjectParents extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = getStringParameter(request, Constants.PARAM_ID);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            Boolean includeRelativePathSegment = getBooleanParameter(request, Constants.PARAM_RELATIVE_PATH_SEGMENT);
 
-        // execute
-        List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
-                includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null);
+            // execute
+            List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null);
 
-        if (parents == null) {
-            throw new CmisRuntimeException("Parents are null!");
-        }
-
-        ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
-        if (objectInfo == null) {
-            throw new CmisRuntimeException("Object Info is missing!");
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
-                objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_PARENTS, objectInfo.getId());
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        selfLink.addParameter(Constants.PARAM_RELATIVE_PATH_SEGMENT, includeRelativePathSegment);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        // write entries
-        AtomEntry entry = new AtomEntry(feed.getWriter());
-        for (ObjectParentData object : parents) {
-            if ((object == null) || (object.getObject() == null)) {
-                continue;
+            if (parents == null) {
+                throw new CmisRuntimeException("Parents are null!");
             }
-            writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null,
-                    object.getRelativePathSegment(), baseUrl, false, context.getCmisVersion());
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
+            if (objectInfo == null) {
+                throw new CmisRuntimeException("Object Info is missing!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(objectInfo.getId(), objectInfo.getAtomId(), objectInfo.getCreatedBy(),
+                    objectInfo.getName(), objectInfo.getLastModificationDate(), null, null);
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_PARENTS, objectInfo.getId());
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            selfLink.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            selfLink.addParameter(Constants.PARAM_RELATIVE_PATH_SEGMENT, includeRelativePathSegment);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            // write entries
+            AtomEntry entry = new AtomEntry(feed.getWriter());
+            for (ObjectParentData object : parents) {
+                if ((object == null) || (object.getObject() == null)) {
+                    continue;
+                }
+                writeObjectEntry(service, entry, object.getObject(), null, repositoryId, null,
+                        object.getRelativePathSegment(), baseUrl, false, context.getCmisVersion());
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Checked Out Collection GET.
      */
-    public static void getCheckedOutDocs(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String folderId = getStringParameter(request, Constants.PARAM_FOLDER_ID);
-        String filter = getStringParameter(request, Constants.PARAM_FILTER);
-        String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
-        Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
-        IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
-                IncludeRelationships.class);
-        String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+    public static class GetCheckedOutDocs extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String folderId = getStringParameter(request, Constants.PARAM_FOLDER_ID);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+            String orderBy = getStringParameter(request, Constants.PARAM_ORDER_BY);
+            Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
+            IncludeRelationships includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
+                    IncludeRelationships.class);
+            String renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
+            BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+            BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
-        // execute
-        ObjectList checkedOut = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
-                includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
+            // execute
+            ObjectList checkedOut = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
 
-        if (checkedOut == null) {
-            throw new CmisRuntimeException("Checked Out list is null!");
-        }
-
-        ObjectInfo folderInfo = null;
-        if (folderId != null) {
-            folderInfo = service.getObjectInfo(repositoryId, folderId);
-            if (folderInfo == null) {
-                throw new CmisRuntimeException("Folder Object Info is missing!");
+            if (checkedOut == null) {
+                throw new CmisRuntimeException("Checked Out list is null!");
             }
-        } else {
-            folderInfo = new ObjectInfoImpl();
-            GregorianCalendar now = new GregorianCalendar();
 
-            ((ObjectInfoImpl) folderInfo).setId("uri:x-checkedout");
-            ((ObjectInfoImpl) folderInfo).setName("Checked Out");
-            ((ObjectInfoImpl) folderInfo).setCreatedBy("");
-            ((ObjectInfoImpl) folderInfo).setCreationDate(now);
-            ((ObjectInfoImpl) folderInfo).setLastModificationDate(now);
-            ((ObjectInfoImpl) folderInfo).setHasParent(false);
-            ((ObjectInfoImpl) folderInfo).setSupportsDescendants(false);
-            ((ObjectInfoImpl) folderInfo).setSupportsFolderTree(false);
-        }
-
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        // write XML
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
-                folderInfo.getName(), folderInfo.getLastModificationDate(), null, checkedOut.getNumItems());
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_CHECKEDOUT, folderInfo.getId());
-        selfLink.addParameter(Constants.PARAM_FILTER, filter);
-        selfLink.addParameter(Constants.PARAM_ORDER_BY, orderBy);
-        selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-        selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
-        feed.writeSelfLink(selfLink.toString(), null);
-
-        UrlBuilder pagingUrl = compileUrlBuilder(baseUrl, RESOURCE_CHECKEDOUT, folderInfo.getId());
-        pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
-        pagingUrl.addParameter(Constants.PARAM_ORDER_BY, orderBy);
-        pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
-        pagingUrl.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
-        pagingUrl.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        feed.writePagingLinks(pagingUrl, maxItems, skipCount, checkedOut.getNumItems(), checkedOut.hasMoreItems(),
-                AtomPubUtils.PAGE_SIZE);
-
-        // write entries
-        if (checkedOut.getObjects() != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (ObjectData object : checkedOut.getObjects()) {
-                if (object == null) {
-                    continue;
+            ObjectInfo folderInfo = null;
+            if (folderId != null) {
+                folderInfo = service.getObjectInfo(repositoryId, folderId);
+                if (folderInfo == null) {
+                    throw new CmisRuntimeException("Folder Object Info is missing!");
                 }
-                writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
-                        context.getCmisVersion());
-            }
-        }
+            } else {
+                folderInfo = new ObjectInfoImpl();
+                GregorianCalendar now = new GregorianCalendar();
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+                ((ObjectInfoImpl) folderInfo).setId("uri:x-checkedout");
+                ((ObjectInfoImpl) folderInfo).setName("Checked Out");
+                ((ObjectInfoImpl) folderInfo).setCreatedBy("");
+                ((ObjectInfoImpl) folderInfo).setCreationDate(now);
+                ((ObjectInfoImpl) folderInfo).setLastModificationDate(now);
+                ((ObjectInfoImpl) folderInfo).setHasParent(false);
+                ((ObjectInfoImpl) folderInfo).setSupportsDescendants(false);
+                ((ObjectInfoImpl) folderInfo).setSupportsFolderTree(false);
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            // write XML
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(folderInfo.getId(), folderInfo.getAtomId(), folderInfo.getCreatedBy(),
+                    folderInfo.getName(), folderInfo.getLastModificationDate(), null, checkedOut.getNumItems());
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_CHECKEDOUT, folderInfo.getId());
+            selfLink.addParameter(Constants.PARAM_FILTER, filter);
+            selfLink.addParameter(Constants.PARAM_ORDER_BY, orderBy);
+            selfLink.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            selfLink.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+            selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+            feed.writeSelfLink(selfLink.toString(), null);
+
+            UrlBuilder pagingUrl = compileUrlBuilder(baseUrl, RESOURCE_CHECKEDOUT, folderInfo.getId());
+            pagingUrl.addParameter(Constants.PARAM_FILTER, filter);
+            pagingUrl.addParameter(Constants.PARAM_ORDER_BY, orderBy);
+            pagingUrl.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
+            pagingUrl.addParameter(Constants.PARAM_RELATIONSHIPS, includeRelationships);
+            pagingUrl.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
+            feed.writePagingLinks(pagingUrl, maxItems, skipCount, checkedOut.getNumItems(), checkedOut.hasMoreItems(),
+                    PAGE_SIZE);
+
+            // write entries
+            if (checkedOut.getObjects() != null) {
+                AtomEntry entry = new AtomEntry(feed.getWriter());
+                for (ObjectData object : checkedOut.getObjects()) {
+                    if (object == null) {
+                        continue;
+                    }
+                    writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, false,
+                            context.getCmisVersion());
+                }
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 }

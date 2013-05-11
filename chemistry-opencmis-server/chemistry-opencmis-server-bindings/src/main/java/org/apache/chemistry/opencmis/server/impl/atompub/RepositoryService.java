@@ -18,30 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.PAGE_SIZE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_BULK_UPDATE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_DESCENDANTS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_FOLDERTREE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYID;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYPATH;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPESDESC;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_UNFILED;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.TYPE_AUTHOR;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileBaseUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrl;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.compileUrlBuilder;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.getNamespaces;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.writeTypeEntry;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
-
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -68,436 +44,446 @@ import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 /**
  * Repository Service operations.
  */
-public final class RepositoryService {
-
-    /**
-     * Private constructor.
-     */
-    private RepositoryService() {
-    }
+public class RepositoryService {
 
     /**
      * Renders the service document.
      */
-    public static void getRepositories(CallContext context, CmisService service, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        // get parameters
-        String repositoryId = getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
+    public static class GetRepositories extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            repositoryId = getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
 
-        // execute
-        List<RepositoryInfo> infoDataList = null;
+            // execute
+            List<RepositoryInfo> infoDataList = null;
 
-        if (repositoryId == null) {
-            infoDataList = service.getRepositoryInfos(null);
-        } else {
-            infoDataList = Collections.singletonList(service.getRepositoryInfo(repositoryId, null));
-            if (context instanceof CallContextImpl) {
-                ((CallContextImpl) context).put(CallContext.REPOSITORY_ID, repositoryId);
+            if (repositoryId == null) {
+                infoDataList = service.getRepositoryInfos(null);
+            } else {
+                infoDataList = Collections.singletonList(service.getRepositoryInfo(repositoryId, null));
+                if (context instanceof CallContextImpl) {
+                    ((CallContextImpl) context).put(CallContext.REPOSITORY_ID, repositoryId);
+                }
             }
-        }
 
-        // set headers
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_SERVICE);
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_SERVICE);
 
-        // write XML
-        ServiceDocument serviceDoc = new ServiceDocument();
+            // write XML
+            ServiceDocument serviceDoc = new ServiceDocument();
 
-        serviceDoc.startDocument(response.getOutputStream(), getNamespaces(service));
-        serviceDoc.startServiceDocument();
+            serviceDoc.startDocument(response.getOutputStream(), getNamespaces(service));
+            serviceDoc.startServiceDocument();
 
-        if (infoDataList != null) {
-            CmisVersion cmisVersion = context.getCmisVersion();
-            for (RepositoryInfo infoData : infoDataList) {
-                if (infoData == null) {
-                    continue;
-                }
-
-                String repId = infoData.getId();
-                UrlBuilder baseUrl = compileBaseUrl(request, repId);
-
-                boolean supportsQuery = false;
-                boolean supportsUnFiling = false;
-                boolean supportsMultifiling = false;
-                boolean supportsFolderTree = false;
-                boolean supportsRootDescendants = false;
-                boolean supportsChanges = false;
-
-                if (infoData.getCapabilities() != null) {
-                    RepositoryCapabilities cap = infoData.getCapabilities();
-
-                    if (cap.getQueryCapability() != null) {
-                        supportsQuery = (cap.getQueryCapability() != CapabilityQuery.NONE);
+            if (infoDataList != null) {
+                CmisVersion cmisVersion = context.getCmisVersion();
+                for (RepositoryInfo infoData : infoDataList) {
+                    if (infoData == null) {
+                        continue;
                     }
 
-                    if (cap.isUnfilingSupported() != null) {
-                        supportsUnFiling = cap.isUnfilingSupported();
+                    String repId = infoData.getId();
+                    UrlBuilder baseUrl = compileBaseUrl(request, repId);
+
+                    boolean supportsQuery = false;
+                    boolean supportsUnFiling = false;
+                    boolean supportsMultifiling = false;
+                    boolean supportsFolderTree = false;
+                    boolean supportsRootDescendants = false;
+                    boolean supportsChanges = false;
+
+                    if (infoData.getCapabilities() != null) {
+                        RepositoryCapabilities cap = infoData.getCapabilities();
+
+                        if (cap.getQueryCapability() != null) {
+                            supportsQuery = (cap.getQueryCapability() != CapabilityQuery.NONE);
+                        }
+
+                        if (cap.isUnfilingSupported() != null) {
+                            supportsUnFiling = cap.isUnfilingSupported();
+                        }
+
+                        if (cap.isMultifilingSupported() != null) {
+                            supportsMultifiling = cap.isMultifilingSupported();
+                        }
+
+                        if (cap.isGetFolderTreeSupported() != null) {
+                            supportsFolderTree = cap.isGetFolderTreeSupported();
+                        }
+
+                        if (cap.isGetDescendantsSupported() != null) {
+                            supportsRootDescendants = cap.isGetDescendantsSupported();
+                        }
+
+                        if (cap.getChangesCapability() != null) {
+                            supportsChanges = (cap.getChangesCapability() != CapabilityChanges.NONE);
+                        }
                     }
 
-                    if (cap.isMultifilingSupported() != null) {
-                        supportsMultifiling = cap.isMultifilingSupported();
+                    serviceDoc.startWorkspace(infoData.getId());
+
+                    // add collections
+
+                    // - root collection
+                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_CHILDREN, infoData.getRootFolderId()),
+                            Constants.COLLECTION_ROOT, "Root Collection", Constants.MEDIATYPE_ENTRY,
+                            Constants.MEDIATYPE_CMISATOM);
+
+                    // - types collection
+                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_TYPES, null), Constants.COLLECTION_TYPES,
+                            "Types Collection", "");
+
+                    // - query collection
+                    if (supportsQuery) {
+                        serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_QUERY, null),
+                                Constants.COLLECTION_QUERY, "Query Collection", Constants.MEDIATYPE_QUERY);
                     }
 
-                    if (cap.isGetFolderTreeSupported() != null) {
-                        supportsFolderTree = cap.isGetFolderTreeSupported();
+                    // - checked out collection collection
+                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_CHECKEDOUT, null),
+                            Constants.COLLECTION_CHECKEDOUT, "Checked Out Collection", Constants.MEDIATYPE_CMISATOM);
+
+                    // - unfiled collection collection
+                    if (supportsUnFiling || supportsMultifiling) {
+                        serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_UNFILED, null),
+                                Constants.COLLECTION_UNFILED, "Unfiled Collection", Constants.MEDIATYPE_CMISATOM);
                     }
 
-                    if (cap.isGetDescendantsSupported() != null) {
-                        supportsRootDescendants = cap.isGetDescendantsSupported();
-                    }
+                    // - bulk update collection
+                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_BULK_UPDATE, null),
+                            Constants.COLLECTION_BULK_UPDATE, "Bulk Update Collection", Constants.MEDIATYPE_CMISATOM);
 
-                    if (cap.getChangesCapability() != null) {
-                        supportsChanges = (cap.getChangesCapability() != CapabilityChanges.NONE);
-                    }
-                }
+                    // add repository info
+                    serviceDoc.writeRepositoryInfo(infoData, cmisVersion);
 
-                serviceDoc.startWorkspace(infoData.getId());
+                    // add links
 
-                // add collections
-
-                // - root collection
-                serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_CHILDREN, infoData.getRootFolderId()),
-                        Constants.COLLECTION_ROOT, "Root Collection", Constants.MEDIATYPE_ENTRY,
-                        Constants.MEDIATYPE_CMISATOM);
-
-                // - types collection
-                serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_TYPES, null), Constants.COLLECTION_TYPES,
-                        "Types Collection", "");
-
-                // - query collection
-                if (supportsQuery) {
-                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_QUERY, null), Constants.COLLECTION_QUERY,
-                            "Query Collection", Constants.MEDIATYPE_QUERY);
-                }
-
-                // - checked out collection collection
-                serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_CHECKEDOUT, null),
-                        Constants.COLLECTION_CHECKEDOUT, "Checked Out Collection", Constants.MEDIATYPE_CMISATOM);
-
-                // - unfiled collection collection
-                if (supportsUnFiling || supportsMultifiling) {
-                    serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_UNFILED, null),
-                            Constants.COLLECTION_UNFILED, "Unfiled Collection", Constants.MEDIATYPE_CMISATOM);
-                }
-
-                // - bulk update collection
-                serviceDoc.writeCollection(compileUrl(baseUrl, RESOURCE_BULK_UPDATE, null),
-                        Constants.COLLECTION_BULK_UPDATE, "Bulk Update Collection", Constants.MEDIATYPE_CMISATOM);
-
-                // add repository info
-                serviceDoc.writeRepositoryInfo(infoData, cmisVersion);
-
-                // add links
-
-                // - types descendants
-                serviceDoc.writeLink(Constants.REP_REL_TYPEDESC, compileUrl(baseUrl, RESOURCE_TYPESDESC, null),
-                        Constants.MEDIATYPE_FEED, null);
-
-                // - folder tree
-                if (supportsFolderTree) {
-                    serviceDoc.writeLink(Constants.REP_REL_FOLDERTREE,
-                            compileUrl(baseUrl, RESOURCE_FOLDERTREE, infoData.getRootFolderId()),
-                            Constants.MEDIATYPE_DESCENDANTS, null);
-                }
-
-                // - root descendants
-                if (supportsRootDescendants) {
-                    serviceDoc.writeLink(Constants.REP_REL_ROOTDESC,
-                            compileUrl(baseUrl, RESOURCE_DESCENDANTS, infoData.getRootFolderId()),
-                            Constants.MEDIATYPE_DESCENDANTS, infoData.getRootFolderId());
-                }
-
-                // - changes
-                if (supportsChanges) {
-                    serviceDoc.writeLink(Constants.REP_REL_CHANGES, compileUrl(baseUrl, RESOURCE_CHANGES, null),
+                    // - types descendants
+                    serviceDoc.writeLink(Constants.REP_REL_TYPEDESC, compileUrl(baseUrl, RESOURCE_TYPESDESC, null),
                             Constants.MEDIATYPE_FEED, null);
+
+                    // - folder tree
+                    if (supportsFolderTree) {
+                        serviceDoc.writeLink(Constants.REP_REL_FOLDERTREE,
+                                compileUrl(baseUrl, RESOURCE_FOLDERTREE, infoData.getRootFolderId()),
+                                Constants.MEDIATYPE_DESCENDANTS, null);
+                    }
+
+                    // - root descendants
+                    if (supportsRootDescendants) {
+                        serviceDoc.writeLink(Constants.REP_REL_ROOTDESC,
+                                compileUrl(baseUrl, RESOURCE_DESCENDANTS, infoData.getRootFolderId()),
+                                Constants.MEDIATYPE_DESCENDANTS, infoData.getRootFolderId());
+                    }
+
+                    // - changes
+                    if (supportsChanges) {
+                        serviceDoc.writeLink(Constants.REP_REL_CHANGES, compileUrl(baseUrl, RESOURCE_CHANGES, null),
+                                Constants.MEDIATYPE_FEED, null);
+                    }
+
+                    // add URI templates
+
+                    // - object by id
+                    String url = compileUrl(baseUrl, RESOURCE_OBJECTBYID, null)
+                            + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
+                    serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_ID, Constants.MEDIATYPE_ENTRY);
+
+                    // - object by path
+                    url = compileUrl(baseUrl, RESOURCE_OBJECTBYPATH, null)
+                            + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
+                    serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_PATH, Constants.MEDIATYPE_ENTRY);
+
+                    // - type by id
+                    url = compileUrl(baseUrl, RESOURCE_TYPE, null) + "?id={id}";
+                    serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_TYPE_BY_ID, Constants.MEDIATYPE_ENTRY);
+
+                    // - query
+                    if (supportsQuery) {
+                        url = compileUrl(baseUrl, RESOURCE_QUERY, null)
+                                + "?q={q}&searchAllVersions={searchAllVersions}&includeAllowableActions={includeAllowableActions}&includeRelationships={includeRelationships}&maxItems={maxItems}&skipCount={skipCount}";
+                        serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_QUERY, Constants.MEDIATYPE_FEED);
+                    }
+
+                    serviceDoc.endWorkspace();
                 }
-
-                // add URI templates
-
-                // - object by id
-                String url = compileUrl(baseUrl, RESOURCE_OBJECTBYID, null)
-                        + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
-                serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_ID, Constants.MEDIATYPE_ENTRY);
-
-                // - object by path
-                url = compileUrl(baseUrl, RESOURCE_OBJECTBYPATH, null)
-                        + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
-                serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_PATH, Constants.MEDIATYPE_ENTRY);
-
-                // - type by id
-                url = compileUrl(baseUrl, RESOURCE_TYPE, null) + "?id={id}";
-                serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_TYPE_BY_ID, Constants.MEDIATYPE_ENTRY);
-
-                // - query
-                if (supportsQuery) {
-                    url = compileUrl(baseUrl, RESOURCE_QUERY, null)
-                            + "?q={q}&searchAllVersions={searchAllVersions}&includeAllowableActions={includeAllowableActions}&includeRelationships={includeRelationships}&maxItems={maxItems}&skipCount={skipCount}";
-                    serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_QUERY, Constants.MEDIATYPE_FEED);
-                }
-
-                serviceDoc.endWorkspace();
             }
-        }
 
-        serviceDoc.endServiceDocument();
-        serviceDoc.endDocument();
+            serviceDoc.endServiceDocument();
+            serviceDoc.endDocument();
+        }
     }
 
     /**
      * Renders a type children collection.
      */
-    public static void getTypeChildren(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
-        boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
-        BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
+    public static class GetTypeChildren extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
+            boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS,
+                    false);
+            BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
+            BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
-        // execute
-        TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
-                maxItems, skipCount, null);
+            // execute
+            TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
+                    maxItems, skipCount, null);
 
-        BigInteger numItems = (typeList == null ? null : typeList.getNumItems());
-        Boolean hasMoreItems = (typeList == null ? null : typeList.hasMoreItems());
+            BigInteger numItems = (typeList == null ? null : typeList.getNumItems());
+            Boolean hasMoreItems = (typeList == null ? null : typeList.hasMoreItems());
 
-        String parentTypeId = null;
-        String typeName = "Type Children";
+            String parentTypeId = null;
+            String typeName = "Type Children";
 
-        // in order to get the parent type, we need the type definition of this
-        // type as well
-        if (typeId != null) {
-            TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
+            // in order to get the parent type, we need the type definition of
+            // this type as well
+            if (typeId != null) {
+                TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
 
-            parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
-            typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
-        }
-
-        // write XML
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
-
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
-
-        // write basic Atom feed elements
-        feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, numItems);
-
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
-
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
-        selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        selfLink.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
-        selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-        selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
-        feed.writeSelfLink(selfLink.toString(), typeId);
-
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_TYPE, typeId));
-
-        UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPESDESC, null);
-        downLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        feed.writeDownLink(downLink.toString(), Constants.MEDIATYPE_DESCENDANTS);
-
-        if (parentTypeId != null) {
-            feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, parentTypeId), Constants.MEDIATYPE_ENTRY);
-        }
-
-        // write paging links
-        UrlBuilder pagingUrl = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
-        pagingUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        pagingUrl.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
-        feed.writePagingLinks(pagingUrl, maxItems, skipCount, numItems, hasMoreItems, PAGE_SIZE);
-
-        // write collection
-        UrlBuilder collectionUrl = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
-        collectionUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        feed.writeCollection(collectionUrl.toString(), null, "Types Collection", "");
-
-        // write type entries
-        if ((typeList != null) && (typeList.getList() != null)) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
-            for (TypeDefinition type : typeList.getList()) {
-                writeTypeEntry(entry, type, null, repositoryId, baseUrl, false, context.getCmisVersion());
+                parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
+                typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
             }
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            // write XML
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
+
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
+
+            // write basic Atom feed elements
+            feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, numItems);
+
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
+
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
+            selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            selfLink.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+            selfLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+            selfLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+            feed.writeSelfLink(selfLink.toString(), typeId);
+
+            feed.writeViaLink(compileUrl(baseUrl, RESOURCE_TYPE, typeId));
+
+            UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPESDESC, null);
+            downLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            feed.writeDownLink(downLink.toString(), Constants.MEDIATYPE_DESCENDANTS);
+
+            if (parentTypeId != null) {
+                feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, parentTypeId), Constants.MEDIATYPE_ENTRY);
+            }
+
+            // write paging links
+            UrlBuilder pagingUrl = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
+            pagingUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            pagingUrl.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+            feed.writePagingLinks(pagingUrl, maxItems, skipCount, numItems, hasMoreItems, PAGE_SIZE);
+
+            // write collection
+            UrlBuilder collectionUrl = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
+            collectionUrl.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            feed.writeCollection(collectionUrl.toString(), null, "Types Collection", "");
+
+            // write type entries
+            if ((typeList != null) && (typeList.getList() != null)) {
+                AtomEntry entry = new AtomEntry(feed.getWriter());
+                for (TypeDefinition type : typeList.getList()) {
+                    writeTypeEntry(entry, type, null, repositoryId, baseUrl, false, context.getCmisVersion());
+                }
+            }
+
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Renders a type descendants feed.
      */
-    public static void getTypeDescendants(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
-        BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
-        boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS, false);
+    public static class GetTypeDescendants extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
+            BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
+            boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS,
+                    false);
 
-        // execute
-        List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
-                includePropertyDefinitions, null);
+            // execute
+            List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
+                    includePropertyDefinitions, null);
 
-        String parentTypeId = null;
-        String typeName = "Type Children";
+            String parentTypeId = null;
+            String typeName = "Type Children";
 
-        // in order to get the parent type, we need the type definition of this
-        // type as well
-        if (typeId != null) {
-            TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
+            // in order to get the parent type, we need the type definition of
+            // this type as well
+            if (typeId != null) {
+                TypeDefinition typeDefinition = service.getTypeDefinition(repositoryId, typeId, null);
 
-            parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
-            typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
-        }
+                parentTypeId = (typeDefinition == null ? null : typeDefinition.getParentTypeId());
+                typeName = (typeDefinition == null ? typeId : typeDefinition.getDisplayName());
+            }
 
-        // write XML
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_FEED);
+            // write XML
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_FEED);
 
-        AtomFeed feed = new AtomFeed();
-        feed.startDocument(response.getOutputStream(), getNamespaces(service));
-        feed.startFeed(true);
+            AtomFeed feed = new AtomFeed();
+            feed.startDocument(response.getOutputStream(), getNamespaces(service));
+            feed.startFeed(true);
 
-        // write basic Atom feed elements
-        feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, null);
+            // write basic Atom feed elements
+            feed.writeFeedElements(typeId, null, TYPE_AUTHOR, typeName, new GregorianCalendar(), null, null);
 
-        // write links
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+            // write links
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-        feed.writeServiceLink(baseUrl.toString(), repositoryId);
+            feed.writeServiceLink(baseUrl.toString(), repositoryId);
 
-        UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_TYPESDESC, null);
-        selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        selfLink.addParameter(Constants.PARAM_DEPTH, depth);
-        selfLink.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
-        feed.writeSelfLink(selfLink.toString(), typeId);
+            UrlBuilder selfLink = compileUrlBuilder(baseUrl, RESOURCE_TYPESDESC, null);
+            selfLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            selfLink.addParameter(Constants.PARAM_DEPTH, depth);
+            selfLink.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+            feed.writeSelfLink(selfLink.toString(), typeId);
 
-        feed.writeViaLink(compileUrl(baseUrl, RESOURCE_TYPE, typeId));
+            feed.writeViaLink(compileUrl(baseUrl, RESOURCE_TYPE, typeId));
 
-        UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
-        downLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
-        feed.writeDownLink(downLink.toString(), Constants.MEDIATYPE_FEED);
+            UrlBuilder downLink = compileUrlBuilder(baseUrl, RESOURCE_TYPES, null);
+            downLink.addParameter(Constants.PARAM_TYPE_ID, typeId);
+            feed.writeDownLink(downLink.toString(), Constants.MEDIATYPE_FEED);
 
-        if (parentTypeId != null) {
-            feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, parentTypeId), Constants.MEDIATYPE_ENTRY);
-        }
+            if (parentTypeId != null) {
+                feed.writeUpLink(compileUrl(baseUrl, RESOURCE_TYPE, parentTypeId), Constants.MEDIATYPE_ENTRY);
+            }
 
-        // write tree
-        if (typeTree != null) {
-            AtomEntry entry = new AtomEntry(feed.getWriter());
+            // write tree
+            if (typeTree != null) {
+                AtomEntry entry = new AtomEntry(feed.getWriter());
 
-            for (TypeDefinitionContainer container : typeTree) {
-                if ((container != null) && (container.getTypeDefinition() != null)) {
-                    writeTypeEntry(entry, container.getTypeDefinition(), container.getChildren(), repositoryId,
-                            baseUrl, false, context.getCmisVersion());
+                for (TypeDefinitionContainer container : typeTree) {
+                    if ((container != null) && (container.getTypeDefinition() != null)) {
+                        writeTypeEntry(entry, container.getTypeDefinition(), container.getChildren(), repositoryId,
+                                baseUrl, false, context.getCmisVersion());
+                    }
                 }
             }
-        }
 
-        // we are done
-        feed.endFeed();
-        feed.endDocument();
+            // we are done
+            feed.endFeed();
+            feed.endDocument();
+        }
     }
 
     /**
      * Renders a type definition.
      */
-    public static void getTypeDefinition(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_ID);
+    public static class GetTypeDefinition extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String typeId = getStringParameter(request, Constants.PARAM_ID);
 
-        // execute
-        TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
+            // execute
+            TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
 
-        // write XML
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_ENTRY);
+            // write XML
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_ENTRY);
 
-        AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeTypeEntry(entry, type, null, repositoryId, compileBaseUrl(request, repositoryId), true,
-                context.getCmisVersion());
-        entry.endDocument();
+            AtomEntry entry = new AtomEntry();
+            entry.startDocument(response.getOutputStream(), getNamespaces(service));
+            writeTypeEntry(entry, type, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                    context.getCmisVersion());
+            entry.endDocument();
+        }
     }
 
     /**
      * Creates a type.
      */
-    public static void createType(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // parse entry
-        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
-                .get(CallContext.STREAM_FACTORY);
-        AtomEntryParser parser = new AtomEntryParser(streamFactory);
-        parser.parse(request.getInputStream());
+    public static class CreateType extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // parse entry
+            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                    .get(CallContext.STREAM_FACTORY);
+            AtomEntryParser parser = new AtomEntryParser(streamFactory);
+            parser.parse(request.getInputStream());
 
-        // execute
-        TypeDefinition newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
+            // execute
+            TypeDefinition newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
 
-        // set headers
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+            // set headers
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        response.setContentType(Constants.MEDIATYPE_ENTRY);
-        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.setContentType(Constants.MEDIATYPE_ENTRY);
+            response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
 
-        // write XML
-        AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
-                context.getCmisVersion());
-        entry.endDocument();
+            // write XML
+            AtomEntry entry = new AtomEntry();
+            entry.startDocument(response.getOutputStream(), getNamespaces(service));
+            writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                    context.getCmisVersion());
+            entry.endDocument();
+        }
     }
 
     /**
      * Updates a type.
      */
-    public static void updateType(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // parse entry
-        ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
-                .get(CallContext.STREAM_FACTORY);
-        AtomEntryParser parser = new AtomEntryParser(streamFactory);
-        parser.parse(request.getInputStream());
+    public static class UpdateType extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // parse entry
+            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+                    .get(CallContext.STREAM_FACTORY);
+            AtomEntryParser parser = new AtomEntryParser(streamFactory);
+            parser.parse(request.getInputStream());
 
-        // execute
-        TypeDefinition newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
+            // execute
+            TypeDefinition newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
 
-        // set headers
-        UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+            // set headers
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(Constants.MEDIATYPE_ENTRY);
-        response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_ENTRY);
+            response.setHeader("Location", compileUrl(baseUrl, RESOURCE_TYPE, newType.getId()));
 
-        // write XML
-        AtomEntry entry = new AtomEntry();
-        entry.startDocument(response.getOutputStream(), getNamespaces(service));
-        writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
-                context.getCmisVersion());
-        entry.endDocument();
+            // write XML
+            AtomEntry entry = new AtomEntry();
+            entry.startDocument(response.getOutputStream(), getNamespaces(service));
+            writeTypeEntry(entry, newType, null, repositoryId, compileBaseUrl(request, repositoryId), true,
+                    context.getCmisVersion());
+            entry.endDocument();
+        }
     }
 
     /**
      * Deletes a type.
      */
-    public static void deleteType(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String typeId = getStringParameter(request, Constants.PARAM_ID);
+    public static class DeleteType extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String typeId = getStringParameter(request, Constants.PARAM_ID);
 
-        // execute
-        service.deleteType(repositoryId, typeId, null);
+            // execute
+            service.deleteType(repositoryId, typeId, null);
 
-        // set headers
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            // set headers
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
     }
 }

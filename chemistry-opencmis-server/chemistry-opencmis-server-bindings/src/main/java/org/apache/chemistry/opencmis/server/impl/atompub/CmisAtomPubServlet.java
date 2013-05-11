@@ -18,27 +18,27 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ACL;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ALLOWABLEACIONS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_BULK_UPDATE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHANGES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHECKEDOUT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CHILDREN;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_CONTENT;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_DESCENDANTS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_ENTRY;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_FOLDERTREE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYID;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_OBJECTBYPATH;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_PARENTS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_POLICIES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_QUERY;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_RELATIONSHIPS;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPE;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPES;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_TYPESDESC;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_UNFILED;
-import static org.apache.chemistry.opencmis.server.impl.atompub.AtomPubUtils.RESOURCE_VERSIONS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_ACL;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_ALLOWABLEACIONS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_BULK_UPDATE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_CHANGES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_CHECKEDOUT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_CHILDREN;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_CONTENT;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_DESCENDANTS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_ENTRY;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_FOLDERTREE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_OBJECTBYID;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_OBJECTBYPATH;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_PARENTS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_POLICIES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_QUERY;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_RELATIONSHIPS;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_TYPE;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_TYPES;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_TYPESDESC;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_UNFILED;
+import static org.apache.chemistry.opencmis.server.impl.atompub.AbstractAtomPubServiceCall.RESOURCE_VERSIONS;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_DELETE;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
@@ -49,7 +49,6 @@ import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,18 +67,15 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
-import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
-import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
-import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
+import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,110 +83,76 @@ import org.slf4j.LoggerFactory;
 /**
  * CMIS AtomPub servlet.
  */
-public class CmisAtomPubServlet extends HttpServlet {
-
-    public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
-    public static final String PARAM_CMIS_VERSION = "cmisVersion";
+public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class.getName());
 
     private static final long serialVersionUID = 1L;
 
-    private CmisVersion cmisVersion;
-
-    private ThresholdOutputStreamFactory streamFactory;
-    private Dispatcher dispatcher;
-    private CallContextHandler callContextHandler;
+    private final Dispatcher dispatcher = new Dispatcher();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        // initialize the call context handler
-        callContextHandler = null;
-        String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
-        if (callContextHandlerClass != null) {
-            try {
-                callContextHandler = (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass)
-                        .newInstance();
-            } catch (Exception e) {
-                throw new ServletException("Could not load call context handler: " + e, e);
-            }
-        }
+        // set the binding
+        setBinding(CallContext.BINDING_ATOMPUB);
 
-        // get CMIS version
+        // get and CMIS version
         String cmisVersionStr = config.getInitParameter(PARAM_CMIS_VERSION);
         if (cmisVersionStr != null) {
             try {
-                cmisVersion = CmisVersion.fromValue(cmisVersionStr);
+                setCmisVersion(CmisVersion.fromValue(cmisVersionStr));
             } catch (IllegalArgumentException e) {
                 LOG.warn("CMIS version is invalid! Setting it to CMIS 1.0.");
-                cmisVersion = CmisVersion.CMIS_1_0;
+                setCmisVersion(CmisVersion.CMIS_1_0);
             }
         } else {
             LOG.warn("CMIS version is not defined! Setting it to CMIS 1.0.");
-            cmisVersion = CmisVersion.CMIS_1_0;
+            setCmisVersion(CmisVersion.CMIS_1_0);
         }
 
-        // get memory threshold and temp directory
-        CmisServiceFactory factory = (CmisServiceFactory) config.getServletContext().getAttribute(
-                CmisRepositoryContextListener.SERVICES_FACTORY);
-
-        if (factory == null) {
-            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
-        }
-
-        // set up stream factory
-        streamFactory = ThresholdOutputStreamFactory.newInstance(factory.getTempDirectory(),
-                factory.getMemoryThreshold(), factory.getMaxContentSize(), factory.encryptTempFiles());
-
-        // initialize the dispatcher
-        dispatcher = new Dispatcher();
-
-        try {
-            dispatcher.addResource(RESOURCE_TYPES, METHOD_GET, RepositoryService.class, "getTypeChildren");
-            dispatcher.addResource(RESOURCE_TYPES, METHOD_POST, RepositoryService.class, "createType");
-            dispatcher.addResource(RESOURCE_TYPESDESC, METHOD_GET, RepositoryService.class, "getTypeDescendants");
-            dispatcher.addResource(RESOURCE_TYPE, METHOD_GET, RepositoryService.class, "getTypeDefinition");
-            dispatcher.addResource(RESOURCE_TYPE, METHOD_PUT, RepositoryService.class, "updateType");
-            dispatcher.addResource(RESOURCE_TYPE, METHOD_DELETE, RepositoryService.class, "deleteType");
-            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_GET, NavigationService.class, "getChildren");
-            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_GET, NavigationService.class, "getDescendants");
-            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_GET, NavigationService.class, "getFolderTree");
-            dispatcher.addResource(RESOURCE_PARENTS, METHOD_GET, NavigationService.class, "getObjectParents");
-            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_GET, NavigationService.class, "getCheckedOutDocs");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_GET, ObjectService.class, "getObject");
-            dispatcher.addResource(RESOURCE_OBJECTBYID, METHOD_GET, ObjectService.class, "getObject");
-            dispatcher.addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, ObjectService.class, "getObjectByPath");
-            dispatcher.addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, ObjectService.class, "getAllowableActions");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_GET, ObjectService.class, "getContentStream");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_PUT, ObjectService.class, "setOrAppendContentStream");
-            dispatcher.addResource(RESOURCE_CONTENT, METHOD_DELETE, ObjectService.class, "deleteContentStream");
-            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_POST, ObjectService.class, "create");
-            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, ObjectService.class, "createRelationship");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_PUT, ObjectService.class, "updateProperties");
-            dispatcher.addResource(RESOURCE_ENTRY, METHOD_DELETE, ObjectService.class, "deleteObject");
-            dispatcher.addResource(RESOURCE_CHILDREN, METHOD_DELETE, ObjectService.class, "deleteTree"); // 1.1
-            dispatcher.addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, ObjectService.class, "deleteTree");
-            dispatcher.addResource(RESOURCE_FOLDERTREE, METHOD_DELETE, ObjectService.class, "deleteTree");
-            dispatcher.addResource(RESOURCE_CHECKEDOUT, METHOD_POST, VersioningService.class, "checkOut");
-            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_GET, VersioningService.class, "getAllVersions");
-            dispatcher.addResource(RESOURCE_VERSIONS, METHOD_DELETE, VersioningService.class, "deleteAllVersions");
-            dispatcher.addResource(RESOURCE_QUERY, METHOD_GET, DiscoveryService.class, "query");
-            dispatcher.addResource(RESOURCE_QUERY, METHOD_POST, DiscoveryService.class, "query");
-            dispatcher.addResource(RESOURCE_CHANGES, METHOD_GET, DiscoveryService.class, "getContentChanges");
-            dispatcher.addResource(RESOURCE_RELATIONSHIPS, METHOD_GET, RelationshipService.class,
-                    "getObjectRelationships");
-            dispatcher.addResource(RESOURCE_UNFILED, METHOD_POST, MultiFilingService.class, "removeObjectFromFolder");
-            dispatcher.addResource(RESOURCE_ACL, METHOD_GET, AclService.class, "getAcl");
-            dispatcher.addResource(RESOURCE_ACL, METHOD_PUT, AclService.class, "applyAcl");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_GET, PolicyService.class, "getAppliedPolicies");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_POST, PolicyService.class, "applyPolicy");
-            dispatcher.addResource(RESOURCE_POLICIES, METHOD_DELETE, PolicyService.class, "removePolicy");
-            dispatcher.addResource(RESOURCE_BULK_UPDATE, METHOD_POST, ObjectService.class, "bulkUpdateProperties");
-        } catch (NoSuchMethodException e) {
-            LOG.error("Cannot initialize dispatcher!", e);
-        }
+        // initialize resources
+        addResource("", METHOD_GET, new RepositoryService.GetRepositories());
+        addResource(RESOURCE_TYPES, METHOD_GET, new RepositoryService.GetTypeChildren());
+        addResource(RESOURCE_TYPES, METHOD_POST, new RepositoryService.CreateType());
+        addResource(RESOURCE_TYPESDESC, METHOD_GET, new RepositoryService.GetTypeDescendants());
+        addResource(RESOURCE_TYPE, METHOD_GET, new RepositoryService.GetTypeDefinition());
+        addResource(RESOURCE_TYPE, METHOD_PUT, new RepositoryService.UpdateType());
+        addResource(RESOURCE_TYPE, METHOD_DELETE, new RepositoryService.DeleteType());
+        addResource(RESOURCE_CHILDREN, METHOD_GET, new NavigationService.GetChildren());
+        addResource(RESOURCE_DESCENDANTS, METHOD_GET, new NavigationService.GetDescendants());
+        addResource(RESOURCE_FOLDERTREE, METHOD_GET, new NavigationService.GetFolderTree());
+        addResource(RESOURCE_PARENTS, METHOD_GET, new NavigationService.GetObjectParents());
+        addResource(RESOURCE_CHECKEDOUT, METHOD_GET, new NavigationService.GetCheckedOutDocs());
+        addResource(RESOURCE_ENTRY, METHOD_GET, new ObjectService.GetObject());
+        addResource(RESOURCE_OBJECTBYID, METHOD_GET, new ObjectService.GetObject());
+        addResource(RESOURCE_OBJECTBYPATH, METHOD_GET, new ObjectService.GetObjectByPath());
+        addResource(RESOURCE_ALLOWABLEACIONS, METHOD_GET, new ObjectService.GetAllowableActions());
+        addResource(RESOURCE_CONTENT, METHOD_GET, new ObjectService.GetContentStream());
+        addResource(RESOURCE_CONTENT, METHOD_PUT, new ObjectService.SetOrAppendContentStream());
+        addResource(RESOURCE_CONTENT, METHOD_DELETE, new ObjectService.DeleteContentStream());
+        addResource(RESOURCE_CHILDREN, METHOD_POST, new ObjectService.Create());
+        addResource(RESOURCE_RELATIONSHIPS, METHOD_POST, new ObjectService.CreateRelationship());
+        addResource(RESOURCE_ENTRY, METHOD_PUT, new ObjectService.UpdateProperties());
+        addResource(RESOURCE_ENTRY, METHOD_DELETE, new ObjectService.DeleteObject());
+        addResource(RESOURCE_CHILDREN, METHOD_DELETE, new ObjectService.DeleteTree()); // 1.1
+        addResource(RESOURCE_DESCENDANTS, METHOD_DELETE, new ObjectService.DeleteTree());
+        addResource(RESOURCE_FOLDERTREE, METHOD_DELETE, new ObjectService.DeleteTree());
+        addResource(RESOURCE_BULK_UPDATE, METHOD_POST, new ObjectService.BulkUpdateProperties());
+        addResource(RESOURCE_CHECKEDOUT, METHOD_POST, new VersioningService.CheckOut());
+        addResource(RESOURCE_VERSIONS, METHOD_GET, new VersioningService.GetAllVersions());
+        addResource(RESOURCE_VERSIONS, METHOD_DELETE, new VersioningService.DeleteAllVersions());
+        addResource(RESOURCE_QUERY, METHOD_GET, new DiscoveryService.Query());
+        addResource(RESOURCE_QUERY, METHOD_POST, new DiscoveryService.Query());
+        addResource(RESOURCE_CHANGES, METHOD_GET, new DiscoveryService.GetContentChanges());
+        addResource(RESOURCE_RELATIONSHIPS, METHOD_GET, new RelationshipService.GetObjectRelationships());
+        addResource(RESOURCE_UNFILED, METHOD_POST, new MultiFilingService.RemoveObjectFromFolder());
+        addResource(RESOURCE_ACL, METHOD_GET, new AclService.GetAcl());
+        addResource(RESOURCE_ACL, METHOD_PUT, new AclService.ApplyAcl());
+        addResource(RESOURCE_POLICIES, METHOD_GET, new PolicyService.GetAppliedPolicies());
+        addResource(RESOURCE_POLICIES, METHOD_POST, new PolicyService.ApplyPolicy());
+        addResource(RESOURCE_POLICIES, METHOD_DELETE, new PolicyService.RemovePolicy());
     }
 
     @Override
@@ -205,8 +167,7 @@ public class CmisAtomPubServlet extends HttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = HttpUtils.createContext(qsRequest, response, getServletContext(), CallContext.BINDING_ATOMPUB,
-                    cmisVersion, callContextHandler, streamFactory);
+            context = createContext(getServletContext(), qsRequest, response);
             dispatch(context, qsRequest, response);
         } catch (Exception e) {
             if (e instanceof CmisPermissionDeniedException) {
@@ -226,6 +187,13 @@ public class CmisAtomPubServlet extends HttpServlet {
     }
 
     /**
+     * Registers a new resource.
+     */
+    protected void addResource(String resource, String httpMethod, ServiceCall serviceCall) {
+        dispatcher.addResource(resource, httpMethod, serviceCall);
+    }
+
+    /**
      * Dispatches to feed, entry or whatever.
      */
     private void dispatch(CallContext context, HttpServletRequest request, HttpServletResponse response)
@@ -233,23 +201,15 @@ public class CmisAtomPubServlet extends HttpServlet {
 
         CmisService service = null;
         try {
-            // get services factory
-            CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
-                    CmisRepositoryContextListener.SERVICES_FACTORY);
-
-            if (factory == null) {
-                throw new CmisRuntimeException("Service factory not available! Configuration problem?");
-            }
-
             // get the service
-            service = factory.getService(context);
+            service = getServiceFactory().getService(context);
 
             // analyze the path
             String[] pathFragments = HttpUtils.splitPath(request);
 
             if (pathFragments.length < 2) {
                 // root -> service document
-                RepositoryService.getRepositories(context, service, request, response);
+                dispatcher.dispatch("", METHOD_GET, context, service, null, request, response);
                 return;
             }
 
@@ -258,12 +218,12 @@ public class CmisAtomPubServlet extends HttpServlet {
             String resource = pathFragments[1];
 
             // dispatch
-            boolean methodFound = dispatcher.dispatch(resource, method, context, service, repositoryId, request,
+            boolean callServiceFound = dispatcher.dispatch(resource, method, context, service, repositoryId, request,
                     response);
 
-            // if the dispatcher couldn't find a matching method, return an
-            // error message
-            if (!methodFound) {
+            // if the dispatcher couldn't find a matching service
+            // -> return an error message
+            if (!callServiceFound) {
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Unknown operation");
             }
         } finally {
@@ -276,7 +236,7 @@ public class CmisAtomPubServlet extends HttpServlet {
     /**
      * Translates an exception in an appropriate HTTP error code.
      */
-    private static int getErrorCode(CmisBaseException ex) {
+    protected int getErrorCode(CmisBaseException ex) {
         if (ex instanceof CmisConstraintException) {
             return 409;
         } else if (ex instanceof CmisContentAlreadyExistsException) {
@@ -309,7 +269,7 @@ public class CmisAtomPubServlet extends HttpServlet {
     /**
      * Prints the error HTML page.
      */
-    private static void printError(Exception ex, HttpServletResponse response) {
+    protected void printError(Exception ex, HttpServletResponse response) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         String exceptionName = "runtime";
 

@@ -19,8 +19,6 @@
 package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +48,7 @@ public class Dispatcher implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(Dispatcher.class.getName());
 
     private final boolean caseSensitive;
-    private final HashMap<String, Method> methodMap;
+    private final HashMap<String, ServiceCall> serviceCallMap;
 
     public Dispatcher() {
         this(true);
@@ -58,48 +56,39 @@ public class Dispatcher implements Serializable {
 
     public Dispatcher(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
-        methodMap = new HashMap<String, Method>();
+        serviceCallMap = new HashMap<String, ServiceCall>();
     }
 
     /**
-     * Connects a resource and HTTP method with a class and a class method.
+     * Connects a resource and HTTP method with an object that handles the call.
      */
-    public synchronized void addResource(String resource, String httpMethod, Class<?> clazz, String classmethod)
-            throws NoSuchMethodException {
-
-        Method m = clazz.getMethod(classmethod, CallContext.class, CmisService.class, String.class,
-                HttpServletRequest.class, HttpServletResponse.class);
-
-        methodMap.put(getKey(resource, httpMethod), m);
+    public void addResource(String resource, String httpMethod, ServiceCall serviceCall) {
+        serviceCallMap.put(getKey(resource, httpMethod), serviceCall);
     }
 
     /**
-     * Find the appropriate method an call it.
+     * Handles the a call.
      * 
-     * @return <code>true</code> if the method was found, <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if an object was found that can handle the
+     *         request, <code>false</code> otherwise.
      */
     public boolean dispatch(String resource, String httpMethod, CallContext context, CmisService service,
             String repositoryId, HttpServletRequest request, HttpServletResponse response) {
-        Method m = methodMap.get(getKey(resource, httpMethod));
-        if (m == null) {
+        ServiceCall serviceCall = serviceCallMap.get(getKey(resource, httpMethod));
+        if (serviceCall == null) {
             return false;
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(repositoryId + " / " + resource + ", " + httpMethod + " -> " + m.getName());
+            LOG.debug(repositoryId + " / " + resource + ", " + httpMethod + " -> " + serviceCall.getClass().getName());
         }
 
         try {
-            m.invoke(null, context, service, repositoryId, request, response);
-        } catch (IllegalAccessException e) {
-            throw new CmisRuntimeException("Internal error!", e);
-        } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof CmisBaseException) {
-                throw (CmisBaseException) e.getCause();
-            } else {
-                throw new CmisRuntimeException(e.getMessage(), e);
-            }
+            serviceCall.serve(context, service, repositoryId, request, response);
+        } catch (CmisBaseException ce) {
+            throw ce;
+        } catch (Exception e) {
+            throw new CmisRuntimeException(e.getMessage(), e);
         }
 
         return true;

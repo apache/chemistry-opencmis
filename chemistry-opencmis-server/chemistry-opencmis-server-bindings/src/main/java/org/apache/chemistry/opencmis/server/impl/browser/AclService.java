@@ -18,14 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createAddAcl;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.createRemoveAcl;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.setStatus;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.writeJSON;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,48 +37,54 @@ public class AclService {
     /**
      * getACL.
      */
-    public static void getACL(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
+    public static class GetACL extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
-        // execute
-        Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
+            // execute
+            Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
 
-        // return ACL
-        response.setStatus(HttpServletResponse.SC_OK);
+            // return ACL
+            response.setStatus(HttpServletResponse.SC_OK);
 
-        JSONObject jsonObject = JSONConverter.convert(acl);
-        if (jsonObject == null) {
-            jsonObject = new JSONObject();
+            JSONObject jsonObject = JSONConverter.convert(acl);
+            if (jsonObject == null) {
+                jsonObject = new JSONObject();
+            }
+
+            writeJSON(jsonObject, request, response);
         }
-
-        writeJSON(jsonObject, request, response);
     }
 
     /**
      * applyACL.
      */
-    public static void applyACL(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION, AclPropagation.class);
+    public static class ApplyACL extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION,
+                    AclPropagation.class);
 
-        // execute
-        ControlParser cp = new ControlParser(request);
+            // execute
+            ControlParser cp = new ControlParser(request);
 
-        Acl acl = service.applyAcl(repositoryId, objectId, createAddAcl(cp), createRemoveAcl(cp), aclPropagation, null);
+            Acl acl = service.applyAcl(repositoryId, objectId, createAddAcl(cp), createRemoveAcl(cp), aclPropagation,
+                    null);
 
-        // return ACL
-        setStatus(request, response, HttpServletResponse.SC_CREATED);
+            // return ACL
+            setStatus(request, response, HttpServletResponse.SC_CREATED);
 
-        JSONObject jsonObject = JSONConverter.convert(acl);
-        if (jsonObject == null) {
-            jsonObject = new JSONObject();
+            JSONObject jsonObject = JSONConverter.convert(acl);
+            if (jsonObject == null) {
+                jsonObject = new JSONObject();
+            }
+
+            writeJSON(jsonObject, request, response);
         }
-
-        writeJSON(jsonObject, request, response);
     }
 }

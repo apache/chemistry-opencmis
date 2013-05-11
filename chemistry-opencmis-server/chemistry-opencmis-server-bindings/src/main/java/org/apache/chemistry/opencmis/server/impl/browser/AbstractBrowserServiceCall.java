@@ -18,9 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -66,38 +63,23 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONStreamAware;
-import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
+import org.apache.chemistry.opencmis.server.shared.AbstractServiceCall;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
-import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 
-public final class BrowserBindingUtils {
+public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
 
     public static final String JSON_MIME_TYPE = "application/json";
     public static final String HTML_MIME_TYPE = "text/html";
 
     public static final String ROOT_PATH_FRAGMENT = "root";
 
-    public static final String CONTEXT_OBJECT_ID = "org.apache.chemistry.opencmis.browserbinding.objectId";
-    public static final String CONTEXT_OBJECT_TYPE_ID = "org.apache.chemistry.opencmis.browserbinding.objectTypeId";
-    public static final String CONTEXT_BASETYPE_ID = "org.apache.chemistry.opencmis.browserbinding.basetypeId";
-    public static final String CONTEXT_TOKEN = "org.apache.chemistry.opencmis.browserbinding.token";
-
     public static final String REPOSITORY_PLACEHOLDER = "{repositoryId}";
-
-    public enum CallUrl {
-        SERVICE, REPOSITORY, ROOT
-    }
-
-    // Utility class.
-    private BrowserBindingUtils() {
-    }
 
     /**
      * Compiles the base URL for links, collections and templates.
      */
-    public static UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
+    public UrlBuilder compileBaseUrl(HttpServletRequest request, String repositoryId) {
         String baseUrl = (String) request.getAttribute(Dispatcher.BASE_URL_ATTRIBUTE);
         if (baseUrl != null) {
             int repIdPos = baseUrl.indexOf(REPOSITORY_PLACEHOLDER);
@@ -118,105 +100,135 @@ public final class BrowserBindingUtils {
         return url;
     }
 
-    public static UrlBuilder compileRepositoryUrl(HttpServletRequest request, String repositoryId) {
+    public UrlBuilder compileRepositoryUrl(HttpServletRequest request, String repositoryId) {
         return compileBaseUrl(request, repositoryId);
     }
 
-    public static UrlBuilder compileRootUrl(HttpServletRequest request, String repositoryId) {
+    public UrlBuilder compileRootUrl(HttpServletRequest request, String repositoryId) {
         return compileRepositoryUrl(request, repositoryId).addPathSegment(ROOT_PATH_FRAGMENT);
     }
 
-    /**
-     * Returns the current CMIS path.
-     */
-    public static String getPath(HttpServletRequest request) {
-        String[] pathFragments = HttpUtils.splitPath(request);
-        if (pathFragments.length < 2) {
-            return null;
-        }
-        if (pathFragments.length == 2) {
-            return "/";
-        }
+    public String compileObjectLocationUrl(HttpServletRequest request, String repositoryId, String objectId) {
+        return compileRootUrl(request, repositoryId).addParameter(Constants.PARAM_OBJECT_ID, objectId).toString();
+    }
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 2; i < pathFragments.length; i++) {
-            if (pathFragments[i].length() == 0) {
-                continue;
+    public String compileTypeLocationUrl(HttpServletRequest request, String repositoryId, String typeId) {
+        return compileRepositoryUrl(request, repositoryId).addParameter(Constants.PARAM_TYPE_ID, typeId).toString();
+    }
+
+    /**
+     * Writes JSON to the servlet response and adds a callback wrapper if
+     * requested.
+     */
+    public void writeJSON(JSONStreamAware json, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String token = getStringParameter(request, Constants.PARAM_TOKEN);
+
+        if (token != null && "POST".equals(request.getMethod())) {
+            response.setContentType(HTML_MIME_TYPE);
+            response.setContentLength(0);
+        } else {
+            response.setContentType(JSON_MIME_TYPE);
+            response.setCharacterEncoding("UTF-8");
+
+            String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
+            if (callback != null) {
+                if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
+                    throw new CmisInvalidArgumentException("Invalid callback name!");
+                }
+                response.getWriter().print(callback + "(");
             }
 
-            sb.append("/");
-            sb.append(pathFragments[i]);
+            json.writeJSONString(response.getWriter());
+
+            if (callback != null) {
+                response.getWriter().print(");");
+            }
         }
 
-        return sb.toString();
+        response.getWriter().flush();
+    }
+
+    public void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentLength(0);
+        response.setContentType(HTML_MIME_TYPE);
+        response.getWriter().flush();
+    }
+
+    public ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
+        return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
+                false, null);
     }
 
     /**
-     * Returns the object id of the current request.
+     * Sets the given HTTP status code if the surpessResponseCodes parameter is
+     * not set to true; otherwise sets HTTP status code 200 (OK).
      */
-    public static void prepareContext(CallContext context, CallUrl callUrl, CmisService service, String repositoryId,
-            String objectId, String token, HttpServletRequest request) {
-        CallContextImpl contextImpl = null;
-        if (context instanceof CallContextImpl) {
-            contextImpl = (CallContextImpl) context;
-            contextImpl.put(CONTEXT_TOKEN, token);
+    public void setStatus(HttpServletRequest request, HttpServletResponse response, int statusCode) {
+        if (getBooleanParameter(request, Constants.PARAM_SUPPRESS_RESPONSE_CODES, false)) {
+            statusCode = HttpServletResponse.SC_OK;
         }
 
-        if (callUrl != CallUrl.ROOT) {
-            return;
-        }
-
-        ObjectData object = null;
-
-        if (objectId != null) {
-            object = service.getObject(repositoryId, objectId, "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId",
-                    false, IncludeRelationships.NONE, "cmis:none", false, false, null);
-        } else {
-            object = service.getObjectByPath(repositoryId, getPath(request),
-                    "cmis:objectId,cmis:objectTypeId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none",
-                    false, false, null);
-        }
-
-        if (contextImpl != null) {
-            contextImpl.put(CONTEXT_OBJECT_ID, object.getId());
-            contextImpl.put(CONTEXT_OBJECT_TYPE_ID, getProperty(object, PropertyIds.OBJECT_TYPE_ID, String.class));
-            contextImpl.put(CONTEXT_BASETYPE_ID, getProperty(object, PropertyIds.BASE_TYPE_ID, String.class));
-        }
+        response.setStatus(statusCode);
     }
 
     /**
-     * Extracts a property from an object.
+     * Transforms the transaction into a cookie name.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getProperty(ObjectData object, String name, Class<T> clazz) {
-        if (object == null) {
-            return null;
+    public String getCookieName(String token) {
+        if (token == null || token.length() == 0) {
+            return "cmis%";
         }
 
-        Properties propData = object.getProperties();
-        if (propData == null) {
-            return null;
-        }
-
-        Map<String, PropertyData<?>> properties = propData.getProperties();
-        if (properties == null) {
-            return null;
-        }
-
-        PropertyData<?> property = properties.get(name);
-        if (property == null) {
-            return null;
-        }
-
-        Object value = property.getFirstValue();
-        if (!clazz.isInstance(value)) {
-            return null;
-        }
-
-        return (T) value;
+        return "cmis_" + Base64.encodeBytes(token.getBytes()).replace('=', '%');
     }
 
-    public static Properties createNewProperties(ControlParser controlParser, TypeCache typeCache) {
+    /**
+     * Sets a transaction cookie.
+     */
+    public void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId, String token,
+            String value) {
+        setCookie(request, response, repositoryId, token, value, 3600);
+    }
+
+    /**
+     * Deletes a transaction cookie.
+     */
+    public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId, String token) {
+        setCookie(request, response, repositoryId, token, "", 0);
+    }
+
+    /**
+     * Sets a transaction cookie.
+     */
+    public void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId, String token,
+            String value, int expiry) {
+        if (token != null && token.length() > 0) {
+            String cookieValue = value;
+            try {
+                cookieValue = URLEncoder.encode(value, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+            }
+
+            Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);
+            transactionCookie.setMaxAge(expiry);
+            transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
+            response.addCookie(transactionCookie);
+        }
+    }
+
+    public String createCookieValue(int code, String objectId, String ex, String message) {
+        JSONObject result = new JSONObject();
+
+        result.put("code", code);
+        result.put("objectId", objectId == null ? "" : objectId);
+        result.put("exception", ex == null ? "" : ex);
+        result.put("message", message == null ? "" : message);
+
+        return result.toJSONString();
+    }
+
+    public Properties createNewProperties(ControlParser controlParser, TypeCache typeCache) {
         Map<String, List<String>> properties = controlParser.getProperties();
         if (properties == null) {
             return null;
@@ -256,8 +268,8 @@ public final class BrowserBindingUtils {
         return result;
     }
 
-    public static Properties createUpdateProperties(ControlParser controlParser, String typeId,
-            List<String> secondaryTypeIds, List<String> objectIds, TypeCache typeCache) {
+    public Properties createUpdateProperties(ControlParser controlParser, String typeId, List<String> secondaryTypeIds,
+            List<String> objectIds, TypeCache typeCache) {
         Map<String, List<String>> properties = controlParser.getProperties();
         if (properties == null) {
             return null;
@@ -315,7 +327,7 @@ public final class BrowserBindingUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static PropertyData<?> createPropertyData(PropertyDefinition<?> propDef, Object value) {
+    private PropertyData<?> createPropertyData(PropertyDefinition<?> propDef, Object value) {
 
         List<String> strValues;
         if (value == null) {
@@ -392,11 +404,11 @@ public final class BrowserBindingUtils {
         return propertyData;
     }
 
-    public static List<String> createPolicies(ControlParser controlParser) {
+    public List<String> createPolicies(ControlParser controlParser) {
         return controlParser.getValues(Constants.CONTROL_POLICY);
     }
 
-    public static Acl createAddAcl(ControlParser controlParser) {
+    public Acl createAddAcl(ControlParser controlParser) {
         List<String> principals = controlParser.getValues(Constants.CONTROL_ADD_ACE_PRINCIPAL);
         if (principals == null) {
             return null;
@@ -414,7 +426,7 @@ public final class BrowserBindingUtils {
         return new AccessControlListImpl(aces);
     }
 
-    public static Acl createRemoveAcl(ControlParser controlParser) {
+    public Acl createRemoveAcl(ControlParser controlParser) {
         List<String> principals = controlParser.getValues(Constants.CONTROL_REMOVE_ACE_PRINCIPAL);
         if (principals == null) {
             return null;
@@ -432,7 +444,7 @@ public final class BrowserBindingUtils {
         return new AccessControlListImpl(aces);
     }
 
-    public static ContentStream createContentStream(HttpServletRequest request) {
+    public ContentStream createContentStream(HttpServletRequest request) {
         ContentStreamImpl result = null;
 
         if (request instanceof POSTHttpServletRequestWrapper) {
@@ -444,128 +456,5 @@ public final class BrowserBindingUtils {
         }
 
         return result;
-    }
-
-    public static void closeContentStream(ContentStream contentStream) {
-        if (contentStream != null && contentStream.getStream() != null) {
-            try {
-                contentStream.getStream().close();
-            } catch (IOException e) {
-                // we tried our best
-            }
-        }
-    }
-
-    protected static ObjectData getSimpleObject(CmisService service, String repositoryId, String objectId) {
-        return service.getObject(repositoryId, objectId, null, false, IncludeRelationships.NONE, "cmis:none", false,
-                false, null);
-    }
-
-    /**
-     * Sets the given HTTP status code if the surpessResponseCodes parameter is
-     * not set to true; otherwise sets HTTP status code 200 (OK).
-     */
-    public static void setStatus(HttpServletRequest request, HttpServletResponse response, int statusCode) {
-        if (getBooleanParameter(request, Constants.PARAM_SUPPRESS_RESPONSE_CODES, false)) {
-            statusCode = HttpServletResponse.SC_OK;
-        }
-
-        response.setStatus(statusCode);
-    }
-
-    /**
-     * Transforms the transaction into a cookie name.
-     */
-    public static String getCookieName(String token) {
-        if (token == null || token.length() == 0) {
-            return "cmis%";
-        }
-
-        return "cmis_" + Base64.encodeBytes(token.getBytes()).replace('=', '%');
-    }
-
-    /**
-     * Sets a transaction cookie.
-     */
-    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String token, String value) {
-        setCookie(request, response, repositoryId, token, value, 3600);
-    }
-
-    /**
-     * Deletes a transaction cookie.
-     */
-    public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String token) {
-        setCookie(request, response, repositoryId, token, "", 0);
-    }
-
-    /**
-     * Sets a transaction cookie.
-     */
-    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId,
-            String token, String value, int expiry) {
-        if (token != null && token.length() > 0) {
-            String cookieValue = value;
-            try {
-                cookieValue = URLEncoder.encode(value, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-            }
-
-            Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);
-            transactionCookie.setMaxAge(expiry);
-            transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
-            response.addCookie(transactionCookie);
-        }
-    }
-
-    public static String createCookieValue(int code, String objectId, String ex, String message) {
-        JSONObject result = new JSONObject();
-
-        result.put("code", code);
-        result.put("objectId", objectId == null ? "" : objectId);
-        result.put("exception", ex == null ? "" : ex);
-        result.put("message", message == null ? "" : message);
-
-        return result.toJSONString();
-    }
-
-    /**
-     * Writes JSON to the servlet response and adds a callback wrapper if
-     * requested.
-     */
-    public static void writeJSON(JSONStreamAware json, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        String token = getStringParameter(request, Constants.PARAM_TOKEN);
-
-        if (token != null && "POST".equals(request.getMethod())) {
-            response.setContentType(HTML_MIME_TYPE);
-            response.setContentLength(0);
-        } else {
-            response.setContentType(JSON_MIME_TYPE);
-            response.setCharacterEncoding("UTF-8");
-
-            String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
-            if (callback != null) {
-                if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
-                    throw new CmisInvalidArgumentException("Invalid callback name!");
-                }
-                response.getWriter().print(callback + "(");
-            }
-
-            json.writeJSONString(response.getWriter());
-
-            if (callback != null) {
-                response.getWriter().print(");");
-            }
-        }
-
-        response.getWriter().flush();
-    }
-
-    public static void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentLength(0);
-        response.setContentType(HTML_MIME_TYPE);
-        response.getWriter().flush();
     }
 }

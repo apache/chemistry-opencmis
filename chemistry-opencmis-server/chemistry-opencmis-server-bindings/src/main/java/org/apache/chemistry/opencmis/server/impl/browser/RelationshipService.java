@@ -25,11 +25,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_RENDITI
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SKIP_COUNT;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_SUB_RELATIONSHIP_TYPES;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TYPE_ID;
-import static org.apache.chemistry.opencmis.server.impl.browser.BrowserBindingUtils.CONTEXT_OBJECT_ID;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBigIntegerParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getBooleanParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getEnumParameter;
-import static org.apache.chemistry.opencmis.server.shared.HttpUtils.getStringParameter;
 
 import java.math.BigInteger;
 
@@ -51,32 +46,36 @@ public class RelationshipService {
     /**
      * getObjectRelationships.
      */
-    public static void getObjectRelationships(CallContext context, CmisService service, String repositoryId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // get parameters
-        String objectId = (String) context.get(CONTEXT_OBJECT_ID);
-        Boolean includeSubRelationshipTypes = getBooleanParameter(request, PARAM_SUB_RELATIONSHIP_TYPES);
-        RelationshipDirection relationshipDirection = getEnumParameter(request, PARAM_RELATIONSHIP_DIRECTION,
-                RelationshipDirection.class);
-        String typeId = getStringParameter(request, PARAM_TYPE_ID);
-        String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
-        Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
-        BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
-        BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
-        boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+    public static class GetObjectRelationships extends AbstractBrowserServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            // get parameters
+            String objectId = ((BrowserCallContextImpl) context).getObjectId();
+            Boolean includeSubRelationshipTypes = getBooleanParameter(request, PARAM_SUB_RELATIONSHIP_TYPES);
+            RelationshipDirection relationshipDirection = getEnumParameter(request, PARAM_RELATIONSHIP_DIRECTION,
+                    RelationshipDirection.class);
+            String typeId = getStringParameter(request, PARAM_TYPE_ID);
+            String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
+            Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
+            BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
+            BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+            boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
 
-        // execute
-        ObjectList relationships = service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
-                relationshipDirection, typeId, renditionFilter, includeAllowableActions, maxItems, skipCount, null);
+            // execute
+            ObjectList relationships = service.getObjectRelationships(repositoryId, objectId,
+                    includeSubRelationshipTypes, relationshipDirection, typeId, renditionFilter,
+                    includeAllowableActions, maxItems, skipCount, null);
 
-        if (relationships == null) {
-            throw new CmisRuntimeException("Relationships are null!");
+            if (relationships == null) {
+                throw new CmisRuntimeException("Relationships are null!");
+            }
+
+            TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
+            JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache,
+                    JSONConverter.PropertyMode.OBJECT, succinct);
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeJSON(jsonChildren, request, response);
         }
-
-        TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-        JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache, JSONConverter.PropertyMode.OBJECT, succinct);
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        BrowserBindingUtils.writeJSON(jsonChildren, request, response);
     }
 }
