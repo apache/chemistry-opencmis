@@ -21,9 +21,9 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +98,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         this.session = session;
         this.objectType = objectType;
         this.secondaryTypes = null;
-        this.extensions = new HashMap<ExtensionLevel, List<CmisExtensionElement>>();
+        this.extensions = new EnumMap<ExtensionLevel, List<CmisExtensionElement>>(ExtensionLevel.class);
         this.creationContext = new OperationContextImpl(context);
         this.refreshTimestamp = System.currentTimeMillis();
 

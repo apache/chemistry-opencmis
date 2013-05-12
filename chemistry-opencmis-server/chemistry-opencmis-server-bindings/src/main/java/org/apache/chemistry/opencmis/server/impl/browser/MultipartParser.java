@@ -30,7 +30,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
@@ -47,7 +49,7 @@ public class MultipartParser {
     private static final String CHARSET_FIELD = "_charset_";
 
     private static final int MAX_FIELD_BYTES = 10 * 1024 * 1024;
-    private static final int BUFFER_SIZE = 64 * 1024;
+    private static final int BUFFER_SIZE = 128 * 1024;
 
     private static final byte CR = 0x0D;
     private static final byte LF = 0x0A;
@@ -503,9 +505,15 @@ public class MultipartParser {
 
     private void skipEpilogue() {
         try {
-            // read to the end of stream
+            // read to the end of stream, but max 1 MB
+            int count = 0;
             byte[] tmpBuf = new byte[4096];
-            while (requestStream.read(tmpBuf) > -1) {
+            int b;
+            while ((b = requestStream.read(tmpBuf)) > -1) {
+                count += b;
+                if (count >= 1024 * 1024) {
+                    break;
+                }
             }
         } catch (IOException e) {
             // ignore
@@ -565,7 +573,7 @@ public class MultipartParser {
 
                 fields.put(e.getKey(), values);
             }
-        } catch (UnsupportedEncodingException uee) {
+        } catch (Exception e) {
             if (contentStream != null) {
                 try {
                     contentStream.close();
@@ -578,7 +586,15 @@ public class MultipartParser {
 
             fields = null;
 
-            throw new CmisInvalidArgumentException("Encoding not supported!");
+            if (e instanceof UnsupportedEncodingException) {
+                throw new CmisInvalidArgumentException("Encoding not supported!");
+            } else if (e instanceof CmisBaseException) {
+                throw (CmisBaseException) e;
+            } else if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new CmisRuntimeException(e.getMessage(), e);
+            }
         } finally {
             rawFields = null;
         }

@@ -19,8 +19,6 @@
 package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.CmisEnumHelper;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 
 public abstract class AbstractServiceCall implements ServiceCall {
@@ -100,23 +98,8 @@ public abstract class AbstractServiceCall implements ServiceCall {
     /**
      * Extracts an enum parameter.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getEnumParameter(HttpServletRequest request, String name, Class<T> clazz) {
-        String value = getStringParameter(request, name);
-        if ((value == null) || (value.length() == 0)) {
-            return null;
-        }
-
-        try {
-            Method m = clazz.getMethod("fromValue", new Class[] { String.class });
-            return (T) m.invoke(null, new Object[] { value });
-        } catch (Exception e) {
-            if (e instanceof InvocationTargetException && e.getCause() instanceof IllegalArgumentException) {
-                throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
-            }
-
-            throw new CmisRuntimeException(e.getMessage(), e);
-        }
+    public <T extends Enum<T>> T getEnumParameter(HttpServletRequest request, String name, Class<T> clazz) {
+        return CmisEnumHelper.fromValue(getStringParameter(request, name), clazz);
     }
 
     /**

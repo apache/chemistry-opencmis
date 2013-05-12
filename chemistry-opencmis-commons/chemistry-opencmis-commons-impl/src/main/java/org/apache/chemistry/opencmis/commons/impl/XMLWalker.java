@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
 import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.skip;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -230,23 +229,8 @@ public abstract class XMLWalker<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends Enum<E>> E readEnum(final XMLStreamReader parser, final Class<E> clazz) throws XMLStreamException {
-        String value = readText(parser);
-        if (value == null) {
-            return null;
-        }
-
-        try {
-            Method m = clazz.getMethod("fromValue", String.class);
-            return (E) m.invoke(null, value);
-        } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
-                return null;
-            } else {
-                throw new CmisInvalidArgumentException("Invalid enum value!", e);
-            }
-        }
+        return CmisEnumHelper.fromValue(readText(parser), clazz);
     }
 
     protected abstract T prepareTarget(XMLStreamReader parser, QName name) throws XMLStreamException;

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -101,8 +102,14 @@ public class MultiFilingService {
                     VersioningState.class);
 
             // create
-            String newObjectId = service.create(repositoryId, parser.getProperties(), null, parser.getContentStream(),
-                    versioningState, parser.getPolicyIds(), null);
+            ContentStream contentStream = parser.getContentStream();
+            String newObjectId = null;
+            try {
+                newObjectId = service.create(repositoryId, parser.getProperties(), null, contentStream,
+                        versioningState, parser.getPolicyIds(), null);
+            } finally {
+                closeContentStream(contentStream);
+            }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
             if (objectInfo == null) {

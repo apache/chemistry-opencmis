@@ -2918,42 +2918,12 @@ public final class JSONConverter {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> T getEnum(final Map<String, Object> json, final String key, final Class<T> clazz) {
-        String value = getString(json, key);
-        if (value == null) {
-            return null;
-        }
-
-        try {
-            Method m = clazz.getMethod("fromValue", String.class);
-            return (T) m.invoke(null, value);
-        } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
-                return null;
-            } else {
-                throw new CmisRuntimeException("Could not parse enum value!", e);
-            }
-        }
+        return CmisEnumHelper.fromValue(getString(json, key), clazz);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> T getIntEnum(final Map<String, Object> json, final String key,
             final Class<T> clazz) {
-        BigInteger value = getInteger(json, key);
-        if (value == null) {
-            return null;
-        }
-
-        try {
-            Method m = clazz.getMethod("fromValue", BigInteger.class);
-            return (T) m.invoke(null, value);
-        } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
-                return null;
-            } else {
-                throw new CmisRuntimeException("Could not parse enum value!", e);
-            }
-        }
+        return CmisEnumHelper.fromValue(getInteger(json, key), clazz);
     }
 }
