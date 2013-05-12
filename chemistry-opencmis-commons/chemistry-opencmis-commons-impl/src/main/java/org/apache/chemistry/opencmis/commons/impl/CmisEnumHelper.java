@@ -52,7 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 public class CmisEnumHelper {
 
     @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>> E fromValue(final String value, final Class<E> clazz) {
+    public static <E extends Enum<?>> E fromValue(final String value, final Class<E> clazz) {
         if (value == null || value.length() == 0) {
             return null;
         }
@@ -113,7 +113,7 @@ public class CmisEnumHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>> E fromValue(final BigInteger value, final Class<E> clazz) {
+    public static <E extends Enum<?>> E fromValue(final BigInteger value, final Class<E> clazz) {
         if (value == null) {
             return null;
         }
