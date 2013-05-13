@@ -57,4 +57,22 @@ public class ObjectIdImpl implements ObjectId, Serializable {
     public String toString() {
         return "Object Id: " + id;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return id.equals(((ObjectIdImpl) obj).id);
+    }
 }
