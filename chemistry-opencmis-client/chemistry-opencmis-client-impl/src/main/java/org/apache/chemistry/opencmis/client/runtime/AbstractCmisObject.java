@@ -682,4 +682,18 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             writeUnlock();
         }
     }
+
+    @Override
+    public String toString() {
+        readLock();
+        try {
+            if (objectType == null) {
+                return "<unknown>";
+            }
+
+            return objectType.getBaseTypeId() + " (" + objectType.getId() + "): " + getId();
+        } finally {
+            readUnlock();
+        }
+    }
 }
