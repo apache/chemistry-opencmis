@@ -366,9 +366,9 @@ public class ClientFrame extends JFrame implements WindowListener {
                 itemMenuItem.setEnabled(model.supportsItems());
                 relationshipMenuItem.setEnabled(model.supportsRelationships());
 
-                Object user = clientSession.getSessionParameters().get(SessionParameter.USER);
+                String user = clientSession.getSessionParameters().get(SessionParameter.USER);
                 if (user != null) {
-                    user = " - (" + user.toString() + ")";
+                    user = " - (" + user + ")";
                 } else {
                     user = "";
                 }

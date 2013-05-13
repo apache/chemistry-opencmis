@@ -64,6 +64,7 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -71,13 +72,17 @@ import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Rendition;
+import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
@@ -628,9 +633,27 @@ public class ClientHelper {
         try {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            Console console = new Console(parent.getClass().getClassLoader());
-            console.setVariable("session", model.getClientSession().getSession());
-            console.setVariable("binding", model.getClientSession().getSession().getBinding());
+            final Session groovySession = model.getClientSession().getSession();
+            final BindingType bindingType = BindingType.fromValue(model.getClientSession().getSessionParameters()
+                    .get(SessionParameter.BINDING_TYPE));
+            final String user = model.getClientSession().getSessionParameters().get(SessionParameter.USER);
+            final String title = "GroovyConsole - Repsository: " + groovySession.getRepositoryInfo().getId();
+
+            final Console console = new Console(parent.getClass().getClassLoader()) {
+                @Override
+                public void updateTitle() {
+                    JFrame frame = (JFrame) getFrame();
+
+                    if (getScriptFile() != null) {
+                        frame.setTitle(((File) getScriptFile()).getName() + (getDirty() ? " * " : "") + " - " + title);
+                    } else {
+                        frame.setTitle(title);
+                    }
+                }
+            };
+
+            console.setVariable("session", groovySession);
+            console.setVariable("binding", groovySession.getBinding());
 
             console.run();
 
@@ -645,6 +668,20 @@ public class ClientHelper {
                     new URI("http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc", new URI(
                     "http://chemistry.apache.org/java/0.8.0/maven/apidocs/"));
+            cmisMenu.addSeparator();
+            JMenuItem menuItem = new JMenuItem("CMIS Session Details");
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AttributeSet style = console.getOutputStyle();
+                    console.clearOutput();
+                    console.appendOutputNl("Repository id:   " + groovySession.getRepositoryInfo().getId(), style);
+                    console.appendOutputNl("Repository name: " + groovySession.getRepositoryInfo().getName(), style);
+                    console.appendOutputNl("Binding:         " + bindingType, style);
+                    console.appendOutputNl("User:            " + user, style);
+                }
+            });
+            cmisMenu.add(menuItem);
 
             console.getInputArea().setText(readFileAndRemoveHeader(file));
 
