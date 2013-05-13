@@ -55,7 +55,7 @@
 
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/chemistry/opencmis/trunk</connection>
-        <developerConnection>scn:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</developerConnection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</developerConnection>
         <url>http://svn.apache.org/viewvc/chemistry/opencmis/trunk</url>
     </scm>
 
@@ -532,7 +532,7 @@
                       <group>
                           <title>OpenCMIS Bridge</title>
                           <packages>org.apache.chemistry.opencmis.bridge*</packages>
-                      </group>                 
+                      </group>
                       <group>
                           <title>OpenCMIS TCK</title>
                           <packages>org.apache.chemistry.opencmis.tck*</packages>
