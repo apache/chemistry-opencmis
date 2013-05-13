@@ -19,7 +19,476 @@
 package org.apache.chemistry.opencmis.commons;
 
 /**
- * Collection of session parameters.
+ * Session parameter constants.
+ * 
+ * <table border="2" rules="all" cellpadding="4">
+ * <tr>
+ * <th>Constant</th>
+ * <th>Description</th>
+ * <th>Binding</th>
+ * <th>Value</th>
+ * <th>Required</th>
+ * <th>Default</th>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>General settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #BINDING_TYPE}</td>
+ * <td>Defines the binding to use for the session</td>
+ * <td>all</td>
+ * <td>"atompub", "webservices", "browser", "local", "custom"</td>
+ * <td>yes</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #BINDING_SPI_CLASS}</td>
+ * <td>Binding implementation class</td>
+ * <td>all</td>
+ * <td>class name</td>
+ * <td>Custom binding: yes<br>
+ * all other binding: no</td>
+ * <td>depends on {@link #BINDING_TYPE}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #REPOSITORY_ID}</td>
+ * <td>Repository ID</td>
+ * <td>all</td>
+ * <td>repository id</td>
+ * <td>SessionFactory.createSession(): yes<br>
+ * SessionFactory.getRepositories(): no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #LOCALE_ISO639_LANGUAGE}</td>
+ * <td>Language code sent to server</td>
+ * <td>all</td>
+ * <td>ISO 639 code</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #LOCALE_ISO3166_COUNTRY}</td>
+ * <td>Country code sent to server if language code is set</td>
+ * <td>all</td>
+ * <td>ISO 3166 code</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <tr>
+ * <td>{@link #OBJECT_FACTORY_CLASS}</td>
+ * <td>Object factory implementation class</td>
+ * <td>all</td>
+ * <td>class name</td>
+ * <td>no</td>
+ * <td>org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl
+ * </td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>Authentication settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #USER}</td>
+ * <td>User name (used by the standard authentication provider)</td>
+ * <td>all</td>
+ * <td>user name</td>
+ * <td>depends on the server</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #PASSWORD}</td>
+ * <td>Password (used by the standard authentication provider)</td>
+ * <td>all</td>
+ * <td>password</td>
+ * <td>depends on the server</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #AUTHENTICATION_PROVIDER_CLASS}</td>
+ * <td>Authentication Provider class</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>class name</td>
+ * <td>no</td>
+ * <td>org.apache.chemistry.opencmis.client.bindings.spi.
+ * StandardAuthenticationProvider</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #AUTH_HTTP_BASIC}</td>
+ * <td>Switch to turn HTTP basic authentication on or off</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>depends on {@link #BINDING_TYPE}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #AUTH_SOAP_USERNAMETOKEN}</td>
+ * <td>Switch to turn UsernameTokens on or off</td>
+ * <td>Web Services</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>true</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>HTTP and network settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #HTTP_INVOKER_CLASS}</td>
+ * <td>HTTP invoker class</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>class name</td>
+ * <td>no</td>
+ * <td>org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #COMPRESSION}</td>
+ * <td>Switch to turn HTTP response compression on or off</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>false</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CLIENT_COMPRESSION}</td>
+ * <td>Switch to turn HTTP request compression on or off</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>false</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #COOKIES}</td>
+ * <td>Switch to turn cookie support on or off</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>false</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #HEADER}</td>
+ * <td>HTTP header</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>header header</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #PROXY_USER}</td>
+ * <td>Proxy user (used by the standard authentication provider)</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>user name</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #PROXY_PASSWORD}</td>
+ * <td>Proxy password (used by the standard authentication provider)</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>password</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CONNECT_TIMEOUT}</td>
+ * <td>HTTP connect timeout</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>time in milliseconds</td>
+ * <td>no</td>
+ * <td>JVM default</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #READ_TIMEOUT}</td>
+ * <td>HTTP read timeout</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>time in milliseconds</td>
+ * <td>no</td>
+ * <td>JVM default</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>Cache settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_CLASS}</td>
+ * <td>Cache implementation class</td>
+ * <td>all</td>
+ * <td>class name</td>
+ * <td>no</td>
+ * <td>org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_SIZE_OBJECTS}</td>
+ * <td>Object cache size</td>
+ * <td>all</td>
+ * <td>number of object entries</td>
+ * <td>no</td>
+ * <td>1000</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_TTL_OBJECTS}</td>
+ * <td>Object cache time-to-live</td>
+ * <td>all</td>
+ * <td>time in milliseconds</td>
+ * <td>no</td>
+ * <td>7200000 (2 hours)</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_SIZE_PATHTOID}</td>
+ * <td>Path-to-id cache size</td>
+ * <td>all</td>
+ * <td>number of path to object link entries</td>
+ * <td>no</td>
+ * <td>1000</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_PATH_OMIT}</td>
+ * <td>Turn off path-to-id cache</td>
+ * <td>all</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>false</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_SIZE_REPOSITORIES}</td>
+ * <td>Repository info cache size</td>
+ * <td>all</td>
+ * <td>number of repository info entries</td>
+ * <td>no</td>
+ * <td>10</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_SIZE_TYPES}</td>
+ * <td>Type definition cache size</td>
+ * <td>all</td>
+ * <td>number of type definition entries</td>
+ * <td>no</td>
+ * <td>100</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #CACHE_SIZE_LINKS}</td>
+ * <td>AtomPub link cache size</td>
+ * <td>AtomPub</td>
+ * <td>number of link entries</td>
+ * <td>no</td>
+ * <td>400</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>AtomPub Binding settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #ATOMPUB_URL}</td>
+ * <td>AtomPub service document URL</td>
+ * <td>AtomPub</td>
+ * <td>URL</td>
+ * <td>yes</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>Web Services Binding settings</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_REPOSITORY_SERVICE}</td>
+ * <td>Repository Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_REPOSITORY_SERVICE} or
+ * {@link #WEBSERVICES_REPOSITORY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_REPOSITORY_SERVICE_ENDPOINT}</td>
+ * <td>Repository Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_REPOSITORY_SERVICE} or
+ * {@link #WEBSERVICES_REPOSITORY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_NAVIGATION_SERVICE}</td>
+ * <td>Navigation Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_NAVIGATION_SERVICE} or
+ * {@link #WEBSERVICES_NAVIGATION_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_NAVIGATION_SERVICE_ENDPOINT}</td>
+ * <td>Navigation Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_NAVIGATION_SERVICE} or
+ * {@link #WEBSERVICES_NAVIGATION_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_OBJECT_SERVICE}</td>
+ * <td>Object Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_OBJECT_SERVICE} or
+ * {@link #WEBSERVICES_OBJECT_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_OBJECT_SERVICE_ENDPOINT}</td>
+ * <td>Object Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_OBJECT_SERVICE} or
+ * {@link #WEBSERVICES_OBJECT_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_VERSIONING_SERVICE}</td>
+ * <td>Versioning Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_VERSIONING_SERVICE} or
+ * {@link #WEBSERVICES_VERSIONING_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_VERSIONING_SERVICE_ENDPOINT}</td>
+ * <td>Versioning Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_VERSIONING_SERVICE} or
+ * {@link #WEBSERVICES_VERSIONING_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_DISCOVERY_SERVICE}</td>
+ * <td>Discovery Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_DISCOVERY_SERVICE} or
+ * {@link #WEBSERVICES_DISCOVERY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_DISCOVERY_SERVICE_ENDPOINT}</td>
+ * <td>Discovery Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_DISCOVERY_SERVICE} or
+ * {@link #WEBSERVICES_DISCOVERY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_RELATIONSHIP_SERVICE}</td>
+ * <td>Relationship Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_RELATIONSHIP_SERVICE} or
+ * {@link #WEBSERVICES_RELATIONSHIP_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_RELATIONSHIP_SERVICE_ENDPOINT}</td>
+ * <td>Relationship Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_DISCOVERY_SERVICE} or
+ * {@link #WEBSERVICES_RELATIONSHIP_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_MULTIFILING_SERVICE}</td>
+ * <td>Multifiling Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_MULTIFILING_SERVICE} or
+ * {@link #WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT}</td>
+ * <td>Multifiling Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_MULTIFILING_SERVICE} or
+ * {@link #WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_POLICY_SERVICE}</td>
+ * <td>Policy Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_POLICY_SERVICE} or
+ * {@link #WEBSERVICES_POLICY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_POLICY_SERVICE_ENDPOINT}</td>
+ * <td>Policy Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_POLICY_SERVICE} or
+ * {@link #WEBSERVICES_POLICY_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_ACL_SERVICE}</td>
+ * <td>ACL Service WSDL URL</td>
+ * <td>Web Services</td>
+ * <td>WSDL URL</td>
+ * <td>either {@link #WEBSERVICES_ACL_SERVICE} or
+ * {@link #WEBSERVICES_ACL_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_ACL_SERVICE_ENDPOINT}</td>
+ * <td>ACL Service endpoint URL</td>
+ * <td>Web Services</td>
+ * <td>Endpoint URL</td>
+ * <td>either {@link #WEBSERVICES_ACL_SERVICE} or
+ * {@link #WEBSERVICES_ACL_SERVICE_ENDPOINT} must be set</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_MEMORY_THRESHOLD}</td>
+ * <td>Documents smaller than the threshold are kept in main memory, larger
+ * documents are written to a temporary file</td>
+ * <td>Web Services</td>
+ * <td>size in bytes</td>
+ * <td>no</td>
+ * <td>4194304 (4MB)</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>Browser Binding</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #BROWSER_URL}</td>
+ * <td>Browser binding service document URL</td>
+ * <td>Browser</td>
+ * <td>URL</td>
+ * <td>yes</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #BROWSER_SUCCINCT}</td>
+ * <td>Defines if properties should be sent in the succinct format</td>
+ * <td>Browser</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"true"</td>
+ * </tr>
+ * <tr>
+ * <td colspan="6"><b>Local Binding</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #LOCAL_FACTORY}</td>
+ * <td>Class name of the local service factory (if client and server reside in
+ * the same JVM)</td>
+ * <td>Local</td>
+ * <td>class name</td>
+ * <td>yes</td>
+ * <td>-</td>
+ * </tr>
+ * </table>
  */
 public final class SessionParameter {
 
@@ -66,7 +535,7 @@ public final class SessionParameter {
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
-    
+
     public static final String WEBSERVICES_JAXWS_IMPL = "org.apache.chemistry.opencmis.binding.webservices.jaxws.impl";
 
     /** URL of the Browser Binding entry point. */
