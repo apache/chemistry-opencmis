@@ -70,7 +70,7 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
         if (renditionDocumentId == null) {
             return null;
         }
-        CmisObject rendDoc = session.getObject(session.createObjectId(renditionDocumentId), context);
+        CmisObject rendDoc = session.getObject(renditionDocumentId, context);
         if (!(rendDoc instanceof Document)) {
             return null;
         }
@@ -106,8 +106,8 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
         }
         long length = bigLength == null ? -1 : bigLength.longValue();
 
-        return session.getObjectFactory().createContentStream(filename, length,
-                contentStream.getMimeType(), contentStream.getStream());
+        return session.getObjectFactory().createContentStream(filename, length, contentStream.getMimeType(),
+                contentStream.getStream());
     }
 
 }
