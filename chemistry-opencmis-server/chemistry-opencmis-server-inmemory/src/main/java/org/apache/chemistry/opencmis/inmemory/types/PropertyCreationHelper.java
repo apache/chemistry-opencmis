@@ -495,7 +495,7 @@ public final class PropertyCreationHelper {
         }
         prop.setDescription("This is a " + prop.getDisplayName() + " property.");
         prop.setLocalName(id);
-        prop.setLocalNamespace("local");
+        prop.setLocalNamespace(null);
         prop.setQueryName(id);
         prop.setIsInherited(false);
         prop.setCardinality(card);

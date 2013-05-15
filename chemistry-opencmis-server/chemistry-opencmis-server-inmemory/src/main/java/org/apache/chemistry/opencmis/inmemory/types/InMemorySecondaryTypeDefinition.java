@@ -85,7 +85,7 @@ public class InMemorySecondaryTypeDefinition extends SecondaryTypeDefinitionImpl
         // create some suitable defaults for convenience
         setDescription("Description of " + getDisplayName() + " Type");
         setLocalName(id);
-        setLocalNamespace("local");
+        setLocalNamespace(null);
         setQueryName(id);
         setIsControllableAcl(true);
         setIsControllablePolicy(false);
