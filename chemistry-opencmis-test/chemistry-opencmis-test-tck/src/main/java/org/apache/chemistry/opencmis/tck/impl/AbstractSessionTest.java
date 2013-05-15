@@ -1279,7 +1279,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         f = createResult(FAILURE, "Content MIME types don't match!");
-        addResult(results, assertEquals(contentMimeType, docMimeType, null, f));
+        addResult(results, assertEquals(docMimeType, contentMimeType, null, f));
 
         if (contentStream.getMimeType() != null) {
             if (contentMimeType.equals(docMimeType)) {
