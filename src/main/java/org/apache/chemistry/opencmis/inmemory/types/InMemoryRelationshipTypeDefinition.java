@@ -91,7 +91,7 @@ public class InMemoryRelationshipTypeDefinition extends RelationshipTypeDefiniti
         // create some suitable defaults for convenience
         setDescription("Description of " + getDisplayName() + " Type");
         setLocalName(id);
-        setLocalNamespace("local");
+        setLocalNamespace(null);
         setQueryName(id);
         setIsControllableAcl(false);
         setIsControllablePolicy(false);
