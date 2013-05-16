@@ -157,7 +157,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
                 policies = new ArrayList<Policy>();
                 for (String pid : objectData.getPolicyIds().getPolicyIds()) {
-                    CmisObject policy = session.getObject(getSession().createObjectId(pid));
+                    CmisObject policy = session.getObject(pid);
                     if (policy instanceof Policy) {
                         policies.add((Policy) policy);
                     }

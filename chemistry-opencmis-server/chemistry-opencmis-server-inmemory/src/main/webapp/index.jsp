@@ -32,6 +32,19 @@
 <%@ page import="org.apache.chemistry.opencmis.inmemory.ConfigConstants" %>
 <%@ page import="org.apache.chemistry.opencmis.inmemory.ConfigurationSettings" %>
 
+<%!
+    private static final String OPENCMIS_VERSION;
+
+    static {
+        Package p = Package.getPackage("org.apache.chemistry.opencmis.inmemory");
+        if (p == null) {
+            OPENCMIS_VERSION = "(unofficial dev or snapshot build)";
+        } else {
+            String ver = p.getImplementationVersion();
+            OPENCMIS_VERSION = (null == ver ? "(unofficial dev or snapshot build)" : ver);
+        }
+    }
+%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -65,16 +78,33 @@
 	You have to use a CMIS client to use this application. An example for
 	such a client is the <a href="http://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html"> CMIS Workbench.</a>
 </p>
+<table>
+<tr><th>Server-Name</th><td>Apache-Chemistry-OpenCMIS-InMemory</td></tr>
+<tr>
+  <th>Version</th>
+  <td>
+<% 
+       out.println(OPENCMIS_VERSION);
+%>
+  </td>
+</tr>
+</table>
 
 <h2>Access Information</h2>
+<h3>CMIS 1.1</h3>
 <p>
-WS (SOAP) Binding: <a href="services/RepositoryService"> All Services</a>
-</p>
-<p>
-AtomPub Binding: <a href="atom"> 
+WS (SOAP) Binding: <a href="services11/cmis?wsdl">
 <% 
 String reqStr = request.getRequestURL().toString();
-out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom");
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "services11/cmis?wsdl");
+%>
+</a>
+</p>
+<p>
+AtomPub Binding: <a href="atom11"> 
+<% 
+reqStr = request.getRequestURL().toString();
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom11");
 %>
 </a>
 </p>
@@ -85,8 +115,27 @@ out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "browser");
 %>
 </a>
 </p>
+<h3>CMIS 1.0</h3>
 <p>
-Authentication: Basic Authentication (user name and password are arbitrary)<br>
+WS (SOAP) Binding: <a href="services/cmis?wsdl">
+<% 
+reqStr = request.getRequestURL().toString();
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "services/cmis?wsdl");
+%>
+</a>
+</p>
+<p>
+AtomPub Binding: <a href="atom"> 
+<% 
+reqStr = request.getRequestURL().toString();
+out.println(reqStr.substring(0, reqStr.lastIndexOf('/')+1) + "atom");
+%>
+</a>
+</p>
+<p>
+<h3>Authentication</h3>
+<p>
+Basic Authentication (user name and password are arbitrary)<br>
 Note: Authentication is optional and only informational. User names are stored 
 in properties (createdBy, etc.), password is not required. The server does 
 not perform any kind of secure authentication.

@@ -51,12 +51,23 @@
 <p>The ${artifactId} server is a CMIS server based on Apache Chemistry OpenCMIS.</p>
 <p>You need a CMIS client to access this server. Download the <a href="http://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html">CMIS Workbench</a>.</p>
 
-<h2>Access Information</h2>
+<h2>Access Informatio</h2>
 
-<p>Web Services Binding: <a href="services/RepositoryService">All Services</a></p>
-<p>AtomPub Binding: <a href="atom">Service Document</a></p>
+<h3>CMIS 1.1</h3>
+
+<p>Web Services Binding: <a href="services11/cmis?wsdl">WSDL</a></p>
+<p>AtomPub Binding: <a href="atom11">Service Document</a></p>
 <p>Browser Binding: <a href="browser">Service Document</a></p>
+
+<h3>CMIS 1.0</h3>
+
+<p>Web Services Binding: <a href="services/cmis?wsdl">WSDL</a></p>
+<p>AtomPub Binding: <a href="atom">Service Document</a></p>
+
+<h3>Authentication</h3>
+
 <p>No authentication required.</p>
+
 
 <h2>More Information</h2>
 
@@ -64,7 +75,7 @@
 <p><a href="http://www.oasis-open.org/committees/cmis">CMIS Technical Committees at OASIS</a></p>
 
 <hr/>
-This software is powered by <a href="http://chemistry.apache.org/">Apache Chemistry.</a>
+This software is powered by <a href="http://chemistry.apache.org/">Apache Chemistry</a>.
 <br/>
 
 </body>

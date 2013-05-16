@@ -394,7 +394,7 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             Acl removeAces, List<String> policyIds, ExtensionsData extension) {
 
         if (policyIds != null && policyIds.size() > 0)
-            throw new CmisConstraintException("Applying policies to poilicies is not supported.");
+            throw new CmisConstraintException("Applying policies to policies is not supported.");
         if (folderId != null && folderId.length() > 0)
             throw new CmisConstraintException("Policies cannot be created in folders.");
         if (addAces != null || removeAces != null)

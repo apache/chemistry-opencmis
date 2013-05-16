@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
@@ -174,7 +173,7 @@ public class SessionImpl implements Session {
         cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
     }
 
-    private static Locale determineLocale(Map<String, String> parameters) {
+    private Locale determineLocale(Map<String, String> parameters) {
         Locale locale = null;
 
         String language = parameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
@@ -487,7 +486,7 @@ public class SessionImpl implements Session {
     public Folder getRootFolder(OperationContext context) {
         String rootFolderId = getRepositoryInfo().getRootFolderId();
 
-        CmisObject rootFolder = getObject(createObjectId(rootFolderId), context);
+        CmisObject rootFolder = getObject(rootFolderId, context);
         if (!(rootFolder instanceof Folder)) {
             throw new CmisRuntimeException("Root folder object is not a folder!");
         }
@@ -689,14 +688,6 @@ public class SessionImpl implements Session {
 
     public QueryStatement createQueryStatement(final String statement) {
         return new QueryStatementImpl(this, statement);
-    }
-
-    public String setExtensionContext(String context) {
-        throw new CmisRuntimeException("not implemented");
-    }
-
-    public ExtensionHandler setExtensionHandler(String context, ExtensionHandler extensionHandler) {
-        throw new CmisRuntimeException("not implemented");
     }
 
     /**
@@ -943,7 +934,7 @@ public class SessionImpl implements Session {
                 List<Relationship> page = new ArrayList<Relationship>();
                 if (relList.getObjects() != null) {
                     for (ObjectData rod : relList.getObjects()) {
-                        CmisObject relationship = getObject(createObjectId(rod.getId()), ctxt);
+                        CmisObject relationship = getObject(rod.getId(), ctxt);
                         if (!(relationship instanceof Relationship)) {
                             throw new CmisRuntimeException("Repository returned an object that is not a relationship!");
                         }
