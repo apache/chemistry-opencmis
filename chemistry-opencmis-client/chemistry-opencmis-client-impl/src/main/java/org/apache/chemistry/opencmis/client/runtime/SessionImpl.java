@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.ExtensionHandler;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
@@ -689,14 +688,6 @@ public class SessionImpl implements Session {
 
     public QueryStatement createQueryStatement(final String statement) {
         return new QueryStatementImpl(this, statement);
-    }
-
-    public String setExtensionContext(String context) {
-        throw new CmisRuntimeException("not implemented");
-    }
-
-    public ExtensionHandler setExtensionHandler(String context, ExtensionHandler extensionHandler) {
-        throw new CmisRuntimeException("not implemented");
     }
 
     /**
