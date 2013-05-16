@@ -81,9 +81,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            String id = service.createDocument(repositoryId, convert(properties), folderId, convert(contentStream),
-                    convert(VersioningState.class, versioningState), policies, convert(addAces, null),
-                    convert(removeAces, null), extData);
+            String id = service.createDocument(repositoryId, convert(properties), folderId,
+                    convert(contentStream, false), convert(VersioningState.class, versioningState), policies,
+                    convert(addAces, null), convert(removeAces, null), extData);
 
             if (objectId != null) {
                 objectId.value = id;
@@ -416,7 +416,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             ExtensionsData extData = convertExtensionHolder(extension);
 
             service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
-                    convert(contentStream), extData);
+                    convert(contentStream, false), extData);
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
@@ -439,7 +439,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, convert(contentStream),
+            service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, convert(contentStream, true),
                     isLastChunk, extData);
 
             setHolderValue(objectIdHolder, objectId);

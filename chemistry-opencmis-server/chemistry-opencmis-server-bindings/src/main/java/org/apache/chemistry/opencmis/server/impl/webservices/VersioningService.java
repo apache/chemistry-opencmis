@@ -88,7 +88,7 @@ public class VersioningService extends AbstractService implements VersioningServ
             org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
             ExtensionsData extData = convertExtensionHolder(extension);
 
-            service.checkIn(repositoryId, objectIdHolder, major, convert(properties), convert(contentStream),
+            service.checkIn(repositoryId, objectIdHolder, major, convert(properties), convert(contentStream, false),
                     checkinComment, policies, convert(addAces, null), convert(removeAces, null), extData);
 
             setHolderValue(objectIdHolder, objectId);

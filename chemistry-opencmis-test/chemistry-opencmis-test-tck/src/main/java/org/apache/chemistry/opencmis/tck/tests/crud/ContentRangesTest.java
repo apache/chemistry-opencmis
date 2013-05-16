@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.PartialContentStream;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -60,6 +61,40 @@ public class ContentRangesTest extends AbstractSessionTest {
             String excerpt;
             ContentStream content;
 
+            // no offset, no length -> full content
+            try {
+                content = doc.getContentStream(null, null);
+                excerpt = getStringFromContentStream(content);
+
+                if (CONTENT.equals(excerpt)) {
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(FAILURE,
+                            "Retrieved stream is marked as partial stream "
+                                    + "although the full stream {offset=null, length=null} was expected!")));
+                } else {
+                    addResult(createResult(FAILURE, "Retrieved stream doesn't match the document content!"));
+                }
+            } catch (Exception e) {
+                addResult(createResult(FAILURE,
+                        "Unexpected exception while retrieving full stream {offset=null, length=null}: " + e, e, false));
+            }
+
+            // offset = 0, no length -> full content
+            try {
+                content = doc.getContentStream(BigInteger.ZERO, null);
+                excerpt = getStringFromContentStream(content);
+
+                if (CONTENT.equals(excerpt)) {
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is marked as partial stream "
+                                    + "although the full stream {offset=0, length=null} was expected!")));
+                } else {
+                    addResult(createResult(FAILURE, "Retrieved stream doesn't match the document content!"));
+                }
+            } catch (Exception e) {
+                addResult(createResult(FAILURE,
+                        "Unexpected exception while retrieving full stream {offset=0, length=null}: " + e, e, false));
+            }
+
             // offset, no length
             try {
                 content = doc.getContentStream(BigInteger.valueOf(3), null);
@@ -68,9 +103,14 @@ public class ContentRangesTest extends AbstractSessionTest {
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=3, length=null}! Content ranges supported?"));
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is marked as partial stream, " + "although the full stream is returned!")));
                 } else {
                     f = createResult(FAILURE, "Retrieved stream excerpt {offset=3, length=null} doesn't match!");
                     addResult(assertEquals(CONTENT.substring(3), excerpt, null, f));
+                    addResult(assertIsTrue(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is not marked as partial stream. "
+                                    + "(AtomPub and Browser Binding should return the HTTP status code 206.)")));
                 }
             } catch (Exception e) {
                 addResult(createResult(FAILURE,
@@ -85,9 +125,14 @@ public class ContentRangesTest extends AbstractSessionTest {
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=null, length=12}! Content ranges supported?"));
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is marked as partial stream, " + "although the full stream is returned!")));
                 } else {
                     f = createResult(FAILURE, "Retrieved stream excerpt {offset=null, length=12} doesn't match!");
                     addResult(assertEquals(CONTENT.substring(0, 12), excerpt, null, f));
+                    addResult(assertIsTrue(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is not marked as partial stream. "
+                                    + "(AtomPub and Browser Binding should return the HTTP status code 206.)")));
                 }
             } catch (Exception e) {
                 addResult(createResult(FAILURE,
@@ -102,9 +147,14 @@ public class ContentRangesTest extends AbstractSessionTest {
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=5, length=17}! Content ranges supported?"));
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is marked as partial stream, " + "although the full stream is returned!")));
                 } else {
                     f = createResult(FAILURE, "Retrieved stream excerpt {offset=5, length=17} doesn't match!");
                     addResult(assertEquals(CONTENT.substring(5, 5 + 17), excerpt, null, f));
+                    addResult(assertIsTrue(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is not marked as partial stream. "
+                                    + "(AtomPub and Browser Binding should return the HTTP status code 206.)")));
                 }
             } catch (Exception e) {
                 addResult(createResult(FAILURE, "Unexpected exception while retrieving stream {offset=5, length=17}: "
@@ -119,9 +169,14 @@ public class ContentRangesTest extends AbstractSessionTest {
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=9, length=123}! Content ranges supported?"));
+                    addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is marked as partial stream, " + "although the full stream is returned!")));
                 } else {
                     f = createResult(FAILURE, "Retrieved stream excerpt {offset=9, length=123} doesn't match!");
                     addResult(assertEquals(CONTENT.substring(9), excerpt, null, f));
+                    addResult(assertIsTrue(content instanceof PartialContentStream, null, createResult(WARNING,
+                            "Retrieved stream is not marked as partial stream. "
+                                    + "(AtomPub and Browser Binding should return the HTTP status code 206.)")));
                 }
             } catch (Exception e) {
                 addResult(createResult(FAILURE, "Unexpected exception while retrieving stream {offset=9, length=123}: "

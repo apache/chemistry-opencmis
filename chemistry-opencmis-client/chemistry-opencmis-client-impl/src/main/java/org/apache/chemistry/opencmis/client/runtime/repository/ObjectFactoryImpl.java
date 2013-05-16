@@ -94,6 +94,7 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
 /**
@@ -197,7 +198,17 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     // content stream
 
     public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream) {
-        return new ContentStreamImpl(filename, (length < 0 ? null : BigInteger.valueOf(length)), mimetype, stream);
+        return createContentStream(filename, length, mimetype, stream, false);
+    }
+
+    public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream,
+            boolean partial) {
+        if (partial) {
+            return new PartialContentStreamImpl(filename, (length < 0 ? null : BigInteger.valueOf(length)), mimetype,
+                    stream);
+        } else {
+            return new ContentStreamImpl(filename, (length < 0 ? null : BigInteger.valueOf(length)), mimetype, stream);
+        }
     }
 
     public ContentStream convertContentStream(ContentStream contentStream) {
