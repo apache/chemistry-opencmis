@@ -327,7 +327,13 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "getContentStream");
 
         try {
-            return convert(port.getContentStream(repositoryId, objectId, streamId, offset, length, convert(extension)));
+            boolean isPartial = false;
+            if ((offset != null && offset.signum() == 1) || length != null) {
+                isPartial = true;
+            }
+
+            return convert(port.getContentStream(repositoryId, objectId, streamId, offset, length, convert(extension)),
+                    isPartial);
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {

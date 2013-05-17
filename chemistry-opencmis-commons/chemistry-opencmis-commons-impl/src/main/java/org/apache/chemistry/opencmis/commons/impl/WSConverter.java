@@ -143,6 +143,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderData
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
@@ -2581,12 +2582,17 @@ public final class WSConverter {
     /**
      * Converts a content stream object.
      */
-    public static ContentStream convert(CmisContentStreamType contentStream) {
+    public static ContentStream convert(CmisContentStreamType contentStream, boolean partial) {
         if (contentStream == null) {
             return null;
         }
 
-        ContentStreamImpl result = new ContentStreamImpl();
+        ContentStreamImpl result;
+        if (partial) {
+            result = new PartialContentStreamImpl();
+        } else {
+            result = new ContentStreamImpl();
+        }
 
         result.setFileName(contentStream.getFilename());
         result.setLength(contentStream.getLength());

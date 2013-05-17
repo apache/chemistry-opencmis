@@ -464,7 +464,7 @@ public class ObjectService {
             }
 
             // set headers
-            if ((offset == null) && (length == null)) {
+            if ((offset == null || offset.signum() == 0) && (length == null)) {
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);

@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.PartialContentStream;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -396,7 +397,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
         // convert and return stream object
         return getSession().getObjectFactory().createContentStream(filename, lengthLong, contentStream.getMimeType(),
-                contentStream.getStream());
+                contentStream.getStream(), contentStream instanceof PartialContentStream);
     }
 
     public Document setContentStream(ContentStream contentStream, boolean overwrite) {

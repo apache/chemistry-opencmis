@@ -42,10 +42,12 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -330,7 +332,6 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
-        ContentStreamImpl result = new ContentStreamImpl();
 
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_CONTENT);
@@ -344,7 +345,20 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
         }
 
-        result.setFileName(null);
+        ContentStreamImpl result;
+        if (resp.getResponseCode() == 206) {
+            result = new PartialContentStreamImpl();
+        } else {
+            result = new ContentStreamImpl();
+        }
+
+        String filename = null;
+        String contentDisposition = resp.getHeader("Content-Disposition");
+        if (contentDisposition != null) {
+            filename = MimeHelper.decodeContentDispositionFilename(contentDisposition);
+        }
+
+        result.setFileName(filename);
         result.setLength(resp.getContentLength());
         result.setMimeType(resp.getContentTypeHeader());
         result.setStream(resp.getStream());

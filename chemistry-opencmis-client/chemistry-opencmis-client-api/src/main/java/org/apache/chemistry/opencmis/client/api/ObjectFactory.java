@@ -90,7 +90,27 @@ public interface ObjectFactory {
     ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream);
 
     /**
-     * Converts a low level {@link ContentStream} object into a high level
+     * Creates an object that implements the {@link ContentStream} interface.
+     * 
+     * @param filename
+     *            the filename, should be set
+     * @param length
+     *            the length of the stream or -1 if the length is unknown
+     * @param mimetype
+     *            the MIME type, if unknown "application/octet-stream" should be
+     *            used
+     * @param stream
+     *            the stream, should not be <code>null</code>
+     * @param partial
+     *            if <code>false</code> the stream represents the full content,
+     *            if <code>true</code> the stream is only a part of the content
+     * 
+     * @return the {@link ContentStream} object
+     */
+    ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream, boolean partial);
+
+    /**
+     * Converts a high level {@link ContentStream} object into a low level
      * {@link ContentStream} object.
      * 
      * @param contentStream
