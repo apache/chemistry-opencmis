@@ -22,6 +22,8 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
 /**
  * Type mutability flags.
+ * 
+ * @cmis 1.1
  */
 public interface TypeMutability extends ExtensionsData {
 
@@ -30,6 +32,8 @@ public interface TypeMutability extends ExtensionsData {
      * 
      * @return <code>true</code> if a sub type can be created,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canCreate();
 
@@ -38,6 +42,8 @@ public interface TypeMutability extends ExtensionsData {
      * 
      * @return <code>true</code> if this type can be updated, <code>false</code>
      *         otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canUpdate();
 
@@ -46,6 +52,8 @@ public interface TypeMutability extends ExtensionsData {
      * 
      * @return <code>true</code> if this type can be deleted, <code>false</code>
      *         otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canDelete();
 }

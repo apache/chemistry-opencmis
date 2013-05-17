@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.commons.data;
 /**
  * A collection of flags that indicate which type attributes can be set at type
  * creation.
+ * 
+ * @cmis 1.1
  */
 public interface NewTypeSettableAttributes extends ExtensionsData {
 
@@ -29,6 +31,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "id" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetId();
 
@@ -37,6 +41,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "localName" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetLocalName();
 
@@ -45,6 +51,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "localNamespace" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetLocalNamespace();
 
@@ -53,6 +61,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "displayName" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetDisplayName();
 
@@ -61,6 +71,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "queryName" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetQueryName();
 
@@ -69,6 +81,7 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "description" attribute can be set,
      *         <code>false</code> otherwise
+     * @cmis 1.1
      */
     Boolean canSetDescription();
 
@@ -77,6 +90,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "creatable" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetCreatable();
 
@@ -85,6 +100,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "fileable" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetFileable();
 
@@ -93,6 +110,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "queryable" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetQueryable();
 
@@ -109,6 +128,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "includedInSupertypeQuery" attribute can
      *         be set, <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetIncludedInSupertypeQuery();
 
@@ -117,6 +138,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "controllablePolicy" attribute can be
      *         set, <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetControllablePolicy();
 
@@ -125,6 +148,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
      * 
      * @return <code>true</code> if the "controllableACL" attribute can be set,
      *         <code>false</code> otherwise
+     * 
+     * @cmis 1.1
      */
     Boolean canSetControllableAcl();
 }

@@ -27,13 +27,17 @@ public interface RelationshipProperties {
 
     /**
      * Returns the source id of this CMIS relationship (CMIS property
-     * <code>cmis:sourceId<code>).
+     * <code>cmis:sourceId</code>).
+     * 
+     * @cmis 1.0
      */
     ObjectId getSourceId(); // cmis:sourceId
 
     /**
      * Returns the target id of this CMIS relationship (CMIS property
-     * <code>cmis:targetId<code>).
+     * <code>cmis:targetId</code>).
+     * 
+     * @cmis 1.0
      */
     ObjectId getTargetId();
 }

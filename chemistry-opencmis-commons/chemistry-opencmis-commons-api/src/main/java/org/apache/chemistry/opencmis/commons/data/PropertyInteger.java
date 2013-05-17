@@ -20,6 +20,9 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.math.BigInteger;
 
+/**
+ * Integer property.
+ */
 public interface PropertyInteger extends PropertyData<BigInteger> {
 
 }

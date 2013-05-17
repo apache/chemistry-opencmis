@@ -24,8 +24,6 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
 /**
  * CMIS Property.
- * <p>
- * Domain Model 2.2.1
  */
 public interface Property<T> extends PropertyData<T> {
 

@@ -23,11 +23,30 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
+/**
+ * List of type definitions.
+ */
 public interface TypeDefinitionList extends ExtensionsData {
 
+    /**
+     * Returns the list of type definitions.
+     */
     List<TypeDefinition> getList();
 
+    /**
+     * Returns whether there more type definitions or not.
+     * 
+     * @return <code>true</code> if there are more type definitions,
+     *         <code>false</code> if there are no more type definitions,
+     *         <code>null</code> if it's unknown
+     */
     Boolean hasMoreItems();
 
+    /**
+     * Returns the total number of type definitions.
+     * 
+     * @return total number of type definitions or <code>null</code> if the
+     *         total number is unknown
+     */
     BigInteger getNumItems();
 }

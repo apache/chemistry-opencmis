@@ -22,6 +22,10 @@ import java.math.BigInteger;
 
 /**
  * CMIS ContentAlreadyExists Exception.
+ * <p>
+ * Intent: The operation attempts to set the content stream for a document that
+ * already has a content stream without explicitly specifying the
+ * "overwriteFlag" parameter.
  */
 public class CmisContentAlreadyExistsException extends CmisBaseException {
 

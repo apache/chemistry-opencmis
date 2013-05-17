@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS UpdateConflict Exception.
+ * <p>
+ * Intent: The operation is attempting to update an object that is no longer
+ * current (as determined by the repository).
  */
 public class CmisUpdateConflictException extends CmisBaseException {
 

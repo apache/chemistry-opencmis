@@ -20,9 +20,24 @@ package org.apache.chemistry.opencmis.commons.definitions;
 
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
+/**
+ * Document Type Definition.
+ * 
+ * @cmis 1.0
+ */
 public interface DocumentTypeDefinition extends TypeDefinition {
 
+    /**
+     * Returns whether objects of this type are versionable or not.
+     * 
+     * @cmis 1.0
+     */
     Boolean isVersionable();
 
+    /**
+     * Returns if a content stream must be set.
+     * 
+     * @cmis 1.0
+     */
     ContentStreamAllowed getContentStreamAllowed();
 }

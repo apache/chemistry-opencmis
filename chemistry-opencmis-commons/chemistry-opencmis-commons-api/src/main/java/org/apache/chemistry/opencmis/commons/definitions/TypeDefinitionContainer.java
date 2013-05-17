@@ -22,9 +22,19 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
+/**
+ * Type Definition Container. This class is used to build a tree of type
+ * definitions.
+ */
 public interface TypeDefinitionContainer extends ExtensionsData {
 
+    /**
+     * Returns the type definition at this level.
+     */
     TypeDefinition getTypeDefinition();
 
+    /**
+     * Returns direct children of the type definition at this level.
+     */
     List<TypeDefinitionContainer> getChildren();
 }

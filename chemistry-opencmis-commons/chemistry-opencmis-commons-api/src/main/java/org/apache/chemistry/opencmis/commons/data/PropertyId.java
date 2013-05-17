@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * Id property.
+ */
 public interface PropertyId extends PropertyData<String> {
 
 }

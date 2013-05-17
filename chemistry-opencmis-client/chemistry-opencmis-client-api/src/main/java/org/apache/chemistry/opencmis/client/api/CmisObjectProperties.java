@@ -61,60 +61,80 @@ public interface CmisObjectProperties {
     /**
      * Returns the name of this CMIS object (CMIS property
      * <code>cmis:name</code>).
+     * 
+     * @cmis 1.0
      */
     String getName();
 
     /**
      * Returns the description of this CMIS object (CMIS property
      * <code>cmis:description</code>).
+     * 
+     * @cmis 1.1
      */
     String getDescription();
 
     /**
      * Returns the user who created this CMIS object (CMIS property
      * <code>cmis:createdBy</code>).
+     * 
+     * @cmis 1.0
      */
     String getCreatedBy();
 
     /**
      * Returns the timestamp when this CMIS object has been created (CMIS
      * property <code>cmis:creationDate</code>).
+     * 
+     * @cmis 1.0
      */
     GregorianCalendar getCreationDate();
 
     /**
      * Returns the user who modified this CMIS object (CMIS property
      * <code>cmis:lastModifiedBy</code>).
+     * 
+     * @cmis 1.0
      */
     String getLastModifiedBy();
 
     /**
      * Returns the timestamp when this CMIS object has been modified (CMIS
      * property <code>cmis:lastModificationDate</code>).
+     * 
+     * @cmis 1.0
      */
     GregorianCalendar getLastModificationDate();
 
     /**
      * Returns the id of the base type of this CMIS object (CMIS property
      * <code>cmis:baseTypeId</code>).
+     * 
+     * @cmis 1.0
      */
     BaseTypeId getBaseTypeId();
 
     /**
      * Returns the base type of this CMIS object (object type identified by
      * <code>cmis:baseTypeId</code>).
+     * 
+     * @cmis 1.0
      */
     ObjectType getBaseType();
 
     /**
      * Returns the type of this CMIS object (object type identified by
      * <code>cmis:objectTypeId</code>).
+     * 
+     * @cmis 1.0
      */
     ObjectType getType();
 
     /**
      * Returns the secondary types of this CMIS object (object types identified
      * by <code>cmis:secondaryObjectTypeIds</code>).
+     * 
+     * @cmis 1.1
      */
     List<SecondaryType> getSecondaryTypes();
 
@@ -127,6 +147,8 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the change token (CMIS property <code>cmis:changeToken</code>).
+     * 
+     * @cmis 1.0
      */
     String getChangeToken();
 }

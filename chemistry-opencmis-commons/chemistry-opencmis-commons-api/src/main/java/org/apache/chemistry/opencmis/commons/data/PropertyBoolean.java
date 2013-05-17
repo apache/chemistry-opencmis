@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * Boolean property.
+ */
 public interface PropertyBoolean extends PropertyData<Boolean> {
 
 }

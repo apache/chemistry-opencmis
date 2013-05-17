@@ -18,5 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Property definition of an Id property.
+ */
 public interface PropertyIdDefinition extends PropertyDefinition<String> {
 }

@@ -538,7 +538,43 @@
                           <packages>org.apache.chemistry.opencmis.tck*</packages>
                       </group>
                     </groups>
-                    <excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.dataobjects:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.jcr:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.workbench:org.apache.chemistry.opencmis.commander:org.apache.chemistry.opencmis.client.osgi</excludePackageNames>
+                    <!--<excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.dataobjects:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.jcr:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.workbench:org.apache.chemistry.opencmis.commander:org.apache.chemistry.opencmis.client.osgi</excludePackageNames>-->
+                    <sourceFileExcludes>
+                      <exclude>**/CmisQl*</exclude>
+                      <exclude>**/CmisQueryWalk*</exclude>
+                      <exclude>**/TextSearch*</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/*</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/dataobjects/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/json/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/tube/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/jaxb/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/server/ObjectInfoImpl*</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commons/impl/server/RenditionInfoImpl*</exclude>
+                      <exclude>org/apache/chemistry/opencmis/client/runtime/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/client/bindings/impl/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/client/bindings/cache/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/client/bindings/spi/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/server/impl/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/server/shared/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/server/support/filter/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/fit/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/util/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/fileshare/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/inmemory/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/jcr/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/browser/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/workbench/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/commander/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/client/osgi/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/tools/**</exclude>
+                    </sourceFileExcludes>
+                    <tags>
+                      <tag>
+                        <name>cmis</name>
+                        <placement>a</placement>
+                        <head>CMIS:</head>
+                      </tag>
+                    </tags>
                 </configuration>
             </plugin>
         </plugins>

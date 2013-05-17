@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS ObjectNotFound Exception.
+ * <p>
+ * Cause: The service call has specified an object, an object-type or a
+ * repository that does not exist.
  */
 public class CmisObjectNotFoundException extends CmisBaseException {
 

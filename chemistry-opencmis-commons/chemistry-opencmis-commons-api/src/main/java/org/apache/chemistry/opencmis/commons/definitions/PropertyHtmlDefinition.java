@@ -18,5 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Property definition of a HTML property.
+ */
 public interface PropertyHtmlDefinition extends PropertyDefinition<String> {
 }

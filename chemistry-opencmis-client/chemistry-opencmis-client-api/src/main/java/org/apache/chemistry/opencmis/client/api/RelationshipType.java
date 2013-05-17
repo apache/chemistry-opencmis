@@ -21,8 +21,8 @@ import java.util.List;
 
 /**
  * Relationship Object Type.
- * <p>
- * See CMIS Domain Model - section 2.1.6.1.
+ * 
+ * @cmis 1.0
  */
 public interface RelationshipType extends ObjectType {
 
@@ -31,6 +31,8 @@ public interface RelationshipType extends ObjectType {
      * type.
      * 
      * @return the allowed source types for this relationship type.
+     * 
+     * @cmis 1.0
      */
     List<ObjectType> getAllowedSourceTypes();
 
@@ -39,6 +41,8 @@ public interface RelationshipType extends ObjectType {
      * type.
      * 
      * @return the allowed target types for this relationship type.
+     * 
+     * @cmis 1.0
      */
     List<ObjectType> getAllowedTargetTypes();
 

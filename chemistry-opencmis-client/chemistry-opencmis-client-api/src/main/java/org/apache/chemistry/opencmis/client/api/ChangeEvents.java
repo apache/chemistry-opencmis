@@ -20,13 +20,30 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 
+/**
+ * Change event list.
+ * 
+ * @cmis 1.0
+ */
 public interface ChangeEvents {
 
+    /**
+     * Returns the changelog token if available.
+     */
     String getLatestChangeLogToken();
 
+    /**
+     * Returns the change event list.
+     */
     List<ChangeEvent> getChangeEvents();
 
+    /**
+     * Indicates whether are more change events or not.
+     */
     boolean getHasMoreItems();
-    
+
+    /**
+     * Returns the total number of change events if available.
+     */
     long getTotalNumItems();
 }

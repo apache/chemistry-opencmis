@@ -22,6 +22,10 @@ import java.math.BigInteger;
 
 /**
  * CMIS StreamNotSupported Exception.
+ * <p>
+ * Intent: The operation is attempting to get or set a content stream for a
+ * document whose object-type specifies that a content stream is not allowed for
+ * document's of that type.
  */
 public class CmisStreamNotSupportedException extends CmisBaseException {
 

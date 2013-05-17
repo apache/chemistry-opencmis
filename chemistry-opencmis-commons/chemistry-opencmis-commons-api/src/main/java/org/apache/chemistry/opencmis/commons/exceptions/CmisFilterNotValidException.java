@@ -22,6 +22,11 @@ import java.math.BigInteger;
 
 /**
  * CMIS FilterNotValid Exception.
+ * <p>
+ * Intent: The property filter or rendition filter input to the operation is not
+ * valid. The repository SHOULD NOT throw this exception if the filter syntax is
+ * correct but one or more elements in the filter is unknown. Unknown elements
+ * SHOULD be ignored.
  */
 public class CmisFilterNotValidException extends CmisBaseException {
 

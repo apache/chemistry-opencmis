@@ -20,9 +20,22 @@ package org.apache.chemistry.opencmis.commons.definitions;
 
 import java.math.BigInteger;
 
+/**
+ * Property definition of an integer property.
+ */
 public interface PropertyIntegerDefinition extends PropertyDefinition<BigInteger> {
 
+    /**
+     * Returns the min value of this integer.
+     * 
+     * @return the min value or <code>null</code> if no limit is specified
+     */
     BigInteger getMinValue();
 
+    /**
+     * Returns the max value of this integer.
+     * 
+     * @return the max value or <code>null</code> if no limit is specified
+     */
     BigInteger getMaxValue();
 }

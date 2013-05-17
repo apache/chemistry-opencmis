@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
  * 
  * <p>
  * <em>
- * See CMIS 1.0 specification for details on the operations, parameters,
+ * See the CMIS 1.0 and CMIS 1.1 specifications for details on the operations, parameters,
  * exceptions and the domain model.
  * </em>
  * </p>

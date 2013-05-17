@@ -28,54 +28,71 @@ public interface DocumentProperties {
     /**
      * Returns <code>true</code> if this CMIS object is immutable (CMIS property
      * <code>cmis:isImmutable</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isImmutable();
 
     /**
      * Returns if this CMIS object is the latest version (CMIS property
      * <code>cmis:isLatestVersion</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isLatestVersion();
 
     /**
-     * Returns
-     * <code>true<code> if this CMIS object is the latest version (CMIS property
-     * <code>cmis:isMajorVersion</code>).
+     * Returns <code>true</code> if this CMIS object is the latest version (CMIS
+     * property <code>cmis:isMajorVersion</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isMajorVersion();
 
     /**
      * Returns <code>true</code> if this CMIS object is the latest major version
      * (CMIS property <code>cmis:isLatestMajorVersion</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isLatestMajorVersion();
 
     /**
      * Returns <code>true</code> if this CMIS object is the PWC (CMIS property
      * <code>cmis:isPrivateWorkingCopy</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isPrivateWorkingCopy();
 
     /**
      * Returns the version label (CMIS property <code>cmis:versionLabel</code>).
+     * 
+     * @cmis 1.0
      */
     String getVersionLabel();
 
     /**
      * Returns the version series id (CMIS property
      * <code>cmis:versionSeriesId</code>).
+     * 
+     * @cmis 1.0
      */
     String getVersionSeriesId();
 
     /**
      * Returns <code>true</code> if this version series is checked out (CMIS
      * property <code>cmis:isVersionSeriesCheckedOut</code>).
+     * 
+     * @cmis 1.0
      */
     Boolean isVersionSeriesCheckedOut();
 
     /**
      * Returns the user who checked out this version series (CMIS property
      * <code>cmis:versionSeriesCheckedOutBy</code>).
+     * 
+     * @cmis 1.0
      */
     String getVersionSeriesCheckedOutBy();
 
@@ -88,30 +105,40 @@ public interface DocumentProperties {
     /**
      * Returns the checkin comment (CMIS property
      * <code>cmis:checkinComment</code>).
+     * 
+     * @cmis 1.0
      */
     String getCheckinComment();
 
     /**
      * Returns the content stream length or -1 if the document has no content
      * (CMIS property <code>cmis:contentStreamLength</code>).
+     * 
+     * @cmis 1.0
      */
     long getContentStreamLength();
 
     /**
      * Returns the content stream MIME type or <code>null</code> if the document
      * has no content (CMIS property <code>cmis:contentStreamMimeType</code>).
+     * 
+     * @cmis 1.0
      */
     String getContentStreamMimeType();
 
     /**
      * Returns the content stream filename or <code>null</code> if the document
      * has no content (CMIS property <code>cmis:contentStreamFileName</code>).
+     * 
+     * @cmis 1.0
      */
     String getContentStreamFileName();
 
     /**
      * Returns the content stream id or <code>null</code> if the document has no
      * content (CMIS property <code>cmis:contentStreamId</code>).
+     * 
+     * @cmis 1.0
      */
     String getContentStreamId();
 }

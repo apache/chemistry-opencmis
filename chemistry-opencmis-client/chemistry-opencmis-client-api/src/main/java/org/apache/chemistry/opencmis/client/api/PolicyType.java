@@ -20,8 +20,8 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Policy Object Type.
- * <p>
- * See CMIS Domain Model - section 2.1.7.1.
+ * 
+ * @cmis 1.0
  */
 public interface PolicyType extends ObjectType {
 

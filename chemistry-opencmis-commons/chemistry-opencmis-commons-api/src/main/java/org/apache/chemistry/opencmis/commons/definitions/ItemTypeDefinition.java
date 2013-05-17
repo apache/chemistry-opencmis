@@ -18,6 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Item Type Definition.
+ * 
+ * @cmis 1.1
+ */
 public interface ItemTypeDefinition extends TypeDefinition {
 
 }

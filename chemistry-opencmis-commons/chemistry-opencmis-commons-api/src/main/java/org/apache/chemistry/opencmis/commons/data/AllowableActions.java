@@ -22,8 +22,18 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.enums.Action;
 
+/**
+ * Allowable Actions.
+ * 
+ * @cmis 1.0
+ */
 public interface AllowableActions extends ExtensionsData {
 
+    /**
+     * Returns the set of Allowable Actions.
+     * 
+     * @cmis 1.0
+     */
     Set<Action> getAllowableActions();
 
 }

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
-
+/**
+ * Property definition of a boolean property.
+ */
 public interface PropertyBooleanDefinition extends PropertyDefinition<Boolean> {
 }

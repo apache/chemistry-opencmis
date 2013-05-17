@@ -22,6 +22,8 @@ import java.math.BigInteger;
 
 /**
  * CMIS Runtime Exception.
+ * <p>
+ * Cause: Any other cause not expressible by another CMIS exception.
  */
 public class CmisRuntimeException extends CmisBaseException {
 

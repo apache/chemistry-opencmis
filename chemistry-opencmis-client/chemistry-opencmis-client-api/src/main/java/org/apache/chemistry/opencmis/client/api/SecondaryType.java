@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Secondary type.
+ * 
+ * @cmis 1.1
  */
 public interface SecondaryType extends ObjectType {
 

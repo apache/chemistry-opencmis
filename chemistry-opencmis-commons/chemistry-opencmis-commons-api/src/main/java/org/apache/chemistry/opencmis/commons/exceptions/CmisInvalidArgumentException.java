@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS InvalidArgument Exception.
+ * <p>
+ * Cause: One or more of the input parameters to the service method is missing
+ * or invalid.
  */
 public class CmisInvalidArgumentException extends CmisBaseException {
 

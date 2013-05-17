@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * HTML property.
+ */
 public interface PropertyHtml extends PropertyData<String> {
 
 }

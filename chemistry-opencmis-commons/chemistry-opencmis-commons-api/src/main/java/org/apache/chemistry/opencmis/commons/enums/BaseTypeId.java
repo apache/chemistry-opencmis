@@ -23,12 +23,18 @@ package org.apache.chemistry.opencmis.commons.enums;
  */
 public enum BaseTypeId {
 
+    /** @cmis 1.0 */
     CMIS_DOCUMENT("cmis:document"), //
+    /** @cmis 1.0 */
     CMIS_FOLDER("cmis:folder"), //
+    /** @cmis 1.0 */
     CMIS_RELATIONSHIP("cmis:relationship"), //
+    /** @cmis 1.0 */
     CMIS_POLICY("cmis:policy"), //
-    CMIS_ITEM("cmis:item"), // CMIS 1.1
-    CMIS_SECONDARY("cmis:secondary"); // CMIS 1.1
+    /** @cmis 1.1 */
+    CMIS_ITEM("cmis:item"), //
+    /** @cmis 1.1 */
+    CMIS_SECONDARY("cmis:secondary"); //
 
     private final String value;
 

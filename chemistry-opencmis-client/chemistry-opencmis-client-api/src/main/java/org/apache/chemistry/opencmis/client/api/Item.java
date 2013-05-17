@@ -19,9 +19,9 @@
 package org.apache.chemistry.opencmis.client.api;
 
 /**
- * CMIS Item.
+ * CMIS item interface.
  * 
- * Introduced in CMIS 1.1.
+ * @cmis 1.1
  */
 public interface Item extends FileableCmisObject {
 

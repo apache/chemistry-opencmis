@@ -22,9 +22,18 @@ import java.io.Serializable;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 
+/**
+ * Permission definition.
+ */
 public interface PermissionDefinition extends Serializable, ExtensionsData {
 
+    /**
+     * Returns the permission id.
+     */
     String getId();
 
+    /**
+     * Returns a human readable description of the permission.
+     */
     String getDescription();
 }

@@ -18,6 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Folder Type Definition.
+ * 
+ * @cmis 1.0
+ */
 public interface FolderTypeDefinition extends TypeDefinition {
 
 }

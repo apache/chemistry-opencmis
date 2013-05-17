@@ -24,7 +24,7 @@ package org.apache.chemistry.opencmis.client.api;
 public interface ObjectId {
 
     /**
-     * Returns the id.
+     * Returns the object id.
      */
     String getId();
 }

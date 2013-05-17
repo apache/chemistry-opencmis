@@ -28,12 +28,32 @@ public interface FileableCmisObject extends CmisObject {
     // object service
 
     /**
-     * Moves the object.
+     * Moves this object.
+     * 
+     * @param sourceFolderId
+     *            the object id of the source folder
+     * @param targetFolderId
+     *            the object id of the target folder
+     * 
+     * @return the moved object
+     * 
+     * @cmis 1.0
      */
     FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId);
 
     /**
-     * Moves the object.
+     * Moves this object.
+     * 
+     * @param sourceFolderId
+     *            the object id of the source folder
+     * @param targetFolderId
+     *            the object id of the target folder
+     * @param context
+     *            the {@link OperationContext} to use to fetch the moved object
+     * 
+     * @return the moved object
+     * 
+     * @cmis 1.0
      */
     FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId, OperationContext context);
 
@@ -41,16 +61,35 @@ public interface FileableCmisObject extends CmisObject {
 
     /**
      * Returns the parents of this object.
+     * 
+     * @return the list of parent folders of this object or an empty list if
+     *         this object is unfiled or if this object is the root folder
+     * 
+     * @cmis 1.0
      */
     List<Folder> getParents();
 
     /**
      * Returns the parents of this object.
+     * 
+     * @param context
+     *            the {@link OperationContext} to use to fetch the parent folder
+     *            objects
+     * 
+     * @return the list of parent folders of this object or an empty list if
+     *         this object is unfiled or if this object is the root folder
+     * 
+     * @cmis 1.0
      */
     List<Folder> getParents(OperationContext context);
 
     /**
      * Returns the paths of this object.
+     * 
+     * @return the list of paths of this object or an empty list if this object
+     *         is unfiled or if this object is the root folder
+     * 
+     * @cmis 1.0
      */
     List<String> getPaths();
 
@@ -58,11 +97,28 @@ public interface FileableCmisObject extends CmisObject {
 
     /**
      * Adds this object to a folder.
+     * 
+     * @param folderId
+     *            the object id of the folder to which this object should be
+     *            added
+     * @param allVersions
+     *            if this parameter is <code>true</code> and this object is a
+     *            document, all versions of the version series are added to the
+     *            folder
+     * 
+     * 
+     * @cmis 1.0
      */
     void addToFolder(ObjectId folderId, boolean allVersions);
 
     /**
      * Removes this object from a folder.
+     * 
+     * @param folderId
+     *            the object id of the folder from which this object should be
+     *            removed
+     * 
+     * @cmis 1.0
      */
     void removeFromFolder(ObjectId folderId);
 }

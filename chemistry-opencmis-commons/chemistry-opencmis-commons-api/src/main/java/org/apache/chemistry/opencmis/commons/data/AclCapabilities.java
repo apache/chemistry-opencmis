@@ -26,6 +26,11 @@ import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 
+/**
+ * Acl Capabilities.
+ * 
+ * @cmis 1.0
+ */
 public interface AclCapabilities extends Serializable, ExtensionsData {
 
     SupportedPermissions getSupportedPermissions();

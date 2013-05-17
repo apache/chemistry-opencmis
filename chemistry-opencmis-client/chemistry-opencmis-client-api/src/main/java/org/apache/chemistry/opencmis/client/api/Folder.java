@@ -27,9 +27,9 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
- * CMIS Folder.
- * <p>
- * See Domain Model 2.5
+ * CMIS folder interface.
+ * 
+ * @cmis 1.0
  */
 public interface Folder extends FileableCmisObject, FolderProperties {
 
@@ -49,6 +49,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the new document object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
+     * 
+     * @cmis 1.0
      */
     Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
@@ -60,6 +62,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * this method.
      * 
      * @return the new document object
+     * 
+     * @cmis 1.0
      */
     Document createDocument(Map<String, ?> properties, ContentStream contentStream, VersioningState versioningState);
 
@@ -68,6 +72,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the new document object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
+     * 
+     * @cmis 1.0
      */
     Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context);
@@ -76,6 +82,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * Creates a new document from a source document in this folder.
      * 
      * @return the new document object
+     * 
+     * @cmis 1.0
      */
     Document createDocumentFromSource(ObjectId source, Map<String, ?> properties, VersioningState versioningState);
 
@@ -84,6 +92,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the new folder object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
+     * 
+     * @cmis 1.0
      */
     Folder createFolder(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
@@ -92,6 +102,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * Creates a new subfolder in this folder.
      * 
      * @return the new folder object
+     * 
+     * @cmis 1.0
      */
     Folder createFolder(Map<String, ?> properties);
 
@@ -100,6 +112,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the new policy object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
+     * 
+     * @cmis 1.0
      */
     Policy createPolicy(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
@@ -108,6 +122,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * Creates a new item in this folder.
      * 
      * @return the new item object
+     * 
+     * @cmis 1.1
      */
     Item createItem(Map<String, ?> properties);
 
@@ -116,6 +132,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the new item object or <code>null</code> if the parameter
      *         <code>context</code> was set to <code>null</code>
+     * 
+     * @cmis 1.1
      */
     Item createItem(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context);
@@ -124,6 +142,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * Creates a new policy in this folder.
      * 
      * @return the new policy object
+     * 
+     * @cmis 1.0
      */
     Policy createPolicy(Map<String, ?> properties);
 
@@ -131,6 +151,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * Deletes this folder and all subfolders.
      * 
      * @return a list of object ids which failed to be deleted
+     * 
+     * @cmis 1.0
      */
     List<String> deleteTree(boolean allversions, UnfileObject unfile, boolean continueOnFailure);
 
@@ -138,39 +160,53 @@ public interface Folder extends FileableCmisObject, FolderProperties {
 
     /**
      * Gets the folder tree starting with this folder.
+     * 
+     * @cmis 1.0
      */
     List<Tree<FileableCmisObject>> getFolderTree(int depth);
 
     /**
      * Gets the folder tree starting with this folder using the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     List<Tree<FileableCmisObject>> getFolderTree(int depth, OperationContext context);
 
     /**
      * Gets the folder descendants starting with this folder.
+     * 
+     * @cmis 1.0
      */
     List<Tree<FileableCmisObject>> getDescendants(int depth);
 
     /**
      * Gets the folder descendants starting with this folder using the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     List<Tree<FileableCmisObject>> getDescendants(int depth, OperationContext context);
 
     /**
      * Returns the children of this folder.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<CmisObject> getChildren();
 
     /**
      * Returns the children of this folder using the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<CmisObject> getChildren(OperationContext context);
 
     /**
      * Returns if the folder is the root folder.
+     * 
+     * @cmis 1.0
      */
     boolean isRootFolder();
 
@@ -179,22 +215,30 @@ public interface Folder extends FileableCmisObject, FolderProperties {
      * 
      * @return the parent folder object or <code>null</code> if the folder is
      *         the root folder.
+     * 
+     * @cmis 1.0
      */
     Folder getFolderParent();
 
     /**
      * Returns the path of the folder.
+     * 
+     * @cmis 1.0
      */
     String getPath();
 
     /**
      * Returns all checked out documents in this folder.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<Document> getCheckedOutDocs();
 
     /**
      * Returns all checked out documents in this folder using the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
 }
