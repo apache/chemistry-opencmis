@@ -31,12 +31,12 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  * Constants and methods to create and manipulate {@link OperationContext}
  * objects.
  */
-public class OperationContextUtil {
+public class OperationContextUtils {
 
     public static final String PROPERTIES_STAR = "*";
     public static final String RENDITION_NONE = "cmis:none";
 
-    private OperationContextUtil() {
+    private OperationContextUtils() {
     }
 
     /**
