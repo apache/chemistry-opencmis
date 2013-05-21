@@ -667,7 +667,7 @@ public class ClientHelper {
             addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
                     new URI("http://chemistry.apache.org/java/opencmis.html"));
             addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc", new URI(
-                    "http://chemistry.apache.org/java/0.8.0/maven/apidocs/"));
+                    "http://chemistry.apache.org/java/0.9.0/maven/apidocs/"));
             cmisMenu.addSeparator();
             JMenuItem menuItem = new JMenuItem("CMIS Session Details");
             menuItem.addActionListener(new ActionListener() {

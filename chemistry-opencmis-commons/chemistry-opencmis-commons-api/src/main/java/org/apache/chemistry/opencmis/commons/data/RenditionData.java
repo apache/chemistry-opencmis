@@ -20,21 +20,54 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.math.BigInteger;
 
+/**
+ * Rendition.
+ * 
+ * @cmis 1.0
+ */
 public interface RenditionData extends ExtensionsData {
 
+    /**
+     * Returns the stream id of the rendition.
+     */
     String getStreamId();
 
+    /**
+     * Returns the MIME type of the rendition.
+     */
     String getMimeType();
 
+    /**
+     * Returns the size of the rendition in byte if available.
+     */
     BigInteger getBigLength();
 
+    /**
+     * Returns the kind of the rendition.
+     * <p>
+     * The CMIS specification only defines the kind <code>cmis:thumbnail</code>,
+     * but a repository can provide other kinds.
+     */
     String getKind();
 
+    /**
+     * Returns the title of the rendition.
+     */
     String getTitle();
 
+    /**
+     * Returns the height in pixels if the rendition is an image.
+     */
     BigInteger getBigHeight();
 
+    /**
+     * Returns the width in pixels if the rendition is an image.
+     */
     BigInteger getBigWidth();
 
+    /**
+     * Returns the object id of the rendition document if the rendition is a
+     * stand-alone document.
+     */
     String getRenditionDocumentId();
 }

@@ -60,11 +60,15 @@ public interface OperationContext extends Serializable {
 
     /**
      * Sets if secondary type properties should be loaded.
+     * 
+     * @cmis 1.1
      */
     void setLoadSecondaryTypeProperties(boolean load);
 
     /**
      * Returns is secondary type properties should be loaded.
+     * 
+     * @cmis 1.1
      */
     boolean loadSecondaryTypeProperties();
 

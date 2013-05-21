@@ -26,6 +26,8 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Base type definition interface.
+ * 
+ * @cmis 1.0
  */
 public interface TypeDefinition extends Serializable, ExtensionsData {
 
@@ -33,6 +35,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the type id.
      * 
      * @return the type id
+     * 
+     * @cmis 1.0
      */
     String getId();
 
@@ -40,6 +44,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the local name.
      * 
      * @return the local name
+     * 
+     * @cmis 1.0
      */
     String getLocalName();
 
@@ -47,6 +53,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the local namespace.
      * 
      * @return the local namespace
+     * 
+     * @cmis 1.0
      */
     String getLocalNamespace();
 
@@ -54,6 +62,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the display name.
      * 
      * @return the display name
+     * 
+     * @cmis 1.0
      */
     String getDisplayName();
 
@@ -61,6 +71,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the query name
      * 
      * @return the query name
+     * 
+     * @cmis 1.0
      */
     String getQueryName();
 
@@ -68,6 +80,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the property description.
      * 
      * @return returns the description
+     * 
+     * @cmis 1.0
      */
     String getDescription();
 
@@ -75,6 +89,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns the base object type id.
      * 
      * @return the base object type id
+     * 
+     * @cmis 1.0
      */
     BaseTypeId getBaseTypeId();
 
@@ -83,6 +99,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * 
      * @return the parent type id or <code>null</code> if the type is a base
      *         type
+     * 
+     * @cmis 1.0
      */
     String getParentTypeId();
 
@@ -92,6 +110,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if an object of this type can be created;
      *         <code>false</code> if creation of objects of this type is not
      *         possible; <code>null</code> - unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isCreatable();
 
@@ -101,6 +121,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if an object of this type can be filed;
      *         <code>false</code> if an object of this type cannot be filed;
      *         <code>null</code> - unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isFileable();
 
@@ -110,6 +132,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if this type is queryable; <code>false</code>
      *         if this type is not queryable; <code>null</code> - unknown
      *         (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isQueryable();
 
@@ -119,6 +143,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if this type is full text indexed;
      *         <code>false</code> if this type is not full text indexed;
      *         <code>null</code> - unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isFulltextIndexed();
 
@@ -128,6 +154,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if this type is included; <code>false</code> if
      *         this type is not included; <code>null</code> - unknown
      *         (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isIncludedInSupertypeQuery();
 
@@ -137,6 +165,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if objects are controllable by policies;
      *         <code>false</code> if objects are not controllable by policies;
      *         <code>null</code> - unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isControllablePolicy();
 
@@ -146,6 +176,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * @return <code>true</code> if objects are controllable by ACLs;
      *         <code>false</code> if objects are not controllable by ACLs;
      *         <code>null</code> - unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isControllableAcl();
 
@@ -154,6 +186,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * 
      * @return the property definitions or <code>null</code> if the property
      *         definitions were not requested
+     * 
+     * @cmis 1.0
      */
     Map<String, PropertyDefinition<?>> getPropertyDefinitions();
 
@@ -161,6 +195,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
      * Returns type mutability flags.
      * 
      * @return type mutability flags
+     * 
+     * @cmis 1.1
      */
     TypeMutability getTypeMutability();
 }

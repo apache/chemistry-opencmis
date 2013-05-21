@@ -18,7 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
-
+/**
+ * Policy Type Definition.
+ * 
+ * @cmis 1.0
+ */
 public interface PolicyTypeDefinition extends TypeDefinition {
 
 }

@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * 
  * <p>
  * Almost all methods might throw exceptions derived from
- * {@link CmisBaseException} which is a runtime exception!
+ * {@link CmisBaseException} which is a runtime exception.
  * </p>
  * 
  * <p>
@@ -130,6 +130,8 @@ public interface Session extends Serializable {
     /**
      * Returns the repository info of the repository associated with this
      * session.
+     * 
+     * @cmis 1.0
      */
     RepositoryInfo getRepositoryInfo();
 
@@ -143,31 +145,43 @@ public interface Session extends Serializable {
 
     /**
      * Returns the type definition of the given type id.
+     * 
+     * @cmis 1.0
      */
     ObjectType getTypeDefinition(String typeId);
 
     /**
      * Returns the type children of the given type id.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions);
 
     /**
      * Returns the type descendants of the given type id.
+     * 
+     * @cmis 1.0
      */
     List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions);
 
     /**
      * Creates a new type.
+     * 
+     * @cmis 1.1
      */
     ObjectType createType(TypeDefinition type);
 
     /**
      * Updates an existing type.
+     * 
+     * @cmis 1.1
      */
     ObjectType updateType(TypeDefinition type);
 
     /**
      * Deletes a type.
+     * 
+     * @cmis 1.1
      */
     void deleteType(String typeId);
 
@@ -175,12 +189,16 @@ public interface Session extends Serializable {
 
     /**
      * Gets the root folder of the repository.
+     * 
+     * @cmis 1.0
      */
     Folder getRootFolder();
 
     /**
      * Gets the root folder of the repository with the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     Folder getRootFolder(OperationContext context);
 
@@ -188,6 +206,8 @@ public interface Session extends Serializable {
      * Returns all checked out documents.
      * 
      * @see Folder#getCheckedOutDocs()
+     * 
+     * @cmis 1.0
      */
     ItemIterable<Document> getCheckedOutDocs();
 
@@ -196,6 +216,8 @@ public interface Session extends Serializable {
      * .
      * 
      * @see Folder#getCheckedOutDocs(OperationContext)
+     * 
+     * @cmis 1.0
      */
     ItemIterable<Document> getCheckedOutDocs(OperationContext context);
 
@@ -208,6 +230,8 @@ public interface Session extends Serializable {
      *            the object id
      * 
      * @see #getObject(String)
+     * 
+     * @cmis 1.0
      */
     CmisObject getObject(ObjectId objectId);
 
@@ -222,6 +246,8 @@ public interface Session extends Serializable {
      *            the {@link OperationContext} to use
      * 
      * @see #getObject(String, OperationContext)
+     * 
+     * @cmis 1.0
      */
     CmisObject getObject(ObjectId objectId, OperationContext context);
 
@@ -234,6 +260,8 @@ public interface Session extends Serializable {
      *            the object id
      * 
      * @see #getObject(ObjectId)
+     * 
+     * @cmis 1.0
      */
     CmisObject getObject(String objectId);
 
@@ -248,6 +276,8 @@ public interface Session extends Serializable {
      *            the {@link OperationContext} to use
      * 
      * @see #getObject(ObjectId, OperationContext)
+     * 
+     * @cmis 1.0
      */
     CmisObject getObject(String objectId, OperationContext context);
 
@@ -258,6 +288,8 @@ public interface Session extends Serializable {
      * 
      * @param path
      *            the object path
+     * 
+     * @cmis 1.0
      */
     CmisObject getObjectByPath(String path);
 
@@ -270,6 +302,8 @@ public interface Session extends Serializable {
      *            the object path
      * @param context
      *            the {@link OperationContext} to use
+     * 
+     * @cmis 1.0
      */
     CmisObject getObjectByPath(String path, OperationContext context);
 
@@ -299,6 +333,8 @@ public interface Session extends Serializable {
      * @param searchAllVersions
      *            specifies if the latest and non-latest versions of document
      *            objects should be included
+     * 
+     * @cmis 1.0
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions);
 
@@ -313,6 +349,8 @@ public interface Session extends Serializable {
      *            objects should be included
      * @param context
      *            the OperationContext
+     * 
+     * @cmis 1.0
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
@@ -327,6 +365,8 @@ public interface Session extends Serializable {
      *            objects should be included
      * @param context
      *            the OperationContext
+     * 
+     * @cmis 1.0
      */
     ItemIterable<CmisObject> queryObjects(String typeId, String where, boolean searchAllVersions,
             OperationContext context);
@@ -338,6 +378,8 @@ public interface Session extends Serializable {
      *            the query statement with placeholders ('?').
      * 
      * @see QueryStatement
+     * 
+     * @cmis 1.0
      */
     QueryStatement createQueryStatement(String statement);
 
@@ -351,6 +393,8 @@ public interface Session extends Serializable {
      *            result
      * @param maxNumItems
      *            maximum numbers of events
+     * 
+     * @cmis 1.0
      */
     ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems);
 
@@ -366,6 +410,8 @@ public interface Session extends Serializable {
      *            maximum numbers of events
      * @param context
      *            the OperationContext
+     * 
+     * @cmis 1.0
      */
     ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
             OperationContext context);
@@ -382,6 +428,8 @@ public interface Session extends Serializable {
      * 
      * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
      *      List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
@@ -396,6 +444,8 @@ public interface Session extends Serializable {
      * 
      * @see Folder#createDocument(Map, ContentStream, VersioningState, List,
      *      List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState);
@@ -407,6 +457,8 @@ public interface Session extends Serializable {
      * 
      * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
      *      List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
@@ -418,6 +470,8 @@ public interface Session extends Serializable {
      * 
      * @see Folder#createDocumentFromSource(ObjectId, Map, VersioningState,
      *      List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState);
@@ -428,6 +482,8 @@ public interface Session extends Serializable {
      * @return the object id of the new folder
      * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
@@ -438,6 +494,8 @@ public interface Session extends Serializable {
      * @return the object id of the new folder
      * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId);
 
@@ -447,6 +505,8 @@ public interface Session extends Serializable {
      * @return the object id of the new policy
      * 
      * @see Folder#createPolicy(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
@@ -457,6 +517,8 @@ public interface Session extends Serializable {
      * @return the object id of the new policy
      * 
      * @see Folder#createPolicy(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.0
      */
     ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId);
 
@@ -466,6 +528,8 @@ public interface Session extends Serializable {
      * @return the object id of the new policy
      * 
      * @see Folder#createItem(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.1
      */
     ObjectId createItem(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
@@ -476,6 +540,8 @@ public interface Session extends Serializable {
      * @return the object id of the new item
      * 
      * @see Folder#createItem(Map, List, List, List, OperationContext)
+     * 
+     * @cmis 1.1
      */
     ObjectId createItem(Map<String, ?> properties, ObjectId folderId);
 
@@ -483,6 +549,8 @@ public interface Session extends Serializable {
      * Creates a new relationship.
      * 
      * @return the object id of the new relationship
+     * 
+     * @cmis 1.0
      */
     ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces);
@@ -491,17 +559,23 @@ public interface Session extends Serializable {
      * Creates a new relationship.
      * 
      * @return the object id of the new relationship
+     * 
+     * @cmis 1.0
      */
     ObjectId createRelationship(Map<String, ?> properties);
 
     /**
      * Fetches the relationships from or to an object from the repository.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<Relationship> getRelationships(ObjectId objectId, boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, ObjectType type, OperationContext context);
 
     /**
      * Updates multiple objects in one request.
+     * 
+     * @cmis 1.0
      */
     List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(List<CmisObject> objects, Map<String, ?> properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds);
@@ -512,6 +586,8 @@ public interface Session extends Serializable {
      * 
      * @param objectId
      *            the id of the object
+     * 
+     * @cmis 1.0
      */
     void delete(ObjectId objectId);
 
@@ -523,6 +599,8 @@ public interface Session extends Serializable {
      * @param allVersions
      *            if this object is a document this parameter defines if only
      *            this version or all versions should be deleted
+     * 
+     * @cmis 1.0
      */
     void delete(ObjectId objectId, boolean allVersions);
 
@@ -533,6 +611,8 @@ public interface Session extends Serializable {
      *            the id of the document
      * @return the content stream or <code>null</code> if the document has no
      *         content stream
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream(ObjectId docId);
 
@@ -552,6 +632,8 @@ public interface Session extends Serializable {
      * 
      * @return the content stream or <code>null</code> if the document has no
      *         content stream
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length);
 
@@ -567,6 +649,8 @@ public interface Session extends Serializable {
      *            express the ACL with basic and repository specific permissions
      * 
      * @return the ACL of the object
+     * 
+     * @cmis 1.0
      */
     Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions);
 
@@ -589,6 +673,8 @@ public interface Session extends Serializable {
      *            {@link AclPropagation#REPOSITORYDETERMINED}
      * 
      * @return the new ACL of the object
+     * 
+     * @cmis 1.0
      */
     Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation);
 
@@ -604,6 +690,8 @@ public interface Session extends Serializable {
      *            list of ACEs to be set
      * 
      * @return the new ACL of the object
+     * 
+     * @cmis 1.0
      */
     Acl setAcl(ObjectId objectId, List<Ace> aces);
 
@@ -617,6 +705,8 @@ public interface Session extends Serializable {
      *            the id the object
      * @param policyIds
      *            the ids of the policies to be applied
+     * 
+     * @cmis 1.0
      */
     void applyPolicy(ObjectId objectId, ObjectId... policyIds);
 
@@ -630,6 +720,8 @@ public interface Session extends Serializable {
      *            the id the object
      * @param policyIds
      *            the ids of the policies to be removed
+     * 
+     * @cmis 1.0
      */
     void removePolicy(ObjectId objectId, ObjectId... policyIds);
 }

@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS Versioning Exception.
+ * <p>
+ * Intent: The operation is attempting to perform an action on a non-current
+ * version of a document that cannot be performed on a non-current version.
  */
 public class CmisVersioningException extends CmisBaseException {
 

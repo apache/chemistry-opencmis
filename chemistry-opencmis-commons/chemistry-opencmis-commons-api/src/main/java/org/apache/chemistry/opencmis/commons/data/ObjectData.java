@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
- * Base object for CMIS documents, folders, relationships and policies.
+ * Base object for CMIS documents, folders, relationships, policies, and items.
  */
 public interface ObjectData extends ExtensionsData {
 

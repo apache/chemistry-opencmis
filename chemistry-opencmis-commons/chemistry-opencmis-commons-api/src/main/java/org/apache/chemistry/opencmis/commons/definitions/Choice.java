@@ -21,11 +21,23 @@ package org.apache.chemistry.opencmis.commons.definitions;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Choice value interface.
+ * 
+ * @cmis 1.0
+ */
 public interface Choice<T> extends Serializable {
 
-	String getDisplayName();
+    /**
+     * Return the display name of the choice value.
+     */
+    String getDisplayName();
 
-	List<T> getValue();
+    /**
+     * Return the value of the choice value. Single value properties return a
+     * list with exactly one value.
+     */
+    List<T> getValue();
 
-	List<Choice<T>> getChoice();
+    List<Choice<T>> getChoice();
 }

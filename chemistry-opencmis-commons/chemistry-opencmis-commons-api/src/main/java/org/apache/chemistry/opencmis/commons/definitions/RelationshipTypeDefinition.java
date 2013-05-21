@@ -20,10 +20,28 @@ package org.apache.chemistry.opencmis.commons.definitions;
 
 import java.util.List;
 
-
+/**
+ * Relationship Type Definition.
+ * 
+ * @cmis 1.0
+ */
 public interface RelationshipTypeDefinition extends TypeDefinition {
 
+    /**
+     * Returns the list of type ids that are allowed as source objects.
+     * 
+     * @return list of type ids or <code>null</null> if all types are allowed
+     * 
+     * @cmis 1.0
+     */
     List<String> getAllowedSourceTypeIds();
 
+    /**
+     * Returns the list of type ids that are allowed as target objects.
+     * 
+     * @return list of type ids or <code>null</null> if all types are allowed
+     * 
+     * @cmis 1.0
+     */
     List<String> getAllowedTargetTypeIds();
 }

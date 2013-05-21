@@ -22,19 +22,41 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 
 /**
- * {@see Document#getRenditions()}. Domain Model 2.4.2
+ * Rendition.
+ * 
+ * @cmis 1.0
  */
 public interface Rendition extends RenditionData {
 
+    /**
+     * Returns the size of the rendition in byte if available.
+     */
     long getLength();
 
+    /**
+     * Returns the height in pixels if the rendition is an image.
+     */
     long getHeight();
 
+    /**
+     * Returns the width in pixels if the rendition is an image.
+     */
     long getWidth();
 
+    /**
+     * Returns the rendition document if the rendition is a stand-alone
+     * document.
+     */
     Document getRenditionDocument();
 
+    /**
+     * Returns the rendition document using the provides
+     * {@link OperationContext} if the rendition is a stand-alone document.
+     */
     Document getRenditionDocument(OperationContext context);
 
+    /**
+     * Returns the content stream of the rendition.
+     */
     ContentStream getContentStream();
 }

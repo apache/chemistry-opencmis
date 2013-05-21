@@ -19,37 +19,67 @@
 package org.apache.chemistry.opencmis.commons.enums;
 
 public enum Action {
-   
+
     // important: do not change the order of these values!
+    /** @cmis 1.0 */
     CAN_DELETE_OBJECT("canDeleteObject"), //
+    /** @cmis 1.0 */
     CAN_UPDATE_PROPERTIES("canUpdateProperties"), //
+    /** @cmis 1.0 */
     CAN_GET_FOLDER_TREE("canGetFolderTree"), //
+    /** @cmis 1.0 */
     CAN_GET_PROPERTIES("canGetProperties"), //
+    /** @cmis 1.0 */
     CAN_GET_OBJECT_RELATIONSHIPS("canGetObjectRelationships"), //
+    /** @cmis 1.0 */
     CAN_GET_OBJECT_PARENTS("canGetObjectParents"), //
+    /** @cmis 1.0 */
     CAN_GET_FOLDER_PARENT("canGetFolderParent"), //
+    /** @cmis 1.0 */
     CAN_GET_DESCENDANTS("canGetDescendants"), //
+    /** @cmis 1.0 */
     CAN_MOVE_OBJECT("canMoveObject"), //
+    /** @cmis 1.0 */
     CAN_DELETE_CONTENT_STREAM("canDeleteContentStream"), //
+    /** @cmis 1.0 */
     CAN_CHECK_OUT("canCheckOut"), //
+    /** @cmis 1.0 */
     CAN_CANCEL_CHECK_OUT("canCancelCheckOut"), //
+    /** @cmis 1.0 */
     CAN_CHECK_IN("canCheckIn"), //
+    /** @cmis 1.0 */
     CAN_SET_CONTENT_STREAM("canSetContentStream"), //
+    /** @cmis 1.0 */
     CAN_GET_ALL_VERSIONS("canGetAllVersions"), //
+    /** @cmis 1.0 */
     CAN_ADD_OBJECT_TO_FOLDER("canAddObjectToFolder"), //
+    /** @cmis 1.0 */
     CAN_REMOVE_OBJECT_FROM_FOLDER("canRemoveObjectFromFolder"), //
+    /** @cmis 1.0 */
     CAN_GET_CONTENT_STREAM("canGetContentStream"), //
+    /** @cmis 1.0 */
     CAN_APPLY_POLICY("canApplyPolicy"), //
+    /** @cmis 1.0 */
     CAN_GET_APPLIED_POLICIES("canGetAppliedPolicies"), //
+    /** @cmis 1.0 */
     CAN_REMOVE_POLICY("canRemovePolicy"), //
+    /** @cmis 1.0 */
     CAN_GET_CHILDREN("canGetChildren"), //
+    /** @cmis 1.0 */
     CAN_CREATE_DOCUMENT("canCreateDocument"), //
+    /** @cmis 1.0 */
     CAN_CREATE_FOLDER("canCreateFolder"), //
+    /** @cmis 1.0 */
     CAN_CREATE_RELATIONSHIP("canCreateRelationship"), //
+    /** @cmis 1.1 */
     CAN_CREATE_ITEM("canCreateItem"), //
+    /** @cmis 1.0 */
     CAN_DELETE_TREE("canDeleteTree"), //
+    /** @cmis 1.0 */
     CAN_GET_RENDITIONS("canGetRenditions"), //
+    /** @cmis 1.0 */
     CAN_GET_ACL("canGetACL"), //
+    /** @cmis 1.0 */
     CAN_APPLY_ACL("canApplyACL");
 
     private final String value;

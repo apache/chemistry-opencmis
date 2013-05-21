@@ -20,6 +20,9 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.math.BigDecimal;
 
+/**
+ * Decimal property.
+ */
 public interface PropertyDecimal extends PropertyData<BigDecimal> {
 
 }

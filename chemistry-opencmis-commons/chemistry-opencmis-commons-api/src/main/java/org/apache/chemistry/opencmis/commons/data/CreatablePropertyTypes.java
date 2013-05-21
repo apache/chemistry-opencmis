@@ -24,6 +24,8 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 
 /**
  * Holds the set of property data types for type creation and update.
+ * 
+ * @cmis 1.1
  */
 public interface CreatablePropertyTypes extends ExtensionsData {
 
@@ -32,6 +34,8 @@ public interface CreatablePropertyTypes extends ExtensionsData {
      * a type definition.
      * 
      * @return the available set of property data types.
+     * 
+     * @cmis 1.1
      */
     Set<PropertyType> canCreate();
 

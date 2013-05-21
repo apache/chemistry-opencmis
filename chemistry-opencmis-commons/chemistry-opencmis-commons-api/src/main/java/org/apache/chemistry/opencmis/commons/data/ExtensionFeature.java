@@ -23,7 +23,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Representation of an extension feature;
+ * Representation of an extension feature.
+ * 
+ * @cmis 1.1
  */
 public interface ExtensionFeature extends Serializable, ExtensionsData {
 
@@ -31,6 +33,8 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
      * Returns the unique feature id.
      * 
      * @return feature id
+     * 
+     * @cmis 1.1
      */
     String getId();
 
@@ -38,6 +42,8 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
      * Returns a URL that provides more information about the feature.
      * 
      * @return feature URL
+     * 
+     * @cmis 1.1
      */
     String getUrl();
 
@@ -45,6 +51,8 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
      * Returns a human-readable name for the feature.
      * 
      * @return feature name
+     * 
+     * @cmis 1.1
      */
     String getCommonName();
 
@@ -52,6 +60,8 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
      * Returns a feature version label.
      * 
      * @return feature version label
+     * 
+     * @cmis 1.1
      */
     String getVersionLabel();
 
@@ -59,13 +69,17 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
      * Returns a human-readable description of the feature.
      * 
      * @return feature description
+     * 
+     * @cmis 1.1
      */
     String getDescription();
 
     /**
      * Returns extra feature data.
      * 
-     * @return key-value pairs of extra data.
+     * @return key-value pairs of extra data
+     * 
+     * @cmis 1.1
      */
     Map<String, String> getFeatureData();
 }

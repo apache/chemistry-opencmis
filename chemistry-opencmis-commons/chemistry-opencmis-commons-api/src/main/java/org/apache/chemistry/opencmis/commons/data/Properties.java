@@ -21,6 +21,9 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Properties.
+ */
 public interface Properties extends ExtensionsData {
 
     /**

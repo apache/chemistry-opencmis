@@ -18,6 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * Holder for bulkUpdateObject data.
+ * 
+ * @cmis 1.1
+ */
 public interface BulkUpdateObjectIdAndChangeToken extends ExtensionsData {
 
     String getId();

@@ -20,6 +20,9 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.GregorianCalendar;
 
+/**
+ * DateTime property.
+ */
 public interface PropertyDateTime extends PropertyData<GregorianCalendar> {
 
 }

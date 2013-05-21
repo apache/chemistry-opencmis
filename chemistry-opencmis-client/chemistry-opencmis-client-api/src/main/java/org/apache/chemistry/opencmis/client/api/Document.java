@@ -25,11 +25,12 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
 
 /**
- * CMIS Document.
- * <p>
- * Domain Model 2.4
+ * CMIS document interface.
+ * 
+ * @cmis 1.0
  */
 public interface Document extends FileableCmisObject, DocumentProperties {
 
@@ -43,13 +44,18 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Deletes this document and all its versions.
+     * 
+     * @cmis 1.0
      */
     void deleteAllVersions();
 
     /**
      * Retrieves the content stream of this document.
      * 
-     * @return the content stream, or {@code null}
+     * @return the content stream, or <code>null</code> if the document has no
+     *         content
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream();
 
@@ -62,7 +68,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * @param length
      *            the maximum length of the stream or <code>null</code> to read
      *            to the end of the stream
-     * @return the content stream, or {@code null}
+     * @return the content stream, or <code>null</code> if the document has no
+     *         content
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream(BigInteger offset, BigInteger length);
 
@@ -73,7 +82,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * @param streamId
      *            the stream id
      * 
-     * @return the content stream, or {@code null}
+     * @return the content stream, or <code>null</code> if no content is
+     *         associated with this stream id
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream(String streamId);
 
@@ -89,7 +101,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * @param length
      *            the maximum length of the stream or <code>null</code> to read
      *            to the end of the stream
-     * @return the content stream, or {@code null}
+     * @return the content stream, or <code>null</code> if no content is
+     *         associated with this stream id
+     * 
+     * @cmis 1.0
      */
     ContentStream getContentStream(String streamId, BigInteger offset, BigInteger length);
 
@@ -97,21 +112,52 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Sets a new content stream for the document and refreshes this object
      * afterwards. If the repository created a new version, this new document is
      * returned. Otherwise the current document is returned.
-     * 
+     * <p>
      * The stream in <code>contentStream</code> is consumed but not closed by
      * this method.
      * 
-     * @return the updated document
+     * @param contentStream
+     *            the content stream
+     * @param overwrite
+     *            if this parameter is set to <code>false</code> and the
+     *            document already has content, the repository throws a
+     *            {@link CmisContentAlreadyExistsException}
+     * 
+     * @return the updated document, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @see ObjectFactory#createContentStream(String, long, String,
+     *      java.io.InputStream)
+     * 
+     * @cmis 1.0
      */
     Document setContentStream(ContentStream contentStream, boolean overwrite);
 
     /**
-     * Sets a new content stream for the document.
-     * 
+     * Sets a new content stream for the document. If the repository created a
+     * new version, the object id of this new version is returned. Otherwise the
+     * object id of the current document is returned.
+     * <p>
      * The stream in <code>contentStream</code> is consumed but not closed by
      * this method.
      * 
-     * @return the updated object id
+     * @param contentStream
+     *            the content stream
+     * @param overwrite
+     *            if this parameter is set to <code>false</code> and the
+     *            document already has content, the repository throws a
+     *            {@link CmisContentAlreadyExistsException}
+     * @param refresh
+     *            if this parameter is set to <code>true</code>, this object
+     *            will be refreshed after the new content has been set
+     * 
+     * @return the updated object id, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @see ObjectFactory#createContentStream(String, long, String,
+     *      java.io.InputStream)
+     * 
+     * @cmis 1.0
      */
     ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh);
 
@@ -120,21 +166,45 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * refreshes this object afterwards. If the repository created a new
      * version, this new document is returned. Otherwise the current document is
      * returned.
-     * 
+     * <p>
      * The stream in <code>contentStream</code> is consumed but not closed by
      * this method.
      * 
-     * @return the updated document
+     * @param contentStream
+     *            the content stream
+     * @param isLastChunk
+     *            indicates if this stream is the last chunk of the content
+     * 
+     * @return the updated document, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @see ObjectFactory#createContentStream(String, long, String,
+     *      java.io.InputStream)
+     * 
+     * @cmis 1.1
      */
     Document appendContentStream(ContentStream contentStream, boolean isLastChunk);
 
     /**
-     * Appends a content stream to the content stream of the document.
-     * 
+     * Appends a content stream to the content stream of the document. If the
+     * repository created a new version, the object id of this new version is
+     * returned. Otherwise the object id of the current document is returned.
+     * <p>
      * The stream in <code>contentStream</code> is consumed but not closed by
      * this method.
      * 
-     * @return the updated object id
+     * @param contentStream
+     *            the content stream
+     * @param isLastChunk
+     *            indicates if this stream is the last chunk of the content
+     * @param refresh
+     *            if this parameter is set to <code>true</code>, this object
+     *            will be refreshed after the content stream has been appended
+     * 
+     * @return the updated object id, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @cmis 1.1
      */
     ObjectId appendContentStream(ContentStream contentStream, boolean isLastChunk, boolean refresh);
 
@@ -143,12 +213,26 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * object afterwards. If the repository created a new version, this new
      * document is returned. Otherwise the current document is returned.
      * 
-     * @return the updated document
+     * @return the updated document, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @cmis 1.0
      */
     Document deleteContentStream();
 
     /**
-     * Removes the current content stream from the document.
+     * Removes the current content stream from the document. If the repository
+     * created a new version, the object id of this new version is returned.
+     * Otherwise the object id of the current document is returned.
+     * 
+     * @param refresh
+     *            if this parameter is set to <code>true</code>, this object
+     *            will be refreshed after the content stream has been deleted
+     * 
+     * @return the updated document, or <code>null</code> if the repository did
+     *         not return an object id
+     * 
+     * @cmis 1.0
      */
     ObjectId deleteContentStream(boolean refresh);
 
@@ -159,12 +243,16 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * working copy).
      * 
      * @return PWC object id
+     * 
+     * @cmis 1.0
      */
     ObjectId checkOut(); // returns the PWC id
 
     /**
      * If this is a PWC (private working copy) the check out will be reversed.
      * If this is not a PWC it an exception will be thrown.
+     * 
+     * @cmis 1.0
      */
     void cancelCheckOut();
 
@@ -176,6 +264,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * this method.
      * 
      * @return new document id
+     * 
+     * @cmis 1.0
      */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces);
@@ -188,6 +278,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * this method.
      * 
      * @return new document id
+     * 
+     * @cmis 1.0
      */
     ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment);
 
@@ -199,6 +291,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      *            returned, otherwise the very last version will be returned
      * 
      * @return the latest document object
+     * 
+     * @cmis 1.0
      */
     Document getObjectOfLatestVersion(boolean major);
 
@@ -211,17 +305,23 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      *            returned, otherwise the very last version will be returned
      * 
      * @return the latest document object
+     * 
+     * @cmis 1.0
      */
     Document getObjectOfLatestVersion(boolean major, OperationContext context);
 
     /**
      * Fetches all versions of this document.
+     * 
+     * @cmis 1.0
      */
     List<Document> getAllVersions();
 
     /**
      * Fetches all versions of this document using the given
      * {@link OperationContext}.
+     * 
+     * @cmis 1.0
      */
     List<Document> getAllVersions(OperationContext context);
 
@@ -229,6 +329,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Creates a copy of this document, including content.
      * 
      * @return the new document object
+     * 
+     * @cmis 1.0
      */
     Document copy(ObjectId targetFolderId);
 
@@ -237,6 +339,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * 
      * @return the new document object or {@code null} if the parameter
      *         {@code context} was set to {@code null}
+     * 
+     * @cmis 1.0
      */
     Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addACEs, List<Ace> removeACEs, OperationContext context);

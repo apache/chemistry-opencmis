@@ -20,7 +20,16 @@ package org.apache.chemistry.opencmis.commons.definitions;
 
 import java.math.BigInteger;
 
+/**
+ * Property definition of a string property.
+ */
 public interface PropertyStringDefinition extends PropertyDefinition<String> {
 
+    /**
+     * Returns the max length of the string.
+     * 
+     * @return the max string length in characters or <code>null</code> if the
+     *         the length is not limited
+     */
     BigInteger getMaxLength();
 }

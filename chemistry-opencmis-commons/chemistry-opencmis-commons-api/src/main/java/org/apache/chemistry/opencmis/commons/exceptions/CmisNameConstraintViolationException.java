@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS NameConstraintViolation Exception.
+ * <p>
+ * Intent: The repository is not able to store the object that the user is
+ * creating/updating due to a name constraint violation.
  */
 public class CmisNameConstraintViolationException extends CmisBaseException {
 

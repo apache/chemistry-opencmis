@@ -22,7 +22,7 @@ import java.math.BigInteger;
 
 /**
  * Unauthorized exception.
- * 
+ * <p>
  * (This is exception is not defined in the CMIS specification and is therefore
  * derived from {@link CmisRuntimeException}.)
  */

@@ -26,8 +26,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Object Type.
- * <p>
- * See CMIS Domain Model - section 2.1.3.
+ * 
+ * @cmis 1.0
  */
 public interface ObjectType extends TypeDefinition {
 
@@ -42,6 +42,8 @@ public interface ObjectType extends TypeDefinition {
      * 
      * @return {@code true} if this type is a base type, {@code false} if this
      *         type is a derived type.
+     * 
+     * @cmis 1.0
      */
     boolean isBaseType();
 
@@ -51,6 +53,8 @@ public interface ObjectType extends TypeDefinition {
      * @return the base type this type is derived from, or {@code null} if it is
      *         a base type ({@code isBase()==true}).
      * @throws CmisRuntimeException
+     * 
+     * @cmis 1.0
      */
     ObjectType getBaseType(); // null if isBase == true
 
@@ -60,6 +64,8 @@ public interface ObjectType extends TypeDefinition {
      * @return the parent type from which this type is derived, or {@code null}
      *         if it is a base type ( {@code isBase()==true}).
      * @throws CmisRuntimeException
+     * 
+     * @cmis 1.0
      */
     ObjectType getParentType();
 
@@ -69,6 +75,8 @@ public interface ObjectType extends TypeDefinition {
      * 
      * @return a {@code List} of types which are directly derived from this
      *         type.
+     * 
+     * @cmis 1.0
      */
     ItemIterable<ObjectType> getChildren();
 
@@ -79,6 +87,8 @@ public interface ObjectType extends TypeDefinition {
      *            the depth to which the derived types should be resolved.
      * @return a {@code Tree} of types which are derived from this type (direct
      *         and via their parents).
+     * 
+     * @cmis 1.0
      */
     List<Tree<ObjectType>> getDescendants(int depth);
 

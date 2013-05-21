@@ -28,6 +28,8 @@ public interface PolicyProperties {
     /**
      * Returns the policy text of this CMIS policy (CMIS property
      * <code>cmis:policyText</code>).
+     * 
+     * @cmis 1.0
      */
     String getPolicyText();
 }

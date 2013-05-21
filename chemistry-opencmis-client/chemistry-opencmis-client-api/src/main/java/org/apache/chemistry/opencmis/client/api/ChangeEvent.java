@@ -25,7 +25,9 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 
 /**
- * Change Event from the change log.
+ * Change event in the change log.
+ * 
+ * @cmis 1.0
  */
 public interface ChangeEvent extends ChangeEventInfo {
 

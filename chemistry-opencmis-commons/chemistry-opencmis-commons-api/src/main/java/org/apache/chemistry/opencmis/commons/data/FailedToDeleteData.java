@@ -20,7 +20,19 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+
+/**
+ * Holder for object ids of objects that could not be deleted.
+ * 
+ * @see ObjectService#deleteTree(String, String, Boolean,
+ *      org.apache.chemistry.opencmis.commons.enums.UnfileObject, Boolean,
+ *      ExtensionsData)
+ */
 public interface FailedToDeleteData extends ExtensionsData {
 
+    /**
+     * Returns the list of object ids of the objects that haven't been deleted.
+     */
     List<String> getIds();
 }

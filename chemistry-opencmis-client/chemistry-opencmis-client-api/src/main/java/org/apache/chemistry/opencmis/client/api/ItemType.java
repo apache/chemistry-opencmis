@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.client.api;
 
 /**
  * Item Object Type.
+ * 
+ * @cmis 1.1
  */
 public interface ItemType extends ObjectType {
 

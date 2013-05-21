@@ -22,7 +22,15 @@ import java.util.GregorianCalendar;
 
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
+/**
+ * Property definition of a datetime property.
+ */
 public interface PropertyDateTimeDefinition extends PropertyDefinition<GregorianCalendar> {
 
+    /**
+     * Returns which datetime resolution is supported by this property.
+     * 
+     * @see DateTimeResolution
+     */
     DateTimeResolution getDateTimeResolution();
 }

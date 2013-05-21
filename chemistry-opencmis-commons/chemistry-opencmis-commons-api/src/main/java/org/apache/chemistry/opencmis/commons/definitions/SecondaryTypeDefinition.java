@@ -18,6 +18,11 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Secondary Type Definition.
+ * 
+ * @cmis 1.1
+ */
 public interface SecondaryTypeDefinition extends TypeDefinition {
 
 }

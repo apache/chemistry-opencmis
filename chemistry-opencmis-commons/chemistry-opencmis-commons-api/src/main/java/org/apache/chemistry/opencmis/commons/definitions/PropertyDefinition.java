@@ -28,6 +28,8 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 
 /**
  * Base property definition interface.
+ * 
+ * @cmis 1.0
  */
 public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
 
@@ -35,6 +37,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the property definition id.
      * 
      * @return the property definition id
+     * 
+     * @cmis 1.0
      */
     String getId();
 
@@ -42,6 +46,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the local name.
      * 
      * @return the local name
+     * 
+     * @cmis 1.0
      */
     String getLocalName();
 
@@ -49,6 +55,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the local namespace.
      * 
      * @return the local namespace
+     * 
+     * @cmis 1.0
      */
     String getLocalNamespace();
 
@@ -56,6 +64,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the display name.
      * 
      * @return the display name
+     * 
+     * @cmis 1.0
      */
     String getDisplayName();
 
@@ -63,6 +73,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the query name
      * 
      * @return the query name
+     * 
+     * @cmis 1.0
      */
     String getQueryName();
 
@@ -70,6 +82,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the property description.
      * 
      * @return returns the description
+     * 
+     * @cmis 1.0
      */
     String getDescription();
 
@@ -77,6 +91,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the property type.
      * 
      * @return the property type
+     * 
+     * @cmis 1.0
      */
     PropertyType getPropertyType();
 
@@ -84,6 +100,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the cardinality.
      * 
      * @return the cardinality
+     * 
+     * @cmis 1.0
      */
     Cardinality getCardinality();
 
@@ -91,6 +109,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the updatability.
      * 
      * @return the updatability
+     * 
+     * @cmis 1.0
      */
     Updatability getUpdatability();
 
@@ -100,6 +120,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * @return <code>true</code> - is inherited;
      *         <code>false</false> - is not inherited; <code>null</code> -
      *         unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isInherited();
 
@@ -109,6 +131,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * @return <code>true</code> - is required;
      *         <code>false</false> - is not required; <code>null</code> -
      *         unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isRequired();
 
@@ -118,6 +142,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * @return <code>true</code> - is queryable;
      *         <code>false</false> - is not queryable; <code>null</code> -
      *         unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isQueryable();
 
@@ -127,6 +153,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * @return <code>true</code> - is Orderable;
      *         <code>false</false> - is not Orderable; <code>null</code> -
      *         unknown (noncompliant repository)
+     * 
+     * @cmis 1.0
      */
     Boolean isOrderable();
 
@@ -136,6 +164,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * @return <code>true</code> - supports open choice;
      *         <code>false</false> - does not support open choice; <code>null</code>
      *         - unknown or not applicable
+     * 
+     * @cmis 1.0
      */
     Boolean isOpenChoice();
 
@@ -144,6 +174,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * 
      * @return the default value (list) or <code>null</code> if no default value
      *         is defined
+     * 
+     * @cmis 1.0
      */
     List<T> getDefaultValue();
 
@@ -151,6 +183,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns the choices for this property.
      * 
      * @return the choices or <code>null</code> if no choices are defined
+     * 
+     * @cmis 1.0
      */
     List<Choice<T>> getChoices();
 }

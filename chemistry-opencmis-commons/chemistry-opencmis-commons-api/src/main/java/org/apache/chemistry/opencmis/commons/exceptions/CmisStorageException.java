@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS Storage Exception.
+ * <p>
+ * Intent: The repository is not able to store the object that the user is
+ * creating/updating due to an internal storage problem.
  */
 public class CmisStorageException extends CmisBaseException {
 

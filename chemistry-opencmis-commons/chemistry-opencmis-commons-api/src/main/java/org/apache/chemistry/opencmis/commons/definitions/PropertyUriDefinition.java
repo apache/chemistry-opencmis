@@ -18,5 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.definitions;
 
+/**
+ * Property definition of a URI property.
+ */
 public interface PropertyUriDefinition extends PropertyDefinition<String> {
 }

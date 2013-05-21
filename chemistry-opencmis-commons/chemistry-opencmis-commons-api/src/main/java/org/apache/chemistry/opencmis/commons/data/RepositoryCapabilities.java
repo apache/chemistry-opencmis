@@ -32,50 +32,118 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
 
     // Object
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityContentStreamUpdates getContentStreamUpdatesCapability();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityChanges getChangesCapability();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityRenditions getRenditionsCapability();
 
     // Navigation
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isGetDescendantsSupported();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isGetFolderTreeSupported();
 
+    /**
+     * 
+     * @cmis 1.1
+     */
     CapabilityOrderBy getOrderByCapability();
 
     // Filing
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isMultifilingSupported();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isUnfilingSupported();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isVersionSpecificFilingSupported();
 
     // Versioning
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isPwcSearchableSupported();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isPwcUpdatableSupported();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     Boolean isAllVersionsSearchableSupported();
 
     // Query
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityQuery getQueryCapability();
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityJoin getJoinCapability();
 
     // ACLs
 
+    /**
+     * 
+     * @cmis 1.0
+     */
     CapabilityAcl getAclCapability();
 
     // Type mutability
 
+    /**
+     * 
+     * @cmis 1.1
+     */
     CreatablePropertyTypes getCreatablePropertyTypes();
 
+    /**
+     * 
+     * @cmis 1.1
+     */
     NewTypeSettableAttributes getNewTypeSettableAttributes();
 
 }

@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS PermissionDenied Exception.
+ * <p>
+ * Cause: The caller of the service method does not have sufficient permissions
+ * to perform the operation.
  */
 public class CmisPermissionDeniedException extends CmisBaseException {
 

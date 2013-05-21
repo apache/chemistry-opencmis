@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS Constraint Exception.
+ * <p>
+ * Intent: The operation violates a repository- or object-level constraint
+ * defined in the CMIS domain model.
  */
 public class CmisConstraintException extends CmisBaseException {
 

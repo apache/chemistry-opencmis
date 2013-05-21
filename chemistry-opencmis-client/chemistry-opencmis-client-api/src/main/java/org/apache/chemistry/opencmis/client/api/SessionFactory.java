@@ -29,10 +29,9 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
  * class implementation needs to be retrieved by any runtime lookup call. This
  * can for instance be a J2EE JNDI lookup or an OSGi service lookup.
  * <p>
- * The entries of the parameter map are defined by <code>SessionParameter</code>
+ * The entries of the parameter map are defined by {@link SessionParameter}
  * class which is part of the commons package. Parameters specify connection
- * settings (user name, authentication, connection url, binding type (soap or
- * atom pub) ...).
+ * settings (user name, authentication, connection URL, binding type, etc.).
  * <p>
  * The <code>Session</code> class which is constructed is either the
  * <code>session</code> base class which is the default implementation or it can

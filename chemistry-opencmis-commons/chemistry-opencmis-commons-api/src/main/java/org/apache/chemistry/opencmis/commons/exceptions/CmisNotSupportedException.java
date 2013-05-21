@@ -22,6 +22,9 @@ import java.math.BigInteger;
 
 /**
  * CMIS NotSupported Exception.
+ * <p>
+ * Cause: The service method invoked requires an optional capability not
+ * supported by the repository.
  */
 public class CmisNotSupportedException extends CmisBaseException {
 

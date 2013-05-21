@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Accessors to CMIS folder properties.
- *
+ * 
  * @see CmisObjectProperties
  */
 public interface FolderProperties {
@@ -30,6 +30,8 @@ public interface FolderProperties {
     /**
      * Returns the parent id or <code>null</code> if the folder is ther root
      * folder (CMIS property <code>cmis:parentId</code>).
+     * 
+     * @cmis 1.0
      */
     String getParentId();
 
@@ -37,6 +39,8 @@ public interface FolderProperties {
      * Returns the list of the allowed object types in this folder (CMIS
      * property <code>cmis:allowedChildObjectTypeIds</code>). If the list is
      * empty or <code>null</code> all object types are allowed.
+     * 
+     * @cmis 1.0
      */
     List<ObjectType> getAllowedChildObjectTypes();
 }
