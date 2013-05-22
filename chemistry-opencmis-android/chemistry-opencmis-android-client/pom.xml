@@ -84,6 +84,7 @@
                             	<copy todir="${gendir}">
 									<fileset dir="${client-bindings}/${sourcefiles}">
 										<include name="**/*.java" />
+										<exclude name="**/spi/StandardAuthenticationProvider.*" />
 										<exclude name="**/spi/local/**" />
 										<exclude name="**/spi/http/DefaultHttpInvoker.*" />
 										<exclude name="**/spi/webservices/**" />
