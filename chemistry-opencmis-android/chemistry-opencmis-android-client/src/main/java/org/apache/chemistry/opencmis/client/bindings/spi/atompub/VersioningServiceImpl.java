@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +41,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 
@@ -75,7 +73,8 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         UrlBuilder url = new UrlBuilder(link);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),
+                getCmisVersion(repositoryId));
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -127,7 +126,6 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         delete(new UrlBuilder(link));
     }
 
-    @SuppressWarnings("unused")
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -155,24 +153,9 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         url.addParameter(Constants.PARAM_MAJOR, major);
         url.addParameter(Constants.PARAM_CHECK_IN, "true");
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        if (object.getProperties() == null) {
-            object.setProperties(new PropertiesImpl());
-        }
-
-        String mediaType = null;
-        InputStream stream = null;
-
-        if (contentStream != null) {
-            mediaType = contentStream.getMimeType();
-            stream = contentStream.getStream();
-        }
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId), contentStream);
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -192,7 +175,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         // set object id
         objectId.setValue(entry.getId());
 
-        Acl originalAces = null;
+        AccessControlListImpl originalAces = null;
 
         lockLinks();
         try {
@@ -205,10 +188,11 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
                     addLink(repositoryId, entry.getId(), (AtomLink) element.getObject());
                 } else if (element.getObject() instanceof ObjectData) {
                     // extract current ACL
-                    // TODO Update This part for Android.
-                    object = (ObjectDataImpl) element.getObject();
-                    // originalAces = convert(object.getAcl(),
-                    // object.isExactACL());
+                    ObjectData object = (ObjectData) element.getObject();
+                    if (object.getAcl() != null) {
+                        originalAces = new AccessControlListImpl(object.getAcl().getAces());
+                        originalAces.setExact(object.isExactAcl());
+                    }
                 }
             }
         } finally {

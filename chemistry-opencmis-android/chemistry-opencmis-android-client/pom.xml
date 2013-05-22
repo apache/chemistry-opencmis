@@ -74,7 +74,10 @@
 										<exclude name="**/jaxb/**" />
 										<exclude name="**/webservices/**" />
 										<exclude name="**/impl/WSConverter.*" />
-										<exclude name="**/impl/XMLConverter.*" />										
+										<exclude name="**/impl/XMLConverter.*" />
+										<exclude name="**/impl/XMLConverter.*" />
+										<exclude name="**/impl/XMLUtils.*" />
+										<exclude name="**/impl/XMLWalker.*" />										
 									</fileset>
 								</copy>
                                 
@@ -82,6 +85,7 @@
 									<fileset dir="${client-bindings}/${sourcefiles}">
 										<include name="**/*.java" />
 										<exclude name="**/spi/local/**" />
+										<exclude name="**/spi/http/DefaultHttpInvoker.*" />
 										<exclude name="**/spi/webservices/**" />
 										<exclude name="**/spi/atompub/**" />
 									</fileset>
@@ -147,6 +151,6 @@
                 </executions>
             </plugin>
 		</plugins>
-	</build>
 
+	</build>
 </project>

@@ -21,8 +21,6 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
@@ -34,13 +32,20 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.xmlpull.v1.XmlSerializer;
+
+import android.util.Xml;
 
 /**
  * Discovery Service AtomPub client.
@@ -110,7 +115,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         return result;
     }
-    
+
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -125,19 +130,26 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         UrlBuilder url = new UrlBuilder(link);
 
-        final Map<String, String> queryParameters = new HashMap<String, String>(6);
-        queryParameters.put(CmisAtomPubConstants.TAG_QUERY_STATEMENT, statement);
-        queryParameters.put(Constants.PARAM_ALLOWABLE_ACTIONS, (includeAllowableActions == null) ? null : includeAllowableActions.toString());
-        queryParameters.put(Constants.PARAM_ALL_VERSIONS, (searchAllVersions == null) ? null :searchAllVersions.toString());
-        queryParameters.put(Constants.PARAM_RELATIONSHIPS, (includeRelationships == null) ? null : includeRelationships.toString());
-        queryParameters.put(Constants.PARAM_RENDITION_FILTER, renditionFilter);
-        queryParameters.put(Constants.PARAM_MAX_ITEMS, (maxItems == null) ? null : maxItems.toString());
-        queryParameters.put(Constants.PARAM_SKIP_COUNT, (skipCount == null) ? null : skipCount.toString());
+        // compile query request
+        final QueryTypeImpl query = new QueryTypeImpl();
+        query.setStatement(statement);
+        query.setSearchAllVersions(searchAllVersions);
+        query.setIncludeAllowableActions(includeAllowableActions);
+        query.setIncludeRelationships(includeRelationships);
+        query.setRenditionFilter(renditionFilter);
+        query.setMaxItems(maxItems);
+        query.setSkipCount(skipCount);
+
+        final CmisVersion cmisVersion = getCmisVersion(repositoryId);
 
         // post the query and parse results
         Response resp = post(url, Constants.MEDIATYPE_QUERY, new Output() {
             public void write(OutputStream out) throws Exception {
-                AtomEntryWriter.writeQuery(out, queryParameters);
+                XmlSerializer writer = Xml.newSerializer();
+        		writer.setOutput(out, AtomEntryWriter.ENCODING);
+                XMLUtils.startXmlDocument(writer);
+                XMLConverter.writeQuery(writer, cmisVersion, query);
+                XMLUtils.endXmlDocument(writer);
             }
         });
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
@@ -175,5 +187,4 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         return result;
     }
-
 }

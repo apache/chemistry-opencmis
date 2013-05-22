@@ -58,7 +58,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         url.addParameter(Constants.PARAM_ALL_VERSIONS, allVersions);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId), getCmisVersion(repositoryId));
 
         // post addObjectToFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -84,7 +84,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         url.addParameter(Constants.PARAM_REMOVE_FROM, folderId);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId), getCmisVersion(repositoryId));
 
         // post removeObjectFromFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {

@@ -23,7 +23,8 @@ import java.io.Serializable;
 import javax.xml.namespace.QName;
 
 /**
- * Atom element.
+ * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
+ * 
  */
 public class AtomElement implements Serializable {
 
