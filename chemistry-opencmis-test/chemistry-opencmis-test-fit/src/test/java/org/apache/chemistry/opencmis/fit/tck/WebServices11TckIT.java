@@ -23,9 +23,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.junit.Ignore;
 
-//@Ignore
 public class WebServices11TckIT extends AbstractTckIT {
 
     public static final String WEBSERVICES_PATH = "/opencmis/services11/";

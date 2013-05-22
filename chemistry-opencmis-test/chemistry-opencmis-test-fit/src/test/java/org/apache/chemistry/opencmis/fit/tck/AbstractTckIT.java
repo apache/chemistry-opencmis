@@ -56,12 +56,17 @@ public abstract class AbstractTckIT extends AbstractRunner {
     public Map<String, String> getBaseSessionParameters() {
         Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put(SessionParameter.REPOSITORY_ID, REPOSITORY_ID);
-        parameters.put(SessionParameter.USER, USER);
-        parameters.put(SessionParameter.PASSWORD, PASSWORD);
+        parameters.put(SessionParameter.REPOSITORY_ID,
+                System.getProperty(SessionParameter.REPOSITORY_ID, REPOSITORY_ID));
+        parameters.put(SessionParameter.USER, System.getProperty(SessionParameter.USER, USER));
+        parameters.put(SessionParameter.PASSWORD, System.getProperty(SessionParameter.PASSWORD, PASSWORD));
 
-        parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE, "VersionableType");
-        parameters.put(TestParameters.DEFAULT_FOLDER_TYPE, "cmis:folder");
+        // default document type is "VersionableType" to run versioning tests
+        // with the InMemory repository
+        parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE,
+                System.getProperty(TestParameters.DEFAULT_DOCUMENT_TYPE, "VersionableType"));
+        parameters.put(TestParameters.DEFAULT_FOLDER_TYPE,
+                System.getProperty(TestParameters.DEFAULT_FOLDER_TYPE, "cmis:folder"));
 
         return parameters;
     }
