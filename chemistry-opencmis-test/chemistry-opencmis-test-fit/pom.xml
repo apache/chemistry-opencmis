@@ -193,12 +193,19 @@
             	<service.factory.class>org.modeshape.jcr.JcrRepositoryFactory</service.factory.class>
             	<repository>test</repository>
             	<default.documentType>cmis:document</default.documentType>
+            	<forkMode>never</forkMode>
             </properties>
 	        <dependencies>
 		        <dependency>
 		            <groupId>org.modeshape</groupId>
 		            <artifactId>modeshape-jcr</artifactId>
 		            <version>${modeshape.version}</version>
+		            <exclusions>
+                        <exclusion>
+                            <artifactId>tika-parsers</artifactId>
+                            <groupId>org.apache.tika</groupId>
+                        </exclusion>
+                    </exclusions>
 		        </dependency>
 		        <dependency>
 		            <groupId>org.apache.chemistry.opencmis</groupId>
