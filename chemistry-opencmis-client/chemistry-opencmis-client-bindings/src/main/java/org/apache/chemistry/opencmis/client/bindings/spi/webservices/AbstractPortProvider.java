@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
@@ -500,18 +501,42 @@ public abstract class AbstractPortProvider {
      * Reads the URL and extracts the endpoint URL of the given service.
      */
     private URL getEndpointUrlFromWsdl(String wsdlUrl, CmisWebSerivcesService service) {
-        HttpInvoker hi = CmisBindingsHelper.getHttpInvoker(session);
-        Response wsdlResponse = hi.invokeGET(new UrlBuilder(wsdlUrl), session);
+        InputStream wsdlStream;
+        URL url;
 
-        if (wsdlResponse.getResponseCode() != 200) {
-            throw new CmisConnectionException("Cannot access WSDL: " + wsdlUrl, BigInteger.ZERO,
-                    wsdlResponse.getErrorContent());
+        // check the WSDL URL
+        try {
+            url = new URL(wsdlUrl);
+        } catch (MalformedURLException e) {
+            throw new CmisConnectionException("Invalid WSDL URL: " + wsdlUrl, e);
         }
 
-        try {
-            Document doc = XMLUtils.parseDomDocument(wsdlResponse.getStream());
+        // check protocol
+        if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
+            // HTTP URL -> use HttpInvoker to enable authentication
+            HttpInvoker hi = CmisBindingsHelper.getHttpInvoker(session);
+            Response wsdlResponse = hi.invokeGET(new UrlBuilder(wsdlUrl), session);
 
-            NodeList serivceList = doc.getElementsByTagName("service");
+            if (wsdlResponse.getResponseCode() != 200) {
+                throw new CmisConnectionException("Cannot access WSDL: " + wsdlUrl, BigInteger.ZERO,
+                        wsdlResponse.getErrorContent());
+            } else {
+                wsdlStream = wsdlResponse.getStream();
+            }
+        } else {
+            // non-HTTP URL -> just open the stream
+            try {
+                wsdlStream = url.openStream();
+            } catch (IOException e) {
+                throw new CmisConnectionException("Cannot access WSDL: " + wsdlUrl, e);
+            }
+        }
+
+        // parse the WSDL
+        try {
+            Document doc = XMLUtils.parseDomDocument(wsdlStream);
+
+            NodeList serivceList = doc.getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/", "service");
             for (int i = 0; i < serivceList.getLength(); i++) {
                 Element serviceNode = (Element) serivceList.item(i);
 
@@ -524,7 +549,8 @@ public abstract class AbstractPortProvider {
                     continue;
                 }
 
-                NodeList portList = ((Element) serviceNode).getElementsByTagName("port");
+                NodeList portList = ((Element) serviceNode).getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/",
+                        "port");
                 if (portList.getLength() < 1) {
                     throw new CmisRuntimeException("This service has no ports: " + service.getServiceName());
                 }
@@ -561,7 +587,7 @@ public abstract class AbstractPortProvider {
             throw new CmisRuntimeException("Cannot read this WSDL: " + wsdlUrl, ioe);
         } finally {
             try {
-                wsdlResponse.getStream().close();
+                wsdlStream.close();
             } catch (IOException ioe) {
                 // ignore, there is nothing we can do
             }
