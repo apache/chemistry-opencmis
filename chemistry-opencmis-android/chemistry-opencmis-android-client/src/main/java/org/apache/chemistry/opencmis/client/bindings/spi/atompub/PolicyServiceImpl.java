@@ -32,8 +32,6 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -62,7 +60,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId), getCmisVersion(repositoryId));
 
         // post applyPolicy request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -145,7 +143,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
                             policyLink = atomLink.getHref();
                         }
                     } else if (element.getObject() instanceof ObjectData) {
-                        String id = findIdProperty((ObjectData) element.getObject());
+                        String id = ((ObjectData) element.getObject()).getId();
                         if (policyId.equals(id)) {
                             found = true;
                         }
@@ -162,25 +160,5 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         if (found && (policyLink != null)) {
             delete(new UrlBuilder(policyLink));
         }
-    }
-
-    /**
-     * Finds the id property within a CMIS object.
-     */
-    private static String findIdProperty(ObjectData object) {
-        if ((object == null) || (object.getProperties() == null)) {
-            return null;
-        }
-
-        for (PropertyData<?> property : object.getProperties().getPropertyList()) {
-            if (PropertyIds.OBJECT_ID.equals(property.getId()) && (property instanceof PropertyId)) {
-                List<String> values = ((PropertyId) property).getValues();
-                if (values.size() == 1) {
-                    return values.get(0);
-                }
-            }
-        }
-
-        return null;
     }
 }

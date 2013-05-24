@@ -59,17 +59,23 @@ public final class CmisAtomPubConstants {
     public static final String TAG_CONTENT = "content";
     public static final String TAG_CONTENT_MEDIATYPE = "mediatype";
     public static final String TAG_CONTENT_BASE64 = "base64";
+    public static final String TAG_CONTENT_FILENAME = "filename";
 
     public static final String ATTR_DOCUMENT_TYPE = "cmisTypeDocumentDefinitionType";
     public static final String ATTR_FOLDER_TYPE = "cmisTypeFolderDefinitionType";
     public static final String ATTR_RELATIONSHIP_TYPE = "cmisTypeRelationshipDefinitionType";
     public static final String ATTR_POLICY_TYPE = "cmisTypePolicyDefinitionType";
+    public static final String ATTR_ITEM_TYPE = "cmisTypeItemDefinitionType";
+    public static final String ATTR_SECONDARY_TYPE = "cmisTypeSecondaryDefinitionType";
 
     // allowable actions
     public static final String TAG_ALLOWABLEACTIONS = "allowableActions";
 
     // ACL
     public static final String TAG_ACL = "acl";
+
+    // HTML
+    public static final String TAG_HTML = "html";
 
     // links
     public static final String LINK_REL = "rel";

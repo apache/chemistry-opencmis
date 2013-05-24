@@ -59,9 +59,10 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -106,21 +107,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
         url.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        String mediaType = null;
-        InputStream stream = null;
-
-        if (contentStream != null) {
-            mediaType = contentStream.getMimeType();
-            stream = contentStream.getStream();
-        }
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object, mediaType, stream);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId), contentStream);
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -157,13 +146,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -208,13 +193,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -255,13 +236,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -278,7 +255,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         return entry.getId();
     }
-    
+
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         checkCreateProperties(properties);
@@ -303,12 +280,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+                getCmisVersion(repositoryId));
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -326,7 +300,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return entry.getId();
     }
 
-    @SuppressWarnings("rawtypes")
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         // we need an object id
@@ -346,13 +319,9 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
         }
 
-        // set up object and writer
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-        // TODO
-        // object.setPolicyIds(convertPolicyIds(policies));
-
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(object);
+        // set up writer
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null),
+                getCmisVersion(repositoryId));
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -388,20 +357,13 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 } else if (element.getObject() instanceof ObjectData) {
                     // extract new change token
                     if (changeToken != null) {
-                        object = (ObjectDataImpl) element.getObject();
+                        ObjectData object = (ObjectData) element.getObject();
 
                         if (object.getProperties() != null) {
-                            for (PropertyData property : object.getProperties().getPropertyList()) {
-                                if (PropertyIds.CHANGE_TOKEN.equals(property.getId())
-                                        && (property instanceof PropertyString)) {
-
-                                    PropertyString changeTokenProperty = (PropertyString) property;
-                                    if (changeTokenProperty.getFirstValue() != null && changeTokenProperty.getFirstValue().length() > 0) {
-                                        changeToken.setValue(changeTokenProperty.getFirstValue());
-                                    }
-
-                                    break;
-                                }
+                            Object changeTokenStr = object.getProperties().getProperties()
+                                    .get(PropertyIds.CHANGE_TOKEN);
+                            if (changeTokenStr instanceof PropertyString) {
+                                changeToken.setValue(((PropertyString) changeTokenStr).getFirstValue());
                             }
                         }
                     }
@@ -415,7 +377,60 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
+        // find link
+        String link = loadCollection(repositoryId, Constants.COLLECTION_BULK_UPDATE);
+
+        if (link == null) {
+            throw new CmisObjectNotFoundException("Unknown repository or bulk update properties is not supported!");
+        }
+
+        // set up writer
+        final BulkUpdateImpl bulkUpdate = new BulkUpdateImpl();
+        bulkUpdate.setObjectIdAndChangeToken(objectIdAndChangeToken);
+        bulkUpdate.setProperties(properties);
+        bulkUpdate.setAddSecondaryTypeIds(addSecondaryTypeIds);
+        bulkUpdate.setRemoveSecondaryTypeIds(removeSecondaryTypeIds);
+
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(bulkUpdate);
+
+        // post the new folder object
+        Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            public void write(OutputStream out) throws Exception {
+                entryWriter.write(out);
+            }
+        });
+
+        AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>(feed
+                .getEntries().size());
+
+        // get the results
+        if (!feed.getEntries().isEmpty()) {
+
+            for (AtomEntry entry : feed.getEntries()) {
+                // walk through the entry
+                // we are not interested in the links this time because they
+                // could belong to a new document version
+                for (AtomElement element : entry.getElements()) {
+                    if (element.getObject() instanceof ObjectData) {
+                        ObjectData object = (ObjectData) element.getObject();
+                        String id = object.getId();
+                        if (id != null) {
+                            String changeToken = null;
+                            PropertyData<?> changeTokenProp = object.getProperties().getProperties()
+                                    .get(PropertyIds.CHANGE_TOKEN);
+                            if (changeTokenProp instanceof PropertyString) {
+                                changeToken = ((PropertyString) changeTokenProp).getFirstValue();
+                            }
+
+                            result.add(new BulkUpdateObjectIdAndChangeTokenImpl(id, changeToken));
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
@@ -436,11 +451,25 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
 
-        // find the link
-        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
+        // find the down links
+        String link = loadLink(repositoryId, folderId, Constants.REL_DOWN, null);
+
+        if (link != null) {
+            // found only a children link, but no descendants link
+            // -> try folder tree link
+            link = null;
+        } else {
+            // found no or two down links
+            // -> get only the descendants link
+            link = loadLink(repositoryId, folderId, Constants.REL_DOWN, Constants.MEDIATYPE_DESCENDANTS);
+        }
 
         if (link == null) {
             link = loadLink(repositoryId, folderId, Constants.REL_FOLDERTREE, Constants.MEDIATYPE_DESCENDANTS);
+        }
+
+        if (link == null) {
+            link = loadLink(repositoryId, folderId, Constants.REL_FOLDERTREE, Constants.MEDIATYPE_FEED);
         }
 
         if (link == null) {
@@ -560,11 +589,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         return result;
     }
 
-    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
-        throw new CmisNotSupportedException("Not supported!");
-    }    
-    
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
@@ -624,7 +648,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         url.addParameter(Constants.PARAM_SOURCE_FOLDER_ID, sourceFolderId);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),
+                getCmisVersion(repositoryId));
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
@@ -641,64 +666,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-        // we need an object id
-        if ((objectId == null) || (objectId.getValue() == null)) {
-            throw new CmisInvalidArgumentException("Object ID must be set!");
-        }
-
-        // we need content
-        if ((contentStream == null) || (contentStream.getStream() == null) || (contentStream.getMimeType() == null)) {
-            throw new CmisInvalidArgumentException("Content must be set!");
-        }
-
-        // find the link
-        String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
-
-        if (link == null) {
-            throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
-        }
-
-        UrlBuilder url = new UrlBuilder(link);
-        if (changeToken != null) {
-            url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
-        }
-        url.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
-
-        final InputStream stream = contentStream.getStream();
-
-        // Content-Disposition header for the filename
-        Map<String, String> headers = null;
-        if (contentStream.getFileName() != null) {
-            headers = Collections
-                    .singletonMap(
-                            MimeHelper.CONTENT_DISPOSITION,
-                            MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT,
-                                    contentStream.getFileName()));
-        }
-
-        // send content
-        Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
-            public void write(OutputStream out) throws Exception {
-                int b;
-                byte[] buffer = new byte[4096];
-
-                while ((b = stream.read(buffer)) > -1) {
-                    out.write(buffer, 0, b);
-                }
-
-                stream.close();
-            }
-        });
-
-        // check response code further
-        if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201) && (resp.getResponseCode() != 204)) {
-            throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
-        }
-
-        objectId.setValue(null);
-        if (changeToken != null) {
-            changeToken.setValue(null);
-        }
+        setOrAppendContent(repositoryId, objectId, overwriteFlag, changeToken, contentStream, true, false, extension);
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -726,6 +694,11 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         if (changeToken != null) {
             changeToken.setValue(null);
         }
+    }
+
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
+        setOrAppendContent(repositoryId, objectId, null, changeToken, contentStream, isLastChunk, true, extension);
     }
 
     // ---- internal ----
@@ -760,6 +733,76 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             if (newACL != null) {
                 updateAcl(repositoryId, entry.getId(), newACL, null);
             }
+        }
+    }
+
+    /**
+     * Sets or appends content.
+     */
+    private void setOrAppendContent(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
+            Holder<String> changeToken, ContentStream contentStream, boolean isLastChunk, boolean append,
+            ExtensionsData extension) {
+        // we need an object id
+        if ((objectId == null) || (objectId.getValue() == null)) {
+            throw new CmisInvalidArgumentException("Object ID must be set!");
+        }
+
+        // we need content
+        if ((contentStream == null) || (contentStream.getStream() == null) || (contentStream.getMimeType() == null)) {
+            throw new CmisInvalidArgumentException("Content must be set!");
+        }
+
+        // find the link
+        String link = loadLink(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
+
+        if (link == null) {
+            throwLinkException(repositoryId, objectId.getValue(), Constants.REL_EDITMEDIA, null);
+        }
+
+        UrlBuilder url = new UrlBuilder(link);
+        if (changeToken != null) {
+            url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
+        }
+
+        if (append) {
+            url.addParameter(Constants.PARAM_APPEND, Boolean.TRUE);
+            url.addParameter(Constants.PARAM_IS_LAST_CHUNK, isLastChunk);
+        } else {
+            url.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
+        }
+
+        final InputStream stream = contentStream.getStream();
+
+        // Content-Disposition header for the filename
+        Map<String, String> headers = null;
+        if (contentStream.getFileName() != null) {
+            headers = Collections
+                    .singletonMap(
+                            MimeHelper.CONTENT_DISPOSITION,
+                            MimeHelper.encodeContentDisposition(MimeHelper.DISPOSITION_ATTACHMENT,
+                                    contentStream.getFileName()));
+        }
+
+        // send content
+        Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
+            public void write(OutputStream out) throws Exception {
+                int b;
+                byte[] buffer = new byte[4096];
+
+                while ((b = stream.read(buffer)) > -1) {
+                    out.write(buffer, 0, b);
+                }
+            }
+        });
+
+        // check response code further
+        if ((resp.getResponseCode() != 200) && (resp.getResponseCode() != 201) && (resp.getResponseCode() != 204)) {
+            throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
+        }
+
+        objectId.setValue(null);
+        if (changeToken != null) {
+            changeToken.setValue(null);
         }
     }
 }

@@ -18,47 +18,36 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.ATTR_PROPERTY_DEFINITION_ID;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_ID;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_TITLE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ATOM_UPDATED;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_BASE64;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_FILENAME;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT_MEDIATYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_QUERY_STATEMENT;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_VALUE;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
-import org.apache.chemistry.opencmis.commons.data.Acl;
-import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
-import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
-import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
-import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
-import org.apache.chemistry.opencmis.commons.data.PropertyUri;
-import org.apache.chemistry.opencmis.commons.enums.AtomPropertyType;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
-import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
@@ -68,47 +57,85 @@ import android.util.Xml;
  */
 public class AtomEntryWriter {
 
-    private static final String PREFIX_ATOM = "atom";
-    private static final String PREFIX_CMIS = "cmis";
-    private static final String PREFIX_RESTATOM = "cmisra";
-    private static final String ENCODING = "UTF-8";
+    public static final String ENCODING = "UTF-8";
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
+    private final CmisVersion cmisVersion;
     private final ObjectData object;
+    private final ContentStream contentStream;
     private final InputStream stream;
-    private final String mediaType;
-    
-    private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private final TypeDefinition typeDef;
+    private final BulkUpdateImpl bulkUpdate;
 
     /**
-     * Constructor.
+     * Constructor for objects.
      */
-    public AtomEntryWriter(ObjectData object) {
-        this(object, null, null);
+    public AtomEntryWriter(ObjectData object, CmisVersion cmisVersion) {
+        this(object, cmisVersion, null);
     }
 
     /**
-     * Constructor.
+     * Constructor for objects.
      */
-    public AtomEntryWriter(ObjectData object, String mediaType, InputStream stream) {
+    public AtomEntryWriter(ObjectData object, CmisVersion cmisVersion, ContentStream contentStream) {
         if ((object == null) || (object.getProperties() == null)) {
             throw new CmisInvalidArgumentException("Object and properties must not be null!");
         }
 
-        if ((stream != null) && (mediaType == null)) {
+        if ((contentStream != null) && (contentStream.getMimeType() == null)) {
             throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
         }
 
         this.object = object;
-        this.mediaType = mediaType;
+        this.cmisVersion = cmisVersion;
+        this.contentStream = contentStream;
+        if (contentStream != null && contentStream.getStream() != null) {
+            InputStream in = contentStream.getStream();
 
-        if (stream != null && !(stream instanceof BufferedInputStream) && !(stream instanceof ByteArrayInputStream)) {
             // avoid double buffering
-            stream = new BufferedInputStream(stream, BUFFER_SIZE);
+            if (!(in instanceof BufferedInputStream) && !(in instanceof ByteArrayInputStream)) {
+                stream = new BufferedInputStream(in, BUFFER_SIZE);
+            } else {
+                stream = in;
+            }
+        } else {
+            stream = null;
+        }
+        this.typeDef = null;
+        this.bulkUpdate = null;
+    }
+
+    /**
+     * Constructor for types.
+     */
+    public AtomEntryWriter(TypeDefinition type, CmisVersion cmisVersion) {
+        if (type == null) {
+            throw new CmisInvalidArgumentException("Type must not be null!");
         }
 
-        this.stream = stream;
+        this.typeDef = type;
+        this.cmisVersion = cmisVersion;
+        this.object = null;
+        this.contentStream = null;
+        this.stream = null;
+        this.bulkUpdate = null;
+    }
+
+    /**
+     * Constructor for bulk updates.
+     */
+    public AtomEntryWriter(BulkUpdateImpl bulkUpdate) {
+        if (bulkUpdate == null) {
+            throw new CmisInvalidArgumentException("Bulk update data must not be null!");
+        }
+
+        this.bulkUpdate = bulkUpdate;
+        this.typeDef = null;
+        this.cmisVersion = CmisVersion.CMIS_1_1;
+        this.object = null;
+        this.contentStream = null;
+        this.stream = null;
     }
 
     /**
@@ -119,16 +146,17 @@ public class AtomEntryWriter {
         writer.setOutput(out, ENCODING);
 
         // start doc
-        writer.startDocument(ENCODING, false);
-        writer.setPrefix(PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.setPrefix(PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        XMLUtils.startXmlDocument(writer);
 
         // start entry
         writer.startTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
-        writer.attribute("", PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
-        writer.attribute("", PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.attribute("", PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        
+        writer.attribute("", XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
+        writer.attribute("", XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
+        writer.attribute("", XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
+        /*if (contentStream != null && contentStream.getFileName() != null) {
+            writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+        }*/
 
         // atom:id
         writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");
@@ -143,8 +171,13 @@ public class AtomEntryWriter {
         if (stream != null) {
             writer.startTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT);
 
-            writeTag(writer, XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE, mediaType);
+            writeTag(writer, XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_MEDIATYPE, contentStream.getMimeType());
 
+            if (contentStream.getFileName() != null) {
+                XMLUtils.write(writer, XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY,
+                        TAG_CONTENT_FILENAME, contentStream.getFileName());
+            }
+            
             writer.startTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
             writeContent(writer);
             writer.endTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
@@ -153,61 +186,25 @@ public class AtomEntryWriter {
         }
 
         // object
-        writeObject(writer, object);
+        if (object != null) {
+            XMLConverter.writeObject(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, object);
+        }
+        
+        // type
+        if (typeDef != null) {
+            XMLConverter.writeTypeDefinition(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, typeDef);
+        }
+
+        // bulk update
+        if (bulkUpdate != null) {
+            XMLConverter.writeBulkUpdate(writer, XMLConstants.NAMESPACE_RESTATOM, bulkUpdate);
+        }
 
         // end entry
         writer.endTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
 
         // end document
-        writer.endDocument();
-
-        writer.flush();
-    }
-
-    public static void writeQuery(OutputStream out, Map<String, String> queryParams) throws Exception {
-        XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, ENCODING);
-        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.startTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY);
-        writer.attribute(null, PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-
-        writer.startTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
-        writer.cdsect(queryParams.get(TAG_QUERY_STATEMENT));
-        writer.endTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY_STATEMENT);
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_SEARCH_ALL_VERSIONS,
-                queryParams.get(Constants.PARAM_SEARCH_ALL_VERSIONS));
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_ALLOWABLE_ACTIONS,
-                queryParams.get(Constants.PARAM_ALLOWABLE_ACTIONS));
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_RELATIONSHIPS,
-                queryParams.get(Constants.PARAM_RELATIONSHIPS));
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_RENDITION_FILTER,
-                queryParams.get(Constants.PARAM_RENDITION_FILTER));
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_MAX_ITEMS,
-                queryParams.get(Constants.PARAM_MAX_ITEMS));
-        writeTagIfNotNull(writer, XMLConstants.NAMESPACE_CMIS, Constants.PARAM_SKIP_COUNT,
-                queryParams.get(Constants.PARAM_SKIP_COUNT));
-
-        writer.endTag(XMLConstants.NAMESPACE_CMIS, TAG_QUERY);
-        writer.flush();
-    }
-
-    public static void writeACL(OutputStream out, Acl acl) throws Exception {
-        XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, ENCODING);
-        writer.setPrefix(PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-        writer.startTag(XMLConstants.NAMESPACE_CMIS, "acl");
-        writer.attribute(null, PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
-
-        writer.startTag(XMLConstants.NAMESPACE_CMIS, "permission");
-
-        // TODO Implements
-        // writeTag(writer, Constants.NAMESPACE_CMIS, "direct",
-        // acl.getAces().get(0).)
-
-        writer.endTag(XMLConstants.NAMESPACE_CMIS, "permission");
-
-        writer.endTag(XMLConstants.NAMESPACE_CMIS, "acl");
-        writer.flush();
+         XMLUtils.endXmlDocument(writer);
     }
 
     // ---- internal ----
@@ -215,61 +212,48 @@ public class AtomEntryWriter {
     private String getTitle() {
         String result = "";
 
-        List<PropertyData<?>> list = object.getProperties().getPropertyList();
-        for (PropertyData<?> propertyData : list) {
-            if (PropertyIds.NAME.equals(propertyData.getId()) && (propertyData instanceof PropertyString)) {
-                List<String> values = ((PropertyString) propertyData).getValues();
-                if (!values.isEmpty()) {
-                    return values.get(0);
-                }
+        if (object != null) {
+            PropertyData<?> nameProperty = object.getProperties().getProperties().get(PropertyIds.NAME);
+            if (nameProperty instanceof PropertyString) {
+                result = ((PropertyString) nameProperty).getFirstValue();
             }
+        }
+
+        if (typeDef != null) {
+            if (typeDef.getDisplayName() != null) {
+                result = typeDef.getDisplayName();
+            }
+        }
+
+        if (bulkUpdate != null) {
+            result = "Bulk Update Properties";
         }
 
         return result;
     }
 
-    private static String getUpdated() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        return sdf.format(new Date());
-    }
-
     private void writeContent(XmlSerializer writer) throws Exception {
+        @SuppressWarnings("resource")
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
-        byte[] buffer = new byte[BUFFER_SIZE * 3 / 4];
+        char[] buffer = new char[BUFFER_SIZE];
+        int pos = 0;
         int b;
-        while ((b = b64stream.read(buffer)) > -1) {
-            if (b > 0) {
-                writer.text(new String(buffer, 0, b, "US-ASCII"));
+
+        while ((b = b64stream.read()) > -1) {
+            buffer[pos++] = (char) (b & 0xFF);
+            if (pos == buffer.length) {
+                writer.text(buffer, 0, buffer.length);
+                pos = 0;
             }
         }
-
-        b64stream.close();
+        if (pos > 0) {
+            writer.text(buffer, 0, pos);
+        }
     }
 
-    private static void writeObject(XmlSerializer writer, ObjectData object) throws Exception {
-        writer.startTag(XMLConstants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
-        if (object.getProperties() != null) {
-            writer.startTag(XMLConstants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
-            writeProperties(writer, object.getProperties().getPropertyList());
-
-            if (object.getProperties().getExtensions() != null
-                    && object.getProperties().getExtensions().isEmpty() == false) {
-                writeExtensions(writer, object.getProperties().getExtensions());
-            }
-
-            writer.endTag(XMLConstants.NAMESPACE_CMIS, Constants.SELECTOR_PROPERTIES);
-        }
-        writer.endTag(XMLConstants.NAMESPACE_RESTATOM, Constants.SELECTOR_OBJECT);
-    }
-
-    private static void writeTagIfNotNull(XmlSerializer writer, String tagNameSpace, String tagName, String text)
-            throws Exception {
-        if (text != null) {
-            writeTag(writer, tagNameSpace, tagName, text);
-        }
+    private static String getUpdated() {
+        return DateTimeHelper.formatXmlDateTime(new GregorianCalendar(TimeZone.getTimeZone("GMT")));
     }
 
     private static void writeTag(XmlSerializer writer, String tagNameSpace, String tagName, String text)
@@ -278,78 +262,4 @@ public class AtomEntryWriter {
         writer.text(text);
         writer.endTag(tagNameSpace, tagName);
     }
-
-    private static void writeProperties(XmlSerializer writer, List<PropertyData<?>> props) throws Exception {
-        for (PropertyData<?> propertyData : props) {
-            writeProperty(writer, propertyData);
-        }
-    }
-
-    private static void writeProperty(XmlSerializer writer, PropertyData<?> prop) throws Exception {
-        writer.startTag(XMLConstants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
-        writer.attribute(null, ATTR_PROPERTY_DEFINITION_ID, prop.getId());
-        writeValues(writer, prop.getValues());
-        writer.endTag(XMLConstants.NAMESPACE_CMIS, getPropertyTypeTag(prop));
-    }
-
-    private static void writeExtensions(XmlSerializer writer, List<CmisExtensionElement> extensions) throws Exception {
-        for (CmisExtensionElement cmisExtensionElement : extensions) {
-            writer.startTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
-            writeAttributes(writer, cmisExtensionElement.getAttributes());
-            if (cmisExtensionElement.getChildren() != null && cmisExtensionElement.getChildren().isEmpty() == false) {
-                writeExtensions(writer, cmisExtensionElement.getChildren());
-            } else if (cmisExtensionElement.getValue() != null) {
-                writer.text(cmisExtensionElement.getValue());
-            }
-            writer.endTag(cmisExtensionElement.getNamespace(), cmisExtensionElement.getName());
-        }
-    }
-
-    private static void writeAttributes(XmlSerializer writer, Map<String, String> values) throws Exception {
-        for (Map.Entry<String, String> value : values.entrySet()) {
-            writer.attribute(null, value.getKey(), value.getValue());
-        }
-    }
-
-    private static void writeValues(XmlSerializer writer, List<?> values) throws Exception {
-        for (Object value : values) {
-            writeTag(writer, XMLConstants.NAMESPACE_CMIS, TAG_VALUE, convertPropertyValue(value));
-        }
-    }
-
-    private static String convertPropertyValue(Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        if (value instanceof GregorianCalendar) {
-            return dateFormatter.format(((GregorianCalendar) value).getTime());
-        }
-
-        return value.toString();
-    }
-
-    // Not sure its the right way
-    private static String getPropertyTypeTag(PropertyData<?> prop) {
-        if (prop instanceof PropertyString) {
-            return AtomPropertyType.STRING.value();
-        } else if (prop instanceof PropertyId) {
-            return AtomPropertyType.ID.value();
-        } else if (prop instanceof PropertyBoolean) {
-            return AtomPropertyType.BOOLEAN.value();
-        } else if (prop instanceof PropertyInteger) {
-            return AtomPropertyType.INTEGER.value();
-        } else if (prop instanceof PropertyDecimal) {
-            return AtomPropertyType.DECIMAL.value();
-        } else if (prop instanceof PropertyDateTime) {
-            return AtomPropertyType.DATETIME.value();
-        } else if (prop instanceof PropertyHtml) {
-            return AtomPropertyType.HTML.value();
-        } else if (prop instanceof PropertyUri) {
-            return AtomPropertyType.URI.value();
-        } else {
-            return null;
-        }
-    }
-
 }

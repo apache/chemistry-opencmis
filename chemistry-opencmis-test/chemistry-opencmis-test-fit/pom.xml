@@ -26,11 +26,21 @@
 
 	<properties>
 		<parentBasedir>../../</parentBasedir>
-		<modeshape.version>2.8.3.Final</modeshape.version>
+		<modeshape.version>3.2.0.Final</modeshape.version>
+        <jackrabbit-core.version>2.6.1</jackrabbit-core.version>
         <maven-failsafe-plugin.version>2.14.1</maven-failsafe-plugin.version>
         <maven-jetty-plugin.version>6.1.22</maven-jetty-plugin.version>
         <jcr.version>2.0</jcr.version>
-        <jackrabbit-core.version>2.5.2</jackrabbit-core.version>
+        <overlay.groupId></overlay.groupId>
+        <overlay.artifactId></overlay.artifactId>
+        <factory.class></factory.class>
+        <!-- Used in ServiceLoader to look up impl. -->
+        <service.factory.class></service.factory.class>
+        <repository></repository>
+        <user></user>
+        <password></password>
+        <!-- "VersionableType" to run versioning tests with the InMemory repository -->
+        <default.documentType>VersionableType</default.documentType>        
     </properties>
 
 
@@ -116,6 +126,10 @@
 			              <name>org.apache.chemistry.opencmis.password</name>
 			              <value>${password}</value>
 			            </systemProperty>
+			            <systemProperty>
+			              <name>org.apache.chemistry.opencmis.tck.default.documentType</name>
+			              <value>${default.documentType}</value>
+			            </systemProperty>
 	                	<systemProperty>
 	                		<name>project.basedir</name>
 	                		<value>${project.basedir}</value>
@@ -175,15 +189,23 @@
             	<overlay.groupId>org.apache.chemistry.opencmis</overlay.groupId>
             	<overlay.artifactId>chemistry-opencmis-server-jcr</overlay.artifactId>
             	<factory.class>org.apache.chemistry.opencmis.jcr.JcrServiceFactory</factory.class>
-            	<!-- Uses in ServiceLoader to look up impl. -->
+            	<!-- Used in ServiceLoader to look up impl. -->
             	<service.factory.class>org.modeshape.jcr.JcrRepositoryFactory</service.factory.class>
             	<repository>test</repository>
+            	<default.documentType>cmis:document</default.documentType>
+            	<forkMode>never</forkMode>
             </properties>
 	        <dependencies>
 		        <dependency>
 		            <groupId>org.modeshape</groupId>
 		            <artifactId>modeshape-jcr</artifactId>
 		            <version>${modeshape.version}</version>
+		            <exclusions>
+                        <exclusion>
+                            <artifactId>tika-parsers</artifactId>
+                            <groupId>org.apache.tika</groupId>
+                        </exclusion>
+                    </exclusions>
 		        </dependency>
 		        <dependency>
 		            <groupId>org.apache.chemistry.opencmis</groupId>
@@ -223,9 +245,10 @@
             	<overlay.groupId>${project.groupId}</overlay.groupId>
             	<overlay.artifactId>chemistry-opencmis-server-inmemory</overlay.artifactId>
             	<factory.class>org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl</factory.class>
-            	<!-- Uses in ServiceLoader to look up impl. -->
+            	<!-- Used in ServiceLoader to look up impl. -->
             	<service.factory.class>${factory.class}</service.factory.class>
             	<repository>test</repository>
+            	<default.documentType>VersionableType</default.documentType>
             </properties>
 	        <dependencies>
 	        	<dependency>
@@ -252,11 +275,12 @@
             	<overlay.groupId>${project.groupId}</overlay.groupId>
             	<overlay.artifactId>chemistry-opencmis-server-bindings-war</overlay.artifactId>
             	<factory.class>org.apache.chemistry.opencmis.jcr.JcrServiceFactory</factory.class>
-            	<!-- Uses in ServiceLoader to look up impl.  -->
+            	<!-- Used in ServiceLoader to look up impl.  -->
             	<service.factory.class>org.apache.jackrabbit.core.RepositoryFactoryImpl</service.factory.class>
             	<repository>default</repository>  
             	<user>admin</user>
             	<password>admin</password>
+            	<default.documentType>cmis:document</default.documentType>
             	<forkMode>never</forkMode>
             </properties>
 	        <dependencies>

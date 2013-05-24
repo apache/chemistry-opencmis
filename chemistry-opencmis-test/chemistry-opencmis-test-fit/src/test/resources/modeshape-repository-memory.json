@@ -1,0 +1,15 @@
+{
+    "name" : "test",
+    "jndiName" : "",
+    "workspaces" : {
+        "predefined" : ["test"],
+        "default" : "test",
+        "allowCreation" : true
+    },
+    "security" : {
+        "anonymous" : {
+            "roles" : ["readonly","readwrite","admin"],
+            "useOnFailedLogin" : true
+        }
+    }
+}

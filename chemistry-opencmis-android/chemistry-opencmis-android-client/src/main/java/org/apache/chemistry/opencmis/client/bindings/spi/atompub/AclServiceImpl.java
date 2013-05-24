@@ -24,11 +24,12 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 
 /**
  * ACL Service AtomPub client.
  */
-public class AclServiceImpl extends AbstractAtomPubService implements AclService {
+public class AclServiceImpl extends AbstractAtomPubService implements AclService, ExtendedAclService {
 
     /**
      * Constructor.
@@ -62,4 +63,10 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         return getAclInternal(repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
+    public Acl setAcl(String repositoryId, String objectId, Acl aces) {
+        AtomAcl acl = updateAcl(repositoryId, objectId, aces, AclPropagation.OBJECTONLY);
+        Acl result = acl.getACL();
+
+        return result;
+    }
 }

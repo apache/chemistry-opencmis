@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
+import org.apache.chemistry.opencmis.client.bindings.impl.RepositoryInfoCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
@@ -47,9 +48,11 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -68,6 +71,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -75,8 +80,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntry
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
+import org.xmlpull.v1.XmlSerializer;
+
+import android.util.Xml;
 
 /**
  * Base class for all AtomPub client services.
@@ -114,8 +123,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected HttpInvoker getHttpInvoker() {
         return CmisBindingsHelper.getHttpInvoker(session);
-    }    
-    
+    }
+
     /**
      * Returns the service document URL of this session.
      */
@@ -126,6 +135,24 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         return null;
+    }
+
+    /**
+     * Return the CMIS version of the given repository.
+     */
+    protected CmisVersion getCmisVersion(String repositoryId) {
+        RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
+        RepositoryInfo info = cache.get(repositoryId);
+
+        if (info == null) {
+            List<RepositoryInfo> infoList = getRepositoriesInternal(repositoryId);
+            if (!infoList.isEmpty()) {
+                info = infoList.get(0);
+                cache.put(info);
+            }
+        }
+
+        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
     }
 
     // ---- link cache ----
@@ -506,8 +533,27 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
+     * Creates a CMIS object with properties and policy ids.
+     */
+    protected ObjectDataImpl createObject(Properties properties, List<String> policies) {
+        ObjectDataImpl object = new ObjectDataImpl();
+
+        if (properties == null) {
+            properties = new PropertiesImpl();
+        }
+        object.setProperties(properties);
+
+        if (policies != null && !policies.isEmpty()) {
+            PolicyIdListImpl policyIdList = new PolicyIdListImpl();
+            policyIdList.setPolicyIds(policies);
+            object.setPolicyIds(policyIdList);
+        }
+
+        return object;
+    }
+
+    /**
      * Creates a CMIS object that only contains an id in the property list.
-     * Modified
      */
     protected ObjectData createIdObject(String objectId) {
         ObjectDataImpl object = new ObjectDataImpl();
@@ -515,8 +561,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         PropertiesImpl properties = new PropertiesImpl();
         object.setProperties(properties);
 
-        PropertyIdImpl idProperty = new PropertyIdImpl(PropertyIds.OBJECT_ID, objectId);
-        properties.addProperty(idProperty);
+        properties.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, objectId));
 
         return object;
     }
@@ -550,7 +595,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected Response read(UrlBuilder url) {
         // make the call
-        //Log.d("URL", url.toString());
+        // Log.d("URL", url.toString());
         Response resp = getHttpInvoker().invokeGET(url, session);
 
         // check response code
@@ -567,7 +612,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected Response post(UrlBuilder url, String contentType, Output writer) {
         // make the call
-        //Log.d("URL", url.toString());
+        // Log.d("URL", url.toString());
         Response resp = getHttpInvoker().invokePOST(url, contentType, writer, session);
 
         // check response code
@@ -590,10 +635,9 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Performs a PUT on an URL, checks the response code and returns the
      * result.
      */
-    protected Response put(UrlBuilder url, String contentType, Map<String, String> headers,
-            Output writer) {
+    protected Response put(UrlBuilder url, String contentType, Map<String, String> headers, Output writer) {
         // make the call
-        //Log.d("URL", url.toString());
+        // Log.d("URL", url.toString());
         Response resp = getHttpInvoker().invokePUT(url, contentType, headers, writer, session);
 
         // check response code
@@ -610,7 +654,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected void delete(UrlBuilder url) {
         // make the call
-        //Log.d("URL", url.toString());
+        // Log.d("URL", url.toString());
         Response resp = getHttpInvoker().invokeDELETE(url, session);
 
         // check response code
@@ -892,11 +936,16 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         UrlBuilder aclUrl = new UrlBuilder(link);
         aclUrl.addParameter(Constants.PARAM_ACL_PROPAGATION, aclPropagation);
 
+        final CmisVersion cmisVersion = getCmisVersion(repositoryId);
+
         // update
         Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new Output() {
             public void write(OutputStream out) throws Exception {
-                // TODO not implemented
-                AtomEntryWriter.writeACL(out, acl);
+                XmlSerializer writer = Xml.newSerializer();
+                writer.setOutput(out, AtomEntryWriter.ENCODING);
+                XMLUtils.startXmlDocument(writer);
+                XMLConverter.writeAcl(writer, cmisVersion, true, acl);
+                XMLUtils.endXmlDocument(writer);
             }
         });
 
