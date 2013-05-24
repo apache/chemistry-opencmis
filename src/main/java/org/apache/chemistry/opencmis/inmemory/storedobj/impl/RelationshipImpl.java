@@ -36,7 +36,8 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
         super(objStore);
     }
 
-    public String getSourceObjectId() {
+    @Override
+	public String getSourceObjectId() {
         return sourceObjId;
     }
 
@@ -44,7 +45,8 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
         this.sourceObjId = id;
     }
 
-    public String getTargetObjectId() {
+    @Override
+	public String getTargetObjectId() {
         return targetObjId;
     }
 

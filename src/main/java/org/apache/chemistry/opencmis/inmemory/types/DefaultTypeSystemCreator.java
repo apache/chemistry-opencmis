@@ -54,7 +54,8 @@ public class DefaultTypeSystemCreator implements TypeCreator {
      * in the public interface of this class we return the singleton containing
      * the required types for testing
      */
-    public List<TypeDefinition> createTypesList() {
+    @Override
+	public List<TypeDefinition> createTypesList() {
         return singletonTypes;
     }
 

@@ -27,6 +27,6 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
  * @author Jens
  * 
  */
-public interface DocumentVersion extends Version, Content, StoredObject, MultiFiling {
+public interface DocumentVersion extends Version, Content, Fileable {
 
 }

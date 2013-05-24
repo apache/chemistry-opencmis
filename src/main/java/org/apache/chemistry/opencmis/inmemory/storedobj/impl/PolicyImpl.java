@@ -40,7 +40,8 @@ public class PolicyImpl extends StoredObjectImpl implements Policy {
         policyText = text;
     }
     
-    public String getPolicyText() {
+    @Override
+	public String getPolicyText() {
         return policyText;
     }
     

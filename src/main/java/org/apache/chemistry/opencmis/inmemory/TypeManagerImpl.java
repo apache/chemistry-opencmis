@@ -62,14 +62,16 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getTypeById(java.lang.String)
      */
-    public TypeDefinitionContainer getTypeById(String typeId) {
+    @Override
+	public TypeDefinitionContainer getTypeById(String typeId) {
         return fTypesMap.get(typeId);
     }
 
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getTypeByQueryName(java.lang.String)
      */
-    public TypeDefinition getTypeByQueryName(String typeQueryName) {
+    @Override
+	public TypeDefinition getTypeByQueryName(String typeQueryName) {
         for (Entry<String, TypeDefinitionContainer> entry : fTypesMap.entrySet()) {
             if (entry.getValue().getTypeDefinition().getQueryName().equals(typeQueryName)) {
                 return entry.getValue().getTypeDefinition();
@@ -81,14 +83,16 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getTypeDefinitionList()
      */
-    public Collection<TypeDefinitionContainer> getTypeDefinitionList() {
+    @Override
+	public Collection<TypeDefinitionContainer> getTypeDefinitionList() {
         return Collections.unmodifiableCollection(fTypesMap.values());
     }
 
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getRootTypes()
      */
-    public List<TypeDefinitionContainer> getRootTypes() {
+    @Override
+	public List<TypeDefinitionContainer> getRootTypes() {
         // just take first repository
         List<TypeDefinitionContainer> rootTypes = new ArrayList<TypeDefinitionContainer>();
 
@@ -134,7 +138,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      * @param cmisType
      *            new type to add
      */
-    public void addTypeDefinition(TypeDefinition cmisType) {
+    @Override
+	public void addTypeDefinition(TypeDefinition cmisType) {
         
         TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
 
@@ -152,7 +157,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         fTypesMap.put(cmisType.getId(), typeContainer);
     }
     
-    public void updateTypeDefinition(TypeDefinition typeDefinition) {
+    @Override
+	public void updateTypeDefinition(TypeDefinition typeDefinition) {
         throw new CmisNotSupportedException("updating a type definition is not supported.");
     }
 
@@ -160,7 +166,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      * Remove a type from a type system
      * @param typeId
      */
-    public void deleteTypeDefinition(String typeId) {
+    @Override
+	public void deleteTypeDefinition(String typeId) {
         TypeDefinitionContainer typeDef = fTypesMap.remove(typeId);  
         // remove type from children of parent types
         TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDef.getTypeDefinition().getParentTypeId());
@@ -184,7 +191,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     /* (non-Javadoc)
      * @see org.apache.chemistry.opencmis.inmemory.TypeManager#getPropertyIdForQueryName(org.apache.chemistry.opencmis.commons.definitions.TypeDefinition, java.lang.String)
      */
-    public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
+    @Override
+	public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
         for (PropertyDefinition<?> pd : typeDefinition.getPropertyDefinitions().values()) {
             if (pd.getQueryName().equals(propQueryName)) {
                 return pd.getId();

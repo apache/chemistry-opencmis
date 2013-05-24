@@ -35,7 +35,7 @@ public interface Filing {
      * character indicating how folders are separated within a path string. This
      * char must not be a valid character of an object name.
      */
-    String PATH_SEPARATOR = "/";
+    final String PATH_SEPARATOR = "/";
 
     /**
      * return a list of parents the principal has access to. for single parent object this list must contain
@@ -45,7 +45,7 @@ public interface Filing {
      * 		user id
      * @return list of parent folders
      */
-    List<Folder> getParents(String user);
+    List<String> getParents();
     
     /**
      * usually true except for the root folder, optimized call that just tests
@@ -58,12 +58,8 @@ public interface Filing {
     boolean hasParent();
 
     /**
-     * Move an object to a different folder. Source and target object are
-     * persisted in this call as part of a transactional step.
-     * 
-     * @param newParent
-     *            new parent folder for the object
+     * get the path segment of this object
+     * @return
      */
-    void move(Folder oldParent, Folder newParent);
-
+    String getPathSegment();
 }

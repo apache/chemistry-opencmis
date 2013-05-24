@@ -33,7 +33,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -49,14 +48,13 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Children;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -275,36 +273,34 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectInFolderListImpl result = new ObjectInFolderListImpl();
         List<ObjectInFolderData> folderList = new ArrayList<ObjectInFolderData>();
-        ObjectStore fs = fStoreManager.getObjectStore(repositoryId);
-        StoredObject so = fs.getObjectById(folderId);
-        Folder folder = null;
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        StoredObject so = objStore.getObjectById(folderId);
+        ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + folderId);
         }
 
-        if (so instanceof Folder) {
-            folder = (Folder) so;
-        }
-        else {
+        if (!(so instanceof Folder)) {
             return null; // it is a document and has no children
         }
 
-        Children.ChildrenResult children = folderOnly ? folder.getFolderChildren(maxItems, skipCount, user) : folder
-                .getChildren(maxItems, skipCount, user);
+        ObjectStoreFiling.ChildrenResult children = folderOnly ? objStoreFiling.getFolderChildren((Folder)so, maxItems, skipCount, user) : objStoreFiling
+                .getChildren((Folder)so, maxItems, skipCount, user);
 
-        for (StoredObject spo : children.getChildren()) {
-            if (!cmis11 && spo instanceof Item)
+        for (Fileable child : children.getChildren()) {
+
+            if (!cmis11 && child instanceof Item)
                 continue; // ignore items for CMIS 1.1‚
             
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             if (includePathSegments != null && includePathSegments) {
-                oifd.setPathSegment(spo.getName());
+                oifd.setPathSegment(child.getName());
             }
 
             TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-            ObjectData objectData = PropertyCreationHelper.getObjectData(tm, spo, filter, user, includeAllowableActions, 
+            ObjectData objectData = PropertyCreationHelper.getObjectData(tm, child, filter, user, includeAllowableActions, 
                     includeRelationships, renditionFilter, false, false, null);
 
             oifd.setObject(objectData);
@@ -312,10 +308,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             // add additional information for Atom
             if (objectInfos != null) {
                 ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, spo, objectInfo);
+                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, child, objectInfo);
                 objectInfos.addObjectInfo(objectInfo);
             }
-
         }
         result.setObjects(folderList);
         result.setNumItems(BigInteger.valueOf(children.getNoItems()));
@@ -369,58 +364,46 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectInfoHandler objectInfos, Boolean includeAllowableActions, 
             IncludeRelationships includeRelationships, String renditionFilter, String user) {
 
-        List<ObjectParentData> result = null;
-        if (sop instanceof SingleFiling) {
-            ObjectData parent = getFolderParentIntern(repositoryId, (SingleFiling) sop, filter, 
-            		includeAllowableActions, includeRelationships, user, objectInfos);
-            if (null != parent) {
+        List<ObjectParentData> result = null;        
+        result = new ArrayList<ObjectParentData>();
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        List<String> parentIds = ((ObjectStoreFiling)objStore).getParentIds(sop, user);
+        if (null != parentIds) {
+            for (String parentId : parentIds) {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
-                parentData.setObject(parent);
-                String path = ((SingleFiling) sop).getPath();
-                int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; 
-                //   Note: if not found results in 0
-                String relPathSeg = path.substring(beginIndex, path.length());
-                parentData.setRelativePathSegment(relPathSeg);
-                result = Collections.singletonList((ObjectParentData) parentData);
-            } else {
-                result = Collections.emptyList();
-            }
-        } else if (sop instanceof MultiFiling) {
-            result = new ArrayList<ObjectParentData>();
-            MultiFiling multiParentObj = (MultiFiling) sop;
-            List<Folder> parents = multiParentObj.getParents(user);
-            if (null != parents) {
-                for (Folder parent : parents) {
-                    ObjectParentDataImpl parentData = new ObjectParentDataImpl();
-                    TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-                    ObjectData objData = PropertyCreationHelper.getObjectData(tm, parent, filter, user, includeAllowableActions, 
-                            includeRelationships, renditionFilter, false, true, null);
+                TypeManager tm = fStoreManager.getTypeManager(repositoryId);
+                Folder parent = (Folder) objStore.getObjectById(parentId);
+                ObjectData objData = PropertyCreationHelper.getObjectData(tm, parent, filter, user, includeAllowableActions, 
+                        includeRelationships, renditionFilter, false, true, null);
 
-                    parentData.setObject(objData);
-                    parentData.setRelativePathSegment(multiParentObj.getPathSegment());
-                    result.add(parentData);
-                    if (objectInfos != null) {
-                        ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-                        fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, parent, objectInfo);
-                        objectInfos.addObjectInfo(objectInfo);
-                    }
+                parentData.setObject(objData);
+                parentData.setRelativePathSegment(sop.getPathSegment());
+                result.add(parentData);
+                if (objectInfos != null) {
+                    ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+                    fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, parent, objectInfo);
+                    objectInfos.addObjectInfo(objectInfo);
                 }
             }
         }
+        
         return result;
     }
 
-    private ObjectData getFolderParentIntern(String repositoryId, SingleFiling sop, String filter,
+    private ObjectData getFolderParentIntern(String repositoryId, Filing sop, String filter,
     		Boolean includeAllowableActions, IncludeRelationships includeRelationships, 
     		String user, ObjectInfoHandler objectInfos) {
 
         ObjectDataImpl parent = new ObjectDataImpl();
 
-        Folder parentFolder = sop.getParent();
-
-        if (null == parentFolder) {
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        List<String> parents = ((ObjectStoreFiling)objStore).getParentIds(sop, user);
+        if (null == parents || parents.isEmpty()) {
             return null;
         }
+        String parentId = parents.get(0);
+
+        Folder parentFolder = (Folder) objStore.getObjectById(parentId);
 
         copyFilteredProperties(repositoryId, parentFolder, filter, parent);
         

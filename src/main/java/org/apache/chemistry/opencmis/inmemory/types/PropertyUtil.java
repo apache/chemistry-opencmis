@@ -147,7 +147,7 @@ public class PropertyUtil {
         if (folder != null) {
             // not supported: ALLOWED_CHILD_OBJECT_TYPE_IDS
             if (propertyId.equals(PropertyIds.PARENT_ID)) {
-                return folder.getParent() == null ? null : folder.getParent().getId();
+                return folder.getParentId();
             }
 
             if (propertyId.equals(PropertyIds.PATH)) {

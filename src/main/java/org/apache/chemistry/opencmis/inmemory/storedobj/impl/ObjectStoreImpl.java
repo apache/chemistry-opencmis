@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,30 +39,38 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.SingleFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The object store is the central core of the in-memory repository. It is based on huge HashMap
- * map mapping ids to objects in memory. To allow access from multiple threads a Java concurrent
- * HashMap is used that allows parallel access methods.
+ * The object store is the central core of the in-memory repository. It is based
+ * on huge HashMap map mapping ids to objects in memory. To allow access from
+ * multiple threads a Java concurrent HashMap is used that allows parallel
+ * access methods.
  * <p>
- * Certain methods in the in-memory repository must guarantee constraints. For example a folder
- * enforces that each child has a unique name. Therefore certain operations must occur in an
- * atomic manner. In the example it must be guaranteed that no write access occurs to the
- * map between acquiring the iterator to find the children and finishing the add operation when
- * no name conflicts can occur. For this purpose this class has methods to lock an unlock the
- * state of the repository. It is very important that the caller acquiring the lock enforces an
- * unlock under all circumstances. Typical code is:
+ * Certain methods in the in-memory repository must guarantee constraints. For
+ * example a folder enforces that each child has a unique name. Therefore
+ * certain operations must occur in an atomic manner. In the example it must be
+ * guaranteed that no write access occurs to the map between acquiring the
+ * iterator to find the children and finishing the add operation when no name
+ * conflicts can occur. For this purpose this class has methods to lock an
+ * unlock the state of the repository. It is very important that the caller
+ * acquiring the lock enforces an unlock under all circumstances. Typical code
+ * is:
  * <p>
+ * 
  * <pre>
  * ObjectStoreImpl os = ... ;
  * try {
@@ -69,25 +79,28 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  *     os.unlock();
  * }
  * </pre>
- *
- * The locking is very coarse-grained. Productive implementations would probably implement finer
- * grained locks on a folder or document rather than the complete repository.
+ * 
+ * The locking is very coarse-grained. Productive implementations would probably
+ * implement finer grained locks on a folder or document rather than the
+ * complete repository.
  */
-public class ObjectStoreImpl implements ObjectStore {
+public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
-    
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectStoreImpl.class);
+
     /**
      * user id for administrator always having all rights
      */
     public static final String ADMIN_PRINCIPAL_ID = "Admin";
-    
+
     /**
      * Simple id generator that uses just an integer
      */
     private static int NEXT_UNUSED_ID = 100;
 
     /**
-     * a concurrent HashMap as core element to hold all objects in the repository
+     * a concurrent HashMap as core element to hold all objects in the
+     * repository
      */
     private final Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
 
@@ -95,7 +108,7 @@ public class ObjectStoreImpl implements ObjectStore {
      * a concurrent HashMap to hold all Acls in the repository
      */
     private int nextUnusedAclId = 0;
-    
+
     private final List<InMemoryAcl> fAcls = new ArrayList<InMemoryAcl>();
 
     private final Lock fLock = new ReentrantLock();
@@ -115,48 +128,52 @@ public class ObjectStoreImpl implements ObjectStore {
     private synchronized Integer getNextAclId() {
         return nextUnusedAclId++;
     }
-    
-   public void lock() {
-      fLock.lock();
+
+    private void lock() {
+        fLock.lock();
     }
 
-    public void unlock() {
-      fLock.unlock();
+    private void unlock() {
+        fLock.unlock();
     }
 
+    @Override
     public Folder getRootFolder() {
         return fRootFolder;
     }
 
+    @Override
     public StoredObject getObjectByPath(String path, String user) {
-        for (StoredObject so : fStoredObjectMap.values()) {
-            if (so instanceof SingleFiling) {
-                String soPath = ((SingleFiling) so).getPath();
-                if (soPath.equals(path)) {
-                    return so;
-                }
-            } else if (so instanceof MultiFiling) {
-                MultiFiling mfo = (MultiFiling) so;
-                List<Folder> parents = mfo.getParents(user);
-                for (Folder parent : parents) {
-                    String parentPath = parent.getPath();
-                    String mfPath = parentPath.equals(Folder.PATH_SEPARATOR) ? parentPath + mfo.getPathSegment()
-                            : parentPath + Folder.PATH_SEPARATOR + mfo.getPathSegment();
-                    if (mfPath.equals(path)) {
-                        return so;
-                    }
+        StoredObject so = findObjectWithPathInDescendents(path, user, Folder.PATH_SEPARATOR, fRootFolder);
+        return so;
+    }
+
+    private Fileable findObjectWithPathInDescendents(String path, String user, String prefix, Fileable fo) {
+        if (path.equals(prefix)) {
+            return fo;
+        } else if (fo instanceof Folder) {
+            List<Fileable> children = getChildren((Folder) fo);
+            for (Fileable child : children) {
+                String foundPath = prefix.length() == 1 ? prefix + child.getName() : prefix + Folder.PATH_SEPARATOR
+                        + child.getName();
+                if (path.startsWith(foundPath)) {
+                    Fileable found = findObjectWithPathInDescendents(path, user, foundPath, child);
+                    if (null != found)
+                        return found;   // note that there can be multiple folders with the same prefix like folder1, folder10
                 }
             }
         }
         return null;
     }
 
+    @Override
     public StoredObject getObjectById(String objectId) {
         // we use path as id so we just can look it up in the map
         StoredObject so = fStoredObjectMap.get(objectId);
         return so;
     }
 
+    @Override
     public void deleteObject(String objectId, Boolean allVersions, String user) {
         StoredObject obj = fStoredObjectMap.get(objectId);
 
@@ -165,7 +182,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         if (obj instanceof FolderImpl) {
-        	deleteFolder(objectId, user);
+            deleteFolder(objectId, user);
         } else if (obj instanceof DocumentVersion) {
             DocumentVersion vers = (DocumentVersion) obj;
             VersionedDocument parentDoc = vers.getParentDocument();
@@ -180,7 +197,7 @@ public class ObjectStoreImpl implements ObjectStore {
                 fStoredObjectMap.remove(objectId);
                 otherVersionsExists = parentDoc.deleteVersion(vers);
             }
-            
+
             if (!otherVersionsExists) {
                 fStoredObjectMap.remove(parentDoc.getId());
             }
@@ -193,7 +210,8 @@ public class ObjectStoreImpl implements ObjectStore {
         StoredObject found = fStoredObjectMap.remove(vers.getId());
 
         if (null == found) {
-            throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId() + ". Object does not exist.");
+            throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId()
+                    + ". Object does not exist.");
         }
     }
 
@@ -223,6 +241,7 @@ public class ObjectStoreImpl implements ObjectStore {
     /**
      * Clear repository and remove all data.
      */
+    @Override
     public void clear() {
         lock();
         fStoredObjectMap.clear();
@@ -230,6 +249,7 @@ public class ObjectStoreImpl implements ObjectStore {
         unlock();
     }
 
+    @Override
     public long getObjectCount() {
         return fStoredObjectMap.size();
     }
@@ -240,7 +260,7 @@ public class ObjectStoreImpl implements ObjectStore {
     private void createRootFolder() {
         FolderImpl rootFolder = new FolderImpl(this);
         rootFolder.setName("RootFolder");
-        rootFolder.setParent(null);
+        rootFolder.setParentId(null);
         rootFolder.setTypeId(BaseTypeId.CMIS_FOLDER.value());
         rootFolder.setCreatedBy("Admin");
         rootFolder.setModifiedBy("Admin");
@@ -251,6 +271,7 @@ public class ObjectStoreImpl implements ObjectStore {
         fRootFolder = rootFolder;
     }
 
+    @Override
     public Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
             List<String> policies, Acl addACEs, Acl removeACEs) {
         DocumentImpl doc = new DocumentImpl(this);
@@ -259,8 +280,10 @@ public class ObjectStoreImpl implements ObjectStore {
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
         if (null != folder) {
-            ((FolderImpl) folder).addChildDocument(doc); // add document to
-                                                         // folder and
+            if (hasChild(folder, name))
+                throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
+                        + " already exists in folder " + folder.getPath());
+            doc.addParentId(folder.getId());
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
@@ -269,38 +292,46 @@ public class ObjectStoreImpl implements ObjectStore {
         return doc;
     }
 
+    @Override
     public StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
             List<String> policies, Acl addACEs, Acl removeACEs) {
-        StoredObjectImpl item = new ItemImpl(this);
+        ItemImpl item = new ItemImpl(this);
         item.createSystemBasePropertiesWhenCreated(propMap, user);
         item.setCustomProperties(propMap);
         item.setRepositoryId(fRepositoryId);
         item.setName(name);
         if (null != folder) {
-            ((FolderImpl)folder).addChildItem(item); // add document to folder and
+            if (hasChild(folder, name))
+                throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
+                        + " already exists in folder " + folder.getPath());
+            item.addParentId(folder.getId());
         }
         if (null != policies)
             item.setAppliedPolicies(policies);
-        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         item.setAclId(aclId);
         return item;
     }
-    
-    public DocumentVersion createVersionedDocument(String name,
-    		Map<String, PropertyData<?>> propMap, String user, Folder folder,
-    		List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream, VersioningState versioningState) {
-    	VersionedDocumentImpl doc = new VersionedDocumentImpl(this);
+
+    @Override
+    public DocumentVersion createVersionedDocument(String name, Map<String, PropertyData<?>> propMap, String user,
+            Folder folder, List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream,
+            VersioningState versioningState) {
+        VersionedDocumentImpl doc = new VersionedDocumentImpl(this);
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
         DocumentVersion version = doc.addVersion(contentStream, versioningState, user);
-        if (null != folder) {
-        	((FolderImpl)folder).addChildDocument(doc); // add document to folder and set
-        }
         version.createSystemBasePropertiesWhenCreated(propMap, user);
         version.setCustomProperties(propMap);
-        int aclId = getAclId(((FolderImpl)folder), addACEs, removeACEs);
+        if (null != folder) {
+            if (hasChild(folder, name))
+                throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
+                        + " already exists in folder " + folder.getPath());
+            doc.addParentId(folder.getId());
+        }
+        int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
         if (null != policies)
             doc.setAppliedPolicies(policies);
@@ -308,21 +339,21 @@ public class ObjectStoreImpl implements ObjectStore {
         return version;
     }
 
-    public Folder createFolder(String name,
-			Map<String, PropertyData<?>> propMap, String user, Folder parent,
-			List<String> policies, Acl addACEs, Acl removeACEs) {
-    	
-    	FolderImpl folder = new FolderImpl(this, name, null);
+    @Override
+    public Folder createFolder(String name, Map<String, PropertyData<?>> propMap, String user, Folder parent,
+            List<String> policies, Acl addACEs, Acl removeACEs) {
+
+        if (null != parent && hasChild(parent, name)) {
+            throw new CmisNameConstraintViolationException("Cannot create folder, this name already exists in parent folder.");
+        }
+        FolderImpl folder = new FolderImpl(this, name, parent.getId());
         if (null != propMap) {
-        	folder.createSystemBasePropertiesWhenCreated(propMap, user);
-        	folder.setCustomProperties(propMap);
+            folder.createSystemBasePropertiesWhenCreated(propMap, user);
+            folder.setCustomProperties(propMap);
         }
         folder.setRepositoryId(fRepositoryId);
-        if (null != parent) {
-        	((FolderImpl)parent).addChildFolder(folder); // add document to folder and set
-        }
 
-        int aclId = getAclId(((FolderImpl)parent), addACEs, removeACEs);
+        int aclId = getAclId(((FolderImpl) parent), addACEs, removeACEs);
         folder.setAclId(aclId);
         if (null != policies)
             folder.setAppliedPolicies(policies);
@@ -334,8 +365,9 @@ public class ObjectStoreImpl implements ObjectStore {
         Folder folder = new FolderImpl(this, name, null);
         folder.setRepositoryId(fRepositoryId);
         return folder;
-	}
-    
+    }
+
+    @Override
     public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user) {
         PolicyImpl policy = new PolicyImpl(this);
         policy.createSystemBasePropertiesWhenCreated(propMap, user);
@@ -346,10 +378,11 @@ public class ObjectStoreImpl implements ObjectStore {
         policy.persist();
         return policy;
     }
-    
-	public List<StoredObject> getCheckedOutDocuments(String orderBy,
-			String user, IncludeRelationships includeRelationships) {
-	    List<StoredObject> res = new ArrayList<StoredObject>();
+
+    @Override
+    public List<StoredObject> getCheckedOutDocuments(String orderBy, String user,
+            IncludeRelationships includeRelationships) {
+        List<StoredObject> res = new ArrayList<StoredObject>();
 
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof VersionedDocument) {
@@ -363,9 +396,9 @@ public class ObjectStoreImpl implements ObjectStore {
         return res;
     }
 
-	public StoredObject createRelationship(String name, StoredObject sourceObject,
-			StoredObject targetObject, Map<String, PropertyData<?>> propMap,
-			String user, Acl addACEs, Acl removeACEs) {
+    @Override
+    public StoredObject createRelationship(String name, StoredObject sourceObject, StoredObject targetObject,
+            Map<String, PropertyData<?>> propMap, String user, Acl addACEs, Acl removeACEs) {
 
         RelationshipImpl rel = new RelationshipImpl(this);
         rel.createSystemBasePropertiesWhenCreated(propMap, user);
@@ -380,66 +413,70 @@ public class ObjectStoreImpl implements ObjectStore {
         rel.setAclId(aclId);
         rel.persist();
         return rel;
-	}
+    }
 
+    @Override
     public List<StoredObject> getRelationships(String objectId, List<String> typeIds, RelationshipDirection direction) {
-    
+
         List<StoredObject> res = new ArrayList<StoredObject>();
-        
+
         if (typeIds != null && typeIds.size() > 0) {
             for (String typeId : typeIds) {
                 for (StoredObject so : fStoredObjectMap.values()) {
                     if (so instanceof Relationship && so.getTypeId().equals(typeId)) {
                         Relationship ro = (Relationship) so;
-                        if (ro.getSourceObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
-                                res.add(so);
-                        } else if (ro.getTargetObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction
-                                || RelationshipDirection.TARGET == direction)) {
+                        if (ro.getSourceObjectId().equals(objectId)
+                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
+                            res.add(so);
+                        } else if (ro.getTargetObjectId().equals(objectId)
+                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.TARGET == direction)) {
                             res.add(so);
                         }
                     }
                 }
-           }
+            }
         } else
             res = getAllRelationships(objectId, direction);
         return res;
     }
 
+    @Override
     public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
-        if (aclPropagation==AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
+        if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
             return applyAcl(so, addAces, removeAces);
         } else {
-            return applyAclRecursive(((Folder)so), addAces, removeAces, principalId);            
+            return applyAclRecursive(((Folder) so), addAces, removeAces, principalId);
         }
     }
-    
+
+    @Override
     public Acl applyAcl(StoredObject so, Acl acl, AclPropagation aclPropagation, String principalId) {
-        if (aclPropagation==AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
+        if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
             return applyAcl(so, acl);
         } else {
-            return applyAclRecursive(((Folder)so), acl, principalId);
+            return applyAclRecursive(((Folder) so), acl, principalId);
         }
     }
 
     public List<Integer> getAllAclsForUser(String principalId, Permission permission) {
         List<Integer> acls = new ArrayList<Integer>();
-        for (InMemoryAcl acl: fAcls) {
+        for (InMemoryAcl acl : fAcls) {
             if (acl.hasPermission(principalId, permission))
                 acls.add(acl.getId());
         }
         return acls;
     }
-    
+
     public Acl getAcl(int aclId) {
         InMemoryAcl acl = getInMemoryAcl(aclId);
-        return acl==null ? InMemoryAcl.getDefaultAcl().toCommonsAcl() : acl.toCommonsAcl();
+        return acl == null ? InMemoryAcl.getDefaultAcl().toCommonsAcl() : acl.toCommonsAcl();
     }
-    
+
     public int getAclId(StoredObjectImpl so, Acl addACEs, Acl removeACEs) {
         InMemoryAcl newAcl;
         boolean removeDefaultAcl = false;
         int aclId = 0;
-        
+
         if (so == null) {
             newAcl = new InMemoryAcl();
         } else {
@@ -448,35 +485,38 @@ public class ObjectStoreImpl implements ObjectStore {
             if (null == newAcl)
                 newAcl = new InMemoryAcl();
             else
-                // copy list so that we can safely change it without effecting the original
-                newAcl = new InMemoryAcl(newAcl.getAces()); 
+                // copy list so that we can safely change it without effecting
+                // the original
+                newAcl = new InMemoryAcl(newAcl.getAces());
         }
 
         if (newAcl.size() == 0 && addACEs == null && removeACEs == null)
             return 0;
 
         if (null != removeACEs)
-            for (Ace ace: removeACEs.getAces()) {
-            InMemoryAce inMemAce = new InMemoryAce(ace);
-            if (inMemAce.equals(InMemoryAce.getDefaultAce()))
-                removeDefaultAcl = true;
+            for (Ace ace : removeACEs.getAces()) {
+                InMemoryAce inMemAce = new InMemoryAce(ace);
+                if (inMemAce.equals(InMemoryAce.getDefaultAce()))
+                    removeDefaultAcl = true;
             }
-        
-        if ( so!= null && 0 == aclId  && !removeDefaultAcl)
-            return 0; // if object grants full access to everyone and it will not be removed we do nothing
+
+        if (so != null && 0 == aclId && !removeDefaultAcl)
+            return 0; // if object grants full access to everyone and it will
+                      // not be removed we do nothing
 
         // add ACEs
         if (null != addACEs)
-            for (Ace ace: addACEs.getAces()) {
+            for (Ace ace : addACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
                 if (inMemAce.equals(InMemoryAce.getDefaultAce()))
-                    return 0; // if everyone has full access there is no need to add additional ACLs.
+                    return 0; // if everyone has full access there is no need to
+                              // add additional ACLs.
                 newAcl.addAce(inMemAce);
             }
-        
+
         // remove ACEs
         if (null != removeACEs)
-            for (Ace ace: removeACEs.getAces()) {
+            for (Ace ace : removeACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
                 newAcl.removeAce(inMemAce);
             }
@@ -486,7 +526,7 @@ public class ObjectStoreImpl implements ObjectStore {
         else
             return 0;
     }
-    
+
     private void deleteFolder(String folderId, String user) {
         StoredObject folder = fStoredObjectMap.get(folderId);
         if (folder == null) {
@@ -499,7 +539,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         // check if children exist
-        List<? extends StoredObject> children = ((Folder) folder).getChildren(-1, -1, user).getChildren();
+        List<Fileable> children = getChildren((Folder) folder, -1, -1, user).getChildren();
         if (children != null && !children.isEmpty()) {
             throw new CmisConstraintException("Cannot delete folder with id:  " + folderId + ". Folder is not empty.");
         }
@@ -507,33 +547,157 @@ public class ObjectStoreImpl implements ObjectStore {
         fStoredObjectMap.remove(folderId);
     }
 
-    public boolean hasReadAccess(String principalId, StoredObject so) {       
+    @Override
+    public ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user) {
+        List<Fileable> children = getChildren(folder, user);
+        sortFolderList(children);
+
+        if (maxItems < 0) {
+            maxItems = children.size();
+        }
+        if (skipCount < 0) {
+            skipCount = 0;
+        }
+
+        int from = Math.min(skipCount, children.size());
+        int to = Math.min(maxItems + from, children.size());
+        int noItems = children.size();
+
+        children = children.subList(from, to);
+        return new ChildrenResult(children, noItems);
+    }
+
+    private List<Fileable> getChildren(Folder folder) {
+        return getChildren(folder, null);
+    }
+
+    private List<Fileable> getChildren(Folder folder, String user) {
+        List<Fileable> children = new ArrayList<Fileable>();
+        for (String id : getIds()) {
+            StoredObject obj = getObject(id);
+            if (obj instanceof Fileable) {
+                Fileable pathObj = (Fileable) obj;
+                if ((null == user || hasReadAccess(user, obj)) && pathObj.getParents().contains(folder.getId())) {
+                    if (pathObj instanceof VersionedDocument) {
+                        DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        children.add(ver);
+                    } else if (!(pathObj instanceof DocumentVersion)) { // ignore
+                                                                        // DocumentVersion
+                        children.add(pathObj);
+                    }
+                }
+            }
+        }
+        return children;
+    }
+
+    @Override
+    public ChildrenResult getFolderChildren(Folder folder, int maxItems, int skipCount, String user) {
+        List<Fileable> folderChildren = new ArrayList<Fileable>();
+        for (String id : getIds()) {
+            StoredObject obj = getObject(id);
+            if (hasReadAccess(user, obj) && obj instanceof Folder) {
+                Folder childFolder = (Folder) obj;
+                if (childFolder.getParents().contains(folder.getId()) ) {
+                    folderChildren.add(childFolder);
+                }
+            }
+        }
+        sortFolderList(folderChildren);
+        int from = Math.min(skipCount, folderChildren.size());
+        int to = Math.min(maxItems + from, folderChildren.size());
+        int noItems = folderChildren.size();
+
+        folderChildren = folderChildren.subList(from, to);
+
+        return new ChildrenResult(folderChildren, noItems);
+    }
+
+    @Override
+    public void move(StoredObject so, Folder oldParent, Folder newParent) {
+        try {
+            if (hasChild(newParent, so.getName())) {
+                throw new CmisInvalidArgumentException("Cannot move object " + so.getName() + " to folder "
+                        + newParent.getPath() + ". A child with this name already exists.");
+            }
+            lock();
+            if (so instanceof FilingMutable) {
+                FilingMutable fi = (FilingMutable) so;
+                addParentIntern(fi, newParent);
+                removeParentIntern(fi, oldParent);
+            } else if (so instanceof FolderImpl) {
+                ((FolderImpl) so).setParentId(newParent.getId());
+            }
+        } finally {
+            unlock();
+        }
+    }
+
+    @Override
+    public void rename(Fileable so, String newName) {
+        try {
+            lock();
+            if (so.getId().equals(fRootFolder.getId())) {
+                throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
+            }
+            for (String folderId : so.getParents()) {
+                Folder folder = (Folder) getObjectById(folderId);
+                if (hasChild(folder, newName))
+                    throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
+                            + ". This path already exists in parent " + folder.getPath() + ".");
+            }
+            so.setName(newName);
+        } finally {
+            unlock();
+        }
+    }
+
+    private boolean hasChild(Folder folder, String name) {
+        List<Fileable> children = getChildren(folder);
+        for (Fileable child : children)
+            if (child.getName().equals(name)) {
+                return true;
+            }
+        return false;
+    }
+
+    @Override
+    public List<String> getParentIds(Filing fileable, String user) {
+        List<String> visibleParents = new ArrayList<String>(); 
+        List<String> parents = fileable.getParents();
+        for (String id: parents) {
+            StoredObject so = getObjectById(id);
+            if (hasReadAccess(user, so)) {
+                visibleParents.add(id);
+            }
+        }
+        return visibleParents;
+    }
+
+    public boolean hasReadAccess(String principalId, StoredObject so) {
         return hasAccess(principalId, so, Permission.READ);
     }
 
-    
-    public boolean hasWriteAccess(String principalId, StoredObject so) {       
+    public boolean hasWriteAccess(String principalId, StoredObject so) {
         return hasAccess(principalId, so, Permission.WRITE);
     }
 
-    
-    public boolean hasAllAccess(String principalId, StoredObject so) {       
+    public boolean hasAllAccess(String principalId, StoredObject so) {
         return hasAccess(principalId, so, Permission.ALL);
     }
-    
 
     public void checkReadAccess(String principalId, StoredObject so) {
         checkAccess(principalId, so, Permission.READ);
     }
-    
+
     public void checkWriteAccess(String principalId, StoredObject so) {
         checkAccess(principalId, so, Permission.WRITE);
     }
-    
+
     public void checkAllAccess(String principalId, StoredObject so) {
         checkAccess(principalId, so, Permission.ALL);
     }
- 
+
     private void checkAccess(String principalId, StoredObject so, Permission permission) {
         if (!hasAccess(principalId, so, permission))
             throw new CmisPermissionDeniedException("Object with id " + so.getId() + " and name " + so.getName()
@@ -543,12 +707,12 @@ public class ObjectStoreImpl implements ObjectStore {
     private boolean hasAccess(String principalId, StoredObject so, Permission permission) {
         if (null != principalId && principalId.equals(ADMIN_PRINCIPAL_ID))
             return true;
-        List<Integer> aclIds = getAllAclsForUser(principalId, permission);        
-        return aclIds.contains(((StoredObjectImpl)so).getAclId());
+        List<Integer> aclIds = getAllAclsForUser(principalId, permission);
+        return aclIds.contains(((StoredObjectImpl) so).getAclId());
     }
 
     private InMemoryAcl getInMemoryAcl(int aclId) {
-        
+
         for (InMemoryAcl acl : fAcls) {
             if (aclId == acl.getId())
                 return acl;
@@ -566,28 +730,28 @@ public class ObjectStoreImpl implements ObjectStore {
         so.setAclId(aclId);
         return aclId;
     }
-    
-	/**
-	 * check if an Acl is already known
-	 * @param acl
-	 *     acl to be checked
-	 * @return
-	 *     0 if Acl is not known, id of Acl otherwise
-	 */
-	private int hasAcl(InMemoryAcl acl) {
-	    for (InMemoryAcl acl2: fAcls) {
-	        if (acl2.equals(acl))
-	            return acl2.getId();
-	    }
-	    return -1;
-	}
+
+    /**
+     * check if an Acl is already known
+     * 
+     * @param acl
+     *            acl to be checked
+     * @return 0 if Acl is not known, id of Acl otherwise
+     */
+    private int hasAcl(InMemoryAcl acl) {
+        for (InMemoryAcl acl2 : fAcls) {
+            if (acl2.equals(acl))
+                return acl2.getId();
+        }
+        return -1;
+    }
 
     private int addAcl(InMemoryAcl acl) {
         int aclId = -1;
-        
+
         if (null == acl)
             return 0;
-        
+
         lock();
         try {
             aclId = hasAcl(acl);
@@ -601,7 +765,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
         return aclId;
     }
-    
+
     private Acl applyAcl(StoredObject so, Acl acl) {
         int aclId = setAcl((StoredObjectImpl) so, acl);
         return getAcl(aclId);
@@ -614,60 +778,60 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl addAces, Acl removeAces, String principalId) {
-        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID).getChildren();
-        
-        Acl result = applyAcl(folder, addAces, removeAces);  
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID).getChildren();
+        Acl result = applyAcl(folder, addAces, removeAces);
 
         if (null == children) {
             return result;
         }
-        
-        for (StoredObject child : children) {
+
+        for (Fileable child : children) {
             if (hasAllAccess(principalId, child)) {
                 if (child instanceof Folder) {
-                    applyAclRecursive((Folder) child, addAces, removeAces, principalId);                
+                    applyAclRecursive((Folder) child, addAces, removeAces, principalId);
                 } else {
-                    applyAcl(child, addAces, removeAces);               
+                    applyAcl(child, addAces, removeAces);
                 }
             }
         }
-        
+
         return result;
     }
-    
-    private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
-        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID).getChildren();
 
-        Acl result = applyAcl(folder, acl);  
+    private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID).getChildren();
+
+        Acl result = applyAcl(folder, acl);
 
         if (null == children) {
             return result;
         }
 
-        for (StoredObject child : children) {
+        for (Fileable child : children) {
             if (hasAllAccess(principalId, child)) {
                 if (child instanceof Folder) {
-                    applyAclRecursive((Folder) child, acl, principalId);                
+                    applyAclRecursive((Folder) child, acl, principalId);
                 } else {
-                    applyAcl(child, acl);               
+                    applyAcl(child, acl);
                 }
             }
         }
-        
+
         return result;
     }
 
     private List<StoredObject> getAllRelationships(String objectId, RelationshipDirection direction) {
-        
+
         List<StoredObject> res = new ArrayList<StoredObject>();
-        
+
         for (StoredObject so : fStoredObjectMap.values()) {
             if (so instanceof Relationship) {
                 Relationship ro = (Relationship) so;
-                if (ro.getSourceObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
+                if (ro.getSourceObjectId().equals(objectId)
+                        && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
                     res.add(so);
-                } else if (ro.getTargetObjectId().equals(objectId) && (RelationshipDirection.EITHER == direction
-                        || RelationshipDirection.TARGET == direction)) {
+                } else if (ro.getTargetObjectId().equals(objectId)
+                        && (RelationshipDirection.EITHER == direction || RelationshipDirection.TARGET == direction)) {
                     res.add(so);
                 }
             }
@@ -675,6 +839,7 @@ public class ObjectStoreImpl implements ObjectStore {
         return res;
     }
 
+    @Override
     public boolean isTypeInUse(String typeId) {
         // iterate over all the objects and check for each if the type matches
         for (String objectId : getIds()) {
@@ -685,5 +850,64 @@ public class ObjectStoreImpl implements ObjectStore {
         return false;
     }
 
+    @Override
+    public void addParent(StoredObject so, Folder parent) {
+        try {
+            lock();
+            if (hasChild(parent, so.getName())) {
+                throw new IllegalArgumentException(
+                        "Cannot assign new parent folder, this name already exists in target folder.");
+            }
+            FilingMutable fi;
+            if (so instanceof FilingMutable) 
+                fi = (FilingMutable) so;
+            else
+                throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
+                
+            addParentIntern(fi, parent);
+        } finally {
+            unlock();
+        }
+    }
+
+    @Override
+    public void removeParent(StoredObject so, Folder parent) {
+        try {
+            lock();
+            FilingMutable fi;
+            if (so instanceof FilingMutable) 
+                fi = (FilingMutable) so;
+            else
+                throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
+
+            removeParentIntern(fi, parent);
+        } finally {
+            unlock();
+        }
+    }
+
+    private void addParentIntern(FilingMutable so, Folder parent) {
+        so.addParentId(parent.getId());
+    }
+
+    private void removeParentIntern(FilingMutable so, Folder parent) {
+        so.removeParentId(parent.getId());
+    }
+
+    private static void sortFolderList(List<? extends StoredObject> list) {
+        // TODO evaluate orderBy, for now sort by path segment
+        class FolderComparator implements Comparator<StoredObject> {
+
+            @Override
+            public int compare(StoredObject f1, StoredObject f2) {
+                String segment1 = f1.getName();
+                String segment2 = f2.getName();
+
+                return segment1.compareTo(segment2);
+            }
+        }
+
+        Collections.sort(list, new FolderComparator());
+    }
 
 }

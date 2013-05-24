@@ -68,13 +68,15 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Children.ChildrenResult;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling.ChildrenResult;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -117,12 +119,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start createDocumentFromSource()");
         StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, policies,
                 extension);
-        TypeDefinition td = getTypeDefinition(repositoryId, so); // type
-                                                                 // definition
-                                                                 // may be
-                                                                 // copied from
-                                                                 // source
-                                                                 // object
 
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
@@ -167,7 +163,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     public String createPolicy(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        // TODO to be completed if policies are implemented
         LOG.debug("start createPolicy()");
         StoredObject so = createPolicyIntern(context, repositoryId, properties, folderId, policies, addAces,
                 removeAces, extension);
@@ -501,7 +496,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         } else if (so instanceof Filing) {
             spo = (Filing) so;
         } else {
-            throw new CmisInvalidArgumentException("Object must be folder or document: " + objectId.getValue());
+            throw new CmisInvalidArgumentException("Object must be fileable: " + objectId.getValue());
         }
 
         StoredObject soTarget = objectStore.getObjectById(targetFolderId);
@@ -524,8 +519,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         boolean foundOldParent = false;
-        for (Folder parent : spo.getParents(user)) {
-            if (parent.getId().equals(soSource.getId())) {
+        for (String parentId : ((ObjectStoreFiling)objectStore).getParentIds(spo, user)) {
+            if (parentId.equals(soSource.getId())) {
                 foundOldParent = true;
                 break;
             }
@@ -535,12 +530,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     + "is not a parent of object " + objectId.getValue());
         }
 
-        if (so instanceof Folder && hasDescendant((Folder) so, targetFolder)) {
+        if (so instanceof Folder && hasDescendant(context.getUsername(), objectStore, (Folder) so, targetFolder)) {
             throw new CmisNotSupportedException("Destination of a move cannot be a subfolder of the source");
         }
 
-        spo.move(sourceFolder, targetFolder);
+        if (objectStore instanceof ObjectStoreFiling) {
+            ((ObjectStoreFiling) objectStore).move(so, sourceFolder, targetFolder);
+        } else {
+            throw new CmisInvalidArgumentException("Repository " + repositoryId + "does not support Filing");
+        }
         objectId.setValue(so.getId());
+
         LOG.debug("stop moveObject()");
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
@@ -704,16 +704,19 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
             if (pd != null && so instanceof Filing) {
                 String newName = (String) pd.getFirstValue();
-                List<Folder> parents = ((Filing) so).getParents(user);
-                if (so instanceof Folder && parents.isEmpty()) {
+                boolean hasParent = ((Filing) so).hasParent();
+                if (so instanceof Folder && !hasParent) {
                     throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
                 }
                 if (newName == null || newName.equals("")) {
                     throw new CmisConstraintException("updateProperties failed, name must not be empty.");
                 }
-
-                so.rename((String) pd.getFirstValue()); // note: this does
-                                                        // persist
+                if (!NameValidator.isValidName(newName)) {
+                    throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+                }
+                // Note: the test for duplicated name in folder is left to the object store
+                ObjectStoreFiling objStore = (ObjectStoreFiling) fStoreManager.getObjectStore(repositoryId);
+                objStore.rename((Fileable)so, (String) pd.getFirstValue()); 
                 hasUpdatedProp = true;
             }
         }
@@ -738,6 +741,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         if (null != acl) {
+            // TODO
             LOG.warn("Setting ACLs is currently not supported by this implementation, acl is ignored");
             // if implemented add this call:
             // fAclService.appyAcl(context, repositoryId, acl, null,
@@ -1179,22 +1183,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
     }
 
-    private static boolean hasDescendant(Folder sourceFolder, Folder targetFolder) {
+    private boolean hasDescendant(String user, ObjectStore objStore, Folder sourceFolder, Folder targetFolder) {
         String sourceId = sourceFolder.getId();
         String targetId = targetFolder.getId();
+        
         while (targetId != null) {
-            // log.debug("comparing source id " + sourceId +
-            // " with predecessor "
-            // +
-            // targetId);
             if (targetId.equals(sourceId)) {
                 return true;
             }
-            targetFolder = targetFolder.getParent();
-            if (null != targetFolder) {
-                targetId = targetFolder.getId();
-            } else {
-                targetId = null;
+            List<String>parentIds = ((ObjectStoreFiling)objStore).getParentIds(targetFolder, user);
+            targetId = parentIds == null || parentIds.isEmpty() ? null : parentIds.get(0);    
+            if (null != targetId) {
+                targetFolder = (Folder) objStore.getObjectById(targetId);
             }
         }
         return false;
@@ -1204,7 +1204,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      * Recursively delete a tree by traversing it and first deleting all
      * children and then the object itself
      * 
-     * @param folderStore
+     * @param objStore
      * @param parentFolder
      * @param continueOnFailure
      * @param allVersions
@@ -1212,31 +1212,33 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      * @return returns true if operation should continue, false if it should
      *         stop
      */
-    private boolean deleteRecursive(ObjectStore folderStore, Folder parentFolder, boolean continueOnFailure,
+    private boolean deleteRecursive(ObjectStore objStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
-        ChildrenResult childrenResult = parentFolder.getChildren(-1, -1, "Admin");
-        List<? extends StoredObject> children = childrenResult.getChildren();
+        
+        ObjectStoreFiling filingStore = (ObjectStoreFiling) objStore;
+        ChildrenResult childrenResult = filingStore.getChildren(parentFolder, -1, -1, "Admin");
+        List<Fileable> children = childrenResult.getChildren();
 
         if (null == children) {
             return true;
         }
 
-        for (StoredObject child : children) {
+        for (Fileable child : children) {
             if (child instanceof Folder) {
-                boolean mustContinue = deleteRecursive(folderStore, (Folder) child, continueOnFailure, allVersions,
+                boolean mustContinue = deleteRecursive(objStore, (Folder) child, continueOnFailure, allVersions,
                         failedToDeleteIds, user);
                 if (!mustContinue && !continueOnFailure) {
                     return false; // stop further deletions
                 }
             } else {
                 try {
-                    folderStore.deleteObject(child.getId(), allVersions, user);
+                    objStore.deleteObject(child.getId(), allVersions, user);
                 } catch (Exception e) {
                     failedToDeleteIds.add(child.getId());
                 }
             }
         }
-        folderStore.deleteObject(parentFolder.getId(), allVersions, user);
+        objStore.deleteObject(parentFolder.getId(), allVersions, user);
         return true;
     }
 

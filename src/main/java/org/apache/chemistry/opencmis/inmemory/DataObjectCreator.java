@@ -77,7 +77,7 @@ public class DataObjectCreator {
         boolean canCheckIn = false;
         boolean isVersioned = so instanceof Version || so instanceof VersionedDocument;
         boolean hasContent = so instanceof Content && ((Content) so).hasContent();
-        boolean isRootFolder = isFolder && ((Folder) so).getParent() == null;
+        boolean isRootFolder = isFolder && ((Folder) so).getParentId() == null;
         boolean hasRendition = so.hasRendition(user);
         boolean canGetAcl = user != null && (isDocument || isFolder || isItem);
         boolean canSetAcl = canGetAcl;

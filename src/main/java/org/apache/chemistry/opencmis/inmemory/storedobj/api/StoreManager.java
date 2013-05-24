@@ -164,6 +164,10 @@ public interface StoreManager {
      */
     TypeManagerCreatable getTypeManager(String repositoryId);
     
+    boolean supportsSingleFiling(String repositoryId);
+    
+    boolean supportsMultiFilings(String repositoryId);
+    
     /**
      * Execute a query against the repository (same parameter as the discovery service
      * query method
@@ -182,5 +186,7 @@ public interface StoreManager {
     ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount);
+    
+    
     
  }

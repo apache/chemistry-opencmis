@@ -121,15 +121,18 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         LOG.debug("setting content stream, new size total " + (TOTAL_LENGTH / (1024 * 1024)) + "MB.");
     }
 
-    public long getLength() {
+    @Override
+	public long getLength() {
         return fLength;
     }
 
-    public BigInteger getBigLength() {
+    @Override
+	public BigInteger getBigLength() {
         return BigInteger.valueOf(fLength);
     }
 
-    public String getMimeType() {
+    @Override
+	public String getMimeType() {
         return fMimeType;
     }
 
@@ -137,7 +140,8 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         this.fMimeType = fMimeType;
     }
 
-    public String getFileName() {
+    @Override
+	public String getFileName() {
         return fFileName;
     }
 
@@ -149,7 +153,8 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         return fFileName;
     }
 
-    public InputStream getStream() {
+    @Override
+	public InputStream getStream() {
         if (null == fContent) {
             return null;
         } else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0) {
@@ -164,7 +169,8 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         this.fLastModified = lastModified;
     }
     
-    public GregorianCalendar getLastModified() {
+    @Override
+	public GregorianCalendar getLastModified() {
         return fLastModified;
     }
     
@@ -184,11 +190,13 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         return fContent;
     }
 
-    public List<CmisExtensionElement> getExtensions() {
+    @Override
+	public List<CmisExtensionElement> getExtensions() {
         return null;
     }
 
-    public void setExtensions(List<CmisExtensionElement> extensions) {
+    @Override
+	public void setExtensions(List<CmisExtensionElement> extensions) {
         // not implemented
     }
 }

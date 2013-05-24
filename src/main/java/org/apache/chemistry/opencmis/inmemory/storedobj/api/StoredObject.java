@@ -215,14 +215,6 @@ public interface StoredObject {
     void persist();
 
     /**
-     * Rename an object
-     * 
-     * @param newName
-     *            the new name of the object
-     */
-    void rename(String newName);
-
-    /**
      * Create all system base properties that need to be stored with every
      * object in the repository This method is called when a new object is
      * created to record all of the capturing data like the creation time,

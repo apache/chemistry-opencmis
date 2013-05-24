@@ -204,7 +204,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createDocumentNoCatch("/(%#$���������", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            createDocumentNoCatch("/(%#$aöÜ", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -236,7 +236,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createFolderNoCatch("/(%#$���������", fRootFolderId, FOLDER_TYPE_ID);
+            createFolderNoCatch("/(%#$���������������������������", fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -658,6 +658,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
     @Test
     public void testUpdateProperties() {
+        // TODO add test rename root folder and non root folder (must be a folder)
         log.info("starting testUpdateProperties() ...");
         String oldChangeToken, newChangeToken;
         String id = createDocumentWithCustomType(MY_CUSTOM_NAME, fRootFolderId, false);
@@ -792,6 +793,17 @@ public class ObjectServiceTest extends AbstractServiceTest {
             } catch (Exception e) {
                 assertTrue(e instanceof CmisNameConstraintViolationException);
             }
+            
+            // test an invalid name
+            properties = new ArrayList<PropertyData<?>>();
+            properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Invalid/Name"));
+            newProps = fFactory.createPropertiesData(properties);
+            try {
+                fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
+                fail("Update with an invalid name should fail.");
+            } catch (Exception e) {
+                assertTrue(e instanceof CmisInvalidArgumentException);
+            }
 
         } catch (Exception e) {
             fail("getObject() failed with exception: " + e);
@@ -911,10 +923,10 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.info("starting testGetObjectByPath() with specal chars...");
             log.info("  creating object");
 
-            String docID = createDocument("H������nschen", fRootFolderId, false);
+            String docID = createDocument("Hänschen", fRootFolderId, false);
             log.info("  getting object by path with special chars");
             try {
-                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H������nschen", "*", false, IncludeRelationships.NONE, null, false,
+                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/Hänschen", "*", false, IncludeRelationships.NONE, null, false,
                         false, null);
                 assertNotNull(res);
                assertNotNull(res.getId());
@@ -1494,19 +1506,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
 
     private void moveObjectTest(boolean isFolder) {
-        final String propertyFilter = PropertyIds.OBJECT_ID + "," + PropertyIds.NAME; // +
-        // ","
-        // +
-        // PropertyIds
-        // .
-        // CMIS_OBJECT_TYPE_ID
-        // +
-        // ","
-        // +
-        // PropertyIds
-        // .
-        // CMIS_BASE_TYPE_ID
-        // ;
+        final String propertyFilter = PropertyIds.OBJECT_ID + "," + PropertyIds.NAME; 
         String rootFolderId = createFolder();
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
                 ObjectGenerator.CONTENT_KIND.LoremIpsumText);
@@ -1683,7 +1683,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
          *
          * @return typesMap map filled with created types
          */
-        public List<TypeDefinition> createTypesList() {
+        @Override
+		public List<TypeDefinition> createTypesList() {
             List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
             InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(TEST_DOCUMENT_TYPE_ID,
                     "My Document Type", InMemoryDocumentTypeDefinition.getRootDocumentType());

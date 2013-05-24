@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
-public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements VersionedDocument {
+public class VersionedDocumentImpl extends FilingImpl implements VersionedDocument {
 
     private boolean fIsCheckedOut;
     private String fCheckedOutUser;
@@ -46,7 +46,8 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         fIsCheckedOut = false;
     }
 
-    public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
+    @Override
+	public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
 
         if (isCheckedOut()) {
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
@@ -65,7 +66,8 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         return ver;
     }
 
-    public boolean deleteVersion(DocumentVersion version) {
+    @Override
+	public boolean deleteVersion(DocumentVersion version) {
         if (fIsCheckedOut) {
             // Note: Do not throw an exception here if the document is
             // checked-out. In AtomPub binding cancelCheckout
@@ -85,11 +87,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         return !fVersions.isEmpty();
     }
 
-    public void cancelCheckOut(String user) {
+    @Override
+	public void cancelCheckOut(String user) {
         cancelCheckOut(true);
     }
 
-    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
+    @Override
+	public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
             List<String> policyIds, String user) {
         if (fIsCheckedOut) {
             if (fCheckedOutUser.equals(user)) {
@@ -119,7 +123,8 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         }
     }
 
-    public DocumentVersion checkOut(ContentStream content, String user) {
+    @Override
+	public DocumentVersion checkOut(ContentStream content, String user) {
         if (fIsCheckedOut) {
             throw new CmisConstraintException("Error: Can't checkout, Document " + getId() + " is already checked out.");
         }
@@ -130,11 +135,13 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         return pwc;
     }
 
-    public List<DocumentVersion> getAllVersions() {
+    @Override
+	public List<DocumentVersion> getAllVersions() {
         return fVersions;
     }
 
-    public DocumentVersion getLatestVersion(boolean major) {
+    @Override
+	public DocumentVersion getLatestVersion(boolean major) {
 
         DocumentVersion latest = null;
         if (fVersions.size() == 0)
@@ -152,15 +159,18 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
         return latest;
     }
 
-    public boolean isCheckedOut() {
+    @Override
+	public boolean isCheckedOut() {
         return fIsCheckedOut;
     }
 
-    public String getCheckedOutBy() {
+    @Override
+	public String getCheckedOutBy() {
         return fCheckedOutUser;
     }
 
-    public DocumentVersion getPwc() {
+    @Override
+	public DocumentVersion getPwc() {
         for (DocumentVersion ver : fVersions) {
             if (ver.isPwc()) {
                 return ver;

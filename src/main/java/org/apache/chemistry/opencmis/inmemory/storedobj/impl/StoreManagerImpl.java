@@ -120,19 +120,22 @@ public class StoreManagerImpl implements StoreManager {
         fObjectFactory = new BindingsObjectFactoryImpl();
     }
 
-    public List<String> getAllRepositoryIds() {
+    @Override
+	public List<String> getAllRepositoryIds() {
         Set<String> repIds = fMapRepositoryToObjectStore.keySet();
         List<String> result = new ArrayList<String>();
         result.addAll(repIds);
         return result;
     }
 
-    public void initRepository(String repositoryId) {
+    @Override
+	public void initRepository(String repositoryId) {
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
         fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
     }
 
-    public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
+    @Override
+	public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
         if (fMapRepositoryToObjectStore.containsKey(repositoryId)
                 || fMapRepositoryToTypeManager.containsKey(repositoryId)) {
             throw new RuntimeException("Cannot add repository, repository " + repositoryId + " already exists.");
@@ -145,19 +148,23 @@ public class StoreManagerImpl implements StoreManager {
         initTypeSystem(repositoryId, typeCreatorClassName);
     }
 
-    public ObjectStore getObjectStore(String repositoryId) {
+    @Override
+	public ObjectStore getObjectStore(String repositoryId) {
         return fMapRepositoryToObjectStore.get(repositoryId);
     }
 
-    public CmisServiceValidator getServiceValidator() {
+    @Override
+	public CmisServiceValidator getServiceValidator() {
         return new InMemoryServiceValidatorImpl(this);
     }
 
-    public BindingsObjectFactory getObjectFactory() {
+    @Override
+	public BindingsObjectFactory getObjectFactory() {
         return fObjectFactory;
     }
 
-    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
+    @Override
+	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new RuntimeException("Unknown repository " + repositoryId);
@@ -176,7 +183,8 @@ public class StoreManagerImpl implements StoreManager {
         return tdc;
     }
 
-    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
+    @Override
+	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
             int depth) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -199,7 +207,8 @@ public class StoreManagerImpl implements StoreManager {
             return null;
     }
 
-    public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
+    @Override
+	public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
             boolean includePropertyDefinitions) {
 //        Collection<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
@@ -224,7 +233,8 @@ public class StoreManagerImpl implements StoreManager {
         return typeColl;
     }
 
-    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
+    @Override
+	public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
         List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -265,7 +275,8 @@ public class StoreManagerImpl implements StoreManager {
         return result;
     }
 
-    public RepositoryInfo getRepositoryInfo(String repositoryId) {
+    @Override
+	public RepositoryInfo getRepositoryInfo(String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
         if (null == sm) {
             return null;
@@ -575,12 +586,26 @@ public class StoreManagerImpl implements StoreManager {
         return tdcClone;
     }
 
-    public TypeManagerCreatable getTypeManager(String repositoryId) {
+    @Override
+	public TypeManagerCreatable getTypeManager(String repositoryId) {
         TypeManagerCreatable typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         return typeManager;
     }
 
-    public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+    @Override
+    public
+	boolean supportsSingleFiling(String repositoryId) {
+    	return false;
+    }
+    
+    @Override
+    public
+	boolean supportsMultiFilings(String repositoryId) {
+    	return true;
+    }
+    
+    @Override
+	public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount) {
         TypeManager tm = getTypeManager(repositoryId);
