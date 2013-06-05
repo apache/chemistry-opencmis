@@ -252,7 +252,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         result = getObjectParentsIntern(repositoryId, spo, filter, 
         		context.isObjectInfoRequired() ? objectInfos : null, includeAllowableActions, includeRelationships,
-				renditionFilter, context.getUsername());
+				renditionFilter, includeRelativePathSegment, context.getUsername());
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -365,9 +365,11 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         return childrenOfFolderId;
     }
 
-    private List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop, String filter,
-            ObjectInfoHandler objectInfos, Boolean includeAllowableActions, 
-            IncludeRelationships includeRelationships, String renditionFilter, String user) {
+	private List<ObjectParentData> getObjectParentsIntern(String repositoryId,
+			Filing sop, String filter, ObjectInfoHandler objectInfos,
+			Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includeRelativePathSegment, String user) {
 
         List<ObjectParentData> result = null;
         if (sop instanceof SingleFiling) {
@@ -380,7 +382,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 int beginIndex = path.lastIndexOf(Filing.PATH_SEPARATOR) + 1; 
                 //   Note: if not found results in 0
                 String relPathSeg = path.substring(beginIndex, path.length());
-                parentData.setRelativePathSegment(relPathSeg);
+                if (null != includeRelativePathSegment && includeRelativePathSegment)
+                	parentData.setRelativePathSegment(relPathSeg);
                 result = Collections.singletonList((ObjectParentData) parentData);
             } else {
                 result = Collections.emptyList();
@@ -397,7 +400,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                             includeRelationships, renditionFilter, false, true, null);
 
                     parentData.setObject(objData);
-                    parentData.setRelativePathSegment(multiParentObj.getPathSegment());
+                    if (null != includeRelativePathSegment && includeRelativePathSegment)
+                    	parentData.setRelativePathSegment(multiParentObj.getPathSegment());
                     result.add(parentData);
                     if (objectInfos != null) {
                         ObjectInfoImpl objectInfo = new ObjectInfoImpl();
