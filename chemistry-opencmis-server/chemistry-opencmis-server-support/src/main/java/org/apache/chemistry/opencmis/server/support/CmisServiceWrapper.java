@@ -812,7 +812,7 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
         allVersions = getDefaultTrue(allVersions);
 
         try {
-            service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extension);
+            service.deleteObject(repositoryId, objectId, allVersions, extension);
         } catch (Exception e) {
             throw createCmisException(e);
         }
