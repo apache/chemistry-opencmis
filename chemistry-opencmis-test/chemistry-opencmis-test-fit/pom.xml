@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.apache.chemistry.opencmis</groupId>
 		<artifactId>chemistry-opencmis</artifactId>
-		<version>0.9.0-SNAPSHOT</version>
+		<version>0.10.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -31,14 +31,14 @@
         <maven-failsafe-plugin.version>2.14.1</maven-failsafe-plugin.version>
         <maven-jetty-plugin.version>6.1.22</maven-jetty-plugin.version>
         <jcr.version>2.0</jcr.version>
-        <overlay.groupId></overlay.groupId>
-        <overlay.artifactId></overlay.artifactId>
-        <factory.class></factory.class>
+        <overlay.groupId />
+        <overlay.artifactId />
+        <factory.class />
         <!-- Used in ServiceLoader to look up impl. -->
-        <service.factory.class></service.factory.class>
-        <repository></repository>
-        <user></user>
-        <password></password>
+        <service.factory.class />
+        <repository />
+        <user />
+        <password />
         <!-- "VersionableType" to run versioning tests with the InMemory repository -->
         <default.documentType>VersionableType</default.documentType>        
     </properties>

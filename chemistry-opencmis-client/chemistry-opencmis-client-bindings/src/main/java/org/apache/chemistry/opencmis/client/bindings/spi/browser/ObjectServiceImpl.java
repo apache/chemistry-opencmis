@@ -499,7 +499,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             }
         });
 
-        if (!BigInteger.ZERO.equals(resp.getContentLength())) {
+        if (resp.hasResponseStream()) {
             Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
             return JSONConverter.convertFailedToDelete(json);
         }

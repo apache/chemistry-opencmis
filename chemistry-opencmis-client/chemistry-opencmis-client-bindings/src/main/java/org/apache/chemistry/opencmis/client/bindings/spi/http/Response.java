@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 
 /**
@@ -43,12 +45,14 @@ public class Response {
     private String errorContent;
     private BigInteger length;
     private String charset;
+    private boolean hasResponseStream;
 
     public Response(int responseCode, String responseMessage, Map<String, List<String>> headers,
             InputStream responseStream, InputStream errorStream) {
         this.responseCode = responseCode;
         this.responseMessage = responseMessage;
-        stream = responseStream;
+        this.stream = responseStream;
+        this.hasResponseStream = (stream != null);
 
         this.headers = new HashMap<String, List<String>>();
         if (headers != null) {
@@ -133,35 +137,52 @@ public class Response {
             }
         }
 
-        if (stream != null) {
-            String encoding = getContentEncoding();
-            if (encoding != null) {
-                if (encoding.toLowerCase().trim().equals("gzip")) {
-                    // if the stream is gzip encoded, decode it
-                    length = null;
-                    try {
-                        stream = new GZIPInputStream(stream, 4096);
-                    } catch (IOException e) {
-                        errorContent = e.getMessage();
-                        stream = null;
-                        try {
-                            responseStream.close();
-                        } catch (IOException ec) {
-                        }
-                    }
-                } else if (encoding.toLowerCase().trim().equals("deflate")) {
-                    // if the stream is deflate encoded, decode it
-                    length = null;
-                    stream = new InflaterInputStream(stream, new Inflater(true), 4096);
+        if (stream == null || BigInteger.ZERO.equals(length) || responseCode == 204) {
+            hasResponseStream = false;
+        } else {
+            stream = new BufferedInputStream(stream, 64 * 1024);
+            try {
+                stream.mark(2);
+                if (stream.read() == -1) {
+                    hasResponseStream = false;
+                } else {
+                    stream.reset();
+                    hasResponseStream = true;
                 }
+            } catch (IOException ioe) {
+                throw new CmisConnectionException("IO exception!", ioe);
             }
 
-            String transferEncoding = getContentTransferEncoding();
-            if ((stream != null) && (transferEncoding != null)
-                    && (transferEncoding.toLowerCase().trim().equals("base64"))) {
-                // if the stream is base64 encoded, decode it
-                length = null;
-                stream = new Base64.InputStream(stream);
+            if (hasResponseStream) {
+                String encoding = getContentEncoding();
+                if (encoding != null) {
+                    if (encoding.toLowerCase().trim().equals("gzip")) {
+                        // if the stream is gzip encoded, decode it
+                        length = null;
+                        try {
+                            stream = new GZIPInputStream(stream, 4096);
+                        } catch (IOException e) {
+                            errorContent = e.getMessage();
+                            stream = null;
+                            try {
+                                responseStream.close();
+                            } catch (IOException ec) {
+                            }
+                        }
+                    } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                        // if the stream is deflate encoded, decode it
+                        length = null;
+                        stream = new InflaterInputStream(stream, new Inflater(true), 4096);
+                    }
+                }
+
+                String transferEncoding = getContentTransferEncoding();
+                if ((stream != null) && (transferEncoding != null)
+                        && (transferEncoding.toLowerCase().trim().equals("base64"))) {
+                    // if the stream is base64 encoded, decode it
+                    length = null;
+                    stream = new Base64.InputStream(stream);
+                }
             }
         }
     }
@@ -226,6 +247,10 @@ public class Response {
 
     public BigInteger getContentLength() {
         return length;
+    }
+
+    public boolean hasResponseStream() {
+        return hasResponseStream;
     }
 
     public InputStream getStream() {

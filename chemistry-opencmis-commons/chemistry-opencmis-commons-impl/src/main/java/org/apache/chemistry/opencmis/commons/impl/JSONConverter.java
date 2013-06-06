@@ -1177,6 +1177,9 @@ public final class JSONConverter {
             }
 
             String propId = (propertyMode == PropertyMode.QUERY ? property.getQueryName() : property.getId());
+            if (propId == null) {
+                throw new CmisRuntimeException("No query name or alias for property '" + property.getId() + "'!");
+            }
             result.put(propId, convert(property, propDef, succinct));
         }
 

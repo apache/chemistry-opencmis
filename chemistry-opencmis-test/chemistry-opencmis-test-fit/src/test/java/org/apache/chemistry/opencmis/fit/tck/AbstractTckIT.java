@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.tck;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -91,8 +92,13 @@ public abstract class AbstractTckIT extends AbstractRunner {
         for (CmisTestGroup group : getGroups()) {
             for (CmisTest test : group.getTests()) {
                 for (CmisTestResult result : test.getResults()) {
-                    assertTrue(result.getStatus() != CmisTestResultStatus.FAILURE);
-                    assertTrue(result.getStatus() != CmisTestResultStatus.UNEXPECTED_EXCEPTION);
+                    assertNotNull("The test '" + test.getName() + "' returned an invalid result.", result);
+                    assertTrue("The test '" + test.getName() + "' returned a failure: " + result.getMessage(),
+                            result.getStatus() != CmisTestResultStatus.FAILURE);
+                    assertTrue(
+                            "The test '" + test.getName() + "' returned at an unexcepted exception: "
+                                    + result.getMessage(),
+                            result.getStatus() != CmisTestResultStatus.UNEXPECTED_EXCEPTION);
                 }
             }
         }

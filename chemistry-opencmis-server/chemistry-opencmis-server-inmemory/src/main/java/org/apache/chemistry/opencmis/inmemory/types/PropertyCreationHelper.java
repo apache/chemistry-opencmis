@@ -526,24 +526,29 @@ public final class PropertyCreationHelper {
     }
 
     private static AbstractPropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
+    	AbstractPropertyData<?> emptyValue;
         if (propDef.getPropertyType().equals(PropertyType.BOOLEAN))
-            return new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
+        	emptyValue =  new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
         else if (propDef.getPropertyType().equals(PropertyType.DATETIME))
-            return new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
+        	emptyValue =  new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
         else if (propDef.getPropertyType().equals(PropertyType.DECIMAL))
-            return new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
+        	emptyValue =  new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
         else if (propDef.getPropertyType().equals(PropertyType.HTML))
-            return new PropertyHtmlImpl(propDef.getId(), (String) null);
+        	emptyValue =  new PropertyHtmlImpl(propDef.getId(), (String) null);
         else if (propDef.getPropertyType().equals(PropertyType.ID))
-            return new PropertyIdImpl(propDef.getId(), (String) null);
+        	emptyValue =  new PropertyIdImpl(propDef.getId(), (String) null);
         else if (propDef.getPropertyType().equals(PropertyType.INTEGER))
-            return new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
+        	emptyValue =  new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
         else if (propDef.getPropertyType().equals(PropertyType.STRING))
-            return new PropertyStringImpl(propDef.getId(), (String) null);
+        	emptyValue =  new PropertyStringImpl(propDef.getId(), (String) null);
         else if (propDef.getPropertyType().equals(PropertyType.URI))
-            return new PropertyUriImpl(propDef.getId(), (String) null);
+        	emptyValue =  new PropertyUriImpl(propDef.getId(), (String) null);
         else
-            return null;
+        	emptyValue =  null;
+        emptyValue.setDisplayName(propDef.getDisplayName());
+        emptyValue.setQueryName(propDef.getQueryName());
+        emptyValue.setLocalName(propDef.getLocalName());
+        return emptyValue;
     }
 
     private static AbstractPropertyData<?> clonePropertyData(PropertyData<?> prop) {
