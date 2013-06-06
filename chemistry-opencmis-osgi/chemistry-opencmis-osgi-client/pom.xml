@@ -48,6 +48,8 @@
 						    org.slf4j;resolution:=optional,
 						    org.slf4j.impl;resolution:=optional,
 							com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional,
+							com.sun.xml.internal.*;resolution:=optional,
+							org.apache.cxf.*;resolution:=optional,
 							*
 						</Import-Package>
 						<_exportcontents>
