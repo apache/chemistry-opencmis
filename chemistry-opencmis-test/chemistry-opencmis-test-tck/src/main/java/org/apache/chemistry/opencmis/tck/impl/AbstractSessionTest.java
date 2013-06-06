@@ -1117,6 +1117,24 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 addResult(results, checkRenditions(session, object, "Rendition check"));
             }
 
+            // check allowed child object type ids
+            if (object instanceof Folder) {
+                List<String> otids = object.getPropertyValue(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS);
+                if (otids != null) {
+                    for (String otid : otids) {
+                        try {
+                            session.getTypeDefinition(otid);
+                        } catch (CmisBaseException e) {
+                            addResult(
+                                    results,
+                                    createResult(FAILURE,
+                                            "The cmis:allowedChildObjectTypeIds property contains the type id '" + otid
+                                                    + "' but the type doesn't exists. Folder id: " + object.getId()));
+                        }
+                    }
+                }
+            }
+
             // check path
             if (object instanceof FileableCmisObject) {
                 List<String> paths = ((FileableCmisObject) object).getPaths();

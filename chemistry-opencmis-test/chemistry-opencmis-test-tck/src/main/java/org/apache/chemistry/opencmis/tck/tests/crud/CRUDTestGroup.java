@@ -47,5 +47,6 @@ public class CRUDTestGroup extends AbstractSessionTestGroup {
         addTest(new CopyTest());
         addTest(new MoveTest());
         addTest(new DeleteTreeTest());
+        addTest(new OperationContextTest());
     }
 }
