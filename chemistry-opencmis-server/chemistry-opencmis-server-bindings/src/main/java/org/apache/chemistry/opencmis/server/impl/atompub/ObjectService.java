@@ -195,7 +195,7 @@ public class ObjectService {
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
 
             // execute
-            service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, null);
+            service.deleteObject(repositoryId, objectId, allVersions, null);
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
