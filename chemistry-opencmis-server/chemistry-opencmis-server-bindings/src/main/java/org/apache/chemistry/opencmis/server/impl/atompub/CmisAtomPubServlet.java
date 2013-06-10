@@ -65,6 +65,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedExce
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -170,7 +171,10 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             context = createContext(getServletContext(), qsRequest, response);
             dispatch(context, qsRequest, response);
         } catch (Exception e) {
-            if (e instanceof CmisPermissionDeniedException) {
+            if (e instanceof CmisUnauthorizedException) {
+                response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
+            } else if (e instanceof CmisPermissionDeniedException) {
                 if ((context == null) || (context.getUsername() == null)) {
                     response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
