@@ -100,7 +100,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             // test if the content stream can be deleted
             if (docType.getContentStreamAllowed() == ContentStreamAllowed.REQUIRED) {
                 addResult(createResult(SKIPPED,
-                        "A content stream is required for this docuemnt type. deleteContentStream() test skipped!"));
+                        "A content stream is required for this document type. deleteContentStream() test skipped!"));
             } else {
                 // delete content stream
                 try {
@@ -126,27 +126,33 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             } catch (Exception e) {
             }
 
-            ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),
-                    contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
-
-            ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
-
             try {
-                contentStream.getStream().close();
-            } catch (Exception e) {
-            }
+                ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),
+                        contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
 
-            // setContentStream may have created a new version
-            Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId, "setContentStream()");
+                ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
 
-            // test new content
-            try {
-                String content = getStringFromContentStream(contentDoc.getContentStream());
-                f = createResult(FAILURE, "Document content doesn't match the content set by setContentStream()!");
-                addResult(assertEquals(CONTENT2, content, null, f));
-            } catch (IOException e) {
-                addResult(createResult(UNEXPECTED_EXCEPTION,
-                        "Document content couldn't be read! Exception: " + e.getMessage(), e, true));
+                try {
+                    contentStream.getStream().close();
+                } catch (Exception e) {
+                }
+
+                // setContentStream may have created a new version
+                Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId, "setContentStream()");
+
+                // test new content
+                try {
+                    String content = getStringFromContentStream(contentDoc.getContentStream());
+                    f = createResult(FAILURE, "Document content doesn't match the content set by setContentStream()!");
+                    addResult(assertEquals(CONTENT2, content, null, f));
+                } catch (IOException e) {
+                    addResult(createResult(UNEXPECTED_EXCEPTION,
+                            "Document content couldn't be read! Exception: " + e.getMessage(), e, true));
+                }
+
+                workDoc = contentDoc;
+            } catch (CmisNotSupportedException e) {
+                addResult(createResult(WARNING, "setContentStream() is not supported!"));
             }
 
             // test appendContentStream
@@ -157,24 +163,28 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
                 } catch (Exception e) {
                 }
 
-                contentStream = session.getObjectFactory().createContentStream(contentDoc.getName(),
-                        contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
-
-                newObjectId = contentDoc.appendContentStream(contentStream, true);
-
-                // appendContentStream may have created a new version
-                Document contentDoc2 = getNewVersion(session, contentDoc, checkedout, newObjectId,
-                        "appendContentStream()");
-
-                // test new content
                 try {
-                    String content = getStringFromContentStream(contentDoc2.getContentStream());
-                    f = createResult(FAILURE,
-                            "Document content doesn't match the content set by setContentStream() followed by appendContentStream()!");
-                    addResult(assertEquals(CONTENT2 + CONTENT3, content, null, f));
-                } catch (IOException e) {
-                    addResult(createResult(UNEXPECTED_EXCEPTION,
-                            "Document content couldn't be read! Exception: " + e.getMessage(), e, true));
+                    ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),
+                            contentBytes.length, "text/plain", new ByteArrayInputStream(contentBytes));
+
+                    ObjectId newObjectId = workDoc.appendContentStream(contentStream, true);
+
+                    // appendContentStream may have created a new version
+                    Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId,
+                            "appendContentStream()");
+
+                    // test new content
+                    try {
+                        String content = getStringFromContentStream(contentDoc.getContentStream());
+                        f = createResult(FAILURE,
+                                "Document content doesn't match the content set by setContentStream() followed by appendContentStream()!");
+                        addResult(assertEquals(CONTENT2 + CONTENT3, content, null, f));
+                    } catch (IOException e) {
+                        addResult(createResult(UNEXPECTED_EXCEPTION, "Document content couldn't be read! Exception: "
+                                + e.getMessage(), e, true));
+                    }
+                } catch (CmisNotSupportedException e) {
+                    addResult(createResult(WARNING, "appendContentStream() is not supported!"));
                 }
             }
 
