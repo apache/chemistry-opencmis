@@ -90,7 +90,7 @@ public class InMemoryPolicyTypeDefinition extends PolicyTypeDefinitionImpl {
         setDescription("Description of " + getDisplayName() + " Type");
         setLocalName(id);
         setLocalNamespace(null);
-        setQueryName(id);
+        setQueryName(TypeUtil.getQueryNameFromId(id));
         setIsControllableAcl(false);
         setIsControllablePolicy(false);
         setIsCreatable(true);

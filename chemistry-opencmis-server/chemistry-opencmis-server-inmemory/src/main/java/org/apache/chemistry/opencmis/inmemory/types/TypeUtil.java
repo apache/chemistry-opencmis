@@ -176,6 +176,20 @@ public final class TypeUtil {
         td.initialize(td);
         return null;
     }
+    
+	public static String getQueryNameFromId(String id) {
+		StringBuffer sb = new StringBuffer(id.length());
+		for (int i = 0; i < id.length(); i++) {
+			char c = id.charAt(i);
+			if (c == '.' || c == ' ' || c == ',' || c == '\'' || c == '"'
+					|| c == '\\' || c == '(' || c == ')') {
+				sb.append('_');
+			} else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
 
     private static void initializeAbstractPropertyDefinition(PropertyDefinition<?> pdSrc, AbstractPropertyDefinition<?> pdTarget) {
         pdTarget.setCardinality(pdSrc.getCardinality());

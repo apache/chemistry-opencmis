@@ -95,7 +95,7 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         setDescription("Description of " + getDisplayName() + " Type");
         setLocalName(id);
         setLocalNamespace(null);
-        setQueryName(id);
+        setQueryName(TypeUtil.getQueryNameFromId(id));
         setIsControllableAcl(true);
         setIsControllablePolicy(false);
         setIsCreatable(true);
@@ -117,4 +117,5 @@ public class InMemoryDocumentTypeDefinition extends DocumentTypeDefinitionImpl {
         setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
         setIsVersionable(false);
     }
+    
 }
