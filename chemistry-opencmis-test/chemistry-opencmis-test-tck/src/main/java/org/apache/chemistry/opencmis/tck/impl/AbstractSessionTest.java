@@ -2010,6 +2010,45 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     // --- type checks ---
 
+    protected CmisTestResult checkQueryName(String queryName, boolean isRequired, String message) {
+        List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+
+        CmisTestResult f;
+
+        if (queryName == null || queryName.length() == 0) {
+            addResult(results, createResult(isRequired ? FAILURE : WARNING, "Query name is not set!"));
+        } else {
+            f = createResult(FAILURE, "Query name contains invalid character: ' '");
+            addResult(results, assertIsTrue(queryName.indexOf(' ') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: ','");
+            addResult(results, assertIsTrue(queryName.indexOf(',') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '\"'");
+            addResult(results, assertIsTrue(queryName.indexOf('"') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '''");
+            addResult(results, assertIsTrue(queryName.indexOf('\'') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '\\'");
+            addResult(results, assertIsTrue(queryName.indexOf('\\') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '.'");
+            addResult(results, assertIsTrue(queryName.indexOf('.') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '('");
+            addResult(results, assertIsTrue(queryName.indexOf('(') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: ')'");
+            addResult(results, assertIsTrue(queryName.indexOf(')') < 0, null, f));
+        }
+
+        CmisTestResultImpl result = createResult(getWorst(results), message);
+        result.getChildren().addAll(results);
+
+        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+    }
+
     protected CmisTestResult checkTypeDefinition(Session session, TypeDefinition type, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
@@ -2031,8 +2070,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // f = createResult(FAILURE, "Local namespace is not set!");
             // addResult(results, assertStringNotEmpty(type.(), null, f));
 
-            f = createResult(FAILURE, "Query name is not set!");
-            addResult(results, assertStringNotEmpty(type.getQueryName(), null, f));
+            boolean isQueryNameRequired = Boolean.TRUE.equals(type.isQueryable());
+            addResult(results,
+                    checkQueryName(type.getQueryName(), isQueryNameRequired, "Type Query Name: " + type.getQueryName()));
 
             if ((type.getId() != null) && (type.getBaseTypeId() != null)) {
                 if (type.getBaseTypeId().value().equals(type.getId())) {
@@ -3258,6 +3298,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                                 "Queryable: expected: " + queryable + " / actual: " + propDef.isQueryable());
                         addResult(results, f);
                     }
+
+                    boolean isPropertyQueryNameRequired = Boolean.TRUE.equals(queryable);
+                    checkQueryName(propDef.getQueryName(), isPropertyQueryNameRequired, "Property Query Name: "
+                            + propDef.getQueryName());
 
                     if ((orderable != null) && !orderable.equals(propDef.isOrderable())) {
                         f = createResult(FAILURE,
