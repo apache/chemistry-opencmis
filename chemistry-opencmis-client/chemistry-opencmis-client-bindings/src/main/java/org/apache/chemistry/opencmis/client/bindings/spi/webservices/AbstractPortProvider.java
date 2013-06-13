@@ -640,6 +640,7 @@ public abstract class AbstractPortProvider {
     protected void setSoapAction(BindingProvider portObject, String soapAction, CmisVersion cmisVersion) {
         if (cmisVersion == CmisVersion.CMIS_1_0) {
             portObject.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.FALSE);
+            portObject.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "");
         } else {
             portObject.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
             portObject.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
