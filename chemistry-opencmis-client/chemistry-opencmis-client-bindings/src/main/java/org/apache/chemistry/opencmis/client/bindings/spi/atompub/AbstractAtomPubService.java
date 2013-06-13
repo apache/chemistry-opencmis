@@ -140,6 +140,10 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Return the CMIS version of the given repository.
      */
     protected CmisVersion getCmisVersion(String repositoryId) {
+        if (CmisBindingsHelper.getForcedCmisVersion(session) != null) {
+            return CmisBindingsHelper.getForcedCmisVersion(session);
+        }
+
         RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
         RepositoryInfo info = cache.get(repositoryId);
 

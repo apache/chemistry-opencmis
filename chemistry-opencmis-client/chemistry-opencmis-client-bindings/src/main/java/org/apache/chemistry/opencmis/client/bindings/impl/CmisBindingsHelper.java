@@ -24,6 +24,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
@@ -41,6 +42,7 @@ public final class CmisBindingsHelper {
     public static final String HTTP_INVOKER_OBJECT = "org.apache.chemistry.opencmis.binding.httpinvoker.object";
     public static final String AUTHENTICATION_PROVIDER_OBJECT = "org.apache.chemistry.opencmis.binding.auth.object";
     public static final String ACCEPT_LANGUAGE = "org.apache.chemistry.opencmis.binding.acceptLanguage";
+    public static final String FORCE_CMIS_VERSION = "org.apache.chemistry.opencmis.cmisversion";
 
     /**
      * Private constructor.
@@ -128,6 +130,13 @@ public final class CmisBindingsHelper {
         }
 
         return invoker;
+    }
+
+    /**
+     * Returns a CMIS version if the user set one, <code>null</code> otherwise.
+     */
+    public static CmisVersion getForcedCmisVersion(BindingSession session) {
+        return (CmisVersion) session.get(FORCE_CMIS_VERSION);
     }
 
     /**

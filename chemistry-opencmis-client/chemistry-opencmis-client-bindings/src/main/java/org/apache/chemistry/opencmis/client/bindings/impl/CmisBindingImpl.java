@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.SessionAwareAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
@@ -123,6 +124,16 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
                 if ((acceptLanguage.indexOf('\n') == -1) && (acceptLanguage.indexOf('\r') == -1)) {
                     session.put(CmisBindingsHelper.ACCEPT_LANGUAGE, acceptLanguage);
                 }
+            }
+        }
+
+        // force CMIS version
+        String forceCmisVersion = sessionParameters.get(SessionParameter.FORCE_CMIS_VERSION);
+        if (forceCmisVersion != null) {
+            try {
+                session.put(CmisBindingsHelper.FORCE_CMIS_VERSION, CmisVersion.fromValue(forceCmisVersion));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid CMIS version value: " + forceCmisVersion);
             }
         }
 

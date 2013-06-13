@@ -138,7 +138,8 @@ package org.apache.chemistry.opencmis.commons;
  * <td>AtomPub, Web Services, Browser</td>
  * <td>class name</td>
  * <td>no</td>
- * <td>org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker</td>
+ * <td>org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker
+ * </td>
  * </tr>
  * <tr>
  * <td>{@link #COMPRESSION}</td>
@@ -506,6 +507,12 @@ public final class SessionParameter {
 
     /** Class name of the binding class. */
     public static final String BINDING_SPI_CLASS = "org.apache.chemistry.opencmis.binding.spi.classname";
+
+    /**
+     * Forces OpenCMIS to use the specified CMIS version and ignore the CMIS
+     * version reported by the repository.
+     */
+    public static final String FORCE_CMIS_VERSION = "org.apache.chemistry.opencmis.cmisversion";
 
     /** URL of the AtomPub service document. */
     public static final String ATOMPUB_URL = "org.apache.chemistry.opencmis.binding.atompub.url";

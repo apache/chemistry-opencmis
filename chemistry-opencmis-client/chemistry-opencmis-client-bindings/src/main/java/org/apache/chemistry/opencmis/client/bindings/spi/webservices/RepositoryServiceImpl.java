@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -60,22 +61,17 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
     }
 
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "getRepositories");
+        CmisVersion cmisVersion = CmisBindingsHelper.getForcedCmisVersion(getSession());
+        if (cmisVersion == null) {
+            cmisVersion = CmisVersion.CMIS_1_1;
+        }
 
-        List<RepositoryInfo> infos = null;
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(cmisVersion, "getRepositories");
+
+        List<CmisRepositoryEntryType> entries = null;
         try {
             // get the list of repositories
-            List<CmisRepositoryEntryType> entries = port.getRepositories(convert(extension));
-
-            if (entries != null) {
-                infos = new ArrayList<RepositoryInfo>();
-
-                // iterate through the list and fetch repository infos
-                for (CmisRepositoryEntryType entry : entries) {
-                    CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
-                    infos.add(convert(info));
-                }
-            }
+            entries = port.getRepositories(convert(extension));
         } catch (CmisException e) {
             throw convertException(e);
         } catch (Exception e) {
@@ -84,11 +80,37 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
             portProvider.endCall(port);
         }
 
+        List<RepositoryInfo> infos = null;
+        if (entries != null) {
+            port = portProvider.getRepositoryServicePort(cmisVersion, "getRepositoryInfo");
+
+            try {
+                infos = new ArrayList<RepositoryInfo>();
+
+                // iterate through the list and fetch repository infos
+                for (CmisRepositoryEntryType entry : entries) {
+                    CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
+                    infos.add(convert(info));
+                }
+            } catch (CmisException e) {
+                throw convertException(e);
+            } catch (Exception e) {
+                throw new CmisRuntimeException("Error: " + e.getMessage(), e);
+            } finally {
+                portProvider.endCall(port);
+            }
+        }
+
         return infos;
     }
 
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        RepositoryServicePort port = portProvider.getRepositoryServicePort(CmisVersion.CMIS_1_1, "getRepositoryInfo");
+        CmisVersion cmisVersion = CmisBindingsHelper.getForcedCmisVersion(getSession());
+        if (cmisVersion == null) {
+            cmisVersion = CmisVersion.CMIS_1_1;
+        }
+
+        RepositoryServicePort port = portProvider.getRepositoryServicePort(cmisVersion, "getRepositoryInfo");
 
         try {
             return convert(port.getRepositoryInfo(repositoryId, convert(extension)));
