@@ -154,7 +154,22 @@ public class CmisWebServicesServlet extends WSServlet {
             return;
         }
 
-        super.service(new ProtectionRequestWrapper(request, MAX_SOAP_SIZE), response);
+        // handle other non-POST requests
+        if (!request.getMethod().equals("POST")) {
+            printError(request, response, "Not a HTTP POST request.");
+            return;
+        }
+
+        // handle POST requests
+        ProtectionRequestWrapper requestWrapper = null;
+        try {
+            requestWrapper = new ProtectionRequestWrapper(request, MAX_SOAP_SIZE);
+        } catch (ServletException e) {
+            printError(request, response, "The request is not MTOM encoded.");
+            return;
+        }
+
+        super.service(requestWrapper, response);
     }
 
     private void printXml(HttpServletRequest request, HttpServletResponse response, String doc, UrlBuilder baseUrl)
@@ -196,6 +211,36 @@ public class CmisWebServicesServlet extends WSServlet {
         pw.print("<p>CMIS WSDL for all services: <a href=\"" + urlEscaped + "\">" + urlEscaped + "</a></p>");
 
         pw.print("</html></body>");
+        pw.flush();
+    }
+
+    private void printError(HttpServletRequest request, HttpServletResponse response, String message)
+            throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/xml");
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter pw = response.getWriter();
+
+        String messageEscaped = StringEscapeUtils.escapeXml(message);
+
+        pw.println("<?xml version='1.0' encoding='UTF-8'?>");
+        pw.println("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">");
+        pw.println("<S:Body>");
+        pw.println("<S:Fault>");
+        pw.println("<faultcode>S:Client</faultcode>");
+        pw.println("<faultstring>" + messageEscaped + "</faultstring>");
+        pw.println("<detail>");
+        pw.println("<cmisFault xmlns=\"http://docs.oasis-open.org/ns/cmis/messaging/200908/\">");
+        pw.println("<type>runtime</type>");
+        pw.println("<code>0</code>");
+        pw.println("<message>" + messageEscaped + "</message>");
+        pw.println("</cmisFault>");
+        pw.println("</detail>");
+        pw.println("</S:Fault>");
+        pw.println("</S:Body>");
+        pw.println("</S:Envelope>");
+
         pw.flush();
     }
 
