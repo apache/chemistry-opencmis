@@ -3,8 +3,12 @@ Apache Chemistry OpenCMIS
 =========================
 
 OpenCMIS is a collection of Java libraries, frameworks and tools around
-the CMIS (Content Management Interoperability Services) specification
-<http://docs.oasis-open.org/cmis/CMIS/v1.0/cmis-spec-v1.0.html>.
+the CMIS (Content Management Interoperability Services) specification.
+
+OpenCMIS supports the specification versions
+ - CMIS 1.0 <http://docs.oasis-open.org/cmis/CMIS/v1.0/cmis-spec-v1.0.html>
+ - CMIS 1.1 <http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html>
+
 
 Building OpenCMIS
 =================
@@ -13,12 +17,14 @@ You can build OpenCMIS like this:
 
     mvn clean install
 
-You need Maven 2 with Java 5 (or higher) for the build.
+You need Maven 3 with Java 5 (or higher) for the build.
+Set the environment variable MAVEN_OPTS to 
+'-Xmx1024m -XX:MaxPermSize=256m' to give Maven more memory.
 
 License (see also package specific LICENSE files)
 =================================================
 
-Collective work: Copyright 2010 The Apache Software Foundation.
+Collective work: Copyright 2010-2013 The Apache Software Foundation.
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
