@@ -36,7 +36,9 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -93,14 +95,22 @@ public class SecondaryTypesTest extends AbstractSessionTest {
 
     private void createDocumentAndAttachSecondaryType(Session session, Folder testFolder, ObjectType secondaryTestType) {
         Document doc = createDocument(session, testFolder, "createandattach.txt", "Secondary Type Test");
+        Document workDoc = doc;
 
         try {
+            // test if check out is required
+            boolean checkedout = false;
+            if (needsCheckOut(doc)) {
+                workDoc = (Document) session.getObject(doc.checkOut(), SELECT_ALL_NO_CACHE_OC);
+                checkedout = true;
+            }
+
             // -- attach secondary type
             List<String> secondaryTypes = new ArrayList<String>();
 
             // copy already attached secondary types, if there are any
-            if (doc.getSecondaryTypes() != null) {
-                for (SecondaryType secType : doc.getSecondaryTypes()) {
+            if (workDoc.getSecondaryTypes() != null) {
+                for (SecondaryType secType : workDoc.getSecondaryTypes()) {
                     secondaryTypes.add(secType.getId());
                 }
             }
@@ -112,7 +122,7 @@ public class SecondaryTypesTest extends AbstractSessionTest {
             properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 
             // attach secondary type
-            ObjectId newId = doc.updateProperties(properties);
+            ObjectId newId = workDoc.updateProperties(properties);
             Document newDoc = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
             // check if the secondary type is there
@@ -123,6 +133,10 @@ public class SecondaryTypesTest extends AbstractSessionTest {
                 detachSecondaryType(session, newDoc, secondaryTestType);
             }
 
+            // cancel a possible check out
+            if (checkedout) {
+                workDoc.cancelCheckOut();
+            }
         } finally {
             deleteObject(doc);
         }
@@ -137,12 +151,22 @@ public class SecondaryTypesTest extends AbstractSessionTest {
             boolean found = checkSecondaryType(doc, secondaryTestType);
 
             // detach secondary type
-            if (found) {
+            if (found && !needsCheckOut(doc)) {
                 detachSecondaryType(session, doc, secondaryTestType);
             }
         } finally {
             deleteObject(doc);
         }
+    }
+
+    private boolean needsCheckOut(Document doc) {
+        DocumentTypeDefinition type = (DocumentTypeDefinition) doc.getType();
+        PropertyDefinition<?> secTypeIdsPropDef = type.getPropertyDefinitions().get(
+                PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+
+        return secTypeIdsPropDef.getUpdatability() == Updatability.WHENCHECKEDOUT
+                || (!doc.getAllowableActions().getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES) && Boolean.TRUE
+                        .equals(type.isVersionable()));
     }
 
     private boolean checkSecondaryType(Document doc, ObjectType secondaryTestType) {

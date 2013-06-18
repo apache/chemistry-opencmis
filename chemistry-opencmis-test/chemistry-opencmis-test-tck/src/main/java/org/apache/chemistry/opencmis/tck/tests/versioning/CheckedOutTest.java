@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -111,11 +112,20 @@ public class CheckedOutTest extends AbstractSessionTest {
             addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + (pwc == null ? "?" : pwc.getId())));
 
             if (pwc != null) {
-                f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()
-                        + " (Note: The words of the CMIS specification define that the PWC is the latest version."
-                        + " But that is not the intention of the spec and will be changed in CMIS 1.1."
-                        + " Thus this a warning, not an error.)");
-                addResult(assertIsTrue(pwc.isLatestVersion(), null, f));
+                if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
+                    f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()
+                            + " (Note: The words of the CMIS specification define that the PWC is the latest version."
+                            + " But that is not the intention of the spec and will be changed in CMIS 1.1."
+                            + " Thus this a warning, not an error.)");
+                    addResult(assertIsTrue(pwc.isLatestVersion(), null, f));
+                } else {
+                    f = createResult(FAILURE, "The property value of 'cmis:isLatestVersion' is TRUE for a PWC! Id: "
+                            + pwc.getId());
+                    addResult(assertIsFalse(pwc.isLatestVersion(), null, f));
+                    f = createResult(FAILURE,
+                            "The property value of 'cmis:isLatestMajorVersion' is TRUE for a PWC! Id: " + pwc.getId());
+                    addResult(assertIsFalse(pwc.isLatestMajorVersion(), null, f));
+                }
 
                 if (lastName != null && pwc.getName() != null) {
                     if (pwc.getName().compareToIgnoreCase(lastName) < 0) {

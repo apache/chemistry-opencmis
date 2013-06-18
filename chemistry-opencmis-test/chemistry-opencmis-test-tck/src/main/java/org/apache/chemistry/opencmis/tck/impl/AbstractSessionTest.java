@@ -2041,6 +2041,15 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             f = createResult(FAILURE, "Query name contains invalid character: ')'");
             addResult(results, assertIsTrue(queryName.indexOf(')') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '\\t'");
+            addResult(results, assertIsTrue(queryName.indexOf('\t') < 0, null, f));
+
+            f = createResult(FAILURE, "Query name contains invalid character: '\\n'");
+            addResult(results, assertIsTrue(queryName.indexOf('\n') < 0, null, f));
+            
+            f = createResult(FAILURE, "Query name contains invalid character: '\\r'");
+            addResult(results, assertIsTrue(queryName.indexOf('\r') < 0, null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);

@@ -349,7 +349,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 if (!(secondaryType instanceof SecondaryType)) {
                     throw new IllegalArgumentException(
                             "Secondary types property contains a type that is not a secondary type: "
-                                    + secondaryType.getId());
+                                    + secondaryTypeId);
                 }
 
                 allSecondaryTypes.add((SecondaryType) secondaryType);

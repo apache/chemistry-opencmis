@@ -174,19 +174,46 @@ public class VersioningSmokeTest extends AbstractSessionTest {
     private CmisTestResult checkVersionSeries(Session session, List<Document> versions, String[] properties,
             String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
+        CmisTestResult f;
 
+        // make sure there is only one latest version
+        // and zero or one latest major version
         int countLatest = 0;
+        int countLatestMajor = 0;
+        String latestId = null;
         for (Document version : versions) {
             addResult(results, checkObject(session, version, properties, "Version object check: " + version.getId()));
 
             if (Boolean.TRUE.equals(version.isLatestVersion())) {
                 countLatest++;
+                latestId = version.getId();
+            }
+
+            if (Boolean.TRUE.equals(version.isLatestMajorVersion())) {
+                countLatestMajor++;
             }
         }
 
-        CmisTestResult f = createResult(FAILURE, "A version series should have one latest version, but it has "
-                + countLatest + "!");
+        f = createResult(FAILURE, "The version series must have exactly one latest version, but it has " + countLatest
+                + "!");
         addResult(results, assertEquals(1, countLatest, null, f));
+
+        f = createResult(FAILURE, "The version series must have zero or one latest major version, but it has "
+                + countLatestMajor + "!");
+        addResult(results, assertIsTrue(countLatestMajor < 2, null, f));
+
+        // check getObjectOfLatestVersion()
+        if (countLatest == 1) {
+            Document latestVersion = versions.get(0).getObjectOfLatestVersion(false);
+            addResult(
+                    results,
+                    checkObject(session, latestVersion, properties,
+                            "Latest version object check: " + latestVersion.getId()));
+
+            f = createResult(FAILURE,
+                    "The version that is flagged as latest version is not returned by getObjectOfLatestVersion()!");
+            addResult(results, assertEquals(latestId, latestVersion.getId(), null, f));
+        }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
