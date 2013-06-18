@@ -18,17 +18,42 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
 
-/**
- * itemImpl is used for CMIS:item objects. Items are fileable  but do not have content
- *
- */
-public class ItemImpl extends FilingImpl implements Item, Filing {
-
-    ItemImpl(ObjectStoreImpl objStore) {
+public class FilingImpl extends StoredObjectImpl implements Fileable, FilingMutable {
+    
+    private List<String> parentIds = new ArrayList<String>(1);
+    
+    FilingImpl(ObjectStoreImpl objStore) {
         super(objStore);
     }
 
+    @Override
+    public List<String> getParents() {
+        return parentIds;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return !(null == parentIds || parentIds.isEmpty());
+    }
+
+    @Override
+    public String getPathSegment() {
+        return super.getName();
+    }
+    
+    @Override
+    public void addParentId(String parentId) {
+        parentIds.add(parentId);
+    }
+
+    @Override
+    public void removeParentId(String parentId) {
+        parentIds.remove(parentId);
+    }
 }

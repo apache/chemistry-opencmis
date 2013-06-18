@@ -19,13 +19,33 @@
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 /**
- * A document is a concrete object (meaning it can be stored) and has content.
- * It also has a path (is contained in a parent folder)
+ * Folders have in the CMIS specification exactly one parent. This interface
+ * describes the behavior of objects with a single parent object.
  * 
  * @author Jens
  * 
  */
+public interface ObjectStoreSingleFiling extends ObjectStoreFiling {
 
-public interface Document extends Fileable, Content {
+    /**
+     * return the id of the parent folder
+     * 
+     * @param objectId
+     *      id of object
+     * @return
+     *      id of parent folder
+     */
+    String getParent(String objectId);
+
+    /**
+     * Put the document in a folder and set the parent. This method should not
+     * be used to file a document in a folder. It is used internally when a
+     * document is filed to the folder. The document does not get persisted in
+     * this call.
+     * 
+     * @param parentId
+     *            id of parent folder the document is to be filed into
+     */
+    void setParent(String parentId);
 
 }

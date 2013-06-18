@@ -27,16 +27,13 @@ import java.util.Map.Entry;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
@@ -45,12 +42,12 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  * @author Jens
  *
  */
-public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion {
+public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion, FilingMutable {
 
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     private ContentStreamDataImpl fContent;
-    private final VersionedDocument fContainer; // the document this version belongs
+    private final VersionedDocumentImpl fContainer; // the document this version belongs
     // to
     private String fComment; // checkin comment
     boolean fIsMajor;
@@ -61,7 +58,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             VersioningState verState, ObjectStoreImpl objStore) {
         super(objStore);
         setRepositoryId(repositoryId);
-        fContainer = container;
+        fContainer = (VersionedDocumentImpl) container;
         setContent(content, false);
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
@@ -77,7 +74,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         label = createVersionLabel();
     }
 
-    public void setContent(ContentStream content, boolean mustPersist) {
+    @Override
+	public void setContent(ContentStream content, boolean mustPersist) {
         if (null == content) {
             fContent = null;
         } else {
@@ -94,7 +92,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
     }
 
-    public void appendContent(ContentStream content) {
+    @Override
+	public void appendContent(ContentStream content) {
         if (null == content) {
             return;
         } if (null == fContent) {
@@ -109,11 +108,13 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
     }
 
-    public void setCheckinComment(String comment) {
+    @Override
+	public void setCheckinComment(String comment) {
         fComment = comment;
     }
 
-    public String getCheckinComment() {
+    @Override
+	public String getCheckinComment() {
         return fComment;
     }
 
@@ -136,20 +137,24 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         return label;
     }
 
-    public boolean isMajor() {
+    @Override
+	public boolean isMajor() {
         return fIsMajor && !isPwc();
     }
 
-    public boolean isPwc() {
+    @Override
+	public boolean isPwc() {
         return fIsPwc;
     }
 
-    public void commit(boolean isMajor) {
+    @Override
+	public void commit(boolean isMajor) {
         fIsPwc = false; // unset working copy flag
         fIsMajor = isMajor;
     }
 
-    public ContentStream getContent(long offset, long length) {
+    @Override
+	public ContentStream getContent(long offset, long length) {
         if (offset <= 0 && length < 0) {
             return fContent;
         } else {
@@ -157,7 +162,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         }
     }
 
-    public VersionedDocument getParentDocument() {
+    @Override
+	public VersionedDocument getParentDocument() {
         return fContainer;
     }
 
@@ -295,41 +301,39 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
         ((StoredObjectImpl)fContainer).setAclId(id);
     }    
     
-    public List<Folder> getParents(String user) {
-        return fContainer.getParents(user);
+    @Override
+	public List<String> getParents() {
+        return fContainer.getParents();
     }
 
-    public String getPathSegment() {
+    @Override
+	public String getPathSegment() {
         return fContainer.getPathSegment();
     }
 
-    public void move(Folder oldParent, Folder newParent) {
-        fContainer.move(oldParent, newParent);
-    }
-
-    public void addParent(Folder parent) {
-        fContainer.addParent(parent);
-    }
-
-    public void removeParent(Folder parent) {
-        fContainer.removeParent(parent);
-    }
-
-    public boolean hasContent() {
+    @Override
+	public boolean hasContent() {
         return null != fContent;
     }
 
-    public boolean hasParent() {
-      return true;
+    @Override
+	public boolean hasParent() {
+      return fContainer.hasParent();
     }
 
-    public void rename(String newName) {
-    	super.rename(newName);
-    	fContainer.setName(newName);
-    }
-
-    public String getVersionLabel() {
+    @Override
+	public String getVersionLabel() {
         return label;
+    }
+
+    @Override
+    public void addParentId(String parentId) {
+        fContainer.addParentId(parentId);
+    }
+
+    @Override
+    public void removeParentId(String parentId) {
+        fContainer.removeParentId(parentId);
     }
 
 

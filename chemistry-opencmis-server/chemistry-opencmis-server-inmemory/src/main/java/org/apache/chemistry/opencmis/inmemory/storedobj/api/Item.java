@@ -18,6 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-public interface Item {
+public interface Item extends Fileable {
 
 }

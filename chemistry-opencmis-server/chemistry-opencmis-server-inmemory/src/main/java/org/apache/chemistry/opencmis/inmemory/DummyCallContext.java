@@ -43,43 +43,53 @@ public class DummyCallContext implements CallContext {
         fParameter.put(LOCALE, "en");
     }
 
-    public boolean isObjectInfoRequired() {
+    @Override
+	public boolean isObjectInfoRequired() {
         return false;
     }
 
-    public Object get(String key) {
+    @Override
+	public Object get(String key) {
         return fParameter.get(key);
     }
 
-    public String getBinding() {
+    @Override
+	public String getBinding() {
         return BINDING_ATOMPUB;
     }
     
-    public CmisVersion getCmisVersion() {
+    @Override
+	public CmisVersion getCmisVersion() {
         return CmisVersion.CMIS_1_1;
     }
 
-    public String getRepositoryId() {
+    @Override
+	public String getRepositoryId() {
         return (String) get(REPOSITORY_ID);
     }
 
-    public String getLocale() {
+    @Override
+	public String getLocale() {
         return (String) get(LOCALE);
     }
 
-    public BigInteger getOffset() {
+    @Override
+	public BigInteger getOffset() {
         return (BigInteger) get(OFFSET);
     }
 
-    public BigInteger getLength() {
+    @Override
+	public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
 
-    public String getPassword() {
+    @Override
+	public String getPassword() {
         return (String) get(PASSWORD);
     }
 
-    public String getUsername() {
+    @Override
+	public String getUsername() {
         return (String) get(USERNAME);
     }
 
@@ -87,19 +97,23 @@ public class DummyCallContext implements CallContext {
         fParameter.put(key, value);
     }
 
-    public File getTempDirectory() {
+    @Override
+	public File getTempDirectory() {
         return null;
     }
 
-    public boolean encryptTempFiles() {
+    @Override
+	public boolean encryptTempFiles() {
         return false;
     }
 
-    public int getMemoryThreshold() {
+    @Override
+	public int getMemoryThreshold() {
         return 4 * 1024 * 1024;
     }
 
-    public long getMaxContentSize() {
+    @Override
+	public long getMaxContentSize() {
         return 4 * 1024 * 1024 * 1024;
     }
 }

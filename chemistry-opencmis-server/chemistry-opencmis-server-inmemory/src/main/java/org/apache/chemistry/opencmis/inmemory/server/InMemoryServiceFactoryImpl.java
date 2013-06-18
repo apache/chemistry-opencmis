@@ -322,60 +322,74 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         class DummyCallContext implements CallContext {
 
-            public String get(String key) {
+            @Override
+			public String get(String key) {
                 return null;
             }
 
-            public String getBinding() {
+            @Override
+			public String getBinding() {
                 return null;
             }
 
-            public boolean isObjectInfoRequired() {
+            @Override
+			public boolean isObjectInfoRequired() {
                 return false;
             }
 
-            public CmisVersion getCmisVersion() {
+            @Override
+			public CmisVersion getCmisVersion() {
                 return CmisVersion.CMIS_1_1;
             }
 
-            public String getRepositoryId() {
+            @Override
+			public String getRepositoryId() {
                 return null;
             }
 
-            public String getLocale() {
+            @Override
+			public String getLocale() {
                 return null;
             }
 
-            public BigInteger getOffset() {
+            @Override
+			public BigInteger getOffset() {
                 return null;
             }
 
-            public BigInteger getLength() {
+            @Override
+			public BigInteger getLength() {
                 return null;
             }
 
-            public String getPassword() {
+            @Override
+			public String getPassword() {
                 return null;
             }
 
-            public String getUsername() {
+            @Override
+			public String getUsername() {
                 return null;
             }
 
-            public File getTempDirectory() {
+            @Override
+			public File getTempDirectory() {
 
                 return tempDir;
             }
 
-            public boolean encryptTempFiles() {
+            @Override
+			public boolean encryptTempFiles() {
                 return encrypt;
             }
 
-            public int getMemoryThreshold() {
+            @Override
+			public int getMemoryThreshold() {
                 return memoryThreshold;
             }
 
-            public long getMaxContentSize() {
+            @Override
+			public long getMaxContentSize() {
                 return maxContentSize;
             }
         }
@@ -508,7 +522,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         public void startCleanRepositoryJob(long intervalInMinutes) {
 
             final Runnable cleaner = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     LOG.info("Cleaning repository as part of a scheduled maintenance job.");
                     for (String repositoryId : storeManager.getAllRepositoryIds()) {
                         ObjectStore store = storeManager.getObjectStore(repositoryId);

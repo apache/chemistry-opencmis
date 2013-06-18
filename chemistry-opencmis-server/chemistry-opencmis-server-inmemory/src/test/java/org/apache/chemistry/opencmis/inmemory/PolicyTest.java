@@ -55,14 +55,16 @@ public class PolicyTest extends AbstractServiceTest {
 
     private String polId;
 
-    @Before
+    @Override
+	@Before
     public void setUp() {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
         createPolicy();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() {
         super.tearDown();
     }

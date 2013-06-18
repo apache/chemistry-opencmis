@@ -88,67 +88,93 @@ public class StoredObjectImpl implements StoredObject {
         policyIds = null;
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return fId;
     }
 
-    public String getName() {
+    @Override
+    public void setId(String id) {
+        fId = id;
+    }
+    
+    @Override
+	public String getName() {
         return fName;
     }
 
-    public void setName(String name) {
+    @Override
+	public void setName(String name) {
         fName = name;
     }
 
-    public String getTypeId() {
+    @Override
+	public String getTypeId() {
         return fTypeId;
     }
 
-    public void setTypeId(String type) {
+    @Override
+	public void setTypeId(String type) {
         fTypeId = type;
     }
 
-    public String getCreatedBy() {
+    @Override
+	public String getCreatedBy() {
         return fCreatedBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    @Override
+	public void setCreatedBy(String createdBy) {
         this.fCreatedBy = createdBy;
     }
 
-    public String getModifiedBy() {
+    @Override
+	public String getModifiedBy() {
         return fModifiedBy;
     }
 
-    public void setModifiedBy(String modifiedBy) {
+    @Override
+	public void setModifiedBy(String modifiedBy) {
         this.fModifiedBy = modifiedBy;
     }
 
-    public GregorianCalendar getCreatedAt() {
+    @Override
+	public GregorianCalendar getCreatedAt() {
         return fCreatedAt;
     }
 
-    public void setCreatedAt(GregorianCalendar createdAt) {
+    @Override
+	public void setCreatedAt(GregorianCalendar createdAt) {
         this.fCreatedAt = createdAt;
     }
 
-    public GregorianCalendar getModifiedAt() {
+    @Override
+	public GregorianCalendar getModifiedAt() {
         return fModifiedAt;
     }
 
-    public void setModifiedAtNow() {
+    @Override
+	public void setModifiedAtNow() {
         this.fModifiedAt = getNow();
     }
 
-    public void setRepositoryId(String repositoryId) {
+    @Override
+    public void setModifiedAt(GregorianCalendar cal) {
+        this.fModifiedAt = cal;
+    }
+
+    @Override
+	public void setRepositoryId(String repositoryId) {
         fRepositoryId = repositoryId;
     }
 
-    public String getRepositoryId() {
+    @Override
+	public String getRepositoryId() {
         return fRepositoryId;
     }
     
-    public List<String> getAppliedPolicies() {
+    @Override
+	public List<String> getAppliedPolicies() {
         if (null == policyIds)
             return null;
         else
@@ -166,7 +192,8 @@ public class StoredObjectImpl implements StoredObject {
         }
     }
     
-    public void addAppliedPolicy(String policyId) {
+    @Override
+	public void addAppliedPolicy(String policyId) {
         if (null == policyIds) {
             policyIds = new ArrayList<String>();
         }
@@ -175,7 +202,8 @@ public class StoredObjectImpl implements StoredObject {
         }
     }
 
-    public void removePolicy(String policyId) {
+    @Override
+	public void removePolicy(String policyId) {
         if (null != policyIds && policyIds.contains(policyId)) {
             policyIds.remove(policyId);
             if (policyIds.isEmpty()) {
@@ -185,46 +213,51 @@ public class StoredObjectImpl implements StoredObject {
     }
     
     // CMIS 1.1:
-    public void setDescription(String descr) {
+    @Override
+	public void setDescription(String descr) {
         description = descr;
     }
     
     // CMIS 1.1:
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return description;
     }
 
-    public List<String> getSecondaryTypeIds() {
+    @Override
+	public List<String> getSecondaryTypeIds() {
         return Collections.unmodifiableList(secondaryTypeIds);
     }
 
-    public void setProperties(Map<String, PropertyData<?>> props) {
+    @Override
+	public void setProperties(Map<String, PropertyData<?>> props) {
         fProperties = props;
     }
 
-    public Map<String, PropertyData<?>> getProperties() {
+    @Override
+	public Map<String, PropertyData<?>> getProperties() {
         return fProperties;
     }
 
-    public String getChangeToken() {
+    @Override
+	public String getChangeToken() {
         GregorianCalendar lastModified = getModifiedAt();
         String token = Long.valueOf(lastModified.getTimeInMillis()).toString();
         return token;
     }
 
-    public void rename(String newName) {
-        setName(newName);
-    }
-
-    public void createSystemBasePropertiesWhenCreated(Map<String, PropertyData<?>> properties, String user) {
+    @Override
+	public void createSystemBasePropertiesWhenCreated(Map<String, PropertyData<?>> properties, String user) {
         addSystemBaseProperties(properties, user, true);
     }
 
-    public void updateSystemBasePropertiesWhenModified(Map<String, PropertyData<?>> properties, String user) {
+    @Override
+	public void updateSystemBasePropertiesWhenModified(Map<String, PropertyData<?>> properties, String user) {
         addSystemBaseProperties(properties, user, false);
     }
 
-    public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
+    @Override
+	public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
         
         if (FilterParser.isContainedInFilter(PropertyIds.NAME, requestedIds)) {
@@ -289,7 +322,8 @@ public class StoredObjectImpl implements StoredObject {
     // ///////////////////////////////////////////
     // private helper methods
 
-    public void setCustomProperties(Map<String, PropertyData<?>> properties) {
+    @Override
+	public void setCustomProperties(Map<String, PropertyData<?>> properties) {
         properties = new HashMap<String, PropertyData<?>>(properties); // get a
         // writable
         // collection
@@ -463,12 +497,14 @@ public class StoredObjectImpl implements StoredObject {
         }
     }
 
-    public void persist() {
+    @Override
+	public void persist() {
         // in-memory implementation does not need to to anything to persist,
         // but after this call the id should be set.
         fId = fObjStore.storeObject(this);
     }
 
+	@Override
 	public Acl getAcl() {
 	    return fObjStore.getAcl(fAclId);
 	}
@@ -481,26 +517,31 @@ public class StoredObjectImpl implements StoredObject {
 	    fAclId = aclId;
 	}
 	
-    public List<StoredObject> getObjectRelationships(RelationshipDirection relationshipDirection, String user) {
+    @Override
+	public List<StoredObject> getObjectRelationships(RelationshipDirection relationshipDirection, String user) {
 	    
         List<StoredObject> rels = fObjStore.getRelationships(getId(), null, relationshipDirection);
 		return rels;
 	}
 
+	@Override
 	public AllowableActions getAllowableActions(String user) {
 		AllowableActions actions = DataObjectCreator.fillAllowableActions(this, user);
 		return actions;
 	}
 
-    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
+    @Override
+	public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
         return null;
     }
 
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {
+    @Override
+	public ContentStream getRenditionContent(String streamId, long offset, long length) {
         return null;
     }
 
-    public boolean hasRendition(String user) {
+    @Override
+	public boolean hasRendition(String user) {
         return false;
     }
     

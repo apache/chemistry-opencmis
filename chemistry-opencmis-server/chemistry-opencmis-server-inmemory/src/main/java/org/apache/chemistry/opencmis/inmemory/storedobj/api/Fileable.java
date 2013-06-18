@@ -18,14 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-/**
- * A document is a concrete object (meaning it can be stored) and has content.
- * It also has a path (is contained in a parent folder)
- * 
- * @author Jens
- * 
- */
-
-public interface Document extends Fileable, Content {
+public interface Fileable extends StoredObject, Filing {
 
 }

@@ -18,14 +18,29 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+
 /**
- * A document is a concrete object (meaning it can be stored) and has content.
- * It also has a path (is contained in a parent folder)
+ * Documents can have in the CMIS specification multiple parents. This interface
+ * describes the behavior of objects with multiple parent objects.
  * 
  * @author Jens
  * 
  */
+public interface ObjectStoreMultiFiling  extends ObjectStoreFiling {
 
-public interface Document extends Fileable, Content {
+    /**
+     * Add this document to a new parent folder as child object
+     * 
+     * @param parentId
+     *            id of parent folder the document is to be added to
+     */
+    void addParent(StoredObject so, Folder parent);
 
+    /**
+     * Remove this object from the children of parent
+     * 
+     * @param parentId
+     *            id of parent folder the document is to be removed from
+     */
+    void removeParent(StoredObject so, Folder parent);
 }

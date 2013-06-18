@@ -16,16 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.inmemory.storedobj.api;
+package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-/**
- * A document is a concrete object (meaning it can be stored) and has content.
- * It also has a path (is contained in a parent folder)
- * 
- * @author Jens
- * 
- */
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 
-public interface Document extends Fileable, Content {
+public interface FilingMutable extends Filing {
 
+    public void addParentId(String parentId);
+
+    public void removeParentId(String parentId);
 }

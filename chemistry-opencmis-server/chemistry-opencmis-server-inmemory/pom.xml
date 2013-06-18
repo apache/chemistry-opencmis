@@ -25,6 +25,8 @@
 
 	<properties>
 		<parentBasedir>../../</parentBasedir>
+        <maven.compile.source>1.6</maven.compile.source>
+        <maven.compile.target>1.6</maven.compile.target>
 	</properties>
 
 	<build>

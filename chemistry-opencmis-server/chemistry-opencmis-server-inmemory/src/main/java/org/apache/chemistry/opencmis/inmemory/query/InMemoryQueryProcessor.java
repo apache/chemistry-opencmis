@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
@@ -192,7 +193,8 @@ public class InMemoryQueryProcessor {
         }
         class ResultComparator implements Comparator<StoredObject> {
 
-            @SuppressWarnings("unchecked")
+            @Override
+			@SuppressWarnings("unchecked")
             public int compare(StoredObject so1, StoredObject so2) {
                 SortSpec s = orderBy.get(0);
                 CmisSelector sel = s.getSelector();
@@ -637,11 +639,11 @@ public class InMemoryQueryProcessor {
                 
     }
     
-    private static boolean hasParent(Filing objInFolder, String folderId, String user) {
-        List<Folder> parents = objInFolder.getParents(user);
+    private boolean hasParent(Filing objInFolder, String folderId, String user) {
+        List<String> parents = objStore.getParentIds(objInFolder, user);
 
-        for (Folder folder : parents) {
-            if (folderId.equals(folder.getId())) {
+        for (String parentId : parents) {
+            if (folderId.equals(parentId)) {
                 return true;
             }
         }
@@ -649,15 +651,16 @@ public class InMemoryQueryProcessor {
     }
 
     private boolean hasAncestor(Filing objInFolder, String folderId, String user) {
-        List<Folder> parents = objInFolder.getParents(user);
+        List<String> parents = objStore.getParentIds(objInFolder, user);
 
-        for (Folder folder : parents) {
-            if (folderId.equals(folder.getId())) {
+        for (String parentId : parents) {
+            if (folderId.equals(parentId)) {
                 return true;
             }
         }
-        for (Folder folder : parents) {
-            if (hasAncestor(folder, folderId, user)) {
+        for (String parentId : parents) {
+            Folder parentFolder = (Folder) objStore.getObjectById(parentId);
+            if (hasAncestor(parentFolder, folderId, user)) {
                 return true;
             }
         }

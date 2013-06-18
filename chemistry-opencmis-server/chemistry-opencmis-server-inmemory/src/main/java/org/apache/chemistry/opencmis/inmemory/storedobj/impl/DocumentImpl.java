@@ -28,7 +28,6 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
@@ -36,7 +35,6 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 
-public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
+public class DocumentImpl extends FilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentImpl.class.getName());
@@ -61,7 +59,8 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         super(objStore);
     }
 
-    public ContentStream getContent(long offset, long length) {
+    @Override
+	public ContentStream getContent(long offset, long length) {
         if (null == fContent) {
             return null;
         } else if (offset <= 0 && length < 0) {
@@ -71,7 +70,8 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         }
     }
 
-    public void setContent(ContentStream content, boolean mustPersist) {
+    @Override
+	public void setContent(ContentStream content, boolean mustPersist) {
         if (null == content) {
             fContent = null;
         } else {
@@ -96,7 +96,8 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         }
     }
     
-    public void appendContent(ContentStream content) {
+    @Override
+	public void appendContent(ContentStream content) {
         if (null == content) {
             return;
         } if (null == fContent) {
@@ -192,7 +193,8 @@ public class DocumentImpl extends AbstractMultiFilingImpl implements Document {
         
     }
 
-    public boolean hasContent() {
+    @Override
+	public boolean hasContent() {
         return null != fContent;
     }
 

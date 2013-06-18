@@ -49,7 +49,8 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
         super.setUp();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() {
         super.tearDown();
     }

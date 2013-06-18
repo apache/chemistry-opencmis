@@ -29,8 +29,23 @@ import java.util.List;
  * 
  */
 
-public interface Folder extends Children, SingleFiling, StoredObject {
+public interface Folder extends Fileable {
 
+    /**
+     * get parent if of this folder
+     * @return
+     *      parent id of this folder
+     */
+    String getParentId();
+    
+    /**
+     * get the path of this folder (for folder in CMIS path is unique)
+     * 
+     * @return
+     *      path of this folder
+     */
+    String getPath();
+    
     /**
      * return a list of allowed types of children in this folder
      * 

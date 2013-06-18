@@ -196,7 +196,7 @@ public interface ObjectStore {
      */
     public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user);
 
-     /**
+    /**
      * Clear repository and remove all data.
      */
     void clear();

@@ -30,7 +30,6 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
-import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -66,18 +65,10 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
             BigInteger maxItems, ExtensionsData extension, ObjectInfoHandler objectInfos) {
         // dummy implementation using hard coded values
 
-        RepositoryInfo rep = fRepositoryService.getRepositoryInfo(context, repositoryId, null);
-        String rootFolderId = rep.getRootFolderId();
-
         ObjectListImpl objList = new ObjectListImpl();
-        List<ObjectInFolderContainer> tempRes = fNavigationService.getDescendants(context, repositoryId, rootFolderId,
-                BigInteger.valueOf(3), filter, false, IncludeRelationships.NONE, null, false, extension, null);
 
         // convert ObjectInFolderContainerList to objectList
         List<ObjectData> lod = new ArrayList<ObjectData>();
-        for (ObjectInFolderContainer obj : tempRes) {
-//            convertList(lod, obj);
-        }
 
         // add a dummy delete event
         ObjectDataImpl odImpl = new ObjectDataImpl();

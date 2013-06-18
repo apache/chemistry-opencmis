@@ -59,6 +59,14 @@ public interface StoredObject {
      * @return id of this object
      */
     String getId();
+    
+    /**
+     * Set the id of this object
+     * 
+     * @param id
+     *      id of this object
+     */
+    void setId(String id);
 
     /**
      * Retrieve the name of this object
@@ -169,6 +177,13 @@ public interface StoredObject {
     void setModifiedAtNow();
 
     /**
+     * Set the date and time of the last modification of this object
+     * @param calendar
+     *      timestamp of last modification
+     */
+    void setModifiedAt(GregorianCalendar calendar);
+    
+    /**
      * Get the repository id of this object where the object is stored.
      * 
      * @return
@@ -213,14 +228,6 @@ public interface StoredObject {
      * id to the object
      */
     void persist();
-
-    /**
-     * Rename an object
-     * 
-     * @param newName
-     *            the new name of the object
-     */
-    void rename(String newName);
 
     /**
      * Create all system base properties that need to be stored with every
