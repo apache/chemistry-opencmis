@@ -94,6 +94,11 @@ public class StoredObjectImpl implements StoredObject {
     }
 
     @Override
+    public void setId(String id) {
+        fId = id;
+    }
+    
+    @Override
 	public String getName() {
         return fName;
     }
@@ -151,6 +156,11 @@ public class StoredObjectImpl implements StoredObject {
     @Override
 	public void setModifiedAtNow() {
         this.fModifiedAt = getNow();
+    }
+
+    @Override
+    public void setModifiedAt(GregorianCalendar cal) {
+        this.fModifiedAt = cal;
     }
 
     @Override

@@ -70,7 +70,7 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
         }
 
         if (FilterParser.isContainedInFilter(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, requestedIds)) {
-            String allowedChildObjects = "*"; // TODO: not yet supported
+            String allowedChildObjects = null; // TODO: not yet supported
             properties.put(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, objFactory.createPropertyIdData(
                     PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
         }

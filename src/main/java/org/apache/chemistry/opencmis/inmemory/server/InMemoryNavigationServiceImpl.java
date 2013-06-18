@@ -250,7 +250,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         result = getObjectParentsIntern(repositoryId, spo, filter, 
         		context.isObjectInfoRequired() ? objectInfos : null, includeAllowableActions, includeRelationships,
-				renditionFilter, context.getUsername());
+				renditionFilter, includeRelativePathSegment, context.getUsername());
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -362,7 +362,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
     private List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop, String filter,
             ObjectInfoHandler objectInfos, Boolean includeAllowableActions, 
-            IncludeRelationships includeRelationships, String renditionFilter, String user) {
+            IncludeRelationships includeRelationships, String renditionFilter, Boolean includeRelativePathSegment, String user) {
 
         List<ObjectParentData> result = null;        
         result = new ArrayList<ObjectParentData>();
@@ -377,7 +377,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                         includeRelationships, renditionFilter, false, true, null);
 
                 parentData.setObject(objData);
-                parentData.setRelativePathSegment(sop.getPathSegment());
+                if (null != includeRelativePathSegment && includeRelativePathSegment)
+                    parentData.setRelativePathSegment(sop.getPathSegment());
                 result.add(parentData);
                 if (objectInfos != null) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();
