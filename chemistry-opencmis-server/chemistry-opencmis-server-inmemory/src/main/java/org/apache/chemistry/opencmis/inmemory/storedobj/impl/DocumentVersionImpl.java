@@ -163,10 +163,14 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 
     private boolean isLatestVersion() {
         List<DocumentVersion> allVers = fContainer.getAllVersions();
+        boolean hasPwc = null != fContainer.getPwc();
         boolean isLatestVersion;
-        isLatestVersion = allVers.get(allVers.size() - 1).equals(this);
-        if (isPwc())
-        	isLatestVersion = false; // CMIS 1.1 forbids it for PWC
+        if (hasPwc) {
+        	// CMIS 1.1 forbids it for PWC
+            isLatestVersion = allVers.size() > 1 && allVers.get(allVers.size() - 2).equals(this);        	
+        } else {
+            isLatestVersion = allVers.get(allVers.size() - 1).equals(this);        	
+        }
         return isLatestVersion;
     }
 
@@ -184,7 +188,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             }
         }
 
-        boolean isLatestMajorVersion = latestMajor == this && !isPwc(); // CMIS 1.1 forbids it for PWC
+        boolean isLatestMajorVersion = latestMajor == this; 
         return isLatestMajorVersion;
     }
 

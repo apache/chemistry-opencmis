@@ -1214,7 +1214,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      */
     private boolean deleteRecursive(ObjectStore folderStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
-        ChildrenResult childrenResult = parentFolder.getChildren(-1, -1, "Admin");
+        ChildrenResult childrenResult = parentFolder.getChildren(-1, -1, "Admin", true);
         List<? extends StoredObject> children = childrenResult.getChildren();
 
         if (null == children) {

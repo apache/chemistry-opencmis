@@ -95,7 +95,7 @@ public class AtomLinkInfoProvider {
             objInfo.setIsCurrentVersion(ver == ver.getParentDocument().getLatestVersion(false));
             objInfo.setVersionSeriesId(ver.getParentDocument().getId());
             objInfo.setWorkingCopyId(pwc == null ? null : pwc.getId());
-            objInfo.setWorkingCopyOriginalId(pwc == ver ? ver.getParentDocument().getLatestVersion(false).getId()
+            objInfo.setWorkingCopyOriginalId(pwc == ver ? ver.getParentDocument().getPwc().getId()
                     : null);
         } else if (so instanceof VersionedDocument) {
             VersionedDocument doc = (VersionedDocument) so;

@@ -499,7 +499,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         // check if children exist
-        List<? extends StoredObject> children = ((Folder) folder).getChildren(-1, -1, user).getChildren();
+        List<? extends StoredObject> children = ((Folder) folder).getChildren(-1, -1, user, true).getChildren();
         if (children != null && !children.isEmpty()) {
             throw new CmisConstraintException("Cannot delete folder with id:  " + folderId + ". Folder is not empty.");
         }
@@ -614,7 +614,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl addAces, Acl removeAces, String principalId) {
-        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID).getChildren();
+        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
         
         Acl result = applyAcl(folder, addAces, removeAces);  
 
@@ -636,7 +636,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
     
     private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
-        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID).getChildren();
+        List<? extends StoredObject> children = folder.getChildren(-1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
 
         Acl result = applyAcl(folder, acl);  
 

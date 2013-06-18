@@ -142,12 +142,18 @@ public class VersionedDocumentImpl extends AbstractMultiFilingImpl implements Ve
 
         if (major) {
             for (DocumentVersion ver : fVersions) {
-                if (ver.isMajor()) {
+                if (ver.isMajor() && !ver.isPwc()) {
                     latest = ver;
                 }
             }
         } else {
-            latest = fVersions.get(fVersions.size() - 1);
+        	if (null == getPwc()) {
+        		latest = fVersions.get(fVersions.size() - 1);
+        	} else if (fVersions.size() > 1) {
+        		latest = fVersions.get(fVersions.size() - 2);
+        	} else {
+        		latest = null;
+        	}
         }
         return latest;
     }

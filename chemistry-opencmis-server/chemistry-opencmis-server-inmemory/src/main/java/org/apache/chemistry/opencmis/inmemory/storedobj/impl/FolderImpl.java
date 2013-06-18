@@ -122,7 +122,7 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
         }
     }
 
-    public ChildrenResult getChildren(int maxItems, int skipCount, String user) {
+    public ChildrenResult getChildren(int maxItems, int skipCount, String user, boolean usePwc) {
         List<StoredObject> result = new ArrayList<StoredObject>();
         for (String id : fObjStore.getIds()) {
             StoredObject obj = fObjStore.getObject(id);
@@ -130,8 +130,15 @@ public class FolderImpl extends AbstractSingleFilingImpl implements Folder {
                 Filing pathObj = (Filing) obj;
                 if (fObjStore.hasReadAccess(user, obj) && pathObj.getParents(user).contains(this)) {
                     if (pathObj instanceof VersionedDocument) {
-                        DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-                        result.add(ver);
+                    	DocumentVersion ver;
+                    	if (usePwc) {
+                    		ver = ((VersionedDocument) pathObj).getPwc();
+                    		if (null == ver)
+                    			ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                    	} else {
+                    		ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                    	}
+                    	result.add(ver);
                     } else if (pathObj instanceof DocumentVersion) {
                         // ignore
                     } else {
