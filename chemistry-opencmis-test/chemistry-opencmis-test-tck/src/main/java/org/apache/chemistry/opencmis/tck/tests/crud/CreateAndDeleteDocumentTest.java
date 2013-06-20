@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -60,6 +61,9 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
         int numOfDocuments = 20;
 
+        OperationContext orderContext = (isOrderByNameSupported(session) ? SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME
+                : SELECT_ALL_NO_CACHE_OC);
+        
         // create a test folder
         Folder testFolder = createTestFolder(session);
 
@@ -115,7 +119,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
             CmisObject lastObject = null;
 
             int count = 0;
-            ItemIterable<CmisObject> page1 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME).getPage(
+            ItemIterable<CmisObject> page1 = testFolder.getChildren(orderContext).getPage(
                     pageSize);
             for (CmisObject child : page1) {
                 count++;
@@ -137,7 +141,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
             // check second page
             count = 0;
-            ItemIterable<CmisObject> page2 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+            ItemIterable<CmisObject> page2 = testFolder.getChildren(orderContext)
                     .skipTo(pageSize - 1).getPage(pageSize);
             for (CmisObject child : page2) {
                 count++;
@@ -164,7 +168,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
             // check third page
             count = 0;
-            ItemIterable<CmisObject> page3 = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+            ItemIterable<CmisObject> page3 = testFolder.getChildren(orderContext)
                     .skipTo(numOfDocuments - 5).getPage(10);
             for (@SuppressWarnings("unused")
             CmisObject child : page3) {
@@ -187,7 +191,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
             // check non-existing page
             count = 0;
-            ItemIterable<CmisObject> pageNotExisting = testFolder.getChildren(SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME)
+            ItemIterable<CmisObject> pageNotExisting = testFolder.getChildren(orderContext)
                     .skipTo(100000).getPage(pageSize);
             for (@SuppressWarnings("unused")
             CmisObject child : pageNotExisting) {
