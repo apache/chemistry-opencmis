@@ -109,7 +109,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         url.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId), contentStream);
 
         // post the new folder object
@@ -148,7 +148,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId));
 
         // post the new folder object
@@ -195,7 +195,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId));
 
         // post the new folder object
@@ -238,7 +238,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId));
 
         // post the new folder object
@@ -282,7 +282,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId));
 
         // post the new folder object
@@ -317,12 +317,14 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
         if (changeToken != null) {
+            // not required by the CMIS specification
+            // -> keep for backwards compatibility with older OpenCMIS servers
             url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
         }
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null),
-                getCmisVersion(repositoryId));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, changeToken == null ? null
+                : changeToken.getValue(), null), getCmisVersion(repositoryId));
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {

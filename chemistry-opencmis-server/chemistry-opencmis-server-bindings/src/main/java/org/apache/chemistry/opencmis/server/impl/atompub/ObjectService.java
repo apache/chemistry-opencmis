@@ -519,10 +519,24 @@ public class ObjectService {
                     closeContentStream(contentStream);
                 }
             } else {
-                String changeToken = extractChangeToken(parser.getProperties());
+                Properties properties = parser.getProperties();
+                String changeToken = null;
+                if (properties != null) {
+                    changeToken = extractChangeToken(properties);
+                    if (changeToken != null) {
+                        properties = new PropertiesImpl(properties);
+                        ((PropertiesImpl) properties).removeProperty(PropertyIds.CHANGE_TOKEN);
+                    }
+                }
 
+                if(changeToken == null) {
+                    // not required by the CMIS specification
+                    // -> keep for backwards compatibility with older OpenCMIS clients
+                    changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
+                }
+                
                 service.updateProperties(repositoryId, objectIdHolder, changeToken == null ? null : new Holder<String>(
-                        changeToken), parser.getProperties(), null);
+                        changeToken), properties, null);
             }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectIdHolder.getValue());
@@ -565,12 +579,12 @@ public class ObjectService {
                 return null;
             }
 
-            PropertyData<?> changeLogProperty = propertiesMap.get(PropertyIds.CHANGE_TOKEN);
-            if (!(changeLogProperty instanceof PropertyString)) {
+            PropertyData<?> changeTokenProperty = propertiesMap.get(PropertyIds.CHANGE_TOKEN);
+            if (!(changeTokenProperty instanceof PropertyString)) {
                 return null;
             }
 
-            return ((PropertyString) changeLogProperty).getFirstValue();
+            return ((PropertyString) changeTokenProperty).getFirstValue();
         }
     }
 

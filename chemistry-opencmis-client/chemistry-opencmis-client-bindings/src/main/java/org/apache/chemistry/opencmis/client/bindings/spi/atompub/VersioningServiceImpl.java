@@ -154,7 +154,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         url.addParameter(Constants.PARAM_CHECK_IN, "true");
 
         // set up writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, policies),
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),
                 getCmisVersion(repositoryId), contentStream);
 
         // update

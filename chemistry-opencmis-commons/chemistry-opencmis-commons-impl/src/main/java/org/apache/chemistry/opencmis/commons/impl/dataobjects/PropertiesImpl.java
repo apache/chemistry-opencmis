@@ -52,11 +52,22 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
      *            initial collection of properties
      */
     public PropertiesImpl(Collection<PropertyData<?>> properties) {
-        if (properties != null) {
-            for (PropertyData<?> prop : properties) {
-                addProperty(prop);
-            }
+        addProperties(properties);
+    }
+
+    /**
+     * Shallow copy constructor.
+     * 
+     * Creates a new collection of properties but references the original
+     * property and extension objects.
+     */
+    public PropertiesImpl(Properties properties) {
+        if (properties == null) {
+            throw new IllegalArgumentException("Properties not set!");
         }
+
+        addProperties(properties.getPropertyList());
+        setExtensions(properties.getExtensions());
     }
 
     public Map<String, PropertyData<?>> getProperties() {
@@ -65,6 +76,14 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
 
     public List<PropertyData<?>> getPropertyList() {
         return Collections.unmodifiableList(propertyList);
+    }
+
+    protected void addProperties(Collection<PropertyData<?>> properties) {
+        if (properties != null) {
+            for (PropertyData<?> prop : properties) {
+                addProperty(prop);
+            }
+        }
     }
 
     /**
