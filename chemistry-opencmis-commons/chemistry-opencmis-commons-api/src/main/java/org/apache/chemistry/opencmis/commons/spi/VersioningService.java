@@ -43,6 +43,12 @@ public interface VersioningService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param objectId
+     *            input: the identifier for the document that should be checked
+     *            out, output: the identifier for the newly created PWC
+     * @param contentCopied
+     *            output: indicator if the content of the original document has
+     *            been copied to the PWC
      */
     void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension, Holder<Boolean> contentCopied);
 
@@ -51,6 +57,8 @@ public interface VersioningService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param objectId
+     *            the identifier for the PWC
      */
     void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension);
 
@@ -62,6 +70,29 @@ public interface VersioningService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param objectId
+     *            input: the identifier for the PWC, output: the identifier for
+     *            the newly created version document
+     * @param major
+     *            indicator if the new version should become a major (
+     *            <code>true</code>) or minor (<code>false</code>) version
+     * @param properties
+     *            <em>(optional)</em> the property values that must be applied
+     *            to the newly created document object
+     * @param contentStream
+     *            <em>(optional)</em> the content stream that must be stored for
+     *            the newly created document object
+     * @param checkinComment
+     *            <em>(optional)</em> a version comment
+     * @param policies
+     *            <em>(optional)</em> a list of policy IDs that must be applied
+     *            to the newly created document object
+     * @param addAces
+     *            <em>(optional)</em> a list of ACEs that must be added to the
+     *            newly created document object
+     * @param removeAces
+     *            <em>(optional)</em> a list of ACEs that must be removed from
+     *            the newly created document object
      */
     void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
