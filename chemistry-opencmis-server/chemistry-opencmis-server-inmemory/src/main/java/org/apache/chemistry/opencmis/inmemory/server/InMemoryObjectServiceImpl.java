@@ -603,6 +603,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.setContent(contentStream, true);
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
+
         LOG.debug("stop setContentStream()");
     }
 
@@ -802,6 +804,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.appendContent(contentStream);
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
     }
 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,

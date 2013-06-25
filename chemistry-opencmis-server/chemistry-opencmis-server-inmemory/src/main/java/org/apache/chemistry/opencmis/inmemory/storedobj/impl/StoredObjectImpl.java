@@ -350,20 +350,22 @@ public class StoredObjectImpl implements StoredObject {
         // Note that initial creation and modification date is set in
         // constructor.
         setModifiedBy(user);
-        if (null != properties.get(PropertyIds.DESCRIPTION))
-            setDescription((String)properties.get(PropertyIds.DESCRIPTION).getFirstValue());
-        
-        if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
-            secondaryTypeIds.clear();
-            secondaryTypeIds.addAll((List<String>)properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
-        }
-        
+		if (null != properties) {
+			if (null != properties.get(PropertyIds.DESCRIPTION))
+				setDescription((String) properties.get(PropertyIds.DESCRIPTION)
+						.getFirstValue());
+
+			if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+				secondaryTypeIds.clear();
+				secondaryTypeIds.addAll((List<String>) properties.get(
+						PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
+			}
+		}
         if (isCreated) {
             setCreatedBy(user);
             setName((String) properties.get(PropertyIds.NAME).getFirstValue());
             setTypeId((String) properties.get(PropertyIds.OBJECT_TYPE_ID).getFirstValue());
         } else {
-            setModifiedBy(user);
             setModifiedAtNow();
         }
     }

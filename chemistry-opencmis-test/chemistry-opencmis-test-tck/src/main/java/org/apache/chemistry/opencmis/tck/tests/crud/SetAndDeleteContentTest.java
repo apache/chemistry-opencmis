@@ -25,6 +25,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,8 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdate
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -195,6 +198,8 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
             // remove the document
             deleteObject(doc);
+            
+            runContentTest(session, getTestFolder());
         } finally {
             deleteTestFolder();
         }
@@ -206,6 +211,44 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
         }
 
         return session.getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability();
+    }
+    
+    private void runContentTest(Session session, Folder testFolder) {
+        if (session.getRepositoryInfo().getCapabilities().getContentStreamUpdatesCapability() != CapabilityContentStreamUpdates.ANYTIME) {
+            addResult(createResult(SKIPPED, "Repository doesn't allow to replace content. Test skipped!"));
+            return;
+        }
+
+        Document doc = createDocument(session, testFolder, "content1.txt", "Hello World!");
+
+        try {
+            if (doc.getChangeToken() == null) {
+                addResult(createResult(SKIPPED, "Repository does not provide change tokens. Test skipped!"));
+                return;
+            }
+
+            if (!doc.getAllowableActions().getAllowableActions().contains(Action.CAN_SET_CONTENT_STREAM)) {
+                addResult(createResult(SKIPPED, "Document content can't be changed. Test skipped!"));
+                return;
+            }
+
+            byte[] contentBytes = "New content".getBytes();
+            ContentStream contentStream = new ContentStreamImpl("content2.txt",
+                    BigInteger.valueOf(contentBytes.length), "text/plain", new ByteArrayInputStream(contentBytes));
+
+            doc.setContentStream(contentStream, true, false);
+
+            try {
+                doc.setContentStream(contentStream, true, false);
+
+                addResult(createResult(FAILURE, "Updating content a second time with the same change token "
+                        + "should result in an UpdateConflict exception!"));
+            } catch (CmisUpdateConflictException e) {
+                // expected exception
+            }
+        } finally {
+            deleteObject(doc);
+        }
     }
 
     private Document getNewVersion(Session session, Document orgDoc, boolean checkedout, ObjectId newObjectId,
