@@ -23,6 +23,7 @@ import java.net.Authenticator;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -36,23 +37,27 @@ public class Workbench {
         Authenticator.setDefault(null);
 
         // set up Swing
-        try {
-            boolean nimbus = false;
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                try {
+                    boolean nimbus = false;
 
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    nimbus = true;
-                    break;
+                    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            nimbus = true;
+                            break;
+                        }
+                    }
+
+                    if (!nimbus) {
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-
-            if (!nimbus) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
