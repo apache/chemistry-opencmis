@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.fit.tck;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.util.HashMap;
@@ -38,9 +39,22 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
+import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTckIT extends AbstractRunner {
+    public static final String TEST = "org.apache.chemistry.opencmis.tck.test";
+    public static final String TEST_CMIS_1_0 = "org.apache.chemistry.opencmis.tck.testCmis10";
+    public static final String TEST_CMIS_1_1 = "org.apache.chemistry.opencmis.tck.testCmis11";
+    public static final String TEST_ATOMPUB = "org.apache.chemistry.opencmis.tck.testAtomPub";
+    public static final String TEST_WEBSERVICES = "org.apache.chemistry.opencmis.tck.testWebServices";
+    public static final String TEST_BROWSER = "org.apache.chemistry.opencmis.tck.testBrowser";
+    public static final String TEST_NOT_VERSIONABLE = "org.apache.chemistry.opencmis.tck.testNotVersionable";
+    public static final String TEST_VERSIONABLE = "org.apache.chemistry.opencmis.tck.testVersionable";
+
+    public static final String DEFAULT_VERSIONABLE_DOCUMENT_TYPE = "org.apache.chemistry.opencmis.tck.default.versionableDocumentType";
+    public static final String DEFAULT_VERSIONABLE_DOCUMENT_TYPE_VALUE = "VersionableType"; // InMemory
+
     public static final String HOST = "localhost";
     public static final int PORT = 19080;
 
@@ -54,6 +68,8 @@ public abstract class AbstractTckIT extends AbstractRunner {
 
     public abstract CmisVersion getCmisVersion();
 
+    public abstract boolean usesVersionableDocumentType();
+
     public Map<String, String> getBaseSessionParameters() {
         Map<String, String> parameters = new HashMap<String, String>();
 
@@ -62,14 +78,49 @@ public abstract class AbstractTckIT extends AbstractRunner {
         parameters.put(SessionParameter.USER, System.getProperty(SessionParameter.USER, USER));
         parameters.put(SessionParameter.PASSWORD, System.getProperty(SessionParameter.PASSWORD, PASSWORD));
 
-        // default document type is "VersionableType" to run versioning tests
-        // with the InMemory repository
-        parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE,
-                System.getProperty(TestParameters.DEFAULT_DOCUMENT_TYPE, "VersionableType"));
+        if (usesVersionableDocumentType()) {
+            parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE,
+                    System.getProperty(DEFAULT_VERSIONABLE_DOCUMENT_TYPE, DEFAULT_VERSIONABLE_DOCUMENT_TYPE_VALUE));
+        } else {
+            parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE, System.getProperty(
+                    TestParameters.DEFAULT_DOCUMENT_TYPE, TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE));
+        }
+
         parameters.put(TestParameters.DEFAULT_FOLDER_TYPE,
                 System.getProperty(TestParameters.DEFAULT_FOLDER_TYPE, "cmis:folder"));
 
         return parameters;
+    }
+
+    @Before
+    public void checkTest() {
+        assumeTrue("Skipping all TCK tests.", getSystemPropertyBoolean(TEST));
+
+        if (getCmisVersion() == CmisVersion.CMIS_1_0) {
+            assumeTrue("Skipping CMIS 1.0 TCK tests.", getSystemPropertyBoolean(TEST_CMIS_1_0));
+        } else if (getCmisVersion() == CmisVersion.CMIS_1_1) {
+            assumeTrue("Skipping CMIS 1.1 TCK tests.", getSystemPropertyBoolean(TEST_CMIS_1_1));
+        }
+
+        if (getBindingType() == BindingType.ATOMPUB) {
+            assumeTrue("Skipping AtomPub binding TCK tests.", getSystemPropertyBoolean(TEST_ATOMPUB));
+        } else if (getBindingType() == BindingType.WEBSERVICES) {
+            assumeTrue("Skipping Web Services binding TCK tests.", getSystemPropertyBoolean(TEST_WEBSERVICES));
+        } else if (getBindingType() == BindingType.BROWSER) {
+            assumeTrue("Skipping Browser binding TCK tests.", getSystemPropertyBoolean(TEST_BROWSER));
+        }
+
+        if (usesVersionableDocumentType()) {
+            assumeTrue("Skipping TCK tests with versionable document types.",
+                    getSystemPropertyBoolean(TEST_VERSIONABLE));
+        } else {
+            assumeTrue("Skipping TCK tests with non-versionable document types.",
+                    getSystemPropertyBoolean(TEST_NOT_VERSIONABLE));
+        }
+    }
+
+    protected boolean getSystemPropertyBoolean(String propName) {
+        return "true".equalsIgnoreCase(System.getProperty(propName, "true"));
     }
 
     @Test
@@ -86,7 +137,8 @@ public abstract class AbstractTckIT extends AbstractRunner {
 
         CmisTestReport report = new TextReport();
         report.createReport(getParameters(), getGroups(), new File(target, "tck-result-" + getBindingType().value()
-                + "-" + getCmisVersion().value() + ".txt"));
+                + "-" + getCmisVersion().value() + "-"
+                + (usesVersionableDocumentType() ? "versionable" : "nonversionable") + ".txt"));
 
         // find failures
         for (CmisTestGroup group : getGroups()) {

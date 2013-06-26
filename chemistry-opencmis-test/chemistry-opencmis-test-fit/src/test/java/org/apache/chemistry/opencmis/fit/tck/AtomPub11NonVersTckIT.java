@@ -18,31 +18,13 @@
  */
 package org.apache.chemistry.opencmis.fit.tck;
 
-import java.util.Map;
-
-import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
-public class AtomPub11TckIT extends AbstractTckIT {
-
-    public static final String ATOMPUB_PATH = "/opencmis/atom11";
+public class AtomPub11NonVersTckIT extends AbstractAtomPubTckIT {
 
     @Override
-    public Map<String, String> getSessionParameters() {
-        Map<String, String> parameters = getBaseSessionParameters();
-
-        String url = "http://" + HOST + ":" + PORT + ATOMPUB_PATH;
-
-        parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-        parameters.put(SessionParameter.ATOMPUB_URL, url);
-
-        return parameters;
-    }
-
-    @Override
-    public BindingType getBindingType() {
-        return BindingType.ATOMPUB;
+    public String getAtomPubPath() {
+        return "/opencmis/atom11";
     }
 
     @Override
@@ -50,4 +32,8 @@ public class AtomPub11TckIT extends AbstractTckIT {
         return CmisVersion.CMIS_1_1;
     }
 
+    @Override
+    public boolean usesVersionableDocumentType() {
+        return false;
+    }
 }

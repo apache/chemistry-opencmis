@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.impl;
 
 public class TestParameters {
+
     public static final String DEFAULT_FOLDER_TYPE = "org.apache.chemistry.opencmis.tck.default.folderType";
     public static final String DEFAULT_FOLDER_TYPE_VALUE = "cmis:folder";
 

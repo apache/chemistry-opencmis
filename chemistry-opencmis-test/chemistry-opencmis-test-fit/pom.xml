@@ -39,8 +39,10 @@
         <repository />
         <user />
         <password />
-        <!-- "VersionableType" to run versioning tests with the InMemory repository -->
-        <default.documentType>VersionableType</default.documentType>        
+        <default.documentType>cmis:document</default.documentType>
+        <default.versionableDocumentType>VersionableType</default.versionableDocumentType>
+        <test.versionable>true</test.versionable>
+        <test.notVersionable>true</test.notVersionable>
     </properties>
 
 
@@ -130,6 +132,18 @@
 			              <name>org.apache.chemistry.opencmis.tck.default.documentType</name>
 			              <value>${default.documentType}</value>
 			            </systemProperty>
+			            <systemProperty>
+			              <name>org.apache.chemistry.opencmis.tck.default.versionableDocumentType</name>
+			              <value>${default.versionableDocumentType}</value>
+			            </systemProperty>
+			            <systemProperty>
+			              <name>org.apache.chemistry.opencmis.tck.testNotVersionable</name>
+			              <value>${test.notVersionable}</value>
+			            </systemProperty>
+			            <systemProperty>
+			              <name>org.apache.chemistry.opencmis.tck.testVersionable</name>
+			              <value>${test.versionable}</value>
+			            </systemProperty>			            
 	                	<systemProperty>
 	                		<name>project.basedir</name>
 	                		<value>${project.basedir}</value>
@@ -193,6 +207,9 @@
             	<service.factory.class>org.modeshape.jcr.JcrRepositoryFactory</service.factory.class>
             	<repository>test</repository>
             	<default.documentType>cmis:document</default.documentType>
+            	<default.versionableDocumentType>cmis:document</default.versionableDocumentType>
+            	<test.versionable>true</test.versionable>
+                <test.notVersionable>false</test.notVersionable>
             	<forkMode>never</forkMode>
             </properties>
 	        <dependencies>
@@ -248,7 +265,10 @@
             	<!-- Used in ServiceLoader to look up impl. -->
             	<service.factory.class>${factory.class}</service.factory.class>
             	<repository>test</repository>
-            	<default.documentType>VersionableType</default.documentType>
+                <default.documentType>cmis:document</default.documentType>
+                <default.versionableDocumentType>VersionableType</default.versionableDocumentType>
+                <test.versionable>true</test.versionable>
+                <test.notVersionable>true</test.notVersionable>
             </properties>
 	        <dependencies>
 	        	<dependency>
@@ -281,6 +301,9 @@
             	<user>admin</user>
             	<password>admin</password>
             	<default.documentType>cmis:document</default.documentType>
+            	<default.versionableDocumentType>cmis:document</default.versionableDocumentType>
+            	<test.versionable>true</test.versionable>
+                <test.notVersionable>false</test.notVersionable>
             	<forkMode>never</forkMode>
             </properties>
 	        <dependencies>

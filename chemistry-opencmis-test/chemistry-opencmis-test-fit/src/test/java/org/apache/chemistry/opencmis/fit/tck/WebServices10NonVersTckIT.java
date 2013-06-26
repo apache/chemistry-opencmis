@@ -18,36 +18,22 @@
  */
 package org.apache.chemistry.opencmis.fit.tck;
 
-import java.util.Map;
-
-import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
-public class BrowserTckIT extends AbstractTckIT {
-
-    public static final String BROWSER_PATH = "/opencmis/browser";
+public class WebServices10NonVersTckIT extends AbstractWebServicesTckIT {
 
     @Override
-    public Map<String, String> getSessionParameters() {
-        Map<String, String> parameters = getBaseSessionParameters();
-
-        String url = "http://" + HOST + ":" + PORT + BROWSER_PATH;
-
-        parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
-        parameters.put(SessionParameter.BROWSER_URL, url);
-
-        return parameters;
-    }
-
-    @Override
-    public BindingType getBindingType() {
-        return BindingType.BROWSER;
+    public String getWebServicesPath() {
+        return "/opencmis/services";
     }
 
     @Override
     public CmisVersion getCmisVersion() {
-        return CmisVersion.CMIS_1_1;
+        return CmisVersion.CMIS_1_0;
     }
 
+    @Override
+    public boolean usesVersionableDocumentType() {
+        return false;
+    }
 }

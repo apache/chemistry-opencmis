@@ -22,17 +22,16 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
-public class WebServicesTckIT extends AbstractTckIT {
+public abstract class AbstractWebServicesTckIT extends AbstractTckIT {
 
-    public static final String WEBSERVICES_PATH = "/opencmis/services/";
+    public abstract String getWebServicesPath();
 
     @Override
     public Map<String, String> getSessionParameters() {
         Map<String, String> parameters = getBaseSessionParameters();
 
-        String url = "http://" + HOST + ":" + PORT + WEBSERVICES_PATH;
+        String url = "http://" + HOST + ":" + PORT + getWebServicesPath() + "/";
 
         parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
         parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
@@ -52,10 +51,4 @@ public class WebServicesTckIT extends AbstractTckIT {
     public BindingType getBindingType() {
         return BindingType.WEBSERVICES;
     }
-
-    @Override
-    public CmisVersion getCmisVersion() {
-        return CmisVersion.CMIS_1_0;
-    }
-
 }

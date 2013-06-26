@@ -24,38 +24,29 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 
-public class WebServices11TckIT extends AbstractTckIT {
+public abstract class AbstractBrowserTckIT extends AbstractTckIT {
 
-    public static final String WEBSERVICES_PATH = "/opencmis/services11/";
+    public static final String BROWSER_PATH = "/opencmis/browser";
 
     @Override
     public Map<String, String> getSessionParameters() {
         Map<String, String> parameters = getBaseSessionParameters();
 
-        String url = "http://" + HOST + ":" + PORT + WEBSERVICES_PATH;
+        String url = "http://" + HOST + ":" + PORT + BROWSER_PATH;
 
-        parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
-        parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "NavigationService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "ObjectService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url + "VersioningService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url + "DiscoveryService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url + "RelationshipService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url + "MultiFilingService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "PolicyService?wsdl");
-        parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "ACLService?wsdl");
+        parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
+        parameters.put(SessionParameter.BROWSER_URL, url);
 
         return parameters;
     }
 
     @Override
     public BindingType getBindingType() {
-        return BindingType.WEBSERVICES;
+        return BindingType.BROWSER;
     }
 
     @Override
     public CmisVersion getCmisVersion() {
         return CmisVersion.CMIS_1_1;
     }
-
 }
