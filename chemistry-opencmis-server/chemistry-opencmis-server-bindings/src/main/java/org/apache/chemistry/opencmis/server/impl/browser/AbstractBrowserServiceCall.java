@@ -349,12 +349,8 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             break;
         case BOOLEAN:
             List<Boolean> boolValues = new ArrayList<Boolean>(strValues.size());
-            try {
-                for (String s : strValues) {
-                    boolValues.add(Boolean.valueOf(s));
-                }
-            } catch (NumberFormatException e) {
-                throw new CmisInvalidArgumentException(propDef.getId() + " value is not a boolean value!");
+            for (String s : strValues) {
+                boolValues.add(Boolean.valueOf(s));
             }
             propertyData = new PropertyBooleanImpl(propDef.getId(), boolValues);
             break;
@@ -365,7 +361,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
                     intValues.add(new BigInteger(s));
                 }
             } catch (NumberFormatException e) {
-                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an integer value!");
+                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an integer value!", e);
             }
             propertyData = new PropertyIntegerImpl(propDef.getId(), intValues);
             break;
@@ -376,7 +372,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
                     decValues.add(new BigDecimal(s));
                 }
             } catch (NumberFormatException e) {
-                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an integer value!");
+                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an integer value!", e);
             }
             propertyData = new PropertyDecimalImpl(propDef.getId(), decValues);
             break;
@@ -389,7 +385,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
                     calValues.add(cal);
                 }
             } catch (NumberFormatException e) {
-                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an datetime value!");
+                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an datetime value!", e);
             }
             propertyData = new PropertyDateTimeImpl(propDef.getId(), calValues);
             break;

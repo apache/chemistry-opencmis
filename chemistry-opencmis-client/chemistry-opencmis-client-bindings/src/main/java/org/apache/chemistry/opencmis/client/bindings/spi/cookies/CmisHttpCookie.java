@@ -56,7 +56,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
     private static final Pattern ATTR_PATTERN1 = Pattern.compile("(,?[^;=]*)(?:=([^;,]*))?((?=.))?");
 
     private abstract static class Setter {
-        boolean set;
+        private boolean set;
 
         Setter() {
             set = false;

@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 public class LoggingFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingFilter.class);
-    private static int REQUEST_NO = 0;
+    private static int requestNo = 0;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
     private String logDir;
     private boolean prettyPrint = true;
@@ -188,14 +188,16 @@ public class LoggingFilter implements Filter {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (pw != null)
+            if (pw != null) {
                 pw.close();
-            if (fw != null)
+            }
+            if (fw != null) {
                 try {
                     fw.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
         }
     }
 
@@ -334,7 +336,7 @@ public class LoggingFilter implements Filter {
     }
 
     private static synchronized int getNextRequestNumber() {
-        return REQUEST_NO++;
+        return requestNo++;
     }
 
     private class LoggingRequestWrapper extends HttpServletRequestWrapper {
@@ -501,7 +503,7 @@ public class LoggingFilter implements Filter {
         @Override
         public void setDateHeader(String name, long date) {
             super.setDateHeader(name, date);
-            headers.put(name, String.valueOf(getDateString(date)));
+            headers.put(name, getDateString(date));
         }
 
         @Override
@@ -510,7 +512,7 @@ public class LoggingFilter implements Filter {
             if (headers.containsKey(name)) {
                 headers.put(name, headers.get(name) + "; " + getDateString(date));
             } else {
-                headers.put(name, String.valueOf(getDateString(date)));
+                headers.put(name, getDateString(date));
             }
         }
 

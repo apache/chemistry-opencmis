@@ -75,7 +75,7 @@ public class DiscoveryService {
                     XMLUtils.findNextStartElemenet(parser);
                     queryType = XMLConverter.convertQuery(parser);
                 } catch (XMLStreamException e) {
-                    throw new CmisInvalidArgumentException("Invalid query request!");
+                    throw new CmisInvalidArgumentException("Invalid query request!", e);
                 } finally {
                     if (parser != null) {
                         try {

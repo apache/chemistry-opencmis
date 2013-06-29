@@ -512,7 +512,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * </ul>
      */
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-        return getObject(repositoryId, objectId, "cmi:objectId", true, IncludeRelationships.NONE, "cmis:none", false,
+        return getObject(repositoryId, objectId, "cmis:objectId", true, IncludeRelationships.NONE, "cmis:none", false,
                 false, extension).getAllowableActions();
     }
 

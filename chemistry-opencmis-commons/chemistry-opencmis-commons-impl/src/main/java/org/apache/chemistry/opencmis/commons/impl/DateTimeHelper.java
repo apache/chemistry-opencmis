@@ -60,7 +60,7 @@ public class DateTimeHelper {
     /**
      * Parses a xsd:dateTime string.
      */
-    public static GregorianCalendar parseXmlDateTime(String s) throws IllegalArgumentException {
+    public static GregorianCalendar parseXmlDateTime(String s) {
         if (s == null) {
             return null;
         }

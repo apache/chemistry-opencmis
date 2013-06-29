@@ -91,7 +91,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
         try {
             return new BigInteger(value);
         } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!");
+            throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!", e);
         }
     }
 

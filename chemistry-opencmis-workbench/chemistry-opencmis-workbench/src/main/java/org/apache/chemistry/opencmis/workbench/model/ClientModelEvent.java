@@ -22,17 +22,17 @@ import java.util.EventObject;
 
 public class ClientModelEvent extends EventObject {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ClientModelEvent(Object source) {
-		super(source);
-	}
+    public ClientModelEvent(Object source) {
+        super(source);
+    }
 
-	public ClientModel getClientModel() {
-		if (getSource() instanceof ClientModel) {
-			return (ClientModel) getSource();
-		}
+    public ClientModel getClientModel() {
+        if (getSource() instanceof ClientModel) {
+            return (ClientModel) getSource();
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

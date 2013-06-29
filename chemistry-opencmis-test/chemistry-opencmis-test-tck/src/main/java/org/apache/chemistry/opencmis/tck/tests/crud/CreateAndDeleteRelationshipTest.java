@@ -37,130 +37,116 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
  */
 public class CreateAndDeleteRelationshipTest extends AbstractSessionTest {
 
-	@Override
-	public void init(Map<String, String> parameters) {
-		super.init(parameters);
-		setName("Create and Delete Relationship Test");
-		setDescription("Creates a relationship between two documents, checks the newly created relationship and finally deletes the created relationship.");
-	}
+    @Override
+    public void init(Map<String, String> parameters) {
+        super.init(parameters);
+        setName("Create and Delete Relationship Test");
+        setDescription("Creates a relationship between two documents, checks the newly created relationship and finally deletes the created relationship.");
+    }
 
-	@Override
-	public void run(Session session) {
-		CmisTestResult f;
-		boolean found;
+    @Override
+    public void run(Session session) {
+        CmisTestResult f;
+        boolean found;
 
-		if (hasRelationships(session)) {
-			// create a test folder
-			Folder testFolder = createTestFolder(session);
+        if (hasRelationships(session)) {
+            // create a test folder
+            Folder testFolder = createTestFolder(session);
 
-			try {
-				// create documents
-				Document doc1 = createDocument(session, testFolder, "doc1.txt",
-						"doc1");
-				Document doc2 = createDocument(session, testFolder, "doc2.txt",
-						"doc2");
+            try {
+                // create documents
+                Document doc1 = createDocument(session, testFolder, "doc1.txt", "doc1");
+                Document doc2 = createDocument(session, testFolder, "doc2.txt", "doc2");
 
-				// create relationship
-				Relationship rel = createRelationship(session, "rel1", doc1,
-						doc2);
+                // create relationship
+                Relationship rel = createRelationship(session, "rel1", doc1, doc2);
 
-				f = createResult(FAILURE,
-						"Source document id does not match relationship source id!");
-				addResult(assertEquals(doc1.getId(), rel.getSourceId().getId(),
-						null, f));
+                f = createResult(FAILURE, "Source document id does not match relationship source id!");
+                addResult(assertEquals(doc1.getId(), rel.getSourceId().getId(), null, f));
 
-				f = createResult(FAILURE,
-						"Target document id does not match relationship target id!");
-				addResult(assertEquals(doc2.getId(), rel.getTarget().getId(),
-						null, f));
+                f = createResult(FAILURE, "Target document id does not match relationship target id!");
+                addResult(assertEquals(doc2.getId(), rel.getTarget().getId(), null, f));
 
-				// check the source document
-				doc1.refresh();
-				List<Relationship> doc1rels = doc1.getRelationships();
+                // check the source document
+                doc1.refresh();
+                List<Relationship> doc1rels = doc1.getRelationships();
 
-				f = createResult(FAILURE,
-						"Source document has no relationships but must have at least one!");
-				addResult(assertListNotEmpty(doc1rels, null, f));
+                f = createResult(FAILURE, "Source document has no relationships but must have at least one!");
+                addResult(assertListNotEmpty(doc1rels, null, f));
 
-				if (doc1rels != null) {
-					found = false;
-					for (Relationship r : doc1rels) {
-						if (rel.getId().equals(r.getId())) {
-							found = true;
-							break;
-						}
-					}
+                if (doc1rels != null) {
+                    found = false;
+                    for (Relationship r : doc1rels) {
+                        if (rel.getId().equals(r.getId())) {
+                            found = true;
+                            break;
+                        }
+                    }
 
-					f = createResult(
-							FAILURE,
-							"Newly created relationship not found in the relationships of the source document!");
-					addResult(assertIsTrue(found, null, f));
-				}
+                    f = createResult(FAILURE,
+                            "Newly created relationship not found in the relationships of the source document!");
+                    addResult(assertIsTrue(found, null, f));
+                }
 
-				found = false;
-				for (Relationship r : session.getRelationships(doc1, true,
-						RelationshipDirection.SOURCE, null,
-						SELECT_ALL_NO_CACHE_OC)) {
-					if (rel.getId().equals(r.getId())) {
-						found = true;
-						break;
-					}
-				}
+                found = false;
+                for (Relationship r : session.getRelationships(doc1, true, RelationshipDirection.SOURCE, null,
+                        SELECT_ALL_NO_CACHE_OC)) {
+                    if (rel.getId().equals(r.getId())) {
+                        found = true;
+                        break;
+                    }
+                }
 
-				f = createResult(
-						FAILURE,
-						"Newly created relationship not found in the relationships returned by getObjectRelationships() for the source document!");
-				addResult(assertIsTrue(found, null, f));
+                f = createResult(
+                        FAILURE,
+                        "Newly created relationship not found in the relationships returned by getObjectRelationships() for the source document!");
+                addResult(assertIsTrue(found, null, f));
 
-				// check the target document
-				doc2.refresh();
-				List<Relationship> doc2rels = doc2.getRelationships();
+                // check the target document
+                doc2.refresh();
+                List<Relationship> doc2rels = doc2.getRelationships();
 
-				f = createResult(FAILURE,
-						"Target document has no relationships but must have at least one!");
-				addResult(assertListNotEmpty(doc2rels, null, f));
+                f = createResult(FAILURE, "Target document has no relationships but must have at least one!");
+                addResult(assertListNotEmpty(doc2rels, null, f));
 
-				if (doc2rels != null) {
-					found = false;
-					for (Relationship r : doc2rels) {
-						if (rel.getId().equals(r.getId())) {
-							found = true;
-							break;
-						}
-					}
+                if (doc2rels != null) {
+                    found = false;
+                    for (Relationship r : doc2rels) {
+                        if (rel.getId().equals(r.getId())) {
+                            found = true;
+                            break;
+                        }
+                    }
 
-					f = createResult(
-							FAILURE,
-							"Newly created relationship not found in the relationships of the target document!");
-					addResult(assertIsTrue(found, null, f));
-				}
+                    f = createResult(FAILURE,
+                            "Newly created relationship not found in the relationships of the target document!");
+                    addResult(assertIsTrue(found, null, f));
+                }
 
-				found = false;
-				for (Relationship r : session.getRelationships(doc2, true,
-						RelationshipDirection.TARGET, null,
-						SELECT_ALL_NO_CACHE_OC)) {
-					if (rel.getId().equals(r.getId())) {
-						found = true;
-						break;
-					}
-				}
+                found = false;
+                for (Relationship r : session.getRelationships(doc2, true, RelationshipDirection.TARGET, null,
+                        SELECT_ALL_NO_CACHE_OC)) {
+                    if (rel.getId().equals(r.getId())) {
+                        found = true;
+                        break;
+                    }
+                }
 
-				f = createResult(
-						FAILURE,
-						"Newly created relationship not found in the relationships returned by getObjectRelationships() for the target document!");
-				addResult(assertIsTrue(found, null, f));
+                f = createResult(
+                        FAILURE,
+                        "Newly created relationship not found in the relationships returned by getObjectRelationships() for the target document!");
+                addResult(assertIsTrue(found, null, f));
 
-				// remove
-				deleteObject(rel);
-				deleteObject(doc2);
-				deleteObject(doc1);
-			} finally {
-				// delete the test folder
-				deleteTestFolder();
-			}
-		} else {
-			addResult(createResult(SKIPPED,
-					"Relationships not supported. Test skipped!"));
-		}
-	}
+                // remove
+                deleteObject(rel);
+                deleteObject(doc2);
+                deleteObject(doc1);
+            } finally {
+                // delete the test folder
+                deleteTestFolder();
+            }
+        } else {
+            addResult(createResult(SKIPPED, "Relationships not supported. Test skipped!"));
+        }
+    }
 }

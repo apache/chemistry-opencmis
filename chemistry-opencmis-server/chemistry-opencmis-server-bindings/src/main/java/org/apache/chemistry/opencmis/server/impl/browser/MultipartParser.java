@@ -587,7 +587,7 @@ public class MultipartParser {
             fields = null;
 
             if (e instanceof UnsupportedEncodingException) {
-                throw new CmisInvalidArgumentException("Encoding not supported!");
+                throw new CmisInvalidArgumentException("Encoding not supported!", e);
             } else if (e instanceof CmisBaseException) {
                 throw (CmisBaseException) e;
             } else if (e instanceof IOException) {

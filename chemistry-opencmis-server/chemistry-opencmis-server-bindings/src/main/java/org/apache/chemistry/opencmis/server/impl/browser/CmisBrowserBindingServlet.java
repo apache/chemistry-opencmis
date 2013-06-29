@@ -120,7 +120,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
     private final Dispatcher repositoryDispatcher = new Dispatcher(false);
     private final Dispatcher rootDispatcher = new Dispatcher(false);
-    private final static ErrorServiceCall ERROR_SERTVICE_CALL = new ErrorServiceCall();
+    private static final ErrorServiceCall ERROR_SERTVICE_CALL = new ErrorServiceCall();
 
     public enum CallUrl {
         SERVICE, REPOSITORY, ROOT

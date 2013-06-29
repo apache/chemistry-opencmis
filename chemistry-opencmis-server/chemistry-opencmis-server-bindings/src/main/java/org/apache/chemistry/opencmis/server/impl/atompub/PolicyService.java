@@ -38,7 +38,7 @@ import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
  */
 public class PolicyService {
 
-    public static abstract class AbstractPoliciesServiceCall extends AbstractAtomPubServiceCall {
+    public abstract static class AbstractPoliciesServiceCall extends AbstractAtomPubServiceCall {
         /**
          * Writes an entry that is attached to an object.
          */

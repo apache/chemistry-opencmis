@@ -31,7 +31,6 @@ import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequest
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
-    private final boolean isMultipart;
     private String filename;
     private String contentType;
     private BigInteger size;
@@ -42,7 +41,7 @@ public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequest
         super(request);
 
         // check multipart
-        isMultipart = MultipartParser.isMultipartContent(request);
+        boolean isMultipart = MultipartParser.isMultipartContent(request);
 
         if (isMultipart) {
             MultipartParser parser = new MultipartParser(request, streamFactory);

@@ -176,9 +176,9 @@ class Yylex {
         while (i < l) {
             int count = packed.charAt(i++);
             int value = packed.charAt(i++);
-            do
+            do {
                 result[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return j;
     }
@@ -262,9 +262,9 @@ class Yylex {
         while (i < 90) {
             int count = packed.charAt(i++);
             char value = packed.charAt(i++);
-            do
+            do {
                 map[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return map;
     }
@@ -328,8 +328,9 @@ class Yylex {
         zzAtEOF = true; /* indicate end of file */
         zzEndRead = zzStartRead; /* invalidate buffer */
 
-        if (zzReader != null)
+        if (zzReader != null) {
             zzReader.close();
+        }
     }
 
     /**
@@ -433,8 +434,9 @@ class Yylex {
      *            not be greater than yylength()!
      */
     public void yypushback(int number) {
-        if (number > yylength())
+        if (number > yylength()) {
             zzScanError(ZZ_PUSHBACK_2BIG);
+        }
 
         zzMarkedPos -= number;
     }
@@ -476,9 +478,9 @@ class Yylex {
             zzForAction: {
                 while (true) {
 
-                    if (zzCurrentPosL < zzEndReadL)
+                    if (zzCurrentPosL < zzEndReadL) {
                         zzInput = zzBufferL[zzCurrentPosL++];
-                    else if (zzAtEOF) {
+                    } else if (zzAtEOF) {
                         zzInput = YYEOF;
                         break zzForAction;
                     } else {
@@ -499,16 +501,18 @@ class Yylex {
                         }
                     }
                     int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
-                    if (zzNext == -1)
+                    if (zzNext == -1) {
                         break zzForAction;
+                    }
                     zzState = zzNext;
 
                     int zzAttributes = zzAttrL[zzState];
                     if ((zzAttributes & 1) == 1) {
                         zzAction = zzState;
                         zzMarkedPosL = zzCurrentPosL;
-                        if ((zzAttributes & 8) == 8)
+                        if ((zzAttributes & 8) == 8) {
                             break zzForAction;
+                        }
                     }
 
                 }
@@ -568,7 +572,8 @@ class Yylex {
             case 33:
                 break;
             case 1: {
-                throw new JSONParseException(yychar, JSONParseException.ERROR_UNEXPECTED_CHAR, new Character(yycharat(0)));
+                throw new JSONParseException(yychar, JSONParseException.ERROR_UNEXPECTED_CHAR, new Character(
+                        yycharat(0)));
             }
             case 34:
                 break;

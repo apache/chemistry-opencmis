@@ -2135,7 +2135,7 @@ public class XMLConverter {
         }
     };
 
-    private static abstract class ChoiceXMLWalker<T> extends XMLWalker<ChoiceImpl<T>> {
+    private abstract static class ChoiceXMLWalker<T> extends XMLWalker<ChoiceImpl<T>> {
 
         public void addToChoiceList(XMLStreamReader parser, AbstractPropertyDefinition<T> propDef)
                 throws XMLStreamException {

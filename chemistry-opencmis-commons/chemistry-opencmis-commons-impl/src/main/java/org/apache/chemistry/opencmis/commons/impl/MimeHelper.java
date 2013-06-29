@@ -535,8 +535,8 @@ public class MimeHelper {
          */
         private void eatWhiteSpace() {
             // skip to end of whitespace
-            while (++pos < header.length() && WHITE.indexOf(header.charAt(pos)) != -1)
-                ;
+            while (++pos < header.length() && WHITE.indexOf(header.charAt(pos)) != -1) {
+            }
         }
     }
 

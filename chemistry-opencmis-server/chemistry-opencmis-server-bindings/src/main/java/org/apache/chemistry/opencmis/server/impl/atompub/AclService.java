@@ -42,7 +42,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
  */
 public class AclService {
 
-    public static abstract class AclServiceCall extends AbstractAtomPubServiceCall {
+    public abstract static class AclServiceCall extends AbstractAtomPubServiceCall {
         protected void writeAclXML(Acl acl, CmisVersion cmisVersion, OutputStream out) throws XMLStreamException {
             XMLStreamWriter writer = XMLUtils.createWriter(out);
             XMLUtils.startXmlDocument(writer);
@@ -95,7 +95,7 @@ public class AclService {
                 XMLUtils.findNextStartElemenet(parser);
                 aces = XMLConverter.convertAcl(parser);
             } catch (XMLStreamException e) {
-                throw new CmisInvalidArgumentException("Invalid request!");
+                throw new CmisInvalidArgumentException("Invalid request!", e);
             } finally {
                 if (parser != null) {
                     try {

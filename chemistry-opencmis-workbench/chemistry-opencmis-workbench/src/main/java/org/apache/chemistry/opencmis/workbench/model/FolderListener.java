@@ -22,5 +22,5 @@ import java.util.EventListener;
 
 public interface FolderListener extends EventListener {
 
-	void folderLoaded(ClientModelEvent event);
+    void folderLoaded(ClientModelEvent event);
 }
