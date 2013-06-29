@@ -366,9 +366,9 @@ public class AclEditorFrame extends JFrame {
         private final List<String> permissions;
 
         private int position;
-        private final JComboBox<String> principalBox;
+        private final JComboBox principalBox;
         private final JPanel permissionsPanel;
-        private final List<JComboBox<String>> permissionBoxes;
+        private final List<JComboBox> permissionBoxes;
 
         public AceInputPanel(final AceList list, final List<String> principals, final List<String> permissions,
                 int position) {
@@ -407,7 +407,7 @@ public class AclEditorFrame extends JFrame {
             c.fill = GridBagConstraints.HORIZONTAL;
             c.anchor = GridBagConstraints.LINE_START;
 
-            principalBox = new JComboBox<String>(principals.toArray(new String[0]));
+            principalBox = new JComboBox(principals.toArray(new String[0]));
             principalBox.setEditable(true);
             principalBox.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -421,7 +421,7 @@ public class AclEditorFrame extends JFrame {
             permissionsPanel.setLayout(new BoxLayout(permissionsPanel, BoxLayout.Y_AXIS));
             permissionsPanel.setOpaque(false);
 
-            permissionBoxes = new ArrayList<JComboBox<String>>();
+            permissionBoxes = new ArrayList<JComboBox>();
 
             updatePermissionsPanel(false);
 
@@ -445,8 +445,8 @@ public class AclEditorFrame extends JFrame {
             add(removeButton, c);
         }
 
-        private JComboBox<String> createPermissionBox() {
-            JComboBox<String> result = new JComboBox<String>(permissions.toArray(new String[0]));
+        private JComboBox createPermissionBox() {
+            JComboBox result = new JComboBox(permissions.toArray(new String[0]));
             result.setEditable(true);
             result.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -495,7 +495,7 @@ public class AclEditorFrame extends JFrame {
             if (changed) {
                 permissionsPanel.removeAll();
 
-                for (JComboBox<String> box : permissionBoxes) {
+                for (JComboBox box : permissionBoxes) {
                     permissionsPanel.add(box);
                 }
 
@@ -524,7 +524,7 @@ public class AclEditorFrame extends JFrame {
         public Ace getAce() {
             List<String> permissions = new ArrayList<String>();
 
-            for (JComboBox<String> box : permissionBoxes) {
+            for (JComboBox box : permissionBoxes) {
                 String permission = box.getSelectedItem().toString().trim();
                 if (permission.length() > 0) {
                     permissions.add(permission);
