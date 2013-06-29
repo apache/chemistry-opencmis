@@ -93,9 +93,9 @@ public class TypeValidator {
 
             // check general constraints for all property types
             if (propDef.getCardinality() == Cardinality.SINGLE) {
-                if(prop.getValues() != null && prop.getValues().size() > 1) {
+                if (prop.getValues() != null && prop.getValues().size() > 1) {
                     throw new CmisConstraintException("The property with id " + propDef.getId()
-                        + " is single valued, but multiple values are passed " + prop.getValues());
+                            + " is single valued, but multiple values are passed " + prop.getValues());
                 }
             }
 
@@ -250,7 +250,8 @@ public class TypeValidator {
         validateProperties(typeDef, properties, checkMandatory, false);
     }
 
-    public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory, boolean cmis11) {
+    public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory,
+            boolean cmis11) {
         List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
 
         if (properties != null) {
@@ -286,8 +287,9 @@ public class TypeValidator {
 
     public static <T> void validateProperties(List<TypeDefinition> typeDefs, Properties properties,
             boolean checkMandatory) {
-        if (properties == null)
+        if (properties == null) {
             return;
+        }
 
         Map<String, Boolean> checkedProperties = new HashMap<String, Boolean>();
         for (String propId : properties.getProperties().keySet()) {
@@ -308,7 +310,9 @@ public class TypeValidator {
                 }
 
                 if (isSystemProperty(baseTypeId, propertyId, true)) {
-                    checkedProperties.put(prop.getId(), true); // ignore system properties for validation
+                    checkedProperties.put(prop.getId(), true); // ignore system
+                                                               // properties for
+                                                               // validation
                 } else if (typeContainsProperty(typeDef, propertyId)) {
                     // Check if all properties are known in the type
                     // marked the property as found in a type of primary or
@@ -330,8 +334,9 @@ public class TypeValidator {
         // check if all properties are known in a type definition
         List<String> unknownProperties = new ArrayList<String>();
         for (String propId : properties.getProperties().keySet()) {
-            if (!checkedProperties.get(propId))
+            if (!checkedProperties.get(propId)) {
                 unknownProperties.add(propId);
+            }
         }
         if (!unknownProperties.isEmpty()) {
             throw new CmisConstraintException(
@@ -364,12 +369,14 @@ public class TypeValidator {
     }
 
     protected static void validateAllowedTypes(TypeDefinition typeDef, List<String> allowedTypes, String description) {
-        if (null == allowedTypes || allowedTypes.size() == 0)
+        if (null == allowedTypes || allowedTypes.size() == 0) {
             return; // all types are allowed
+        }
 
         for (String allowedType : allowedTypes) {
-            if (allowedType.equals(typeDef.getId()))
+            if (allowedType.equals(typeDef.getId())) {
                 return;
+            }
         }
         throw new CmisConstraintException("The requested type " + typeDef.getId() + " is not allowed " + description);
     }
@@ -413,11 +420,7 @@ public class TypeValidator {
 
         PropertyDefinition<?> propDef = propDefs.get(propertyId);
 
-        if (null == propDef) {
-            return false; // unknown property id in this type
-        } else {
-            return true;
-        }
+        return propDef != null;
     }
 
     public static boolean typeContainsPropertyWithQueryName(TypeDefinition typeDef, String propertyQueryName) {
@@ -428,7 +431,7 @@ public class TypeValidator {
         }
 
         for (PropertyDefinition<?> propDef : propDefs.values()) {
-            if (propDef.getQueryName().toLowerCase().equals(propertyQueryName.toLowerCase())) {
+            if (propDef.getQueryName().equalsIgnoreCase(propertyQueryName)) {
                 return true;
             }
         }

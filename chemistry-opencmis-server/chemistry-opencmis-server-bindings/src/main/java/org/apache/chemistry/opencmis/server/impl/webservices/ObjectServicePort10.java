@@ -38,17 +38,17 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
 public interface ObjectServicePort10 extends ObjectServicePort {
 
     @WebMethod(action = "createItem", exclude = true)
-    public void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
+    void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
             CmisAccessControlListType addACEs, CmisAccessControlListType removeACEs,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException;
 
     @WebMethod(action = "bulkUpdateProperties", exclude = true)
-    public void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
+    void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
             Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
             throws CmisException;
 
     @WebMethod(action = "appendContentStream", exclude = true)
-    public void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
+    void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
             throws CmisException;
 }

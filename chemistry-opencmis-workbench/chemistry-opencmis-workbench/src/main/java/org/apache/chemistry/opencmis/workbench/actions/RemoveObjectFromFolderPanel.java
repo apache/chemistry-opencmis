@@ -69,7 +69,7 @@ public class RemoveObjectFromFolderPanel extends ActionPanel {
 
     @Override
     public boolean isAllowed() {
-        if (getObject() == null || !(getObject() instanceof FileableCmisObject)) {
+        if (!(getObject() instanceof FileableCmisObject)) {
             return false;
         }
 

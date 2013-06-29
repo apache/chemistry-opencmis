@@ -51,15 +51,15 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public long getLength() {
-        return length == null ? -1 : length.longValue();
+        return getBigLength() == null ? -1 : getBigLength().longValue();
     }
 
     public long getHeight() {
-        return height == null ? -1 : height.longValue();
+        return getBigHeight() == null ? -1 : getBigHeight().longValue();
     }
 
     public long getWidth() {
-        return width == null ? -1 : width.longValue();
+        return getBigWidth() == null ? -1 : getBigWidth().longValue();
     }
 
     public Document getRenditionDocument() {
@@ -67,10 +67,10 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public Document getRenditionDocument(OperationContext context) {
-        if (renditionDocumentId == null) {
+        if (getRenditionDocumentId() == null) {
             return null;
         }
-        CmisObject rendDoc = session.getObject(renditionDocumentId, context);
+        CmisObject rendDoc = session.getObject(getRenditionDocumentId(), context);
         if (!(rendDoc instanceof Document)) {
             return null;
         }
@@ -79,14 +79,14 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public ContentStream getContentStream() {
-        if ((objectId == null) || (streamId == null)) {
+        if ((objectId == null) || (getStreamId() == null)) {
             return null;
         }
 
         ContentStream contentStream;
         try {
             contentStream = session.getBinding().getObjectService()
-                    .getContentStream(session.getRepositoryInfo().getId(), objectId, streamId, null, null, null);
+                    .getContentStream(session.getRepositoryInfo().getId(), objectId, getStreamId(), null, null, null);
         } catch (CmisConstraintException e) {
             // no content stream
             return null;

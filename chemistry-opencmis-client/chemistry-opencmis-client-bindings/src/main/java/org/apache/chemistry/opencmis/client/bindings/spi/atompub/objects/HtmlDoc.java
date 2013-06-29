@@ -20,11 +20,11 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 
 public class HtmlDoc extends AtomBase {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getType() {
-		return "HTML document";
-	}
+    @Override
+    public String getType() {
+        return "HTML document";
+    }
 
 }

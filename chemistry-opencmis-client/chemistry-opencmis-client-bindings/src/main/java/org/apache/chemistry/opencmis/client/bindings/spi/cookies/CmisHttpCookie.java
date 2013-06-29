@@ -444,8 +444,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
     @Override
     public Object clone() {
         try {
-            CmisHttpCookie obj = (CmisHttpCookie) super.clone();
-            return obj;
+            return (CmisHttpCookie) super.clone();
         } catch (CloneNotSupportedException e) {
             return null;
         }

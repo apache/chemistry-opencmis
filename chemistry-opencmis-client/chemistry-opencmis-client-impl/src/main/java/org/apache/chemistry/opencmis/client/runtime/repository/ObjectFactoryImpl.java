@@ -348,8 +348,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                 ObjectType secondaryType = session.getTypeDefinition(secondaryTypeId.toString());
                 if (!(secondaryType instanceof SecondaryType)) {
                     throw new IllegalArgumentException(
-                            "Secondary types property contains a type that is not a secondary type: "
-                                    + secondaryTypeId);
+                            "Secondary types property contains a type that is not a secondary type: " + secondaryTypeId);
                 }
 
                 allSecondaryTypes.add((SecondaryType) secondaryType);
@@ -655,14 +654,15 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     private void throwWrongTypeError(Object obj, String type, Class<?> clazz, String id) {
         String expectedTypes;
-        if (clazz.equals(BigInteger.class))
+        if (clazz.equals(BigInteger.class)) {
             expectedTypes = "<BigInteger, Byte, Short, Integer, Long>";
-        else if (clazz.equals(BigDecimal.class))
+        } else if (clazz.equals(BigDecimal.class)) {
             expectedTypes = "<BigDecimal, Double, Float, Byte, Short, Integer, Long>";
-        else if (clazz.equals(GregorianCalendar.class))
+        } else if (clazz.equals(GregorianCalendar.class)) {
             expectedTypes = "<java.util.GregorianCalendar, java.util.Date>";
-        else
+        } else {
             expectedTypes = clazz.getName();
+        }
 
         String message = "Property '" + id + "' is a " + type + " property. Expected type '" + expectedTypes
                 + "' but received a '" + obj.getClass().getName() + "' property.";

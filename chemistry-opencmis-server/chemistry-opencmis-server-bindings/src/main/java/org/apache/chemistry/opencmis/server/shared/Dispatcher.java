@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +49,7 @@ public class Dispatcher implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(Dispatcher.class.getName());
 
     private final boolean caseSensitive;
-    private final HashMap<String, ServiceCall> serviceCallMap;
+    private final Map<String, ServiceCall> serviceCallMap;
 
     public Dispatcher() {
         this(true);

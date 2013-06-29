@@ -29,14 +29,14 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
     private static final long serialVersionUID = 1L;
 
-    protected String streamId;
+    private String streamId;
     private String mimeType;
-    protected BigInteger length;
+    private BigInteger length;
     private String kind;
     private String title;
-    protected BigInteger width;
-    protected BigInteger height;
-    protected String renditionDocumentId;
+    private BigInteger width;
+    private BigInteger height;
+    private String renditionDocumentId;
 
     public RenditionDataImpl() {
     }

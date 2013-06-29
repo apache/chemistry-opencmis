@@ -50,12 +50,13 @@ public abstract class XMLWalker<T> {
             int event = parser.getEventType();
             if (event == XMLStreamReader.START_ELEMENT) {
                 QName name = parser.getName();
-                if (!read(parser, name, result))
+                if (!read(parser, name, result)) {
                     if (result instanceof ExtensionsData) {
                         handleExtension(parser, (ExtensionsData) result);
                     } else {
                         skip(parser);
                     }
+                }
             } else if (event == XMLStreamReader.END_ELEMENT) {
                 break;
             } else {

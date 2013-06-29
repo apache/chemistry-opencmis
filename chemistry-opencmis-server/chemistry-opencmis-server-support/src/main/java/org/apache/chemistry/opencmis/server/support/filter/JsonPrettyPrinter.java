@@ -18,51 +18,51 @@
  */
 package org.apache.chemistry.opencmis.server.support.filter;
 
-
 /* 
  * A super simple JSON pretty printer
  */
 
-public class JsonPrettyPrinter  {
+public class JsonPrettyPrinter {
 
     private int indent = 0;
     private String indentStr;
     private StringBuffer sb = new StringBuffer();
-    
-    public JsonPrettyPrinter () {
+
+    public JsonPrettyPrinter() {
         init(3);
     }
 
-    public JsonPrettyPrinter (int indent) {
+    public JsonPrettyPrinter(int indent) {
         init(indent);
     }
-    
+
     private void init(int indent) {
         StringBuffer sb = new StringBuffer();
-        for (int i=0; i<indent; i++)
-            sb.append(" ");
+        for (int i = 0; i < indent; i++) {
+            sb.append(' ');
+        }
         indentStr = sb.toString();
     }
-        
+
     public String prettyPrint(String jsonStr) {
-        for (int i=0; i<jsonStr.length(); i++)  {
+        for (int i = 0; i < jsonStr.length(); i++) {
             char c = jsonStr.charAt(i);
             writeChar(c);
         }
         return sb.toString();
     }
-    
+
     private void writeChar(char c) {
-        if (((char) c) == '[' || ((char) c) == '{') {
+        if (c == '[' || c == '{') {
             sb.append(c);
             sb.append('\n');
             indent++;
             addIndent();
-        } else if (((char) c) == ',') {
+        } else if (c == ',') {
             sb.append(c);
             sb.append('\n');
             addIndent();
-        } else if (((char) c) == ']' || ((char) c) == '}') {
+        } else if (c == ']' || c == '}') {
             sb.append('\n');
             indent--;
             addIndent();
@@ -78,7 +78,7 @@ public class JsonPrettyPrinter  {
             sb.append(indentStr);
         }
     }
-    
+
     public static void main(String[] args) {
         args = new String[2];
         args[0] = "[0,{\"1\":{\"2\":{\"3\":{\"4\":[5,{\"6\":7}]}}}}]";

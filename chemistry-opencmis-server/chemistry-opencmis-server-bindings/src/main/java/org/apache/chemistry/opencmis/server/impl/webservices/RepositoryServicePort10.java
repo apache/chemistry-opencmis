@@ -34,14 +34,13 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 public interface RepositoryServicePort10 extends RepositoryServicePort {
 
     @WebMethod(action = "createType", exclude = true)
-    public void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
+    void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException;
 
     @WebMethod(action = "updateType", exclude = true)
-    public void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
+    void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException;
 
     @WebMethod(action = "deleteType", exclude = true)
-    public void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension)
-            throws CmisException;
+    void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension) throws CmisException;
 }

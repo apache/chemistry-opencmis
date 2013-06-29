@@ -86,11 +86,9 @@ public class AclEditorFrame extends JFrame {
         this.model = model;
         this.object = object;
 
-        Object[] principals;
+        // get users
+        List<String> princiaplList = new ArrayList<String>();
         try {
-            // get users
-            List<String> princiaplList = new ArrayList<String>();
-
             princiaplList.add("");
             princiaplList.add("cmis:user");
 
@@ -123,29 +121,29 @@ public class AclEditorFrame extends JFrame {
 
                 princiaplList.addAll(aclPrinciaplList);
             }
-
-            principals = princiaplList.toArray();
         } catch (Exception ex) {
-            principals = new Object[] { "", "cmis:user" };
+            princiaplList = new ArrayList<String>();
+            princiaplList.add("");
+            princiaplList.add("cmis:user");
         }
 
-        Object[] permissions;
+        // get permissions
+        List<String> permissionsList = new ArrayList<String>();
         try {
-            // get permissions
-            List<String> permissionsList = new ArrayList<String>();
             permissionsList.add("");
-
             for (PermissionDefinition pd : model.getRepositoryInfo().getAclCapabilities().getPermissions()) {
                 permissionsList.add(pd.getId());
             }
-
-            permissions = permissionsList.toArray();
         } catch (Exception ex) {
-            permissions = new Object[] { "", "cmis:read", "cmis:write", "cmis:all" };
+            permissionsList = new ArrayList<String>();
+            permissionsList.add("");
+            permissionsList.add("cmis:read");
+            permissionsList.add("cmis:write");
+            permissionsList.add("cmis:all");
         }
 
-        addAceList = new AceList(principals, permissions);
-        removeAceList = new AceList(principals, permissions);
+        addAceList = new AceList(princiaplList, permissionsList);
+        removeAceList = new AceList(princiaplList, permissionsList);
 
         createGUI();
     }
@@ -307,10 +305,10 @@ public class AclEditorFrame extends JFrame {
         private static final long serialVersionUID = 1L;
 
         private final List<AceInputPanel> panels;
-        private final Object[] principals;
-        private final Object[] permissions;
+        private final List<String> principals;
+        private final List<String> permissions;
 
-        public AceList(final Object[] principals, final Object[] permissions) {
+        public AceList(final List<String> principals, final List<String> permissions) {
             super();
 
             panels = new ArrayList<AceInputPanel>();
@@ -365,14 +363,15 @@ public class AclEditorFrame extends JFrame {
 
         private static final ImageIcon ICON_REMOVE = ClientHelper.getIcon("remove.png");
 
-        private final Object[] permissions;
+        private final List<String> permissions;
 
         private int position;
-        private final JComboBox principalBox;
+        private final JComboBox<String> principalBox;
         private final JPanel permissionsPanel;
-        private final List<JComboBox> permissionBoxes;
+        private final List<JComboBox<String>> permissionBoxes;
 
-        public AceInputPanel(final AceList list, final Object[] principals, final Object[] permissions, int position) {
+        public AceInputPanel(final AceList list, final List<String> principals, final List<String> permissions,
+                int position) {
             super();
 
             this.permissions = permissions;
@@ -408,7 +407,7 @@ public class AclEditorFrame extends JFrame {
             c.fill = GridBagConstraints.HORIZONTAL;
             c.anchor = GridBagConstraints.LINE_START;
 
-            principalBox = new JComboBox(principals);
+            principalBox = new JComboBox<String>(principals.toArray(new String[0]));
             principalBox.setEditable(true);
             principalBox.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -422,7 +421,7 @@ public class AclEditorFrame extends JFrame {
             permissionsPanel.setLayout(new BoxLayout(permissionsPanel, BoxLayout.Y_AXIS));
             permissionsPanel.setOpaque(false);
 
-            permissionBoxes = new ArrayList<JComboBox>();
+            permissionBoxes = new ArrayList<JComboBox<String>>();
 
             updatePermissionsPanel(false);
 
@@ -446,8 +445,8 @@ public class AclEditorFrame extends JFrame {
             add(removeButton, c);
         }
 
-        private JComboBox createPermissionBox() {
-            JComboBox result = new JComboBox(permissions);
+        private JComboBox<String> createPermissionBox() {
+            JComboBox<String> result = new JComboBox<String>(permissions.toArray(new String[0]));
             result.setEditable(true);
             result.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -496,7 +495,7 @@ public class AclEditorFrame extends JFrame {
             if (changed) {
                 permissionsPanel.removeAll();
 
-                for (JComboBox box : permissionBoxes) {
+                for (JComboBox<String> box : permissionBoxes) {
                     permissionsPanel.add(box);
                 }
 
@@ -525,7 +524,7 @@ public class AclEditorFrame extends JFrame {
         public Ace getAce() {
             List<String> permissions = new ArrayList<String>();
 
-            for (JComboBox box : permissionBoxes) {
+            for (JComboBox<String> box : permissionBoxes) {
                 String permission = box.getSelectedItem().toString().trim();
                 if (permission.length() > 0) {
                     permissions.add(permission);
