@@ -196,7 +196,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                 "Sample Html Property", Updatability.READONLY);
         propertyDefinitions.put(prop4.getId(), prop4);
 
-        prop4 = PropertyCreationHelper.createHtmlDefinition(PROP_ID_HTML_MULTI_VALUE, "Sample Html multi-value Property", Updatability.READONLY);
+        prop4 = PropertyCreationHelper.createHtmlMultiDefinition(PROP_ID_HTML_MULTI_VALUE, "Sample Html multi-value Property", Updatability.READONLY);
         propertyDefinitions.put(prop4.getId(), prop4);
 
         PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition(PROP_ID_ID, "Sample Id Property", Updatability.READONLY);

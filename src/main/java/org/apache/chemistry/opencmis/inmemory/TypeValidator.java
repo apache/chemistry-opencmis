@@ -405,9 +405,9 @@ public class TypeValidator {
 
     private static void checkBaseAndParentType(TypeManager tm, TypeDefinition td) {
         if (null == td.getBaseTypeId()) 
-            throw new CmisInvalidArgumentException("You canno create a type without a base type id: " + td.getId());
+            throw new CmisInvalidArgumentException("You cannot create a type without a base type id: " + td.getId());
         if (null == td.getParentTypeId()) 
-            throw new CmisInvalidArgumentException("You canno create a type without a parent type id: " + td.getId());
+            throw new CmisInvalidArgumentException("You cannot create a type without a parent type id: " + td.getId());
         
     }
 

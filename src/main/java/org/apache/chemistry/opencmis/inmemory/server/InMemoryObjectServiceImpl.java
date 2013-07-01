@@ -571,7 +571,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         if (changeToken != null && changeToken.getValue() != null
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
-            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
+            throw new CmisUpdateConflictException("setContentStream failed: changeToken does not match");
         }
 
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
@@ -665,12 +665,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
                 PropertyData<?> value = properties.getProperties().get(key);
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-                if (null == propDef && cmis11) {
-                    TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
-                    if (null == typeDefSecondary)
-                        throw new CmisInvalidArgumentException("Cannot update property " + key
-                                + ": not contained in type");
-                    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+                if (null == propDef) {
+                    if (cmis11) {
+                        TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
+                        if (null == typeDefSecondary)
+                            throw new CmisInvalidArgumentException("Cannot update property " + key
+                                    + ": not contained in type");
+                        propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+                    } else {
+                        throw new CmisInvalidArgumentException("Unknown property " + key
+                                + ": not contained in type");                        
+                    }
                 }
 
                 if (value.getValues() == null || value.getFirstValue() == null) {
