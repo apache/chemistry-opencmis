@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -51,7 +52,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
 
         // send and parse
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -67,7 +68,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
 
         // send and parse
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });

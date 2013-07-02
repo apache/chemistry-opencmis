@@ -2120,7 +2120,7 @@ public class FileShareRepository {
      * Converts an id to a File object. A simple and insecure implementation,
      * but good enough for now.
      */
-    private File idToFile(String id) throws Exception {
+    private File idToFile(String id) throws IOException {
         if ((id == null) || (id.length() == 0)) {
             throw new CmisInvalidArgumentException("Id is not valid!");
         }
@@ -2148,7 +2148,7 @@ public class FileShareRepository {
      * Creates a File object from an id. A simple and insecure implementation,
      * but good enough for now.
      */
-    private String fileToId(File file) throws Exception {
+    private String fileToId(File file) throws IOException {
         if (file == null) {
             throw new IllegalArgumentException("File is not valid!");
         }

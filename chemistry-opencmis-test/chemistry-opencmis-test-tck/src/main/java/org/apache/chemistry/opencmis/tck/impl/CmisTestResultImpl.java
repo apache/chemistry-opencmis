@@ -74,6 +74,7 @@ public class CmisTestResultImpl implements CmisTestResult {
         return stackTrace;
     }
 
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
     public void setStackTrace(StackTraceElement[] stackTrace) {
         this.stackTrace = stackTrace;
     }

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -71,7 +72,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });

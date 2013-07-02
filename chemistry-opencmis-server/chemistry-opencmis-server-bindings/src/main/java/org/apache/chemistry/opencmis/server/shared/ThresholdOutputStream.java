@@ -371,14 +371,14 @@ public class ThresholdOutputStream extends OutputStream {
         }
 
         @Override
-        public synchronized void mark(int readlimit) {
+        public void mark(int readlimit) {
             if (buf != null) {
                 mark = pos;
             }
         }
 
         @Override
-        public synchronized void reset() throws IOException {
+        public void reset() throws IOException {
             if (mark < 0) {
                 throw new IOException("Reset not possible.");
             }
@@ -521,14 +521,14 @@ public class ThresholdOutputStream extends OutputStream {
         }
 
         @Override
-        public synchronized void mark(int readlimit) {
+        public void mark(int readlimit) {
             if (!isClosed) {
                 stream.mark(readlimit);
             }
         }
 
         @Override
-        public synchronized void reset() throws IOException {
+        public void reset() throws IOException {
             if (isClosed) {
                 throw new IOException("Stream is already closed!");
             }

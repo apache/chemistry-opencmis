@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
@@ -125,7 +126,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -147,7 +148,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -167,7 +168,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });

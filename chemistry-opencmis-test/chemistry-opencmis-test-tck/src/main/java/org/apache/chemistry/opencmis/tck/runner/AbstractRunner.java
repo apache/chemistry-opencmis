@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tck.runner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public abstract class AbstractRunner {
         parameters.put(TCK_BUILD_TIMESTAMP_PARAMETER, loadTCKTimestamp());
     }
 
-    public void loadParameters(File file) throws Exception {
+    public void loadParameters(File file) throws IOException {
         if (file == null || !file.isFile()) {
             throw new IllegalArgumentException("File not found!");
         }
@@ -77,7 +78,7 @@ public abstract class AbstractRunner {
         loadParameters(new FileInputStream(file));
     }
 
-    public void loadParameters(InputStream stream) throws Exception {
+    public void loadParameters(InputStream stream) throws IOException {
         if (stream == null) {
             throw new IllegalArgumentException("Stream is null!");
         }
@@ -234,7 +235,9 @@ public abstract class AbstractRunner {
      * Runs all configured groups.
      */
     public void run(CmisTestProgressMonitor monitor) throws Exception {
-        isCanceled = false;
+        synchronized (this) {
+            isCanceled = false;
+        }
 
         for (CmisTestGroup group : groups) {
             synchronized (this) {

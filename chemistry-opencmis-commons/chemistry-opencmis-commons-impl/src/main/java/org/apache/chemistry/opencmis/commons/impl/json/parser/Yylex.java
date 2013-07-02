@@ -67,8 +67,7 @@ class Yylex {
 
     private static int[] zzUnpackAction() {
         int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
+        zzUnpackAction(ZZ_ACTION_PACKED_0, 0, result);
         return result;
     }
 
@@ -79,9 +78,9 @@ class Yylex {
         while (i < l) {
             int count = packed.charAt(i++);
             int value = packed.charAt(i++);
-            do
+            do {
                 result[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return j;
     }
@@ -99,8 +98,7 @@ class Yylex {
 
     private static int[] zzUnpackRowMap() {
         int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
+        zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, 0, result);
         return result;
     }
 
@@ -164,8 +162,7 @@ class Yylex {
 
     private static int[] zzUnpackAttribute() {
         int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
+        zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, 0, result);
         return result;
     }
 
@@ -572,8 +569,8 @@ class Yylex {
             case 33:
                 break;
             case 1: {
-                throw new JSONParseException(yychar, JSONParseException.ERROR_UNEXPECTED_CHAR, new Character(
-                        yycharat(0)));
+                throw new JSONParseException(yychar, JSONParseException.ERROR_UNEXPECTED_CHAR,
+                        Character.valueOf(yycharat(0)));
             }
             case 34:
                 break;

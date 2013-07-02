@@ -76,7 +76,7 @@ public class WssTube extends AbstractWssTube {
             HeaderList headers = message.getHeaders();
             headers.add(Headers.create(wsseSecurityElement));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Creating SOAP header failed!", e);
         }
 
         return super.processResponse(packet);

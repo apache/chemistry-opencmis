@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import org.apache.chemistry.opencmis.server.impl.webservices.ProtectionRequestWrapper;
 import org.junit.Test;
@@ -105,8 +106,9 @@ public class CheckServletInputStreamTest {
         ByteArrayInputStream originStream = new ByteArrayInputStream(byteBuffer);
 
         try {
-            ProtectionRequestWrapper.CheckServletInputStream stream = new ProtectionRequestWrapper.CheckServletInputStream(
-                    originStream, BOUNDARY.getBytes(), max);
+            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createRequest(BOUNDARY,
+                    originStream), max);
+            InputStream stream = prw.getInputStream();
 
             int countS = 0;
             int countC = 0;
@@ -141,8 +143,9 @@ public class CheckServletInputStreamTest {
         originStream = new ByteArrayInputStream(byteBuffer);
 
         try {
-            ProtectionRequestWrapper.CheckServletInputStream stream = new ProtectionRequestWrapper.CheckServletInputStream(
-                    originStream, BOUNDARY.getBytes(), max);
+            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createRequest(BOUNDARY,
+                    originStream), max);
+            InputStream stream = prw.getInputStream();
 
             int countS = 0;
             int countC = 0;

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
@@ -80,7 +81,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -112,7 +113,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -141,7 +142,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -170,7 +171,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -199,7 +200,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -228,7 +229,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -384,7 +385,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -423,7 +424,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -451,7 +452,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -475,7 +476,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -494,7 +495,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -525,7 +526,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -562,7 +563,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
@@ -598,7 +599,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });

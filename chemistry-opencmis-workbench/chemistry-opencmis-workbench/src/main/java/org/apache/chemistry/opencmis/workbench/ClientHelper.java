@@ -306,10 +306,10 @@ public class ClientHelper {
         return tempFile;
     }
 
-    public static File createTempFileFromDocument(CmisObject object, String streamId) throws Exception {
+    public static File createTempFileFromDocument(CmisObject object, String streamId) throws IOException {
         ContentStream content = getContentStream(object, streamId);
         if (content == null) {
-            throw new Exception("No content!");
+            throw new IllegalArgumentException("No content!");
         }
 
         String filename = content.getFileName();

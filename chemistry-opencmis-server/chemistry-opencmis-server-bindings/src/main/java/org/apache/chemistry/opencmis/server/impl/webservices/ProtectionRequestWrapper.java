@@ -37,8 +37,14 @@ import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
     private static final String MULTIPART = "multipart/";
+    private static final byte CR = 0x0D;
+    private static final byte LF = 0x0A;
+    private static final byte DASH = 0x2D;
 
-    private final ServletInputStream inputStream;
+    private final int messageMax;
+    private final InputStream orgStream;
+    private final ServletInputStream checkedStream;
+    private final byte[] boundary;
 
     public ProtectionRequestWrapper(HttpServletRequest request, int max) throws ServletException {
         super(request);
@@ -50,14 +56,16 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
         }
 
         // get boundary
-        byte[] boundary = MimeHelper.getBoundaryFromMultiPart(contentType);
+        boundary = MimeHelper.getBoundaryFromMultiPart(contentType);
         if (boundary == null) {
             throw new ServletException("Invalid multipart request!");
         }
 
         // set up checked stream
         try {
-            inputStream = new CheckServletInputStream(super.getInputStream(), boundary, max);
+            messageMax = max;
+            orgStream = super.getInputStream();
+            checkedStream = new CheckServletInputStream();
         } catch (IOException e) {
             throw new ServletException(e);
         }
@@ -65,27 +73,19 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return inputStream;
+        return checkedStream;
     }
 
-    public static class CheckServletInputStream extends ServletInputStream {
+    class CheckServletInputStream extends ServletInputStream {
 
-        private static final byte CR = 0x0D;
-        private static final byte LF = 0x0A;
-        private static final byte DASH = 0x2D;
-
-        private final InputStream stream;
-        private final byte[] boundary;
-        private final int max;
+        private final int streamMax;
         private byte[] linebuffer;
         private int pos;
         private int count;
         private int boundariesFound;
 
-        public CheckServletInputStream(InputStream stream, byte[] boundary, int max) {
-            this.stream = stream;
-            this.boundary = boundary;
-            this.max = max + 2 * (boundary.length + 6);
+        public CheckServletInputStream() {
+            streamMax = messageMax + 2 * (boundary.length + 6);
             linebuffer = new byte[64 * 1024];
             pos = 0;
             count = 0;
@@ -107,12 +107,12 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
         @Override
         public int available() throws IOException {
-            return stream.available();
+            return orgStream.available();
         }
 
         @Override
         public int read() throws IOException {
-            int b = stream.read();
+            int b = orgStream.read();
 
             if (boundariesFound == 2) {
                 return b;
@@ -134,7 +134,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
                 return 0;
             }
 
-            int r = stream.read(b, off, len);
+            int r = orgStream.read(b, off, len);
 
             if (boundariesFound == 2) {
                 return r;
@@ -156,7 +156,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
         @Override
         public void close() throws IOException {
-            stream.close();
+            orgStream.close();
         }
 
         private void checkBoundary(int startPos) {
@@ -231,7 +231,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
             if (boundariesFound < 2) {
                 count++;
-                if (count > max) {
+                if (count > streamMax) {
                     throw new IOException("SOAP message too big!");
                 }
             }
@@ -256,7 +256,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
             if (boundariesFound < 2) {
                 count += len;
-                if (count > max) {
+                if (count > streamMax) {
                     throw new IOException("SOAP message too big!");
                 }
             }
@@ -266,7 +266,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
          * Expand the line buffer.
          */
         private void expandBuffer(int len) throws IOException {
-            if (pos + len > max) {
+            if (pos + len > streamMax) {
                 throw new IOException("SOAP message too big!");
             }
 

@@ -24,7 +24,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,14 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.impl.browser.MultipartParser;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Tests the multipart parser.
@@ -371,11 +368,7 @@ public class MultipartParserTest {
     // ---- helpers ----
 
     private MultipartParser prepareParser(String boundary, byte[] content) throws Exception {
-        FakeServletInputStream stream = new FakeServletInputStream(content);
-
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getContentType()).thenReturn("multipart/form-data; boundary=\"" + boundary + "\"");
-        Mockito.when(request.getInputStream()).thenReturn(stream);
+        HttpServletRequest request = HttpRequestMockHelper.createRequest(boundary, content);
 
         ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
@@ -428,29 +421,5 @@ public class MultipartParserTest {
 
         assertEquals(count, counter);
         assertEquals(counter - (hasContent ? 1 : 0), fields.size());
-    }
-
-    private static class FakeServletInputStream extends ServletInputStream {
-
-        private ByteArrayInputStream stream;
-
-        public FakeServletInputStream(byte[] content) {
-            stream = new ByteArrayInputStream(content);
-        }
-
-        @Override
-        public int read() throws IOException {
-            return stream.read();
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            return stream.read(b, off, len);
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            return stream.read(b);
-        }
     }
 }

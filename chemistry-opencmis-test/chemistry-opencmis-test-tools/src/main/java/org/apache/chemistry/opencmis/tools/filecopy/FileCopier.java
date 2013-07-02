@@ -218,8 +218,8 @@ public class FileCopier {
                 
                 parser.extractMetadata(f, td, session);
                 Map<String, Object> properties = parser.getCmisProperties();
-                for (String key : properties.keySet()) {
-                    LOG.info("Found metadata tag " + key + "mapped to " + properties.get(key));
+                for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                    LOG.info("Found metadata tag " + entry.getKey() + "mapped to " + entry.getValue());
                 }
             }                        
         } catch (Exception e) {

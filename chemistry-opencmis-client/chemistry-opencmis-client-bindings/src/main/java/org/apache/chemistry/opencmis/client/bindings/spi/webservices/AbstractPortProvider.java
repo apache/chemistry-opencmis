@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -177,13 +178,14 @@ public abstract class AbstractPortProvider {
         private SoftReference<Service> serviceObject;
         private final URL endpointUrl;
 
-        public CmisServiceHolder(final CmisWebSerivcesService service, final URL endpointUrl) throws Exception {
+        public CmisServiceHolder(final CmisWebSerivcesService service, final URL endpointUrl) throws NoSuchMethodException, SecurityException, InstantiationException, InvocationTargetException, IllegalAccessException {
             this.service = service;
             this.endpointUrl = endpointUrl;
             this.serviceObject = new SoftReference<Service>(createServiceObject());
         }
 
-        private Service createServiceObject() throws Exception {
+        private Service createServiceObject() throws NoSuchMethodException, SecurityException, InstantiationException,
+                InvocationTargetException, IllegalAccessException {
             final Constructor<? extends Service> serviceConstructor = service.getServiceClass().getConstructor(
                     new Class<?>[] { URL.class, QName.class });
 

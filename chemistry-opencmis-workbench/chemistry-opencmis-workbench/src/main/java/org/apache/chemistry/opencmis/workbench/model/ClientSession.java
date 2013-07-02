@@ -197,7 +197,7 @@ public class ClientSession {
         return repositories;
     }
 
-    public Session createSession(int index) {
+    public synchronized Session createSession(int index) {
         session = repositories.get(index).createSession();
         objectOperationContext = null;
         folderOperationContext = null;

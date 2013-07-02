@@ -61,6 +61,7 @@ public class BrowserCallContextImpl extends CallContextImpl {
      * Sets the necessary details to retrieve the object id, type id, and token
      * if requested.
      */
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
     public void setCallDetails(CmisService service, String objectId, String[] pathFragments, String token) {
         this.service = service;
         this.objectId = objectId;

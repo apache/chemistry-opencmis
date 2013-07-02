@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAcl;
@@ -92,7 +93,7 @@ public class AtomPubParser {
     /**
      * Parses the stream.
      */
-    public void parse() throws Exception {
+    public void parse() throws XMLStreamException {
         XMLStreamReader parser = XMLUtils.createParser(stream);
 
         try {
@@ -160,7 +161,7 @@ public class AtomPubParser {
     /**
      * Parses a service document.
      */
-    private static ServiceDoc parseServiceDoc(XMLStreamReader parser) throws Exception {
+    private static ServiceDoc parseServiceDoc(XMLStreamReader parser) throws XMLStreamException {
         ServiceDoc result = new ServiceDoc();
 
         XMLUtils.next(parser);
@@ -194,7 +195,7 @@ public class AtomPubParser {
     /**
      * Parses a workspace element in a service document.
      */
-    private static RepositoryWorkspace parseWorkspace(XMLStreamReader parser) throws Exception {
+    private static RepositoryWorkspace parseWorkspace(XMLStreamReader parser) throws XMLStreamException {
         RepositoryWorkspace workspace = new RepositoryWorkspace();
 
         XMLUtils.next(parser);
@@ -228,7 +229,7 @@ public class AtomPubParser {
     /**
      * Parses an Atom feed.
      */
-    private AtomFeed parseFeed(XMLStreamReader parser) throws Exception {
+    private AtomFeed parseFeed(XMLStreamReader parser) throws XMLStreamException {
         AtomFeed result = new AtomFeed();
 
         XMLUtils.next(parser);
@@ -272,7 +273,7 @@ public class AtomPubParser {
     /**
      * Parses an Atom entry.
      */
-    private AtomEntry parseEntry(XMLStreamReader parser) throws Exception {
+    private AtomEntry parseEntry(XMLStreamReader parser) throws XMLStreamException {
         AtomEntry result = new AtomEntry();
 
         XMLUtils.next(parser);
@@ -310,21 +311,21 @@ public class AtomPubParser {
     /**
      * Parses an Allowable Actions document.
      */
-    private static AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws Exception {
+    private static AtomAllowableActions parseAllowableActions(XMLStreamReader parser) throws XMLStreamException {
         return new AtomAllowableActions(XMLConverter.convertAllowableActions(parser));
     }
 
     /**
      * Parses an ACL document.
      */
-    private static AtomAcl parseACL(XMLStreamReader parser) throws Exception {
+    private static AtomAcl parseACL(XMLStreamReader parser) throws XMLStreamException {
         return new AtomAcl(XMLConverter.convertAcl(parser));
     }
 
     /**
      * Parses an element.
      */
-    private AtomElement parseElement(XMLStreamReader parser) throws Exception {
+    private AtomElement parseElement(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
 
         if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -355,7 +356,7 @@ public class AtomPubParser {
     /**
      * Parses a children element.
      */
-    private AtomElement parseChildren(XMLStreamReader parser) throws Exception {
+    private AtomElement parseChildren(XMLStreamReader parser) throws XMLStreamException {
         AtomElement result = null;
         QName childName = parser.getName();
 
@@ -393,7 +394,7 @@ public class AtomPubParser {
     /**
      * Parses a workspace element.
      */
-    private static AtomElement parseWorkspaceElement(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseWorkspaceElement(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
 
         if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -421,7 +422,7 @@ public class AtomPubParser {
     /**
      * Parses a collection tag.
      */
-    private static AtomElement parseCollection(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseCollection(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         Map<String, String> result = new HashMap<String, String>();
 
@@ -456,7 +457,7 @@ public class AtomPubParser {
     /**
      * Parses a template tag.
      */
-    private static AtomElement parseTemplate(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseTemplate(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         Map<String, String> result = new HashMap<String, String>();
 
@@ -494,7 +495,7 @@ public class AtomPubParser {
     /**
      * Parses a link tag.
      */
-    private static AtomElement parseLink(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseLink(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         AtomLink result = new AtomLink();
 
@@ -518,7 +519,7 @@ public class AtomPubParser {
     /**
      * Parses a link tag.
      */
-    private static AtomElement parseAtomContentSrc(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseAtomContentSrc(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         AtomLink result = new AtomLink();
         result.setRel(LINK_REL_CONTENT);
@@ -539,7 +540,7 @@ public class AtomPubParser {
     /**
      * Parses a text tag.
      */
-    private static AtomElement parseText(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseText(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         return new AtomElement(name, XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
     }
@@ -547,7 +548,7 @@ public class AtomPubParser {
     /**
      * Parses a text tag and convert it into an integer.
      */
-    private static AtomElement parseBigInteger(XMLStreamReader parser) throws Exception {
+    private static AtomElement parseBigInteger(XMLStreamReader parser) throws XMLStreamException {
         QName name = parser.getName();
         return new AtomElement(name, new BigInteger(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH)));
     }

@@ -267,6 +267,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a folder.
      */
     protected Folder createFolder(Session session, Folder parent, String name, String objectTypeId) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Parent is not set!");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name is not set!");
+        }
+        if (objectTypeId == null) {
+            throw new IllegalArgumentException("Object Type Id is not set!");
+        }
+
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -372,6 +382,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      */
     protected Document createDocument(Session session, Folder parent, String name, String objectTypeId,
             String[] secondaryTypeIds, String content) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Parent is not set!");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name is not set!");
+        }
+        if (objectTypeId == null) {
+            throw new IllegalArgumentException("Object Type Id is not set!");
+        }
+
         if (content == null) {
             content = "";
         }
@@ -447,20 +467,19 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
         }
 
-        if (parent != null) {
-            List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
-            boolean found = false;
-            for (Folder folder : parents) {
-                if (parent.getId().equals(folder.getId())) {
-                    found = true;
-                    break;
-                }
+        // check parents
+        List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
+        boolean found = false;
+        for (Folder folder : parents) {
+            if (parent.getId().equals(folder.getId())) {
+                found = true;
+                break;
             }
+        }
 
-            if (!found) {
-                addResult(createResult(FAILURE,
-                        "The folder the document has been created in is not in the list of the document parents!"));
-            }
+        if (!found) {
+            addResult(createResult(FAILURE,
+                    "The folder the document has been created in is not in the list of the document parents!"));
         }
 
         return result;
@@ -483,6 +502,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      */
     protected Relationship createRelationship(Session session, String name, ObjectId source, ObjectId target,
             String objectTypeId) {
+        if (name == null) {
+            throw new IllegalArgumentException("Name is not set!");
+        }
+        if (objectTypeId == null) {
+            throw new IllegalArgumentException("Object Type Id is not set!");
+        }
+
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -524,6 +550,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a item.
      */
     protected Item createItem(Session session, Folder parent, String name, String objectTypeId) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Parent is not set!");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name is not set!");
+        }
+        if (objectTypeId == null) {
+            throw new IllegalArgumentException("Object Type Id is not set!");
+        }
+
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -551,20 +587,19 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     e, true));
         }
 
-        if (parent != null) {
-            List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
-            boolean found = false;
-            for (Folder folder : parents) {
-                if (parent.getId().equals(folder.getId())) {
-                    found = true;
-                    break;
-                }
+        // check parents
+        List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
+        boolean found = false;
+        for (Folder folder : parents) {
+            if (parent.getId().equals(folder.getId())) {
+                found = true;
+                break;
             }
+        }
 
-            if (!found) {
-                addResult(createResult(FAILURE,
-                        "The folder the item has been created in is not in the list of the item parents!"));
-            }
+        if (!found) {
+            addResult(createResult(FAILURE,
+                    "The folder the item has been created in is not in the list of the item parents!"));
         }
 
         return result;

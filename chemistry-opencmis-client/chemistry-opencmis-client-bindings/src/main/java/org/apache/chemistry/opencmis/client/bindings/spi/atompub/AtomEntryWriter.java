@@ -28,11 +28,13 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -135,8 +137,10 @@ public class AtomEntryWriter {
 
     /**
      * Writes the entry to an output stream.
+     * 
+     * @throws XMLStreamException
      */
-    public void write(OutputStream out) throws Exception {
+    public void write(OutputStream out) throws XMLStreamException, IOException {
         XMLStreamWriter writer = XMLUtils.createWriter(out);
 
         XMLUtils.startXmlDocument(writer);
@@ -227,7 +231,7 @@ public class AtomEntryWriter {
         return result;
     }
 
-    private void writeContent(XMLStreamWriter writer) throws Exception {
+    private void writeContent(XMLStreamWriter writer) throws XMLStreamException, IOException {
         @SuppressWarnings("resource")
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 

@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.server.impl.atompub;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -98,7 +100,8 @@ public class AtomEntryParser {
     /**
      * Constructor that immediately parses the given stream.
      */
-    public AtomEntryParser(InputStream stream, ThresholdOutputStreamFactory streamFactory) throws Exception {
+    public AtomEntryParser(InputStream stream, ThresholdOutputStreamFactory streamFactory) throws XMLStreamException,
+            IOException {
         this(streamFactory);
         parse(stream);
     }
@@ -189,7 +192,7 @@ public class AtomEntryParser {
     /**
      * Parses the stream.
      */
-    public void parse(InputStream stream) throws Exception {
+    public void parse(InputStream stream) throws XMLStreamException, IOException {
         object = null;
         atomContentStream = null;
         cmisContentStream = null;
@@ -226,7 +229,7 @@ public class AtomEntryParser {
     /**
      * Parses an Atom entry.
      */
-    private void parseEntry(XMLStreamReader parser) throws Exception {
+    private void parseEntry(XMLStreamReader parser) throws XMLStreamException, IOException {
         String atomTitle = null;
 
         XMLUtils.next(parser);
@@ -279,28 +282,31 @@ public class AtomEntryParser {
     /**
      * Parses a CMIS object.
      */
-    private void parseObject(XMLStreamReader parser) throws Exception {
+    private void parseObject(XMLStreamReader parser) throws XMLStreamException {
         object = XMLConverter.convertObject(parser);
     }
 
     /**
      * Parses a CMIS type.
      */
-    private void parseTypeDefinition(XMLStreamReader parser) throws Exception {
+    private void parseTypeDefinition(XMLStreamReader parser) throws XMLStreamException {
         typeDef = XMLConverter.convertTypeDefinition(parser);
     }
 
     /**
      * Parses a bluk update.
      */
-    private void parseBulkUpdate(XMLStreamReader parser) throws Exception {
+    private void parseBulkUpdate(XMLStreamReader parser) throws XMLStreamException {
         bulkUpdate = XMLConverter.convertBulkUpdate(parser);
     }
 
     /**
      * Extract the content stream.
+     * 
+     * @throws XMLStreamException
+     * @throws IOException
      */
-    private void parseAtomContent(XMLStreamReader parser) throws Exception {
+    private void parseAtomContent(XMLStreamReader parser) throws XMLStreamException, IOException {
         atomContentStream = new ContentStreamImpl();
 
         // read attributes
@@ -351,7 +357,7 @@ public class AtomEntryParser {
     /**
      * Extract the content stream.
      */
-    private void parseCmisContent(XMLStreamReader parser) throws Exception {
+    private void parseCmisContent(XMLStreamReader parser) throws XMLStreamException, IOException {
         cmisContentStream = new ContentStreamImpl();
 
         XMLUtils.next(parser);
@@ -396,7 +402,7 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains content bytes.
      */
-    private ThresholdOutputStream readContentBytes(XMLStreamReader parser) throws Exception {
+    private ThresholdOutputStream readContentBytes(XMLStreamReader parser) throws XMLStreamException, IOException {
         ThresholdOutputStream bufferStream = streamFactory.newOutputStream();
 
         XMLUtils.next(parser);
@@ -421,9 +427,14 @@ public class AtomEntryParser {
                     break;
                 }
             }
-        } catch (Exception e) {
-            bufferStream.destroy(); // remove temp file
-            throw e;
+        } catch (XMLStreamException xse) {
+            // remove temp file
+            bufferStream.destroy();
+            throw xse;
+        } catch (IOException ioe) {
+            // remove temp file
+            bufferStream.destroy();
+            throw ioe;
         }
 
         XMLUtils.next(parser);
@@ -434,7 +445,7 @@ public class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private ThresholdOutputStream readBase64(XMLStreamReader parser) throws Exception {
+    private ThresholdOutputStream readBase64(XMLStreamReader parser) throws XMLStreamException, IOException {
         ThresholdOutputStream bufferStream = streamFactory.newOutputStream();
         @SuppressWarnings("resource")
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
@@ -467,9 +478,14 @@ public class AtomEntryParser {
             }
 
             b64stream.close();
-        } catch (Exception e) {
-            bufferStream.destroy(); // remove temp file
-            throw e;
+        } catch (XMLStreamException xse) {
+            // remove temp file
+            bufferStream.destroy();
+            throw xse;
+        } catch (IOException ioe) {
+            // remove temp file
+            bufferStream.destroy();
+            throw ioe;
         }
 
         XMLUtils.next(parser);
@@ -480,7 +496,7 @@ public class AtomEntryParser {
     /**
      * Copies a subtree into a stream.
      */
-    private static byte[] copy(XMLStreamReader parser) throws Exception {
+    private static byte[] copy(XMLStreamReader parser) throws XMLStreamException {
         // create a writer
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
@@ -521,7 +537,7 @@ public class AtomEntryParser {
     /**
      * Copies a XML start element.
      */
-    private static void copyStartElement(XMLStreamReader parser, XMLStreamWriter writer) throws Exception {
+    private static void copyStartElement(XMLStreamReader parser, XMLStreamWriter writer) throws XMLStreamException {
         String namespaceUri = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
         String localName = parser.getLocalName();
@@ -566,7 +582,7 @@ public class AtomEntryParser {
      */
     @SuppressWarnings("unchecked")
     private static void addNamespaceIfMissing(XMLStreamWriter writer, String prefix, String namespaceUri)
-            throws Exception {
+            throws XMLStreamException {
         if ((namespaceUri == null) || (namespaceUri.trim().length() == 0)) {
             return;
         }
@@ -593,7 +609,8 @@ public class AtomEntryParser {
     /**
      * Adds a namespace to a XML element.
      */
-    private static void addNamespace(XMLStreamWriter writer, String prefix, String namespaceUri) throws Exception {
+    private static void addNamespace(XMLStreamWriter writer, String prefix, String namespaceUri)
+            throws XMLStreamException {
         if ((prefix == null) || (prefix.trim().length() == 0)) {
             writer.setDefaultNamespace(namespaceUri);
             writer.writeDefaultNamespace(namespaceUri);

@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -214,7 +215,7 @@ public class FormDataWriter {
         return (contentStream == null ? CONTENT_TYPE_URLENCODED : CONTENT_TYPE_FORMDATA + boundary);
     }
 
-    public void write(OutputStream out) throws Exception {
+    public void write(OutputStream out) throws IOException {
         if (contentStream == null || contentStream.getStream() == null) {
             boolean first = true;
             byte[] amp = "&".getBytes("UTF-8");
@@ -280,11 +281,11 @@ public class FormDataWriter {
         }
     }
 
-    private void writeLine(OutputStream out) throws Exception {
+    private void writeLine(OutputStream out) throws IOException {
         writeLine(out, null);
     }
 
-    private void writeLine(OutputStream out, String s) throws Exception {
+    private void writeLine(OutputStream out, String s) throws IOException {
         s = (s == null ? CRLF : s + CRLF);
         out.write(s.getBytes("UTF-8"));
     }
