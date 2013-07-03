@@ -113,6 +113,7 @@
                                  <replace dir="${targetdir}/start">
                                      <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
                                      <replacefilter token="@version@" value="Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}" />
+                                     <replacefilter token="@versionnummer@" value="${project.version}" />
                                  </replace>
                                  <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
                              </target>
@@ -167,6 +168,23 @@
                                 <descriptor>
                                   src/main/assembly/workbench-cxf-assembly.xml
                                 </descriptor>   
+                            </descriptors>
+                        </configuration>
+                     </execution>
+                    <execution>
+                        <id>mac-workbench</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>true</attach>
+                            <finalName>CMIS Workbench ${project.version}.app</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>
+                                  src/main/assembly/workbench-mac-assembly.xml
+                                </descriptor>  
                             </descriptors>
                         </configuration>
                      </execution>
