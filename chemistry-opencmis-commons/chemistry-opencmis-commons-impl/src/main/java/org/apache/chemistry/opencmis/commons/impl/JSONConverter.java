@@ -2906,6 +2906,10 @@ public final class JSONConverter {
             return (BigDecimal) obj;
         }
 
+        if (obj instanceof BigInteger) {
+            return new BigDecimal((BigInteger) obj);
+        }
+
         return null;
     }
 
