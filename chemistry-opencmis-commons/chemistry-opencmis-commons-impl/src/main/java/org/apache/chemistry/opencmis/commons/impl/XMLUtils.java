@@ -266,7 +266,7 @@ public class XMLUtils {
             int event = parser.getEventType();
             if (event == XMLStreamReader.END_ELEMENT) {
                 break;
-            } else if (event == XMLStreamReader.CHARACTERS) {
+            } else if (event == XMLStreamReader.CHARACTERS || event == XMLStreamReader.CDATA) {
                 int len = parser.getTextLength();
                 if (len > 0) {
                     if (sb.length() + len > maxLength) {
