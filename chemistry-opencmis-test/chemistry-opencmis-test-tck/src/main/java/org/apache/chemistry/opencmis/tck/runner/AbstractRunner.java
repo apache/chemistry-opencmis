@@ -44,6 +44,8 @@ public abstract class AbstractRunner {
     public static final String DEFAULT_TCK_GROUPS = "/cmis-tck-groups.txt";
     public static final String TCK_BUILD_TIMESTAMP = "/META-INF/build-timestamp.txt";
     public static final String TCK_BUILD_TIMESTAMP_PARAMETER = "org.apache.chemistry.opencmis.tck.timestamp";
+    public static final String TCK_REVISION = "/META-INF/tck-revision.txt";
+    public static final String TCK_REVISION_PARAMETER = "org.apache.chemistry.opencmis.tck.revision";
 
     private Map<String, String> parameters;
     private final List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
@@ -66,8 +68,12 @@ public abstract class AbstractRunner {
             parameters.put(key.toString(), System.getProperties().getProperty(key.toString()));
         }
 
-        // set TCK build timestamp
+        // set TCK build timestamp and revision
         parameters.put(TCK_BUILD_TIMESTAMP_PARAMETER, loadTCKTimestamp());
+        String revision = loadTCKRevision();
+        if (revision != null) {
+            parameters.put(TCK_REVISION_PARAMETER, revision);
+        }
     }
 
     public void loadParameters(File file) throws IOException {
@@ -138,6 +144,30 @@ public abstract class AbstractRunner {
         }
 
         return result.toString();
+    }
+
+    private String loadTCKRevision() {
+        String result = null;
+
+        InputStream stream = getClass().getResourceAsStream(TCK_REVISION);
+        if (stream != null) {
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+                result = br.readLine();
+                br.close();
+            } catch (Exception e) {
+            }
+
+            if (result != null) {
+                try {
+                    result = String.valueOf(Integer.parseInt(result.trim()));
+                } catch (NumberFormatException nfe) {
+                    result = null;
+                }
+            }
+        }
+
+        return result;
     }
 
     // --- groups ---

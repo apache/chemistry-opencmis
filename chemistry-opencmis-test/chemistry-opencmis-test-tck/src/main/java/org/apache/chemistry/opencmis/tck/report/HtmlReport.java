@@ -38,6 +38,7 @@ public class HtmlReport extends CoreHtmlReport {
         writer.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n");
         writer.write("<html><head>\n<title>OpenCMIS TCK Report</title>\n");
         printStyle(writer);
+        printJavaScript(writer);
         writer.write("</head><body>\n");
 
         super.createReport(parameters, groups, writer);
