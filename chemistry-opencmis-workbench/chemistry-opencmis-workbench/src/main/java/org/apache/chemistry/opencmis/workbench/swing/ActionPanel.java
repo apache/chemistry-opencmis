@@ -101,9 +101,9 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
         createActionComponents();
 
-        JButton deleteButton = new JButton(buttonLabel);
-        deleteButton.addActionListener(this);
-        add(deleteButton, BorderLayout.PAGE_END);
+        JButton actionButton = new JButton(buttonLabel);
+        actionButton.addActionListener(this);
+        add(actionButton, BorderLayout.PAGE_END);
 
         setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
     }
@@ -117,6 +117,7 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            ((JButton) e.getSource()).requestFocusInWindow();
             if (doAction()) {
                 model.reloadObject();
             }
