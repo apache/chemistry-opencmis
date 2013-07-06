@@ -44,6 +44,7 @@ public class CmisWebServicesSpi implements CmisSpi {
     public static final String JAXWS_IMPL_JRE = "sunjre";
     public static final String JAXWS_IMPL_CXF = "cxf";
     public static final String JAXWS_IMPL_WEBSPHERE = "websphere";
+    public static final String JAXWS_IMPL_AXIS2 = "axis2";
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisWebServicesSpi.class);
 
@@ -83,6 +84,8 @@ public class CmisWebServicesSpi implements CmisSpi {
                 portProvider = new CXFPortProvider();
             } else if (JAXWS_IMPL_WEBSPHERE.equals(jaxwsImpl)) {
                 portProvider = new WebSpherePortProvider();
+            } else if (JAXWS_IMPL_AXIS2.equals(jaxwsImpl)) {
+                portProvider = new Axis2PortProvider();
             } else {
                 throw new CmisRuntimeException("Unknown JAX-WS implementation specified!");
             }

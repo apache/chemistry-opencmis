@@ -112,7 +112,13 @@
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf.version}</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${axis2.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     
 </project>
