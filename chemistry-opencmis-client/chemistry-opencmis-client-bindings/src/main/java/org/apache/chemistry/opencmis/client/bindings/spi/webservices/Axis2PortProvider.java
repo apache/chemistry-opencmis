@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.MTOMFeature;
 
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.Stub;
+import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -62,7 +63,6 @@ public class Axis2PortProvider extends AbstractPortProvider {
         try {
             // create port object
             BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, new MTOMFeature());
-            ServiceClient serviceClient = ((Stub) portObject)._getServiceClient();
 
             // add SOAP and HTTP authentication headers
             AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
@@ -77,17 +77,10 @@ public class Axis2PortProvider extends AbstractPortProvider {
                     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                     transformer.transform(new DOMSource(soapHeader), new StreamResult(headerXml));
 
-                    serviceClient.addStringHeader(new QName(soapHeader.getNamespaceURI(), soapHeader.getLocalName()),
-                            headerXml.toString());
-                    /*
-                     * Map<QName, List<String>> header = new HashMap<QName,
-                     * List<String>>(); header.put(new
-                     * QName(soapHeader.getNamespaceURI(),
-                     * soapHeader.getLocalName()),
-                     * Collections.singletonList(headerXml.toString()));
-                     * portObject.getRequestContext().put(
-                     * "jaxws.binding.soap.headers.outbound", header);
-                     */
+                    Map<QName, List<String>> header = new HashMap<QName, List<String>>();
+                    header.put(new QName(soapHeader.getNamespaceURI(), soapHeader.getLocalName()),
+                            Collections.singletonList(headerXml.toString()));
+                    portObject.getRequestContext().put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, header);
                 }
 
                 // HTTP header
@@ -107,18 +100,17 @@ public class Axis2PortProvider extends AbstractPortProvider {
             setEndpointUrl(portObject, serviceHolder.getEndpointUrl());
 
             // HTTP settings
-            serviceClient.getOptions().setProperty(HTTPConstants.REUSE_HTTP_CLIENT, "true");
+            portObject.getRequestContext().put(HTTPConstants.REUSE_HTTP_CLIENT, "true");
 
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
             if (connectTimeout >= 0) {
-                serviceClient.getOptions().setProperty(HTTPConstants.CONNECTION_TIMEOUT,
-                        Integer.valueOf(connectTimeout));
+                portObject.getRequestContext().put(HTTPConstants.CONNECTION_TIMEOUT, Integer.valueOf(connectTimeout));
             }
 
             int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
-                serviceClient.getOptions().setProperty(HTTPConstants.SO_TIMEOUT, Integer.valueOf(readTimeout));
+                portObject.getRequestContext().put(HTTPConstants.SO_TIMEOUT, Integer.valueOf(readTimeout));
             }
 
             return portObject;

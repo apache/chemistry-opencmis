@@ -115,7 +115,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
+            <artifactId>axis2-jaxws</artifactId>
             <version>${axis2.version}</version>
             <scope>provided</scope>
         </dependency>
