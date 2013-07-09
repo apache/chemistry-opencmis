@@ -95,6 +95,9 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         if (contentStream != null && contentStream.getStream() == null)
             contentStream = null;
 
+        if (null == major) 
+            major = true;
+        
         verDoc.checkIn(major, properties, contentStream, checkinComment, policies, user);
 
         // To be able to provide all Atom links in the response we need

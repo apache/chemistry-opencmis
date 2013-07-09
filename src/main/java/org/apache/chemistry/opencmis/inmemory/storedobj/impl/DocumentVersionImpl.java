@@ -52,7 +52,6 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     private String fComment; // checkin comment
     boolean fIsMajor;
     boolean fIsPwc; // true if this is the PWC
-    String label;
 
     public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
             VersioningState verState, ObjectStoreImpl objStore) {
@@ -70,8 +69,6 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
                 fProperties.put(prop.getKey(), prop.getValue());
             }
         }
-
-        label = createVersionLabel();
     }
 
     @Override
@@ -119,7 +116,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
 
     private String createVersionLabel() {
-        int majorNo = 1;
+        int majorNo = 0;
         int minorNo = 0;
         List<DocumentVersion> allVersions = fContainer.getAllVersions();
         for (DocumentVersion ver : allVersions) {
@@ -133,7 +130,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
                 break;
             }
         }
-        String label = "V " + majorNo + "." + minorNo;
+        String label = majorNo + "." + minorNo;
         return label;
     }
 
@@ -317,7 +314,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 
     @Override
 	public String getVersionLabel() {
-        return label;
+        return createVersionLabel();
     }
 
     @Override
