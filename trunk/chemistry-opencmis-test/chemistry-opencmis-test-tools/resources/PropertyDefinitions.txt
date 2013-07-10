@@ -1,0 +1,630 @@
+#property definitions
+string
+Artist
+artist;artist;apache
+Artist
+single, readwrite, optional, true, true
+
+string
+Album
+album;album;apache
+title
+single, readwrite, optional, true, true
+
+string
+Title
+title;title;apache
+Title
+single, readwrite, optional, true, true
+
+string
+Comment
+comment;comment;apache
+Comment
+single, readwrite, optional, false, false
+
+string
+Genre
+genre;genre;apache
+Genre
+single, readwrite, optional, true, true
+
+integer
+Length
+length;length;apache
+Length in seconds
+single, readwrite, optional, false, false
+
+integer
+Track
+track;track;apache
+Track in album
+single, readwrite, optional, true, true
+
+string
+Year
+year;year;apache
+release date of albun
+single, readwrite, optional, true, true
+
+string
+Composer
+composer;composer;apache
+Composer
+single, readwrite, optional, true, true
+
+string
+Disc Number
+discNo;discNo;apache
+number of disc / total discs
+single, readwrite, optional, false, false
+
+string
+Audio Format
+audioFormat;audioFormat;apache
+Audio Format / compression scheme
+single, readwrite, optional, false, false
+
+integer
+Sample Rate
+sampleRate;sampleRate;apache
+Sample Rate
+single, readwrite, optional, false, false
+
+string enum: Mono=Mono;Stereo=Stereo;5.1=5.1;7.1=7.1
+Audio Channel Type
+audioChannelType;audioChannelType;apache
+audio channel type
+single, readwrite, optional, false, false
+
+integer
+Number Channels
+noChannels;noChannels;apache
+number of audio channels
+single, readwrite, optional, false, false
+
+string
+Compressor Version
+compressorVersion;compressorVersion;apache
+version description of compressor
+single, readwrite, optional, false, false
+
+string
+Message Recipient Address
+messageRecipientAddress;messageRecipientAddress;apache
+Message Recipient Address
+single, readwrite, optional, true, true
+
+string
+From
+from;from;apache
+sender of message
+single, readwrite, optional, true, true
+
+string
+To
+to;to;apache
+recipients of message
+multi, readwrite, optional, true, true
+
+string
+Cc
+cc;cc;apache
+carbon copy recipients of message
+multi, readwrite, optional, true, true
+
+string
+Bcc
+bcc;bcc;apache
+blind carbon copy recipients of message
+multi, readwrite, optional, false, false
+
+string
+Subject
+subject;subject;apache
+subjet of message
+single, readwrite, optional, true, true
+
+datetime
+Creation Date
+creationDate;creationDate;apache
+Creation Date
+single, readwrite, optional, false, false
+
+datetime
+Last Save Date
+lastSaveDate;lastSaveDate;apache
+Last Save Date
+single, readwrite, optional, false, false
+
+integer
+Image Width
+imageWidth;0x0100;apache;
+Image Width
+single, oncreate, optional, false, false
+
+integer
+Image Height
+imageHeight;0x0101;apache
+Image Height
+single, oncreate, optional, false, false
+
+integer
+Bits Per Sample
+bitsPerSample;0x0102;apache
+Bits Per Sample
+single, oncreate, optional, false, false
+
+integer enum: 1=Uncompressed;2=CCITT 1D;3=T4/Group 3 Fax;4=T6/Group 4 Fax;5=LZW;6=JPEG (old-style);7=JPEG;8=Adobe Deflate;9=JBIG BW;10=JBIG Color;99=JPEG;262=Kodak 262;32766=Next;32767=Sony ARW Compressed;32769=Packed RAW;32770=Samsung SRW Compressed;32771=CCIRLEW;32773=PackBits;32809=Thunderscan;32867=Kodak KDC Compressed;32895=IT8CTPAD;32896=IT8LW;32897=IT8MP;32898=IT8BL;32908=PixarFilm;32909=PixarLog;32946=Deflate;32947=DCS;34661=JBIG;34676=SGILog;34677=SGILog24;34712=JPEG 2000;34713=Nikon NEF Compressed;34715=JBIG2 TIFF FX;34718=Microsoft Document Imaging (MDI) Binary Level Codec;34719=Microsoft Document Imaging (MDI) Progressive Transform Codec;34720=Microsoft Document Imaging (MDI) Vector;65000=Kodak DCR Compressed;65535=Pentax PEF Compressed
+Compression
+compression;0x0103;apache
+Compression Format
+single, oncreate, optional, false, false
+
+integer enum: 0=WhiteIsZero;1=BlackIsZero;2=RGB;3=RGB Palette;4=Transparency Mask;5=CMYK;6=YCbCr;8=CIELab;9=ICCLab;10=ITULab;32803=Color Filter Array;32844=Pixar LogL;32845=Pixar LogLuv;34892=Linear Raw
+Photometric Interpretation
+photometricInterpretation;0x0106
+Color Format
+single, oncreate, optional, false, false
+
+string
+Image Description
+imageDescription;0x010e;apache
+Description
+single, readwrite, optional, true, true
+	 
+string
+Make
+make;0x010f;apache
+Camera Make
+single, readwrite, optional, true, true
+
+string
+Model
+model;0x0110;apache
+Camera Model
+single, readwrite, optional, true, true
+
+integer enum: 1=Horizontal (normal);2=Mirror horizontal;3=Rotate 180;4=Mirror vertical;5=Mirror horizontal and rotate 270 CW;6=Rotate 90 CW;7=Mirror horizontal and rotate 90 CW;8=Rotate 270 CW
+Orientation
+orientation;0x0112;apache
+Orientation
+single, readwrite, optional, false, false
+
+decimal
+X Resolution
+xResolution;0x011a;apache
+xresolution
+single, readwrite, optional, false, false
+
+decimal
+Y Resolution
+yResolution;0x011b;apache
+yresolution
+single, readwrite, optional, false, false
+
+integer enum: 1=None;2=inches;3=cm
+Resolution Unit
+resolutionUnit;0x0128;apache
+Resolution Unit
+single, readwrite, optional, false, false
+
+string
+Software
+software;0x0131;apache
+Software
+single, readwrite, optional, false, false
+
+datetime
+Modify Date
+modifyDate;0x0132;apache
+Modify Date
+single, readwrite, optional, false, false
+
+string
+Artist
+artist;0x013b;apache
+Artist
+single, readwrite, optional, true, true
+
+integer enum: 1=Centered;2=Co-sited
+YCbCrPositioning
+yCbCrPositioning;0x0213;apache
+YCbCr Positioning
+single, readwrite, optional, false, false
+
+string
+Copyright
+copyright;0x8298;apache
+Copyright Notice
+single, readwrite, optional, false, false
+
+decimal
+Exposure Time
+exposureTime;0x829a;apache
+Exposure Time
+single, oncreate, optional, false, false
+
+decimal
+F Number
+fNumber;0x829d;apache
+F-Stop Number
+single, oncreate, optional, false, false
+
+integer enum: 0=Not Defined;1=Manual;2=Program AE;3=Aperture-priority AE;4=Shutter speed priority AE;5=Creative (Slow speed);6=Action (High speed);7=Portrait;8=Landscape;9=Bulb
+Exposure Program
+exposureProgram;0x8822;apache
+Exposure Program
+single, oncreate, optional, false, false
+
+integer
+ISO Speed
+isoSpeed;0x8827;apache
+ISO Speed Setting
+single, oncreate, optional, true, true
+
+decimal
+GPS Latitude
+gpsLatitude;0x8825-0x0002;apache
+GPS Latitude
+single, readwrite, optional, true, true
+
+string	enum: N=North;S=South
+GPS Latitude Ref
+gpsLatitudeRef;0x8825-0x0001;apache
+GPS Latitude Reference (N/S)
+single, readwrite, optional, true, true
+
+decimal
+GPS Longitude
+gpsLongitude;0x8825-0x0004;apache
+GPS Longitude
+single, readwrite, optional, true, true
+
+string enum: E=East;W=West
+GPS Longitude Ref
+gpsLongitudeRef;0x8825-0x0003;apache
+GPS Longitude Reference (W/E)
+single, readwrite, optional, true, true
+
+decimal
+GPS Altitude
+gpsAltitude;0x8825-0x0006;apache
+GPS Altitude
+single, readwrite, optional, true, true
+
+string enum: 0=Above Sea Level;1=Below Sea Level
+GPS Altitude Ref
+gpsAltitudeRef;0x8825-0x0005;apache
+GPS Altitude Reference
+single, readwrite, optional, true, true
+
+integer
+Self Timer Mode
+selfTimerMode;0x882b;apache
+Self Timer Mode
+single, readwrite, optional, false, false
+
+integer
+Time Zone Offset
+timeZoneOffset;0x882a;apache
+Time Zone Offset (GMT offset in hours)
+multi, readwrite, optional, false, false
+	
+datetime
+Date Time Original
+dateTimeOriginal;0x9003;apache
+date/time when original image was taken
+single, readwrite, optional, false, false
+
+datetime
+Create Date
+createDate;0x9004;apache
+date/time digitized
+single, readwrite, optional, true, true
+
+decimal
+Shutter Speed Value
+shutterSpeedValue;0x9201;apache
+shutter speed value
+single, readwrite, optional, false, false
+
+decimal
+Aperture Value
+apertureValue;0x9202;apache
+Aperture Value
+single, readwrite, optional, false, false
+
+decimal
+Brightness Value
+brightnessValue;0x9203;apache
+Brightness Value
+single, readwrite, optional, false, false
+
+decimal
+Exposure Compensation
+exposureCompensation;0x9204;apache
+Exposure Compensation
+single, readwrite, optional, false, false
+
+decimal
+Max Aperture Value 	
+maxApertureValue;0x9205;apache
+Max Aperture Value 	
+single, readwrite, optional, false, false
+
+integer enum:0=Unknown;1=Average;2=Center-weighted average;3=Spot;4=Multi-spot;5=Multi-segment;6=Partial;255=Other
+Metering Mode
+meteringMode;0x9207;apache
+metering mode
+single, readwrite, optional, false, false
+
+decimal
+Subject Distance
+subjectDistance;0x9206;apache
+subject distance
+single, readwrite, optional, false, false
+
+integer
+Light Source
+lightSource;0x9208;apache
+light source value
+single, readwrite, optional, false, false
+
+integer
+Flash
+flash;0x9209;apache
+Flash Setting
+single, readwrite, optional, false, false
+
+decimal
+Focal Length
+focalLength;0x920a;apache
+focal length
+single, readwrite, optional, true, true
+
+string 
+User Comment
+userComment;0x9286;apache
+user comment
+single, readwrite, optional, true, true
+
+integer enum: 1=sRGB;2=Adobe RGB;65533=Wide Gamut RGB;65534=ICC Profile;65535=Uncalibrated
+Color Space
+colorSpace;0xa001;apache
+color space
+single, readwrite, optional, false, false
+
+integer
+PixelXDimension
+pixelXDimension;0xa002;apache
+dimension in pixel x
+single, readwrite, optional, false, false
+
+integer
+PixelYDimension
+pixelYDimension;0xa003;apache
+dimension in pixel y
+single, readwrite, optional, false, false
+
+integer enum: 0=Auto;1=Manual;2=Auto bracket
+Exposure Mode
+exposureMode;0xa402;apache
+Exposure Mode
+single, readwrite, optional, false, false
+
+integer enum: 0=Auto;1=Manual
+White Balance
+whiteBalance;0xa403;apache
+white balance
+single, readwrite, optional, false, false
+
+integer enum: 0=Standard;1=Landscape;2=Portrait;3=Night
+Scene Capture Type
+sceneCaptureType;0xa406;apache
+Scene Capture Type
+single, readwrite, optional, false, false
+
+id
+Image Unique Id
+imageUniqueId;0xa420;apache
+Image Unique Id
+single, readwrite, optional, false, false
+
+string
+Owner Name
+ownerName;0xa430;apache
+Owner Name
+single, readwrite, optional, true, true
+
+string
+Serial Number
+serialNumber;0xa431;apache
+serial number
+single, readwrite, optional, true, true
+
+integer
+Rating
+rating;0x4746;apache
+rating value
+single, readwrite, optional, false, false
+
+integer
+Rating Percent
+ratingPercent;0x4749;apache
+rating percent
+single, readwrite, optional, false, false
+
+integer
+Data Precision
+dataPrecision;0x0000;apache
+JPEG Data Precision
+single, readwrite, optional, false, false
+
+string
+Application Name
+applicationName;applicationName;apache
+Application Name
+single, readwrite, optional, true, true
+
+string
+Application Version
+applicationVersion;applicationVersion;apache
+Application Version
+single, readwrite, optional, false, false
+
+string
+Author
+author;author;apache
+Author
+single, readwrite, optional, true, true
+
+string
+Category
+category;category;apache
+Category
+single, readwrite, optional, true, true
+
+string
+Content Status
+contentStatus;contentStatus;apache
+Content Status
+single, readwrite, optional, false, false
+
+string
+Comments
+comments;comments;apache
+Comments
+single, readwrite, optional, true, true
+
+string
+Company
+company;company;apache
+Company
+single, readwrite, optional, true, true
+
+string
+Keywords
+keywords;keywords;apache
+Keywords
+multiple, readwrite, optional, true, true
+
+string
+Last Author
+lastAuthor;lastAuthor;apache
+Last Author
+single, readwrite, optional, false, false
+
+string
+Manager
+manager;manager;apache
+Manager
+single, readwrite, optional, false, false
+
+string
+Notes
+notes;notes;apache
+Notes
+single, readwrite, optional, false, false
+
+string
+Presentation Format
+presentationFormat;presentationFormat;apache
+Presentation Format
+single, readwrite, optional, false, false
+
+string
+Revision Number
+revisionNumber;revisionNumber;apache
+Revision Number
+single, readwrite, optional, false, false
+
+string
+Template
+template;template;apache
+Template
+single, readwrite, optional, false, false
+
+string
+Version
+version;version;apache
+Version
+single, readwrite, optional, false, false
+
+integer
+Character Count
+characterCount;characterCount;apache
+Character Count
+single, readwrite, optional, false, false
+
+integer
+Character Count With Spaces
+characterCountWithSpaces;characterCountWithSpaces;apache
+Character Count With Spaces
+single, readwrite, optional, false, false
+
+integer
+Word Count
+wordCount;wordCount;apache
+Word Count
+single, readwrite, optional, false, false
+
+integer
+Line Count
+lineCount;lineCount;apache
+Line Count
+single, readwrite, optional, false, false
+
+integer
+Page Count
+pageCount;pageCount;apache
+Page Count
+single, readwrite, optional, true, true
+
+integer
+Slide Count
+slideCount;slideCount;apache
+Slide Count
+single, readwrite, optional, true, true
+
+integer
+Paragraph Count
+paragraphCount;paragraphCount;apache
+Paragraph Count
+single, readwrite, optional, false, false
+
+string
+Total Time
+totalTime;totalTime;apache
+Total Time
+single, readwrite, optional, false, false
+
+string
+Edit Time
+editTime;editTime;apache
+Edit Time
+single, readwrite, optional, false, false
+
+datetime
+Last Save Date
+lastSaveDate;lastSaveDate;apache
+Last Save Date
+single, readwrite, optional, false, false
+
+string
+Last Printed
+lastPrinted;lastPrinted;apache
+Last Printed
+single, readwrite, optional, false, false
+
+string
+Creator
+creator;creator;apache
+creator of document
+single, readwrite, optional, true, true
+
+string
+Trapped
+trapped;trapped;apache
+trapped
+single, readwrite, optional, false, false

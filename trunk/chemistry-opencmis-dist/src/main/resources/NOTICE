@@ -1,0 +1,9 @@
+Chemistry OpenCMIS distribution package
+
+For a complete listing of License Notices for 3rd party libraries shipped by JARs/WARs contained in this package,
+please refer to the META-INF/NOTICE file contained in each OpenCMIS artifact.
+
+OpenCMIS contains code from the following Open Source projects:
+- Apache Harmony <http://http://harmony.apache.org/> (Apache License 2.0)
+- Base64 <http://iharder.net/base64> (Public Domain)
+- JSON.simple <http://code.google.com/p/json-simple/> (Apache License 2.0)

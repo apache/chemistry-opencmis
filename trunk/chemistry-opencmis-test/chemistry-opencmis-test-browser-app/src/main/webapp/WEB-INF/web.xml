@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License. 
+-->
+<web-app id="OpenCMISBrowserID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<display-name>OpenCMIS Browser</display-name>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>browse</servlet-name>
+		<servlet-class>org.apache.chemistry.opencmis.browser.BrowseServlet</servlet-class>
+		<init-param>
+			<param-name>auxroot</param-name>
+			<param-value>{ctx}/browser/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>allow</param-name>
+			<param-value>http.*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/atomsvc+xml</param-name>
+			<param-value>/WEB-INF/stylesheets/service.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/atom+xml;type=feed</param-name>
+			<param-value>/WEB-INF/stylesheets/feed.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/cmistree+xml</param-name>
+			<param-value>/WEB-INF/stylesheets/feed.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/atom+xml;type=entry</param-name>
+			<param-value>/WEB-INF/stylesheets/entry.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/cmisallowableactions+xml</param-name>
+			<param-value>/WEB-INF/stylesheets/actions.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>stylesheet:application/cmisacl+xml</param-name>
+			<param-value>/WEB-INF/stylesheets/acl.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:renditions</param-name>
+			<param-value>/WEB-INF/stylesheets/renditions.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:relationships</param-name>
+			<param-value>/WEB-INF/stylesheets/relationships.xsl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>override-stylesheet:thumbnails</param-name>
+			<param-value>/WEB-INF/stylesheets/thumbnails.xsl</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>browse</servlet-name>
+		<url-pattern>/browse</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+</web-app>

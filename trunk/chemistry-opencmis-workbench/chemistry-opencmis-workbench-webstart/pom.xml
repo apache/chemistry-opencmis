@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.chemistry.opencmis</groupId>
+        <artifactId>chemistry-opencmis</artifactId>
+        <version>0.5.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>chemistry-opencmis-workbench-webstart</artifactId>
+    <name>OpenCMIS Workbench WebStart</name>
+    <packaging>war</packaging>
+
+    <properties>
+        <parentBasedir>../../</parentBasedir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Java 6 is required due to AWT dependencies -->
+        <maven.compile.source>1.6</maven.compile.source>
+        <maven.compile.target>1.6</maven.compile.target>
+    </properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo.webstart</groupId>
+				<artifactId>webstart-maven-plugin</artifactId>
+				<version>1.0-beta-1</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>jnlp-download-servlet</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<outputDirectoryName>workbench</outputDirectoryName>
+					<libPath>lib</libPath>
+
+					<jnlpFiles>
+						<jnlpFile>
+							<templateFilename>workbench.vm</templateFilename>
+							<outputFilename>CMISWorkbench.jnlp</outputFilename>
+							<jarResources>
+								<jarResource>
+									<groupId>org.apache.chemistry.opencmis</groupId>
+									<artifactId>chemistry-opencmis-workbench</artifactId>
+						            <version>${project.version}</version>
+									<mainClass>org.apache.chemistry.opencmis.workbench.Workbench</mainClass>
+								</jarResource>
+							</jarResources>
+						</jnlpFile>
+					</jnlpFiles>
+
+					<outputJarVersions>true</outputJarVersions>
+
+                    <pack200>true</pack200>
+                    <gzip>true</gzip>
+
+                    <sign>
+                        <keystore>${project.build.directory}/keystore</keystore>
+                        <keypass>password</keypass>
+                        <storepass>password</storepass>
+                        <alias>webstart</alias>
+
+                        <validity>365</validity>
+                        <dnameCn>OpenCMIS Development Team</dnameCn>
+                        <dnameOu>Apache Chemistry OpenCMIS</dnameOu>
+                        <dnameO>The Apache Software Foundation</dnameO>
+
+                        <verify>true</verify>
+
+                        <keystoreConfig>
+                            <delete>true</delete>
+                            <gen>true</gen>
+                        </keystoreConfig>
+                    </sign>
+
+				</configuration>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Web-ContextPath>/org.apache.chemistry.opencmis.workbench</Web-ContextPath>
+							<Timestamp>${maven.build.timestamp}</Timestamp>
+							<BuildHost>${env.COMPUTERNAME}</BuildHost>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.mojo.webstart</groupId>
+			<artifactId>webstart-jnlp-servlet</artifactId>
+			<version>1.0-6.0.02_ea_b02.1</version>
+		</dependency>
+	</dependencies>
+
+</project>
