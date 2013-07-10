@@ -69,7 +69,7 @@ public class InfoDialog extends JDialog {
 
         StringBuilder readme = new StringBuilder();
 
-        readme.append(loadText("/META-INF/README", "CMIS Workbench"));
+        readme.append(loadText("/META-INF/README-cmis-workbench.txt", "CMIS Workbench"));
         readme.append("\n---------------------------------------------------------\n");
 
         readme.append("\nCurrent System Properties:\n\n");

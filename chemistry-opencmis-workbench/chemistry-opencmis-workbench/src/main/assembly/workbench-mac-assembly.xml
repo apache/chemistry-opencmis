@@ -64,6 +64,7 @@
             <scope>runtime</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
                 <exclude>junit:junit</exclude>
                 <exclude>org.apache.felix:org.osgi.core</exclude>
             </excludes>
@@ -75,11 +76,9 @@
             <scope>provided</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>wsdl4j</exclude>
-                <exclude>org.apache.cxf</exclude>
-                <exclude>org.apache.axis2</exclude>
-                <exclude>org.apache:apache-jar-resource-bundle</exclude>
+                <exclude>org.apache.cxf:*</exclude>
+                <exclude>org.apache.axis2:*</exclude>
+                <exclude>wsdl4j:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

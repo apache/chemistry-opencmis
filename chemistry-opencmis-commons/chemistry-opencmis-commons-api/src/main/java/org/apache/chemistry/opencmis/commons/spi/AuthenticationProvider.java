@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import javax.xml.ws.handler.HandlerResolver;
 
 import org.w3c.dom.Element;
 
@@ -55,6 +56,15 @@ public interface AuthenticationProvider extends Serializable {
      *         should be set
      */
     Element getSOAPHeaders(Object portObject);
+
+    /**
+     * Returns a {@link HandlerResolver} object that provides a list of SOAP
+     * handlers.
+     * 
+     * @return the HandlerResolver or <code>null</code> if no handlers should be
+     *         set
+     */
+    HandlerResolver getHandlerResolver();
 
     /**
      * Returns the SSL Socket Factory to be used when creating sockets for HTTPS

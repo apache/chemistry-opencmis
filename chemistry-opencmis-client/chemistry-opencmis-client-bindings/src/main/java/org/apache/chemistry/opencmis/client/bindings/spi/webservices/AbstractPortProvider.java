@@ -41,6 +41,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPException;
 
@@ -173,7 +174,7 @@ public abstract class AbstractPortProvider {
         }
     }
 
-    static class CmisServiceHolder {
+    class CmisServiceHolder {
         private final CmisWebSerivcesService service;
         private SoftReference<Service> serviceObject;
         private final URL endpointUrl;
@@ -196,7 +197,17 @@ public abstract class AbstractPortProvider {
                 LOG.debug("WSDL URL: " + wsdlUrl.toExternalForm());
             }
 
-            return serviceConstructor.newInstance(new Object[] { wsdlUrl, service.getQName() });
+            Service newService = serviceConstructor.newInstance(new Object[] { wsdlUrl, service.getQName() });
+
+            AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
+            if (authProvider != null) {
+                HandlerResolver handlerResolver = authProvider.getHandlerResolver();
+                if (handlerResolver != null) {
+                    newService.setHandlerResolver(handlerResolver);
+                }
+            }
+
+            return newService;
         }
 
         public CmisWebSerivcesService getService() {

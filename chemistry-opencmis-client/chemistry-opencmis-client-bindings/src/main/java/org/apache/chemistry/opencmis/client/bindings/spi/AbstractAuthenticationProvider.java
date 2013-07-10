@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import javax.xml.ws.handler.HandlerResolver;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.w3c.dom.Element;
@@ -55,6 +56,10 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     }
 
     public Element getSOAPHeaders(Object portObject) {
+        return null;
+    }
+
+    public HandlerResolver getHandlerResolver() {
         return null;
     }
 

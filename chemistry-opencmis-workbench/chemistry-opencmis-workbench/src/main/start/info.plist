@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>CMIS Workbench @versionnummer@</string>
+    <string>CMIS Workbench @versionnumber@</string>
     <key>CFBundleIdentifier</key>
     <string>org.apache.chemistry.opencmis.workbench</string>
     <key>CFBundleExecutable</key>
@@ -17,6 +17,6 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>@versionnummer@</string>
+    <string>@versionnumber@</string>
 </dict>
 </plist>
