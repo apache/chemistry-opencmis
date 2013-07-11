@@ -2314,7 +2314,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results, cpd.check(type));
 
                     // cmis:secondaryObjectTypeIds
-                    cpd = new CmisPropertyDefintion(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, null, PropertyType.ID,
+                    cpd = new CmisPropertyDefintion(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, false, PropertyType.ID,
                             Cardinality.MULTI, null, null, false);
                     addResult(results, cpd.check(type));
 
