@@ -273,6 +273,7 @@ public class MimeTypes {
         MIME2EXT.put("application/pdf", "pdf");
         MIME2EXT.put("application/pics-rules", "prf");
         MIME2EXT.put("application/pkcs10", "p10");
+        MIME2EXT.put("application/pkix-cert", "cer");
         MIME2EXT.put("application/pkix-crl", "crl");
         MIME2EXT.put("application/postscript", "ps");
         MIME2EXT.put("application/rtf", "rtf");
@@ -322,6 +323,9 @@ public class MimeTypes {
         MIME2EXT.put("application/x-hdf", "hdf");
         MIME2EXT.put("application/x-internet-signup", "isp");
         MIME2EXT.put("application/x-iphone", "iii");
+        MIME2EXT.put("application/x-iwork-keynote-sffkey", "key");
+        MIME2EXT.put("application/x-iwork-numbers-sffnumber", "numbers");
+        MIME2EXT.put("application/x-iwork-pages-sffpages", "pages");
         MIME2EXT.put("application/x-javascript", "js");
         MIME2EXT.put("application/x-latex", "latex");
         MIME2EXT.put("application/x-msaccess", "mdb");
@@ -367,6 +371,7 @@ public class MimeTypes {
         MIME2EXT.put("audio/mpeg", "mp3");
         MIME2EXT.put("audio/ogg", "ogg");
         MIME2EXT.put("audio/x-aiff", "aif");
+        MIME2EXT.put("audio/x-m4a", "m4a");
         MIME2EXT.put("audio/x-mpegurl", "m3u");
         MIME2EXT.put("audio/x-ms-wax", "wax");
         MIME2EXT.put("audio/x-ms-wma", "wma");
