@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.cookies.CmisCookieManager;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
@@ -45,8 +46,8 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
     private static final long serialVersionUID = 1L;
 
-    private static final String WSSE_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
-    private static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+    protected static final String WSSE_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+    protected static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
     private boolean sendBasicAuth;
     private boolean sendUsernameToken;
@@ -57,14 +58,14 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     public void setSession(BindingSession session) {
         super.setSession(session);
 
-        sendBasicAuth = isTrue(SessionParameter.AUTH_HTTP_BASIC);
-        sendUsernameToken = isTrue(SessionParameter.AUTH_SOAP_USERNAMETOKEN);
+        sendBasicAuth = getSendBasicAuth();
+        sendUsernameToken = getSendUsernameToken();
 
-        if (isTrue(SessionParameter.COOKIES)) {
+        if (getHandleCookies()) {
             cookieManager = new CmisCookieManager();
         }
 
-        // authentication
+        // basic authentication
         if (sendBasicAuth) {
             // get user and password
             String user = getUser();
@@ -74,39 +75,19 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             if (user != null) {
                 fixedHeaders.put("Authorization", createBasicAuthHeaderValue(user, password));
             }
+        }
 
+        // proxy authentication
+        if (getProxyUser() != null) {
             // get proxy user and password
             String proxyUser = getProxyUser();
             String proxyPassword = getProxyPassword();
 
-            // if no proxy user is set, don't set basic auth header
-            if (proxyUser != null) {
-                fixedHeaders.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
-            }
+            fixedHeaders.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
         }
 
         // other headers
-        int x = 0;
-        Object headerParam;
-        while ((headerParam = getSession().get(SessionParameter.HEADER + "." + x)) != null) {
-            String header = headerParam.toString();
-            int colon = header.indexOf(':');
-            if (colon > -1) {
-                String key = header.substring(0, colon).trim();
-                if (key.length() > 0) {
-                    String value = header.substring(colon + 1).trim();
-                    List<String> values = fixedHeaders.get(key);
-                    if (values == null) {
-                        fixedHeaders.put(key, Collections.singletonList(value));
-                    } else {
-                        List<String> newValues = new ArrayList<String>(values);
-                        newValues.add(value);
-                        fixedHeaders.put(key, newValues);
-                    }
-                }
-            }
-            x++;
-        }
+        addSessionParameterHeadersToFixedHeaders();
     }
 
     @Override
@@ -192,10 +173,8 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             return wsseSecurityElement;
         } catch (ParserConfigurationException e) {
             // shouldn't happen...
-            e.printStackTrace();
+            throw new CmisRuntimeException("Could not build SOAP header: " + e.getMessage(), e);
         }
-
-        return null;
     }
 
     /**
@@ -204,6 +183,35 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
      */
     protected Map<String, List<String>> getFixedHeaders() {
         return fixedHeaders;
+    }
+
+    /**
+     * Adds the {@link SessionParameter.HEADER} to the fixed headers. This
+     * method should only be called from the {@link #setSession(BindingSession)}
+     * method to avoid threading issues.
+     */
+    protected void addSessionParameterHeadersToFixedHeaders() {
+        int x = 0;
+        Object headerParam;
+        while ((headerParam = getSession().get(SessionParameter.HEADER + "." + x)) != null) {
+            String header = headerParam.toString();
+            int colon = header.indexOf(':');
+            if (colon > -1) {
+                String key = header.substring(0, colon).trim();
+                if (key.length() > 0) {
+                    String value = header.substring(colon + 1).trim();
+                    List<String> values = fixedHeaders.get(key);
+                    if (values == null) {
+                        fixedHeaders.put(key, Collections.singletonList(value));
+                    } else {
+                        List<String> newValues = new ArrayList<String>(values);
+                        newValues.add(value);
+                        fixedHeaders.put(key, newValues);
+                    }
+                }
+            }
+            x++;
+        }
     }
 
     /**
@@ -222,6 +230,28 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             // shouldn't happen...
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * Returns if a HTTP Basic Authentication header should be sent. (All
+     * bindings.)
+     */
+    protected boolean getSendBasicAuth() {
+        return isTrue(SessionParameter.AUTH_HTTP_BASIC);
+    }
+
+    /**
+     * Returns if a UsernameToken should be sent. (Web Services binding only.)
+     */
+    protected boolean getSendUsernameToken() {
+        return isTrue(SessionParameter.AUTH_SOAP_USERNAMETOKEN);
+    }
+
+    /**
+     * Returns if the authentication provider should handle cookies.
+     */
+    protected boolean getHandleCookies() {
+        return isTrue(SessionParameter.COOKIES);
     }
 
     /**
