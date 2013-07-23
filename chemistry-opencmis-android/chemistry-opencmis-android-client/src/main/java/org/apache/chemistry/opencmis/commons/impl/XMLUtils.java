@@ -25,6 +25,8 @@ import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.w3c.dom.Document;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
@@ -260,7 +262,8 @@ public class XMLUtils {
 
     /**
      * Parses a tag that contains text.
-     * @throws XmlPullParserException 
+     * 
+     * @throws XmlPullParserException
      */
     public static String readText(XmlPullParser parser, int maxLength) throws XmlPullParserException {
         StringBuilder sb = new StringBuilder();
@@ -294,5 +297,9 @@ public class XMLUtils {
         next(parser);
 
         return sb.toString();
+    }
+
+    public static Document newDomDocument() {
+        throw new CmisRuntimeException("This method should never be used on Android!");
     }
 }

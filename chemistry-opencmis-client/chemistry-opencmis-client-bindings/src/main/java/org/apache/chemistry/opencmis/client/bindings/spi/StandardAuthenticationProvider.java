@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.chemistry.opencmis.client.bindings.spi.cookies.CmisCookieManager;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -171,7 +169,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             usernameTokenElement.appendChild(createdElement);
 
             return wsseSecurityElement;
-        } catch (ParserConfigurationException e) {
+        } catch (Exception e) {
             // shouldn't happen...
             throw new CmisRuntimeException("Could not build SOAP header: " + e.getMessage(), e);
         }
