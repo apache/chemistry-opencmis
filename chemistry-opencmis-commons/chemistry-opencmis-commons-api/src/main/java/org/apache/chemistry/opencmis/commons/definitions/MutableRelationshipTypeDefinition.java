@@ -16,15 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.definitions;
 
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import java.util.List;
 
 /**
- * Policy type definition.
+ * Mutable Relationship Type Definition.
+ * 
+ * @cmis 1.0
  */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
+public interface MutableRelationshipTypeDefinition extends RelationshipTypeDefinition, MutableTypeDefinition {
 
-    private static final long serialVersionUID = 1L;
+    void setAllowedSourceTypes(List<String> allowedSourceTypes);
 
+    void setAllowedTargetTypes(List<String> allowedTargetTypes);
 }

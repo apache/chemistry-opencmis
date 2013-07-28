@@ -18,12 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyIdDefinition;
 
 /**
  * Id property definition data implementation.
  */
-public class PropertyIdDefinitionImpl extends AbstractPropertyDefinition<String> implements PropertyIdDefinition {
+public class PropertyIdDefinitionImpl extends AbstractPropertyDefinition<String> implements MutablePropertyIdDefinition {
 
     private static final long serialVersionUID = 1L;
 }

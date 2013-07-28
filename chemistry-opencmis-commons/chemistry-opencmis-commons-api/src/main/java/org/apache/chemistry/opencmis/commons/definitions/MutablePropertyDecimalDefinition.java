@@ -16,15 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.definitions;
 
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import java.math.BigDecimal;
 
-/**
- * Policy type definition.
- */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
+import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 
-    private static final long serialVersionUID = 1L;
+public interface MutablePropertyDecimalDefinition extends PropertyDecimalDefinition,
+        MutablePropertyDefinition<BigDecimal> {
 
+    void setMinValue(BigDecimal minValue);
+
+    void setMaxValue(BigDecimal maxValue);
+
+    void setPrecision(DecimalPrecision precision);
 }

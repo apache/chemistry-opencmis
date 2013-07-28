@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.definitions;
 
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import java.math.BigInteger;
 
-/**
- * Policy type definition.
- */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
+public interface MutablePropertyIntegerDefinition extends PropertyIntegerDefinition,
+        MutablePropertyDefinition<BigInteger> {
 
-    private static final long serialVersionUID = 1L;
+    void setMinValue(BigInteger minValue);
 
+    void setMaxValue(BigInteger maxValue);
 }

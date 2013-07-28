@@ -20,14 +20,14 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigDecimal;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 
 /**
  * Decimal property definition data implementation.
  */
 public class PropertyDecimalDefinitionImpl extends AbstractPropertyDefinition<BigDecimal> implements
-        PropertyDecimalDefinition {
+        MutablePropertyDecimalDefinition {
 
     private static final long serialVersionUID = 1L;
 

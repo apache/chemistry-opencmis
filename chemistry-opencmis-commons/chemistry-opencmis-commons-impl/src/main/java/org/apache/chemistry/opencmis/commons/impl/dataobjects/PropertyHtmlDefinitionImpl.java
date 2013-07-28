@@ -18,12 +18,13 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyHtmlDefinition;
 
 /**
  * HTML property definition data implementation.
  */
-public class PropertyHtmlDefinitionImpl extends AbstractPropertyDefinition<String> implements PropertyHtmlDefinition {
+public class PropertyHtmlDefinitionImpl extends AbstractPropertyDefinition<String> implements
+        MutablePropertyHtmlDefinition {
 
     private static final long serialVersionUID = 1L;
 }

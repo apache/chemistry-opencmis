@@ -18,12 +18,13 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyUriDefinition;
 
 /**
  * URI property definition data implementation.
  */
-public class PropertyUriDefinitionImpl extends AbstractPropertyDefinition<String> implements PropertyUriDefinition {
+public class PropertyUriDefinitionImpl extends AbstractPropertyDefinition<String> implements
+        MutablePropertyUriDefinition {
 
     private static final long serialVersionUID = 1L;
 }

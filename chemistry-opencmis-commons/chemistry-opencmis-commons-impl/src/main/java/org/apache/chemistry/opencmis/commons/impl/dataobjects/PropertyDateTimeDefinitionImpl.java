@@ -20,14 +20,14 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
 /**
  * DateTime property definition data implementation.
  */
 public class PropertyDateTimeDefinitionImpl extends AbstractPropertyDefinition<GregorianCalendar> implements
-        PropertyDateTimeDefinition {
+        MutablePropertyDateTimeDefinition {
 
     private static final long serialVersionUID = 1L;
 

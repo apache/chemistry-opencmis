@@ -16,15 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
-
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+package org.apache.chemistry.opencmis.commons.definitions;
 
 /**
- * Policy type definition.
+ * Mutable Secondary Type Definition.
+ * 
+ * @cmis 1.1
  */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
-
-    private static final long serialVersionUID = 1L;
-
+public interface MutableSecondaryTypeDefinition extends SecondaryTypeDefinition, MutableTypeDefinition {
 }

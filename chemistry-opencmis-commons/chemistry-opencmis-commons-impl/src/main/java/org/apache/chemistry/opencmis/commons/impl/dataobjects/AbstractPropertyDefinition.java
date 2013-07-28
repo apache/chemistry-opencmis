@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -29,7 +29,8 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 /**
  * Abstract property definition data implementation.
  */
-public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionData implements PropertyDefinition<T> {
+public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionData implements
+        MutablePropertyDefinition<T> {
 
     private static final long serialVersionUID = 1L;
 

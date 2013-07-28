@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyBooleanDefinition;
 
 /**
  * Boolean property definition data implementation.
  */
 public class PropertyBooleanDefinitionImpl extends AbstractPropertyDefinition<Boolean> implements
-        PropertyBooleanDefinition {
+        MutablePropertyBooleanDefinition {
 
     private static final long serialVersionUID = 1L;
 }

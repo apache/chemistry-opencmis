@@ -18,9 +18,9 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
 
-public class SecondaryTypeDefinitionImpl extends AbstractTypeDefinition implements SecondaryTypeDefinition {
+public class SecondaryTypeDefinitionImpl extends AbstractTypeDefinition implements MutableSecondaryTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 

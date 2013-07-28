@@ -18,13 +18,13 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**
  * Document type definition.
  */
-public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implements DocumentTypeDefinition {
+public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implements MutableDocumentTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 

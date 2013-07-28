@@ -20,13 +20,13 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyStringDefinition;
 
 /**
  * String property definition data implementation.
  */
 public class PropertyStringDefinitionImpl extends AbstractPropertyDefinition<String> implements
-        PropertyStringDefinition {
+        MutablePropertyStringDefinition {
 
     private static final long serialVersionUID = 1L;
 

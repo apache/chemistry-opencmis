@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.definitions;
 
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import java.util.GregorianCalendar;
 
-/**
- * Policy type definition.
- */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
+import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 
-    private static final long serialVersionUID = 1L;
+public interface MutablePropertyDateTimeDefinition extends PropertyDateTimeDefinition,
+        MutablePropertyDefinition<GregorianCalendar> {
 
+    void setDateTimeResolution(DateTimeResolution dateTimeResolution);
 }

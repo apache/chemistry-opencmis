@@ -24,39 +24,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.enums.Cardinality;
-import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
-import org.apache.chemistry.opencmis.commons.enums.PropertyType;
-import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,312 +59,53 @@ public class TypeManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeManager.class);
 
+    private TypeDefinitionFactory tdf;
     private Map<String, TypeDefinitionContainerImpl> types;
     private List<TypeDefinitionContainer> typesList;
 
     public TypeManager() {
-        setup();
+        tdf = TypeDefinitionFactory.newInstance();
+        tdf.setDefaultNamespace(NAMESPACE);
+        tdf.setDefaultControllableAcl(false);
+        tdf.setDefaultControllablePolicy(false);
+        tdf.setDefaultQueryable(false);
+        tdf.setDefaultTypeMutability(tdf.createTypeMutability(false, false, false));
+
+        setup(CmisVersion.CMIS_1_1);
     }
 
     /**
      * Creates the base types.
      */
-    private void setup() {
+    private void setup(CmisVersion cmisVersion) {
         types = new HashMap<String, TypeDefinitionContainerImpl>();
         typesList = new ArrayList<TypeDefinitionContainer>();
 
-        // type mutability
+        try {
+            // folder type
+            addTypeInteral(tdf.createBaseFolderTypeDefinition(cmisVersion));
 
-        TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
-        typeMutability.setCanCreate(false);
-        typeMutability.setCanUpdate(false);
-        typeMutability.setCanDelete(false);
+            // document type
+            addTypeInteral(tdf.createBaseDocumentTypeDefinition(cmisVersion));
 
-        // folder type
-        FolderTypeDefinitionImpl folderType = new FolderTypeDefinitionImpl();
-        folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
-        folderType.setIsControllableAcl(false);
-        folderType.setIsControllablePolicy(false);
-        folderType.setIsCreatable(true);
-        folderType.setDescription("Folder");
-        folderType.setDisplayName("Folder");
-        folderType.setIsFileable(true);
-        folderType.setIsFulltextIndexed(false);
-        folderType.setIsIncludedInSupertypeQuery(true);
-        folderType.setLocalName("Folder");
-        folderType.setLocalNamespace(NAMESPACE);
-        folderType.setIsQueryable(false);
-        folderType.setQueryName("cmis:folder");
-        folderType.setId(FOLDER_TYPE_ID);
-        folderType.setTypeMutability(typeMutability);
+            // relationship types
+            // not supported - don't expose it
+            // addTypeInteral(tdf.createBaseRelationshipTypeDefinition(cmisVersion));
 
-        addBasePropertyDefinitions(folderType);
-        addFolderPropertyDefinitions(folderType);
+            // policy type
+            // not supported - don't expose it
+            // addTypeInteral(tdf.createBasePolicyTypeDefinition(cmisVersion));
 
-        addTypeInteral(folderType);
+            // item type
+            // not supported - don't expose it
+            // addTypeInteral(tdf.createBaseItemTypeDefinition(cmisVersion));
 
-        // document type
-        DocumentTypeDefinitionImpl documentType = new DocumentTypeDefinitionImpl();
-        documentType.setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
-        documentType.setIsControllableAcl(false);
-        documentType.setIsControllablePolicy(false);
-        documentType.setIsCreatable(true);
-        documentType.setDescription("Document");
-        documentType.setDisplayName("Document");
-        documentType.setIsFileable(true);
-        documentType.setIsFulltextIndexed(false);
-        documentType.setIsIncludedInSupertypeQuery(true);
-        documentType.setLocalName("Document");
-        documentType.setLocalNamespace(NAMESPACE);
-        documentType.setIsQueryable(false);
-        documentType.setQueryName("cmis:document");
-        documentType.setId(DOCUMENT_TYPE_ID);
-        documentType.setTypeMutability(typeMutability);
-
-        documentType.setIsVersionable(false);
-        documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
-
-        addBasePropertyDefinitions(documentType);
-        addDocumentPropertyDefinitions(documentType);
-
-        addTypeInteral(documentType);
-
-        // relationship types
-        RelationshipTypeDefinitionImpl relationshipType = new RelationshipTypeDefinitionImpl();
-        relationshipType.setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
-        relationshipType.setIsControllableAcl(false);
-        relationshipType.setIsControllablePolicy(false);
-        relationshipType.setIsCreatable(false);
-        relationshipType.setDescription("Relationship");
-        relationshipType.setDisplayName("Relationship");
-        relationshipType.setIsFileable(false);
-        relationshipType.setIsIncludedInSupertypeQuery(true);
-        relationshipType.setLocalName("Relationship");
-        relationshipType.setLocalNamespace(NAMESPACE);
-        relationshipType.setIsQueryable(false);
-        relationshipType.setQueryName("cmis:relationship");
-        relationshipType.setId(RELATIONSHIP_TYPE_ID);
-        relationshipType.setTypeMutability(typeMutability);
-
-        addBasePropertyDefinitions(relationshipType);
-
-        // not supported - don't expose it
-        // addTypeInteral(relationshipType);
-
-        // policy type
-        PolicyTypeDefinitionImpl policyType = new PolicyTypeDefinitionImpl();
-        policyType.setBaseTypeId(BaseTypeId.CMIS_POLICY);
-        policyType.setIsControllableAcl(false);
-        policyType.setIsControllablePolicy(false);
-        policyType.setIsCreatable(false);
-        policyType.setDescription("Policy");
-        policyType.setDisplayName("Policy");
-        policyType.setIsFileable(false);
-        policyType.setIsIncludedInSupertypeQuery(true);
-        policyType.setLocalName("Policy");
-        policyType.setLocalNamespace(NAMESPACE);
-        policyType.setIsQueryable(false);
-        policyType.setQueryName("cmis:policy");
-        policyType.setId(POLICY_TYPE_ID);
-        policyType.setTypeMutability(typeMutability);
-
-        addBasePropertyDefinitions(policyType);
-
-        // not supported - don't expose it
-        // addTypeInteral(policyType);
-
-        // item type
-        ItemTypeDefinitionImpl itemType = new ItemTypeDefinitionImpl();
-        itemType.setBaseTypeId(BaseTypeId.CMIS_ITEM);
-        itemType.setIsControllableAcl(false);
-        itemType.setIsControllablePolicy(false);
-        itemType.setIsCreatable(true);
-        itemType.setDescription("Item");
-        itemType.setDisplayName("Item");
-        itemType.setIsFileable(true);
-        itemType.setIsIncludedInSupertypeQuery(true);
-        itemType.setLocalName("Item");
-        itemType.setLocalNamespace(NAMESPACE);
-        itemType.setIsQueryable(false);
-        itemType.setQueryName("cmis:item");
-        itemType.setId(ITEM_TYPE_ID);
-        itemType.setTypeMutability(typeMutability);
-
-        addBasePropertyDefinitions(itemType);
-
-        // not supported - don't expose it
-        // addTypeInteral(itemType);
-
-        // secondary type
-        SecondaryTypeDefinitionImpl secondaryType = new SecondaryTypeDefinitionImpl();
-        secondaryType.setBaseTypeId(BaseTypeId.CMIS_ITEM);
-        secondaryType.setIsControllableAcl(false);
-        secondaryType.setIsControllablePolicy(false);
-        secondaryType.setIsCreatable(true);
-        secondaryType.setDescription("Secondary");
-        secondaryType.setDisplayName("Secondary");
-        secondaryType.setIsFileable(false);
-        secondaryType.setIsIncludedInSupertypeQuery(true);
-        secondaryType.setLocalName("Secondary");
-        secondaryType.setLocalNamespace(NAMESPACE);
-        secondaryType.setIsQueryable(false);
-        secondaryType.setQueryName("cmis:secondary");
-        secondaryType.setId(SECONDARY_TYPE_ID);
-        secondaryType.setTypeMutability(typeMutability);
-
-        addBasePropertyDefinitions(secondaryType);
-
-        // not supported - don't expose it
-        // addTypeInteral(secondaryType);
-    }
-
-    private static void addBasePropertyDefinitions(AbstractTypeDefinition type) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
-                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Type Id", "Type Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.ONCREATE, false, true));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READWRITE, false, true));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.DESCRIPTION, "Description", "Description",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
-                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
-                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, false,
-                false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
-                "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI, Updatability.READONLY, false, false));
-    }
-
-    private static void addFolderPropertyDefinitions(FolderTypeDefinitionImpl type) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
-                "Allowed Child Object Type Ids", "Allowed Child Object Type Ids", PropertyType.ID, Cardinality.MULTI,
-                Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.PATH, "Path", "Path", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READONLY, false, false));
-    }
-
-    private static void addDocumentPropertyDefinitions(DocumentTypeDefinitionImpl type) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
-                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_VERSION, "Is Latest Version",
-                "Is Latest Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_MAJOR_VERSION, "Is Major Version", "Is Major Version",
-                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_MAJOR_VERSION, "Is Latest Major Version",
-                "Is Latest Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, false,
-                false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_LABEL, "Version Label", "Version Label",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, true));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_ID, "Version Series Id",
-                "Version Series Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, true));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
-                "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
-                Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
-                "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID, Cardinality.SINGLE,
-                Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
-                "Version Series Checked Out By", "Version Series Checked Out By", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment", "Checkin Comment",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
-                "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type", "MIME Type",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_FILE_NAME, "Filename", "Filename",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id",
-                "Content Stream Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, false, false));
-    }
-
-    /**
-     * Creates a property definition object.
-     */
-    private static PropertyDefinition<?> createPropDef(String id, String displayName, String description,
-            PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
-            boolean required) {
-        AbstractPropertyDefinition<?> result = null;
-
-        switch (datatype) {
-        case BOOLEAN:
-            result = new PropertyBooleanDefinitionImpl();
-            break;
-        case DATETIME:
-            result = new PropertyDateTimeDefinitionImpl();
-            break;
-        case DECIMAL:
-            result = new PropertyDecimalDefinitionImpl();
-            break;
-        case HTML:
-            result = new PropertyHtmlDefinitionImpl();
-            break;
-        case ID:
-            result = new PropertyIdDefinitionImpl();
-            break;
-        case INTEGER:
-            result = new PropertyIntegerDefinitionImpl();
-            break;
-        case STRING:
-            result = new PropertyStringDefinitionImpl();
-            break;
-        case URI:
-            result = new PropertyUriDefinitionImpl();
-            break;
-        default:
-            throw new RuntimeException("Unknown datatype! Spec change?");
+            // secondary type
+            // not supported - don't expose it
+            // addTypeInteral(tdf.createBaseSecondaryTypeDefinition(cmisVersion));
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot set up type defintions!", e);
         }
-
-        result.setId(id);
-        result.setLocalName(id);
-        result.setDisplayName(displayName);
-        result.setDescription(description);
-        result.setPropertyType(datatype);
-        result.setCardinality(cardinality);
-        result.setUpdatability(updateability);
-        result.setIsInherited(inherited);
-        result.setIsRequired(required);
-        result.setIsQueryable(false);
-        result.setIsOrderable(false);
-        result.setQueryName(id);
-
-        return result;
     }
 
     /**
@@ -430,7 +155,7 @@ public class TypeManager {
     /**
      * Adds a type to collection.
      */
-    private void addTypeInteral(AbstractTypeDefinition type) {
+    private void addTypeInteral(MutableTypeDefinition type) {
         if (type == null) {
             return;
         }

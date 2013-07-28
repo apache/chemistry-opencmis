@@ -16,15 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.definitions;
 
-import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 
 /**
- * Policy type definition.
+ * Mutable Document Type Definition.
+ * 
+ * @cmis 1.0
  */
-public class PolicyTypeDefinitionImpl extends AbstractTypeDefinition implements MutablePolicyTypeDefinition {
+public interface MutableDocumentTypeDefinition extends DocumentTypeDefinition, MutableTypeDefinition {
 
-    private static final long serialVersionUID = 1L;
+    void setContentStreamAllowed(ContentStreamAllowed contentStreamAllowed);
 
+    void setIsVersionable(Boolean isVersionable);
 }

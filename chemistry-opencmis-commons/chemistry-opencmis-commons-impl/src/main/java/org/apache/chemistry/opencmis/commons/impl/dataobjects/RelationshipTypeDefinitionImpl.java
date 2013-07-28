@@ -21,12 +21,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
 
 /**
  * Relationship type definition.
  */
-public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition implements RelationshipTypeDefinition {
+public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition implements MutableRelationshipTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 

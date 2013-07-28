@@ -20,13 +20,13 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyIntegerDefinition;
 
 /**
  * Boolean property definition data implementation.
  */
 public class PropertyIntegerDefinitionImpl extends AbstractPropertyDefinition<BigInteger> implements
-        PropertyIntegerDefinition {
+        MutablePropertyIntegerDefinition {
 
     private static final long serialVersionUID = 1L;
 

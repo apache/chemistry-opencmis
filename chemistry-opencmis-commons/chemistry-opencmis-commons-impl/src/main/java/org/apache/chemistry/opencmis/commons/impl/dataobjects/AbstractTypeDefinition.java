@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
@@ -29,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 /**
  * Abstract type definition data implementation.
  */
-public abstract class AbstractTypeDefinition extends AbstractExtensionData implements TypeDefinition, Cloneable {
+public abstract class AbstractTypeDefinition extends AbstractExtensionData implements MutableTypeDefinition, Cloneable {
 
     private static final long serialVersionUID = 2L;
 
@@ -199,32 +200,40 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         return propertyDefinitions;
     }
 
-    public void setPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
-        if (propertyDefinitions == null) {
-            this.propertyDefinitions = null;
-        } else if (propertyDefinitions instanceof LinkedHashMap) {
-            this.propertyDefinitions = (LinkedHashMap<String, PropertyDefinition<?>>) propertyDefinitions;
+    public void setPropertyDefinitions(Map<String, PropertyDefinition<?>> newPropertyDefinitions) {
+        if (newPropertyDefinitions == null) {
+            propertyDefinitions = null;
+        } else if (newPropertyDefinitions instanceof LinkedHashMap) {
+            propertyDefinitions = (LinkedHashMap<String, PropertyDefinition<?>>) newPropertyDefinitions;
         } else {
-            this.propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>(propertyDefinitions);
+            propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>(newPropertyDefinitions);
         }
     }
 
-    /**
-     * Adds a property definition.
-     * 
-     * @param propertyDefinition
-     *            the property definition
-     */
     public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition == null) {
             return;
         }
 
-        if (this.propertyDefinitions == null) {
-            this.propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
+        if (propertyDefinitions == null) {
+            propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
         }
 
-        this.propertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
+        propertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
+    }
+
+    public void removePropertyDefinition(String propertyId) {
+        if (propertyId == null) {
+            return;
+        }
+
+        if (propertyDefinitions != null) {
+            propertyDefinitions.remove(propertyId);
+        }
+    }
+
+    public void removeAllPropertyDefinitions() {
+        propertyDefinitions = null;
     }
 
     public TypeMutability getTypeMutability() {

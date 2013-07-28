@@ -18,9 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableItemTypeDefinition;
 
-public class ItemTypeDefinitionImpl extends AbstractTypeDefinition implements ItemTypeDefinition {
+/**
+ * Item type definition.
+ */
+public class ItemTypeDefinitionImpl extends AbstractTypeDefinition implements MutableItemTypeDefinition {
 
     private static final long serialVersionUID = 1L;
 
