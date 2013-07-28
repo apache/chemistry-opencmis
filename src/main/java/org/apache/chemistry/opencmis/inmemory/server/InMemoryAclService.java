@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.slf4j.Logger;
@@ -42,12 +43,15 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
     public Acl getAcl(CallContext context, String repositoryId, String objectId, Boolean onlyBasicPermissions,
             ExtensionsData extension, ObjectInfoHandler objectInfos) {
         LOG.debug("start getAcl()");
-        Acl acl = null;
+        int aclId;
         StoredObject so = validator.getAcl(context, repositoryId, objectId, extension);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         if (so instanceof DocumentVersion)
-            acl = ((DocumentVersion) so).getParentDocument().getAcl();
+            aclId = ((DocumentVersion) so).getParentDocument().getAclId();
         else
-            acl = so.getAcl();
+            aclId = so.getAclId();
+        
+        Acl acl = objectStore.getAcl(aclId);
 
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();

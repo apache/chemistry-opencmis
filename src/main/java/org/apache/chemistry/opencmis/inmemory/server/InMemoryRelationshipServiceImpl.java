@@ -81,7 +81,7 @@ public class InMemoryRelationshipServiceImpl extends InMemoryAbstractServiceImpl
         List<ObjectData> odList = new ArrayList<ObjectData>();
 
         for (StoredObject rel : rels) {
-            ObjectData od = PropertyCreationHelper.getObjectData(tm, rel, filter, user, includeAllowableActions,
+            ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, rel, filter, user, includeAllowableActions,
                     IncludeRelationships.NONE, null, false, false, extension);
             odList.add(od);
         }

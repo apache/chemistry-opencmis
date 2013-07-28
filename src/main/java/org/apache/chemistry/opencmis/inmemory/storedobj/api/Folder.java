@@ -37,14 +37,13 @@ public interface Folder extends Fileable {
      *      parent id of this folder
      */
     String getParentId();
-    
+      
     /**
-     * get the path of this folder (for folder in CMIS path is unique)
-     * 
-     * @return
-     *      path of this folder
+     * set the parent id of a folder
+     * @param parentId
+     *      parent id of this folder
      */
-    String getPath();
+    void setParentId(String parentId);
     
     /**
      * return a list of allowed types of children in this folder

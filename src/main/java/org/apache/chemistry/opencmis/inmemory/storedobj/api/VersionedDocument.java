@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  * @author Jens
  * 
  */
-public interface VersionedDocument extends Fileable {
+public interface VersionedDocument extends Filing, StoredObject {
 
     DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
 

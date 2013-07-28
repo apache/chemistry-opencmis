@@ -70,9 +70,9 @@ public class FolderTest extends TestCase {
         assertNull(fRoot.getParentId());
         assertEquals(fRoot.getId(), f1.getParentId());
         assertEquals(f1.getId(), f11.getParentId());
-        assertEquals(Filing.PATH_SEPARATOR, fRoot.getPath());
-        assertEquals("/Folder 1", f1.getPath());
-        assertEquals("/Folder 1/Folder 1.1", f11.getPath());
+        assertEquals(Filing.PATH_SEPARATOR, getPath(fRoot));
+        assertEquals("/Folder 1", getPath(f1));
+        assertEquals("/Folder 1/Folder 1.1", getPath(f11));
         StoredObject fTest = fStore.getObjectByPath("/", USER);
         assertEquals(fRoot, fTest);
         fTest = fStore.getObjectByPath("/Folder 1", USER);
@@ -91,10 +91,10 @@ public class FolderTest extends TestCase {
     public void testRenameFolder() {
         // rename top level folder
         String newName = "Folder B";
-        String oldPath = f2.getPath();
+        String oldPath = getPath(f2);
         fStore.rename(f2, newName);
         assertEquals(f2.getName(), newName);
-        assertEquals(f2.getPath(), Filing.PATH_SEPARATOR + newName);
+        assertEquals(getPath(f2), Filing.PATH_SEPARATOR + newName);
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f2, fStore.getObjectByPath(Filing.PATH_SEPARATOR + newName, USER));
         try {
@@ -104,10 +104,10 @@ public class FolderTest extends TestCase {
         }
 
         // rename sub folder
-        oldPath = f11.getPath();
+        oldPath = getPath(f11);
         fStore.rename(f11, newName);
         assertEquals(f11.getName(), newName);
-        assertEquals(f11.getPath(), "/Folder 1/Folder B");
+        assertEquals(getPath(f11), "/Folder 1/Folder B");
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f11, fStore.getObjectByPath("/Folder 1/Folder B", USER));
         try {
@@ -126,11 +126,11 @@ public class FolderTest extends TestCase {
 
     @Test
     public void testMoveFolder() {
-        String oldPath = f1.getPath();
+        String oldPath = getPath(f1);
         Folder f1Parent = fRoot;
         fStore.move(f1, f1Parent, f3);
         assertNull(fStore.getObjectByPath(oldPath, USER));
-        assertEquals(f1.getPath(), "/Folder 3/Folder 1");
+        assertEquals(getPath(f1), "/Folder 3/Folder 1");
         assertEquals(f1, fStore.getObjectByPath("/Folder 3/Folder 1", USER));
 
         fStore.rename(f2, "Folder 1");
@@ -144,7 +144,7 @@ public class FolderTest extends TestCase {
 
     @Test
     public void testDeleteFolder() {
-        String oldPath = f2.getPath();
+        String oldPath = getPath(f2);
         fStore.deleteObject(f2.getId(), true, "TestUser");
         assertNull(fStore.getObjectByPath(oldPath, USER));
 
@@ -158,22 +158,21 @@ public class FolderTest extends TestCase {
     private void createFolders() {
         fRoot = (FolderImpl) fStore.getRootFolder();
         f1 = (FolderImpl) createFolder("Folder 1", fRoot);
-        f1.persist();
 
         f2 = (FolderImpl) createFolder("Folder 2", fRoot);
-        f2.persist();
 
         f3 = (FolderImpl) createFolder("Folder 3", fRoot);
-        f3.persist();
 
         f4 = (FolderImpl) createFolder("Folder 4", fRoot);
-        f4.persist();
 
         f11 = (FolderImpl) createFolder("Folder 1.1", f1);
-        f11.persist();
     }
     
     private Folder createFolder(String name, Folder parent) {
     	return fStore.createFolder(name, null, "user", parent, null, null, null);    	
+    }
+    
+    private String getPath(Folder folder) {
+        return fStore.getFolderPath(folder.getId());
     }
 }

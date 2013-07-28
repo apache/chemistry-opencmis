@@ -27,8 +27,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
  */
 public class ItemImpl extends FilingImpl implements Item, Filing {
 
-    ItemImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    public ItemImpl() {
+        super();
     }
 
 }

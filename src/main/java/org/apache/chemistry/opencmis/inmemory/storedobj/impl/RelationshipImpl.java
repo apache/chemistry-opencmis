@@ -32,8 +32,8 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
     private String sourceObjId;
     private String targetObjId;
 
-    RelationshipImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    public RelationshipImpl() {
+        super();
     }
 
     @Override

@@ -29,8 +29,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 
 public class PolicyImpl extends StoredObjectImpl implements Policy {
 
-    PolicyImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    public PolicyImpl() {
+        super();
     }
 
     private String policyText;

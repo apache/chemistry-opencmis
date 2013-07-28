@@ -29,25 +29,18 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 public interface MultiFiling extends Filing {
 
     /**
-     * retrieve the path segment of this folder
+     * Add parent folder to this document
      * 
-     * @return
+     * @param parentId
+     *     id of parent folder to be added.
      */
-    String getPathSegment();
+    void addParentId(String parentId);
 
     /**
-     * Add this document to a new parent folder as child object
+     * Remove parent from this object
      * 
-     * @param parent
-     *            new parent folder of the document.
+     * @param parentId
+     *     id of parent folder to be removed.
      */
-    void addParent(Folder parent);
-
-    /**
-     * Remove this object from the children of parent
-     * 
-     * @param parent
-     *            parent folder of the document
-     */
-    void removeParent(Folder parent);
+    void removeParentId(String parentId);
 }

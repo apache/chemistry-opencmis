@@ -197,6 +197,36 @@ public interface ObjectStore {
     public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user);
 
     /**
+     * Persist a new version in the store (created from a check-out)
+     * @param version
+     */
+    public void storeVersion(DocumentVersion version);
+    
+    /**
+     * remove a version from the store (after a cancel check-out)
+     * @param version
+     *      version to be deleted
+     */
+    public void deleteVersion(DocumentVersion version);
+    
+    /**
+     * Persist an object after modifying the properties
+     * @param so
+     *      object to be updated
+     */
+    public void upateObject(StoredObject so);
+    
+    /**
+     * get the path of this folder (for folder in CMIS path is unique)
+     * 
+     * @param folderId
+     *      id of folder
+     * @return
+     *      path of this folder
+     */
+    String getFolderPath(String folderId);
+
+    /**
      * Clear repository and remove all data.
      */
     void clear();
@@ -301,4 +331,13 @@ public interface ObjectStore {
      */
     List<StoredObject> getRelationships(String objectId, List<String> typeIds,
             RelationshipDirection direction);
+    
+    /**
+     * get an ACL object from an ACL id
+     * @param aclId
+     *      id of ACL
+     * @return
+     *      ACL of this id
+     */
+    public Acl getAcl(int aclId);
 }

@@ -77,6 +77,7 @@ public class AtomLinkInfoProvider {
             return;
         }
         TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, so.getTypeId()).getTypeDefinition();
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         // Fill all setters:
         objInfo.setId(so.getId());
@@ -149,12 +150,12 @@ public class AtomLinkInfoProvider {
 
         // Relationships
         objInfo.setSupportsRelationships(true);
-        List<StoredObject> rels = so.getObjectRelationships(RelationshipDirection.SOURCE, null);
+        List<StoredObject> rels = objStore.getRelationships(so.getId(), null, RelationshipDirection.SOURCE);
         List<String> srcIds = new ArrayList<String>(rels.size());
         for (StoredObject rel : rels)
             srcIds.add(rel.getId());
         
-        rels = so.getObjectRelationships(RelationshipDirection.TARGET, null);
+        rels = objStore.getRelationships(so.getId(), null, RelationshipDirection.TARGET);
         List<String> targetIds = new ArrayList<String>(rels.size());
         for (StoredObject rel : rels)
             targetIds.add(rel.getId());
@@ -172,8 +173,8 @@ public class AtomLinkInfoProvider {
 
     public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectInfoImpl objectInfo) {
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, null, false,
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, null, false,
                 IncludeRelationships.NONE, null, false, false, null);
         fillInformationForAtomLinks(repositoryId, so, od, objectInfo);
     }

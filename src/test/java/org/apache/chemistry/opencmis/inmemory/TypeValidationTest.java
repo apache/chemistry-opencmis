@@ -735,7 +735,7 @@ public class TypeValidationTest extends TestCase {
     private static TypeManager buildInheritedTypes() {
 
         TypeManagerImpl tm = new TypeManagerImpl();
-        tm.initTypeSystem(null); // create CMIS default types
+        tm.initTypeSystem(null, true); // create CMIS default types
 
         // create super type
         InMemoryDocumentTypeDefinition cmisSuperType = new InMemoryDocumentTypeDefinition(DOC_TYPE_SUPER,

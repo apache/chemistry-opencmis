@@ -23,17 +23,18 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 
-public class FilingImpl extends StoredObjectImpl implements Fileable, FilingMutable {
+public class FilingImpl extends StoredObjectImpl implements Fileable, MultiFiling {
     
     private List<String> parentIds = new ArrayList<String>(1);
     
-    FilingImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    FilingImpl() {
+        super();
     }
 
     @Override
-    public List<String> getParents() {
+    public List<String> getParentIds() {
         return parentIds;
     }
 

@@ -54,7 +54,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.apache.chemistry.opencmis.inmemory.types.PropertyUtil;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
@@ -158,7 +157,7 @@ public class InMemoryQueryProcessor {
             String queryName = queryObj.getTypes().values().iterator().next();
             TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
 
-            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(tm, td, so, user, props, funcs,
+            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(tm, objStore, td, so, user, props, funcs,
                     secondaryTypeIds, includeAllowableActions, includeRelationships, renditionFilter);
             objDataList.add(od);
         }
@@ -207,8 +206,8 @@ public class InMemoryQueryProcessor {
                     String propId = ((ColumnReference) sel).getPropertyId();
                     PropertyDefinition<?> pd = ((ColumnReference) sel).getPropertyDefinition();
                     
-                    Object propVal1 = PropertyUtil.getProperty(so1, propId, pd);
-                    Object propVal2 = PropertyUtil.getProperty(so2, propId, pd);
+                    Object propVal1 = PropertyQueryUtil.getProperty(so1, propId, pd);
+                    Object propVal2 = PropertyQueryUtil.getProperty(so2, propId, pd);
 
                     if (propVal1 == null && propVal2 == null) {
                         result = 0;
@@ -363,7 +362,7 @@ public class InMemoryQueryProcessor {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             List<Object> literals = onLiteralList(listNode);
-            Object prop = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
 
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
@@ -381,7 +380,7 @@ public class InMemoryQueryProcessor {
             // then it evaluates to true for null values (not set properties).
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object prop = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
@@ -459,7 +458,7 @@ public class InMemoryQueryProcessor {
         public Boolean walkIsNull(Tree opNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object propVal = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
             return propVal == null;
         }
 
@@ -467,7 +466,7 @@ public class InMemoryQueryProcessor {
         public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object propVal = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
             return propVal != null;
         }
 
@@ -489,7 +488,7 @@ public class InMemoryQueryProcessor {
                 throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
             }
 
-            String propVal = (String) PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            String propVal = (String) PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
             
             if (null == propVal) {
             	return false;
@@ -556,7 +555,7 @@ public class InMemoryQueryProcessor {
             // System.identityHashCode(leftChild) + " is " + leftChild);
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object val = PropertyUtil.getProperty(so, colRef.getPropertyId(), pd);
+            Object val = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
             if (val==null) {
                 return null;
             } else if (val instanceof List<?>) {

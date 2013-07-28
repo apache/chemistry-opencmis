@@ -414,7 +414,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
     @Before
     public void setUp() {
         tm = new TypeManagerImpl();
-        tm.initTypeSystem(null); // create CMIS default types
+        tm.initTypeSystem(null, true); // create CMIS default types
 
         // create some types for testing
         List<TypeDefinition> typeDefs = super.createTypes();

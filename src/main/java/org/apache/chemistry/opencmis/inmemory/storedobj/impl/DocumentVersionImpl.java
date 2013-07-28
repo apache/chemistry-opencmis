@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
@@ -42,7 +43,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  * @author Jens
  *
  */
-public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion, FilingMutable {
+public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion, MultiFiling {
 
     private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
@@ -54,8 +55,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     boolean fIsPwc; // true if this is the PWC
 
     public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
-            VersioningState verState, ObjectStoreImpl objStore) {
-        super(objStore);
+            VersioningState verState) {
+        super();
         setRepositoryId(repositoryId);
         fContainer = (VersionedDocumentImpl) container;
         setContent(content, false);
@@ -293,8 +294,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }    
     
     @Override
-	public List<String> getParents() {
-        return fContainer.getParents();
+	public List<String> getParentIds() {
+        return fContainer.getParentIds();
     }
 
     @Override

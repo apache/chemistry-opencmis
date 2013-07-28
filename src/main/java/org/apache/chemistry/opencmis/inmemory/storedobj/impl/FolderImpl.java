@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +47,12 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
     private static final Logger LOG = LoggerFactory.getLogger(FilingImpl.class.getName());
     protected String parentId;
     
-    FolderImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    public FolderImpl() {
+        super();
     }
 
-    public FolderImpl(ObjectStoreImpl objStore, String name, String parentId) {
-        super(objStore);
+    public FolderImpl(String name, String parentId) {
+        super();
         init(name, parentId);
     }
 
@@ -75,10 +76,10 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
                     PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
         }
 
-        if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
-            String path = getPath();
-            properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
-        }
+//        if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
+//            String path = getPath();
+//            properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
+//        }
     }
 
     @Override
@@ -130,7 +131,7 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
     }
 
     @Override
-    public List<String> getParents() {
+    public List<String> getParentIds() {
         if (parentId == null)
             return Collections.emptyList();
         else
@@ -148,34 +149,15 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
     }
 
     @Override
-    public String getPath() {
-        StringBuffer sb = new StringBuffer();
-        insertPathSegment(sb, this);
-        return sb.toString();
-    }
-    
-    @Override
     public String getPathSegment() {
         return getName();
     }
 
+    @Override
     public void setParentId (String parentId) {
         this.parentId = parentId;
     }
     
-    private void insertPathSegment(StringBuffer sb, Folder f) {
-        if (null == f.getParentId()) {
-            if (sb.length() == 0) {
-                sb.insert(0, Folder.PATH_SEPARATOR);
-            }
-        } else {
-            sb.insert(0, f.getName());
-            sb.insert(0, Folder.PATH_SEPARATOR);
-            Folder parent = (Folder) fObjStore.getObjectById(f.getParentId());
-            insertPathSegment(sb, parent);
-        }
-    }
-
     // Helper functions
     private void init(String name, String parentId) {
         if (!NameValidator.isValidName(name)) {
