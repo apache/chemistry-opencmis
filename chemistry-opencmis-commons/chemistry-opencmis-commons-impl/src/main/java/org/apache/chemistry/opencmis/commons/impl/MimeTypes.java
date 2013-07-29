@@ -231,6 +231,9 @@ public class MimeTypes {
         EXT2MIME.put("wav", "audio/x-wav");
         EXT2MIME.put("wcm", "application/vnd.ms-works");
         EXT2MIME.put("wdb", "application/vnd.ms-works");
+        EXT2MIME.put("weba", "audio/webm");
+        EXT2MIME.put("webm", "video/webm");
+        EXT2MIME.put("webp", "image/webp");
         EXT2MIME.put("wmf", "application/x-msmetafile");
         EXT2MIME.put("wps", "application/vnd.ms-works");
         EXT2MIME.put("wri", "application/x-mswrite");
@@ -370,6 +373,7 @@ public class MimeTypes {
         MIME2EXT.put("audio/midi", "mid");
         MIME2EXT.put("audio/mpeg", "mp3");
         MIME2EXT.put("audio/ogg", "ogg");
+        MIME2EXT.put("audio/webm", "webm");
         MIME2EXT.put("audio/x-aiff", "aif");
         MIME2EXT.put("audio/x-m4a", "m4a");
         MIME2EXT.put("audio/x-mpegurl", "m3u");
@@ -388,6 +392,7 @@ public class MimeTypes {
         MIME2EXT.put("image/png", "png");
         MIME2EXT.put("image/svg+xml", "svg");
         MIME2EXT.put("image/tiff", "tiff");
+        MIME2EXT.put("image/webp", "webp");
         MIME2EXT.put("image/x-cmu-raster", "ras");
         MIME2EXT.put("image/x-cmx", "cmx");
         MIME2EXT.put("image/x-icon", "ico");
@@ -418,6 +423,7 @@ public class MimeTypes {
         MIME2EXT.put("video/ogg", "ogv");
         MIME2EXT.put("video/quicktime", "mov");
         MIME2EXT.put("video/quicktime", "qt");
+        MIME2EXT.put("video/webm", "webm");
         MIME2EXT.put("video/x-f4v", "f4v");
         MIME2EXT.put("video/x-fli", "fli");
         MIME2EXT.put("video/x-flv", "flv");
