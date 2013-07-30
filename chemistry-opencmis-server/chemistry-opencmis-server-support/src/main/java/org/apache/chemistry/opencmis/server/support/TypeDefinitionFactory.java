@@ -621,121 +621,131 @@ public class TypeDefinitionFactory {
      * Adds the base property definitions to a type definition.
      */
     private void addBasePropertyDefinitions(MutableTypeDefinition type, CmisVersion cmisVersion, boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
-                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Type Id", "Type Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.ONCREATE, inherited, true));
-
         type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READWRITE, inherited, true));
+                Cardinality.SINGLE, Updatability.READWRITE, inherited, true, true, true));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
             type.addPropertyDefinition(createPropDef(PropertyIds.DESCRIPTION, "Description", "Description",
-                    PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                    PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, false, false, false));
         }
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id", PropertyType.ID,
+                Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
-                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+        type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
-                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited,
-                false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Object Type Id", "Object Type Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.ONCREATE, inherited, true, true, false));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
             type.addPropertyDefinition(createPropDef(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
-                    "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI, Updatability.READONLY, inherited, false));
+                    "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI, Updatability.READONLY, inherited, false,
+                    true, false));
         }
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
+                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
+                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited,
+                false, true, true));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
     }
 
     private void addDocumentPropertyDefinitions(MutableDocumentTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
-                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_VERSION, "Is Latest Version",
-                "Is Latest Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                "Is Latest Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_MAJOR_VERSION, "Is Major Version", "Is Major Version",
-                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_MAJOR_VERSION, "Is Latest Major Version",
                 "Is Latest Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited,
-                false));
+                false, false, false));
+
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            type.addPropertyDefinition(createPropDef(PropertyIds.IS_PRIVATE_WORKING_COPY, "Is Private Working Copy",
+                    "Is Private Working Copy", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY,
+                    inherited, false, true, false));
+        }
 
         type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_LABEL, "Version Label", "Version Label",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, true));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_ID, "Version Series Id",
-                "Version Series Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, true));
+                "Version Series Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                true, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
                 "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
-                "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID, Cardinality.SINGLE,
-                Updatability.READONLY, inherited, false));
+                Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
                 "Version Series Checked Out By", "Version Series Checked Out By", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
+                "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID, Cardinality.SINGLE,
+                Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment", "Checkin Comment",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
                 "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY, inherited,
-                false));
+                false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type", "MIME Type",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_FILE_NAME, "Filename", "Filename",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id",
-                "Content Stream Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                "Content Stream Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                false, false));
     }
 
     private void addFolderPropertyDefinitions(MutableFolderTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+
+        type.addPropertyDefinition(createPropDef(PropertyIds.PATH, "Path", "Path", PropertyType.STRING,
+                Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
                 "Allowed Child Object Type Ids", "Allowed Child Object Type Ids", PropertyType.ID, Cardinality.MULTI,
-                Updatability.READONLY, inherited, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.PATH, "Path", "Path", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false));
+                Updatability.READONLY, inherited, false, false, false));
     }
 
     private void addPolicyPropertyDefinitions(MutablePolicyTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.POLICY_TEXT, "Policy Text", "Policy Text",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, true));
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, false, false, false));
     }
 
     private void addRelationshipPropertyDefinitions(MutableRelationshipTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.SOURCE_ID, "Source Id", "Source Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READWRITE, inherited, true));
+                Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
 
         type.addPropertyDefinition(createPropDef(PropertyIds.TARGET_ID, "Target Id", "Target Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READWRITE, inherited, true));
+                Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
     }
 
     /**
@@ -743,7 +753,7 @@ public class TypeDefinitionFactory {
      */
     private MutablePropertyDefinition<?> createPropDef(String id, String displayName, String description,
             PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
-            boolean required) {
+            boolean required, boolean queryable, boolean orderable) {
         MutablePropertyDefinition<?> result = null;
 
         switch (datatype) {
@@ -784,8 +794,8 @@ public class TypeDefinitionFactory {
         result.setUpdatability(updateability);
         result.setIsInherited(inherited);
         result.setIsRequired(required);
-        result.setIsQueryable(false); // TODO
-        result.setIsOrderable(false); // TODO
+        result.setIsQueryable(queryable);
+        result.setIsOrderable(orderable);
         result.setQueryName(id);
 
         return result;

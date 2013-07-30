@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -83,10 +86,14 @@ public class TypeManager {
 
         try {
             // folder type
-            addTypeInteral(tdf.createBaseFolderTypeDefinition(cmisVersion));
+            MutableFolderTypeDefinition folderType = tdf.createBaseFolderTypeDefinition(cmisVersion);
+            removeQueryableAndOrderableFlags(folderType);
+            addTypeInteral(folderType);
 
             // document type
-            addTypeInteral(tdf.createBaseDocumentTypeDefinition(cmisVersion));
+            MutableDocumentTypeDefinition documentType = tdf.createBaseDocumentTypeDefinition(cmisVersion);
+            removeQueryableAndOrderableFlags(documentType);
+            addTypeInteral(documentType);
 
             // relationship types
             // not supported - don't expose it
@@ -105,6 +112,19 @@ public class TypeManager {
             // addTypeInteral(tdf.createBaseSecondaryTypeDefinition(cmisVersion));
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot set up type defintions!", e);
+        }
+    }
+
+    /**
+     * Removes the queryable and orderable flags from the property definitions
+     * of a type definition because this implementations does neither support
+     * queries nor can order objects.
+     */
+    private void removeQueryableAndOrderableFlags(MutableTypeDefinition type) {
+        for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
+            MutablePropertyDefinition<?> mutablePropDef = (MutablePropertyDefinition<?>) propDef;
+            mutablePropDef.setIsQueryable(false);
+            mutablePropDef.setIsOrderable(false);
         }
     }
 
