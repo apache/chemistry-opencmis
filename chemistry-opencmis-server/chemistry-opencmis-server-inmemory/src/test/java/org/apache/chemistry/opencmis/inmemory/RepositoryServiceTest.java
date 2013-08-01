@@ -165,8 +165,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
             log.info("Found type: " + typeDef.getId() + ", display name is: " + typeDef.getDisplayName());
             log.info("  Base type is: " + typeDef.getBaseTypeId());
             Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
-            log.info("  Property definitions (must be null): " + propDefs);
-            assertNull(propDefs);
+            log.info("  Property definitions (must be empty): " + propDefs);
+            assertTrue(propDefs.isEmpty());
         }
 
         log.info("... testGetTypesWihtoutPropDefs() finished.");
@@ -301,7 +301,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         children = fRepSvc.getTypeChildren(repositoryId, typeId, null, maxItems, null, null);
 
         for (TypeDefinition type : children.getList()) {
-            assertNull(type.getPropertyDefinitions());
+            assertTrue(type.getPropertyDefinitions().isEmpty());
         }
 
         log.info("... testGetTypeChildrenNoProperties() finished.");

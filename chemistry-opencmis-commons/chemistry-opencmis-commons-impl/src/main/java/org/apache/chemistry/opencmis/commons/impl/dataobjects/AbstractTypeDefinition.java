@@ -49,7 +49,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
     private Boolean isFulltextIndexed;
     private Boolean isControllableACL;
     private Boolean isControllablePolicy;
-    private LinkedHashMap<String, PropertyDefinition<?>> propertyDefinitions;
+    private LinkedHashMap<String, PropertyDefinition<?>> propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
     private TypeMutability typeMutability;
 
     public void initialize(TypeDefinition typeDefinition) {
@@ -202,7 +202,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
     public void setPropertyDefinitions(Map<String, PropertyDefinition<?>> newPropertyDefinitions) {
         if (newPropertyDefinitions == null) {
-            propertyDefinitions = null;
+            propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
         } else if (newPropertyDefinitions instanceof LinkedHashMap) {
             propertyDefinitions = (LinkedHashMap<String, PropertyDefinition<?>>) newPropertyDefinitions;
         } else {
@@ -215,10 +215,6 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
             return;
         }
 
-        if (propertyDefinitions == null) {
-            propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
-        }
-
         propertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
     }
 
@@ -227,13 +223,11 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
             return;
         }
 
-        if (propertyDefinitions != null) {
-            propertyDefinitions.remove(propertyId);
-        }
+        propertyDefinitions.remove(propertyId);
     }
 
     public void removeAllPropertyDefinitions() {
-        propertyDefinitions = null;
+        propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
     }
 
     public TypeMutability getTypeMutability() {

@@ -75,6 +75,7 @@ public class TypeDefinitionFactory {
     private boolean defaultControllableAcl;
     private boolean defaultControllablePolicy;
     private boolean defaultQueryable;
+    private boolean defaultFulltextIndexed;
     private TypeMutability defaultTypeMutability;
 
     private TypeDefinitionFactory() {
@@ -89,6 +90,7 @@ public class TypeDefinitionFactory {
         defaultControllableAcl = false;
         defaultControllablePolicy = false;
         defaultQueryable = true;
+        defaultFulltextIndexed = false;
 
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(false);
@@ -191,6 +193,14 @@ public class TypeDefinitionFactory {
         this.defaultQueryable = defaultQueryable;
     }
 
+    public boolean getDefaultFulltextIndexed() {
+        return defaultFulltextIndexed;
+    }
+
+    public void setDefaultFulltextIndexed(boolean defaultFulltextIndexed) {
+        this.defaultFulltextIndexed = defaultFulltextIndexed;
+    }
+
     public TypeMutability getDefaultTypeMutability() {
         return defaultTypeMutability;
     }
@@ -238,7 +248,7 @@ public class TypeDefinitionFactory {
         documentType.setDescription("Document");
         documentType.setDisplayName("Document");
         documentType.setIsFileable(true);
-        documentType.setIsFulltextIndexed(false);
+        documentType.setIsFulltextIndexed(defaultFulltextIndexed);
         documentType.setIsIncludedInSupertypeQuery(true);
         documentType.setLocalName("Document");
         documentType.setLocalNamespace(defaultNamespace);
@@ -294,14 +304,14 @@ public class TypeDefinitionFactory {
      */
     public MutableFolderTypeDefinition createBaseFolderTypeDefinition(CmisVersion cmisVersion)
             throws InstantiationException, IllegalAccessException {
-        return createFoldertTypeDefinition(cmisVersion, null);
+        return createFolderTypeDefinition(cmisVersion, null);
     }
 
     /**
      * Creates a new mutable folder type definition including all base property
      * definitions defined in the CMIS specification.
      */
-    public MutableFolderTypeDefinition createFoldertTypeDefinition(CmisVersion cmisVersion, String parentId)
+    public MutableFolderTypeDefinition createFolderTypeDefinition(CmisVersion cmisVersion, String parentId)
             throws InstantiationException, IllegalAccessException {
         MutableFolderTypeDefinition folderType = folderTypeDefinitionClass.newInstance();
         folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
@@ -312,7 +322,7 @@ public class TypeDefinitionFactory {
         folderType.setDescription("Folder");
         folderType.setDisplayName("Folder");
         folderType.setIsFileable(true);
-        folderType.setIsFulltextIndexed(false);
+        folderType.setIsFulltextIndexed(defaultFulltextIndexed);
         folderType.setIsIncludedInSupertypeQuery(true);
         folderType.setLocalName("Folder");
         folderType.setLocalNamespace(defaultNamespace);
@@ -323,8 +333,8 @@ public class TypeDefinitionFactory {
             folderType.setTypeMutability(defaultTypeMutability);
         }
 
-        addBasePropertyDefinitions(folderType, cmisVersion, parentId == null);
-        addFolderPropertyDefinitions(folderType, cmisVersion, parentId == null);
+        addBasePropertyDefinitions(folderType, cmisVersion, parentId != null);
+        addFolderPropertyDefinitions(folderType, cmisVersion, parentId != null);
 
         return folderType;
     }
@@ -353,6 +363,7 @@ public class TypeDefinitionFactory {
         policyType.setDescription("Policy");
         policyType.setDisplayName("Policy");
         policyType.setIsFileable(false);
+        policyType.setIsFulltextIndexed(defaultFulltextIndexed);
         policyType.setIsIncludedInSupertypeQuery(true);
         policyType.setLocalName("Policy");
         policyType.setLocalNamespace(defaultNamespace);
@@ -363,8 +374,8 @@ public class TypeDefinitionFactory {
             policyType.setTypeMutability(defaultTypeMutability);
         }
 
-        addBasePropertyDefinitions(policyType, cmisVersion, parentId == null);
-        addPolicyPropertyDefinitions(policyType, cmisVersion, parentId == null);
+        addBasePropertyDefinitions(policyType, cmisVersion, parentId != null);
+        addPolicyPropertyDefinitions(policyType, cmisVersion, parentId != null);
 
         return policyType;
     }
@@ -393,6 +404,7 @@ public class TypeDefinitionFactory {
         relationshipType.setDescription("Relationship");
         relationshipType.setDisplayName("Relationship");
         relationshipType.setIsFileable(false);
+        relationshipType.setIsFulltextIndexed(defaultFulltextIndexed);
         relationshipType.setIsIncludedInSupertypeQuery(true);
         relationshipType.setLocalName("Relationship");
         relationshipType.setLocalNamespace(defaultNamespace);
@@ -403,8 +415,8 @@ public class TypeDefinitionFactory {
             relationshipType.setTypeMutability(defaultTypeMutability);
         }
 
-        addBasePropertyDefinitions(relationshipType, cmisVersion, parentId == null);
-        addRelationshipPropertyDefinitions(relationshipType, cmisVersion, parentId == null);
+        addBasePropertyDefinitions(relationshipType, cmisVersion, parentId != null);
+        addRelationshipPropertyDefinitions(relationshipType, cmisVersion, parentId != null);
 
         return relationshipType;
     }
@@ -437,6 +449,7 @@ public class TypeDefinitionFactory {
         itemType.setDescription("Item");
         itemType.setDisplayName("Item");
         itemType.setIsFileable(true);
+        itemType.setIsFulltextIndexed(defaultFulltextIndexed);
         itemType.setIsIncludedInSupertypeQuery(true);
         itemType.setLocalName("Item");
         itemType.setLocalNamespace(defaultNamespace);
@@ -445,7 +458,7 @@ public class TypeDefinitionFactory {
         itemType.setId(BaseTypeId.CMIS_ITEM.value());
         itemType.setTypeMutability(defaultTypeMutability);
 
-        addBasePropertyDefinitions(itemType, cmisVersion, parentId == null);
+        addBasePropertyDefinitions(itemType, cmisVersion, parentId != null);
 
         return itemType;
     }
@@ -476,6 +489,7 @@ public class TypeDefinitionFactory {
         secondaryType.setDescription("Secondary");
         secondaryType.setDisplayName("Secondary");
         secondaryType.setIsFileable(false);
+        secondaryType.setIsFulltextIndexed(false);
         secondaryType.setIsIncludedInSupertypeQuery(true);
         secondaryType.setLocalName("Secondary");
         secondaryType.setLocalNamespace(defaultNamespace);
