@@ -20,7 +20,14 @@
  */
 package org.apache.chemistry.opencmis.server.support;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
@@ -43,6 +50,8 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
@@ -114,7 +123,16 @@ public class TypeDefinitionFactory {
 
     public void setDocumentTypeDefinitionClass(
             Class<? extends MutableDocumentTypeDefinition> documentTypeDefinitionClass) {
+        checkClass(documentTypeDefinitionClass);
         this.documentTypeDefinitionClass = documentTypeDefinitionClass;
+    }
+
+    protected MutableDocumentTypeDefinition createDocumentTypeDefinitionObject() {
+        try {
+            return documentTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
     }
 
     public Class<? extends MutableFolderTypeDefinition> getFolderTypeDefinitionClass() {
@@ -122,7 +140,16 @@ public class TypeDefinitionFactory {
     }
 
     public void setFolderTypeDefinitionClass(Class<? extends MutableFolderTypeDefinition> folderTypeDefinitionClass) {
+        checkClass(folderTypeDefinitionClass);
         this.folderTypeDefinitionClass = folderTypeDefinitionClass;
+    }
+
+    protected MutableFolderTypeDefinition createFolderTypeDefinitionObject() {
+        try {
+            return folderTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
     }
 
     public Class<? extends MutablePolicyTypeDefinition> getPolicyTypeDefinitionClass() {
@@ -130,7 +157,16 @@ public class TypeDefinitionFactory {
     }
 
     public void setPolicyTypeDefinitionClass(Class<? extends MutablePolicyTypeDefinition> policyTypeDefinitionClass) {
+        checkClass(policyTypeDefinitionClass);
         this.policyTypeDefinitionClass = policyTypeDefinitionClass;
+    }
+
+    protected MutablePolicyTypeDefinition createPolicyTypeDefinitionObject() {
+        try {
+            return policyTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
     }
 
     public Class<? extends MutableRelationshipTypeDefinition> getRelationshipTypeDefinitionClass() {
@@ -139,7 +175,16 @@ public class TypeDefinitionFactory {
 
     public void setRelationshipTypeDefinitionClass(
             Class<? extends MutableRelationshipTypeDefinition> relationshipTypeDefinitionClass) {
+        checkClass(relationshipTypeDefinitionClass);
         this.relationshipTypeDefinitionClass = relationshipTypeDefinitionClass;
+    }
+
+    protected MutableRelationshipTypeDefinition createRelationshipTypeDefinitionObject() {
+        try {
+            return relationshipTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
     }
 
     public Class<? extends MutableItemTypeDefinition> getItemTypeDefinitionClass() {
@@ -147,7 +192,16 @@ public class TypeDefinitionFactory {
     }
 
     public void setItemTypeDefinitionClass(Class<? extends MutableItemTypeDefinition> itemTypeDefinitionClass) {
+        checkClass(itemTypeDefinitionClass);
         this.itemTypeDefinitionClass = itemTypeDefinitionClass;
+    }
+
+    protected MutableItemTypeDefinition createItemTypeDefinitionObject() {
+        try {
+            return itemTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
     }
 
     public Class<? extends MutableSecondaryTypeDefinition> getSecondaryTypeDefinitionClass() {
@@ -156,7 +210,29 @@ public class TypeDefinitionFactory {
 
     public void setSecondaryTypeDefinitionClass(
             Class<? extends MutableSecondaryTypeDefinition> secondaryTypeDefinitionClass) {
+        checkClass(secondaryTypeDefinitionClass);
         this.secondaryTypeDefinitionClass = secondaryTypeDefinitionClass;
+    }
+
+    protected MutableSecondaryTypeDefinition createSecondaryTypeDefinitionObject() {
+        try {
+            return secondaryTypeDefinitionClass.newInstance();
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
+        }
+    }
+
+    private void checkClass(Class<? extends MutableTypeDefinition> clazz) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("Class must be set!");
+        }
+
+        // check for default constructor
+        try {
+            clazz.getConstructor(new Class[0]);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Class has no accessible default constructor!", e);
+        }
     }
 
     // --- default values ---
@@ -228,8 +304,7 @@ public class TypeDefinitionFactory {
      * Creates a new mutable base document type definition including all
      * property definitions defined in the CMIS specification.
      */
-    public MutableDocumentTypeDefinition createBaseDocumentTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutableDocumentTypeDefinition createBaseDocumentTypeDefinition(CmisVersion cmisVersion) {
         return createDocumentTypeDefinition(cmisVersion, null);
     }
 
@@ -237,9 +312,8 @@ public class TypeDefinitionFactory {
      * Creates a new mutable document type definition including all base
      * property definitions defined in the CMIS specification.
      */
-    public MutableDocumentTypeDefinition createDocumentTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
-        MutableDocumentTypeDefinition documentType = documentTypeDefinitionClass.newInstance();
+    public MutableDocumentTypeDefinition createDocumentTypeDefinition(CmisVersion cmisVersion, String parentId) {
+        MutableDocumentTypeDefinition documentType = createDocumentTypeDefinitionObject();
         documentType.setBaseTypeId(BaseTypeId.CMIS_DOCUMENT);
         documentType.setParentTypeId(parentId);
         documentType.setIsControllableAcl(defaultControllableAcl);
@@ -272,25 +346,43 @@ public class TypeDefinitionFactory {
      * Creates a new mutable document type definition, which is a child of the
      * provided type definition. Property definitions are copied from the parent
      * and marked as inherited.
+     * 
+     * @param parentTypeDefinition
+     *            the type definition of the parent
+     * @param id
+     *            the id of the child type definition
+     * 
+     * @param a
+     *            mutable child type definition
      */
-    public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition)
-            throws InstantiationException, IllegalAccessException {
-        MutableDocumentTypeDefinition documentType = documentTypeDefinitionClass.newInstance();
+    public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
+            String id) {
+        return createChildDocumentTypeDefinition(parentTypeDefinition, id, id, id, id, null);
+    }
+
+    /**
+     * Creates a new mutable document type definition, which is a child of the
+     * provided type definition. Property definitions are copied from the parent
+     * and marked as inherited.
+     */
+    public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
+            String id, String localName, String queryName, String displayName, String description) {
+        MutableDocumentTypeDefinition documentType = createDocumentTypeDefinitionObject();
         documentType.setBaseTypeId(parentTypeDefinition.getBaseTypeId());
         documentType.setParentTypeId(parentTypeDefinition.getId());
         documentType.setIsControllableAcl(parentTypeDefinition.isControllableAcl());
         documentType.setIsControllablePolicy(parentTypeDefinition.isControllablePolicy());
         documentType.setIsCreatable(parentTypeDefinition.isCreatable());
-        documentType.setDescription(null);
-        documentType.setDisplayName(null);
+        documentType.setDescription(description);
+        documentType.setDisplayName(displayName);
         documentType.setIsFileable(parentTypeDefinition.isFileable());
         documentType.setIsFulltextIndexed(parentTypeDefinition.isFulltextIndexed());
         documentType.setIsIncludedInSupertypeQuery(parentTypeDefinition.isIncludedInSupertypeQuery());
-        documentType.setLocalName(null);
+        documentType.setLocalName(localName);
         documentType.setLocalNamespace(parentTypeDefinition.getLocalNamespace());
         documentType.setIsQueryable(parentTypeDefinition.isQueryable());
-        documentType.setQueryName(null);
-        documentType.setId(null);
+        documentType.setQueryName(queryName);
+        documentType.setId(id);
         documentType.setTypeMutability(parentTypeDefinition.getTypeMutability());
         documentType.setIsVersionable(parentTypeDefinition.isVersionable());
         documentType.setContentStreamAllowed(parentTypeDefinition.getContentStreamAllowed());
@@ -304,8 +396,7 @@ public class TypeDefinitionFactory {
      * Creates a new mutable base folder type definition including all property
      * definitions defined in the CMIS specification.
      */
-    public MutableFolderTypeDefinition createBaseFolderTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutableFolderTypeDefinition createBaseFolderTypeDefinition(CmisVersion cmisVersion) {
         return createFolderTypeDefinition(cmisVersion, null);
     }
 
@@ -313,9 +404,8 @@ public class TypeDefinitionFactory {
      * Creates a new mutable folder type definition including all base property
      * definitions defined in the CMIS specification.
      */
-    public MutableFolderTypeDefinition createFolderTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
-        MutableFolderTypeDefinition folderType = folderTypeDefinitionClass.newInstance();
+    public MutableFolderTypeDefinition createFolderTypeDefinition(CmisVersion cmisVersion, String parentId) {
+        MutableFolderTypeDefinition folderType = createFolderTypeDefinitionObject();
         folderType.setBaseTypeId(BaseTypeId.CMIS_FOLDER);
         folderType.setParentTypeId(parentId);
         folderType.setIsControllableAcl(defaultControllableAcl);
@@ -345,8 +435,7 @@ public class TypeDefinitionFactory {
      * Creates a new mutable base policy type definition including all property
      * definitions defined in the CMIS specification.
      */
-    public MutablePolicyTypeDefinition createBasePolicyTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutablePolicyTypeDefinition createBasePolicyTypeDefinition(CmisVersion cmisVersion) {
         return createPolicyTypeDefinition(cmisVersion, null);
     }
 
@@ -354,9 +443,8 @@ public class TypeDefinitionFactory {
      * Creates a new mutable policy type definition including all base property
      * definitions defined in the CMIS specification.
      */
-    public MutablePolicyTypeDefinition createPolicyTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
-        MutablePolicyTypeDefinition policyType = policyTypeDefinitionClass.newInstance();
+    public MutablePolicyTypeDefinition createPolicyTypeDefinition(CmisVersion cmisVersion, String parentId) {
+        MutablePolicyTypeDefinition policyType = createPolicyTypeDefinitionObject();
         policyType.setBaseTypeId(BaseTypeId.CMIS_POLICY);
         policyType.setParentTypeId(parentId);
         policyType.setIsControllableAcl(defaultControllableAcl);
@@ -386,8 +474,7 @@ public class TypeDefinitionFactory {
      * Creates a new mutable base relationship type definition including all
      * property definitions defined in the CMIS specification.
      */
-    public MutableRelationshipTypeDefinition createBaseRelationshipTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutableRelationshipTypeDefinition createBaseRelationshipTypeDefinition(CmisVersion cmisVersion) {
         return createRelationshipTypeDefinition(cmisVersion, null);
     }
 
@@ -395,9 +482,8 @@ public class TypeDefinitionFactory {
      * Creates a new mutable relationship type definition including all base
      * property definitions defined in the CMIS specification.
      */
-    public MutableRelationshipTypeDefinition createRelationshipTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
-        MutableRelationshipTypeDefinition relationshipType = relationshipTypeDefinitionClass.newInstance();
+    public MutableRelationshipTypeDefinition createRelationshipTypeDefinition(CmisVersion cmisVersion, String parentId) {
+        MutableRelationshipTypeDefinition relationshipType = createRelationshipTypeDefinitionObject();
         relationshipType.setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
         relationshipType.setParentTypeId(parentId);
         relationshipType.setIsControllableAcl(defaultControllableAcl);
@@ -427,8 +513,7 @@ public class TypeDefinitionFactory {
      * Creates a new mutable base item type definition including all property
      * definitions defined in the CMIS specification.
      */
-    public MutableItemTypeDefinition createBaseItemTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutableItemTypeDefinition createBaseItemTypeDefinition(CmisVersion cmisVersion) {
         return createItemTypeDefinition(cmisVersion, null);
     }
 
@@ -436,13 +521,12 @@ public class TypeDefinitionFactory {
      * Creates a new mutable item type definition including all base property
      * definitions defined in the CMIS specification.
      */
-    public MutableItemTypeDefinition createItemTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
+    public MutableItemTypeDefinition createItemTypeDefinition(CmisVersion cmisVersion, String parentId) {
         if (cmisVersion == CmisVersion.CMIS_1_0) {
             throw new IllegalArgumentException("CMIS 1.0 doesn't support item types!");
         }
 
-        MutableItemTypeDefinition itemType = itemTypeDefinitionClass.newInstance();
+        MutableItemTypeDefinition itemType = createItemTypeDefinitionObject();
         itemType.setBaseTypeId(BaseTypeId.CMIS_ITEM);
         itemType.setParentTypeId(parentId);
         itemType.setIsControllableAcl(defaultControllableAcl);
@@ -468,21 +552,19 @@ public class TypeDefinitionFactory {
     /**
      * Creates a new mutable base secondary type definition.
      */
-    public MutableSecondaryTypeDefinition createBaseSecondaryTypeDefinition(CmisVersion cmisVersion)
-            throws InstantiationException, IllegalAccessException {
+    public MutableSecondaryTypeDefinition createBaseSecondaryTypeDefinition(CmisVersion cmisVersion) {
         return createSecondaryTypeDefinition(cmisVersion, null);
     }
 
     /**
      * Creates a new mutable secondary type definition.
      */
-    public MutableSecondaryTypeDefinition createSecondaryTypeDefinition(CmisVersion cmisVersion, String parentId)
-            throws InstantiationException, IllegalAccessException {
+    public MutableSecondaryTypeDefinition createSecondaryTypeDefinition(CmisVersion cmisVersion, String parentId) {
         if (cmisVersion == CmisVersion.CMIS_1_0) {
             throw new IllegalArgumentException("CMIS 1.0 doesn't support secondary types!");
         }
 
-        MutableSecondaryTypeDefinition secondaryType = secondaryTypeDefinitionClass.newInstance();
+        MutableSecondaryTypeDefinition secondaryType = createSecondaryTypeDefinitionObject();
         secondaryType.setBaseTypeId(BaseTypeId.CMIS_SECONDARY);
         secondaryType.setParentTypeId(parentId);
         secondaryType.setIsControllableAcl(defaultControllableAcl);
@@ -511,8 +593,7 @@ public class TypeDefinitionFactory {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public MutableTypeDefinition copy(TypeDefinition sourceTypeDefintion, boolean includePropertyDefinitions)
-            throws InstantiationException, IllegalAccessException {
+    public MutableTypeDefinition copy(TypeDefinition sourceTypeDefintion, boolean includePropertyDefinitions) {
         if (sourceTypeDefintion == null) {
             return null;
         }
@@ -521,31 +602,34 @@ public class TypeDefinitionFactory {
 
         switch (sourceTypeDefintion.getBaseTypeId()) {
         case CMIS_DOCUMENT:
-            result = documentTypeDefinitionClass.newInstance();
+            result = createDocumentTypeDefinitionObject();
             break;
         case CMIS_FOLDER:
-            result = folderTypeDefinitionClass.newInstance();
+            result = createFolderTypeDefinitionObject();
             break;
         case CMIS_POLICY:
-            result = policyTypeDefinitionClass.newInstance();
+            result = createPolicyTypeDefinitionObject();
             break;
         case CMIS_RELATIONSHIP:
-            result = relationshipTypeDefinitionClass.newInstance();
+            result = createRelationshipTypeDefinitionObject();
             break;
         case CMIS_ITEM:
-            result = itemTypeDefinitionClass.newInstance();
+            result = createItemTypeDefinitionObject();
             break;
         case CMIS_SECONDARY:
-            result = secondaryTypeDefinitionClass.newInstance();
+            result = createSecondaryTypeDefinitionObject();
             break;
         default:
             throw new RuntimeException("Unknown base type!");
         }
 
         // TODO: copy attributes
-        // TODO: copy extensions
 
-        copyPropertyDefinitions(sourceTypeDefintion, result, false);
+        copyExtensions(sourceTypeDefintion, result);
+
+        if (includePropertyDefinitions) {
+            copyPropertyDefinitions(sourceTypeDefintion, result, false);
+        }
 
         return result;
     }
@@ -611,7 +695,8 @@ public class TypeDefinitionFactory {
         result.setQueryName(sourcePropertyDefinition.getQueryName());
 
         // TODO: handle default values and choices
-        // TODO: copy extensions
+
+        copyExtensions(sourcePropertyDefinition, result);
 
         return result;
     }
@@ -621,7 +706,7 @@ public class TypeDefinitionFactory {
     /**
      * Copies the property definitions from a source type to a target type.
      */
-    private void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target, boolean markAsInherited) {
+    protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target, boolean markAsInherited) {
         if (source != null && source.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> propDef : source.getPropertyDefinitions().values()) {
                 MutablePropertyDefinition<?> newPropDef = copy(propDef);
@@ -634,9 +719,55 @@ public class TypeDefinitionFactory {
     }
 
     /**
+     * Makes a deep copy of extension of a source object and adds them to a
+     * target object.
+     */
+    protected void copyExtensions(ExtensionsData source, ExtensionsData target) {
+        if (source == null || target == null) {
+            return;
+        }
+
+        if (source.getExtensions() == null) {
+            target.setExtensions(null);
+            return;
+        }
+
+        List<CmisExtensionElement> elementList = new ArrayList<CmisExtensionElement>();
+        for (CmisExtensionElement element : source.getExtensions()) {
+            elementList.add(copy(element));
+        }
+
+        target.setExtensions(elementList);
+    }
+
+    /**
+     * Makes a deep copy of an extension element.
+     */
+    private CmisExtensionElement copy(CmisExtensionElement element) {
+        if (element == null) {
+            return null;
+        }
+
+        Map<String, String> attrs = (element.getAttributes() != null ? new HashMap<String, String>(
+                element.getAttributes()) : null);
+
+        if (element.getChildren() == null) {
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, element.getValue());
+        } else {
+            List<CmisExtensionElement> children = new ArrayList<CmisExtensionElement>();
+
+            for (CmisExtensionElement child : element.getChildren()) {
+                children.add(copy(child));
+            }
+
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, children);
+        }
+    }
+
+    /**
      * Adds the base property definitions to a type definition.
      */
-    private void addBasePropertyDefinitions(MutableTypeDefinition type, CmisVersion cmisVersion, boolean inherited) {
+    protected void addBasePropertyDefinitions(MutableTypeDefinition type, CmisVersion cmisVersion, boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READWRITE, inherited, true, true, true));
 
@@ -677,7 +808,7 @@ public class TypeDefinitionFactory {
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
     }
 
-    private void addDocumentPropertyDefinitions(MutableDocumentTypeDefinition type, CmisVersion cmisVersion,
+    protected void addDocumentPropertyDefinitions(MutableDocumentTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
                 PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
@@ -736,7 +867,7 @@ public class TypeDefinitionFactory {
                 false, false));
     }
 
-    private void addFolderPropertyDefinitions(MutableFolderTypeDefinition type, CmisVersion cmisVersion,
+    protected void addFolderPropertyDefinitions(MutableFolderTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
                 Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
@@ -749,13 +880,13 @@ public class TypeDefinitionFactory {
                 Updatability.READONLY, inherited, false, false, false));
     }
 
-    private void addPolicyPropertyDefinitions(MutablePolicyTypeDefinition type, CmisVersion cmisVersion,
+    protected void addPolicyPropertyDefinitions(MutablePolicyTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.POLICY_TEXT, "Policy Text", "Policy Text",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, false, false, false));
     }
 
-    private void addRelationshipPropertyDefinitions(MutableRelationshipTypeDefinition type, CmisVersion cmisVersion,
+    protected void addRelationshipPropertyDefinitions(MutableRelationshipTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
         type.addPropertyDefinition(createPropDef(PropertyIds.SOURCE_ID, "Source Id", "Source Id", PropertyType.ID,
                 Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
@@ -767,7 +898,7 @@ public class TypeDefinitionFactory {
     /**
      * Creates a property definition object.
      */
-    private MutablePropertyDefinition<?> createPropDef(String id, String displayName, String description,
+    protected MutablePropertyDefinition<?> createPropDef(String id, String displayName, String description,
             PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
             boolean required, boolean queryable, boolean orderable) {
         MutablePropertyDefinition<?> result = null;
