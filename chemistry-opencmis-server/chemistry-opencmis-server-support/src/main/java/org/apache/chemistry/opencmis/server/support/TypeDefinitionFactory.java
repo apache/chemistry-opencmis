@@ -352,21 +352,23 @@ public class TypeDefinitionFactory {
      * @param id
      *            the id of the child type definition
      * 
-     * @param a
-     *            mutable child type definition
+     * @return a mutable child type definition
      */
     public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
             String id) {
-        return createChildDocumentTypeDefinition(parentTypeDefinition, id, id, id, id, null);
+        return createChildDocumentTypeDefinition(parentTypeDefinition, id, id, id, id, null, true);
     }
 
     /**
      * Creates a new mutable document type definition, which is a child of the
-     * provided type definition. Property definitions are copied from the parent
+     * provided type definition. If the parameter
+     * <code>includePropertyDefinitions</code> is to
+     * <code>true</true> property definitions are copied from the parent
      * and marked as inherited.
      */
     public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
-            String id, String localName, String queryName, String displayName, String description) {
+            String id, String localName, String queryName, String displayName, String description,
+            boolean includePropertyDefinitions) {
         MutableDocumentTypeDefinition documentType = createDocumentTypeDefinitionObject();
         documentType.setBaseTypeId(parentTypeDefinition.getBaseTypeId());
         documentType.setParentTypeId(parentTypeDefinition.getId());
@@ -387,7 +389,9 @@ public class TypeDefinitionFactory {
         documentType.setIsVersionable(parentTypeDefinition.isVersionable());
         documentType.setContentStreamAllowed(parentTypeDefinition.getContentStreamAllowed());
 
-        copyPropertyDefinitions(parentTypeDefinition, documentType, true);
+        if (includePropertyDefinitions) {
+            copyPropertyDefinitions(parentTypeDefinition, documentType, true);
+        }
 
         return documentType;
     }
@@ -589,9 +593,6 @@ public class TypeDefinitionFactory {
 
     /**
      * Copies the given type definition and returns a mutable object.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
     public MutableTypeDefinition copy(TypeDefinition sourceTypeDefintion, boolean includePropertyDefinitions) {
         if (sourceTypeDefintion == null) {
@@ -650,14 +651,18 @@ public class TypeDefinitionFactory {
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
-            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(((PropertyDateTimeDefinition) sourcePropertyDefinition)
-                    .getDateTimeResolution());
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setDateTimeResolution(((PropertyDateTimeDefinition) sourcePropertyDefinition)
+                            .getDateTimeResolution());
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
-            ((PropertyDecimalDefinitionImpl) result).setMinValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMinValue());
-            ((PropertyDecimalDefinitionImpl) result).setMaxValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMaxValue());
-            ((PropertyDecimalDefinitionImpl) result).setPrecision(((PropertyDecimalDefinition) sourcePropertyDefinition).getPrecision());
+            ((PropertyDecimalDefinitionImpl) result).setMinValue(((PropertyDecimalDefinition) sourcePropertyDefinition)
+                    .getMinValue());
+            ((PropertyDecimalDefinitionImpl) result).setMaxValue(((PropertyDecimalDefinition) sourcePropertyDefinition)
+                    .getMaxValue());
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setPrecision(((PropertyDecimalDefinition) sourcePropertyDefinition).getPrecision());
             break;
         case HTML:
             result = new PropertyHtmlDefinitionImpl();
@@ -667,12 +672,15 @@ public class TypeDefinitionFactory {
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
-            ((PropertyIntegerDefinitionImpl) result).setMinValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMinValue());
-            ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMaxValue());
+            ((PropertyIntegerDefinitionImpl) result).setMinValue(((PropertyIntegerDefinition) sourcePropertyDefinition)
+                    .getMinValue());
+            ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition)
+                    .getMaxValue());
             break;
         case STRING:
             result = new PropertyStringDefinitionImpl();
-            ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition).getMaxLength()));
+            ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition)
+                    .getMaxLength()));
             break;
         case URI:
             result = new PropertyUriDefinitionImpl();
