@@ -566,14 +566,14 @@ public class TypeDefinitionFactory {
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
-            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(((PropertyDateTimeDefinition) result)
+            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(((PropertyDateTimeDefinition) sourcePropertyDefinition)
                     .getDateTimeResolution());
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
-            ((PropertyDecimalDefinitionImpl) result).setMinValue(((PropertyDecimalDefinition) result).getMinValue());
-            ((PropertyDecimalDefinitionImpl) result).setMaxValue(((PropertyDecimalDefinition) result).getMaxValue());
-            ((PropertyDecimalDefinitionImpl) result).setPrecision(((PropertyDecimalDefinition) result).getPrecision());
+            ((PropertyDecimalDefinitionImpl) result).setMinValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMinValue());
+            ((PropertyDecimalDefinitionImpl) result).setMaxValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMaxValue());
+            ((PropertyDecimalDefinitionImpl) result).setPrecision(((PropertyDecimalDefinition) sourcePropertyDefinition).getPrecision());
             break;
         case HTML:
             result = new PropertyHtmlDefinitionImpl();
@@ -583,12 +583,12 @@ public class TypeDefinitionFactory {
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
-            ((PropertyIntegerDefinitionImpl) result).setMinValue(((PropertyIntegerDefinition) result).getMinValue());
-            ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) result).getMaxValue());
+            ((PropertyIntegerDefinitionImpl) result).setMinValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMinValue());
+            ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMaxValue());
             break;
         case STRING:
             result = new PropertyStringDefinitionImpl();
-            ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) result).getMaxLength()));
+            ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition).getMaxLength()));
             break;
         case URI:
             result = new PropertyUriDefinitionImpl();
