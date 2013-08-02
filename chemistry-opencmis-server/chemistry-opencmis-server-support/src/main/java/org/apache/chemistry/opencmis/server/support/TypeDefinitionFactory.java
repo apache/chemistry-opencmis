@@ -262,8 +262,8 @@ public class TypeDefinitionFactory {
         documentType.setIsVersionable(false);
         documentType.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
 
-        addBasePropertyDefinitions(documentType, cmisVersion, parentId == null);
-        addDocumentPropertyDefinitions(documentType, cmisVersion, parentId == null);
+        addBasePropertyDefinitions(documentType, cmisVersion, parentId != null);
+        addDocumentPropertyDefinitions(documentType, cmisVersion, parentId != null);
 
         return documentType;
     }
@@ -292,6 +292,8 @@ public class TypeDefinitionFactory {
         documentType.setQueryName(null);
         documentType.setId(null);
         documentType.setTypeMutability(parentTypeDefinition.getTypeMutability());
+        documentType.setIsVersionable(parentTypeDefinition.isVersionable());
+        documentType.setContentStreamAllowed(parentTypeDefinition.getContentStreamAllowed());
 
         copyPropertyDefinitions(parentTypeDefinition, documentType, true);
 
