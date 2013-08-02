@@ -156,7 +156,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         AbstractTypeDefinition newType = TypeValidator.completeType(type);
         TypeValidator.adjustTypeNamesAndId(newType);
         TypeValidator.checkType(typeManager, newType);
-        typeManager.addTypeDefinition(newType);
+        typeManager.addTypeDefinition(newType, true);
         return newType;
     }
 

@@ -199,19 +199,21 @@ public class TypeValidator {
             
             for (TypeDefinitionContainer tdc : tdl) {
                 TypeDefinition td = tdc.getTypeDefinition();
-                for (PropertyDefinition<?> pd1 : td.getPropertyDefinitions().values()) {
-                    // check if id is used
-                    if (pd1.getId().equals(pd2.getId()))
-                        throw new CmisConstraintException("Property id " + pd2.getId() + " already in use in type "
-                                + td.getId());
-                    // check if query name is used
-                    if (pd1.getQueryName().equals(pd2.getQueryName()))
-                        throw new CmisConstraintException("Property query name " + pd2.getQueryName() + " already in use in type "
-                                + td.getQueryName());
-                    // check if local name is used
-                    if (pd1.getLocalName().equals(pd2.getLocalName()))
-                        throw new CmisConstraintException("Property local name " + pd2.getLocalName() + " already in use in type "
-                                + td.getId());
+                if (null != td.getPropertyDefinitions()) {
+                    for (PropertyDefinition<?> pd1 : td.getPropertyDefinitions().values()) {
+                        // check if id is used
+                        if (pd1.getId().equals(pd2.getId()))
+                            throw new CmisConstraintException("Property id " + pd2.getId() + " already in use in type "
+                                    + td.getId());
+                        // check if query name is used
+                        if (pd1.getQueryName().equals(pd2.getQueryName()))
+                            throw new CmisConstraintException("Property query name " + pd2.getQueryName() + " already in use in type "
+                                    + td.getQueryName());
+                        // check if local name is used
+                        if (pd1.getLocalName().equals(pd2.getLocalName()))
+                            throw new CmisConstraintException("Property local name " + pd2.getLocalName() + " already in use in type "
+                                    + td.getId());
+                    }
                 }
             }
         }        

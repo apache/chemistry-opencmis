@@ -68,7 +68,7 @@ public class QueryTypesTest extends AbstractQueryTest {
         // create some types for testing
         List<TypeDefinition> typeDefs = super.createTypes();
         for (TypeDefinition typeDef : typeDefs) {
-            tm.addTypeDefinition(typeDef);
+            tm.addTypeDefinition(typeDef, true);
         }
 
         // initialize query object with type manager
@@ -538,7 +538,7 @@ public class QueryTypesTest extends AbstractQueryTest {
         // create some types for testing
         List<TypeDefinition> typeDefs = UnitTestTypeSystemCreator.getTypesList(); 
         for (TypeDefinition typeDef : typeDefs) {
-            tm.addTypeDefinition(typeDef);
+            tm.addTypeDefinition(typeDef, true);
         }
         super.setUp(tm, pw);
 

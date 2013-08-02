@@ -32,28 +32,25 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryObjectServiceImpl;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryRepositoryServiceImpl;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceFactoryImpl;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Temporary test class until CMIS 1.1 bindings are completed. Until then
@@ -84,7 +81,6 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         
         InMemoryServiceFactoryImpl factory = new InMemoryServiceFactoryImpl();
         factory.init(parameters);
-        StoreManager storeManager = factory.getStoreManger();
     }
 
     @Override
@@ -158,7 +154,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         String repositoryId = getRepositoryId();
         
         // test illegal type id
-        InMemoryDocumentTypeDefinition typeDefRef = createTypeForAddingAtRuntime();
+        MutableDocumentTypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setId(typeDefRef.getId() + "!!!");
         TypeDefinition typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
         assertEquals(TYPE_ID_MUTABILITY + "___", typeDefNew.getId());
@@ -214,7 +210,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         String repositoryId = getRepositoryId();
         
         // test null property id
-        InMemoryDocumentTypeDefinition typeDef = createTypeForAddingAtRuntime();
+        DocumentTypeDefinition typeDef = createTypeForAddingAtRuntime();
         PropertyStringDefinitionImpl pd = getPropertyDefinitionImpl(typeDef);
         pd.setId(null);
         checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
@@ -341,30 +337,33 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     }
 
     private PropertyStringDefinitionImpl getPropertyDefinitionImpl(TypeDefinition typeDef) {
-        @SuppressWarnings("unchecked")
         PropertyStringDefinitionImpl pd = (PropertyStringDefinitionImpl) typeDef.getPropertyDefinitions().get(PROPERTY_ID_TITLE);
         return pd;
     }
     
-    private InMemoryDocumentTypeDefinition createTypeForAddingAtRuntime() {
-        
-        InMemoryDocumentTypeDefinition cmisLaterType = new InMemoryDocumentTypeDefinition(TYPE_ID_MUTABILITY,
-                "Type with two properties", InMemoryDocumentTypeDefinition.getRootDocumentType());
+    private MutableDocumentTypeDefinition createTypeForAddingAtRuntime() {
+        try {
+            MutableDocumentTypeDefinition cmisLaterType;
+            cmisLaterType = DocumentTypeCreationHelper.createDocumentTypeDefinitionWithoutBaseProperties(DocumentTypeCreationHelper.getCmisDocumentType());
+            cmisLaterType.setId(TYPE_ID_MUTABILITY);
+            cmisLaterType.setDisplayName("Type with two properties");
+            cmisLaterType.setDescription("Builtin InMemory type definition " + TYPE_ID_MUTABILITY);
 
-        Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-        PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition(PROPERTY_ID_NUMBER,
-                "Sample Int Property", Updatability.READWRITE);
-        propertyDefinitions.put(prop1.getId(), prop1);
+            PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition(PROPERTY_ID_NUMBER,
+                    "Sample Int Property", Updatability.READWRITE);
+            cmisLaterType.addPropertyDefinition(prop1);
 
-        PropertyStringDefinitionImpl prop2 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID_TITLE,
-                "Sample String Property", Updatability.READWRITE);
-        propertyDefinitions.put(prop2.getId(), prop2);
-        
-        cmisLaterType.addCustomPropertyDefinitions(propertyDefinitions);
-        
-        return cmisLaterType;
+            PropertyStringDefinitionImpl prop2 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID_TITLE,
+                    "Sample String Property", Updatability.READWRITE);
+            cmisLaterType.addPropertyDefinition(prop2);
+
+            return cmisLaterType;
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error when creating built-in InMemory types.", e);
+        }
     }
+
 
     String createDoc(String name, String folderId, String typeId) {
         ContentStream contentStream = null;

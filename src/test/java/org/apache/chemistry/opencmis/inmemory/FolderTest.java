@@ -79,11 +79,11 @@ public class FolderTest extends TestCase {
         assertEquals(f1, fTest);
         fTest = fStore.getObjectByPath("/Folder 1/Folder 1.1", USER);
         assertEquals(f11, fTest);
-        List<Fileable> subFolders = fStore.getChildren(fRoot, -1, -1, "user").getChildren();
+        List<Fileable> subFolders = fStore.getChildren(fRoot, -1, -1, "user", false).getChildren();
         assertEquals(4, subFolders.size());
-        subFolders = fStore.getChildren(f2, -1, -1, "user").getChildren();
+        subFolders = fStore.getChildren(f2, -1, -1, "user", false).getChildren();
         assertEquals(0, subFolders.size());
-        subFolders = fStore.getChildren(f1, -1, -1, "user").getChildren();
+        subFolders = fStore.getChildren(f1, -1, -1, "user", false).getChildren();
         assertEquals(1, subFolders.size());
     }
 

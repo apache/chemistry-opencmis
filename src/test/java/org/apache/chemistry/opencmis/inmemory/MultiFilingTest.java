@@ -40,18 +40,18 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolat
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultiFilingTest extends AbstractServiceTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiFilingTest.class);
     private static final String DOCUMENT_TYPE_ID = UnitTestTypeSystemCreator.COMPLEX_TYPE;
-    private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
+    private static final String FOLDER_TYPE_ID = DocumentTypeCreationHelper.getCmisFolderType().getId();
     private static final String UNFILED_DOC_NAME = "Unfiled document";
     private static final String RENAMED_DOC_NAME = "My Renamed Document";
 

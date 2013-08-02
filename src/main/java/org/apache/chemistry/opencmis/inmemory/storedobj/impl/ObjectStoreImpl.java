@@ -587,7 +587,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         }
 
         // check if children exist
-        List<Fileable> children = getChildren((Folder) folder, -1, -1, user).getChildren();
+        List<Fileable> children = getChildren((Folder) folder, -1, -1, user, true).getChildren();
         if (children != null && !children.isEmpty()) {
             throw new CmisConstraintException("Cannot delete folder with id:  " + folderId + ". Folder is not empty.");
         }
@@ -596,8 +596,8 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     @Override
-    public ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user) {
-        List<Fileable> children = getChildren(folder, user);
+    public ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user, boolean usePwc) {
+        List<Fileable> children = getChildren(folder, user, usePwc);
         sortFolderList(children);
 
         if (maxItems < 0) {
@@ -616,10 +616,10 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private List<Fileable> getChildren(Folder folder) {
-        return getChildren(folder, null);
+        return getChildren(folder, null, false);
     }
 
-    private List<Fileable> getChildren(Folder folder, String user) {
+    private List<Fileable> getChildren(Folder folder, String user, boolean usePwc) {
         List<Fileable> children = new ArrayList<Fileable>();
         for (String id : getIds()) {
             StoredObject obj = getObject(id);
@@ -627,8 +627,15 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
                 Fileable pathObj = (Fileable) obj;
                 if ((null == user || hasReadAccess(user, obj)) && pathObj.getParentIds().contains(folder.getId())) {
                     if (pathObj instanceof VersionedDocument) {
-                        DocumentVersion ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-                        children.add(ver);
+                         DocumentVersion ver;
+                        if (usePwc) {
+                            ver = ((VersionedDocument) pathObj).getPwc();
+                            if (null == ver)
+                                ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        } else {
+                            ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        }
+                        children.add(ver);                        
                     } else if (!(pathObj instanceof DocumentVersion)) { // ignore
                                                                         // DocumentVersion
                         children.add(pathObj);
@@ -826,7 +833,8 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl addAces, Acl removeAces, String principalId) {
-        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID).getChildren();
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
+        
         Acl result = applyAcl(folder, addAces, removeAces);
 
         if (null == children) {
@@ -847,8 +855,8 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
-        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID).getChildren();
-
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
+        
         Acl result = applyAcl(folder, acl);
 
         if (null == children) {

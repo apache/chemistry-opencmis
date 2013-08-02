@@ -53,7 +53,7 @@ public interface ObjectStoreFiling {
      * @param user 
      * @return list of children objects
      */
-    ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user );
+    ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user, boolean usePwc);
 
     /**
      * get all the children of this folder which are folders. To support paging

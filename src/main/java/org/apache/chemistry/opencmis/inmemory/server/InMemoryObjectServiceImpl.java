@@ -80,11 +80,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling.Ch
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
@@ -216,16 +212,16 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = null;
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
-        if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
+        if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisDocumentType().getBaseTypeId())) {
             so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState,
                     null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisFolderType().getBaseTypeId())) {
             so = createFolderIntern(context, repositoryId, properties, folderId, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisPolicyType().getBaseTypeId())) {
             so = createPolicyIntern(context, repositoryId, properties, folderId, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisRelationshipType().getBaseTypeId())) {
             so = createRelationshipIntern(context, repositoryId, properties, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryItemTypeDefinition.getRootItemType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisItemType().getBaseTypeId())) {
             so = createItemIntern(context, repositoryId, properties, folderId, null, null, null, null);
         } else {
             LOG.error("The type contains an unknown base object id, object can't be created");
@@ -609,6 +605,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.setContent(contentStream, true);
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         LOG.debug("stop setContentStream()");
     }
 
@@ -813,7 +810,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.appendContent(contentStream);
-    }
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());    }
 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
@@ -1221,7 +1218,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             boolean allVersions, List<String> failedToDeleteIds, String user) {
         
         ObjectStoreFiling filingStore = (ObjectStoreFiling) objStore;
-        ChildrenResult childrenResult = filingStore.getChildren(parentFolder, -1, -1, "Admin");
+        ChildrenResult childrenResult = filingStore.getChildren(parentFolder, -1, -1, "Admin", true);
         List<Fileable> children = childrenResult.getChildren();
 
         if (null == children) {

@@ -36,13 +36,13 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jens
@@ -205,8 +205,8 @@ public class NavigationServiceTest extends AbstractServiceTest {
     public void testGetPaging() {
         log.info("starting testGetPaging() ...");
         // create a folder
-        String folderId = super.createFolder("PagingFolder", fRootFolderId, InMemoryFolderTypeDefinition
-                .getRootFolderType().getId());
+        String folderId = super.createFolder("PagingFolder", fRootFolderId, DocumentTypeCreationHelper
+                .getCmisFolderType().getId());
         
         // create some documents
         for (int i=0; i<10; i++) {
@@ -275,8 +275,8 @@ public class NavigationServiceTest extends AbstractServiceTest {
         for (int i = 0; i < NUM_ROOT_FOLDERS; i++) {
             List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
             properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Folder " + i));
-            properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, InMemoryFolderTypeDefinition
-                    .getRootFolderType().getId()));
+            properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, DocumentTypeCreationHelper
+                    .getCmisFolderType().getId()));
             Properties props = fFactory.createPropertiesData(properties);
             String id = fObjSvc.createFolder(fRepositoryId, props, fRootFolderId, null, null, null, null);
             if (i == 3) {

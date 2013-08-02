@@ -34,12 +34,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +118,7 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         // and property lists
         if (null != typesList) {
             for (TypeDefinition typeDef : typesList) {
-                addTypeDefinition(typeDef);
+                addTypeDefinition(typeDef, false);
             }
         }
 
@@ -140,7 +134,7 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      *            new type to add
      */
     @Override
-	public void addTypeDefinition(TypeDefinition cmisType) {
+	public void addTypeDefinition(TypeDefinition cmisType, boolean addInheritedProperties) {
         
         LOG.info("Adding type definition with name " + cmisType.getLocalName() + " and id " 
                 + cmisType.getId() + " to repository.");
@@ -151,9 +145,11 @@ public class TypeManagerImpl implements TypeManagerCreatable {
             TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
             parentTypeContainer.getChildren().add(typeContainer);
 
+            if (addInheritedProperties) {
             // recursively add inherited properties
-            Map<String, PropertyDefinition<?>> propDefs = typeContainer.getTypeDefinition().getPropertyDefinitions();
-            addInheritedProperties(propDefs, parentTypeContainer.getTypeDefinition());
+                Map<String, PropertyDefinition<?>> propDefs = typeContainer.getTypeDefinition().getPropertyDefinitions();
+                addInheritedProperties(propDefs, parentTypeContainer.getTypeDefinition());
+            }
         }
         // add type to type map
         fTypesMap.put(cmisType.getId(), typeContainer);
