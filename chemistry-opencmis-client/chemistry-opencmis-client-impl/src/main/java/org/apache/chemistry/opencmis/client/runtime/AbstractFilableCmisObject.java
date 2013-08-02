@@ -174,12 +174,8 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
     public void removeFromFolder(ObjectId folderId) {
         String objectId = getObjectId();
 
-        if ((folderId == null) || (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder Id must be set!");
-        }
-
-        getBinding().getMultiFilingService()
-                .removeObjectFromFolder(getRepositoryId(), objectId, folderId.getId(), null);
+        getBinding().getMultiFilingService().removeObjectFromFolder(getRepositoryId(), objectId,
+                (folderId != null ? folderId.getId() : null), null);
 
         // invalidate path cache
         getSession().removeObjectFromCache(objectId);
