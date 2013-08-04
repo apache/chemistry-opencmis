@@ -31,11 +31,11 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
  */
 public class RepositoryMap {
 
-    private final Map<String, FileShareRepository> map;
+    private final Map<String, FileShareRepository> repositories;
     private final Map<String, String> logins;
 
     public RepositoryMap() {
-        map = new HashMap<String, FileShareRepository>();
+        repositories = new HashMap<String, FileShareRepository>();
         logins = new HashMap<String, String>();
     }
 
@@ -47,7 +47,7 @@ public class RepositoryMap {
             return;
         }
 
-        map.put(fsr.getRepositoryId(), fsr);
+        repositories.put(fsr.getRepositoryId(), fsr);
     }
 
     /**
@@ -55,7 +55,7 @@ public class RepositoryMap {
      */
     public FileShareRepository getRepository(String repositoryId) {
         // get repository object
-        FileShareRepository result = map.get(repositoryId);
+        FileShareRepository result = repositories.get(repositoryId);
         if (result == null) {
             throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
         }
@@ -77,7 +77,7 @@ public class RepositoryMap {
      * Returns all repository objects.
      */
     public Collection<FileShareRepository> getRepositories() {
-        return map.values();
+        return repositories.values();
     }
 
     /**

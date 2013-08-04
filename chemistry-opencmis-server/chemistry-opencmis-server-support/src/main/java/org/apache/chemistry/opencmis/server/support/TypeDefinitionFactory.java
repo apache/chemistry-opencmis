@@ -22,12 +22,15 @@ package org.apache.chemistry.opencmis.server.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
@@ -37,11 +40,16 @@ import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -51,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
@@ -72,6 +81,13 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl
  * Type definition factory.
  */
 public class TypeDefinitionFactory {
+
+    private static final Set<String> NEW_CMIS11_PROPERTIES = new HashSet<String>();
+    static {
+        NEW_CMIS11_PROPERTIES.add(PropertyIds.DESCRIPTION);
+        NEW_CMIS11_PROPERTIES.add(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+        NEW_CMIS11_PROPERTIES.add(PropertyIds.IS_PRIVATE_WORKING_COPY);
+    }
 
     private Class<? extends MutableDocumentTypeDefinition> documentTypeDefinitionClass;
     private Class<? extends MutableFolderTypeDefinition> folderTypeDefinitionClass;
@@ -343,60 +359,6 @@ public class TypeDefinitionFactory {
     }
 
     /**
-     * Creates a new mutable document type definition, which is a child of the
-     * provided type definition. Property definitions are copied from the parent
-     * and marked as inherited.
-     * 
-     * @param parentTypeDefinition
-     *            the type definition of the parent
-     * @param id
-     *            the id of the child type definition
-     * 
-     * @return a mutable child type definition
-     */
-    public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
-            String id) {
-        return createChildDocumentTypeDefinition(parentTypeDefinition, id, id, id, id, null, true);
-    }
-
-    /**
-     * Creates a new mutable document type definition, which is a child of the
-     * provided type definition. If the parameter
-     * <code>includePropertyDefinitions</code> is to
-     * <code>true</true> property definitions are copied from the parent
-     * and marked as inherited.
-     */
-    public MutableDocumentTypeDefinition createChildDocumentTypeDefinition(DocumentTypeDefinition parentTypeDefinition,
-            String id, String localName, String queryName, String displayName, String description,
-            boolean includePropertyDefinitions) {
-        MutableDocumentTypeDefinition documentType = createDocumentTypeDefinitionObject();
-        documentType.setBaseTypeId(parentTypeDefinition.getBaseTypeId());
-        documentType.setParentTypeId(parentTypeDefinition.getId());
-        documentType.setIsControllableAcl(parentTypeDefinition.isControllableAcl());
-        documentType.setIsControllablePolicy(parentTypeDefinition.isControllablePolicy());
-        documentType.setIsCreatable(parentTypeDefinition.isCreatable());
-        documentType.setDescription(description);
-        documentType.setDisplayName(displayName);
-        documentType.setIsFileable(parentTypeDefinition.isFileable());
-        documentType.setIsFulltextIndexed(parentTypeDefinition.isFulltextIndexed());
-        documentType.setIsIncludedInSupertypeQuery(parentTypeDefinition.isIncludedInSupertypeQuery());
-        documentType.setLocalName(localName);
-        documentType.setLocalNamespace(parentTypeDefinition.getLocalNamespace());
-        documentType.setIsQueryable(parentTypeDefinition.isQueryable());
-        documentType.setQueryName(queryName);
-        documentType.setId(id);
-        documentType.setTypeMutability(parentTypeDefinition.getTypeMutability());
-        documentType.setIsVersionable(parentTypeDefinition.isVersionable());
-        documentType.setContentStreamAllowed(parentTypeDefinition.getContentStreamAllowed());
-
-        if (includePropertyDefinitions) {
-            copyPropertyDefinitions(parentTypeDefinition, documentType, true);
-        }
-
-        return documentType;
-    }
-
-    /**
      * Creates a new mutable base folder type definition including all property
      * definitions defined in the CMIS specification.
      */
@@ -589,14 +551,76 @@ public class TypeDefinitionFactory {
         return secondaryType;
     }
 
+    /**
+     * Creates a new mutable type definition, which is a child of the provided
+     * type definition. Property definitions are copied from the parent and
+     * marked as inherited.
+     * 
+     * @param parentTypeDefinition
+     *            the type definition of the parent
+     * @param id
+     *            the id of the child type definition
+     * 
+     * @return a mutable child type definition
+     */
+    public MutableTypeDefinition createChildTypeDefinition(TypeDefinition parentTypeDefinition, String id) {
+        return createChildTypeDefinition(parentTypeDefinition, id, id, id, id, null, true, null);
+    }
+
+    /**
+     * Creates a new mutable type definition, which is a child of the provided
+     * type definition. If the parameter <code>includePropertyDefinitions</code>
+     * is set to
+     * <code>true</true> property definitions are copied from the parent
+     * and marked as inherited.
+     */
+    public MutableTypeDefinition createChildTypeDefinition(TypeDefinition parentTypeDefinition, String id,
+            String localName, String queryName, String displayName, String description,
+            boolean includePropertyDefinitions, CmisVersion cmisVersion) {
+        if (parentTypeDefinition == null) {
+            throw new IllegalArgumentException("Parent type must be set!");
+        }
+
+        if (id == null) {
+            throw new IllegalArgumentException("Child id must be set!");
+        }
+
+        MutableTypeDefinition childType = copy(parentTypeDefinition, false);
+
+        childType.setParentTypeId(parentTypeDefinition.getId());
+        childType.setDescription(description);
+        childType.setDisplayName(displayName);
+        childType.setLocalName(localName);
+        childType.setQueryName(queryName);
+        childType.setId(id);
+
+        if (includePropertyDefinitions) {
+            copyPropertyDefinitions(parentTypeDefinition, childType, cmisVersion, true);
+        }
+
+        return childType;
+    }
+
     // --- copy methods ---
 
     /**
      * Copies the given type definition and returns a mutable object.
      */
     public MutableTypeDefinition copy(TypeDefinition sourceTypeDefintion, boolean includePropertyDefinitions) {
+        return copy(sourceTypeDefintion, includePropertyDefinitions, null);
+    }
+
+    /**
+     * Copies the given type definition and returns a mutable object.
+     */
+    public MutableTypeDefinition copy(TypeDefinition sourceTypeDefintion, boolean includePropertyDefinitions,
+            CmisVersion cmisVersion) {
         if (sourceTypeDefintion == null) {
-            return null;
+            throw new IllegalArgumentException("Source type must be set!");
+        }
+
+        if (sourceTypeDefintion.getBaseTypeId() == null) {
+            throw new IllegalArgumentException("Source type has no base type!");
         }
 
         MutableTypeDefinition result = null;
@@ -604,6 +628,10 @@ public class TypeDefinitionFactory {
         switch (sourceTypeDefintion.getBaseTypeId()) {
         case CMIS_DOCUMENT:
             result = createDocumentTypeDefinitionObject();
+            ((MutableDocumentTypeDefinition) result).setIsVersionable(((DocumentTypeDefinition) sourceTypeDefintion)
+                    .isVersionable());
+            ((MutableDocumentTypeDefinition) result)
+                    .setContentStreamAllowed(((DocumentTypeDefinition) sourceTypeDefintion).getContentStreamAllowed());
             break;
         case CMIS_FOLDER:
             result = createFolderTypeDefinitionObject();
@@ -613,23 +641,61 @@ public class TypeDefinitionFactory {
             break;
         case CMIS_RELATIONSHIP:
             result = createRelationshipTypeDefinitionObject();
+            List<String> sourceTypeIds = ((RelationshipTypeDefinition) sourceTypeDefintion).getAllowedSourceTypeIds();
+            if (sourceTypeIds != null) {
+                ((MutableRelationshipTypeDefinition) result)
+                        .setAllowedSourceTypes(new ArrayList<String>(sourceTypeIds));
+            }
+            List<String> targetTypeIds = ((RelationshipTypeDefinition) sourceTypeDefintion).getAllowedTargetTypeIds();
+            if (targetTypeIds != null) {
+                ((MutableRelationshipTypeDefinition) result)
+                        .setAllowedTargetTypes(new ArrayList<String>(targetTypeIds));
+            }
             break;
         case CMIS_ITEM:
+            if (cmisVersion == CmisVersion.CMIS_1_0) {
+                throw new IllegalArgumentException("CMIS 1.0 doesn't support item types!");
+            }
             result = createItemTypeDefinitionObject();
             break;
         case CMIS_SECONDARY:
+            if (cmisVersion == CmisVersion.CMIS_1_0) {
+                throw new IllegalArgumentException("CMIS 1.0 doesn't support secondary types!");
+            }
             result = createSecondaryTypeDefinitionObject();
             break;
         default:
             throw new RuntimeException("Unknown base type!");
         }
 
-        // TODO: copy attributes
+        result.setId(sourceTypeDefintion.getId());
+        result.setLocalName(sourceTypeDefintion.getLocalName());
+        result.setLocalNamespace(sourceTypeDefintion.getLocalNamespace());
+        result.setDisplayName(sourceTypeDefintion.getDisplayName());
+        result.setQueryName(sourceTypeDefintion.getQueryName());
+        result.setDescription(sourceTypeDefintion.getDescription());
+        result.setBaseTypeId(sourceTypeDefintion.getBaseTypeId());
+        result.setParentTypeId(sourceTypeDefintion.getParentTypeId());
+        result.setIsCreatable(sourceTypeDefintion.isCreatable());
+        result.setIsFileable(sourceTypeDefintion.isFileable());
+        result.setIsQueryable(sourceTypeDefintion.isQueryable());
+        result.setIsFulltextIndexed(sourceTypeDefintion.isFulltextIndexed());
+        result.setIsIncludedInSupertypeQuery(sourceTypeDefintion.isIncludedInSupertypeQuery());
+        result.setIsControllablePolicy(sourceTypeDefintion.isControllablePolicy());
+        result.setIsControllableAcl(sourceTypeDefintion.isControllableAcl());
+
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            if (sourceTypeDefintion.getTypeMutability() != null) {
+                result.setTypeMutability(createTypeMutability(sourceTypeDefintion.getTypeMutability().canCreate(),
+                        sourceTypeDefintion.getTypeMutability().canUpdate(), sourceTypeDefintion.getTypeMutability()
+                                .canDelete()));
+            }
+        }
 
         copyExtensions(sourceTypeDefintion, result);
 
         if (includePropertyDefinitions) {
-            copyPropertyDefinitions(sourceTypeDefintion, result, false);
+            copyPropertyDefinitions(sourceTypeDefintion, result, cmisVersion, false);
         }
 
         return result;
@@ -640,7 +706,11 @@ public class TypeDefinitionFactory {
      */
     public MutablePropertyDefinition<?> copy(PropertyDefinition<?> sourcePropertyDefinition) {
         if (sourcePropertyDefinition == null) {
-            return null;
+            throw new IllegalArgumentException("Source definition must be set!");
+        }
+
+        if (sourcePropertyDefinition.getPropertyType() == null) {
+            throw new IllegalArgumentException("Source definition property type must be set!");
         }
 
         MutablePropertyDefinition<?> result = null;
@@ -648,12 +718,20 @@ public class TypeDefinitionFactory {
         switch (sourcePropertyDefinition.getPropertyType()) {
         case BOOLEAN:
             result = new PropertyBooleanDefinitionImpl();
+            ((PropertyBooleanDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyBooleanDefinition) sourcePropertyDefinition));
+            ((PropertyBooleanDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyBooleanDefinition) sourcePropertyDefinition));
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
             ((PropertyDateTimeDefinitionImpl) result)
                     .setDateTimeResolution(((PropertyDateTimeDefinition) sourcePropertyDefinition)
                             .getDateTimeResolution());
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyDateTimeDefinition) sourcePropertyDefinition));
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyDateTimeDefinition) sourcePropertyDefinition));
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
@@ -663,12 +741,22 @@ public class TypeDefinitionFactory {
                     .getMaxValue());
             ((PropertyDecimalDefinitionImpl) result)
                     .setPrecision(((PropertyDecimalDefinition) sourcePropertyDefinition).getPrecision());
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyDecimalDefinition) sourcePropertyDefinition));
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyDecimalDefinition) sourcePropertyDefinition));
             break;
         case HTML:
             result = new PropertyHtmlDefinitionImpl();
+            ((PropertyHtmlDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyHtmlDefinition) sourcePropertyDefinition));
             break;
         case ID:
             result = new PropertyIdDefinitionImpl();
+            ((PropertyIdDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyIdDefinition) sourcePropertyDefinition));
+            ((PropertyIdDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyIdDefinition) sourcePropertyDefinition));
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
@@ -676,14 +764,26 @@ public class TypeDefinitionFactory {
                     .getMinValue());
             ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition)
                     .getMaxValue());
+            ((PropertyIntegerDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyIntegerDefinition) sourcePropertyDefinition));
+            ((PropertyIntegerDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyIntegerDefinition) sourcePropertyDefinition));
             break;
         case STRING:
             result = new PropertyStringDefinitionImpl();
             ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition)
                     .getMaxLength()));
+            ((PropertyStringDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyStringDefinition) sourcePropertyDefinition));
+            ((PropertyStringDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyStringDefinition) sourcePropertyDefinition));
             break;
         case URI:
             result = new PropertyUriDefinitionImpl();
+            ((PropertyUriDefinitionImpl) result)
+                    .setDefaultValue(copyDefaultValue((PropertyUriDefinition) sourcePropertyDefinition));
+            ((PropertyUriDefinitionImpl) result)
+                    .setChoices(copyChoices((PropertyUriDefinition) sourcePropertyDefinition));
             break;
         default:
             throw new RuntimeException("Unknown datatype!");
@@ -702,8 +802,6 @@ public class TypeDefinitionFactory {
         result.setIsOrderable(sourcePropertyDefinition.isOrderable());
         result.setQueryName(sourcePropertyDefinition.getQueryName());
 
-        // TODO: handle default values and choices
-
         copyExtensions(sourcePropertyDefinition, result);
 
         return result;
@@ -714,9 +812,16 @@ public class TypeDefinitionFactory {
     /**
      * Copies the property definitions from a source type to a target type.
      */
-    protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target, boolean markAsInherited) {
+    protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target,
+            CmisVersion cmisVersion, boolean markAsInherited) {
         if (source != null && source.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> propDef : source.getPropertyDefinitions().values()) {
+                if (cmisVersion == CmisVersion.CMIS_1_0) {
+                    if (NEW_CMIS11_PROPERTIES.contains(propDef.getId())) {
+                        break;
+                    }
+                }
+
                 MutablePropertyDefinition<?> newPropDef = copy(propDef);
                 if (markAsInherited) {
                     newPropDef.setIsInherited(true);
@@ -724,6 +829,56 @@ public class TypeDefinitionFactory {
                 target.addPropertyDefinition(newPropDef);
             }
         }
+    }
+
+    /**
+     * Returns a copy of a default value.
+     */
+    protected <T> List<T> copyDefaultValue(PropertyDefinition<T> source) {
+        if (source == null || source.getDefaultValue() == null) {
+            return null;
+        }
+
+        return new ArrayList<T>(source.getDefaultValue());
+    }
+
+    /**
+     * Returns a copy of a choice tree.
+     */
+    protected <T> List<Choice<T>> copyChoices(PropertyDefinition<T> source) {
+        if (source == null || source.getChoices() == null) {
+            return null;
+        }
+
+        List<Choice<T>> result = new ArrayList<Choice<T>>();
+
+        for (Choice<T> c : source.getChoices()) {
+            result.add(copyChoice(c));
+        }
+
+        return result;
+    }
+
+    private <T> Choice<T> copyChoice(Choice<T> source) {
+        if (source == null) {
+            return null;
+        }
+
+        ChoiceImpl<T> result = new ChoiceImpl<T>();
+
+        result.setDisplayName(source.getDisplayName());
+        if (source.getValue() != null) {
+            result.setValue(new ArrayList<T>(source.getValue()));
+        }
+        if (source.getChoice() != null) {
+            List<Choice<T>> choices = new ArrayList<Choice<T>>();
+            for (Choice<T> c : source.getChoice()) {
+                choices.add(copyChoice(c));
+            }
+            result.setChoice(choices);
+        }
+
+        return result;
     }
 
     /**

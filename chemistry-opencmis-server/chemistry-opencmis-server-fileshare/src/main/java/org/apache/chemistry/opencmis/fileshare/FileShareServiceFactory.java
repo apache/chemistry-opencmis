@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
@@ -64,7 +65,7 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
     @Override
     public void init(Map<String, String> parameters) {
         repositoryMap = new RepositoryMap();
-        typeManager = new TypeManager();
+        typeManager = new TypeManager(CmisVersion.CMIS_1_1);
 
         readConfiguration(parameters);
     }

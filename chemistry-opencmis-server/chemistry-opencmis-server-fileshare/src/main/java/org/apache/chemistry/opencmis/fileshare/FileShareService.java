@@ -119,7 +119,7 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        return getRepository().getTypesDescendants(getCallContext(), typeId, depth, includePropertyDefinitions);
+        return getRepository().getTypeDescendants(getCallContext(), typeId, depth, includePropertyDefinitions);
     }
 
     // --- navigation service ---

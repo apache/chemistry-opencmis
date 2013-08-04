@@ -37,9 +37,6 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.impl.WSConverter;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -62,11 +59,14 @@ public class TypeManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeManager.class);
 
-    private TypeDefinitionFactory tdf;
+    private final CmisVersion cmisVersion;
+    private final TypeDefinitionFactory tdf;
     private Map<String, TypeDefinitionContainerImpl> types;
     private List<TypeDefinitionContainer> typesList;
 
-    public TypeManager() {
+    public TypeManager(CmisVersion cmisVersion) {
+        this.cmisVersion = cmisVersion;
+
         tdf = TypeDefinitionFactory.newInstance();
         tdf.setDefaultNamespace(NAMESPACE);
         tdf.setDefaultControllableAcl(false);
@@ -74,13 +74,13 @@ public class TypeManager {
         tdf.setDefaultQueryable(false);
         tdf.setDefaultTypeMutability(tdf.createTypeMutability(false, false, false));
 
-        setup(CmisVersion.CMIS_1_1);
+        setup();
     }
 
     /**
      * Creates the base types.
      */
-    private void setup(CmisVersion cmisVersion) {
+    private void setup() {
         types = new HashMap<String, TypeDefinitionContainerImpl>();
         typesList = new ArrayList<TypeDefinitionContainer>();
 
@@ -103,13 +103,15 @@ public class TypeManager {
             // not supported - don't expose it
             // addTypeInteral(tdf.createBasePolicyTypeDefinition(cmisVersion));
 
-            // item type
-            // not supported - don't expose it
-            // addTypeInteral(tdf.createBaseItemTypeDefinition(cmisVersion));
+            if (cmisVersion != CmisVersion.CMIS_1_0) {
+                // item type
+                // not supported - don't expose it
+                // addTypeInteral(tdf.createBaseItemTypeDefinition(cmisVersion));
 
-            // secondary type
-            // not supported - don't expose it
-            // addTypeInteral(tdf.createBaseSecondaryTypeDefinition(cmisVersion));
+                // secondary type
+                // not supported - don't expose it
+                // addTypeInteral(tdf.createBaseSecondaryTypeDefinition(cmisVersion));
+            }
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot set up type defintions!", e);
         }
@@ -129,7 +131,7 @@ public class TypeManager {
     }
 
     /**
-     * Adds a type to collection with inheriting base type properties.
+     * Adds a type to the collection with inheriting base type properties.
      */
     public boolean addType(TypeDefinition type) {
         if (type == null) {
@@ -141,27 +143,19 @@ public class TypeManager {
         }
 
         // find base type
-        TypeDefinition baseType = null;
-        if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
-            baseType = copyTypeDefintion(types.get(DOCUMENT_TYPE_ID).getTypeDefinition());
-        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-            baseType = copyTypeDefintion(types.get(FOLDER_TYPE_ID).getTypeDefinition());
-        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
-            baseType = copyTypeDefintion(types.get(ITEM_TYPE_ID).getTypeDefinition());
-        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
-            baseType = copyTypeDefintion(types.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
-        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
-            baseType = copyTypeDefintion(types.get(POLICY_TYPE_ID).getTypeDefinition());
-        } else {
+        TypeDefinitionContainer baseTypeContainer = types.get(type.getBaseTypeId().value());
+        if (baseTypeContainer == null) {
             return false;
         }
+        TypeDefinition baseType = baseTypeContainer.getTypeDefinition();
 
-        AbstractTypeDefinition newType = (AbstractTypeDefinition) copyTypeDefintion(type);
+        MutableTypeDefinition newType = tdf.copy(type, true);
 
-        // copy property definition
+        // copy base type property definitions and mark them as inherited
         for (PropertyDefinition<?> propDef : baseType.getPropertyDefinitions().values()) {
-            ((AbstractPropertyDefinition<?>) propDef).setIsInherited(true);
-            newType.addPropertyDefinition(propDef);
+            MutablePropertyDefinition<?> basePropDef = tdf.copy(propDef);
+            basePropDef.setIsInherited(true);
+            newType.addPropertyDefinition(basePropDef);
         }
 
         // add it
@@ -192,9 +186,6 @@ public class TypeManager {
         if (type.getParentTypeId() != null) {
             TypeDefinitionContainerImpl tdc = types.get(type.getParentTypeId());
             if (tdc != null) {
-                if (tdc.getChildren() == null) {
-                    tdc.setChildren(new ArrayList<TypeDefinitionContainer>());
-                }
                 tdc.getChildren().add(tc);
             }
         }
@@ -222,11 +213,15 @@ public class TypeManager {
 
         if (typeId == null) {
             if (skip < 1) {
-                result.getList().add(copyTypeDefintion(types.get(FOLDER_TYPE_ID).getTypeDefinition()));
+                result.getList().add(
+                        tdf.copy(types.get(FOLDER_TYPE_ID).getTypeDefinition(), includePropertyDefinitions,
+                                context.getCmisVersion()));
                 max--;
             }
             if ((skip < 2) && (max > 0)) {
-                result.getList().add(copyTypeDefintion(types.get(DOCUMENT_TYPE_ID).getTypeDefinition()));
+                result.getList().add(
+                        tdf.copy(types.get(DOCUMENT_TYPE_ID).getTypeDefinition(), includePropertyDefinitions,
+                                context.getCmisVersion()));
                 max--;
             }
 
@@ -244,7 +239,7 @@ public class TypeManager {
                     continue;
                 }
 
-                result.getList().add(copyTypeDefintion(child.getTypeDefinition()));
+                result.getList().add(tdf.copy(child.getTypeDefinition(), includePropertyDefinitions));
 
                 max--;
                 if (max == 0) {
@@ -256,19 +251,13 @@ public class TypeManager {
             result.setNumItems(BigInteger.valueOf(tc.getChildren().size()));
         }
 
-        if (!includePropertyDefinitions) {
-            for (TypeDefinition type : result.getList()) {
-                type.getPropertyDefinitions().clear();
-            }
-        }
-
         return result;
     }
 
     /**
      * CMIS getTypesDescendants.
      */
-    public List<TypeDefinitionContainer> getTypesDescendants(CallContext context, String typeId, BigInteger depth,
+    public List<TypeDefinitionContainer> getTypeDescendants(CallContext context, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions) {
         List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
 
@@ -285,16 +274,12 @@ public class TypeManager {
         boolean ipd = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
         if (typeId == null) {
-            result.add(getTypesDescendants(d, types.get(FOLDER_TYPE_ID), ipd));
-            result.add(getTypesDescendants(d, types.get(DOCUMENT_TYPE_ID), ipd));
-            // result.add(getTypesDescendants(depth,
-            // fTypes.get(RELATIONSHIP_TYPE_ID), includePropertyDefinitions));
-            // result.add(getTypesDescendants(depth, fTypes.get(POLICY_TYPE_ID),
-            // includePropertyDefinitions));
+            result.add(getTypesDescendants(context, d, types.get(FOLDER_TYPE_ID), ipd));
+            result.add(getTypesDescendants(context, d, types.get(DOCUMENT_TYPE_ID), ipd));
         } else {
             TypeDefinitionContainer tc = types.get(typeId);
             if (tc != null) {
-                result.add(getTypesDescendants(d, tc, ipd));
+                result.add(getTypesDescendants(context, d, tc, ipd));
             }
         }
 
@@ -304,24 +289,18 @@ public class TypeManager {
     /**
      * Gathers the type descendants tree.
      */
-    private TypeDefinitionContainer getTypesDescendants(int depth, TypeDefinitionContainer tc,
+    private TypeDefinitionContainer getTypesDescendants(CallContext context, int depth, TypeDefinitionContainer tc,
             boolean includePropertyDefinitions) {
         TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl();
 
-        TypeDefinition type = copyTypeDefintion(tc.getTypeDefinition());
-        if (!includePropertyDefinitions) {
-            type.getPropertyDefinitions().clear();
-        }
+        TypeDefinition type = tdf.copy(tc.getTypeDefinition(), includePropertyDefinitions, context.getCmisVersion());
 
         result.setTypeDefinition(type);
 
         if (depth != 0) {
-            if (tc.getChildren() != null) {
-                result.setChildren(new ArrayList<TypeDefinitionContainer>());
-                for (TypeDefinitionContainer tdc : tc.getChildren()) {
-                    result.getChildren().add(
-                            getTypesDescendants(depth < 0 ? -1 : depth - 1, tdc, includePropertyDefinitions));
-                }
+            for (TypeDefinitionContainer tdc : tc.getChildren()) {
+                result.getChildren().add(
+                        getTypesDescendants(context, depth < 0 ? -1 : depth - 1, tdc, includePropertyDefinitions));
             }
         }
 
@@ -349,10 +328,6 @@ public class TypeManager {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
 
-        return copyTypeDefintion(tc.getTypeDefinition());
-    }
-
-    private static TypeDefinition copyTypeDefintion(TypeDefinition type) {
-        return WSConverter.convert(WSConverter.convert(type));
+        return tdf.copy(tc.getTypeDefinition(), true, context.getCmisVersion());
     }
 }
