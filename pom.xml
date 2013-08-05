@@ -201,7 +201,7 @@
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-client</module>
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
         <!-- <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench-webstart</module> -->
-		<module>chemistry-opencmis-android/chemistry-opencmis-android-client</module>
+        <module>chemistry-opencmis-android/chemistry-opencmis-android-client</module>
         <module>chemistry-opencmis-dist</module>
   </modules>
 
@@ -234,6 +234,7 @@
         <junit.version>4.11</junit.version>        
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
+        <apacheclient.version>4.2.5</apacheclient.version>
         <cxf.version>2.7.5</cxf.version>
         <axis2.version>1.6.2</axis2.version>
     </properties>

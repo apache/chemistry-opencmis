@@ -87,6 +87,7 @@
 										<exclude name="**/spi/LTPAWSSecurityAuthenticationProvider.*" />
 										<exclude name="**/spi/local/**" />
 										<exclude name="**/spi/http/DefaultHttpInvoker.*" />
+										<exclude name="**/spi/http/ApacheClientHttpInvoker.*" />
 										<exclude name="**/spi/webservices/**" />
 										<exclude name="**/spi/atompub/**" />
 									</fileset>
