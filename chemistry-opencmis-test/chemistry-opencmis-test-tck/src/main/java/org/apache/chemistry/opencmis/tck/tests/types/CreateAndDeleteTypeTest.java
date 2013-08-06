@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.tests.types;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.CreatablePropertyTypes;
+import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -77,7 +79,7 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
         CmisTestResult failure = null;
 
         // define the type
-        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition("tck:testid_without_properties",
+        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition(session, "tck:testid_without_properties",
                 parentType);
 
         // create the type
@@ -113,7 +115,8 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
         }
 
         // define the type
-        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition("tck:testid_with_properties", parentType);
+        DocumentTypeDefinitionImpl newTypeDef = createDocumentTypeDefinition(session, "tck:testid_with_properties",
+                parentType);
 
         // add a property for each creatable property type
         for (PropertyType propType : PropertyType.values()) {
@@ -176,24 +179,116 @@ public class CreateAndDeleteTypeTest extends AbstractSessionTest {
         deleteType(session, newType.getId());
     }
 
-    private DocumentTypeDefinitionImpl createDocumentTypeDefinition(String typeId, ObjectType parentType) {
+    private DocumentTypeDefinitionImpl createDocumentTypeDefinition(Session session, String typeId,
+            ObjectType parentType) {
+        CmisTestResult failure = null;
+
+        NewTypeSettableAttributes settableAttributes = session.getRepositoryInfo().getCapabilities()
+                .getNewTypeSettableAttributes();
+        if (settableAttributes == null) {
+            addResult(createResult(WARNING, "Capability NewTypeSettableAttributes is not set!"));
+        }
+
         DocumentTypeDefinitionImpl result = new DocumentTypeDefinitionImpl();
 
-        result.setId(typeId);
         result.setBaseTypeId(parentType.getBaseTypeId());
         result.setParentTypeId(parentType.getId());
-        result.setLocalName("tck:testlocal");
-        result.setLocalNamespace("tck:testlocalnamespace");
-        result.setDisplayName("TCK Document Type");
-        result.setDescription("This is the TCK document type");
-        result.setQueryName("tck:testqueryname");
-        result.setIsQueryable(false);
-        result.setIsFulltextIndexed(false);
-        result.setIsIncludedInSupertypeQuery(true);
-        result.setIsControllableAcl(false);
-        result.setIsControllablePolicy(false);
-        result.setIsCreatable(true);
-        result.setIsFileable(true);
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetId())) {
+            result.setId(typeId);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'id' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetId(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetLocalName())) {
+            result.setLocalName("tck:testlocal");
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'localName' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetLocalName(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetLocalNamespace())) {
+            result.setLocalNamespace("http://tck/testlocalnamespace");
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'localNamespace' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetLocalNamespace(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetDisplayName())) {
+            result.setDisplayName("TCK Document Type");
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'displayName' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetDisplayName(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetDescription())) {
+            result.setDescription("This is the TCK document type");
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'description' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetDescription(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetQueryName())) {
+            result.setQueryName("tck:testqueryname");
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'queryName' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetQueryName(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetQueryable())) {
+            result.setIsQueryable(false);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'queryable' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetQueryable(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetFulltextIndexed())) {
+            result.setIsFulltextIndexed(false);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING,
+                    "Flag 'fulltextIndexed' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetFulltextIndexed(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetIncludedInSupertypeQuery())) {
+            result.setIsIncludedInSupertypeQuery(false);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING,
+                    "Flag 'includedInSupertypeQuery' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetIncludedInSupertypeQuery(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetControllableAcl())) {
+            result.setIsControllableAcl(false);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING,
+                    "Flag 'controllableACL' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetControllableAcl(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetControllablePolicy())) {
+            result.setIsControllablePolicy(false);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING,
+                    "Flag 'controllablePolicy' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetControllablePolicy(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetCreatable())) {
+            result.setIsCreatable(true);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'creatable' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetCreatable(), null, failure));
+        }
+
+        if (settableAttributes == null || Boolean.TRUE.equals(settableAttributes.canSetFileable())) {
+            result.setIsFileable(true);
+        } else if (settableAttributes != null) {
+            failure = createResult(WARNING, "Flag 'fileable' in capability NewTypeSettableAttributes is not set!");
+            addResult(assertNotNull(settableAttributes.canSetFileable(), null, failure));
+        }
+
         result.setIsVersionable(false);
         result.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
 
