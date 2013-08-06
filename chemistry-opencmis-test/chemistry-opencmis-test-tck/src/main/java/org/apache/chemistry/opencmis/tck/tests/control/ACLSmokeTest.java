@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.tests.control;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,7 +92,8 @@ public class ACLSmokeTest extends AbstractSessionTest {
                     }
                 }
 
-                if (getAclCapability(session) == CapabilityAcl.MANAGE) {
+                if (getAclCapability(session) == CapabilityAcl.MANAGE
+                        && !Boolean.FALSE.equals(doc.getType().isControllableAcl())) {
                     String principal = getParameters().get(TestParameters.DEFAULT_ACL_PRINCIPAL);
                     if (principal == null) {
                         principal = TestParameters.DEFAULT_ACL_PRINCIPAL_VALUE;
@@ -106,11 +108,13 @@ public class ACLSmokeTest extends AbstractSessionTest {
                     if (session.getRepositoryInfo().getAclCapabilities().getAclPropagation() != AclPropagation.REPOSITORYDETERMINED) {
                         // set permission "cmis:all"
                         aces = new ArrayList<Ace>();
-                        aces.add(session.getObjectFactory()
-                                .createAce(principal, Collections.singletonList("cmis:all")));
+                        aces.add(session.getObjectFactory().createAce(principal, Collections.singletonList("cmis:all")));
 
                         session.setAcl(doc, aces);
                     }
+                } else {
+                    addResult(createResult(INFO, "The repository or the type '" + doc.getType().getId()
+                            + "' don't support managing ACLs."));
                 }
 
                 deleteObject(doc);
