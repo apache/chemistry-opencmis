@@ -178,6 +178,16 @@ public class MultiFilingTest extends AbstractServiceTest {
         LOG.debug("End testRenameMultiFiledDocument()");
     }
 
+        
+    @Test
+    public void testRemoveDocumentFromAllFolders() {
+        LOG.debug("Begin testRemoveDocumentFromAllFolders()");
+
+        String docId = createUnfiledDocument();
+        removeDocumentFromAllFolders(docId);
+        LOG.debug("End testRemoveDocumentFromAllFolders()");
+    }
+    
     @Test
     public void testAddVersionedDocumentToFolder() {
         LOG.debug("Begin testAddVersionedDocumentToFolder()");
@@ -195,6 +205,15 @@ public class MultiFilingTest extends AbstractServiceTest {
         LOG.debug("End testRemoveVersionedDocumentFromFolder()");
     }
 
+    @Test
+    public void testRemoveVersionedDocumentFromAllFolders() {
+        LOG.debug("Begin testRemoveVersionedDocumentFromAllFolders()");
+
+        String docId = createVersionedDocument();
+        removeDocumentFromAllFolders(docId);
+        LOG.debug("End testRemoveVersionedDocumentFromAllFolders()");
+    }
+    
     private void createFolders() {
         fId1 = createFolder("folder1", fRootFolderId, FOLDER_TYPE_ID);
         fId2 = createFolder("folder2", fRootFolderId, FOLDER_TYPE_ID);
@@ -249,6 +268,15 @@ public class MultiFilingTest extends AbstractServiceTest {
         assertEquals(0, parents.size());
     }
 
+    private void removeDocumentFromAllFolders(String docId) {
+        prepareMultiFiledDocument(docId);
+
+        fMultiSvc.removeObjectFromFolder(fRepositoryId, docId, null, null);
+        List<ObjectParentData> parents = fNavSvc.getObjectParents(fRepositoryId, docId, "*", false,
+                IncludeRelationships.NONE, null, true, null);
+        assertEquals(0, parents.size());
+    }
+    
     private String createUnfiledDocument() {
         return createDocument(UNFILED_DOC_NAME, null, DOCUMENT_TYPE_ID, true);
     }

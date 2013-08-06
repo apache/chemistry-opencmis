@@ -832,7 +832,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
 
         StoredObject[] sos = super.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension);
         checkWriteAccess(repositoryId, context.getUsername(), sos[0]);
-        checkWriteAccess(repositoryId, context.getUsername(), sos[1]);
+        if (null != folderId)
+            checkWriteAccess(repositoryId, context.getUsername(), sos[1]);
         return sos;
     }
 
