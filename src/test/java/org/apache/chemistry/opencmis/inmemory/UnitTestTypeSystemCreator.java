@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -111,112 +112,96 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         try {
-            MutableDocumentTypeDefinition cmisType1;        
-            cmisType1 = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType1.setId(LEVEL1_TYPE);
+            MutableTypeDefinition cmisType1;        
+            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), LEVEL1_TYPE);
             cmisType1.setDisplayName("Document type with inherited properties, Level 2");
             cmisType1.setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
 
-            cmisType1 = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType1.setId("MyDocType1");
+            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), "MyDocType1");
             cmisType1.setDisplayName("My Type 1 Level 1");
             cmisType1.setDescription("Builtin InMemory type definition MyDocType1");
             typesList.add(cmisType1);
 
-            MutableDocumentTypeDefinition cmisType2;        
-            cmisType2 = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType2.setId("MyDocType2");
+            MutableTypeDefinition cmisType2;        
+            cmisType2 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), "MyDocType2");
             cmisType2.setDisplayName("My Type 2 Level 1");
             cmisType2.setDescription("Builtin InMemory type definition MyDocType2");
             typesList.add(cmisType2);
 
-            MutableDocumentTypeDefinition cmisType11;        
-            cmisType11 = typeFactory.createChildDocumentTypeDefinition(cmisType1, null);
-            cmisType11.setId("MyDocType1.1");
+            MutableTypeDefinition cmisType11;        
+            cmisType11 = typeFactory.createChildTypeDefinition(cmisType1, "MyDocType1.1");
             cmisType11.setDisplayName("My Type 3 Level 2");
             cmisType11.setDescription("Builtin InMemory type definition MyDocType1.1");
             typesList.add(cmisType11);
 
-            MutableDocumentTypeDefinition cmisType111;        
-            cmisType111 = typeFactory.createChildDocumentTypeDefinition(cmisType11, null);
-            cmisType111.setId("MyDocType1.1.1");
+            MutableTypeDefinition cmisType111;        
+            cmisType111 = typeFactory.createChildTypeDefinition(cmisType11, "MyDocType1.1.1");
             cmisType111.setDisplayName("My Type 4 Level 3");
             cmisType111.setDescription("Builtin InMemory type definition MyDocType1.1.1");
             typesList.add(cmisType111);
 
-            MutableDocumentTypeDefinition cmisType112;        
-            cmisType112 = typeFactory.createChildDocumentTypeDefinition(cmisType11, null);
-            cmisType112.setId("MyDocType1.1.2");
+            MutableTypeDefinition cmisType112;        
+            cmisType112 = typeFactory.createChildTypeDefinition(cmisType11, "MyDocType1.1.2");
             cmisType112.setDisplayName("My Type 5 Level 3");
             cmisType112.setDescription("Builtin InMemory type definition MyDocType1.1.2");
             typesList.add(cmisType112);
 
-            MutableDocumentTypeDefinition cmisType12;        
-            cmisType12 = typeFactory.createChildDocumentTypeDefinition(cmisType1, null);
-            cmisType12.setId("MyDocType1.2");
+            MutableTypeDefinition cmisType12;        
+            cmisType12 = typeFactory.createChildTypeDefinition(cmisType1, "MyDocType1.2");
             cmisType12.setDisplayName("My Type 6 Level 2");
             cmisType12.setDescription("Builtin InMemory type definition MyDocType1.2");
             typesList.add(cmisType12);
 
-            MutableDocumentTypeDefinition cmisType21;        
-            cmisType21 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType21.setId("MyDocType2.1");
+            MutableTypeDefinition cmisType21;        
+            cmisType21 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.1");
             cmisType21.setDisplayName("My Type 7 Level 2");
             cmisType21.setDescription("Builtin InMemory type definition MyDocType2.1");
             typesList.add(cmisType21);
 
-            MutableDocumentTypeDefinition cmisType22;        
-            cmisType22 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType22.setId("MyDocType2.2");
+            MutableTypeDefinition cmisType22;        
+            cmisType22 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.2");
             cmisType22.setDisplayName("My Type 8 Level 2");
             cmisType22.setDescription("Builtin InMemory type definition MyDocType2.2");
             typesList.add(cmisType22);
 
-            MutableDocumentTypeDefinition cmisType23;        
-            cmisType23 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType23.setId("MyDocType2.3");
+            MutableTypeDefinition cmisType23;        
+            cmisType23 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.3");
             cmisType23.setDisplayName("My Type 9 Level 2");
             cmisType23.setDescription("Builtin InMemory type definition MyDocType2.3");
             typesList.add(cmisType23);
 
-            MutableDocumentTypeDefinition cmisType24;        
-            cmisType24 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType24.setId("MyDocType2.4");
+            MutableTypeDefinition cmisType24;        
+            cmisType24 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.4");
             cmisType24.setDisplayName("My Type 10 Level 2");
             cmisType24.setDescription("Builtin InMemory type definition MyDocType2.4");
             typesList.add(cmisType24);
 
-            MutableDocumentTypeDefinition cmisType25;        
-            cmisType25 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType25.setId("MyDocType2.5");
+            MutableTypeDefinition cmisType25;        
+            cmisType25 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.5");
             cmisType25.setDisplayName("My Type 11 Level 2");
             cmisType25.setDescription("Builtin InMemory type definition MyDocType2.5");
             typesList.add(cmisType25);
 
-            MutableDocumentTypeDefinition cmisType26;        
-            cmisType26 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType26.setId("MyDocType2.6");
+            MutableTypeDefinition cmisType26;        
+            cmisType26 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.6");
             cmisType26.setDisplayName("My Type 12 Level 2");
             cmisType26.setDescription("Builtin InMemory type definition MyDocType2.6");
             typesList.add(cmisType26);
 
-            MutableDocumentTypeDefinition cmisType27;        
-            cmisType27 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType27.setId("MyDocType2.7");
+            MutableTypeDefinition cmisType27;        
+            cmisType27 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.7");
             cmisType27.setDisplayName("My Type 13 Level 2");
             cmisType27.setDescription("Builtin InMemory type definition MyDocType2.7");
             typesList.add(cmisType27);
 
-            MutableDocumentTypeDefinition cmisType28;        
-            cmisType28 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType28.setId("MyDocType2.8");
+            MutableTypeDefinition cmisType28;        
+            cmisType28 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.8");
             cmisType28.setDisplayName("My Type 14 Level 2");
             cmisType28.setDescription("Builtin InMemory type definition MyDocType2.8");
             typesList.add(cmisType28);
 
-            MutableDocumentTypeDefinition cmisType29;        
-            cmisType29 = typeFactory.createChildDocumentTypeDefinition(cmisType2, null);
-            cmisType29.setId("MyDocType2.9");
+            MutableTypeDefinition cmisType29;        
+            cmisType29 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.9");
             cmisType29.setDisplayName("My Type 15 Level 2");
             cmisType29.setDescription("Builtin InMemory type definition MyDocType2.9");
             typesList.add(cmisType29);
@@ -316,15 +301,13 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
             cmisDocTypeTopLevel.setDisplayName("Document type with properties, Level 1");
             cmisDocTypeTopLevel.setDescription("Builtin InMemory type definition " + TOPLEVEL_TYPE);
 
-            MutableDocumentTypeDefinition cmisDocTypeLevel1;        
-            cmisDocTypeLevel1 = typeFactory.createChildDocumentTypeDefinition(cmisDocTypeTopLevel, null);
-            cmisDocTypeLevel1.setId(LEVEL1_TYPE);
+            MutableTypeDefinition cmisDocTypeLevel1;        
+            cmisDocTypeLevel1 = typeFactory.createChildTypeDefinition(cmisDocTypeTopLevel, LEVEL1_TYPE);
             cmisDocTypeLevel1.setDisplayName("Document type with inherited properties, Level 2");
             cmisDocTypeLevel1 .setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
 
-            MutableDocumentTypeDefinition cmisDocTypeLevel2;        
-            cmisDocTypeLevel2 = typeFactory.createChildDocumentTypeDefinition(cmisDocTypeLevel1, null);
-            cmisDocTypeLevel2.setId(LEVEL2_TYPE);
+            MutableTypeDefinition cmisDocTypeLevel2;        
+            cmisDocTypeLevel2 = typeFactory.createChildTypeDefinition(cmisDocTypeLevel1, LEVEL2_TYPE);
             cmisDocTypeLevel2.setDisplayName("Document type with inherited properties, Level 3");
             cmisDocTypeLevel2.setDescription("Builtin InMemory type definition " + LEVEL2_TYPE);
 
@@ -342,8 +325,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
 
             // create a versioned type with properties
             MutableDocumentTypeDefinition cmisVersionedType;        
-            cmisVersionedType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisVersionedType.setId(VERSIONED_TYPE);
+            cmisVersionedType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), VERSIONED_TYPE);
             cmisVersionedType.setDisplayName("Versioned Type");
             cmisVersionedType.setDescription("Builtin InMemory type definition " + VERSIONED_TYPE);
             cmisVersionedType.setIsVersionable(true); // make it a versionable type;

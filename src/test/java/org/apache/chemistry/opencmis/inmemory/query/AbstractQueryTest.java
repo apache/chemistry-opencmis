@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
-import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -93,8 +93,8 @@ public abstract class AbstractQueryTest {
 
         try {
             // First test type
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
+            MutableTypeDefinition cmisType;        
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
             cmisType.setId(MY_DOC_TYPE);
             cmisType.setDisplayName("Document Type for Validation");
 
@@ -116,8 +116,7 @@ public abstract class AbstractQueryTest {
             myType = cmisType;
 
             // add another type definition with exactly the same properties
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(MY_DOC_TYPE_COPY);
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE_COPY);
             cmisType.setDisplayName("Document Type for Duplicated");
 
             // add same properties
@@ -130,8 +129,7 @@ public abstract class AbstractQueryTest {
 
             // Second test type
 
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(BOOK_TYPE);
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), BOOK_TYPE);
             cmisType.setDisplayName("Book Document Type");
 
 

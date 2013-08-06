@@ -70,8 +70,7 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
         try {
             // create a complex type with properties
             MutableDocumentTypeDefinition cmisComplexType;        
-            cmisComplexType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisComplexType.setId(VERSION_TEST_DOCUMENT_TYPE_ID);
+            cmisComplexType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), VERSION_TEST_DOCUMENT_TYPE_ID);
             cmisComplexType.setDisplayName("VersionedType");
             cmisComplexType.setDescription("InMemory test type definition " + VERSION_TEST_DOCUMENT_TYPE_ID);
             cmisComplexType.setIsVersionable(true); // make it a versionable type;

@@ -472,8 +472,7 @@ public class TypeValidationTest extends TestCase {
 
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(MY_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
             cmisType.setDisplayName("Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + MY_DOC_TYPE);
  
@@ -559,8 +558,7 @@ public class TypeValidationTest extends TestCase {
     private static DocumentTypeDefinition buildTypeWithStringProp() {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(STRING_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), STRING_DOC_TYPE);
             cmisType.setDisplayName("String Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + STRING_DOC_TYPE);
 
@@ -579,8 +577,7 @@ public class TypeValidationTest extends TestCase {
     private static DocumentTypeDefinition buildTypeWithIntegerProp() {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(INT_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), INT_DOC_TYPE);
             cmisType.setDisplayName("Int Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + INT_DOC_TYPE);
 
@@ -601,8 +598,7 @@ public class TypeValidationTest extends TestCase {
     private static DocumentTypeDefinition buildTypeWithDecimalProp() {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(DECIMAL_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), DECIMAL_DOC_TYPE);
             cmisType.setDisplayName("Decimal Type for Validation");
             cmisType.setDescription("InMemory test type definition " + DECIMAL_DOC_TYPE);
 
@@ -623,8 +619,7 @@ public class TypeValidationTest extends TestCase {
     public static DocumentTypeDefinition buildTypeWithPickList(Cardinality cardinality) {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(PICK_LIST_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("PickList Type for Validation");
             cmisType.setDescription("InMemory test type definition " + PICK_LIST_DOC_TYPE);
 
@@ -662,8 +657,7 @@ public class TypeValidationTest extends TestCase {
     public static DocumentTypeDefinition buildTypeWithMultiPickList() {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(PICK_LIST_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("MDocument Type for Validation");
             cmisType.setDescription("PickList test type definition " + PICK_LIST_DOC_TYPE);
 
@@ -704,8 +698,7 @@ public class TypeValidationTest extends TestCase {
     public static DocumentTypeDefinition buildTypeWithHierachicalPickList(Cardinality cardinality) {
         try {
             MutableDocumentTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisType.setId(PICK_LIST_DOC_TYPE);
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("PickList Type for Validation");
             cmisType.setDescription("InMemory test type definition " + PICK_LIST_DOC_TYPE);
 
@@ -772,8 +765,7 @@ public class TypeValidationTest extends TestCase {
 
             // create super type
             MutableDocumentTypeDefinition cmisSuperType;        
-            cmisSuperType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisSuperType.setId(DOC_TYPE_SUPER);
+            cmisSuperType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), DOC_TYPE_SUPER);
             cmisSuperType.setDisplayName("Document Type With a child");
             cmisSuperType.setDescription("InMemory test type definition " + DOC_TYPE_SUPER);
 
@@ -787,8 +779,7 @@ public class TypeValidationTest extends TestCase {
 
             // create sub type
             MutableDocumentTypeDefinition cmisSubType;        
-            cmisSubType = typeFactory.createChildDocumentTypeDefinition(cmisSuperType, null);
-            cmisSubType.setId(DOC_TYPE_SUB);
+            cmisSubType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(cmisSuperType, DOC_TYPE_SUB);
             cmisSubType.setDisplayName("Document Type With a parent");
             cmisSubType.setDescription("InMemory test type definition " + DOC_TYPE_SUB);
 

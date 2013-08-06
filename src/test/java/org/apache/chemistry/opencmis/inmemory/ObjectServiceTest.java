@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.definitions.MutableItemTypeDefiniti
 import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
@@ -1695,9 +1696,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
  
             try {
-                MutableDocumentTypeDefinition cmisDocumentType;        
-                cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-                cmisDocumentType.setId(TEST_DOCUMENT_TYPE_ID);
+                MutableTypeDefinition cmisDocumentType;        
+                cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOCUMENT_TYPE_ID);
                 cmisDocumentType.setDisplayName("My Document Type");
                 cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOCUMENT_TYPE_ID);
     
@@ -1752,8 +1752,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         private static DocumentTypeDefinition createCustomTypeWithStringIntProperty() throws InstantiationException, IllegalAccessException {
             MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisDocumentType.setId(TEST_CUSTOM_DOCUMENT_TYPE_ID);
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_DOCUMENT_TYPE_ID);
             cmisDocumentType.setDisplayName("My Custom Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_DOCUMENT_TYPE_ID);
  
@@ -1773,9 +1772,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         private static TypeDefinition createCustomInheritedType(DocumentTypeDefinition baseType)  throws InstantiationException, IllegalAccessException {
-            MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(baseType, null);
-            cmisDocumentType.setId(TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
+            MutableTypeDefinition cmisDocumentType;        
+            cmisDocumentType = typeFactory.createChildTypeDefinition(baseType, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
             cmisDocumentType.setDisplayName("My Custom Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
            
@@ -1792,9 +1790,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         private static TypeDefinition createDocumentTypeWithDefault()  throws InstantiationException, IllegalAccessException {
-            MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisDocumentType.setId(TEST_DOC_TYPE_WITH_DEFAULTS_ID);
+            MutableTypeDefinition cmisDocumentType;        
+            cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOC_TYPE_WITH_DEFAULTS_ID);
             cmisDocumentType.setDisplayName("Document Type With default values");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOC_TYPE_WITH_DEFAULTS_ID);
 
@@ -1824,8 +1821,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         private static TypeDefinition createCustomTypeNoContent()  throws InstantiationException, IllegalAccessException {
             MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisDocumentType.setId(TEST_CUSTOM_NO_CONTENT_TYPE_ID);
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_NO_CONTENT_TYPE_ID);
             cmisDocumentType.setDisplayName("No Content Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_NO_CONTENT_TYPE_ID);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
@@ -1834,8 +1830,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         
         private static TypeDefinition createCustomTypeMustHaveContent()  throws InstantiationException, IllegalAccessException {
             MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            cmisDocumentType.setId(TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
             cmisDocumentType.setDisplayName("Must Have Content Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
@@ -1951,8 +1946,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         private static TypeDefinition createVersionableType()  throws InstantiationException, IllegalAccessException {
             // create a complex type with properties
             MutableDocumentTypeDefinition verType;        
-            verType = typeFactory.createChildDocumentTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), null);
-            verType.setId(TEST_VERSION_DOCUMENT_TYPE_ID);
+            verType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_VERSION_DOCUMENT_TYPE_ID);
             verType.setDisplayName("VersionedType");
             verType.setDescription("InMemory test type definition " + TEST_VERSION_DOCUMENT_TYPE_ID);
 
