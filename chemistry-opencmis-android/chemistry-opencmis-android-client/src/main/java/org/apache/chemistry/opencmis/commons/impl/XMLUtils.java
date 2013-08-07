@@ -206,12 +206,7 @@ public class XMLUtils {
     }
 
     public static boolean hasNext(XmlPullParser parser) throws XmlPullParserException {
-        int event = parser.getEventType();
-        if (event == XmlPullParser.END_DOCUMENT) {
-            return false;
-        } else {
-            return true;
-        }
+        return parser.getEventType() != XmlPullParser.END_DOCUMENT;
     }
 
     /**

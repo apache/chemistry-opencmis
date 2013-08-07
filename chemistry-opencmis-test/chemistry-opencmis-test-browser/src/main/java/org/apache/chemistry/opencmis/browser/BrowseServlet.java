@@ -251,11 +251,13 @@ public class BrowseServlet extends HttpServlet {
                 out.flush();
                 out.close();
             } catch (Exception e) {
+                // ignore, there isn't anything we can do
             }
 
             try {
                 in.close();
             } catch (Exception e) {
+                // ignore, there isn't anything we can do
             }
         } catch (Exception e) {
             printError(req, resp, e.getMessage(), e);

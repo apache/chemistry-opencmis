@@ -440,7 +440,7 @@ public class FileShareRepository {
         try {
             newFile.createNewFile();
         } catch (IOException e) {
-            throw new CmisStorageException("Could not create file: " + e.getMessage());
+            throw new CmisStorageException("Could not create file: " + e.getMessage(), e);
         }
 
         // write content, if available

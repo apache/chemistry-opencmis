@@ -436,6 +436,11 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 LOG.error(ex.getMessage(), ex);
             }
 
+            if (response.isCommitted()) {
+                LOG.warn("Failed to send error message to client. Response is already committed.", ex);
+                return;
+            }
+
             String token = (context instanceof BrowserCallContextImpl ? ((BrowserCallContextImpl) context).getToken()
                     : null);
 

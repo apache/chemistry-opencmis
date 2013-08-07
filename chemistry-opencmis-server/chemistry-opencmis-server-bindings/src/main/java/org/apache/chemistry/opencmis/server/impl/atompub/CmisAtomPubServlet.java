@@ -286,6 +286,11 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             LOG.error(ex.getMessage(), ex);
         }
 
+        if (response.isCommitted()) {
+            LOG.warn("Failed to send error message to client. Response is already committed.", ex);
+            return;
+        }
+
         try {
             PrintWriter pw = response.getWriter();
             response.setStatus(statusCode);

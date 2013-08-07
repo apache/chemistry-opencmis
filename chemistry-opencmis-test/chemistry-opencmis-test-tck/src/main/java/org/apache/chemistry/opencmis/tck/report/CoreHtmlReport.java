@@ -48,7 +48,9 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
             throws IOException {
         stackTraceCounter = 0;
-        revision = parameters.get(AbstractRunner.TCK_REVISION_PARAMETER);
+        if (parameters != null) {
+            revision = parameters.get(AbstractRunner.TCK_REVISION_PARAMETER);
+        }
 
         writer.write("<h1>OpenCMIS TCK Report</h1>\n");
         writer.write((new Date()) + "\n");

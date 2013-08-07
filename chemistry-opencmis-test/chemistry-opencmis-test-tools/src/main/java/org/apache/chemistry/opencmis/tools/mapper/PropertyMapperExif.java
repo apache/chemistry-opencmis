@@ -46,7 +46,7 @@ import com.drew.metadata.jpeg.JpegDirectory;
 public class PropertyMapperExif extends AbstractPropertyMapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyMapperExif.class.getName());
-    private static String EXIF_DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
+    private static final String EXIF_DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
 
     private Map<String, String> propMapExif = new HashMap<String, String> (); // tag to property id
     private Map<String, String> propMapGps = new HashMap<String, String> ();  // tag to property id
@@ -104,8 +104,9 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
     private String getHexString(int tagType) {
         StringBuffer hexStr = new StringBuffer();
         hexStr.append(Integer.toHexString(tagType));
-        while (hexStr.length() < 4)
+        while (hexStr.length() < 4) {
             hexStr.insert(0, "0");
+        }
         hexStr.insert(0, "0x");
         return hexStr.toString();
     }
@@ -127,9 +128,10 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
             propId = propMapExif.get(hexStr);
         } else if (JpegDirectory.class.equals(dir.getClass())) {
             propId = propMapJpeg.get(hexStr);
-        } else
+        } else {
             propId = null;
-        
+        }
+            
         if (null != propId) {
             if (null != td) {
                 PropertyDefinition<?> pd = td.getPropertyDefinitions().get(propId);
@@ -138,8 +140,9 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                 PropertyType pt = pd.getPropertyType();
                 Object convValue = convertValue(dir, tag, pt);
                 propMap.put(propId, convValue);
-            } else
+            } else {
                 propMap.put(propId, dir.getObject(tag.getTagType())); // omit conversion if no type definition is available
+            }
         }
     }
     
@@ -305,11 +308,13 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         
         Class<?> stringArrayClass = src.getClass();
         Class<?> stringArrayComponentType = stringArrayClass.getComponentType();
-        if (!stringArrayClass.isArray() || null == stringArrayComponentType || Array.getLength(src) != 3) 
+        if (!stringArrayClass.isArray() || null == stringArrayComponentType || Array.getLength(src) != 3) {
             throw new MapperException("GPS coordinate \"" + tag + "\" has unknown type.");
-        if (!stringArrayComponentType.equals(Rational.class))
+        }
+        if (!stringArrayComponentType.equals(Rational.class)) {
             throw new MapperException("GPS coordinate \"" + tag + "\" has unknown component type (expected Rational, found: " + 
                     stringArrayComponentType.getName() + ")");
+        }
         // do conversion
         Rational[] components;
         components = (Rational[]) src;
@@ -317,8 +322,9 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         double min = components[1].doubleValue();
         double sec = components[2].doubleValue();
         Double d = (deg + min / 60 + sec / 3600);
-        if (d > 0.0 && mustInvert)
+        if (d > 0.0 && mustInvert) {
             d = -d;
+        }
         res = d;
         return res;
     }

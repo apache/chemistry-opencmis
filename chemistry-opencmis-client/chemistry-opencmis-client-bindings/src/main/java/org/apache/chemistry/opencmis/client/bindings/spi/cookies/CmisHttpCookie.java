@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,7 +80,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         }
     }
 
-    private HashMap<String, Setter> attributeSet = new HashMap<String, Setter>();
+    private Map<String, Setter> attributeSet = new HashMap<String, Setter>();
 
     /**
      * A utility method used to check whether the host name is in a domain or
@@ -306,7 +307,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
                 try {
                     cookie.setMaxAge(Long.parseLong(value));
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid max-age!");
+                    throw new IllegalArgumentException("Invalid max-age!", e);
                 }
                 set(true);
 
@@ -355,7 +356,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
                         cookie.setVersion(v);
                     }
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid version!");
+                    throw new IllegalArgumentException("Invalid version!", e);
                 }
                 if (cookie.getVersion() != 0) {
                     set(true);

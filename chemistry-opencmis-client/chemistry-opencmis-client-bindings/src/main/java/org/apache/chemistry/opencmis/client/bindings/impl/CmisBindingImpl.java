@@ -133,7 +133,7 @@ public class CmisBindingImpl implements CmisBinding, Serializable {
             try {
                 session.put(CmisBindingsHelper.FORCE_CMIS_VERSION, CmisVersion.fromValue(forceCmisVersion));
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid CMIS version value: " + forceCmisVersion);
+                throw new IllegalArgumentException("Invalid CMIS version value: " + forceCmisVersion, e);
             }
         }
 

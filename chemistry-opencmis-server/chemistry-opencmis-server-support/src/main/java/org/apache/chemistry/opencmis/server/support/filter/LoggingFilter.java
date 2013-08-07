@@ -183,6 +183,7 @@ public class LoggingFilter implements Filter {
                 String line = scanner.nextLine();
                 pw.println(line);
             }
+            scanner.close();
 
             pw.flush();
         } catch (IOException e) {
@@ -339,7 +340,7 @@ public class LoggingFilter implements Filter {
         return requestNo++;
     }
 
-    private class LoggingRequestWrapper extends HttpServletRequestWrapper {
+    private static class LoggingRequestWrapper extends HttpServletRequestWrapper {
 
         private LoggingInputStream is;
 
@@ -358,7 +359,7 @@ public class LoggingFilter implements Filter {
         }
     }
 
-    private class LoggingInputStream extends ServletInputStream {
+    private static class LoggingInputStream extends ServletInputStream {
 
         private ByteArrayOutputStream baous = new ByteArrayOutputStream();
         private ServletInputStream is;
@@ -411,7 +412,7 @@ public class LoggingFilter implements Filter {
         }
     }
 
-    private class LoggingResponseWrapper extends HttpServletResponseWrapper {
+    private static class LoggingResponseWrapper extends HttpServletResponseWrapper {
 
         private LoggingOutputStream os;
         private PrintWriter writer;
@@ -581,7 +582,7 @@ public class LoggingFilter implements Filter {
         }
     }
 
-    private class LoggingOutputStream extends ServletOutputStream {
+    private static class LoggingOutputStream extends ServletOutputStream {
         private ByteArrayOutputStream baous = new ByteArrayOutputStream();
         private ServletOutputStream os;
 
@@ -591,7 +592,7 @@ public class LoggingFilter implements Filter {
         }
 
         public String getPayload() {
-            return new String(baous.toString());
+            return new String(baous.toByteArray());
         }
 
         @Override

@@ -48,7 +48,6 @@ import javax.imageio.stream.ImageOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class FractalGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(FractalGenerator.class);
 
@@ -73,9 +72,9 @@ public class FractalGenerator {
     private final String COLORS_WARPED = "warped";
     private final String COLORS_WILD = "wild";
     private final String COLORS_ZEBRA = "zebra";
-    private final String[] colorSchemes = {COLORS_BLACK_AND_WHITE, COLORS_BLUE_ICE, COLORS_FUNKY, COLORS_PASTEL,
-        COLORS_PSYCHEDELIC, COLORS_PURPLE_HAZE, COLORS_RADICAL, COLORS_RAINBOW, COLORS_RAINBOWS,
-        COLORS_SCINTILLATION, COLORS_WARPED, COLORS_WILD, COLORS_ZEBRA};
+    private final String[] colorSchemes = { COLORS_BLACK_AND_WHITE, COLORS_BLUE_ICE, COLORS_FUNKY, COLORS_PASTEL,
+            COLORS_PSYCHEDELIC, COLORS_PURPLE_HAZE, COLORS_RADICAL, COLORS_RAINBOW, COLORS_RAINBOWS,
+            COLORS_SCINTILLATION, COLORS_WARPED, COLORS_WILD, COLORS_ZEBRA };
     private final int imageHeight = 512; // default
     private final int imageWidth = 512; // default
     private final int numColors = 512; // colors per colormap
@@ -89,73 +88,73 @@ public class FractalGenerator {
     private int stepInBatch = 0;
     ComplexRectangle rect;
     ComplexPoint juliaPoint;
-    
+
     public FractalGenerator() {
         reset();
     }
-    
+
     private void reset() {
         rect = new ComplexRectangle(-1.6, -1.2, -0.1, 0.1);
         juliaPoint = null; // new ComplexPoint();
         maxIterations = DEFAULT_MAX_ITERATIONS;
-       
+
         Random ran = new Random();
         color = colorSchemes[ran.nextInt(colorSchemes.length)];
-        parts = ran.nextInt(13)+3;
+        parts = ran.nextInt(13) + 3;
         LOG.debug("Parts: " + parts);
         maxIterations = DEFAULT_MAX_ITERATIONS;
-        LOG.debug("Original rect " + ": (" + rect.getRMin() + "r," + rect.getRMax() +
-                "r, " + rect.getIMin() + "i, " + rect.getIMax() + "i)");
+        LOG.debug("Original rect " + ": (" + rect.getRMin() + "r," + rect.getRMax() + "r, " + rect.getIMin() + "i, "
+                + rect.getIMax() + "i)");
         randomizeRect(rect);
     }
-    
+
     public ByteArrayOutputStream generateFractal() throws IOException {
         ByteArrayOutputStream bos = null;
-        
+
         if (stepInBatch == ZOOM_STEPS_PER_BATCH) {
             stepInBatch = 0;
             reset();
         }
 
         ++stepInBatch;
-        LOG.debug("Generating rect no " + stepInBatch + ": (" + rect.getRMin() + "r," + 
-                rect.getRMax() +  "r, " + rect.getIMin() + "i, " + rect.getIMax() + "i)");
+        LOG.debug("Generating rect no " + stepInBatch + ": (" + rect.getRMin() + "r," + rect.getRMax() + "r, "
+                + rect.getIMin() + "i, " + rect.getIMax() + "i)");
         LOG.debug("   width: " + rect.getWidth() + " height: " + rect.getHeight());
         bos = genFractal(rect, juliaPoint);
 
-        double r1New = rect.getWidth() * newColTile / parts +  rect.getRMin();
-        double r2New = rect.getWidth() * (newColTile+1) / parts +  rect.getRMin();
-        double i1New =  rect.getIMax() - (rect.getHeight() * newRowTile / parts);
-        double i2New =  rect.getIMax() - (rect.getHeight() * (newRowTile+1) / parts);
+        double r1New = rect.getWidth() * newColTile / parts + rect.getRMin();
+        double r2New = rect.getWidth() * (newColTile + 1) / parts + rect.getRMin();
+        double i1New = rect.getIMax() - (rect.getHeight() * newRowTile / parts);
+        double i2New = rect.getIMax() - (rect.getHeight() * (newRowTile + 1) / parts);
         rect.set(r1New, r2New, i1New, i2New);
         randomizeRect(rect);
         LOG.debug("Done generating fractals.");
-        
+
         return bos;
     }
 
-    private void randomizeRect( ComplexRectangle rect) {
+    private void randomizeRect(ComplexRectangle rect) {
         double jitterFactor = 0.15; // +/- 15%
-        double ran = Math.random() * jitterFactor +  (1.0 - jitterFactor);
+        double ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
         double width = rect.getWidth() * ran;
-        ran = Math.random() * jitterFactor +  (1.0 - jitterFactor);
+        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
         double height = rect.getHeight() * ran;
-        ran = Math.random() * jitterFactor +  (1.0 - jitterFactor);
+        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
         double r1 = (rect.getWidth() - width) * ran + rect.getRMin();
-        ran = Math.random() * jitterFactor +  (1.0 - jitterFactor);
+        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
         double i1 = (rect.getHeight() - height) * ran + rect.getIMin();
-        rect.set(r1, r1+width, i1, i1+height);
+        rect.set(r1, r1 + width, i1, i1 + height);
     }
 
     /**
-     * Create a fractal image as JPEG in memory and return it  
+     * Create a fractal image as JPEG in memory and return it
+     * 
      * @param rect
-     *      rectangle of mandelbrot or julia set
+     *            rectangle of mandelbrot or julia set
      * @param juliaPoint
-     *      point in Julia set or null
-     * @return
-     *      byte array with JPEG stream
-     * @throws IOException 
+     *            point in Julia set or null
+     * @return byte array with JPEG stream
+     * @throws IOException
      */
     public ByteArrayOutputStream genFractal(ComplexRectangle rect, ComplexPoint juliaPoint) throws IOException {
 
@@ -174,20 +173,21 @@ public class FractalGenerator {
         findNewRect(image, iterations);
 
         // fast method to write to a file with default options
-        // ImageIO.write((BufferedImage)(image), "jpg", new File("fractal-" + counter++ + ".jpg"));
+        // ImageIO.write((BufferedImage)(image), "jpg", new File("fractal-" +
+        // counter++ + ".jpg"));
 
         // create image in memory
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(200*1024);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(200 * 1024);
         ImageOutputStream ios = ImageIO.createImageOutputStream(bos);
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName( "jpg" );
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
         ImageWriter imageWriter = writers.next();
 
-        JPEGImageWriteParam params = new JPEGImageWriteParam( Locale.getDefault() );
-        params.setCompressionMode( ImageWriteParam.MODE_EXPLICIT );
-        params.setCompressionQuality( 0.9f );
+        JPEGImageWriteParam params = new JPEGImageWriteParam(Locale.getDefault());
+        params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        params.setCompressionQuality(0.9f);
 
-        imageWriter.setOutput( ios );
-        imageWriter.write( null, new IIOImage( image, null, null ), params );
+        imageWriter.setOutput(ios);
+        imageWriter.write(null, new IIOImage(image, null, null), params);
         ios.close();
 
         // write memory block to a file
@@ -220,18 +220,21 @@ public class FractalGenerator {
         double complexWidth = rMax - rMin;
         double complexHeight = iMax - iMin;
 
-        if ((imageWidth != 0) && (imageHeight != 0)) {
+        if ((imageWidth > 0) && (imageHeight > 0)) {
             imageWHRatio = ((double) imageWidth / (double) imageHeight);
-        } else
+        } else {
             return;
+        }
 
-        if ((complexWidth != 0) && (complexHeight != 0)) {
+        if ((complexWidth > 0) && (complexHeight > 0)) {
             complexWHRatio = complexWidth / complexHeight;
-        } else
+        } else {
             return;
+        }
 
-        if (imageWHRatio == complexWHRatio)
+        if (Double.compare(imageWHRatio, complexWHRatio) == 0) {
             return;
+        }
 
         if (imageWHRatio < complexWHRatio) {
             // Expand vertically
@@ -263,8 +266,9 @@ public class FractalGenerator {
             magnitude = 1.0;
         }
         double iterations = INITIAL_ITERATIONS * (magnitude * logZoom + 1.0);
-        if (isJulia)
+        if (isJulia) {
             iterations *= 2.0; // Julia sets tend to need more iterations.
+        }
         return (int) iterations;
     }
 
@@ -427,38 +431,42 @@ public class FractalGenerator {
         for (int colorNum = 0; colorNum < numColors; colorNum++) {
             if (colorNum % 2 == 0) {
                 colorMap[colorNum] = Color.white.getRGB();
-                ;
             } else {
                 colorMap[colorNum] = Color.black.getRGB();
-                ;
             }
         }
         colorTable.put(COLORS_ZEBRA, colorMap);
     }
 
-
     private void findNewRect(BufferedImage image, int[][] iterations) {
 
         int newWidth = image.getWidth() / parts;
         int newHeight = image.getHeight() / parts;
-        int i=0, j=0;
-        int noTiles = (image.getWidth() / newWidth) * (image.getHeight() / newHeight); // equals parts but be aware of rounding errors!;
-        double[] stdDev = new double [noTiles];
+        int i = 0, j = 0;
+        int noTiles = (image.getWidth() / newWidth) * (image.getHeight() / newHeight); // equals
+                                                                                       // parts
+                                                                                       // but
+                                                                                       // be
+                                                                                       // aware
+                                                                                       // of
+                                                                                       // rounding
+                                                                                       // errors!;
+        double[] stdDev = new double[noTiles];
 
-        for (int y = 0; y+newHeight <= image.getHeight(); y+=newHeight) {
-            for (int x = 0; x+newWidth <= image.getWidth(); x+=newWidth) {
+        for (int y = 0; y + newHeight <= image.getHeight(); y += newHeight) {
+            for (int x = 0; x + newWidth <= image.getWidth(); x += newWidth) {
                 Rectangle subRect = new Rectangle(x, y, newWidth, newHeight);
-                stdDev[i*parts+j] = calcStdDev(iterations, subRect);
+                stdDev[i * parts + j] = calcStdDev(iterations, subRect);
                 ++j;
             }
             ++i;
-            j=0;
+            j = 0;
         }
 
         // find tile with greatest std deviation:
         double max = 0;
         int index = 0;
-        for (i=0; i<noTiles; i++) {
+        for (i = 0; i < noTiles; i++) {
             if (stdDev[i] > max) {
                 index = i;
                 max = stdDev[i];
@@ -470,21 +478,21 @@ public class FractalGenerator {
 
     private double calcStdDev(int[][] iterations, Rectangle rect) {
 
-        int sum=0;
-        long sumSquare=0;
+        int sum = 0;
+        long sumSquare = 0;
 
-        for (int x = rect.x; x < rect.x+rect.width; x+=1) {
-            for (int y = rect.y; y < rect.y+rect.height; y+=1) {
+        for (int x = rect.x; x < rect.x + rect.width; x += 1) {
+            for (int y = rect.y; y < rect.y + rect.height; y += 1) {
                 int iters = iterations[x][y];
-                sum +=iters;
-                sumSquare +=iters*iters;
+                sum += iters;
+                sumSquare += iters * iters;
             }
         }
         int count = rect.width * rect.height;
         double mean = 0.0;
 
-        mean = sum / count;
-        return Math.sqrt(sumSquare/count - (mean * mean));
+        mean = (double) (sum / count);
+        return Math.sqrt(sumSquare / count - (mean * mean));
     }
 
 }

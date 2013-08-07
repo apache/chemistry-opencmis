@@ -114,33 +114,36 @@ public class CheckedOutTest extends AbstractSessionTest {
         String lastName = null;
 
         for (Document pwc : pwcs) {
-            String[] propertiesToCheck = getAllProperties(pwc);
-            addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + (pwc == null ? "?" : pwc.getId())));
-
-            if (pwc != null) {
-                if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
-                    f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()
-                            + " (Note: The words of the CMIS specification define that the PWC is the latest version."
-                            + " But that is not the intention of the spec and will be changed in CMIS 1.1."
-                            + " Thus this a warning, not an error.)");
-                    addResult(assertIsTrue(pwc.isLatestVersion(), null, f));
-                } else {
-                    f = createResult(FAILURE, "The property value of 'cmis:isLatestVersion' is TRUE for a PWC! Id: "
-                            + pwc.getId());
-                    addResult(assertIsFalse(pwc.isLatestVersion(), null, f));
-                    f = createResult(FAILURE,
-                            "The property value of 'cmis:isLatestMajorVersion' is TRUE for a PWC! Id: " + pwc.getId());
-                    addResult(assertIsFalse(pwc.isLatestMajorVersion(), null, f));
-                }
-
-                if (lastName != null && pwc.getName() != null) {
-                    if (pwc.getName().compareToIgnoreCase(lastName) < 0) {
-                        orderByNameIssues++;
-                    }
-                }
-
-                lastName = pwc.getName();
+            if (pwc == null) {
+                addResult(createResult(FAILURE, "The list of checked out documents contains a null entry!"));
+                continue;
             }
+
+            String[] propertiesToCheck = getAllProperties(pwc);
+            addResult(checkObject(session, pwc, propertiesToCheck, "PWC check: " + pwc.getId()));
+
+            if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
+                f = createResult(WARNING, "PWC is not the latest version! Id: " + pwc.getId()
+                        + " (Note: The words of the CMIS specification define that the PWC is the latest version."
+                        + " But that is not the intention of the spec and will be changed in CMIS 1.1."
+                        + " Thus this a warning, not an error.)");
+                addResult(assertIsTrue(pwc.isLatestVersion(), null, f));
+            } else {
+                f = createResult(FAILURE,
+                        "The property value of 'cmis:isLatestVersion' is TRUE for a PWC! Id: " + pwc.getId());
+                addResult(assertIsFalse(pwc.isLatestVersion(), null, f));
+                f = createResult(FAILURE, "The property value of 'cmis:isLatestMajorVersion' is TRUE for a PWC! Id: "
+                        + pwc.getId());
+                addResult(assertIsFalse(pwc.isLatestMajorVersion(), null, f));
+            }
+
+            if (lastName != null && pwc.getName() != null) {
+                if (pwc.getName().compareToIgnoreCase(lastName) < 0) {
+                    orderByNameIssues++;
+                }
+            }
+
+            lastName = pwc.getName();
 
             i++;
         }

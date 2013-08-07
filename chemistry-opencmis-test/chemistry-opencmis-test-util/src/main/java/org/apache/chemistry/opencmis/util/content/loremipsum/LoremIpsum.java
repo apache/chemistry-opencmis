@@ -31,8 +31,8 @@ import java.util.Set;
 
 /**
  * A generator of lorem ipsum text ported from the Python implementation at
- * http://code.google.com/p/lorem-ipsum-generator/. 
- * Note: original code licensed under the BSD license
+ * http://code.google.com/p/lorem-ipsum-generator/. Note: original code licensed
+ * under the BSD license
  * 
  */
 public class LoremIpsum {
@@ -52,14 +52,14 @@ public class LoremIpsum {
 
         @Override
         public boolean equals(Object other) {
-            if (this == null || other == null)
+            if (this == null || other == null) {
                 return false;
-            if (other.getClass() != WordLengthPair.class)
+            }
+            if (other.getClass() != getClass()) {
                 return false;
-            if (len1 == ((WordLengthPair) other).len1 && len2 == ((WordLengthPair) other).len2)
-                return true;
-            else
-                return false;
+            }
+
+            return (len1 == ((WordLengthPair) other).len1 && len2 == ((WordLengthPair) other).len2);
         }
 
         @Override
@@ -242,11 +242,11 @@ public class LoremIpsum {
     /**
      * Generates a single lorem ipsum paragraph, of random length.
      * 
-     * @param {boolean} opt_startWithLorem Whether to start the sentence with
+     * @param {boolean} optStartWithLorem Whether to start the sentence with
      *        the standard "Lorem ipsum..." first sentence.
      * @return {string} The generated sentence.
      */
-    public String generateParagraph(boolean opt_startWithLorem) {
+    public String generateParagraph(boolean optStartWithLorem) {
         // The length of the paragraph is a normally distributed random
         // Objectiable.
         Double paragraphLengthDbl = randomNormal(this.paragraphMean, this.paragraphSigma);
@@ -254,7 +254,7 @@ public class LoremIpsum {
 
         // Construct a paragraph from a number of sentences.
         List<String> paragraph = new ArrayList<String>();
-        boolean startWithLorem = opt_startWithLorem;
+        boolean startWithLorem = optStartWithLorem;
         while (paragraph.size() < paragraphLength) {
             String sentence = this.generateSentence(startWithLorem);
             paragraph.add(sentence);
@@ -273,11 +273,11 @@ public class LoremIpsum {
     /**
      * Generates a single sentence, of random length.
      * 
-     * @param {boolean} opt_startWithLorem Whether to start the setnence with
+     * @param {boolean} optStartWithLorem Whether to start the setnence with
      *        the standard "Lorem ipsum..." first sentence.
      * @return {string} The generated sentence.
      */
-    public String generateSentence(boolean opt_startWithLorem) {
+    public String generateSentence(boolean optStartWithLorem) {
         if (this.chains.size() == 0 || this.starts.size() == 0) {
             throw new RuntimeException("No chains created (Invalid sample text?)");
         }
@@ -296,8 +296,8 @@ public class LoremIpsum {
 
         // Start the sentence with "Lorem ipsum...", if desired
         List<String> sentence;
-        ;
-        if (opt_startWithLorem) {
+
+        if (optStartWithLorem) {
             String lorem = "lorem ipsum dolor sit amet, consecteteur adipiscing elit";
             sentence = new ArrayList<String>(Arrays.asList(splitWords(lorem)));
             if (sentence.size() > sentenceLength) {
@@ -405,11 +405,12 @@ public class LoremIpsum {
         text.append(end);
         return text.toString();
     }
-    
+
     /**
      * Generates multiple paragraphs of text, with begin before the paragraphs,
      * end after the paragraphs, and between between each two paragraphs.
-     * @throws IOException 
+     * 
+     * @throws IOException
      */
     private void generateMarkupParagraphs(Appendable writer, String begin, String end, String between, int quantity,
             boolean startWithLorem) throws IOException {
@@ -431,6 +432,7 @@ public class LoremIpsum {
 
         writer.append(end);
     }
+
     /**
      * Generates multiple sentences of text, with begin before the sentences,
      * end after the sentences, and between between each two sentences.
@@ -446,8 +448,9 @@ public class LoremIpsum {
         while (text.length() < quantity) {
             sentence = generateSentence(false);
             text.append(sentence);
-            if (text.length() < quantity)
+            if (text.length() < quantity) {
                 text.append(between);
+            }
         }
 
         text.append(end);
@@ -470,17 +473,20 @@ public class LoremIpsum {
         Map<WordLengthPair, List<WordInfo>> chains = new HashMap<WordLengthPair, List<WordInfo>>();
 
         for (WordInfo wi : wordInfos) {
-            if (wi.len == 0)
+            if (wi.len == 0) {
                 continue;
+            }
 
             List<WordInfo> value = chains.get(previous);
-            if (null == value)
+            if (null == value) {
                 chains.put(previous, new ArrayList<WordInfo>());
-            else
+            } else {
                 chains.get(previous).add(wi);
+            }
 
-            if (delimList.contains(wi.delim))
+            if (delimList.contains(wi.delim)) {
                 starts.add(previous);
+            }
 
             previous.len1 = previous.len2;
             previous.len2 = wi.len;
@@ -632,8 +638,9 @@ public class LoremIpsum {
     static int chooseClosest(Integer[] values, int target) {
         int closest = values[0];
         for (int value : values) {
-            if (Math.abs(target - value) < Math.abs(target - closest))
+            if (Math.abs(target - value) < Math.abs(target - closest)) {
                 closest = value;
+            }
         }
 
         return closest;
@@ -664,8 +671,9 @@ public class LoremIpsum {
     static private WordInfo[] generateWordInfo(String[] words) {
         WordInfo[] result = new WordInfo[words.length];
         int i = 0;
-        for (String word : words)
+        for (String word : words) {
             result[i++] = getWordInfo(word);
+        }
         return result;
     }
 
@@ -710,8 +718,9 @@ public class LoremIpsum {
         List<String> result = new ArrayList<String>();
         for (String s : arr) {
             String trims = s.trim();
-            if (trims.length() > 0)
+            if (trims.length() > 0) {
                 result.add(trims);
+            }
         }
         return result;
     }
@@ -726,8 +735,9 @@ public class LoremIpsum {
 
     public static double variance(double[] values) {
         double[] squared = new double[values.length];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             squared[i] = values[i] * values[i];
+        }
 
         double meanVal = mean(values);
         return mean(squared) - (meanVal * meanVal);
@@ -735,8 +745,9 @@ public class LoremIpsum {
 
     public static double sigma(int[] values) {
         double[] d = new double[values.length];
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             d[i] = (double) values[i];
+        }
 
         return sigma(d);
     }
@@ -747,22 +758,25 @@ public class LoremIpsum {
 
     public static int sum(int[] values) {
         int sum = 0;
-        for (int val : values)
+        for (int val : values) {
             sum += val;
+        }
         return sum;
     }
 
     public static double sum(double[] values) {
         double sum = 0.0d;
-        for (double val : values)
+        for (double val : values) {
             sum += val;
+        }
         return sum;
     }
 
     public static boolean contains(String[] array, String val) {
         for (String s : array)
-            if (s.equals(val))
+            if (s.equals(val)) {
                 return true;
+            }
         return false;
     }
 
@@ -994,16 +1008,15 @@ public class LoremIpsum {
      * @param writer
      * @param quantity
      * @param startWithLorem
-     * @throws IOException 
+     * @throws IOException
      */
     public void generateParagraphsHtml(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
-        generateMarkupParagraphs(writer, "<p>" + LINE_SEPARATOR + "\t", LINE_SEPARATOR + "</p>", LINE_SEPARATOR + "</p>"
-                + LINE_SEPARATOR + "<p>" + LINE_SEPARATOR + "\t", quantity, startWithLorem);
+        generateMarkupParagraphs(writer, "<p>" + LINE_SEPARATOR + "\t", LINE_SEPARATOR + "</p>", LINE_SEPARATOR
+                + "</p>" + LINE_SEPARATOR + "<p>" + LINE_SEPARATOR + "\t", quantity, startWithLorem);
 
     }
-    
-    
+
     /**
      * Generates one paragraph of HTML, surrounded by HTML pararaph tags.
      * 
@@ -1036,8 +1049,7 @@ public class LoremIpsum {
                 + "</p>" + LINE_SEPARATOR + postfix, LINE_SEPARATOR + "</p>" + LINE_SEPARATOR + "<p>" + LINE_SEPARATOR
                 + "\t", quantity, startWithLorem);
     }
-    
-    
+
     /**
      * Generates a number of paragraphs, with each paragraph surrounded by HTML
      * paragraph tags as a full HTML page.
@@ -1045,7 +1057,7 @@ public class LoremIpsum {
      * @param writer
      * @param quantity
      * @param startWithLorem
-     * @throws IOException 
+     * @throws IOException
      */
     public void generateParagraphsFullHtml(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
@@ -1057,8 +1069,7 @@ public class LoremIpsum {
                 + "</p>" + LINE_SEPARATOR + postfix, LINE_SEPARATOR + "</p>" + LINE_SEPARATOR + "<p>" + LINE_SEPARATOR
                 + "\t", quantity, startWithLorem);
     }
-    
-    
+
     /**
      * Generates a number of paragraphs, with each paragraph separated by two
      * newlines.
@@ -1079,7 +1090,7 @@ public class LoremIpsum {
      * @param writer
      * @param quantity
      * @param startWithLorem
-     * @throws IOException 
+     * @throws IOException
      */
     public void generateParagraphsPlainText(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
@@ -1112,17 +1123,18 @@ public class LoremIpsum {
      * @param writer
      * @param quantity
      * @param startWithLorem
-     * @throws IOException 
+     * @throws IOException
      */
-    public void generateParagraphsPlainText(Appendable writer, int quantity, int maxCols, boolean startWithLorem) throws IOException {
+    public void generateParagraphsPlainText(Appendable writer, int quantity, int maxCols, boolean startWithLorem)
+            throws IOException {
 
         String delims = " .,?!";
         String unformatted = generateMarkupParagraphs("", "", LINE_SEPARATOR + LINE_SEPARATOR, quantity, startWithLorem);
         int len = unformatted.length();
 
-        if (maxCols <= 0)
+        if (maxCols <= 0) {
             writer.append(unformatted);
-        else {
+        } else {
             int startPos = 0;
             while (startPos < len - 1) {
                 int endPos = Math.min(startPos + maxCols, len - 1);
@@ -1148,8 +1160,9 @@ public class LoremIpsum {
                     }
                 }
                 writer.append(unformatted.substring(startPos, endPos + 1));
-                if (unformatted.charAt(endPos) != '\n')
+                if (unformatted.charAt(endPos) != '\n') {
                     writer.append(LINE_SEPARATOR);
+                }
                 startPos = endPos + 1;
             }
         }

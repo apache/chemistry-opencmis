@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1048,28 +1046,25 @@ public class XMLConverter {
         }
 
         String namespace = null;
-        //boolean addedNamespace = false;
+        // boolean addedNamespace = false;
 
         if (source.getNamespace() != null) {
-           /* String prefix = writer.getPrefix(source.getNamespace(), false);
-            if (prefix == null) {
-                int p = ns.indexOf(source.getNamespace());
-
-                if (p == -1) {
-                    prefix = "e" + (ns.size() + 1);
-                    ns.add(source.getNamespace());
-                    addedNamespace = true;
-                } else {
-                    prefix = "e" + (p + 1);
-                }
-            }*/
+            /*
+             * String prefix = writer.getPrefix(source.getNamespace(), false);
+             * if (prefix == null) { int p = ns.indexOf(source.getNamespace());
+             * 
+             * if (p == -1) { prefix = "e" + (ns.size() + 1);
+             * ns.add(source.getNamespace()); addedNamespace = true; } else {
+             * prefix = "e" + (p + 1); } }
+             */
 
             namespace = source.getNamespace();
             writer.startTag(source.getNamespace(), source.getName());
 
-            /*if (addedNamespace) {
-                writer.attribute("", prefix, source.getNamespace());
-            }*/
+            /*
+             * if (addedNamespace) { writer.attribute("", prefix,
+             * source.getNamespace()); }
+             */
         } else {
             writer.startTag(null, source.getName());
         }
@@ -1092,9 +1087,9 @@ public class XMLConverter {
 
         writer.endTag(namespace, source.getName());
 
-        /*if (addedNamespace) {
-            ns.removeLast();
-        }*/
+        /*
+         * if (addedNamespace) { ns.removeLast(); }
+         */
     }
 
     // ---------------
@@ -1349,10 +1344,6 @@ public class XMLConverter {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE)) {
                     Set<PropertyType> ptSet = target.canCreate();
-                    if (ptSet == null) {
-                        ptSet = EnumSet.noneOf(PropertyType.class);
-                        target.setCanCreate(ptSet);
-                    }
 
                     ptSet.add(readEnum(parser, PropertyType.class));
                     return true;
@@ -1471,10 +1462,6 @@ public class XMLConverter {
 
                 if (isTag(name, TAG_ACLCAP_PERMISSION_MAPPING)) {
                     Map<String, PermissionMapping> mapping = target.getPermissionMapping();
-                    if (mapping == null) {
-                        mapping = new HashMap<String, PermissionMapping>();
-                        target.setPermissionMappingData(mapping);
-                    }
 
                     PermissionMapping pm = PERMISSION_MAPPING_PARSER.walk(parser);
                     mapping.put(pm.getKey(), pm);
@@ -1499,7 +1486,7 @@ public class XMLConverter {
                 throws XmlPullParserException {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_ACLCAP_PERMISSION_PERMISSION)) {
-                    target.setPermission(readText(parser));
+                    target.setId(readText(parser));
                     return true;
                 }
 
@@ -1576,10 +1563,6 @@ public class XMLConverter {
 
                 if (isTag(name, TAG_FEATURE_DATA)) {
                     Map<String, String> featureData = target.getFeatureData();
-                    if (featureData == null) {
-                        featureData = new HashMap<String, String>();
-                        target.setFeatureData(featureData);
-                    }
 
                     String[] data = FEATURE_DATA_PARSER.walk(parser);
                     featureData.put(data[0], data[1]);
@@ -2324,10 +2307,6 @@ public class XMLConverter {
                     Action action = Action.fromValue(name.getLocalPart());
 
                     Set<Action> actions = target.getAllowableActions();
-                    if (actions == null) {
-                        actions = EnumSet.noneOf(Action.class);
-                        target.setAllowableActions(actions);
-                    }
 
                     if (Boolean.TRUE.equals(readBoolean(parser))) {
                         actions.add(action);

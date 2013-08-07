@@ -597,7 +597,7 @@ public abstract class AbstractPortProvider {
                     return new URL(location);
                 } catch (MalformedURLException e) {
                     throw new CmisRuntimeException("This service provides an invalid endpoint address: "
-                            + service.getServiceName());
+                            + service.getServiceName(), e);
                 }
             }
 

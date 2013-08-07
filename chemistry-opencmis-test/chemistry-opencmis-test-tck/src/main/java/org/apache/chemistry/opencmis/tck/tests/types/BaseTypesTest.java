@@ -223,12 +223,14 @@ public class BaseTypesTest extends AbstractSessionTest {
                     // check type children
                     Map<String, ObjectType> typeChilden = new HashMap<String, ObjectType>();
                     for (ObjectType childType : reloadedTypeChildren) {
-                        addResult(checkTypeDefinition(session, childType, "Type spec compliance: "
-                                + (childType == null ? "?" : childType.getId())));
-
-                        if (childType != null) {
-                            typeChilden.put(childType.getId(), childType);
+                        if (childType == null) {
+                            addResult(createResult(FAILURE, "The list of types contains a null entry!"));
+                            continue;
                         }
+
+                        addResult(checkTypeDefinition(session, childType, "Type spec compliance: " + childType.getId()));
+
+                        typeChilden.put(childType.getId(), childType);
                     }
 
                     // compare type children and type descendants

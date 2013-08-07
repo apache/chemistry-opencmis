@@ -63,6 +63,7 @@ public class XMLUtils {
             XML_OUTPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
             LOG.warn("You are using an unsupported StAX parser.");
         } catch (IllegalArgumentException ex) {
+            // expected for Woodstox
         }
 
         XML_OUTPUT_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);

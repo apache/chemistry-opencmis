@@ -237,7 +237,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
                         } catch (IOException ioe) {
                             throw ioe;
                         } catch (Exception e) {
-                            new IOException(e);
+                            throw new IOException(e);
                         }
                         out.flush();
 

@@ -106,7 +106,7 @@ public class CmisEnumHelper {
                 return (E) CapabilityRenditions.fromValue(value);
             }
         } catch (IllegalArgumentException e) {
-            throw new CmisInvalidArgumentException("Invalid enum value '" + value + "'!");
+            throw new CmisInvalidArgumentException("Invalid enum value '" + value + "'!", e);
         }
 
         throw new CmisRuntimeException(clazz.getSimpleName() + " is not a CMIS enum!");
@@ -123,7 +123,7 @@ public class CmisEnumHelper {
                 return (E) DecimalPrecision.fromValue(value);
             }
         } catch (IllegalArgumentException e) {
-            throw new CmisInvalidArgumentException("Invalid enum value '" + value + "'!");
+            throw new CmisInvalidArgumentException("Invalid enum value '" + value + "'!", e);
         }
 
         throw new CmisRuntimeException(clazz.getSimpleName() + " is not a CMIS enum!");

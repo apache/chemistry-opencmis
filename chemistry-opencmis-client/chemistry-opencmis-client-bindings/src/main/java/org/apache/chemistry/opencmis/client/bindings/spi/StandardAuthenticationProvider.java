@@ -47,8 +47,6 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     protected static final String WSSE_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     protected static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
-    private boolean sendBasicAuth;
-    private boolean sendUsernameToken;
     private CmisCookieManager cookieManager;
     private Map<String, List<String>> fixedHeaders = new HashMap<String, List<String>>();
 
@@ -56,8 +54,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     public void setSession(BindingSession session) {
         super.setSession(session);
 
-        sendBasicAuth = getSendBasicAuth();
-        sendUsernameToken = getSendUsernameToken();
+        boolean sendBasicAuth = getSendBasicAuth();
 
         if (getHandleCookies()) {
             cookieManager = new CmisCookieManager();
@@ -113,7 +110,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     @Override
     public Element getSOAPHeaders(Object portObject) {
         // only send SOAP header if configured
-        if (!sendUsernameToken) {
+        if (!getSendUsernameToken()) {
             return null;
         }
 

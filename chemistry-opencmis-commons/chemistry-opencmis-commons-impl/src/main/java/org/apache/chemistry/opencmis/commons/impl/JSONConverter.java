@@ -1996,7 +1996,7 @@ public final class JSONConverter {
                 try {
                     propertyType = PropertyType.fromValue(getString(jsonPropertyMap, JSON_PROPERTY_DATATYPE));
                 } catch (Exception e) {
-                    throw new CmisRuntimeException("Invalid property: " + id);
+                    throw new CmisRuntimeException("Invalid property: " + id, e);
                 }
 
                 Object value = jsonPropertyMap.get(JSON_PROPERTY_VALUE);

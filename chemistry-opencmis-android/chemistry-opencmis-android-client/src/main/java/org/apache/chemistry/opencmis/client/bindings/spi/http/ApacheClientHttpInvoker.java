@@ -141,8 +141,8 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
                 int soTimeout = HttpConnectionParams.getSoTimeout(params);
 
                 try {
-                    sock.setSoTimeout(soTimeout);
-                    sock.connect(remoteAddress, connTimeout);
+                    sslSocket.setSoTimeout(soTimeout);
+                    sslSocket.connect(remoteAddress, connTimeout);
                 } catch (SocketTimeoutException ex) {
                     closeSocket(sock);
                     throw new ConnectTimeoutException("Connect to " + remoteAddress + " timed out!");

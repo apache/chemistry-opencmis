@@ -396,7 +396,7 @@ public class TckDialog {
         }
     }
 
-    private class TestTreeNodeRender extends JCheckBox implements TreeCellRenderer {
+    private static class TestTreeNodeRender extends JCheckBox implements TreeCellRenderer {
         private static final long serialVersionUID = 1L;
 
         private final Color textSelectionColor;
@@ -459,7 +459,7 @@ public class TckDialog {
         }
     }
 
-    private class TestTreeNodeEditor extends AbstractCellEditor implements TreeCellEditor {
+    private static class TestTreeNodeEditor extends AbstractCellEditor implements TreeCellEditor {
         private static final long serialVersionUID = 1L;
 
         private TestTreeNodeRender lastObject;

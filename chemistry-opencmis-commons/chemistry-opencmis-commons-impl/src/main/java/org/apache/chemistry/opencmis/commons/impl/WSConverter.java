@@ -2908,6 +2908,7 @@ public final class WSConverter {
                 target.setExtensions(null);
             }
         } catch (NoSuchMethodException e) {
+            // ignore
         } catch (Exception e) {
             throw new CmisRuntimeException("Exception: " + e.getMessage(), e);
         }
@@ -2930,6 +2931,7 @@ public final class WSConverter {
                 }
             }
         } catch (NoSuchMethodException e) {
+            // ignore
         } catch (Exception e) {
             throw new CmisRuntimeException("Exception: " + e.getMessage(), e);
         }
