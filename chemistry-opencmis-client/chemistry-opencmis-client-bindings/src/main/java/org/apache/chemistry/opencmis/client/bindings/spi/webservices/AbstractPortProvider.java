@@ -180,13 +180,14 @@ public abstract class AbstractPortProvider {
         private final URL endpointUrl;
 
         public CmisServiceHolder(final CmisWebSerivcesService service, final URL endpointUrl)
-                throws ReflectiveOperationException {
+                throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
             this.service = service;
             this.endpointUrl = endpointUrl;
             this.serviceObject = new SoftReference<Service>(createServiceObject());
         }
 
-        private Service createServiceObject() throws ReflectiveOperationException {
+        private Service createServiceObject() throws InstantiationException, IllegalAccessException,
+                InvocationTargetException, NoSuchMethodException {
             final Constructor<? extends Service> serviceConstructor = service.getServiceClass().getConstructor(
                     new Class<?>[] { URL.class, QName.class });
 
@@ -212,7 +213,8 @@ public abstract class AbstractPortProvider {
             return service;
         }
 
-        public Service getServiceObject() throws ReflectiveOperationException {
+        public Service getServiceObject() throws InstantiationException, IllegalAccessException,
+                InvocationTargetException, NoSuchMethodException {
             Service result = serviceObject.get();
             if (result == null) {
                 result = createServiceObject();
