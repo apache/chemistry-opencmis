@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class MimeTypes {
+public final class MimeTypes {
 
     private static final Map<String, String> EXT2MIME = new HashMap<String, String>();
     private static final Map<String, String> MIME2EXT = new HashMap<String, String>();

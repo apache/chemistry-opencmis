@@ -150,7 +150,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
-public class XMLConverter {
+public final class XMLConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLConverter.class);
 

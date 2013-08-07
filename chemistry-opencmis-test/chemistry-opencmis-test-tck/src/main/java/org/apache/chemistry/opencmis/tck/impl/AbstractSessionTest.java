@@ -3242,12 +3242,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         try {
-            actual.getStream().close();
+            as.close();
         } catch (Exception e) {
         }
 
         try {
-            expected.getStream().close();
+            es.close();
         } catch (Exception e) {
         }
 

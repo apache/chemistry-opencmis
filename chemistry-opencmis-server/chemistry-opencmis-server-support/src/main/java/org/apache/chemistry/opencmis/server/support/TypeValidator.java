@@ -513,9 +513,9 @@ public class TypeValidator {
                 return true;
             } else if (propertyId.equals(PropertyIds.CONTENT_STREAM_ID)) {
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         } else if (baseTypeId.equals(BaseTypeId.CMIS_FOLDER)) {
             if (propertyId.equals(PropertyIds.PARENT_ID)) {
                 return true;
@@ -523,23 +523,22 @@ public class TypeValidator {
                 return true;
             } else if (propertyId.equals(PropertyIds.PATH)) {
                 return true;
-            } else {
-                return false;
             }
+            
+            return false;
         } else if (baseTypeId.equals(BaseTypeId.CMIS_POLICY)) {
             if (propertyId.equals(PropertyIds.SOURCE_ID)) {
                 return true;
             } else if (propertyId.equals(PropertyIds.TARGET_ID)) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } else { // relationship
             if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
                 return true;
-            } else {
-                return false;
             }
+            
+            return false;
         }
     }
 }

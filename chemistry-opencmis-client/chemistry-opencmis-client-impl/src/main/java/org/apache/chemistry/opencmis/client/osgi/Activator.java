@@ -33,7 +33,7 @@ import org.osgi.framework.Constants;
  */
 public class Activator implements BundleActivator {
 
-    public void start(BundleContext context) throws Exception {
+    public void start(BundleContext context) {
         // register the MetaTypeService now, that we are ready
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put(Constants.SERVICE_DESCRIPTION, "Apache Chemistry OpenCMIS Client Session Factory");
@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
         context.registerService(SessionFactory.class.getName(), sessionFactory, props);
     }
 
-    public void stop(BundleContext context) throws Exception {
+    public void stop(BundleContext context) {
         // The SessionFactory service will be unregistered automatically
     }
 }

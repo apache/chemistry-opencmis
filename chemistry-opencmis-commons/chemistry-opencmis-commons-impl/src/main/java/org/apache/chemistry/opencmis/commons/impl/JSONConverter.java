@@ -2040,6 +2040,8 @@ public final class JSONConverter {
                     property = new PropertyUriImpl();
                     ((PropertyUriImpl) property).setValues(copyStringValues(values));
                     break;
+                default:
+                    throw new CmisRuntimeException("Unknown property type!");
                 }
 
                 property.setId(id);
@@ -2157,6 +2159,8 @@ public final class JSONConverter {
                     property = new PropertyUriImpl();
                     ((PropertyUriImpl) property).setValues(copyStringValues(values));
                     break;
+                default:
+                    throw new CmisRuntimeException("Unknown property type!");
                 }
 
                 property.setId(id);

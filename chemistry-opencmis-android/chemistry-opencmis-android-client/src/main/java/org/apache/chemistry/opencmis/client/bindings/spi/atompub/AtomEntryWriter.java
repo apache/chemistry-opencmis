@@ -29,6 +29,7 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.GregorianCalendar;
@@ -42,11 +43,11 @@ import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -140,8 +141,12 @@ public class AtomEntryWriter {
 
     /**
      * Writes the entry to an output stream.
+     * 
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws IllegalArgumentException
      */
-    public void write(OutputStream out) throws Exception {
+    public void write(OutputStream out) throws IOException {
         XmlSerializer writer = Xml.newSerializer();
         writer.setOutput(out, ENCODING);
 
@@ -150,13 +155,15 @@ public class AtomEntryWriter {
 
         // start entry
         writer.startTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
-        
+
         writer.attribute("", XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.attribute("", XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.attribute("", XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-        /*if (contentStream != null && contentStream.getFileName() != null) {
-            writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
-        }*/
+        /*
+         * if (contentStream != null && contentStream.getFileName() != null) {
+         * writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY,
+         * XMLConstants.NAMESPACE_APACHE_CHEMISTRY); }
+         */
 
         // atom:id
         writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");
@@ -177,7 +184,7 @@ public class AtomEntryWriter {
                 XMLUtils.write(writer, XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY,
                         TAG_CONTENT_FILENAME, contentStream.getFileName());
             }
-            
+
             writer.startTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
             writeContent(writer);
             writer.endTag(XMLConstants.NAMESPACE_RESTATOM, TAG_CONTENT_BASE64);
@@ -189,7 +196,7 @@ public class AtomEntryWriter {
         if (object != null) {
             XMLConverter.writeObject(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, object);
         }
-        
+
         // type
         if (typeDef != null) {
             XMLConverter.writeTypeDefinition(writer, cmisVersion, XMLConstants.NAMESPACE_RESTATOM, typeDef);
@@ -204,7 +211,7 @@ public class AtomEntryWriter {
         writer.endTag(XMLConstants.NAMESPACE_ATOM, TAG_ENTRY);
 
         // end document
-         XMLUtils.endXmlDocument(writer);
+        XMLUtils.endXmlDocument(writer);
     }
 
     // ---- internal ----
@@ -232,7 +239,7 @@ public class AtomEntryWriter {
         return result;
     }
 
-    private void writeContent(XmlSerializer writer) throws Exception {
+    private void writeContent(XmlSerializer writer) throws IOException {
         @SuppressWarnings("resource")
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
 
@@ -257,7 +264,7 @@ public class AtomEntryWriter {
     }
 
     private static void writeTag(XmlSerializer writer, String tagNameSpace, String tagName, String text)
-            throws Exception {
+            throws IOException {
         writer.startTag(tagNameSpace, tagName);
         writer.text(text);
         writer.endTag(tagNameSpace, tagName);

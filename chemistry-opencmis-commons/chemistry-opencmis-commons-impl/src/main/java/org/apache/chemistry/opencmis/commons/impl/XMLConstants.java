@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-public class XMLConstants {
+public final class XMLConstants {
 
     private XMLConstants() {
     }

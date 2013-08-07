@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * MIME helper class.
  */
-public class MimeHelper {
+public final class MimeHelper {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
 

@@ -115,7 +115,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
         // build new socket factory
         return new SchemeLayeredSocketFactory() {
 
-            public boolean isSecure(Socket sock) throws IllegalArgumentException {
+            public boolean isSecure(Socket sock) {
                 return true;
             }
 
@@ -124,8 +124,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
             }
 
             public Socket connectSocket(final Socket socket, final InetSocketAddress remoteAddress,
-                    final InetSocketAddress localAddress, final HttpParams params) throws IOException,
-                    UnknownHostException, ConnectTimeoutException {
+                    final InetSocketAddress localAddress, final HttpParams params) throws IOException {
 
                 Socket sock = (socket != null ? socket : createSocket(params));
                 if (localAddress != null) {
@@ -164,7 +163,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
             }
 
             public Socket createLayeredSocket(final Socket socket, final String host, final int port,
-                    final HttpParams params) throws IOException, UnknownHostException {
+                    final HttpParams params) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) sf.createSocket(socket, host, port, true);
                 verify(hv, host, sslSocket);
 

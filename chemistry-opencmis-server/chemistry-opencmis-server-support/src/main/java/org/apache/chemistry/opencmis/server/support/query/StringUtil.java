@@ -18,46 +18,50 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-
 public class StringUtil {
-    
+
     /**
      * remove all escape sequences in a string and return unescaped string
-     * escape character is backslash \, so \\ --> \, \' --> ' additional
-     * escaped characters can be allowed in escapedChars
+     * escape character is backslash \, so \\ --> \, \' --> ' additional escaped
+     * characters can be allowed in escapedChars
+     * 
      * @param literal
-     *      String to unescape
+     *            String to unescape
      * @param escapedChars
-     *      set of allowed characters to be escaped with a backslash, if set to
-     *      null then ' (quote) and \ (backslash) are allowed to be escaped
-     * @return
-     *      unescaped literal or null if the literal is illegal
+     *            set of allowed characters to be escaped with a backslash, if
+     *            set to null then ' (quote) and \ (backslash) are allowed to be
+     *            escaped
+     * @return unescaped literal or null if the literal is illegal
      */
     public static String unescape(String literal, String escapedChars) {
-        char c ='?';
-        int i=0;
+        char c = '?';
+        int i = 0;
         StringBuffer sb = new StringBuffer();
-        
-        if (null == escapedChars) 
+
+        if (null == escapedChars) {
             escapedChars = "\\'";
-        
-        if (null == literal)
+        }
+
+        if (null == literal) {
             return null;
-        
+        }
+
         int len = literal.length();
-        
-        if (len == 1 && literal.charAt(0) == '\\')
-            return null;
 
-        if (len > 1 && literal.charAt(len-2) != '\\' && literal.charAt(len-1) == '\\') 
+        if (len == 1 && literal.charAt(0) == '\\') {
             return null;
+        }
 
-        for (i=0; i<len; i++) {
+        if (len > 1 && literal.charAt(len - 2) != '\\' && literal.charAt(len - 1) == '\\') {
+            return null;
+        }
+
+        for (i = 0; i < len; i++) {
             c = literal.charAt(i);
-            if ( c == '\\') {
-                char escChar = literal.charAt(i+1);
+            if (c == '\\') {
+                char escChar = literal.charAt(i + 1);
                 boolean matched = false;
-                for (int j = 0; j< escapedChars.length(); j++) {
+                for (int j = 0; j < escapedChars.length(); j++) {
                     if (escChar == escapedChars.charAt(j)) {
                         sb.append(escChar);
                         ++i;
@@ -65,15 +69,16 @@ public class StringUtil {
                         break;
                     }
                 }
-                
-                if (!matched)
+
+                if (!matched) {
                     return null;
-                
+                }
+
             } else {
                 sb.append(literal.charAt(i));
             }
         }
-        
+
         return sb.toString();
     }
 

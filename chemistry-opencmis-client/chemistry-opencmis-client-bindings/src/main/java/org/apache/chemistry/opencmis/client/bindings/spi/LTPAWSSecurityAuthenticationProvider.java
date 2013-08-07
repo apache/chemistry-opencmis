@@ -137,7 +137,7 @@ public class LTPAWSSecurityAuthenticationProvider extends StandardAuthentication
 
     @SuppressWarnings("unchecked")
     private <T> T invokeSecurityCredentialMethod(Class<?> credentialClass, Object securityCredential, String methodName)
-            throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method m = credentialClass.getMethod(methodName, new Class[0]);
         return (T) m.invoke(securityCredential, new Object[0]);
     }

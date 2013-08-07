@@ -37,13 +37,8 @@ public class XMLUtils {
 
     /**
      * Starts a XML document.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
-    public static void startXmlDocument(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException,
-            IOException {
+    public static void startXmlDocument(XmlSerializer writer) throws IOException {
         writer.setPrefix(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.setPrefix(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.setPrefix(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
@@ -54,13 +49,8 @@ public class XMLUtils {
 
     /**
      * Ends a XML document.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
-    public static void endXmlDocument(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException,
-            IOException {
+    public static void endXmlDocument(XmlSerializer writer) throws IOException {
         // end document
         writer.endDocument();
         writer.flush();
@@ -69,13 +59,9 @@ public class XMLUtils {
 
     /**
      * Writes a String tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, String value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -91,13 +77,9 @@ public class XMLUtils {
 
     /**
      * Writes an Integer tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, BigInteger value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -106,13 +88,9 @@ public class XMLUtils {
 
     /**
      * Writes a Decimal tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, BigDecimal value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -122,13 +100,9 @@ public class XMLUtils {
 
     /**
      * Writes a DateTime tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, GregorianCalendar value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -138,13 +112,9 @@ public class XMLUtils {
 
     /**
      * Writes a Boolean tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, Boolean value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -154,13 +124,9 @@ public class XMLUtils {
 
     /**
      * Writes an Enum tag.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, Enum<?> value)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (value == null) {
             return;
         }
@@ -181,8 +147,6 @@ public class XMLUtils {
 
     /**
      * Creates a new XML parser with OpenCMIS default settings.
-     * 
-     * @throws XmlPullParserException
      */
     public static XmlPullParser createParser(InputStream stream) throws XmlPullParserException {
         XmlPullParser parser = Xml.newPullParser();
@@ -211,8 +175,6 @@ public class XMLUtils {
 
     /**
      * Skips a tag or subtree.
-     * 
-     * @throws XmlPullParserException
      */
     public static void skip(XmlPullParser parser) throws XmlPullParserException {
         int level = 1;
@@ -236,8 +198,6 @@ public class XMLUtils {
      * 
      * @return <code>true</code> if another start element has been found,
      *         <code>false</code> otherwise
-     * @throws IOException
-     * @throws XmlPullParserException
      */
     public static boolean findNextStartElemenet(XmlPullParser parser) throws XmlPullParserException, IOException {
         while (true) {
@@ -257,8 +217,6 @@ public class XMLUtils {
 
     /**
      * Parses a tag that contains text.
-     * 
-     * @throws XmlPullParserException
      */
     public static String readText(XmlPullParser parser, int maxLength) throws XmlPullParserException {
         StringBuilder sb = new StringBuilder();

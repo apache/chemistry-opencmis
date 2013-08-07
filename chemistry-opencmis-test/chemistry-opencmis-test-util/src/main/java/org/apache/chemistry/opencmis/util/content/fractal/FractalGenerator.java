@@ -491,7 +491,7 @@ public class FractalGenerator {
         int count = rect.width * rect.height;
         double mean = 0.0;
 
-        mean = (double) (sum / count);
+        mean = (double) sum / count;
         return Math.sqrt(sumSquare / count - (mean * mean));
     }
 

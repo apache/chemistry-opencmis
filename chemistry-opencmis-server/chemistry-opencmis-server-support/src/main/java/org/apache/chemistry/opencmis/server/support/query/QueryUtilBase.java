@@ -28,14 +28,15 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
- * Utility class to help parsing and processing a query statement using the AntLR parser
- * Subclasses have to implement methods that setup parser and query walker and 
- * parse and process a query. This class provides common methods for error handling
- * and for storing the necessary opencmis objects for query support
- *
+ * Utility class to help parsing and processing a query statement using the
+ * AntLR parser Subclasses have to implement methods that setup parser and query
+ * walker and parse and process a query. This class provides common methods for
+ * error handling and for storing the necessary opencmis objects for query
+ * support
+ * 
  * @param <T>
- *      AntLR tree grammar, will usually be a CmisQueryWalker but can be custom class for
- *       customized (extended) parsers
+ *            AntLR tree grammar, will usually be a CmisQueryWalker but can be
+ *            custom class for customized (extended) parsers
  */
 public abstract class QueryUtilBase<T extends TreeParser> {
 
@@ -43,29 +44,28 @@ public abstract class QueryUtilBase<T extends TreeParser> {
     protected QueryObject queryObj;
     protected PredicateWalkerBase predicateWalker;
     protected String statement;
- 
+
     protected CommonTree parserTree; // the ANTLR tree after parsing phase
-    protected TokenStream tokens;    // the ANTLR token stream
+    protected TokenStream tokens; // the ANTLR token stream
 
     /**
-     * Perform the first phase of query processing. Setup lexer and parser, 
+     * Perform the first phase of query processing. Setup lexer and parser,
      * parse the statement, check for syntax errors and create an AST
      * 
-     * @return
-     *      the abstract syntax tree of the parsed statement
-     *      
+     * @return the abstract syntax tree of the parsed statement
+     * 
      * @throws RecognitionException
      */
     public abstract CommonTree parseStatement() throws RecognitionException;
-    
+
     /**
-     * Perform the second phase of  query processing, analyzes the select 
-     * part, check for semantic errors, fill the query object. Usually a 
-     * walker will be CmisQueryWalker (or subclass) if the supporting 
-     * OpenCMIS query classes are used. 
+     * Perform the second phase of query processing, analyzes the select part,
+     * check for semantic errors, fill the query object. Usually a walker will
+     * be CmisQueryWalker (or subclass) if the supporting OpenCMIS query classes
+     * are used.
      * 
      * @throws RecognitionException
-     */    
+     */
     public abstract void walkStatement() throws RecognitionException;;
 
     /**
@@ -77,44 +77,45 @@ public abstract class QueryUtilBase<T extends TreeParser> {
     public void processStatement() throws RecognitionException {
         parseStatement();
         walkStatement();
-     }
+    }
 
     protected QueryUtilBase(String statement, TypeManager tm, PredicateWalkerBase pw) {
         walker = null;
         queryObj = new QueryObject(tm);
-        predicateWalker = pw; 
+        predicateWalker = pw;
         this.statement = statement;
     }
-    
+
     public T getWalker() {
         return walker;
     }
-    
+
     public PredicateWalkerBase getPredicateWalker() {
         return predicateWalker;
     }
-    
+
     public QueryObject getQueryObject() {
         return queryObj;
     }
-    
+
     public String getStatement() {
         return statement;
     }
-        
+
     /**
      * Same as traverseStatement but throws only CMIS Exceptions
      * 
      * @param statement
-     *      CMISQL statement to parse
+     *            CMISQL statement to parse
      * @return
      */
-    public void  processStatementUsingCmisExceptions() {
+    public void processStatementUsingCmisExceptions() {
         try {
             processStatement();
         } catch (RecognitionException e) {
             String errorMsg = queryObj.getErrorMessage();
-            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg, e);
+            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   "
+                    + errorMsg, e);
         } catch (CmisBaseException e) {
             throw e;
         } catch (Exception e) {
@@ -123,15 +124,16 @@ public abstract class QueryUtilBase<T extends TreeParser> {
     }
 
     public String getErrorMessage(RecognitionException e) {
-        if (null == walker)
+        if (null == walker) {
             return e.toString();
-        else
+        } else {
             return getErrorMessage(walker, e);
+        }
     }
-    
+
     private static String getErrorMessage(BaseRecognizer recognizer, RecognitionException e) {
         String[] tokenNames = recognizer.getTokenNames();
-        String hdr = "Line "+e.line+":"+e.charPositionInLine;
+        String hdr = "Line " + e.line + ":" + e.charPositionInLine;
         String msg = recognizer.getErrorMessage(e, tokenNames);
         return hdr + " " + msg;
     }

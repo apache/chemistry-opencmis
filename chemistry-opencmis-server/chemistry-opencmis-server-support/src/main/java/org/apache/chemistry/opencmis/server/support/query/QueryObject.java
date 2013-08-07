@@ -36,7 +36,6 @@ import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * QueryObject is a class used to encapsulate a CMIS query. It is created from
  * an ANTLR parser on an incoming query string. During parsing various
@@ -73,11 +72,13 @@ public class QueryObject {
 
     // order by part
     protected final List<SortSpec> sortSpecs = new ArrayList<SortSpec>();
-    
+
     @SuppressWarnings("serial")
-    protected List<String> predefinedQueryNames = new ArrayList<String> () {{
-        add("SEARCH_SCORE");
-        }};
+    protected List<String> predefinedQueryNames = new ArrayList<String>() {
+        {
+            add("SEARCH_SCORE");
+        }
+    };
 
     private String errorMessage;
 
@@ -105,15 +106,16 @@ public class QueryObject {
 
         @Override
         public String toString() {
-            return "JoinReference(" + kind + "," + alias + "," + onLeft + ","
-                    + onRight + ")";
+            return "JoinReference(" + kind + "," + alias + "," + onLeft + "," + onRight + ")";
         }
     }
 
     public class SortSpec {
         public final boolean ascending;
-        public final Integer colRefKey; // key in columnReferencesMap point to column
-                                    // descriptions
+        public final Integer colRefKey; // key in columnReferencesMap point to
+                                        // column
+
+        // descriptions
 
         public SortSpec(Integer key, boolean ascending) {
             this.colRefKey = key;
@@ -168,8 +170,7 @@ public class QueryObject {
     public void addAlias(String aliasName, CmisSelector aliasRef) {
         LOG.debug("add alias: " + aliasName + " for: " + aliasRef);
         if (colOrFuncAlias.containsKey(aliasName)) {
-            throw new CmisQueryException("You cannot use name " + aliasName
-                    + " more than once as alias in a select.");
+            throw new CmisQueryException("You cannot use name " + aliasName + " more than once as alias in a select.");
         } else {
             aliasRef.setAliasName(aliasName);
             colOrFuncAlias.put(aliasName, aliasRef);
@@ -200,7 +201,8 @@ public class QueryObject {
             return aliasName;
         } catch (CmisQueryException cqe) {
             errorMessage = cqe.getMessage(); // preserve message
-            return null; // indicate an error to ANTLR so that it generates FailedPredicateException
+            return null; // indicate an error to ANTLR so that it generates
+                         // FailedPredicateException
         }
     }
 
@@ -241,30 +243,30 @@ public class QueryObject {
     /**
      * return a map of all columns that have been requested in the SELECT part
      * of the statement.
-     *
-     * @return a map with a String as a key and value. key is the alias if 
-     * an alias was given or the query name otherwise. value is the query 
-     * name of the property.
+     * 
+     * @return a map with a String as a key and value. key is the alias if an
+     *         alias was given or the query name otherwise. value is the query
+     *         name of the property.
      */
     public Map<String, String> getRequestedPropertiesByAlias() {
         return getRequestedProperties(true);
     }
-    
+
     /**
      * return a map of all columns that have been requested in the SELECT part
      * of the statement.
-     *
+     * 
      * @return a map with a String as a key and value. key is the query name of
      *         the property, value is the alias if an alias was given or the
      *         query name otherwise.
-     *         
-     * @deprecated  Use getRequestedPropertiesByAlias instead.
+     * 
+     * @deprecated Use getRequestedPropertiesByAlias instead.
      */
     @Deprecated
     public Map<String, String> getRequestedProperties() {
         return getRequestedProperties(false);
     }
-    
+
     private Map<String, String> getRequestedProperties(boolean byAlias) {
 
         Map<String, String> res = new HashMap<String, String>();
@@ -272,16 +274,16 @@ public class QueryObject {
             if (sel instanceof ColumnReference) {
                 ColumnReference colRef = (ColumnReference) sel;
                 String key = colRef.getPropertyId();
-                if (null == key)
-                 {
+                if (null == key) {
                     key = colRef.getPropertyQueryName(); // happens for *
                 }
                 String propDescr = colRef.getAliasName() == null ? colRef.getPropertyQueryName() : colRef
                         .getAliasName();
-                if (byAlias)
+                if (byAlias) {
                     res.put(propDescr, key);
-                else
+                } else {
                     res.put(key, propDescr);
+                }
             }
         }
         return res;
@@ -290,25 +292,25 @@ public class QueryObject {
     /**
      * return a map of all functions that have been requested in the SELECT part
      * of the statement.
-     *
+     * 
      * @return a map with a String as a key and value. key is the function name
      *         of the property, value is the alias if an alias was given or the
      *         function name otherwise.
-     *         
-     * @deprecated  Use getRequestedPropertiesByAlias instead.
+     * 
+     * @deprecated Use getRequestedPropertiesByAlias instead.
      */
     @Deprecated
     public Map<String, String> getRequestedFuncs() {
         return getRequestedFuncs(false);
     }
-    
+
     /**
      * return a map of all functions that have been requested in the SELECT part
      * of the statement.
-     *
-     * @return a map with a String as a key and value. key is the alias if an 
-     * alias was given or the function name otherwise, value is the a name
-     * of the property. 
+     * 
+     * @return a map with a String as a key and value. key is the alias if an
+     *         alias was given or the function name otherwise, value is the a
+     *         name of the property.
      */
     public Map<String, String> getRequestedFuncsByAlias() {
         return getRequestedFuncs(true);
@@ -321,10 +323,11 @@ public class QueryObject {
             if (sel instanceof FunctionReference) {
                 FunctionReference funcRef = (FunctionReference) sel;
                 String propDescr = funcRef.getAliasName() == null ? funcRef.getName() : funcRef.getAliasName();
-                if (byAlias)
+                if (byAlias) {
                     res.put(propDescr, funcRef.getName());
-                else
+                } else {
                     res.put(funcRef.getName(), propDescr);
+                }
             }
         }
         return res;
@@ -361,7 +364,6 @@ public class QueryObject {
     // ///////////////////////////////////////////////////////
     // WHERE part
 
-
     public void addWhereReference(Tree node, CmisSelector reference) {
         LOG.debug("add node to where: " + System.identityHashCode(node));
         columnReferences.put(node.getTokenStartIndex(), reference);
@@ -392,22 +394,24 @@ public class QueryObject {
     }
 
     /**
-     * Tests if the query has a JOIN from one primary type to only secondary types
-     * (This JOIN does not require a JOIN capability in CMIS).
+     * Tests if the query has a JOIN from one primary type to only secondary
+     * types (This JOIN does not require a JOIN capability in CMIS).
      * 
-     * @return list of secondary type ids that are joined or null if the
-     * query has no JOINs or has joins to primary types
+     * @return list of secondary type ids that are joined or null if the query
+     *         has no JOINs or has joins to primary types
      */
     public List<TypeDefinition> getJoinedSecondaryTypes() {
         List<TypeDefinition> secondaryTypeIds = new ArrayList<TypeDefinition>();
         Map<String, String> froms = getTypes();
-        if (froms.size() == 1)
+        if (froms.size() == 1) {
             return null; // no JOIN in query
+        }
         String mainTypeQueryName = froms.get(getMainTypeAlias());
-        for (String queryName: froms.values()) {
+        for (String queryName : froms.values()) {
             TypeDefinition td = getTypeDefinitionFromQueryName(queryName);
-            if (queryName.equals(mainTypeQueryName))
+            if (queryName.equals(mainTypeQueryName)) {
                 continue;
+            }
             if (td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY) {
                 secondaryTypeIds.add(td);
             } else {
@@ -415,11 +419,12 @@ public class QueryObject {
             }
         }
         for (JoinSpec join : getJoins()) {
-            if (!(null != join.onLeft && null != join.onRight && ((join.onRight.getPropertyId() == null && join.onRight.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY &&
-                    join.onLeft.getPropertyId().equals(PropertyIds.OBJECT_ID)) ||
-                    (join.onLeft.getPropertyId() == null && join.onLeft.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && 
-                    join.onRight.getPropertyId().equals(PropertyIds.OBJECT_ID)  ))))
-                return null;             
+            if (!(null != join.onLeft && null != join.onRight && ((join.onRight.getPropertyId() == null
+                    && join.onRight.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && join.onLeft
+                    .getPropertyId().equals(PropertyIds.OBJECT_ID)) || (join.onLeft.getPropertyId() == null
+                    && join.onLeft.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && join.onRight
+                    .getPropertyId().equals(PropertyIds.OBJECT_ID)))))
+                return null;
         }
         return secondaryTypeIds;
     }
@@ -450,7 +455,8 @@ public class QueryObject {
                 if (colOrFuncAlias.containsKey(key)) { // it is an alias
                     CmisSelector resolvedReference = colOrFuncAlias.get(key);
                     columnReferences.put(obj, resolvedReference);
-                    // Note: ^ This may replace the value in the map with the same
+                    // Note: ^ This may replace the value in the map with the
+                    // same
                     // value, but this does not harm.
                     // Otherwise we need to check if it is resolved or not which
                     // causes two more ifs:
@@ -458,7 +464,8 @@ public class QueryObject {
                     // ColumnReference colRef = ((ColumnReference) selector);
                     // if (colRef.getTypeDefinition() == null) // it is not yet
                     // resolved
-                    // // replace unresolved column reference by resolved on from
+                    // // replace unresolved column reference by resolved on
+                    // from
                     // alias map
                     // columnReferences.put(obj,
                     // colOrFuncAlias.get(selector.getAliasName()));
@@ -481,7 +488,8 @@ public class QueryObject {
                 // ignore functions here
                 if (select instanceof ColumnReference) {
                     ColumnReference colRef = ((ColumnReference) select);
-                    if (colRef.getTypeDefinition() == null) { // not yet resolved
+                    if (colRef.getTypeDefinition() == null) { // not yet
+                                                              // resolved
                         if (colRef.getQualifier() == null) {
                             // unqualified select: SELECT p FROM
                             resolveTypeForColumnReference(colRef);
@@ -495,13 +503,12 @@ public class QueryObject {
 
             // Replace types used as qualifiers (IN_TREE, IN_FOLDER,
             // CONTAINS) by their corresponding alias (correlation name)
-            for (Entry<Integer, String> en: typeReferences.entrySet()) {
+            for (Entry<Integer, String> en : typeReferences.entrySet()) {
                 Integer obj = en.getKey();
                 String qualifier = en.getValue();
                 String typeQueryName = getReferencedTypeQueryName(qualifier);
                 if (typeQueryName == null) {
-                    throw new CmisQueryException(qualifier
-                            + " is neither a type query name nor an alias.");
+                    throw new CmisQueryException(qualifier + " is neither a type query name nor an alias.");
                 }
                 if (typeQueryName.equals(qualifier)) {
                     // try to find an alias for it
@@ -523,7 +530,8 @@ public class QueryObject {
             return true;
         } catch (CmisQueryException cqe) {
             errorMessage = cqe.getMessage(); // preserve message
-            return false; // indicate an error to ANTLR so that it generates FailedPredicateException
+            return false; // indicate an error to ANTLR so that it generates
+                          // FailedPredicateException
         }
     }
 
@@ -554,10 +562,11 @@ public class QueryObject {
         // it is property query name without a type, so find type
         int noFound = 0;
         TypeDefinition tdFound = null;
-        
-        if (isPredfinedQueryName(propName))
+
+        if (isPredfinedQueryName(propName)) {
             return;
-        
+        }
+
         for (String typeQueryName : froms.values()) {
             TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
             if (null == td) {
@@ -571,11 +580,9 @@ public class QueryObject {
             }
         }
         if (noFound == 0) {
-            throw new CmisQueryException(propName
-                    + " is not a property query name in any of the types in from ...");
+            throw new CmisQueryException(propName + " is not a property query name in any of the types in from ...");
         } else if (noFound > 1 && !isStar) {
-            throw new CmisQueryException(propName
-                    + " is not a unique property query name within the types in from ...");
+            throw new CmisQueryException(propName + " is not a unique property query name within the types in from ...");
         } else {
             if (null != tdFound) {
                 validateColumnReferenceAndResolveType(tdFound, colRef);
@@ -594,8 +601,7 @@ public class QueryObject {
         String typeQueryName = getReferencedTypeQueryName(colRef.getQualifier());
         TypeDefinition td = typeMgr.getTypeByQueryName(typeQueryName);
         if (null == td) {
-            throw new CmisQueryException(colRef.getQualifier()
-                    + " is neither a type query name nor an alias.");
+            throw new CmisQueryException(colRef.getQualifier() + " is neither a type query name nor an alias.");
         }
 
         validateColumnReferenceAndResolveType(td, colRef);
@@ -609,12 +615,14 @@ public class QueryObject {
             hasProp = true;
         } else {
             hasProp = TypeValidator.typeContainsPropertyWithQueryName(td, colRef.getPropertyQueryName());
-            if (!hasProp && td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && colRef.getPropertyQueryName().equals(PropertyIds.OBJECT_ID))
-                hasProp = true; // special handling for object id on secondary types which are required for JOINS
+            if (!hasProp && td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY
+                    && colRef.getPropertyQueryName().equals(PropertyIds.OBJECT_ID))
+                hasProp = true; // special handling for object id on secondary
+                                // types which are required for JOINS
         }
         if (!hasProp) {
-            throw new CmisQueryException(colRef.getPropertyQueryName()
-                    + " is not a valid property query name in type " + td.getId() + ".");
+            throw new CmisQueryException(colRef.getPropertyQueryName() + " is not a valid property query name in type "
+                    + td.getId() + ".");
         }
 
         colRef.setTypeDefinition(typeMgr.getPropertyIdForQueryName(td, colRef.getPropertyQueryName()), td);
@@ -631,8 +639,7 @@ public class QueryObject {
             for (String tqn : froms.values()) {
                 if (qualifier.equals(tqn)) {
                     if (q != null) {
-                        throw new CmisQueryException(qualifier
-                                + " is an ambiguous type query name.");
+                        throw new CmisQueryException(qualifier + " is an ambiguous type query name.");
                     }
                     q = tqn;
                 }

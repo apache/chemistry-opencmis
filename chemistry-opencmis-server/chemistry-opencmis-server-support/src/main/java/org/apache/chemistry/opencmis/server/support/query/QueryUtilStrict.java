@@ -32,10 +32,12 @@ import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_Cmi
 
 public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
 
-    private CommonTree parserTree; // the ANTLR tree after parsing phase
-    private TokenStream tokens;    // the ANTLR token stream
-    private boolean parseFulltext = true; 
-    
+    /* the ANTLR tree after parsing phase */
+    private CommonTree parserTree;
+    /* the ANTLR token stream */
+    private TokenStream tokens;
+    private boolean parseFulltext = true;
+
     public QueryUtilStrict(String statement, TypeManager tm, PredicateWalkerBase pw) {
         super(statement, tm, pw);
     }
@@ -56,25 +58,27 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
         if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
         } else if (tokens.index() != tokens.size()) {
-            throw new CmisInvalidArgumentException("Query String has illegal tokens after end of statement: " + tokens.get(tokens.index()));
+            throw new CmisInvalidArgumentException("Query String has illegal tokens after end of statement: "
+                    + tokens.get(tokens.index()));
         }
-        
+
         parserTree = (CommonTree) parsedStatement.getTree();
         return parserTree;
     }
-    
+
     @Override
     public void walkStatement() throws RecognitionException {
-        
-        if (null == parserTree)
+
+        if (null == parserTree) {
             throw new CmisQueryException("You must parse the query before you can walk it.");
-        
+        }
+
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
         nodes.setTokenStream(tokens);
         walker = new CmisQueryWalker(nodes);
         walker.setDoFullTextParse(parseFulltext);
         walker.query(queryObj, predicateWalker);
-        walker.getWherePredicateTree();    
+        walker.getWherePredicateTree();
     }
 
 }

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.util;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -56,6 +58,7 @@ import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 public class TypeUtils {
@@ -69,7 +72,7 @@ public class TypeUtils {
      * 
      * The XML is UTF-8 encoded and the stream is not closed.
      */
-    public static void writeToXML(TypeDefinition type, OutputStream stream) throws Exception {
+    public static void writeToXML(TypeDefinition type, OutputStream stream) throws XMLStreamException {
         if (type == null) {
             throw new IllegalArgumentException("Type must be set!");
         }
@@ -90,7 +93,7 @@ public class TypeUtils {
      * 
      * The JSON is UTF-8 encoded and the stream is not closed.
      */
-    public static void writeToJSON(TypeDefinition type, OutputStream stream) throws Exception {
+    public static void writeToJSON(TypeDefinition type, OutputStream stream) throws IOException {
         if (type == null) {
             throw new IllegalArgumentException("Type must be set!");
         }
@@ -108,7 +111,7 @@ public class TypeUtils {
      * 
      * The stream must be UTF-8 encoded.
      */
-    public static TypeDefinition readFromXML(InputStream stream) throws Exception {
+    public static TypeDefinition readFromXML(InputStream stream) throws XMLStreamException {
         if (stream == null) {
             throw new IllegalArgumentException("Input stream must be set!");
         }
@@ -131,7 +134,7 @@ public class TypeUtils {
      * The stream must be UTF-8 encoded.
      */
     @SuppressWarnings("unchecked")
-    public static TypeDefinition readFromJSON(InputStream stream) throws Exception {
+    public static TypeDefinition readFromJSON(InputStream stream) throws IOException, JSONParseException {
         if (stream == null) {
             throw new IllegalArgumentException("Input stream must be set!");
         }

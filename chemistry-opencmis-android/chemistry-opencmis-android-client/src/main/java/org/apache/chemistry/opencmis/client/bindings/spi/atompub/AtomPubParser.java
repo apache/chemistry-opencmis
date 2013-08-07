@@ -30,7 +30,6 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_FEED;
-import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_HTML;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_LINK;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_NUM_ITEMS;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_OBJECT;
@@ -60,17 +59,17 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
-import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.HtmlDoc;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * AtomPub Parser.
@@ -94,7 +93,7 @@ public class AtomPubParser {
     /**
      * Parses the stream.
      */
-    public void parse() throws Exception {
+    public void parse() throws XmlPullParserException {
         XmlPullParser parser = XMLUtils.createParser(stream);
 
         try {
@@ -157,7 +156,7 @@ public class AtomPubParser {
     /**
      * Parses a service document.
      */
-    private static ServiceDoc parseServiceDoc(XmlPullParser parser) throws Exception {
+    private static ServiceDoc parseServiceDoc(XmlPullParser parser) throws XmlPullParserException {
         ServiceDoc result = new ServiceDoc();
 
         next(parser);
@@ -191,7 +190,7 @@ public class AtomPubParser {
     /**
      * Parses a workspace element in a service document.
      */
-    private static RepositoryWorkspace parseWorkspace(XmlPullParser parser) throws Exception {
+    private static RepositoryWorkspace parseWorkspace(XmlPullParser parser) throws XmlPullParserException {
         RepositoryWorkspace workspace = new RepositoryWorkspace();
 
         next(parser);
@@ -225,7 +224,7 @@ public class AtomPubParser {
     /**
      * Parses an Atom feed.
      */
-    private AtomFeed parseFeed(XmlPullParser parser) throws Exception {
+    private AtomFeed parseFeed(XmlPullParser parser) throws XmlPullParserException {
         AtomFeed result = new AtomFeed();
 
         next(parser);
@@ -268,8 +267,10 @@ public class AtomPubParser {
 
     /**
      * Parses an Atom entry.
+     * 
+     * @throws XmlPullParserException
      */
-    private AtomEntry parseEntry(XmlPullParser parser) throws Exception {
+    private AtomEntry parseEntry(XmlPullParser parser) throws XmlPullParserException {
         AtomEntry result = new AtomEntry();
 
         next(parser);
@@ -307,21 +308,23 @@ public class AtomPubParser {
     /**
      * Parses an Allowable Actions document.
      */
-    private static AtomAllowableActions parseAllowableActions(XmlPullParser parser) throws Exception {
+    private static AtomAllowableActions parseAllowableActions(XmlPullParser parser) throws XmlPullParserException {
         return new AtomAllowableActions(XMLConverter.convertAllowableActions(parser));
     }
 
     /**
      * Parses an ACL document.
      */
-    private static AtomAcl parseACL(XmlPullParser parser) throws Exception {
+    private static AtomAcl parseACL(XmlPullParser parser) throws XmlPullParserException {
         return new AtomAcl(XMLConverter.convertAcl(parser));
     }
 
     /**
      * Parses an element.
+     * 
+     * @throws XmlPullParserException
      */
-    private AtomElement parseElement(XmlPullParser parser) throws Exception {
+    private AtomElement parseElement(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
 
         if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -352,7 +355,7 @@ public class AtomPubParser {
     /**
      * Parses a children element.
      */
-    private AtomElement parseChildren(XmlPullParser parser) throws Exception {
+    private AtomElement parseChildren(XmlPullParser parser) throws XmlPullParserException {
         AtomElement result = null;
         QName childName = new QName(parser.getNamespace(), parser.getName());
 
@@ -390,7 +393,7 @@ public class AtomPubParser {
     /**
      * Parses a workspace element.
      */
-    private static AtomElement parseWorkspaceElement(XmlPullParser parser) throws Exception {
+    private static AtomElement parseWorkspaceElement(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
 
         if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -418,7 +421,7 @@ public class AtomPubParser {
     /**
      * Parses a collection tag.
      */
-    private static AtomElement parseCollection(XmlPullParser parser) throws Exception {
+    private static AtomElement parseCollection(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         Map<String, String> result = new HashMap<String, String>();
 
@@ -453,7 +456,7 @@ public class AtomPubParser {
     /**
      * Parses a template tag.
      */
-    private static AtomElement parseTemplate(XmlPullParser parser) throws Exception {
+    private static AtomElement parseTemplate(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         Map<String, String> result = new HashMap<String, String>();
 
@@ -491,7 +494,7 @@ public class AtomPubParser {
     /**
      * Parses a link tag.
      */
-    private static AtomElement parseLink(XmlPullParser parser) throws Exception {
+    private static AtomElement parseLink(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         AtomLink result = new AtomLink();
 
@@ -515,7 +518,7 @@ public class AtomPubParser {
     /**
      * Parses a link tag.
      */
-    private static AtomElement parseAtomContentSrc(XmlPullParser parser) throws Exception {
+    private static AtomElement parseAtomContentSrc(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         AtomLink result = new AtomLink();
         result.setRel(LINK_REL_CONTENT);
@@ -535,8 +538,10 @@ public class AtomPubParser {
 
     /**
      * Parses a text tag.
+     * 
+     * @throws XmlPullParserException
      */
-    private static AtomElement parseText(XmlPullParser parser) throws Exception {
+    private static AtomElement parseText(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         return new AtomElement(name, XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
     }
@@ -544,7 +549,7 @@ public class AtomPubParser {
     /**
      * Parses a text tag and convert it into an integer.
      */
-    private static AtomElement parseBigInteger(XmlPullParser parser) throws Exception {
+    private static AtomElement parseBigInteger(XmlPullParser parser) throws XmlPullParserException {
         QName name = new QName(parser.getNamespace(), parser.getName());
         return new AtomElement(name, new BigInteger(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH)));
     }
