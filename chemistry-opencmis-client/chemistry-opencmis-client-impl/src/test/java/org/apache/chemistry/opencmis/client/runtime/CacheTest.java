@@ -18,6 +18,12 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -25,15 +31,12 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.junit.Before;
 import org.junit.Test;
-
-import static junit.framework.Assert.*;
 
 public class CacheTest {
 
@@ -144,7 +147,7 @@ public class CacheTest {
 
     /**
      * Create a Mock for testing Cache is sufficient.
-     *
+     * 
      * @param id
      * @return a mocked object
      */

@@ -18,15 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestParserExt extends AbstractParserTest {
-
-    private static final Logger log = LoggerFactory.getLogger(TestParserStrict.class);
 
     @Before
     public void setUp() throws Exception {
@@ -46,23 +42,20 @@ public class TestParserExt extends AbstractParserTest {
 
     @Test
     public void test_query1() {
-        testParser("query", "SELECT DISTINCT a, b, c FROM Document", "(SELECT DISTINCT (LIST (COL a) (COL b) (COL c)) (FROM (TABLE Document)))");
+        testParser("query", "SELECT DISTINCT a, b, c FROM Document",
+                "(SELECT DISTINCT (LIST (COL a) (COL b) (COL c)) (FROM (TABLE Document)))");
     }
 
     @Test
     public void test_query2() {
-        testParserOk("query",
-                "SELECT Y.CLAIM_NUM, X.PROPERTY_ADDRESS, Y.DAMAGE_ESTIMATES " +
-                "FROM POLICY AS X JOIN CLAIMS AS Y ON X.POLICY_NUM = Y.POLICY_NUM " +
-                "    WHERE ( 100000 <= ANY Y.DAMAGE_ESTIMATES ) AND ( Y.CAUSE NOT LIKE '%Katrina%' )");
+        testParserOk("query", "SELECT Y.CLAIM_NUM, X.PROPERTY_ADDRESS, Y.DAMAGE_ESTIMATES "
+                + "FROM POLICY AS X JOIN CLAIMS AS Y ON X.POLICY_NUM = Y.POLICY_NUM "
+                + "    WHERE ( 100000 <= ANY Y.DAMAGE_ESTIMATES ) AND ( Y.CAUSE NOT LIKE '%Katrina%' )");
     }
-
 
     @Test
     public void test_query3() {
-        testParserOk("query",
-                "SELECT OBJECT_ID, SCORE() AS X, DESTINATION, DEPARTURE_DATES " +
-                "FROM TRAVEL_BROCHURE " +
-                "WHERE ( CONTAINS('CARIBBEAN CENTRAL AMERICA CRUISE TOUR') ) AND( '2010-1-1' < ANY DEPARTURE_DATES )");
+        testParserOk("query", "SELECT OBJECT_ID, SCORE() AS X, DESTINATION, DEPARTURE_DATES " + "FROM TRAVEL_BROCHURE "
+                + "WHERE ( CONTAINS('CARIBBEAN CENTRAL AMERICA CRUISE TOUR') ) AND( '2010-1-1' < ANY DEPARTURE_DATES )");
     }
 }
