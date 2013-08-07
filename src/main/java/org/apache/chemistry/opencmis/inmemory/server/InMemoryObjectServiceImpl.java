@@ -669,17 +669,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
                 PropertyData<?> value = properties.getProperties().get(key);
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
+                if (cmis11 && null == propDef) {
+                    TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
+                    if (null == typeDefSecondary)
+                        throw new CmisInvalidArgumentException("Cannot update property " + key
+                                + ": not contained in type");
+                    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+                }
+                
                 if (null == propDef) {
-                    if (cmis11) {
-                        TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
-                        if (null == typeDefSecondary)
-                            throw new CmisInvalidArgumentException("Cannot update property " + key
-                                    + ": not contained in type");
-                        propDef = typeDefSecondary.getPropertyDefinitions().get(key);
-                    } else {
-                        throw new CmisInvalidArgumentException("Unknown property " + key
-                                + ": not contained in type");                        
-                    }
+                    throw new CmisInvalidArgumentException("Unknown property " + key
+                            + ": not contained in type (or any secondary type)");                        
                 }
 
                 if (value.getValues() == null || value.getFirstValue() == null) {
@@ -693,12 +693,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     oldProperties.remove(key);
                     hasUpdatedProp = true;
                 } else {
-                    if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
+                    if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
                         if (!isCheckedOut)
                             throw new CmisUpdateConflictException(
                                     "updateProperties failed, following property can't be updated, because it is not checked-out: "
                                             + key);
-                    } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
+                    } else if (propDef.getUpdatability() != Updatability.READWRITE) {
                         throw new CmisConstraintException(
                                 "updateProperties failed, following property can't be updated, because it is not writable: "
                                         + key);
