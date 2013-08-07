@@ -20,7 +20,11 @@
  */
 package org.apache.chemistry.opencmis.server.support;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +55,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinitio
 import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.definitions.TypeMutability;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
@@ -75,6 +80,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 
 /**
@@ -599,6 +605,74 @@ public class TypeDefinitionFactory {
         }
 
         return childType;
+    }
+
+    public TypeDefinitionList createTypeDefinitionList(Collection<TypeDefinition> allTypes, String typeId,
+            Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount) {
+        TypeDefinitionListImpl result = new TypeDefinitionListImpl(Collections.<TypeDefinition> emptyList());
+        result.setHasMoreItems(false);
+        result.setNumItems(BigInteger.ZERO);
+
+        if (allTypes == null || allTypes.isEmpty()) {
+            return result;
+        }
+
+        int maxItemsInt = (maxItems == null ? Integer.MAX_VALUE : maxItems.intValue());
+        if (maxItemsInt <= 0) {
+            return result;
+        }
+
+        int skipCountInt = (skipCount == null ? 0 : skipCount.intValue());
+        if (skipCountInt < 0) {
+            skipCountInt = 0;
+        }
+        if (skipCountInt > allTypes.size()) {
+            return result;
+        }
+
+        boolean includePropertyDefinitionsBool = (includePropertyDefinitions == null ? false
+                : includePropertyDefinitions.booleanValue());
+
+        List<TypeDefinition> targetList = new ArrayList<TypeDefinition>();
+        for (TypeDefinition typeDef : allTypes) {
+            if ((typeId == null && typeDef.getParentTypeId() == null)
+                    || (typeId != null && typeId.equals(typeDef.getParentTypeId()))) {
+                if (includePropertyDefinitionsBool) {
+                    targetList.add(typeDef);
+                } else {
+                    targetList.add(copy(typeDef, false));
+                }
+            }
+        }
+
+        Collections.sort(targetList, new Comparator<TypeDefinition>() {
+            public int compare(TypeDefinition td1, TypeDefinition td2) {
+                String pid1 = td1.getParentTypeId();
+                String pid2 = td2.getParentTypeId();
+                if (pid1 == null && pid2 != null) {
+                    return -1;
+                }
+                if (pid1 != null && pid2 == null) {
+                    return 1;
+                }
+                if (pid1 == null && pid2 == null) {
+                    return td1.getId().compareTo(td2.getId());
+                }
+
+                int c = pid1.compareTo(pid2);
+                if (c == 0) {
+                    return td1.getId().compareTo(td2.getId());
+                }
+
+                return c;
+            }
+        });
+
+        result.setList(targetList.subList(skipCountInt, Math.min(skipCountInt + maxItemsInt, targetList.size())));
+        result.setNumItems(BigInteger.valueOf(targetList.size()));
+        result.setHasMoreItems(targetList.size() > skipCountInt + maxItemsInt);
+
+        return result;
     }
 
     // --- copy methods ---

@@ -1,0 +1,146 @@
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ */
+package org.apache.chemistry.opencmis.server.support;
+
+import static org.junit.Assert.*;
+
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.junit.Test;
+
+public class TypeDefinitionFactoryTest {
+
+    @Test
+    public void testTypeDefinitionFactory() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+        assertNotNull(tdf);
+        assertNotNull(tdf.getDocumentTypeDefinitionClass());
+        assertNotNull(tdf.getFolderTypeDefinitionClass());
+        assertNotNull(tdf.getPolicyTypeDefinitionClass());
+        assertNotNull(tdf.getRelationshipTypeDefinitionClass());
+        assertNotNull(tdf.getItemTypeDefinitionClass());
+        assertNotNull(tdf.getSecondaryTypeDefinitionClass());
+    }
+
+    @Test
+    public void testCreateBaseTypes() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+        CmisVersion cmisVersion = CmisVersion.CMIS_1_1;
+
+        assertTypeDefinition(tdf.createBaseDocumentTypeDefinition(cmisVersion));
+        assertTypeDefinition(tdf.createBaseFolderTypeDefinition(cmisVersion));
+        assertTypeDefinition(tdf.createBasePolicyTypeDefinition(cmisVersion));
+        assertTypeDefinition(tdf.createBaseRelationshipTypeDefinition(cmisVersion));
+        assertTypeDefinition(tdf.createBaseItemTypeDefinition(cmisVersion));
+        assertTypeDefinition(tdf.createBaseSecondaryTypeDefinition(cmisVersion));
+    }
+
+    @Test
+    public void testCreateTypeDefinitionList() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+        CmisVersion cmisVersion = CmisVersion.CMIS_1_1;
+        Map<String, TypeDefinition> types = new HashMap<String, TypeDefinition>();
+
+        TypeDefinition type;
+        TypeDefinition docType;
+        TypeDefinition folderType;
+
+        docType = tdf.createBaseDocumentTypeDefinition(cmisVersion);
+        types.put(docType.getId(), docType);
+
+        type = tdf.createChildTypeDefinition(docType, "test:docType1");
+        types.put(type.getId(), type);
+
+        type = tdf.createChildTypeDefinition(docType, "test:docType2");
+        types.put(type.getId(), type);
+
+        type = tdf.createChildTypeDefinition(docType, "test:docType3");
+        types.put(type.getId(), type);
+
+        type = tdf.createChildTypeDefinition(docType, "test:docType4");
+        types.put(type.getId(), type);
+
+        type = tdf.createChildTypeDefinition(docType, "test:docType5");
+        types.put(type.getId(), type);
+
+        folderType = tdf.createBaseFolderTypeDefinition(cmisVersion);
+        types.put(folderType.getId(), folderType);
+
+        TypeDefinitionList tdl1 = tdf.createTypeDefinitionList(types.values(), null, true, null, null);
+        assertNotNull(tdl1);
+        assertEquals(2, tdl1.getList().size());
+        assertEquals(2, tdl1.getNumItems().intValue());
+        assertEquals(Boolean.FALSE, tdl1.hasMoreItems());
+
+        assertEquals("cmis:document", tdl1.getList().get(0).getId());
+        assertEquals("cmis:folder", tdl1.getList().get(1).getId());
+
+        TypeDefinitionList tdl2 = tdf.createTypeDefinitionList(types.values(), "cmis:document", true, null, null);
+        assertNotNull(tdl2);
+        assertEquals(5, tdl2.getList().size());
+        assertEquals(5, tdl2.getNumItems().intValue());
+        assertEquals(Boolean.FALSE, tdl2.hasMoreItems());
+
+        TypeDefinitionList tdl3 = tdf.createTypeDefinitionList(types.values(), "cmis:document", true,
+                BigInteger.valueOf(3), BigInteger.ZERO);
+        assertNotNull(tdl3);
+        assertEquals(3, tdl3.getList().size());
+        assertEquals(5, tdl3.getNumItems().intValue());
+        assertEquals(Boolean.TRUE, tdl3.hasMoreItems());
+
+        TypeDefinitionList tdl4 = tdf.createTypeDefinitionList(types.values(), "cmis:document", true,
+                BigInteger.valueOf(3), BigInteger.valueOf(2));
+        assertNotNull(tdl4);
+        assertEquals(3, tdl4.getList().size());
+        assertEquals(5, tdl4.getNumItems().intValue());
+        assertEquals(Boolean.FALSE, tdl4.hasMoreItems());
+
+        TypeDefinitionList tdl5 = tdf.createTypeDefinitionList(types.values(), "cmis:document", true,
+                BigInteger.valueOf(2), BigInteger.valueOf(2));
+        assertNotNull(tdl5);
+        assertEquals(2, tdl5.getList().size());
+        assertEquals(5, tdl5.getNumItems().intValue());
+        assertEquals(Boolean.TRUE, tdl5.hasMoreItems());
+
+        assertEquals("test:docType1", tdl2.getList().get(0).getId());
+        assertEquals("test:docType2", tdl2.getList().get(1).getId());
+        assertEquals("test:docType3", tdl2.getList().get(2).getId());
+        assertEquals("test:docType4", tdl2.getList().get(3).getId());
+        assertEquals("test:docType5", tdl2.getList().get(4).getId());
+
+        assertEquals(tdl2.getList().get(0).getId(), tdl3.getList().get(0).getId());
+        assertEquals(tdl2.getList().get(2).getId(), tdl4.getList().get(0).getId());
+        assertEquals(tdl2.getList().get(2).getId(), tdl5.getList().get(0).getId());
+        assertEquals(tdl4.getList().get(0).getId(), tdl5.getList().get(0).getId());
+    }
+
+    private void assertTypeDefinition(TypeDefinition typeDef) {
+        assertNotNull(typeDef);
+        assertNotNull(typeDef.getBaseTypeId());
+        assertNotNull(typeDef.getId());
+
+    }
+}
