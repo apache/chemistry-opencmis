@@ -18,9 +18,12 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomElement;
@@ -64,7 +67,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
 
         // post applyPolicy request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });

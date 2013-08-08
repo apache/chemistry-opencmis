@@ -133,10 +133,10 @@ public class MultipartParser {
     }
 
     private void extractBoundary() {
-        String contentType = request.getContentType();
+        String requestContentType = request.getContentType();
 
         // parse content type and extract boundary
-        byte[] extractedBoundary = MimeHelper.getBoundaryFromMultiPart(contentType);
+        byte[] extractedBoundary = MimeHelper.getBoundaryFromMultiPart(requestContentType);
         if (extractedBoundary == null) {
             throw new CmisInvalidArgumentException("Invalid multipart request!");
         }

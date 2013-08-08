@@ -18,7 +18,10 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.OutputStream;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
@@ -62,7 +65,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
 
         // post addObjectToFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -88,7 +91,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
 
         // post removeObjectFromFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });

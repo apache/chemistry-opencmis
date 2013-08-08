@@ -649,22 +649,24 @@ public class TypeDefinitionFactory {
             public int compare(TypeDefinition td1, TypeDefinition td2) {
                 String pid1 = td1.getParentTypeId();
                 String pid2 = td2.getParentTypeId();
-                if (pid1 == null && pid2 != null) {
-                    return -1;
-                }
-                if (pid1 != null && pid2 == null) {
-                    return 1;
-                }
-                if (pid1 == null && pid2 == null) {
-                    return td1.getId().compareTo(td2.getId());
-                }
+                if (pid1 == null) {
+                    if (pid2 == null) {
+                        return td1.getId().compareTo(td2.getId());
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    if (pid2 == null) {
+                        return 1;
+                    } else {
+                        int c = pid1.compareTo(pid2);
+                        if (c == 0) {
+                            return td1.getId().compareTo(td2.getId());
+                        }
 
-                int c = pid1.compareTo(pid2);
-                if (c == 0) {
-                    return td1.getId().compareTo(td2.getId());
+                        return c;
+                    }
                 }
-
-                return c;
             }
         });
 

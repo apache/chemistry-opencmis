@@ -46,12 +46,9 @@ import org.apache.chemistry.opencmis.util.repository.MultiThreadedObjectGenerato
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.CONTENT_KIND;
 import org.apache.chemistry.opencmis.util.repository.TimeLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ObjGenApp {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ObjGenApp.class.getName());
     private static final String PROP_USER = SessionParameter.USER;
     private static final String PROP_PASSWORD = SessionParameter.PASSWORD;
     private static final String DEFAULT_USER = "user";
@@ -185,15 +182,15 @@ public class ObjGenApp {
             } else {
                 fContentKind = null;
             }
-        } else if (kind.equals("static/text"))
+        } else if (kind.equals("static/text")) {
             fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
-        else if (kind.equals("lorem/text"))
+        } else if (kind.equals("lorem/text")) {
             fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
-        else if (kind.equals("lorem/html"))
+        } else if (kind.equals("lorem/html")) {
             fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
-        else if (kind.equals("fractal/jpeg"))
+        } else if (kind.equals("fractal/jpeg")) {
             fContentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
-        else {
+        } else {
             System.out.println("Unknown content kind: " + options.valueOf(fContentKindStr));
             System.out.println("  must be one of static/text, lorem/text, lorem/html, fractal/jpeg");
             usage(parser);

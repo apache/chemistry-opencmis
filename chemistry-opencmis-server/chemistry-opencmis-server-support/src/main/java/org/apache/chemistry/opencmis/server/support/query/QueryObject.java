@@ -423,8 +423,9 @@ public class QueryObject {
                     && join.onRight.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && join.onLeft
                     .getPropertyId().equals(PropertyIds.OBJECT_ID)) || (join.onLeft.getPropertyId() == null
                     && join.onLeft.getTypeDefinition().getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && join.onRight
-                    .getPropertyId().equals(PropertyIds.OBJECT_ID)))))
+                    .getPropertyId().equals(PropertyIds.OBJECT_ID))))) {
                 return null;
+            }
         }
         return secondaryTypeIds;
     }
@@ -616,9 +617,10 @@ public class QueryObject {
         } else {
             hasProp = TypeValidator.typeContainsPropertyWithQueryName(td, colRef.getPropertyQueryName());
             if (!hasProp && td.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY
-                    && colRef.getPropertyQueryName().equals(PropertyIds.OBJECT_ID))
+                    && colRef.getPropertyQueryName().equals(PropertyIds.OBJECT_ID)) {
                 hasProp = true; // special handling for object id on secondary
                                 // types which are required for JOINS
+            }
         }
         if (!hasProp) {
             throw new CmisQueryException(colRef.getPropertyQueryName() + " is not a valid property query name in type "

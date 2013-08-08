@@ -234,9 +234,9 @@ public abstract class AbstractPortProvider {
     }
 
     private BindingSession session;
-    protected boolean useCompression;
-    protected boolean useClientCompression;
-    protected String acceptLanguage;
+    private boolean useCompression;
+    private boolean useClientCompression;
+    private String acceptLanguage;
 
     private final ReentrantLock portObjectLock = new ReentrantLock();
     private final EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>> portObjectCache = new EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>>(
@@ -258,6 +258,18 @@ public abstract class AbstractPortProvider {
         if (session.get(CmisBindingsHelper.ACCEPT_LANGUAGE) instanceof String) {
             acceptLanguage = session.get(CmisBindingsHelper.ACCEPT_LANGUAGE).toString();
         }
+    }
+
+    public boolean useCompression() {
+        return useCompression;
+    }
+
+    public boolean useClientCompression() {
+        return useClientCompression;
+    }
+
+    public String getAcceptLanguage() {
+        return acceptLanguage;
     }
 
     /**

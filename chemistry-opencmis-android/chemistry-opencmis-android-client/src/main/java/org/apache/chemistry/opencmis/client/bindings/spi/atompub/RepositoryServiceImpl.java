@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -245,7 +246,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         // post the new type definition
         Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -303,7 +304,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         // post the new type definition
         Response resp = put(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });

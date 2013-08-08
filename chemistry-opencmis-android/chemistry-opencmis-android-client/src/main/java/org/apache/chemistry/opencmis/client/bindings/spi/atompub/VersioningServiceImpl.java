@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -159,7 +160,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });

@@ -522,17 +522,17 @@ public class AclEditorFrame extends JFrame {
         }
 
         public Ace getAce() {
-            List<String> permissions = new ArrayList<String>();
+            List<String> permissionsList = new ArrayList<String>();
 
             for (JComboBox box : permissionBoxes) {
                 String permission = box.getSelectedItem().toString().trim();
                 if (permission.length() > 0) {
-                    permissions.add(permission);
+                    permissionsList.add(permission);
                 }
             }
 
             return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalBox.getSelectedItem()
-                    .toString()), permissions);
+                    .toString()), permissionsList);
         }
     }
 }

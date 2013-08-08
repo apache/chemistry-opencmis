@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -113,7 +114,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -152,7 +153,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -199,7 +200,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -242,7 +243,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -286,7 +287,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -325,7 +326,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -395,7 +396,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -653,7 +654,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
@@ -785,7 +786,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // send content
         Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws IOException {
                 int b;
                 byte[] buffer = new byte[4096];
 

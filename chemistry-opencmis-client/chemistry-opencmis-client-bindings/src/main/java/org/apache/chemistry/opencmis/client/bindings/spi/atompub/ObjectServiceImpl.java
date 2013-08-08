@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomAllowableActions;
@@ -114,7 +117,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -153,7 +156,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -200,7 +203,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -243,7 +246,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -287,7 +290,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -328,7 +331,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -398,7 +401,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post the new folder object
         Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
@@ -673,7 +676,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
-            public void write(OutputStream out) throws Exception {
+            public void write(OutputStream out) throws XMLStreamException, IOException {
                 entryWriter.write(out);
             }
         });
