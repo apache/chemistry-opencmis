@@ -52,4 +52,9 @@ public class TypeMutabilityImpl extends ExtensionDataImpl implements TypeMutabil
         this.canDelete = canDelete;
     }
 
+    @Override
+    public String toString() {
+        return "TypeMutability [canCreate=" + canCreate + ", canUpdate=" + canUpdate + ", canDelete=" + canDelete + "]"
+                + super.toString();
+    }
 }
