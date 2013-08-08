@@ -118,7 +118,7 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         // and property lists
         if (null != typesList) {
             for (TypeDefinition typeDef : typesList) {
-                addTypeDefinition(typeDef, false);
+                addTypeDefinition(typeDef, true);
             }
         }
 
