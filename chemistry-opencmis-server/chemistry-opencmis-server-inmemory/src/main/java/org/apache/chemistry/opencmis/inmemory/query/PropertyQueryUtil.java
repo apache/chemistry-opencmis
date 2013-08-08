@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.inmemory.types;
+package org.apache.chemistry.opencmis.inmemory.query;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -29,12 +29,13 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
-public class PropertyUtil {
+public class PropertyQueryUtil {
     
     public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd) {
         ContentStream content = null;
@@ -146,12 +147,9 @@ public class PropertyUtil {
 
         if (folder != null) {
             // not supported: ALLOWED_CHILD_OBJECT_TYPE_IDS
+            // not supported: PATH
             if (propertyId.equals(PropertyIds.PARENT_ID)) {
                 return folder.getParentId();
-            }
-
-            if (propertyId.equals(PropertyIds.PATH)) {
-                return folder.getPath();
             }
         }
 

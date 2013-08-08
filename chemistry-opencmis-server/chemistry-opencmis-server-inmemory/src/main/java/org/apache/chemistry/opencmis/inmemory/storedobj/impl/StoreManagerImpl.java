@@ -210,26 +210,11 @@ public class StoreManagerImpl implements StoreManager {
     @Override
 	public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
             boolean includePropertyDefinitions) {
-//        Collection<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
         Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId, includePropertyDefinitions);
-//        if (includePropertyDefinitions) {
-//            result = typeColl;
-//        } else {
-//            result = new ArrayList<TypeDefinitionContainer>(typeColl.size());
-//            // copy list and omit properties
-//            for (TypeDefinitionContainer c : typeColl) {
-//                AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
-//                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-//                tdc.setChildren(c.getChildren());
-//                td.setPropertyDefinitions(null);
-//                result.add(tdc);
-//            }
-//        }
-//        return result;
         return typeColl;
     }
 
@@ -327,7 +312,7 @@ public class StoreManagerImpl implements StoreManager {
         }
     }
 
-    public List<TypeDefinition> initTypeSystem(String typeCreatorClassName) {
+    public static List<TypeDefinition> initTypeSystem(String typeCreatorClassName) {
 
         List<TypeDefinition> typesList = null;
 
@@ -374,7 +359,7 @@ public class StoreManagerImpl implements StoreManager {
             typeDefs = initTypeSystem(typeCreatorClassName);
         }
 
-        typeManager.initTypeSystem(typeDefs);
+        typeManager.initTypeSystem(typeDefs, true);
     }
 
     @SuppressWarnings("serial")
@@ -565,7 +550,7 @@ public class StoreManagerImpl implements StoreManager {
      *            parent container where to add clone as child
      * @return cloned type definition
      */
-    private static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
+    public static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
             TypeDefinitionContainer tdc, TypeDefinitionContainer parent) {
 
         AbstractTypeDefinition tdClone = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();

@@ -82,12 +82,13 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start getCheckedOutDocs()");
 
         String user = context.getUsername();
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         if (null == folderId) {
             List<StoredObject> checkedOuts = fStoreManager.getObjectStore(repositoryId).getCheckedOutDocuments(
                     orderBy, context.getUsername(), includeRelationships);
             for (StoredObject checkedOut : checkedOuts) {
                 TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-                ObjectData od = PropertyCreationHelper.getObjectData(tm, checkedOut, filter, user,
+                ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, checkedOut, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, false, extension);
                 if (context.isObjectInfoRequired()) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();
@@ -99,8 +100,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         } else {
             LOG.debug("getting checked-out documents for folder: " + folderId);
             ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-                    includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false, true,
-                    context.isObjectInfoRequired() ? objectInfos : null, user);
+                   includeAllowableActions, includeRelationships, renditionFilter, false, -1, -1, false, true,
+                   context.isObjectInfoRequired() ? objectInfos : null, user);
             for (ObjectInFolderData child : children.getObjects()) {
                 ObjectData obj = child.getObject();
                 StoredObject so = fStoreManager.getObjectStore(repositoryId).getObjectById(obj.getId());
@@ -288,11 +289,11 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectStoreFiling.ChildrenResult children = folderOnly ? objStoreFiling.getFolderChildren((Folder)so, maxItems, skipCount, user) : objStoreFiling
                 .getChildren((Folder)so, maxItems, skipCount, user, includePwc);
-
+        
         for (Fileable child : children.getChildren()) {
 
             if (!cmis11 && child instanceof Item)
-                continue; // ignore items for CMIS 1.0
+                continue; // ignore items for CMIS 1.0 
             
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             if (includePathSegments != null && includePathSegments) {
@@ -300,7 +301,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             }
 
             TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-            ObjectData objectData = PropertyCreationHelper.getObjectData(tm, child, filter, user, includeAllowableActions, 
+            ObjectData objectData = PropertyCreationHelper.getObjectData(tm, objStore, child, filter, user, includeAllowableActions, 
                     includeRelationships, renditionFilter, false, false, null);
 
             oifd.setObject(objectData);
@@ -338,7 +339,6 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegments, 1000, 0,
                     folderOnly, false, objectInfos, user);
-
             childrenOfFolderId = new ArrayList<ObjectInFolderContainer>();
             if (null != children) {
 
@@ -373,7 +373,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
                 TypeManager tm = fStoreManager.getTypeManager(repositoryId);
                 Folder parent = (Folder) objStore.getObjectById(parentId);
-                ObjectData objData = PropertyCreationHelper.getObjectData(tm, parent, filter, user, includeAllowableActions, 
+                ObjectData objData = PropertyCreationHelper.getObjectData(tm, objStore, parent, filter, user, includeAllowableActions, 
                         includeRelationships, renditionFilter, false, true, null);
                 parentData.setObject(objData);
                 if (null != includeRelativePathSegment && includeRelativePathSegment)
@@ -408,7 +408,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         copyFilteredProperties(repositoryId, parentFolder, filter, parent);
         
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        parent.setRelationships(DataObjectCreator.getRelationships(tm, includeRelationships, parentFolder, user));
+        parent.setRelationships(DataObjectCreator.getRelationships(tm, objStore, includeRelationships, parentFolder, user));
         
         if (includeAllowableActions != null && includeAllowableActions) {
             //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
@@ -426,9 +426,10 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     void copyFilteredProperties(String repositoryId, StoredObject so, String filter, ObjectDataImpl objData) {
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, objectStore, tm, requestedIds, true);
         objData.setProperties(props);
     }
 

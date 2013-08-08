@@ -50,9 +50,18 @@ import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableItemTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -64,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
@@ -71,13 +81,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.After;
 import org.junit.Before;
@@ -115,9 +121,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_DOCUMENT_MY_SUB_INT_PROP_ID = "MyInheritedIntProp";
     public static final String TEST_ITEM_TYPE_ID = "MyItemType";
     public static final String ITEM_STRING_PROP = "ItemStringProp";
-    private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
+    private static final String DOCUMENT_TYPE_ID = DocumentTypeCreationHelper.getCmisDocumentType().getId();
     private static final String DOCUMENT_ID = "Document_1";
-    private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
+    private static final String FOLDER_TYPE_ID = DocumentTypeCreationHelper.getCmisFolderType().getId();
     private static final String FOLDER_ID = "Folder_1";
     private static final String MY_CUSTOM_NAME = "My Custom Document";
     private static final int MAX_SIZE = 100;
@@ -614,9 +620,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 ObjectGenerator.CONTENT_KIND.LoremIpsumText);
         String rootFolderId = createFolder();
         // Set the type id for all created documents:
-        gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());
+        gen.setDocumentTypeId(DocumentTypeCreationHelper.getCmisDocumentType().getId());
         // Set the type id for all created folders:
-        gen.setFolderTypeId(InMemoryFolderTypeDefinition.getRootFolderType().getId());
+        gen.setFolderTypeId(DocumentTypeCreationHelper.getCmisFolderType().getId());
         gen.setNumberOfDocumentsToCreatePerFolder(2); // create two documents in
         // each folder
         gen.createFolderHierachy(1, 1, rootFolderId);
@@ -1511,12 +1517,12 @@ public class ObjectServiceTest extends AbstractServiceTest {
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
                 ObjectGenerator.CONTENT_KIND.LoremIpsumText);
         // Set the type id for all created documents:
-        gen.setDocumentTypeId(InMemoryDocumentTypeDefinition.getRootDocumentType().getId());
+        gen.setDocumentTypeId(DocumentTypeCreationHelper.getCmisDocumentType().getId());
         // Set the type id for all created folders:
         gen.setNumberOfDocumentsToCreatePerFolder(1); // create one document in
         // each folder
         gen.createFolderHierachy(3, 2, rootFolderId);
-        gen.setFolderTypeId(InMemoryFolderTypeDefinition.getRootFolderType().getId());
+        gen.setFolderTypeId(DocumentTypeCreationHelper.getCmisFolderType().getId());
         gen.dumpFolder(fRootFolderId, propertyFilter);
         Holder<String> holder = new Holder<String>();
         String sourceIdToMove = gen.getFolderId(rootFolderId, 2, 1);
@@ -1678,6 +1684,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
     public static class ObjectTestTypeSystemCreator implements TypeCreator {
 
+        static final TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
+
         /**
          * create root types and a sample type for folder and document
          *
@@ -1686,188 +1694,207 @@ public class ObjectServiceTest extends AbstractServiceTest {
         @Override
 		public List<TypeDefinition> createTypesList() {
             List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(TEST_DOCUMENT_TYPE_ID,
-                    "My Document Type", InMemoryDocumentTypeDefinition.getRootDocumentType());
-
-            InMemoryFolderTypeDefinition cmisFolderType = new InMemoryFolderTypeDefinition(TEST_FOLDER_TYPE_ID,
-                    "My Folder Type", InMemoryFolderTypeDefinition.getRootFolderType());
-            // create a simple string property type and
-            // attach the property definition to the type definition for
-            // document and folder type
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
-                    TEST_DOCUMENT_STRING_PROP_ID, "Sample Doc String Property", Updatability.READWRITE);
-            propertyDefinitions.put(prop.getId(), prop);
-            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
-
-            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            prop = PropertyCreationHelper.createStringDefinition(TEST_FOLDER_STRING_PROP_ID,
-                    "Sample Folder String Property", Updatability.READWRITE);
-            propertyDefinitions.put(prop.getId(), prop);
-            cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
-
-            InMemoryDocumentTypeDefinition customDocType = createCustomTypeWithStringIntProperty();
-            InMemoryDocumentTypeDefinition noContentType = createCustomTypeNoContent();
-            InMemoryDocumentTypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
-            InMemoryRelationshipTypeDefinition relType = createRelationshipType();
-            InMemoryRelationshipTypeDefinition relTypeRestricted = createRelationshipTypeRestricted();
-            InMemoryDocumentTypeDefinition verType = createVersionableType();
-            InMemoryPolicyTypeDefinition polType = createPolicyType();
-            
-            // add type to types collection
-            typesList.add(cmisDocumentType);
-            typesList.add(cmisFolderType);
-            typesList.add(customDocType);
-            typesList.add(noContentType);
-            typesList.add(mustHaveContentType);
-            typesList.add(createCustomInheritedType(customDocType));
-            typesList.add(createDocumentTypeWithDefault());
-            typesList.add(createFolderTypeWithDefault());
-            typesList.add(createItemType());
-            typesList.add(createSecondaryType());
-            typesList.add(relType);
-            typesList.add(relTypeRestricted);
-            typesList.add(verType);
-            typesList.add(polType);
-            return typesList;
+ 
+            try {
+                MutableTypeDefinition cmisDocumentType;        
+                cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOCUMENT_TYPE_ID);
+                cmisDocumentType.setDisplayName("My Document Type");
+                cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOCUMENT_TYPE_ID);
+    
+                MutableFolderTypeDefinition cmisFolderType;        
+                cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisFolderType().getId());
+                cmisFolderType.setId(TEST_FOLDER_TYPE_ID);
+                cmisFolderType.setDisplayName("My Folder Type");
+                cmisFolderType.setDescription("InMemory test type definition " + TEST_FOLDER_TYPE_ID);
+                // create a simple string property type and
+                // attach the property definition to the type definition for
+                // document and folder type
+                Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+                PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
+                        TEST_DOCUMENT_STRING_PROP_ID, "Sample Doc String Property", Updatability.READWRITE);
+                propertyDefinitions.put(prop.getId(), prop);
+                cmisDocumentType.addPropertyDefinition(prop);
+    
+                propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+                prop = PropertyCreationHelper.createStringDefinition(TEST_FOLDER_STRING_PROP_ID,
+                        "Sample Folder String Property", Updatability.READWRITE);
+                propertyDefinitions.put(prop.getId(), prop);
+                cmisFolderType.addPropertyDefinition(prop);
+    
+                DocumentTypeDefinition customDocType = createCustomTypeWithStringIntProperty();
+                TypeDefinition noContentType = createCustomTypeNoContent();
+                TypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
+                TypeDefinition relType = createRelationshipType();
+                TypeDefinition relTypeRestricted = createRelationshipTypeRestricted();
+                TypeDefinition verType = createVersionableType();
+                TypeDefinition polType = createPolicyType();
+                
+                // add type to types collection
+                typesList.add(cmisDocumentType);
+                typesList.add(cmisFolderType);
+                typesList.add(customDocType);
+                typesList.add(noContentType);
+                typesList.add(mustHaveContentType);
+                typesList.add(createCustomInheritedType(customDocType));
+                typesList.add(createDocumentTypeWithDefault());
+                typesList.add(createFolderTypeWithDefault());
+                typesList.add(createItemType());
+                typesList.add(createSecondaryType());
+                typesList.add(relType);
+                typesList.add(relTypeRestricted);
+                typesList.add(verType);
+                typesList.add(polType);
+                return typesList;
+            } catch (Exception e) {
+                throw new CmisRuntimeException("Failed to create types.", e);
+            }
         }
 
-        private static InMemoryDocumentTypeDefinition createCustomTypeWithStringIntProperty() {
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_CUSTOM_DOCUMENT_TYPE_ID, "My Custom Document Type", InMemoryDocumentTypeDefinition
-                            .getRootDocumentType());
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        private static DocumentTypeDefinition createCustomTypeWithStringIntProperty() throws InstantiationException, IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;        
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_DOCUMENT_TYPE_ID);
+            cmisDocumentType.setDisplayName("My Custom Document Type");
+            cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_DOCUMENT_TYPE_ID);
+ 
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
                     TEST_DOCUMENT_MY_STRING_PROP_ID, "My String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             prop.setMaxLength(BigInteger.valueOf(20)); // max len to 20
-            propertyDefinitions.put(prop.getId(), prop);
+            cmisDocumentType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_INT_PROP_ID, "My Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(true);
             prop2.setMinValue(BigInteger.valueOf(-10000));
             prop2.setMaxValue(BigInteger.valueOf(10000));
-            propertyDefinitions.put(prop2.getId(), prop2);
-            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisDocumentType.addPropertyDefinition(prop2);
             return cmisDocumentType;
         }
 
-        private static InMemoryDocumentTypeDefinition createCustomInheritedType(InMemoryDocumentTypeDefinition baseType) {
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID, "My Custom Document Type", baseType);
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        private static TypeDefinition createCustomInheritedType(DocumentTypeDefinition baseType)  throws InstantiationException, IllegalAccessException {
+            MutableTypeDefinition cmisDocumentType;        
+            cmisDocumentType = typeFactory.createChildTypeDefinition(baseType, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
+            cmisDocumentType.setDisplayName("My Custom Document Type");
+            cmisDocumentType.setDescription("InMemory test type definition " + TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
+           
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
                     TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "Subtype String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
-            propertyDefinitions.put(prop.getId(), prop);
+            cmisDocumentType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_SUB_INT_PROP_ID, "Subtype", Updatability.READWRITE);
             prop2.setIsRequired(true);
-            propertyDefinitions.put(prop2.getId(), prop2);
-            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisDocumentType.addPropertyDefinition(prop2);
             return cmisDocumentType;
         }
 
-        private static InMemoryDocumentTypeDefinition createDocumentTypeWithDefault() {
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_DOC_TYPE_WITH_DEFAULTS_ID, "Document Type With default values", InMemoryDocumentTypeDefinition
-                    .getRootDocumentType());
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        private static TypeDefinition createDocumentTypeWithDefault()  throws InstantiationException, IllegalAccessException {
+            MutableTypeDefinition cmisDocumentType;        
+            cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOC_TYPE_WITH_DEFAULTS_ID);
+            cmisDocumentType.setDisplayName("Document Type With default values");
+            cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOC_TYPE_WITH_DEFAULTS_ID);
+
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
                     TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
             prop.setDefaultValue(defValS);
-            propertyDefinitions.put(prop.getId(), prop);
+            cmisDocumentType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
-            propertyDefinitions.put(prop2.getId(), prop2);
+            cmisDocumentType.addPropertyDefinition(prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);
-            propertyDefinitions.put(prop3.getId(), prop3);
-
-            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisDocumentType.addPropertyDefinition(prop3);
 
             return cmisDocumentType;
         }
 
-        private static InMemoryDocumentTypeDefinition createCustomTypeNoContent() {
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_CUSTOM_NO_CONTENT_TYPE_ID, "No Content Document Type", InMemoryDocumentTypeDefinition
-                            .getRootDocumentType());
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            cmisDocumentType.addCustomPropertyDefinitions(propertyDefinitions);
+        private static TypeDefinition createCustomTypeNoContent()  throws InstantiationException, IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;        
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_NO_CONTENT_TYPE_ID);
+            cmisDocumentType.setDisplayName("No Content Document Type");
+            cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_NO_CONTENT_TYPE_ID);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
             return cmisDocumentType;
         }
         
-        private static InMemoryDocumentTypeDefinition createCustomTypeMustHaveContent() {
-            InMemoryDocumentTypeDefinition cmisDocumentType = new InMemoryDocumentTypeDefinition(
-                    TEST_CUSTOM_MUST_CONTENT_TYPE_ID, "Must Have Content Document Type", InMemoryDocumentTypeDefinition
-                            .getRootDocumentType());
+        private static TypeDefinition createCustomTypeMustHaveContent()  throws InstantiationException, IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;        
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
+            cmisDocumentType.setDisplayName("Must Have Content Document Type");
+            cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
+            cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.REQUIRED);
             return cmisDocumentType;
         }
         
-        private static InMemoryFolderTypeDefinition createFolderTypeWithDefault() {
-            InMemoryFolderTypeDefinition cmisFolderType = new InMemoryFolderTypeDefinition(
-                    TEST_FOLDER_TYPE_WITH_DEFAULTS_ID, "Folder Type With default values", InMemoryFolderTypeDefinition.
-                    getRootFolderType());
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+        private static TypeDefinition createFolderTypeWithDefault()  throws InstantiationException, IllegalAccessException {
+            MutableFolderTypeDefinition cmisFolderType;        
+            cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisFolderType().getId());
+            cmisFolderType.setId(TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
+            cmisFolderType.setDisplayName("Folder Type With default values");
+            cmisFolderType.setDescription("InMemory test type definition " + TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
+
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
                     TEST_FOLDER_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
             List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
             prop.setDefaultValue(defValS);
-            propertyDefinitions.put(prop.getId(), prop);
+            cmisFolderType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_FOLDER_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
             List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop2.setDefaultValue(defVal);
-            propertyDefinitions.put(prop2.getId(), prop2);
+            cmisFolderType.addPropertyDefinition(prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
             prop3.setIsRequired(true);
             List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
             prop3.setDefaultValue(defVal2);
-            propertyDefinitions.put(prop3.getId(), prop3);
-
-            cmisFolderType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisFolderType.addPropertyDefinition(prop3);
 
             return cmisFolderType;
         }
         
-        private InMemoryRelationshipTypeDefinition createRelationshipType() {
-            InMemoryRelationshipTypeDefinition cmisRelType = new InMemoryRelationshipTypeDefinition(
-                    TEST_RELATION_TYPE_ID, "MyRelationshipType");
+        private TypeDefinition createRelationshipType()  throws InstantiationException, IllegalAccessException {
+            MutableRelationshipTypeDefinition cmisRelType;        
+            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisRelationshipType().getId());
+            cmisRelType.setId(TEST_RELATION_TYPE_ID);
+            cmisRelType.setDisplayName("MyRelationshipType");
+            cmisRelType.setDescription("InMemory test type definition " + TEST_RELATION_TYPE_ID);
+            DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisRelType);
+            cmisRelType.setIsFileable(false);
+
             // create a single String property definition
 
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(REL_STRING_PROP,
                     "CrossReferenceType", Updatability.READWRITE);
-            propertyDefinitions.put(prop1.getId(), prop1);
-            cmisRelType.addCustomPropertyDefinitions(propertyDefinitions);
+            cmisRelType.addPropertyDefinition(prop1);
             
             return cmisRelType;            
         }
 
-        private InMemoryRelationshipTypeDefinition createRelationshipTypeRestricted() {
-            InMemoryRelationshipTypeDefinition cmisRelType = new InMemoryRelationshipTypeDefinition(
-                    TEST_RESTRICTED_RELATION_TYPE_ID, "RestrictedRelationshipType");
+        private TypeDefinition createRelationshipTypeRestricted()  throws InstantiationException, IllegalAccessException {
+            MutableRelationshipTypeDefinition cmisRelType;        
+            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisRelationshipType().getId());
+            cmisRelType.setId(TEST_RESTRICTED_RELATION_TYPE_ID);
+            cmisRelType.setDisplayName("RestrictedRelationshipType");
+            cmisRelType.setDescription("InMemory test type definition " + TEST_RESTRICTED_RELATION_TYPE_ID);
+            DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisRelType);
+            cmisRelType.setIsFileable(false);
 
             List<String> allowedTypeIds = Collections.singletonList(TEST_CUSTOM_DOCUMENT_TYPE_ID);
             cmisRelType.setAllowedSourceTypes(allowedTypeIds);
@@ -1875,75 +1902,76 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisRelType;            
         }
 
-       private static InMemoryItemTypeDefinition createItemType() {
+       private static TypeDefinition createItemType()  throws InstantiationException, IllegalAccessException {
             //CMIS 1.1 create an item item type
+           MutableItemTypeDefinition cmisItemType;        
+           cmisItemType = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisItemType().getId()); // ??? DocumentTypeCreationHelper.getCmisItemType());
+           cmisItemType.setId(TEST_ITEM_TYPE_ID);
+           cmisItemType.setDisplayName("MyItemType");
+           cmisItemType.setDescription("Builtin InMemory type definition " + TEST_ITEM_TYPE_ID);
+           DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisItemType);
 
-            InMemoryItemTypeDefinition cmisItemType = new InMemoryItemTypeDefinition(TEST_ITEM_TYPE_ID, "MyItemType");
-            // create a single String property definition
-
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(ITEM_STRING_PROP,
-                    "Item String Property", Updatability.READWRITE);
-            propertyDefinitions.put(prop1.getId(), prop1);
-            cmisItemType.addCustomPropertyDefinitions(propertyDefinitions);
-            // add type to types collection
-            return cmisItemType;            
+           // create a single String property definition
+           PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(ITEM_STRING_PROP,
+                   "Item String Property", Updatability.READWRITE);
+           cmisItemType.addPropertyDefinition(prop1);
+           // add type to types collection
+           return cmisItemType;            
         }
         
-        private static InMemorySecondaryTypeDefinition createSecondaryType() {
+        private static TypeDefinition createSecondaryType()  throws InstantiationException, IllegalAccessException {
             //CMIS 1.1 create an item item type
+            MutableSecondaryTypeDefinition cmisSecondaryType;        
+            cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisSecondaryType().getId());
+            cmisSecondaryType.setId(TEST_SECONDARY_TYPE_ID);
+            cmisSecondaryType.setDisplayName("MySecondaryType");
+            cmisSecondaryType.setDescription("InMemory test type definition " + TEST_SECONDARY_TYPE_ID);
+            DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
+            cmisSecondaryType.setIsFileable(false);
 
-            InMemorySecondaryTypeDefinition cmisSecondaryType = new InMemorySecondaryTypeDefinition(TEST_SECONDARY_TYPE_ID, 
-                    "MySecondaryType");
             // create a single String property definition
 
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-            propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(SECONDARY_STRING_PROP,
                     "Secondary String Property", Updatability.READWRITE);
-            propertyDefinitions.put(prop1.getId(), prop1);
+            cmisSecondaryType.addPropertyDefinition(prop1);
+
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(SECONDARY_INTEGER_PROP,
                     "Secondary Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(true);
-            propertyDefinitions.put(prop2.getId(), prop2);
-            cmisSecondaryType.addCustomPropertyDefinitions(propertyDefinitions);
-
+            cmisSecondaryType.addPropertyDefinition(prop2);
+ 
             return cmisSecondaryType;            
         }
         
-        private static InMemoryDocumentTypeDefinition createVersionableType() {
+        private static TypeDefinition createVersionableType()  throws InstantiationException, IllegalAccessException {
             // create a complex type with properties
-            InMemoryDocumentTypeDefinition verType = new InMemoryDocumentTypeDefinition(
-                    TEST_VERSION_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
+            MutableDocumentTypeDefinition verType;        
+            verType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_VERSION_DOCUMENT_TYPE_ID);
+            verType.setDisplayName("VersionedType");
+            verType.setDescription("InMemory test type definition " + TEST_VERSION_DOCUMENT_TYPE_ID);
+
+            verType.setIsVersionable(true); // make it a versionable type;
 
             // create a String property definition
-
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(TEST_VER_PROPERTY_ID,
                     "Sample String Property", Updatability.WHENCHECKEDOUT);
-            propertyDefinitions.put(prop1.getId(), prop1);
-
-            verType.addCustomPropertyDefinitions(propertyDefinitions);
-            verType.setIsVersionable(true); // make it a versionable type;
+            verType.addPropertyDefinition(prop1);
             return verType;
         }
         
-        private static InMemoryPolicyTypeDefinition createPolicyType() {
-            
-            InMemoryPolicyTypeDefinition polType = new InMemoryPolicyTypeDefinition(
-                    TEST_POLICY_TYPE_ID, "Audit Policy", InMemoryPolicyTypeDefinition.getRootPolicyType());
-
+        private static TypeDefinition createPolicyType()  throws InstantiationException, IllegalAccessException {
+            MutablePolicyTypeDefinition polType;        
+            polType = typeFactory.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisPolicyType().getId());
+            polType.setId(TEST_POLICY_TYPE_ID);
+            polType.setDisplayName("Audit Policy");
+            polType.setDescription("InMemory type definition " + TEST_POLICY_TYPE_ID);
+            DocumentTypeCreationHelper.setDefaultTypeCapabilities(polType);
+            polType.setIsFileable(false);
+           
             // create a String property definition
-
-            Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
-
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(TEST_POLICY_PROPERTY_ID,
                     "Audit Kind Property", Updatability.READWRITE);
-            propertyDefinitions.put(prop1.getId(), prop1);
-
-            polType.addCustomPropertyDefinitions(propertyDefinitions);
+            polType.addPropertyDefinition(prop1);
             return polType;            
         }
     }

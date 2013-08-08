@@ -63,12 +63,12 @@ public class QueryTypesTest extends AbstractQueryTest {
     @Before
     public void setUp() {
         tm = new TypeManagerImpl();
-        tm.initTypeSystem(null); // create CMIS default types
+        tm.initTypeSystem(null, true); // create CMIS default types
 
         // create some types for testing
         List<TypeDefinition> typeDefs = super.createTypes();
         for (TypeDefinition typeDef : typeDefs) {
-            tm.addTypeDefinition(typeDef);
+            tm.addTypeDefinition(typeDef, true);
         }
 
         // initialize query object with type manager
@@ -533,12 +533,12 @@ public class QueryTypesTest extends AbstractQueryTest {
     public void testSecondaryJoin() throws RecognitionException {
         // needs some special types:
         tm = new TypeManagerImpl();
-        tm.initTypeSystem(null); // create CMIS default types
+        tm.initTypeSystem(null, true); // create CMIS default types
 
         // create some types for testing
         List<TypeDefinition> typeDefs = UnitTestTypeSystemCreator.getTypesList(); 
         for (TypeDefinition typeDef : typeDefs) {
-            tm.addTypeDefinition(typeDef);
+            tm.addTypeDefinition(typeDef, true);
         }
         super.setUp(tm, pw);
 

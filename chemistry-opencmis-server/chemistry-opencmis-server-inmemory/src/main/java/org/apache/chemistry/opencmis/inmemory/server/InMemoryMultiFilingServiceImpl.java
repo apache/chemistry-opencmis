@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -25,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFiling;
@@ -75,23 +78,38 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension);
         StoredObject so = sos[0];
+        if (null != folderId) {
+            StoredObject folder = sos[1];
+            ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, folder);
+            Folder parent = (Folder) folder;
 
-        StoredObject folder = sos[1];
+            osmf.removeParent(so, parent);
 
-        ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, folder);
-        Folder parent = (Folder) folder;
-        
-        osmf.removeParent(so, parent);
+            // To be able to provide all Atom links in the response we need
+            // additional information:
+            if (context.isObjectInfoRequired()) {
+                ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
+                objectInfos.addObjectInfo(objectInfo);
+            }
+        } else {
+            ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, null);
+            List<String> parentIds = osmf.getParentIds((Filing) so,  context.getUsername());
+            for (String parentId: parentIds) {
+                Folder parent = (Folder) ((ObjectStore)osmf).getObjectById(parentId);
+                osmf.removeParent(so, parent);
+            }
 
-        // To be able to provide all Atom links in the response we need
-        // additional information:
-        if (context.isObjectInfoRequired()) {
-            ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
-            objectInfos.addObjectInfo(objectInfo);
+            // To be able to provide all Atom links in the response we need
+            // additional information:
+            if (context.isObjectInfoRequired()) {
+                ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+                objectInfos.addObjectInfo(objectInfo);
+            }
         }
-
+        
         LOG.debug("End removeObjectFromFolder()");
     }
 
@@ -106,7 +124,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
                     + " is a folder and folders are not multi-filed.");
         }
 
-        if (!(folder instanceof Folder)) {
+        if (folder != null && !(folder instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
                     + " does not refer to a folder.");
         }

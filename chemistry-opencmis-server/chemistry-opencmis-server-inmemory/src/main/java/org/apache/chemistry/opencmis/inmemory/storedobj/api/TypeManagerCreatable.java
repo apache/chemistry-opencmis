@@ -30,8 +30,10 @@ public interface TypeManagerCreatable extends TypeManager {
      * 
      * @param cmisType
      *            new type to add
+     * @param addInheritedProperties
+     *            add properties from supertype to type definition
      */
-    void addTypeDefinition(TypeDefinition typeDefinition);
+    void addTypeDefinition(TypeDefinition typeDefinition, boolean addInheritedProperties);
     
     /**
      * Modify an existing type definition

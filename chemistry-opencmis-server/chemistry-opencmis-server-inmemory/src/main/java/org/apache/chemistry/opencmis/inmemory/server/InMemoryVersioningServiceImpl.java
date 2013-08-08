@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -66,11 +67,12 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
     public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
 
         StoredObject so = validator.cancelCheckOut(context, repositoryId, objectId, extension);
-
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
-
+        DocumentVersion pwc = verDoc.getPwc();
         verDoc.cancelCheckOut(user);
+        objStore.deleteVersion(pwc);
 
         // if this is the last version delete the document itself
         if (verDoc.getAllVersions().size() == 0)
@@ -95,9 +97,11 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         if (contentStream != null && contentStream.getStream() == null)
             contentStream = null;
 
+        if (null == major) 
+            major = true;
+        
         verDoc.checkIn(major, properties, contentStream, checkinComment, policies, user);
         verDoc.updateSystemBasePropertiesWhenModified(null, context.getUsername());
-
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (context.isObjectInfoRequired()) {
@@ -121,6 +125,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         checkIsVersionableObject(so);
 
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
 
         ContentStream content = null;
@@ -140,6 +145,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         checkHasUser(user);
 
         DocumentVersion pwc = verDoc.checkOut(content, user);
+        objectStore.storeVersion(pwc);
         objectId.setValue(pwc.getId()); // return the id of the created pwc
         if (null != contentCopied) // Note: always null in AtomPub binding
             contentCopied.setValue(true);
@@ -248,7 +254,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         StoredObject so = validator.getPropertiesOfLatestVersion(context, repositoryId, objectId, versionSeriesId,
                 extension);
-
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject latestVersionObject = null;
 
         // In AtomPu8b you do not get the version series id, only the object id
@@ -269,7 +275,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
 
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, tm, requestedIds, true);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(latestVersionObject, objectStore, tm,
+                requestedIds, true);
 
         return props;
     }

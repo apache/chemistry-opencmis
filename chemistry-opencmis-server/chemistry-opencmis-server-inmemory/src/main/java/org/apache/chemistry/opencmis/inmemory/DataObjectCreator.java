@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,6 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
-import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -44,6 +42,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
@@ -183,9 +182,9 @@ public class DataObjectCreator {
         return polIds;
     }
 
-    public static List<ObjectData> fillRelationships(TypeManager tm, IncludeRelationships includeRelationships,
-            StoredObject so, String user) {
-        return getRelationships(tm, includeRelationships, so, user);
+    public static List<ObjectData> fillRelationships(TypeManager tm, ObjectStore objStore,
+            IncludeRelationships includeRelationships, StoredObject so, String user) {
+        return getRelationships(tm, objStore, includeRelationships, so, user);
     }
 
     public static ChangeEventInfo fillChangeEventInfo(StoredObject so) {
@@ -194,7 +193,7 @@ public class DataObjectCreator {
         return changeEventInfo;
     }
 
-    public static List<ObjectData> getRelationships(TypeManager tm, IncludeRelationships includeRelationships,
+    public static List<ObjectData> getRelationships(TypeManager tm, ObjectStore objStore, IncludeRelationships includeRelationships,
             StoredObject spo, String user) {
         if (includeRelationships != IncludeRelationships.NONE) {
             RelationshipDirection relationshipDirection = RelationshipDirection.SOURCE;
@@ -204,10 +203,10 @@ public class DataObjectCreator {
             else if (includeRelationships == IncludeRelationships.BOTH)
                 relationshipDirection = RelationshipDirection.EITHER;
             
-            List<StoredObject>  relationships = spo.getObjectRelationships(relationshipDirection, user);
+            List<StoredObject> relationships = objStore.getRelationships(spo.getId(), null, relationshipDirection); 
             List<ObjectData> res = new ArrayList<ObjectData>(relationships.size());
             for (StoredObject so : relationships) {
-                ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false,
+                ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false,
                         IncludeRelationships.NONE, null, false, false, null);
                 res.add(od);
             }

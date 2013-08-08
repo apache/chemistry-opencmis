@@ -80,11 +80,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling.Ch
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
@@ -119,6 +115,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start createDocumentFromSource()");
         StoredObject so = validator.createDocumentFromSource(context, repositoryId, sourceId, folderId, policies,
                 extension);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         ContentStream content = getContentStream(context, repositoryId, sourceId, null, BigInteger.valueOf(-1),
                 BigInteger.valueOf(-1), null);
@@ -130,7 +127,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
+        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, objectStore, tm, requestedIds, true);
 
         PropertiesImpl newPD = new PropertiesImpl();
         // copy all existing properties
@@ -213,16 +210,18 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // check if the given type is a document type
         BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
         StoredObject so = null;
-        if (typeBaseId.equals(InMemoryDocumentTypeDefinition.getRootDocumentType().getBaseTypeId())) {
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+
+        if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisDocumentType().getBaseTypeId())) {
             so = createDocumentIntern(context, repositoryId, properties, folderId, contentStream, versioningState,
                     null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryFolderTypeDefinition.getRootFolderType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisFolderType().getBaseTypeId())) {
             so = createFolderIntern(context, repositoryId, properties, folderId, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryPolicyTypeDefinition.getRootPolicyType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisPolicyType().getBaseTypeId())) {
             so = createPolicyIntern(context, repositoryId, properties, folderId, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisRelationshipType().getBaseTypeId())) {
             so = createRelationshipIntern(context, repositoryId, properties, null, null, null, null);
-        } else if (typeBaseId.equals(InMemoryItemTypeDefinition.getRootItemType().getBaseTypeId())) {
+        } else if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisItemType().getBaseTypeId())) {
             so = createItemIntern(context, repositoryId, properties, folderId, null, null, null, null);
         } else {
             LOG.error("The type contains an unknown base object id, object can't be created");
@@ -231,7 +230,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // Make a call to getObject to convert the resulting id into an
         // ObjectData
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, context.getUsername(), false,
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, context.getUsername(), false,
                 IncludeRelationships.NONE, null, false, false, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -381,6 +380,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start getObject()");
 
         StoredObject so = validator.getObject(context, repositoryId, objectId, extension);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -388,7 +388,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, filter, user, includeAllowableActions,
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         if (context.isObjectInfoRequired()) {
@@ -426,9 +426,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         String user = context.getUsername();
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, filter, user, includeAllowableActions,
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, filter, user, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
 
         LOG.debug("stop getObjectByPath()");
@@ -449,6 +450,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start getProperties()");
         StoredObject so = validator.getProperties(context, repositoryId, objectId, extension);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -457,7 +459,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter(filter);
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, tm, requestedIds, true);
+        Properties props = PropertyCreationHelper.getPropertiesFromObject(so, objectStore, tm, requestedIds, true);
         LOG.debug("stop getProperties()");
         return props;
     }
@@ -544,7 +546,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop moveObject()");
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false, IncludeRelationships.NONE,
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objectStore, so, null, user, false, IncludeRelationships.NONE,
                 null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
@@ -571,7 +573,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         if (changeToken != null && changeToken.getValue() != null
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
-            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
+            throw new CmisUpdateConflictException("setContentStream failed: changeToken does not match");
         }
 
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
@@ -604,7 +606,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         content.setContent(contentStream, true);
         so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
-
         LOG.debug("stop setContentStream()");
     }
 
@@ -615,6 +616,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("start updateProperties()");
         StoredObject so = validator.updateProperties(context, repositoryId, objectId, extension);
         String user = context.getUsername();
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         // Validation
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
@@ -667,12 +669,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
                 PropertyData<?> value = properties.getProperties().get(key);
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-                if (null == propDef && cmis11) {
+                if (cmis11 && null == propDef) {
                     TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
                     if (null == typeDefSecondary)
                         throw new CmisInvalidArgumentException("Cannot update property " + key
                                 + ": not contained in type");
                     propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+                }
+                
+                if (null == propDef) {
+                    throw new CmisInvalidArgumentException("Unknown property " + key
+                            + ": not contained in type (or any secondary type)");                        
                 }
 
                 if (value.getValues() == null || value.getFirstValue() == null) {
@@ -686,12 +693,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     oldProperties.remove(key);
                     hasUpdatedProp = true;
                 } else {
-                    if (propDef.getUpdatability().equals(Updatability.WHENCHECKEDOUT)) {
+                    if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
                         if (!isCheckedOut)
                             throw new CmisUpdateConflictException(
                                     "updateProperties failed, following property can't be updated, because it is not checked-out: "
                                             + key);
-                    } else if (!propDef.getUpdatability().equals(Updatability.READWRITE)) {
+                    } else if (propDef.getUpdatability() != Updatability.READWRITE) {
                         throw new CmisConstraintException(
                                 "updateProperties failed, following property can't be updated, because it is not writable: "
                                         + key);
@@ -717,8 +724,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
                 }
                 // Note: the test for duplicated name in folder is left to the object store
-                ObjectStoreFiling objStore = (ObjectStoreFiling) fStoreManager.getObjectStore(repositoryId);
-                objStore.rename((Fileable)so, (String) pd.getFirstValue()); 
+                ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
+                objStoreFiling.rename((Fileable)so, (String) pd.getFirstValue()); 
                 hasUpdatedProp = true;
             }
         }
@@ -730,7 +737,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             }
             so.updateSystemBasePropertiesWhenModified(properties.getProperties(), user);
             // set changeToken
-            so.persist();
         }
 
         if (hasUpdatedProp) {
@@ -752,7 +758,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, so, null, user, false, IncludeRelationships.NONE,
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false, IncludeRelationships.NONE,
                 null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
@@ -804,8 +810,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.appendContent(contentStream);
-        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
-    }
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());    }
 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
@@ -931,13 +936,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (((DocumentTypeDefinition) typeDef).isVersionable()) {
             DocumentVersion version = objectStore.createVersionedDocument(name, propMap, user, folder, policies,
                     addACEs, removeACEs, contentStream, versioningState);
-            version.persist();
             so = version; // return the version and not the version series to
                           // caller
         } else {
             Document doc = objectStore.createDocument(name, propMap, user, folder, policies, addACEs, removeACEs);
             doc.setContent(contentStream, false);
-            doc.persist();
             so = doc;
         }
 
@@ -1013,7 +1016,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         Folder newFolder = objStore.createFolder(folderName, properties.getProperties(), user, parent, policies,
                 addACEs, removeACEs);
         LOG.debug("stop createFolder()");
-        newFolder.persist();
         return newFolder;
     }
 
@@ -1180,10 +1182,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // Now we are sure to have document type definition:
         so = objectStore.createItem(name, propMap, user, folder, policies, addACEs, removeACEs);
-        so.persist();
-
         return so;
-
     }
 
     private boolean hasDescendant(String user, ObjectStore objStore, Folder sourceFolder, Folder targetFolder) {

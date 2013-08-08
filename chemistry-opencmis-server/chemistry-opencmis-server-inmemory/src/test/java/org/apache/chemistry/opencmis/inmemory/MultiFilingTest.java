@@ -40,18 +40,18 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolat
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultiFilingTest extends AbstractServiceTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiFilingTest.class);
     private static final String DOCUMENT_TYPE_ID = UnitTestTypeSystemCreator.COMPLEX_TYPE;
-    private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
+    private static final String FOLDER_TYPE_ID = DocumentTypeCreationHelper.getCmisFolderType().getId();
     private static final String UNFILED_DOC_NAME = "Unfiled document";
     private static final String RENAMED_DOC_NAME = "My Renamed Document";
 
@@ -178,6 +178,16 @@ public class MultiFilingTest extends AbstractServiceTest {
         LOG.debug("End testRenameMultiFiledDocument()");
     }
 
+        
+    @Test
+    public void testRemoveDocumentFromAllFolders() {
+        LOG.debug("Begin testRemoveDocumentFromAllFolders()");
+
+        String docId = createUnfiledDocument();
+        removeDocumentFromAllFolders(docId);
+        LOG.debug("End testRemoveDocumentFromAllFolders()");
+    }
+    
     @Test
     public void testAddVersionedDocumentToFolder() {
         LOG.debug("Begin testAddVersionedDocumentToFolder()");
@@ -195,6 +205,15 @@ public class MultiFilingTest extends AbstractServiceTest {
         LOG.debug("End testRemoveVersionedDocumentFromFolder()");
     }
 
+    @Test
+    public void testRemoveVersionedDocumentFromAllFolders() {
+        LOG.debug("Begin testRemoveVersionedDocumentFromAllFolders()");
+
+        String docId = createVersionedDocument();
+        removeDocumentFromAllFolders(docId);
+        LOG.debug("End testRemoveVersionedDocumentFromAllFolders()");
+    }
+    
     private void createFolders() {
         fId1 = createFolder("folder1", fRootFolderId, FOLDER_TYPE_ID);
         fId2 = createFolder("folder2", fRootFolderId, FOLDER_TYPE_ID);
@@ -249,6 +268,15 @@ public class MultiFilingTest extends AbstractServiceTest {
         assertEquals(0, parents.size());
     }
 
+    private void removeDocumentFromAllFolders(String docId) {
+        prepareMultiFiledDocument(docId);
+
+        fMultiSvc.removeObjectFromFolder(fRepositoryId, docId, null, null);
+        List<ObjectParentData> parents = fNavSvc.getObjectParents(fRepositoryId, docId, "*", false,
+                IncludeRelationships.NONE, null, true, null);
+        assertEquals(0, parents.size());
+    }
+    
     private String createUnfiledDocument() {
         return createDocument(UNFILED_DOC_NAME, null, DOCUMENT_TYPE_ID, true);
     }

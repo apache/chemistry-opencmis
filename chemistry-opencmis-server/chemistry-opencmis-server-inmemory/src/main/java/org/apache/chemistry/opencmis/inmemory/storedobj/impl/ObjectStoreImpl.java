@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
@@ -206,15 +207,6 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         }
     }
 
-    public void removeVersion(DocumentVersion vers) {
-        StoredObject found = fStoredObjectMap.remove(vers.getId());
-
-        if (null == found) {
-            throw new CmisInvalidArgumentException("Cannot delete object with id  " + vers.getId()
-                    + ". Object does not exist.");
-        }
-    }
-
     public String storeObject(StoredObject so) {
         String id = so.getId();
         // check if update or create
@@ -258,7 +250,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     // private helper methods
 
     private void createRootFolder() {
-        FolderImpl rootFolder = new FolderImpl(this);
+        FolderImpl rootFolder = new FolderImpl();
         rootFolder.setName("RootFolder");
         rootFolder.setParentId(null);
         rootFolder.setTypeId(BaseTypeId.CMIS_FOLDER.value());
@@ -267,14 +259,15 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         rootFolder.setModifiedAtNow();
         rootFolder.setRepositoryId(fRepositoryId);
         rootFolder.setAclId(addAcl(InMemoryAcl.getDefaultAcl()));
-        rootFolder.persist();
+        String id = storeObject(rootFolder);
+        rootFolder.setId(id);
         fRootFolder = rootFolder;
     }
 
     @Override
     public Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
             List<String> policies, Acl addACEs, Acl removeACEs) {
-        DocumentImpl doc = new DocumentImpl(this);
+        DocumentImpl doc = new DocumentImpl();
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
@@ -282,20 +275,22 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         if (null != folder) {
             if (hasChild(folder, name))
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
-                        + " already exists in folder " + folder.getPath());
+                        + " already exists in folder " + getFolderPath(folder.getId()));
             doc.addParentId(folder.getId());
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
         if (null != policies)
             doc.setAppliedPolicies(policies);
+        String id = storeObject(doc);
+        doc.setId(id);
         return doc;
     }
 
     @Override
     public StoredObject createItem(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
             List<String> policies, Acl addACEs, Acl removeACEs) {
-        ItemImpl item = new ItemImpl(this);
+        ItemImpl item = new ItemImpl();
         item.createSystemBasePropertiesWhenCreated(propMap, user);
         item.setCustomProperties(propMap);
         item.setRepositoryId(fRepositoryId);
@@ -303,13 +298,15 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         if (null != folder) {
             if (hasChild(folder, name))
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
-                        + " already exists in folder " + folder.getPath());
+                        + " already exists in folder " + getFolderPath(folder.getId()));
             item.addParentId(folder.getId());
         }
         if (null != policies)
             item.setAppliedPolicies(policies);
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         item.setAclId(aclId);
+        String id = storeObject(item);
+        item.setId(id);
         return item;
     }
 
@@ -317,25 +314,28 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     public DocumentVersion createVersionedDocument(String name, Map<String, PropertyData<?>> propMap, String user,
             Folder folder, List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream,
             VersioningState versioningState) {
-        VersionedDocumentImpl doc = new VersionedDocumentImpl(this);
+        VersionedDocumentImpl doc = new VersionedDocumentImpl();
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
+        String id = storeObject(doc);
+        doc.setId(id);
         DocumentVersion version = doc.addVersion(contentStream, versioningState, user);
         version.createSystemBasePropertiesWhenCreated(propMap, user);
         version.setCustomProperties(propMap);
         if (null != folder) {
             if (hasChild(folder, name))
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
-                        + " already exists in folder " + folder.getPath());
+                        + " already exists in folder " + getFolderPath(folder.getId()));
             doc.addParentId(folder.getId());
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
         if (null != policies)
             doc.setAppliedPolicies(policies);
-        doc.persist();
+        id = storeObject(version);
+        version.setId(id);
         return version;
     }
 
@@ -346,7 +346,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         if (null != parent && hasChild(parent, name)) {
             throw new CmisNameConstraintViolationException("Cannot create folder, this name already exists in parent folder.");
         }
-        FolderImpl folder = new FolderImpl(this, name, parent.getId());
+        FolderImpl folder = new FolderImpl(name, parent.getId());
         if (null != propMap) {
             folder.createSystemBasePropertiesWhenCreated(propMap, user);
             folder.setCustomProperties(propMap);
@@ -358,25 +358,69 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         if (null != policies)
             folder.setAppliedPolicies(policies);
 
+        String id = storeObject(folder);
+        folder.setId(id);
         return folder;
     }
 
     public Folder createFolder(String name) {
-        Folder folder = new FolderImpl(this, name, null);
+        Folder folder = new FolderImpl(name, null);
         folder.setRepositoryId(fRepositoryId);
         return folder;
     }
 
     @Override
     public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user) {
-        PolicyImpl policy = new PolicyImpl(this);
+        PolicyImpl policy = new PolicyImpl();
         policy.createSystemBasePropertiesWhenCreated(propMap, user);
         policy.setCustomProperties(propMap);
         policy.setRepositoryId(fRepositoryId);
         policy.setName(name);
         policy.setPolicyText(policyText);
-        policy.persist();
+        String id = storeObject(policy);
+        policy.setId(id);
         return policy;
+    }
+
+    @Override
+    public StoredObject createRelationship(String name, StoredObject sourceObject, StoredObject targetObject,
+            Map<String, PropertyData<?>> propMap, String user, Acl addACEs, Acl removeACEs) {
+
+        RelationshipImpl rel = new RelationshipImpl();
+        rel.createSystemBasePropertiesWhenCreated(propMap, user);
+        rel.setCustomProperties(propMap);
+        rel.setRepositoryId(fRepositoryId);
+        rel.setName(name);
+        if (null != sourceObject)
+            rel.setSource(sourceObject.getId());
+        if (null != targetObject)
+            rel.setTarget(targetObject.getId());
+        int aclId = getAclId(null, addACEs, removeACEs);
+        rel.setAclId(aclId);
+        String id = storeObject(rel);
+        rel.setId(id);
+        return rel;
+    }
+
+    @Override
+    public void storeVersion(DocumentVersion version) {
+        String id = storeObject(version);
+        version.setId(id);
+    }
+    
+    @Override
+    public void deleteVersion(DocumentVersion version) {
+        StoredObject found = fStoredObjectMap.remove(version.getId());
+
+        if (null == found) {
+            throw new CmisInvalidArgumentException("Cannot delete object with id  " + version.getId()
+                    + ". Object does not exist.");
+        }
+    }
+
+    @Override
+    public void upateObject(StoredObject so) {
+        // nothing to do
     }
 
     @Override
@@ -394,25 +438,6 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         }
 
         return res;
-    }
-
-    @Override
-    public StoredObject createRelationship(String name, StoredObject sourceObject, StoredObject targetObject,
-            Map<String, PropertyData<?>> propMap, String user, Acl addACEs, Acl removeACEs) {
-
-        RelationshipImpl rel = new RelationshipImpl(this);
-        rel.createSystemBasePropertiesWhenCreated(propMap, user);
-        rel.setCustomProperties(propMap);
-        rel.setRepositoryId(fRepositoryId);
-        rel.setName(name);
-        if (null != sourceObject)
-            rel.setSource(sourceObject.getId());
-        if (null != targetObject)
-            rel.setTarget(targetObject.getId());
-        int aclId = getAclId(null, addACEs, removeACEs);
-        rel.setAclId(aclId);
-        rel.persist();
-        return rel;
     }
 
     @Override
@@ -441,6 +466,27 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     @Override
+    public String getFolderPath(String folderId) {
+        StringBuffer sb = new StringBuffer();
+        insertPathSegment(sb, folderId);
+        return sb.toString();     
+    }
+    
+    private void insertPathSegment(StringBuffer sb, String folderId) {
+        Folder folder = (Folder) getObjectById(folderId);
+        if (null == folder.getParentId()) {
+            if (sb.length() == 0) {
+                sb.insert(0, Folder.PATH_SEPARATOR);
+            }
+        } else {
+            sb.insert(0, folder.getName());
+            sb.insert(0, Folder.PATH_SEPARATOR);
+            insertPathSegment(sb, folder.getParentId());
+        }
+    }
+
+   
+    @Override
     public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
         if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
             return applyAcl(so, addAces, removeAces);
@@ -467,6 +513,8 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         return acls;
     }
 
+   
+    @Override
     public Acl getAcl(int aclId) {
         InMemoryAcl acl = getInMemoryAcl(aclId);
         return acl == null ? InMemoryAcl.getDefaultAcl().toCommonsAcl() : acl.toCommonsAcl();
@@ -568,7 +616,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private List<Fileable> getChildren(Folder folder) {
-        return getChildren(folder, null, true);
+        return getChildren(folder, null, false);
     }
 
     private List<Fileable> getChildren(Folder folder, String user, boolean usePwc) {
@@ -577,21 +625,20 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
             StoredObject obj = getObject(id);
             if (obj instanceof Fileable) {
                 Fileable pathObj = (Fileable) obj;
-                if ((null == user || hasReadAccess(user, obj)) && pathObj.getParents().contains(folder.getId())) {
+                if ((null == user || hasReadAccess(user, obj)) && pathObj.getParentIds().contains(folder.getId())) {
                     if (pathObj instanceof VersionedDocument) {
-                    	DocumentVersion ver;
-                    	if (usePwc) {
-                    		ver = ((VersionedDocument) pathObj).getPwc();
-                    		if (null == ver)
-                    			ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-                    	} else {
-                    		ver = ((VersionedDocument) pathObj).getLatestVersion(false);
-                    	}
-                    	children.add(ver);
-                    } else if (pathObj instanceof DocumentVersion) {
-                        // ignore
-                    } else {
-                    	children.add(pathObj);
+                         DocumentVersion ver;
+                        if (usePwc) {
+                            ver = ((VersionedDocument) pathObj).getPwc();
+                            if (null == ver)
+                                ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        } else {
+                            ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                        }
+                        children.add(ver);                        
+                    } else if (!(pathObj instanceof DocumentVersion)) { // ignore
+                                                                        // DocumentVersion
+                        children.add(pathObj);
                     }
                     
                 }
@@ -607,7 +654,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
             StoredObject obj = getObject(id);
             if (hasReadAccess(user, obj) && obj instanceof Folder) {
                 Folder childFolder = (Folder) obj;
-                if (childFolder.getParents().contains(folder.getId()) ) {
+                if (childFolder.getParentIds().contains(folder.getId()) ) {
                     folderChildren.add(childFolder);
                 }
             }
@@ -627,11 +674,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         try {
             if (hasChild(newParent, so.getName())) {
                 throw new CmisInvalidArgumentException("Cannot move object " + so.getName() + " to folder "
-                        + newParent.getPath() + ". A child with this name already exists.");
+                        + getFolderPath(newParent.getId()) + ". A child with this name already exists.");
             }
             lock();
-            if (so instanceof FilingMutable) {
-                FilingMutable fi = (FilingMutable) so;
+            if (so instanceof MultiFiling) {
+                MultiFiling fi = (MultiFiling) so;
                 addParentIntern(fi, newParent);
                 removeParentIntern(fi, oldParent);
             } else if (so instanceof FolderImpl) {
@@ -649,11 +696,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
             if (so.getId().equals(fRootFolder.getId())) {
                 throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
             }
-            for (String folderId : so.getParents()) {
+            for (String folderId : so.getParentIds()) {
                 Folder folder = (Folder) getObjectById(folderId);
                 if (hasChild(folder, newName))
                     throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
-                            + ". This path already exists in parent " + folder.getPath() + ".");
+                            + ". This path already exists in parent " + getFolderPath(folder.getId()) + ".");
             }
             so.setName(newName);
         } finally {
@@ -673,7 +720,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     @Override
     public List<String> getParentIds(Filing fileable, String user) {
         List<String> visibleParents = new ArrayList<String>(); 
-        List<String> parents = fileable.getParents();
+        List<String> parents = fileable.getParentIds();
         for (String id: parents) {
             StoredObject so = getObjectById(id);
             if (hasReadAccess(user, so)) {
@@ -787,7 +834,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl addAces, Acl removeAces, String principalId) {
-        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, true).getChildren();
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
         Acl result = applyAcl(folder, addAces, removeAces);
 
         if (null == children) {
@@ -808,8 +855,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private Acl applyAclRecursive(Folder folder, Acl acl, String principalId) {
-        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, true).getChildren();
-
+        List<Fileable> children = getChildren(folder, -1, -1, ADMIN_PRINCIPAL_ID, false).getChildren();
         Acl result = applyAcl(folder, acl);
 
         if (null == children) {
@@ -867,13 +913,13 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
                 throw new IllegalArgumentException(
                         "Cannot assign new parent folder, this name already exists in target folder.");
             }
-            FilingMutable fi;
-            if (so instanceof FilingMutable) 
-                fi = (FilingMutable) so;
+            MultiFiling mfi;
+            if (so instanceof MultiFiling) 
+                mfi = (MultiFiling) so;
             else
                 throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
                 
-            addParentIntern(fi, parent);
+            addParentIntern(mfi, parent);
         } finally {
             unlock();
         }
@@ -883,23 +929,23 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     public void removeParent(StoredObject so, Folder parent) {
         try {
             lock();
-            FilingMutable fi;
-            if (so instanceof FilingMutable) 
-                fi = (FilingMutable) so;
+            MultiFiling mfi;
+            if (so instanceof MultiFiling) 
+                mfi = (MultiFiling) so;
             else
                 throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
 
-            removeParentIntern(fi, parent);
+            removeParentIntern(mfi, parent);
         } finally {
             unlock();
         }
     }
 
-    private void addParentIntern(FilingMutable so, Folder parent) {
+    private void addParentIntern(MultiFiling so, Folder parent) {
         so.addParentId(parent.getId());
     }
 
-    private void removeParentIntern(FilingMutable so, Folder parent) {
+    private void removeParentIntern(MultiFiling so, Folder parent) {
         so.removeParentId(parent.getId());
     }
 

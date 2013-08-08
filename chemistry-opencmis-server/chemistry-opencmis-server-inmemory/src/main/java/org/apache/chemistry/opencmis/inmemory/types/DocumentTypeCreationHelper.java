@@ -24,20 +24,216 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableItemTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePolicyTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableSecondaryTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
 public class DocumentTypeCreationHelper {
+    
+    public static class InMemoryDocumentType extends DocumentTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(DocumentTypeCreationHelper.getQueryName(id));
+        }
+    }
+
+    public static class InMemoryFolderType extends FolderTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(DocumentTypeCreationHelper.getQueryName(id));
+        }
+    }
+
+    public static class InMemoryRelationshipType extends RelationshipTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(DocumentTypeCreationHelper.getQueryName(id));
+        }
+    }
+    
+    public static class InMemoryPolicyType extends PolicyTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(DocumentTypeCreationHelper.getQueryName(id));
+        }
+    }
+
+    public static class InMemoryItemType extends ItemTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(id);
+        }
+    }
+
+    public static class InMemorySecondaryType extends SecondaryTypeDefinitionImpl {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
+            DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
+            super.addPropertyDefinition(propertyDefinition);
+        }        
+
+        @Override
+        public void setId(String id) {
+            super.setId(id);
+            super.setLocalName(id);
+            super.setQueryName(id);
+        }
+    }
 
     private static final List<TypeDefinition> defaultTypes = createCmisDefaultTypes();
+    private static TypeDefinitionFactory typeFactory;
+    private static MutableDocumentTypeDefinition cmisTypeDoc;
+    private static MutableFolderTypeDefinition cmisTypeFolder;
+    private static MutableRelationshipTypeDefinition cmisTypeRel;
+    private static MutablePolicyTypeDefinition cmisTypePolicy;
+    private static MutableItemTypeDefinition cmisTypeItem;
+    private static MutableSecondaryTypeDefinition cmisTypeSecondary;
+    
+    public static DocumentTypeDefinition getCmisDocumentType() {
+        return cmisTypeDoc;
+    }
+    
+    public static FolderTypeDefinition getCmisFolderType() {
+        return cmisTypeFolder;
+    }
+    
+    public static RelationshipTypeDefinition getCmisRelationshipType() {
+        return cmisTypeRel;
+    }
+
+    public static PolicyTypeDefinition getCmisPolicyType() {
+        return cmisTypePolicy;
+    }
+    
+    public static ItemTypeDefinition getCmisItemType() {
+        return cmisTypeItem;
+    }
+    
+    public static SecondaryTypeDefinition getCmisSecondaryType() {
+        return cmisTypeSecondary;
+    }
+    
+    private static void initType(MutableTypeDefinition type, TypeDefinition parentTypeDefinition) {
+        type.setBaseTypeId(parentTypeDefinition.getBaseTypeId());
+        type.setParentTypeId(parentTypeDefinition.getId());
+        type.setIsControllableAcl(parentTypeDefinition.isControllableAcl());
+        type.setIsControllablePolicy(parentTypeDefinition.isControllablePolicy());
+        type.setIsCreatable(parentTypeDefinition.isCreatable());
+        type.setDescription(null);
+        type.setDisplayName(null);
+        type.setIsFileable(parentTypeDefinition.isFileable());
+        type.setIsFulltextIndexed(parentTypeDefinition.isFulltextIndexed());
+        type.setIsIncludedInSupertypeQuery(parentTypeDefinition.isIncludedInSupertypeQuery());
+        type.setLocalName(null);
+        type.setLocalNamespace(parentTypeDefinition.getLocalNamespace());
+        type.setIsQueryable(parentTypeDefinition.isQueryable());
+        type.setQueryName(null);
+        type.setId(null);
+        type.setTypeMutability(parentTypeDefinition.getTypeMutability());
+    }
+
+    /**
+     * Creates a new mutable document type definition, which is a child of the
+     * provided type definition. Property definitions are not added which is useful
+     * for creating additional types at runtime
+     */
+    public static MutableDocumentTypeDefinition createDocumentTypeDefinitionWithoutBaseProperties(DocumentTypeDefinition parentTypeDefinition)
+            throws InstantiationException, IllegalAccessException {
+        MutableDocumentTypeDefinition documentType = new InMemoryDocumentType();
+        initType(documentType, parentTypeDefinition);
+
+        documentType.setIsVersionable(parentTypeDefinition.isVersionable());
+        documentType.setContentStreamAllowed(parentTypeDefinition.getContentStreamAllowed());
+        return documentType;
+    }
 
     private DocumentTypeCreationHelper() {
     }
@@ -51,31 +247,112 @@ public class DocumentTypeCreationHelper {
     public static final List<TypeDefinition> getDefaultTypes() {
         return defaultTypes;
     }
+    
+    private static void addPropertyDefinition(PropertyDefinition<?> propertyDefinition)  {
+        if (propertyDefinition.getId().equals(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            MutablePropertyDefinition<?> propDef = (MutablePropertyDefinition<?>) propertyDefinition;
+            propDef.setUpdatability(Updatability.READWRITE);
+        }        
+    }
 
+    private static String getQueryName(String id) {
+        if (null == id)
+            return null;
+        
+        StringBuffer sb = new StringBuffer(id);
+        for (int i=0; i<sb.length(); i++) {
+            char c = sb.charAt(i);
+            if (c == '.' || c == ' ') {
+                sb.setCharAt(i, '_');
+            }
+        }
+        return sb.toString();
+    }
+    
+    public static void setDefaultTypeCapabilities(MutableTypeDefinition cmisType) {
+        cmisType.setIsCreatable(true);
+        cmisType.setIsFileable(true);
+        cmisType.setIsFulltextIndexed(false);
+    }
+    
+    static TypeMutabilityImpl getBaseTypeMutability() {
+        TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
+        typeMutability.setCanCreate(true);
+        typeMutability.setCanUpdate(false);
+        typeMutability.setCanDelete(false);
+        return typeMutability;
+    }
+    
     private static List<TypeDefinition> createCmisDefaultTypes() {
+        TypeDefinitionFactory typeFactory = getTypeDefinitionFactory();
+        
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         // create root types:
-        TypeDefinition cmisType = InMemoryDocumentTypeDefinition.getRootDocumentType();
-        typesList.add(cmisType);
+        try {
+            cmisTypeDoc = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypeDoc);
+            cmisTypeDoc.setTypeMutability(getBaseTypeMutability());
+            cmisTypeDoc.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
+            cmisTypeDoc.setIsVersionable(false);
+            typesList.add(cmisTypeDoc);
 
-        cmisType = InMemoryFolderTypeDefinition.getRootFolderType();
-        typesList.add(cmisType);
+            cmisTypeFolder = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypeFolder);
+            cmisTypeFolder.setTypeMutability(getBaseTypeMutability());
+            typesList.add(cmisTypeFolder);
+            
+            cmisTypeRel = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypeRel);
+            cmisTypeRel.setTypeMutability(getBaseTypeMutability());
+            cmisTypeRel.setIsFileable(false);
+            typesList.add(cmisTypeRel);
 
-        cmisType = InMemoryRelationshipTypeDefinition.getRootRelationshipType();
-        typesList.add(cmisType);
-        
-        cmisType = InMemoryPolicyTypeDefinition.getRootPolicyType();
-        typesList.add(cmisType);
-
-        // CMIS 1.1
-        cmisType = InMemoryItemTypeDefinition.getRootItemType();
-        typesList.add(cmisType);
-        
-        cmisType = InMemorySecondaryTypeDefinition.getRootSecondaryType();
-        typesList.add(cmisType);
+            cmisTypePolicy = typeFactory.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypePolicy);
+            cmisTypePolicy.setTypeMutability(getBaseTypeMutability());
+            cmisTypePolicy.setIsFileable(false);
+            typesList.add(cmisTypePolicy);
+            
+            cmisTypeItem = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypeItem);
+            cmisTypeItem.setTypeMutability(getBaseTypeMutability());
+            cmisTypeItem.setIsFileable(true);
+            typesList.add(cmisTypeItem);
+            
+            cmisTypeSecondary = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, null);
+            setDefaultTypeCapabilities(cmisTypeSecondary);
+            cmisTypeSecondary.setTypeMutability(getBaseTypeMutability());
+            cmisTypeSecondary.setIsFileable(false);
+            typesList.add(cmisTypeSecondary);            
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error when creating base types. ", e);
+        }
 
         return typesList;
+    }
+
+    public static TypeDefinitionFactory getTypeDefinitionFactory() {
+        if (null == typeFactory) {
+            typeFactory = TypeDefinitionFactory.newInstance();
+            typeFactory.setDefaultControllableAcl(true);
+            typeFactory.setDefaultControllablePolicy(true);
+            typeFactory.setDefaultNamespace("http://apache.org");
+            //        typeFactory.setDefaultIsFulltextIndexed(false);
+            typeFactory.setDefaultQueryable(true);
+            TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
+            typeMutability.setCanCreate(true);
+            typeMutability.setCanUpdate(true);
+            typeMutability.setCanDelete(true);
+            typeFactory.setDefaultTypeMutability(typeMutability);
+            typeFactory.setDocumentTypeDefinitionClass(InMemoryDocumentType.class);
+            typeFactory.setFolderTypeDefinitionClass(InMemoryFolderType.class);
+            typeFactory.setRelationshipTypeDefinitionClass(InMemoryRelationshipType.class);
+            typeFactory.setPolicyTypeDefinitionClass(InMemoryPolicyType.class);
+            typeFactory.setItemTypeDefinitionClass(InMemoryItemType.class);
+            typeFactory.setSecondaryTypeDefinitionClass(InMemorySecondaryType.class);
+        }
+        return typeFactory;
     }
 
     /**

@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.inmemory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -38,13 +37,12 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSystemCreator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AclServiceTest extends AbstractServiceTest {
 
@@ -52,8 +50,8 @@ public class AclServiceTest extends AbstractServiceTest {
     private ObjectCreator fCreator;
     private static final String DOCUMENT_NAME = "DocumentWithAcl";
     private static final String FOLDER_NAME = "FolderWithAcl";
-    private static final String DOCUMENT_TYPE_ID = InMemoryDocumentTypeDefinition.getRootDocumentType().getId();
-    private static final String FOLDER_TYPE_ID = InMemoryFolderTypeDefinition.getRootFolderType().getId();
+    private static final String DOCUMENT_TYPE_ID = DocumentTypeCreationHelper.getCmisDocumentType().getId();
+    private static final String FOLDER_TYPE_ID = DocumentTypeCreationHelper.getCmisFolderType().getId();
     private static final String USER = "user";
     private static final String ALICE = "alice";
     private static final String BOB = "bob";

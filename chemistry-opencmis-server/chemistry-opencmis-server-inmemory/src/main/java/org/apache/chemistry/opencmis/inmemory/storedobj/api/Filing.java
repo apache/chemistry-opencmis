@@ -45,7 +45,7 @@ public interface Filing {
      * 		user id
      * @return list of parent folders
      */
-    List<String> getParents();
+    List<String> getParentIds();
     
     /**
      * usually true except for the root folder, optimized call that just tests

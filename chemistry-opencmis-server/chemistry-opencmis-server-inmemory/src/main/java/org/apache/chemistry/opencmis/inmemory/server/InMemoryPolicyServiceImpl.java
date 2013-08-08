@@ -43,6 +43,7 @@ public class InMemoryPolicyServiceImpl extends InMemoryAbstractServiceImpl {
             String filter, ExtensionsData extension) {
 
         StoredObject so = validator.getAppliedPolicies(context, repositoryId, objectId, extension);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (so == null) {
             throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
@@ -57,7 +58,7 @@ public class InMemoryPolicyServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectStore os = super.fStoreManager.getObjectStore(repositoryId);
             for (String polId : polIds) {
                 StoredObject pol = os.getObjectById(polId);
-                ObjectData od = PropertyCreationHelper.getObjectData(tm, pol, filter, user, false,
+                ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, pol, filter, user, false,
                         IncludeRelationships.NONE, null, false, false, null);
                 res.add(od);
             }

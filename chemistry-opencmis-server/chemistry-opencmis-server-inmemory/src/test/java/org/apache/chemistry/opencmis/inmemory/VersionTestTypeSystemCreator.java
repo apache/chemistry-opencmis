@@ -18,17 +18,17 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
 public class VersionTestTypeSystemCreator implements TypeCreator {
     public static final String VERSION_TEST_DOCUMENT_TYPE_ID = "MyVersionedType";
@@ -63,28 +63,31 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
      * @return typesMap map filled with created types
      */
     private static List<TypeDefinition> buildTypesList() {
+        TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
         // always add CMIS default types
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
-        // create a complex type with properties
-        InMemoryDocumentTypeDefinition cmisComplexType = new InMemoryDocumentTypeDefinition(
-                VERSION_TEST_DOCUMENT_TYPE_ID, "VersionedType", InMemoryDocumentTypeDefinition.getRootDocumentType());
+        try {
+            // create a complex type with properties
+            MutableDocumentTypeDefinition cmisComplexType;        
+            cmisComplexType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), VERSION_TEST_DOCUMENT_TYPE_ID);
+            cmisComplexType.setDisplayName("VersionedType");
+            cmisComplexType.setDescription("InMemory test type definition " + VERSION_TEST_DOCUMENT_TYPE_ID);
+            cmisComplexType.setIsVersionable(true); // make it a versionable type;
 
-        // create a boolean property definition
+            // create a boolean property definition
 
-        Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
+                    "Sample String Property", Updatability.WHENCHECKEDOUT);
+            cmisComplexType.addPropertyDefinition(prop1);
 
-        PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(PROPERTY_ID,
-                "Sample String Property", Updatability.WHENCHECKEDOUT);
-        propertyDefinitions.put(prop1.getId(), prop1);
+            // add type to types collection
+            typesList.add(cmisComplexType);
 
-        cmisComplexType.addCustomPropertyDefinitions(propertyDefinitions);
-        cmisComplexType.setIsVersionable(true); // make it a versionable type;
-
-        // add type to types collection
-        typesList.add(cmisComplexType);
-
-        return typesList;
+            return typesList;
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error when creating types.", e);
+        }
     }
 
 }

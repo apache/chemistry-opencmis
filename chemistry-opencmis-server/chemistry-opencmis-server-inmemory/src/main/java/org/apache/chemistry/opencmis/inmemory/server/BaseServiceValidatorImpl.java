@@ -161,6 +161,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected StoredObject[] checkParams(String repositoryId, String objectId1, String objectId2) {
         StoredObject[] so = new StoredObject[2];
+        checkRepositoryId(repositoryId);
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         so[0] = checkExistingObjectId(objectStore, objectId1);
         so[1] = checkExistingObjectId(objectStore, objectId2);
@@ -450,7 +451,18 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 	public StoredObject[] removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
             String folderId, ExtensionsData extension) {
 
-        return checkParams(repositoryId, objectId, folderId);
+        if (folderId != null)
+        {
+            return checkParams(repositoryId, objectId, folderId);
+        }
+        else
+        {
+            StoredObject[] so = new StoredObject[1];
+            checkRepositoryId(repositoryId);
+            ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+            so[0] = checkExistingObjectId(objectStore, objectId);
+            return so;
+        }        
     }
 
     @Override

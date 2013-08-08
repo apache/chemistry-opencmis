@@ -40,8 +40,8 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     private String fCheckedOutUser;
     private final List<DocumentVersion> fVersions;
 
-    public VersionedDocumentImpl(ObjectStoreImpl objStore) {
-        super(objStore);
+    public VersionedDocumentImpl() {
+        super();
         fVersions = new ArrayList<DocumentVersion>();
         fIsCheckedOut = false;
     }
@@ -53,10 +53,9 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
         }
 
-        DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState, fObjStore);
+        DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState);
         ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy
         // name and type id from version series.
-        ver.persist();
         fVersions.add(ver);
         if (verState == VersioningState.CHECKEDOUT) {
             fCheckedOutUser = user;
@@ -161,6 +160,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
         	} else {
         		latest = null;
         	}
+            if (null == getPwc()) {
+                latest = fVersions.get(fVersions.size() - 1);
+            } else if (fVersions.size() > 1) {
+                latest = fVersions.get(fVersions.size() - 2);
+            } else {
+                latest = null;
+            }
         }
         return latest;
     }
@@ -221,7 +227,6 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     private void cancelCheckOut(boolean deleteInObjectStore) {
-
         DocumentVersion pwc = getPwc();
         fIsCheckedOut = false;
         fCheckedOutUser = null;
@@ -233,8 +238,6 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
             }
         }
 
-        if (deleteInObjectStore)
-            fObjStore.removeVersion(pwc);
     }
 
 }

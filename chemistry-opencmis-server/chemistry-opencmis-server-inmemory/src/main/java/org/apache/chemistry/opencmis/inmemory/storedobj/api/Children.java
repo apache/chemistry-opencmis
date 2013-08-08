@@ -55,14 +55,14 @@ public interface Children {
      * @param skipCount
      *            initial offset where to start fetching
      * @param user 
-     * 			user to determine visible children
+     *             user to determine visible children
      * @param usePwc 
-     * 			if true return private working copy otherwise return latest version; 
+     *             if true return private working copy otherwise return latest version; 
      * 
      * @return list of children objects
      */
     ChildrenResult getChildren(int maxItems, int skipCount, String user, boolean usePwc);
-
+    
     /**
      * get all the children of this folder which are folders. To support paging
      * an initial offset and a maximum number of children to retrieve can be

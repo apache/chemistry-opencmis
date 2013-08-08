@@ -224,12 +224,6 @@ public interface StoredObject {
     String getChangeToken();
 
     /**
-     * Persist the object so that it can be later retrieved by its id. Assign an
-     * id to the object
-     */
-    void persist();
-
-    /**
      * Create all system base properties that need to be stored with every
      * object in the repository This method is called when a new object is
      * created to record all of the capturing data like the creation time,
@@ -273,32 +267,10 @@ public interface StoredObject {
     void setCustomProperties(Map<String, PropertyData<?>> properties);
     
     /**
-     * get the Acl of the stored object
+     * get the Acl id of the stored object
      */
-    Acl getAcl();
+    int getAclId();
     
-    /**
-     * get the relationships of the object
-     * 
-     * @param includeSubRelationshipTypes
-     *            if true, relationships of a sub type will be returned as well
-     * @param relationshipDirection
-     * 			whether relationships where the object is the source, or the target or all 
-     *          are returned
-     * @param typeId
-     * 			the type of the relationship, may be null
-     * @param filter
-     * 			a property filter, "*" means all properties
-     * @param includeAllowableActions
-     * 			whether allowable actions should be returned
-     * @param maxItems
-     * @param skipCount
-     * @param extension
-     * @param user
-     * 			the id of the user calling the method 
-     */
-    public List<StoredObject> getObjectRelationships(RelationshipDirection relationshipDirection, String user);
-	
 	/*
      * get the allowable actions  of the object
      */

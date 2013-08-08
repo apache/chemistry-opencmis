@@ -34,12 +34,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryFolderTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryItemTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryPolicyTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryRelationshipTypeDefinition;
-import org.apache.chemistry.opencmis.inmemory.types.InMemorySecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,16 +108,17 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      *            list of types to add to the repository
      *
      */
-    public void initTypeSystem(List<TypeDefinition> typesList) {
+    public void initTypeSystem(List<TypeDefinition> typesList, boolean createCmisDefaultTypes) {
 
-        createCmisDefaultTypes();
+        if (createCmisDefaultTypes)
+            createCmisDefaultTypes();
 
         // merge all types from the list and build the correct hierachy with
         // children
         // and property lists
         if (null != typesList) {
             for (TypeDefinition typeDef : typesList) {
-                addTypeDefinition(typeDef);
+                addTypeDefinition(typeDef, false);
             }
         }
 
@@ -139,20 +134,23 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      *            new type to add
      */
     @Override
-	public void addTypeDefinition(TypeDefinition cmisType) {
+	public void addTypeDefinition(TypeDefinition cmisType, boolean addInheritedProperties) {
         
-        TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
-
-        // add new type to children of parent types
-        TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
-        parentTypeContainer.getChildren().add(typeContainer);
-
-        // recursively add inherited properties
-        Map<String, PropertyDefinition<?>> propDefs = typeContainer.getTypeDefinition().getPropertyDefinitions();
-        addInheritedProperties(propDefs, parentTypeContainer.getTypeDefinition());
-
         LOG.info("Adding type definition with name " + cmisType.getLocalName() + " and id " 
                 + cmisType.getId() + " to repository.");
+        TypeDefinitionContainerImpl typeContainer = new TypeDefinitionContainerImpl(cmisType);
+
+        if (null != cmisType.getParentTypeId()) {
+            // add new type to children of parent types
+            TypeDefinitionContainer parentTypeContainer = fTypesMap.get(cmisType.getParentTypeId());
+            parentTypeContainer.getChildren().add(typeContainer);
+
+            if (addInheritedProperties) {
+            // recursively add inherited properties
+                Map<String, PropertyDefinition<?>> propDefs = typeContainer.getTypeDefinition().getPropertyDefinitions();
+                addInheritedProperties(propDefs, parentTypeContainer.getTypeDefinition());
+            }
+        }
         // add type to type map
         fTypesMap.put(cmisType.getId(), typeContainer);
     }
@@ -238,17 +236,18 @@ public class TypeManagerImpl implements TypeManagerCreatable {
     }
 
     private static boolean isRootType(TypeDefinitionContainer c) {
-        if (c.getTypeDefinition().equals(InMemoryFolderTypeDefinition.getRootFolderType())
-                || c.getTypeDefinition().equals(InMemoryDocumentTypeDefinition.getRootDocumentType())
-                || c.getTypeDefinition().equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType())
-                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())
-                || c.getTypeDefinition().equals(InMemoryItemTypeDefinition.getRootItemType()) // CMIS 1.1
-                || c.getTypeDefinition().equals(InMemorySecondaryTypeDefinition.getRootSecondaryType()) // CMIS 1.1
-                ) {
-            return true;
-        } else {
-            return false;
-        }
+        return (c.getTypeDefinition().getId().equals(c.getTypeDefinition().getBaseTypeId().value()));
+//        if (c.getTypeDefinition().equals(InMemoryFolderTypeDefinition.getRootFolderType())
+//                || c.getTypeDefinition().equals(InMemoryDocumentTypeDefinition.getRootDocumentType())
+//                || c.getTypeDefinition().equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType())
+//                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())
+//                || c.getTypeDefinition().equals(InMemoryItemTypeDefinition.getRootItemType()) // CMIS 1.1
+//                || c.getTypeDefinition().equals(InMemorySecondaryTypeDefinition.getRootSecondaryType()) // CMIS 1.1
+//                ) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     private static PropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> src) {

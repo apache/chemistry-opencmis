@@ -55,8 +55,8 @@ public class DocumentImpl extends FilingImpl implements Document {
 
     public static final int THUMBNAIL_SIZE = 100;
 
-    DocumentImpl(ObjectStoreImpl objStore) { // visibility should be package
-        super(objStore);
+    public DocumentImpl() { // visibility should be package
+        super();
     }
 
     @Override

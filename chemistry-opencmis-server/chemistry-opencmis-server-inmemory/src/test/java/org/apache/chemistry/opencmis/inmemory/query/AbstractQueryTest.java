@@ -21,21 +21,21 @@ package org.apache.chemistry.opencmis.inmemory.query;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
-import org.apache.chemistry.opencmis.inmemory.types.InMemoryDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
@@ -88,68 +88,72 @@ public abstract class AbstractQueryTest {
     // Helper to create some types for testing
 
     protected  List<TypeDefinition> createTypes() {
-
+        TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
         List<TypeDefinition> typeDefs = new ArrayList<TypeDefinition>();
 
-        // First test type
-        InMemoryDocumentTypeDefinition cmisType = new InMemoryDocumentTypeDefinition(MY_DOC_TYPE,
-                "Document Type for Validation", InMemoryDocumentTypeDefinition.getRootDocumentType());
+        try {
+            // First test type
+            MutableTypeDefinition cmisType;        
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
+            cmisType.setId(MY_DOC_TYPE);
+            cmisType.setDisplayName("Document Type for Validation");
 
-        Map<String, PropertyDefinition<?>> propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
+            PropertyBooleanDefinition prop1 = PropertyCreationHelper.createBooleanDefinition(BOOL_PROP,
+                    "Sample Boolean Property", Updatability.READWRITE);
+            ((PropertyBooleanDefinitionImpl) prop1).setIsRequired(true);
 
-        PropertyBooleanDefinition prop1 = PropertyCreationHelper.createBooleanDefinition(BOOL_PROP,
-                "Sample Boolean Property", Updatability.READWRITE);
-        ((PropertyBooleanDefinitionImpl) prop1).setIsRequired(true);
-        propertyDefinitions.put(prop1.getId(), prop1);
+            PropertyStringDefinition prop2 = PropertyCreationHelper.createStringDefinition(STRING_PROP,
+                    "Sample String Property", Updatability.READWRITE);
 
-        PropertyStringDefinition prop2 = PropertyCreationHelper.createStringDefinition(STRING_PROP,
-                "Sample String Property", Updatability.READWRITE);
-        propertyDefinitions.put(prop2.getId(), prop2);
+            PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(INT_PROP,
+                    "Sample Integer Property", Updatability.READWRITE);
 
-        PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(INT_PROP,
-                "Sample Integer Property", Updatability.READWRITE);
-        propertyDefinitions.put(prop2.getId(), prop2);
+            cmisType.addPropertyDefinition(prop1);
+            cmisType.addPropertyDefinition(prop2);
+            cmisType.addPropertyDefinition(prop3);
 
-        cmisType.setPropertyDefinitions(propertyDefinitions);
+            typeDefs.add(cmisType);
+            myType = cmisType;
 
-        typeDefs.add(cmisType);
-        myType = cmisType;
+            // add another type definition with exactly the same properties
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE_COPY);
+            cmisType.setDisplayName("Document Type for Duplicated");
 
-        // add another type definition with exactly the same properties
-        cmisType = new InMemoryDocumentTypeDefinition(MY_DOC_TYPE_COPY,
-                "Document Type Duplicated", InMemoryDocumentTypeDefinition.getRootDocumentType());
-        cmisType.setPropertyDefinitions(propertyDefinitions); // add same properties
-        typeDefs.add(cmisType);
-        myTypeCopy = cmisType;
+            // add same properties
+            cmisType.addPropertyDefinition(prop1);
+            cmisType.addPropertyDefinition(prop2);
+            cmisType.addPropertyDefinition(prop3);
+            typeDefs.add(cmisType);
+            myTypeCopy = cmisType;
 
 
-        // Second test type
+            // Second test type
 
-        cmisType = new InMemoryDocumentTypeDefinition(BOOK_TYPE,
-                "Book Document Type", InMemoryDocumentTypeDefinition.getRootDocumentType());
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), BOOK_TYPE);
+            cmisType.setDisplayName("Book Document Type");
 
-        propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
 
-        prop2 = PropertyCreationHelper.createStringDefinition(TITLE_PROP, "Title of Book", Updatability.READWRITE);
-        propertyDefinitions.put(prop2.getId(), prop2);
+            prop2 = PropertyCreationHelper.createStringDefinition(TITLE_PROP, "Title of Book", Updatability.READWRITE);
+            cmisType.addPropertyDefinition(prop2);
 
-        prop2 = PropertyCreationHelper.createStringDefinition(AUTHOR_PROP, "Author of Book", Updatability.READWRITE);
-        propertyDefinitions.put(prop2.getId(), prop2);
+            prop2 = PropertyCreationHelper.createStringDefinition(AUTHOR_PROP, "Author of Book", Updatability.READWRITE);
+            cmisType.addPropertyDefinition(prop2);
 
-        prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP,
-                "ISBN of Book", Updatability.READWRITE);
-        propertyDefinitions.put(prop3.getId(), prop3);
+            prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP,
+                    "ISBN of Book", Updatability.READWRITE);
+            cmisType.addPropertyDefinition(prop3);
 
-        PropertyDateTimeDefinitionImpl prop4 = PropertyCreationHelper.createDateTimeDefinition(PUB_DATE_PROP,
-                "Publishing Date of Book", Updatability.READWRITE);
-        propertyDefinitions.put(prop4.getId(), prop4);
+            PropertyDateTimeDefinitionImpl prop4 = PropertyCreationHelper.createDateTimeDefinition(PUB_DATE_PROP,
+                    "Publishing Date of Book", Updatability.READWRITE);
+            cmisType.addPropertyDefinition(prop4);
 
-        cmisType.setPropertyDefinitions(propertyDefinitions);
+            typeDefs.add(cmisType);
+            bookType = cmisType;
 
-        typeDefs.add(cmisType);
-        bookType = cmisType;
-
-        return typeDefs;
+            return typeDefs;
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Error when creating built-in InMemory types.", e);
+        }
     }
 
 }
