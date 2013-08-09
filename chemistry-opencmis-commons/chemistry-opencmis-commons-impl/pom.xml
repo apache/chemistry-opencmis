@@ -55,6 +55,10 @@
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>wstx-asl</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
@@ -62,24 +66,24 @@
     <build>
         <plugins>
             <plugin>
-        		<groupId>org.codehaus.mojo</groupId>
-		        <artifactId>build-helper-maven-plugin</artifactId>
-		        <version>1.8</version>
-        		<executions>
-		        	<execution>
-		            	<id>add-source</id>
-	            		<phase>generate-sources</phase>
-	            		<goals>
-	              			<goal>add-source</goal>
-	            		</goals>
-			            <configuration>
-    	    		    	<sources>
-        	        			<source>./target/generated</source>
-            	    		</sources>
-            			</configuration>
-          			</execution>
-        		</executions>
-      		</plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>./target/generated</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jvnet.jax-ws-commons</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
