@@ -314,19 +314,9 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         } catch (Exception e) {
             throw new CmisConnectionException("Parsing exception!", e);
         } finally {
-            try {
-                char[] buffer = new char[4096];
-                while (reader.read(buffer) > -1) {
-                }
-            } catch (Exception e) {
-            }
-            try {
-                if (reader == null) {
-                    stream.close();
-                } else {
-                    reader.close();
-                }
-            } catch (Exception e) {
+            IOUtils.consumeAndClose(reader);
+            if (reader == null) {
+                IOUtils.closeQuietly(stream);
             }
         }
 

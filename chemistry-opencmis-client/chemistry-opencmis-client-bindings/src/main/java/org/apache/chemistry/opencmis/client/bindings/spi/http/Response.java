@@ -127,6 +127,7 @@ public class Response {
             try {
                 length = new BigInteger(lengthStr);
             } catch (NumberFormatException e) {
+                // content-length is not a number -> ignore
             }
         }
 

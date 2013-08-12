@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
@@ -61,6 +62,21 @@ public class IOUtils {
             // ignore
         } finally {
             IOUtils.closeQuietly(stream);
+        }
+    }
+
+    /**
+     * Consumes and closes the provided reader.
+     */
+    public static void consumeAndClose(final Reader reader) {
+        try {
+            char[] buffer = new char[4096];
+            while (reader.read(buffer) > -1) {
+            }
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
     }
 }

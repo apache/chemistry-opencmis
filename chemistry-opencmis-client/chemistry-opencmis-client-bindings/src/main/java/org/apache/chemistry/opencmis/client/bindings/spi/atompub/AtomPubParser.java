@@ -138,14 +138,7 @@ public class AtomPubParser {
             parser.close();
         } finally {
             // make sure the stream is read and closed in all cases
-            try {
-                byte[] buffer = new byte[4096];
-                while (stream.read(buffer) > -1) {
-                }
-            } catch (Exception e) {
-            }
-
-            IOUtils.closeQuietly(stream);
+            IOUtils.consumeAndClose(stream);
         }
     }
 

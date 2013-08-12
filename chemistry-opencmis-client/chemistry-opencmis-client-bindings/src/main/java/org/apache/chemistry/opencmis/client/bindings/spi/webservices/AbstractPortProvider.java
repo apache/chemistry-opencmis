@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ACLService;
@@ -621,11 +622,7 @@ public abstract class AbstractPortProvider {
         } catch (IOException ioe) {
             throw new CmisRuntimeException("Cannot read this WSDL: " + wsdlUrl, ioe);
         } finally {
-            try {
-                wsdlStream.close();
-            } catch (IOException ioe) {
-                // ignore, there is nothing we can do
-            }
+            IOUtils.closeQuietly(wsdlStream);
         }
     }
 

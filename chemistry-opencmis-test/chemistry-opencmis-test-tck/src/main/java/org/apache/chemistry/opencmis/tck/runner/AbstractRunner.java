@@ -99,7 +99,7 @@ public abstract class AbstractRunner {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("#") || line.length() == 0) {
+                if (line.length() == 0 || line.charAt(0) == '#') {
                     continue;
                 }
 
@@ -193,7 +193,7 @@ public abstract class AbstractRunner {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("#") || line.length() == 0) {
+                if (line.length() == 0 || line.charAt(0) == '#') {
                     continue;
                 }
 

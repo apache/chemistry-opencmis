@@ -217,7 +217,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
         if (!ste.getClassName().startsWith("org.apache.chemistry.opencmis.tck.")) {
             result.append(escape(ste.getFileName()));
             if (ste.getLineNumber() > 0) {
-                result.append(":");
+                result.append(':');
                 result.append(ste.getLineNumber());
             }
         } else {
@@ -238,7 +238,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
 
             result.append(escape(ste.getFileName()));
             if (ste.getLineNumber() > 0) {
-                result.append(":");
+                result.append(':');
                 result.append(ste.getLineNumber());
             }
 

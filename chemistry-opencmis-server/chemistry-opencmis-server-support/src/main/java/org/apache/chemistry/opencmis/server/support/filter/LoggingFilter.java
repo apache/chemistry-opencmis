@@ -257,19 +257,19 @@ public class LoggingFilter implements Filter {
                             } else {
                                 out.append(prettyPrintJson(xmlBodyBuffer.toString(), indent));
                             }
-                            out.append(line).append("\n");
+                            out.append(line).append('\n');
                         } else {
                             xmlBodyBuffer.write(line.getBytes(), 0, line.length());
                         }
                     }
                 } else {
                     LOG.debug("in XML part is: " + line);
-                    out.append(line).append("\n");
+                    out.append(line).append('\n');
                 }
 
             } else {
                 LOG.debug("not in XML part: " + line);
-                out.append(line).append("\n");
+                out.append(line).append('\n');
                 boundaryFound = line.startsWith(boundary);
                 if (boundaryFound) {
                     LOG.debug("Boundardy found!");
@@ -286,16 +286,16 @@ public class LoggingFilter implements Filter {
     @SuppressWarnings("rawtypes")
     private void logHeaders(LoggingRequestWrapper req, StringBuffer sb) {
         sb.append(req.getMethod());
-        sb.append(" ");
+        sb.append(' ');
         sb.append(req.getRequestURI());
         String queryString = req.getQueryString();
         if (null != queryString && queryString.length() > 0) {
-            sb.append("?");
+            sb.append('?');
             sb.append(queryString);
         }
-        sb.append(" ");
+        sb.append(' ');
         sb.append(req.getProtocol());
-        sb.append("\n");
+        sb.append('\n');
         Enumeration headerNames = req.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement().toString();
@@ -303,24 +303,24 @@ public class LoggingFilter implements Filter {
             sb.append(headerName);
             sb.append(": ");
             sb.append(req.getHeader(headerName));
-            sb.append("\n");
+            sb.append('\n');
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 
     private void logHeaders(LoggingResponseWrapper resp, String protocol, StringBuffer sb) {
         sb.append(protocol);
-        sb.append(" ");
+        sb.append(' ');
         sb.append(String.valueOf(resp.getStatus()));
-        sb.append("\n");
+        sb.append('\n');
         Map<String, String> headers = resp.getHeaders();
         for (Map.Entry<String, String> header : headers.entrySet()) {
             sb.append(header.getKey());
             sb.append(": ");
             sb.append(header.getValue());
-            sb.append("\n");
+            sb.append('\n');
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 
     private String getRequestFileName(int no) {

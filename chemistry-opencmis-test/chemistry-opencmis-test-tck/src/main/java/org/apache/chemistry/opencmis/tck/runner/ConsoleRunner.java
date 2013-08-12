@@ -64,7 +64,7 @@ public class ConsoleRunner extends AbstractRunner {
         }
 
         public void startTest(CmisTest test) {
-            System.out.print(".");
+            System.out.print('.');
         }
 
         public void endTest(CmisTest test) {
