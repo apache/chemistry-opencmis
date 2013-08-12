@@ -65,11 +65,11 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
         servletPath = request.getServletPath();
 
-        if (basePath != null) {
+        if (basePath != null && basePath.length() > 0) {
             final String path = request.getRequestURI().substring(
                     request.getContextPath().length() + request.getServletPath().length());
 
-            contextPath = (basePath.startsWith("/") ? basePath : "/" + basePath);
+            contextPath = (basePath.charAt(0) == '/' ? basePath : "/" + basePath);
             requestURI = contextPath + servletPath + path;
         } else {
             contextPath = request.getContextPath();
@@ -121,7 +121,7 @@ public class ProxyHttpServletRequestWrapper extends HttpServletRequestWrapper {
         sb.append(scheme);
         sb.append("://");
         sb.append(serverName);
-        sb.append(":");
+        sb.append(':');
         sb.append(serverPort);
         sb.append(getRequestURI());
 

@@ -637,7 +637,7 @@ public class SessionImpl implements Session {
 
         String select = ctxt.getFilterString();
         if (select == null) {
-            statement.append("*");
+            statement.append('*');
         } else {
             statement.append(select);
         }

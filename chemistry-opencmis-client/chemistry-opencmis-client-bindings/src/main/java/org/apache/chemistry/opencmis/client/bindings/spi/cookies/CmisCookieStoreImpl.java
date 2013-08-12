@@ -132,7 +132,7 @@ public class CmisCookieStoreImpl implements Serializable {
                                 if (newHost.endsWith(newDomain)) {
                                     if (newHost.length() == newDomain.length()) {
                                         cookies.add(cookie);
-                                    } else if (newDomain.startsWith(".")) {
+                                    } else if (newDomain.charAt(0) == '.') {
                                         cookies.add(cookie);
                                     }
                                 }
@@ -152,7 +152,7 @@ public class CmisCookieStoreImpl implements Serializable {
     }
 
     private boolean isIPAddress(String s) {
-        if (s.startsWith("[")) {
+        if (s.charAt(0) == '[') {
             // IPv6
             return true;
         }

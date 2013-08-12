@@ -171,7 +171,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
                 }
 
                 sb.append(offset.toString());
-                sb.append("-");
+                sb.append('-');
 
                 if ((length != null) && (length.signum() == 1)) {
                     sb.append(offset.add(length.subtract(BigInteger.ONE)).toString());

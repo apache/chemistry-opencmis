@@ -98,12 +98,12 @@ public class WebSpherePortProvider extends AbstractPortProvider {
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);
             if (connectTimeout >= 0) {
-                ((BindingProvider) portObject).getRequestContext().put("connection_timeout", connectTimeout);
+                portObject.getRequestContext().put("connection_timeout", connectTimeout);
             }
 
             int readTimeout = getSession().get(SessionParameter.READ_TIMEOUT, -1);
             if (readTimeout >= 0) {
-                ((BindingProvider) portObject).getRequestContext().put("request_timeout", readTimeout);
+                portObject.getRequestContext().put("request_timeout", readTimeout);
             }
 
             return portObject;

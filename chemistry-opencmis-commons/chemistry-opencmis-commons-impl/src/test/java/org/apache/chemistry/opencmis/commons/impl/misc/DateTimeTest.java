@@ -56,9 +56,9 @@ public class DateTimeTest {
         GregorianCalendar cal3 = DateTimeHelper.parseXmlDateTime("2013-01-02T03:04:05.678+05:00");
         assertEquals(2013, cal3.get(Calendar.YEAR));
         assertEquals(0, cal3.get(Calendar.MONTH));
-        assertEquals(02, cal3.get(Calendar.DAY_OF_MONTH));
-        assertEquals(03, cal3.get(Calendar.HOUR_OF_DAY));
-        assertEquals(04, cal3.get(Calendar.MINUTE));
+        assertEquals(2, cal3.get(Calendar.DAY_OF_MONTH));
+        assertEquals(3, cal3.get(Calendar.HOUR_OF_DAY));
+        assertEquals(4, cal3.get(Calendar.MINUTE));
         assertEquals(5, cal3.get(Calendar.SECOND));
         assertEquals(678, cal3.get(Calendar.MILLISECOND));
         assertEquals(5 * 60 * 60 * 1000, cal3.getTimeZone().getRawOffset());

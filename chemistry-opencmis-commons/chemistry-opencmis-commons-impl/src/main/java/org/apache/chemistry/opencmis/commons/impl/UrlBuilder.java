@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Utility class that helps building URLs.
@@ -89,7 +90,7 @@ public class UrlBuilder {
         urlPart.append("://");
         urlPart.append(host);
         if (port > 0) {
-            urlPart.append(":").append(port);
+            urlPart.append(':').append(port);
         }
         if (path != null) {
             urlPart.append(path);
@@ -127,6 +128,7 @@ public class UrlBuilder {
         try {
             queryPart.append(URLEncoder.encode(valueStr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
+            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'.", e);
         }
 
         return this;

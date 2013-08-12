@@ -18,14 +18,13 @@
  */
 package org.apache.chemistry.opencmis.workbench.actions;
 
-import java.io.IOException;
-
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
 
@@ -70,12 +69,8 @@ public class SetContentStreamPanel extends ActionPanel {
         try {
             ((Document) getObject()).setContentStream(content, overwriteBox.isSelected());
         } finally {
-            if (content != null && content.getStream() != null) {
-                try {
-                    content.getStream().close();
-                } catch (IOException e) {
-                    // ignore
-                }
+            if (content != null) {
+                IOUtils.closeQuietly(content);
             }
         }
         return true;

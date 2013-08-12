@@ -53,6 +53,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
@@ -372,17 +373,8 @@ public class CreateDocumentDialog extends CreateDialog {
             JOptionPane.showMessageDialog(getOwner(), "Content test exception: " + e.getMessage(),
                     "Verification failed", JOptionPane.ERROR_MESSAGE);
         } finally {
-            try {
-                sourceContent.close();
-            } catch (Exception e) {
-            }
-            try {
-                while (docContent.read() > -1) {
-                }
-
-                docContent.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(sourceContent);
+            IOUtils.consumeAndClose(docContent);
         }
     }
 }

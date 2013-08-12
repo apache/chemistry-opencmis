@@ -19,11 +19,11 @@
 package org.apache.chemistry.opencmis.tck.impl;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.UNEXPECTED_EXCEPTION;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
-import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -89,6 +89,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
@@ -1389,10 +1390,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         } catch (Exception e) {
             addResult(results, createResult(FAILURE, "Reading content failed: " + e, e, false));
         } finally {
-            try {
-                stream.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(stream);
         }
     }
 
@@ -1460,10 +1458,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             } catch (Exception e) {
                                 addResult(results, createResult(FAILURE, "Reading content failed: " + e, e, false));
                             } finally {
-                                try {
-                                    stream.close();
-                                } catch (Exception e) {
-                                }
+                                IOUtils.closeQuietly(stream);
                             }
                         }
                     }
@@ -3176,10 +3171,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Expected stream is null, but actual stream is not!");
             addResultChild(failure, f);
 
-            try {
-                actual.getStream().close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(actual);
 
             return failure;
         }
@@ -3188,10 +3180,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Actual object is null, but expected object is not!");
             addResultChild(failure, f);
 
-            try {
-                expected.getStream().close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(expected);
 
             return failure;
         }
@@ -3241,15 +3230,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResultChild(failure, f);
         }
 
-        try {
-            as.close();
-        } catch (Exception e) {
-        }
-
-        try {
-            es.close();
-        } catch (Exception e) {
-        }
+        IOUtils.closeQuietly(as);
+        IOUtils.closeQuietly(es);
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {
             for (CmisTestResult result : results) {

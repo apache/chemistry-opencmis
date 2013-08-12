@@ -119,7 +119,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
             }
 
             public Socket createSocket(HttpParams params) throws IOException {
-                return (SSLSocket) sf.createSocket();
+                return sf.createSocket();
             }
 
             public Socket connectSocket(final Socket socket, final InetSocketAddress remoteAddress,

@@ -159,7 +159,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
             if (id.length() == 0) {
                 id = "/";
             }
-            ObjectId objectId = model.loadFolder(id, id.startsWith("/"));
+            ObjectId objectId = model.loadFolder(id, id.charAt(0) == '/');
             model.loadObject(objectId.getId());
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);

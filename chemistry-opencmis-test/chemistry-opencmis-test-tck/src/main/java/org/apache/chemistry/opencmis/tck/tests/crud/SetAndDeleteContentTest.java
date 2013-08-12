@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdate
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -132,10 +133,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
                 ObjectId newObjectId = workDoc.setContentStream(contentStream, true, true);
 
-                try {
-                    contentStream.getStream().close();
-                } catch (Exception e) {
-                }
+                IOUtils.closeQuietly(contentStream);
 
                 // setContentStream may have created a new version
                 Document contentDoc = getNewVersion(session, workDoc, checkedout, newObjectId, "setContentStream()");

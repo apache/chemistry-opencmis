@@ -585,8 +585,7 @@ public abstract class AbstractPortProvider {
                     continue;
                 }
 
-                NodeList portList = ((Element) serviceNode).getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/",
-                        "port");
+                NodeList portList = serviceNode.getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/", "port");
                 if (portList.getLength() < 1) {
                     throw new CmisRuntimeException("This service has no ports: " + service.getServiceName());
                 }

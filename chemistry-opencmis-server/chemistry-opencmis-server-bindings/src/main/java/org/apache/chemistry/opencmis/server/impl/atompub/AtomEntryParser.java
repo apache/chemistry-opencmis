@@ -591,7 +591,7 @@ public class AtomEntryParser {
             prefix = "";
         }
 
-        Iterator<String> iter = (Iterator<String>) writer.getNamespaceContext().getPrefixes(namespaceUri);
+        Iterator<String> iter = writer.getNamespaceContext().getPrefixes(namespaceUri);
         if (iter == null) {
             return;
         }

@@ -61,7 +61,7 @@ public class CXFPortProvider extends AbstractPortProvider {
             // create port object
             BindingProvider portObject = createPortObjectFromServiceHolder(serviceHolder, new MTOMFeature());
 
-            Binding binding = ((BindingProvider) portObject).getBinding();
+            Binding binding = portObject.getBinding();
             ((SOAPBinding) binding).setMTOMEnabled(true);
 
             // add SOAP and HTTP authentication headers
@@ -71,7 +71,7 @@ public class CXFPortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    ((BindingProvider) portObject).getRequestContext().put(
+                    portObject.getRequestContext().put(
                             Header.HEADER_LIST,
                             Collections.singletonList(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader
                                     .getLocalName()), soapHeader)));

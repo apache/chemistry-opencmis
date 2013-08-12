@@ -54,6 +54,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,13 +193,7 @@ public class LoggingFilter implements Filter {
             if (pw != null) {
                 pw.close();
             }
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            IOUtils.closeQuietly(fw);
         }
     }
 

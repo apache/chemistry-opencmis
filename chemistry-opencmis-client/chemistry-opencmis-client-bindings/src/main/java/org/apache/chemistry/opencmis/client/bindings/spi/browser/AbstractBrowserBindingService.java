@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.JSONConstants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -370,20 +371,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
      */
     protected void postAndConsume(UrlBuilder url, String contentType, Output writer) {
         Response resp = post(url, contentType, writer);
-
-        InputStream stream = resp.getStream();
-        try {
-            byte[] buffer = new byte[4096];
-            while (stream.read(buffer) > -1) {
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            try {
-                stream.close();
-            } catch (Exception e) {
-            }
-        }
+        IOUtils.consumeAndClose(resp.getStream());
     }
 
     // ---- URL ----

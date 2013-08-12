@@ -50,6 +50,7 @@ public class XMLUtils {
             XML_INPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
             LOG.warn("You are using an unsupported StAX parser.");
         } catch (IllegalArgumentException ex) {
+            // expected for Woodstox
         }
 
         XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);

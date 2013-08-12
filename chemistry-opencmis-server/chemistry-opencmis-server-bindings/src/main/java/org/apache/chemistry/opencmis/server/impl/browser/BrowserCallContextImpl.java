@@ -153,7 +153,7 @@ public class BrowserCallContextImpl extends CallContextImpl {
                 continue;
             }
 
-            sb.append("/");
+            sb.append('/');
             sb.append(pathFragments[i]);
         }
 

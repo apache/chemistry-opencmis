@@ -333,7 +333,7 @@ public abstract class InfoPanel extends JPanel {
 
         @Override
         public boolean isLink(String link) {
-            return link != null && link.length() > 0 && !link.startsWith("(");
+            return link != null && link.length() > 0 && link.charAt(0) != '(';
         }
 
         @Override

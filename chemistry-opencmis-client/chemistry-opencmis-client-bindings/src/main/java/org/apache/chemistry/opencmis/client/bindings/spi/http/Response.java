@@ -33,6 +33,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
 /**
  * HTTP Response.
@@ -112,18 +113,10 @@ public class Response {
                     }
                 }
             } else {
-                try {
-                    errorStream.close();
-                } catch (IOException e) {
-                }
+                IOUtils.closeQuietly(errorStream);
             }
 
-            if (responseStream != null) {
-                try {
-                    responseStream.close();
-                } catch (IOException e) {
-                }
-            }
+            IOUtils.closeQuietly(responseStream);
 
             return;
         }
@@ -164,10 +157,7 @@ public class Response {
                         } catch (IOException e) {
                             errorContent = e.getMessage();
                             stream = null;
-                            try {
-                                responseStream.close();
-                            } catch (IOException ec) {
-                            }
+                            IOUtils.closeQuietly(responseStream);
                         }
                     } else if (encoding.toLowerCase().trim().equals("deflate")) {
                         // if the stream is deflate encoded, decode it

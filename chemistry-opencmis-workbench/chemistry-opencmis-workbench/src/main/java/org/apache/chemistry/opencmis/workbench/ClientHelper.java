@@ -85,6 +85,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.slf4j.Logger;
@@ -352,18 +353,8 @@ public class ClientHelper {
             }
 
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception e) {
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (Exception e) {
-                }
-            }
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
         }
     }
 
@@ -403,7 +394,7 @@ public class ClientHelper {
 
         for (int col = 0; col < cols; col++) {
             if (col > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(formatCSVValue(table.getModel().getColumnName(col)));
@@ -414,7 +405,7 @@ public class ClientHelper {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (col > 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
 
                 Object value = table.getModel().getValueAt(row, col);
@@ -452,16 +443,16 @@ public class ClientHelper {
             return sb.toString();
         } else if (value instanceof Collection<?>) {
             StringBuffer sb = new StringBuffer();
-            sb.append("[");
+            sb.append('[');
 
             for (Object v : (Collection<?>) value) {
                 if (sb.length() > 1) {
-                    sb.append(",");
+                    sb.append(',');
                 }
                 sb.append(formatCSVValue(v));
             }
 
-            sb.append("]");
+            sb.append(']');
 
             return sb.toString();
         } else if (value instanceof ObjectId) {
@@ -497,11 +488,7 @@ public class ClientHelper {
 
         final String result = readStreamAndRemoveHeader(stream);
 
-        try {
-            stream.close();
-        } catch (IOException e) {
-            // ignore
-        }
+        IOUtils.closeQuietly(stream);
 
         return result;
     }
@@ -534,7 +521,7 @@ public class ClientHelper {
                 }
 
                 sb.append(s);
-                sb.append("\n");
+                sb.append('\n');
             }
 
             reader.close();
@@ -622,10 +609,7 @@ public class ClientHelper {
             LOG.error("Cannot read library file: " + propertiesFile);
             return null;
         } finally {
-            try {
-                stream.close();
-            } catch (IOException ioe) {
-            }
+            IOUtils.closeQuietly(stream);
         }
     }
 
@@ -786,6 +770,10 @@ public class ClientHelper {
 
         @Override
         public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+
             if (!(obj instanceof FileEntry)) {
                 return false;
             }

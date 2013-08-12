@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
@@ -75,21 +76,33 @@ import org.slf4j.LoggerFactory;
 public class Main {
 
     private static final String MULTIFILED_DOCUMENT = "MultifiledDocument";
-	private static final String MULTIFILED_FOLDER_2 = "MultifiledFolder2";
-	private static final String MULTIFILED_FOLDER_1 = "MultifiledFolder1";
-	private static final Logger LOG = LoggerFactory.getLogger(Main.class.getName());
+    private static final String MULTIFILED_FOLDER_2 = "MultifiledFolder2";
+    private static final String MULTIFILED_FOLDER_1 = "MultifiledFolder1";
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class.getName());
     private static final BigInteger TYPE_DEPTH_ALL = BigInteger.valueOf(-1);
     private static final BigInteger MAX_ITEMS = null;
     private static final BigInteger SKIP_COUNT = BigInteger.valueOf(0);
     private static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     private static final String VERSIONED_TYPE = "VersionableType";
     private static final String VERSIONED_PROP = "VersionedStringProp";
-    private static String LOGDIR = System.getProperty("java.io.tmpdir");// + File.separator;
-    private static String ROOT_URL = "http://localhost:8080/inmemory"; 
-    private static String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory"; // required by OASIS rules, add this host to your hosts file
+    private static String LOGDIR = System.getProperty("java.io.tmpdir");// +
+                                                                        // File.separator;
+    private static String ROOT_URL = "http://localhost:8080/inmemory";
+    private static String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory"; // required
+                                                                                   // by
+                                                                                   // OASIS
+                                                                                   // rules,
+                                                                                   // add
+                                                                                   // this
+                                                                                   // host
+                                                                                   // to
+                                                                                   // your
+                                                                                   // hosts
+                                                                                   // file
     static int NO_FILES_LOGGED = 0;
 
-    private String targetDir = System.getProperty("java.io.tmpdir");// + File.separator;
+    private String targetDir = System.getProperty("java.io.tmpdir");// +
+                                                                    // File.separator;
     private BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
     private BindingType bindingType;
     private String rootFolderId;
@@ -101,80 +114,79 @@ public class Main {
     private MultiFilingService multiSvc;
     private DiscoveryService discSvc;
     private AclService aclSvc;
-    
+
     private List<String> idsToDelete = new ArrayList<String>();
     private String multiFiledDoc;
     private String multiFiledFolder1;
     private String multiFiledFolder2;
-	private String changeToken;
-    
-    private static final String[] URLS = {ROOT_URL + "/atom", 
-        ROOT_URL + "/services", 
-        ROOT_URL + "/browser"};
-    private static final BindingType[] BINDINGS = {BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER};
+    private String changeToken;
+
+    private static final String[] URLS = { ROOT_URL + "/atom", ROOT_URL + "/services", ROOT_URL + "/browser" };
+    private static final BindingType[] BINDINGS = { BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER };
 
     public Main() {
     }
 
     public void runAllBindings() {
-    	cleanLogFilterDir(); // delete directory where Logging filter writes to ensure not to include unwanted files        
+        cleanLogFilterDir(); // delete directory where Logging filter writes to
+                             // ensure not to include unwanted files
 
-    	for (int i = 0; i < BINDINGS.length; i++) {
-    		bindingType = BINDINGS[i];
-    		init(URLS[i], BINDINGS[i]);
-    		run();
-    	}
-    	String dirs[] = {BindingType.ATOMPUB.value(), BindingType.WEBSERVICES.value(), BindingType.BROWSER.value() };        
-    	createZipFile("CMIS-Spec-Examples.zip", dirs);
-     
+        for (int i = 0; i < BINDINGS.length; i++) {
+            bindingType = BINDINGS[i];
+            init(URLS[i], BINDINGS[i]);
+            run();
+        }
+        String dirs[] = { BindingType.ATOMPUB.value(), BindingType.WEBSERVICES.value(), BindingType.BROWSER.value() };
+        createZipFile("CMIS-Spec-Examples.zip", dirs);
+
     }
-    
+
     public void run() {
         LOG.debug("Generating spec examples for Binding: " + bindingType.value());
-        
+
         try {
-        // Repository Service:
-        getRepositories();
+            // Repository Service:
+            getRepositories();
 
-        repositoryId = "A1";
-        getRepositoryInfo(); // get root folder id here!
+            repositoryId = "A1";
+            getRepositoryInfo(); // get root folder id here!
 
-        getTypeDefinition("cmis:folder");
-        
-        String docId = getTestDocId();
-        String folderId = getTestFolderId();
+            getTypeDefinition("cmis:folder");
 
-        getTypeChildren(TOPLEVEL_TYPE);
+            String docId = getTestDocId();
+            String folderId = getTestFolderId();
 
-        // Navigation Service:
-        getChildren(folderId);
-        getDescendants(folderId);
-        getObjectParents(folderId);
-        removeObjectFromFolder();
+            getTypeChildren(TOPLEVEL_TYPE);
 
-        // Object Service:
-        getObject(docId);
-        getAcl(docId);
-        String id1 = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
-        updateProperties(id1, PropertyIds.NAME, "RenamedDocument");
-        getAllowableActions(id1);
-        
-        deleteObject(id1);
+            // Navigation Service:
+            getChildren(folderId);
+            getDescendants(folderId);
+            getObjectParents(folderId);
+            removeObjectFromFolder();
 
-        // Discovery Service:
-        doQuery();
-        getContentChanges(changeToken);
+            // Object Service:
+            getObject(docId);
+            getAcl(docId);
+            String id1 = createDocument("SampleDocument", TOPLEVEL_TYPE, rootFolderId, VersioningState.NONE);
+            updateProperties(id1, PropertyIds.NAME, "RenamedDocument");
+            getAllowableActions(id1);
 
-        // Versioning Service
-        String id2 = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
-        checkOut(id2);
-        checkIn(id2, true, "final version in series");
-        getAllVersions(id2);
+            deleteObject(id1);
 
-        // collect all captured files and store them in a ZIP file
+            // Discovery Service:
+            doQuery();
+            getContentChanges(changeToken);
+
+            // Versioning Service
+            String id2 = prepareVersionSeries("VersionedDocument", VERSIONED_TYPE, rootFolderId);
+            checkOut(id2);
+            checkIn(id2, true, "final version in series");
+            getAllVersions(id2);
+
+            // collect all captured files and store them in a ZIP file
         } catch (Exception e) {
-        	LOG.error("Failed to create spec examples: ", e);
-        } 
+            LOG.error("Failed to create spec examples: ", e);
+        }
 
         // delete all generated objects
         cleanup();
@@ -194,24 +206,24 @@ public class Main {
         // get factory and create binding
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
         CmisBinding binding = null;
-        
-        if (bindingType == BindingType.ATOMPUB)  {
+
+        if (bindingType == BindingType.ATOMPUB) {
             parameters.put(SessionParameter.ATOMPUB_URL, url);
             binding = factory.createCmisAtomPubBinding(parameters);
         } else if (bindingType == BindingType.WEBSERVICES) {
             parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url + "/ACLService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE,  url + "/DiscoveryService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE,  url + "/MultiFilingService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE,  url + "/NavigationService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE,  url + "/ObjectService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE,  url + "/PolicyService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE,  url + "/RelatinshipService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,  url + "/RepositoryService?wsdl");
-            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE,  url + "/VersioningService?wsdl");
-            binding = factory.createCmisWebServicesBinding(parameters);            
+            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url + "/DiscoveryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url + "/MultiFilingService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url + "/NavigationService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url + "/ObjectService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url + "/PolicyService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url + "/RelatinshipService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "/RepositoryService?wsdl");
+            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url + "/VersioningService?wsdl");
+            binding = factory.createCmisWebServicesBinding(parameters);
         } else if (bindingType == BindingType.BROWSER) {
-            parameters.put(SessionParameter.BROWSER_URL, url); 
-            binding = factory.createCmisBrowserBinding(parameters);            
+            parameters.put(SessionParameter.BROWSER_URL, url);
+            binding = factory.createCmisBrowserBinding(parameters);
         } else {
             LOG.error("Unknown binding type: " + bindingType.value());
             return;
@@ -224,13 +236,14 @@ public class Main {
         multiSvc = binding.getMultiFilingService();
         discSvc = binding.getDiscoveryService();
         aclSvc = binding.getAclService();
-        
+
         // create a folder where target files will be stored:
         targetDir = bindingType.value();
         File in = new File(targetDir);
-        deleteDirRecursive(in); // avoid that there are unwanted files from previous runs
+        deleteDirRecursive(in); // avoid that there are unwanted files from
+                                // previous runs
         boolean ok = in.mkdir();
-        
+
         LOG.debug("creating target directory for files: " + ok);
         LOG.debug("Initializing done. ");
     }
@@ -245,13 +258,18 @@ public class Main {
 
     private void getRepositoryInfo() {
         LOG.debug("getting repository info for repository " + repositoryId);
-        
-        // Because some bindings silently retrieve all repositories on the first request we call it twice
+
+        // Because some bindings silently retrieve all repositories on the first
+        // request we call it twice
         // and use a dummy extension data element to prevent caching
         RepositoryInfo repoInfo = repSvc.getRepositoryInfo(repositoryId, null);
         ExtensionDataImpl dummyExt = new ExtensionDataImpl();
         @SuppressWarnings("serial")
-		List<CmisExtensionElement> extList = new ArrayList<CmisExtensionElement>() {{ add(new CmisExtensionElementImpl("foo", "foo", null, "bar")); }};
+        List<CmisExtensionElement> extList = new ArrayList<CmisExtensionElement>() {
+            {
+                add(new CmisExtensionElementImpl("foo", "foo", null, "bar"));
+            }
+        };
         dummyExt.setExtensions(extList);
         repoInfo = repSvc.getRepositoryInfo(repositoryId, dummyExt);
 
@@ -289,32 +307,34 @@ public class Main {
         renameFiles("getDescendants");
         LOG.debug("getDescendants() done.");
     }
-    
+
     private void getObjectParents(String folderId) {
-    	// get object parents first add object to two folders then get parents
+        // get object parents first add object to two folders then get parents
         LOG.debug("getObjectsParents " + folderId);
         multiFiledFolder1 = createFolderIntern(MULTIFILED_FOLDER_1, BaseTypeId.CMIS_FOLDER.value(), folderId);
         idsToDelete.add(multiFiledFolder1);
         multiFiledFolder2 = createFolderIntern(MULTIFILED_FOLDER_2, BaseTypeId.CMIS_FOLDER.value(), folderId);
         idsToDelete.add(multiFiledFolder2);
-        multiFiledDoc = createDocumentIntern(MULTIFILED_DOCUMENT, BaseTypeId.CMIS_DOCUMENT.value(), multiFiledFolder1, VersioningState.NONE);
-        idsToDelete.add(0, multiFiledDoc); // add at the beginning must be removed before folders!
-    	multiSvc.addObjectToFolder(repositoryId, multiFiledDoc, multiFiledFolder2, true, null);
-    	navSvc.getObjectParents(repositoryId, multiFiledDoc, "*", false, IncludeRelationships.NONE, null, true, null);
+        multiFiledDoc = createDocumentIntern(MULTIFILED_DOCUMENT, BaseTypeId.CMIS_DOCUMENT.value(), multiFiledFolder1,
+                VersioningState.NONE);
+        idsToDelete.add(0, multiFiledDoc); // add at the beginning must be
+                                           // removed before folders!
+        multiSvc.addObjectToFolder(repositoryId, multiFiledDoc, multiFiledFolder2, true, null);
+        navSvc.getObjectParents(repositoryId, multiFiledDoc, "*", false, IncludeRelationships.NONE, null, true, null);
         renameFiles("getObjectParents");
         LOG.debug("getObjectParents() done.");
     }
-    
+
     private void removeObjectFromFolder() {
         LOG.debug("removeObjectFromFolder");
         multiSvc.removeObjectFromFolder(repositoryId, multiFiledDoc, multiFiledFolder2, null);
-    	renameFiles("removeObjectFromFolder");
-    	try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
+        renameFiles("removeObjectFromFolder");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
 
-		}
-        LOG.debug("removeObjectFromFolder() done.");    	
+        }
+        LOG.debug("removeObjectFromFolder() done.");
     }
 
     private void doQuery() {
@@ -326,12 +346,12 @@ public class Main {
         LOG.debug("doQuery() done.");
     }
 
-    private void getContentChanges(String token) {    	
+    private void getContentChanges(String token) {
         LOG.debug("getContentChanges");
         Holder<String> changeLogToken = new Holder<String>("token");
-		discSvc.getContentChanges(repositoryId, changeLogToken, false, "*", false, false, null, null);
-    	renameFiles("getContentChanges");
-        LOG.debug("getContentChanges() done.");    	
+        discSvc.getContentChanges(repositoryId, changeLogToken, false, "*", false, false, null, null);
+        renameFiles("getContentChanges");
+        LOG.debug("getContentChanges() done.");
     }
 
     private void getTypeChildren(String typeId) {
@@ -367,17 +387,18 @@ public class Main {
 
         String id = null;
         try {
-            id = objSvc.createDocument(repositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
-                    removeACEs, extension);
+            id = objSvc.createDocument(repositoryId, props, folderId, contentStream, versioningState, policies,
+                    addACEs, removeACEs, extension);
         } catch (CmisBaseException e) {
-        	// folder already there, get it:
+            // folder already there, get it:
             ObjectInFolderList result = navSvc.getChildren(repositoryId, folderId, "*", null, false,
                     IncludeRelationships.NONE, null, true, MAX_ITEMS, SKIP_COUNT, null);
 
             List<ObjectInFolderData> children = result.getObjects();
             LOG.debug(" found " + children.size() + " folders in getChildren()");
             for (ObjectInFolderData child : children) {
-            	String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME).getFirstValue();
+                String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME)
+                        .getFirstValue();
                 if (name.equals(nameChild))
                     return child.getObject().getId();
             }
@@ -398,17 +419,17 @@ public class Main {
 
         String id = null;
         try {
-        id = objSvc.createFolder(repositoryId, props, parentFolderId, policies, addACEs,
-                removeACEs, extension);
+            id = objSvc.createFolder(repositoryId, props, parentFolderId, policies, addACEs, removeACEs, extension);
         } catch (CmisBaseException e) {
-        	// folder already there, get it:
+            // folder already there, get it:
             ObjectInFolderList result = navSvc.getChildren(repositoryId, parentFolderId, "*", null, false,
                     IncludeRelationships.NONE, null, true, MAX_ITEMS, SKIP_COUNT, null);
 
             List<ObjectInFolderData> children = result.getObjects();
             LOG.debug(" found " + children.size() + " folders in getChildren()");
             for (ObjectInFolderData child : children) {
-            	String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME).getFirstValue();
+                String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME)
+                        .getFirstValue();
                 if (name.equals(nameChild))
                     return child.getObject().getId();
             }
@@ -457,16 +478,16 @@ public class Main {
         LOG.debug("deleteObject() done.");
     }
 
-    private void cleanup () {
+    private void cleanup() {
         LOG.debug("cleaning up...");
         for (String id : idsToDelete) {
             LOG.debug("deleting object " + id);
-            objSvc.deleteObject(repositoryId, id, true, null);            
+            objSvc.deleteObject(repositoryId, id, true, null);
         }
         idsToDelete.clear();
         LOG.debug("... cleaning up done");
     }
-    
+
     /**
      * enumerate the children of the root folder and return the id of the first
      * document
@@ -508,19 +529,19 @@ public class Main {
 
         verSvc.checkOut(repositoryId, idHolder, null, contentCopied);
         String checkinComment = "Checkin V2.0";
-        verSvc.checkIn(repositoryId, idHolder, true /*major*/, null /*properties*/, null /*content*/,
-                checkinComment, null/*policies*/, null/*addAcl*/, null /*removeAcl*/, null /*extension*/);
+        verSvc.checkIn(repositoryId, idHolder, true /* major */, null /* properties */, null /* content */,
+                checkinComment, null/* policies */, null/* addAcl */, null /* removeAcl */, null /* extension */);
 
         verSvc.checkOut(repositoryId, idHolder, null, contentCopied);
         checkinComment = "Checkin V2.1";
-        verSvc.checkIn(repositoryId, idHolder, false /*major*/, null /*properties*/, null /*content*/,
-                checkinComment, null/*policies*/, null/*addAcl*/, null /*removeAcl*/, null /*extension*/);
-        
+        verSvc.checkIn(repositoryId, idHolder, false /* major */, null /* properties */, null /* content */,
+                checkinComment, null/* policies */, null/* addAcl */, null /* removeAcl */, null /* extension */);
+
         return idHolder.getValue();
     }
-    
+
     private void checkOut(String id) {
-        LOG.debug("checkOut()");        
+        LOG.debug("checkOut()");
         Holder<String> idHolder = new Holder<String>(id);
         Holder<Boolean> contentCopied = new Holder<Boolean>(true);
         verSvc.checkOut(repositoryId, idHolder, null, contentCopied);
@@ -535,20 +556,20 @@ public class Main {
         Properties newProps = objFactory.createPropertiesData(properties);
 
         Holder<String> idHolder = new Holder<String>(id);
-        verSvc.checkIn(repositoryId, idHolder, major /*major*/, newProps /*properties*/, null /*content*/,
-                checkinComment, null/*policies*/, null/*addAcl*/, null /*removeAcl*/, null /*extension*/);
+        verSvc.checkIn(repositoryId, idHolder, major /* major */, newProps /* properties */, null /* content */,
+                checkinComment, null/* policies */, null/* addAcl */, null /* removeAcl */, null /* extension */);
         renameFiles("checkIn");
         LOG.debug("checkIn done.");
     }
 
     private void getAllVersions(String id) {
-        LOG.debug("getAllVersions()");     
+        LOG.debug("getAllVersions()");
         verSvc.getAllVersions(repositoryId, id/* object id */, id/* series id */, "*"/* filter */,
                 false /* includeAllowableActions */, null /* extension */);
         renameFiles("getAllVersions");
         LOG.debug("getAllVersions done.");
     }
-    
+
     private void getAcl(String objectId) {
         LOG.debug("getting Acl() " + objectId);
 
@@ -564,7 +585,7 @@ public class Main {
 
         // add the new ACL and remove the old one
         aclSvc.applyAcl(repositoryId, objectId, acl, oldAcl, AclPropagation.OBJECTONLY, null);
-            
+
         aclSvc.getAcl(repositoryId, objectId, true, null);
         renameFiles("getAcl");
         LOG.debug("getting Acl() done.");
@@ -622,46 +643,38 @@ public class Main {
         else
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
     }
-    
+
     private void createZipFile(String zipFileName, String[] dirs) {
-        
+
         File out = new File(zipFileName);
         if (out.exists())
             out.delete();
-        
+
         FileOutputStream fout = null;
-        ZipOutputStream zout =null;
+        ZipOutputStream zout = null;
         try {
             fout = new FileOutputStream(zipFileName);
             zout = new ZipOutputStream(fout);
-            for (String dir: dirs) {
+            for (String dir : dirs) {
                 File dirToZip = new File(dir);
                 addDirectory(zout, dir, dirToZip);
             }
         } catch (Exception e) {
             LOG.error("Creating ZIP file failed: " + e);
         } finally {
-            try {
-                if (zout != null)
-                    zout.close();
-                if (fout != null)
-                    fout.close();
-            } catch (IOException e) {
-                LOG.error(e.toString(), e);
-            }
+            IOUtils.closeQuietly(zout);
+            IOUtils.closeQuietly(fout);
         }
     }
-    
+
     private static void addDirectory(ZipOutputStream zout, String prefix, File sourceDir) throws IOException {
-        
+
         File[] files = sourceDir.listFiles();
         LOG.debug("Create Zip, adding directory " + sourceDir.getName());
-               
+
         if (null != files) {
-            for(int i=0; i < files.length; i++)
-            {
-                if(files[i].isDirectory())
-                {
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
                     addDirectory(zout, prefix + File.separator + files[i].getName(), files[i]);
                 } else {
                     LOG.debug("Create Zip, adding file " + files[i].getName());
@@ -672,30 +685,29 @@ public class Main {
                     zout.putNextEntry(new ZipEntry(zipEntryName));
 
                     int length;
-                    while((length = fin.read(buffer)) > 0)
-                    {
+                    while ((length = fin.read(buffer)) > 0) {
                         zout.write(buffer, 0, length);
                     }
 
                     zout.closeEntry();
                     fin.close();
                 }
-            }      
+            }
         }
     }
-    
+
     public static void clean() {
         LOG.debug("Cleaning generated and captured request and response logs...");
-        
+
         cleanFilesWithFilter(LOGDIR, "*-request.log");
         cleanFilesWithFilter(LOGDIR, "*-response.log");
         for (int i = 0; i < BINDINGS.length; i++) {
             String dir = BINDINGS[i].value();
-            
+
             cleanFilesWithFilter(dir, "*-request.log");
             cleanFilesWithFilter(dir, "*-response.log");
 
-            File dirToDelete = new File (dir);
+            File dirToDelete = new File(dir);
             boolean ok = dirToDelete.delete();
             if (ok)
                 LOG.debug("Deleting dir " + dirToDelete.getAbsolutePath() + " succeeded.");
@@ -703,9 +715,9 @@ public class Main {
                 LOG.warn("Deleting dir " + dirToDelete.getAbsolutePath() + " failed.");
         }
         new File("./target/logs/log4j.log").delete();
-        LOG.debug("... done.");        
+        LOG.debug("... done.");
     }
-    
+
     private static void cleanFilesWithFilter(String directoryPath, String wildcardFilter) {
         File dir = new File(directoryPath);
         FileFilter fileFilter = new WildcardFileFilter(wildcardFilter);
@@ -714,32 +726,33 @@ public class Main {
             for (int i = 0; i < files.length; i++) {
                 boolean ok = files[i].delete();
                 LOG.debug("Deleting file: " + files[i] + ", success: " + ok);
-            }        
+            }
     }
-    
+
     private static String findLastFile(String directoryPath, String wildcardFilter) {
         File dir = new File(directoryPath);
         FileFilter fileFilter = new WildcardFileFilter(wildcardFilter);
         File[] files = dir.listFiles(fileFilter);
         LOG.debug("Number of files in filter dir " + files.length);
         if (files.length < NO_FILES_LOGGED) {
-        	LOG.warn("WARNING TOO FEW FILES!");
-        	// There might be some problem with disk caching, seems that listFiles
-        	// does not always get the most recent state, ugly workaround
-        	try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-			}
-        	files = dir.listFiles(fileFilter);
-            if (files.length < NO_FILES_LOGGED) 
-            	LOG.error("WARNING TOO FEW FILES EVEN AFTER SECOND TRY!!!");
+            LOG.warn("WARNING TOO FEW FILES!");
+            // There might be some problem with disk caching, seems that
+            // listFiles
+            // does not always get the most recent state, ugly workaround
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+            }
+            files = dir.listFiles(fileFilter);
+            if (files.length < NO_FILES_LOGGED)
+                LOG.error("WARNING TOO FEW FILES EVEN AFTER SECOND TRY!!!");
         }
         NO_FILES_LOGGED = files.length;
         Arrays.sort(files);
         if (files.length == 0)
             return null;
         else
-            return files[files.length-1].getAbsolutePath();
+            return files[files.length - 1].getAbsolutePath();
     }
 
     public static void main(String[] args) {
@@ -754,21 +767,20 @@ public class Main {
             LOG.debug("... finished generating spec examples.");
         }
     }
-    
+
     static private boolean deleteDirRecursive(File path) {
-        if( path.exists() ) {
-          File[] files = path.listFiles();
-          for(int i=0; i<files.length; i++) {
-             if(files[i].isDirectory()) {
-                 deleteDirRecursive(files[i]);
-             }
-             else {
-               files[i].delete();
-             }
-          }
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    deleteDirRecursive(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
         }
-        return( path.delete() );
-      }
+        return (path.delete());
+    }
 
     private void cleanLogFilterDir() {
         File dir = new File(LOGDIR);

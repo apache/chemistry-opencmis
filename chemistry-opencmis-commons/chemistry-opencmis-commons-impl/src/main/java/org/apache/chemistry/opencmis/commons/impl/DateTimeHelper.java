@@ -145,16 +145,16 @@ public class DateTimeHelper {
 
         int tz = cal.getTimeZone().getOffset(cal.getTimeInMillis());
         if (tz == 0) {
-            sb.append("Z");
+            sb.append('Z');
         } else {
             if (tz > 0) {
-                sb.append("+");
+                sb.append('+');
             } else {
-                sb.append("-");
+                sb.append('-');
                 tz *= -1;
             }
             add2d(sb, tz / 3600000);
-            sb.append(":");
+            sb.append(':');
             int tzm = tz % 3600000;
             add2d(sb, tzm == 0 ? 0 : tzm / 60000);
         }
@@ -171,7 +171,7 @@ public class DateTimeHelper {
         }
 
         s = s.trim();
-        if (s.length() > 1 && s.startsWith("'") && s.endsWith("'")) {
+        if (s.length() > 1 && s.charAt(0) == '\'' && s.endsWith("'")) {
             s = s.substring(1, s.length() - 1);
         }
 

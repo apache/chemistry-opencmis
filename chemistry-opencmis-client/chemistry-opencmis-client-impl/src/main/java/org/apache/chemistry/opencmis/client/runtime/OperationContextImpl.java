@@ -188,7 +188,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
         for (String oid : this.filter) {
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(oid);
@@ -304,7 +304,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
         for (String rf : this.renditionFilter) {
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(rf);
@@ -352,15 +352,15 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(includeAcls ? "1" : "0");
-        sb.append(includeAllowableActions ? "1" : "0");
-        sb.append(includePolicies ? "1" : "0");
-        sb.append("|");
+        sb.append(includeAcls ? '1' : '0');
+        sb.append(includeAllowableActions ? '1' : '0');
+        sb.append(includePolicies ? '1' : '0');
+        sb.append('|');
         sb.append(filter == null ? "" : getFilterString());
-        sb.append("|");
+        sb.append('|');
         sb.append(includeRelationships == null ? "" : includeRelationships.value());
 
-        sb.append("|");
+        sb.append('|');
         sb.append(renditionFilter == null ? "" : getRenditionFilterString());
 
         cacheKey = sb.toString();

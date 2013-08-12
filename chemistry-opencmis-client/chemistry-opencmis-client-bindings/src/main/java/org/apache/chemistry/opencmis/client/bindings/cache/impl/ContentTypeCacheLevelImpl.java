@@ -126,9 +126,9 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
 
             // write parameters sorted by key
             for (Map.Entry<String, String> entry : parameter.entrySet()) {
-                sb.append(";");
+                sb.append(';');
                 sb.append(entry.getKey());
-                sb.append("=");
+                sb.append('=');
                 sb.append(entry.getValue());
             }
         }

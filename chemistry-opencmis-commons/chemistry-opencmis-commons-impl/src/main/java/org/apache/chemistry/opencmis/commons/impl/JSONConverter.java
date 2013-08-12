@@ -579,7 +579,7 @@ public final class JSONConverter {
         if (permissions != null) {
             List<PermissionDefinition> permissionDefinitionList = new ArrayList<PermissionDefinition>();
 
-            for (Object permission : (List<Object>) permissions) {
+            for (Object permission : permissions) {
                 Map<String, Object> permissionMap = getMap(permission);
                 if (permissionMap != null) {
                     PermissionDefinitionDataImpl permDef = new PermissionDefinitionDataImpl();
@@ -600,7 +600,7 @@ public final class JSONConverter {
         if (permissionMapping != null) {
             Map<String, PermissionMapping> permMap = new HashMap<String, PermissionMapping>();
 
-            for (Object permission : (List<Object>) permissionMapping) {
+            for (Object permission : permissionMapping) {
                 Map<String, Object> permissionMap = getMap(permission);
                 if (permissionMap != null) {
                     PermissionMappingDataImpl mapping = new PermissionMappingDataImpl();
@@ -1777,7 +1777,7 @@ public final class JSONConverter {
                 if (children instanceof List) {
                     container.setChildren(convertTypeDescendants((List<Object>) children));
                 } else {
-                    container.setChildren((List<TypeDefinitionContainer>) Collections.EMPTY_LIST);
+                    container.setChildren(Collections.<TypeDefinitionContainer> emptyList());
                 }
 
                 convertExtension(jsonContainer, container, TYPESCONTAINER_KEYS);
@@ -2791,12 +2791,12 @@ public final class JSONConverter {
             throw new CmisRuntimeException("Invalid Boolean value!");
         case INTEGER:
             if (value instanceof BigInteger) {
-                return (BigInteger) value;
+                return value;
             }
             throw new CmisRuntimeException("Invalid Integer value!");
         case DECIMAL:
             if (value instanceof BigDecimal) {
-                return (BigDecimal) value;
+                return value;
             }
             throw new CmisRuntimeException("Invalid Decimal value!");
         case DATETIME:

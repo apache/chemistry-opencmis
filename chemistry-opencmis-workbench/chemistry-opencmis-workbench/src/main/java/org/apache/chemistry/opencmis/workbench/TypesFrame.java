@@ -429,7 +429,7 @@ public class TypesFrame extends JFrame {
             for (ValidationError error : typeResult) {
                 sb.append("- ");
                 sb.append(error.toString());
-                sb.append("\n");
+                sb.append('\n');
             }
         }
 
@@ -443,7 +443,7 @@ public class TypesFrame extends JFrame {
                     for (ValidationError error : propResult) {
                         sb.append("- ");
                         sb.append(error.toString());
-                        sb.append("\n");
+                        sb.append('\n');
                     }
                 }
             }

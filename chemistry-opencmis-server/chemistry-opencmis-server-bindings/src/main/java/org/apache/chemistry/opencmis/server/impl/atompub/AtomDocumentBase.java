@@ -26,6 +26,7 @@ import java.util.GregorianCalendar;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
@@ -180,6 +181,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             writeLink(Constants.REL_SERVICE, href + "?repositoryId=" + URLEncoder.encode(repositoryId, "UTF-8"),
                     Constants.MEDIATYPE_SERVICE, null);
         } catch (UnsupportedEncodingException e) {
+            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
         }
     }
 

@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.tools.filecopy.FileCopier;
@@ -514,15 +515,8 @@ public class ObjGenApp {
             System.err.println("Error generating file: " + e);
             e.printStackTrace();
         } finally {
-            try {
-                if (null != is) {
-                    is.close();
-                }
-                if (null != os) {
-                    os.close();
-                }
-            } catch (IOException e) {
-            }
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
         }
     }
 

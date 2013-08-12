@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.CmisEnumHelper;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
 public abstract class AbstractServiceCall implements ServiceCall {
 
@@ -106,13 +107,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
      * Closes a content stream.
      */
     public void closeContentStream(ContentStream contentStream) {
-        if (contentStream != null && contentStream.getStream() != null) {
-            try {
-                contentStream.getStream().close();
-            } catch (IOException e) {
-                // we tried our best
-            }
-        }
+        IOUtils.closeQuietly(contentStream);
     }
 
     /**
@@ -157,7 +152,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
             if (chcs.getETag() != null) {
                 String etag = request.getHeader("If-None-Match");
                 if (etag != null && !etag.equals("*")) {
-                    if (etag.length() > 2 && etag.startsWith("\"") && etag.endsWith("\"")) {
+                    if (etag.length() > 2 && etag.charAt(0) == '"' && etag.endsWith("\"")) {
                         etag = etag.substring(1, etag.length() - 1);
                     }
 

@@ -37,7 +37,7 @@ public class HttpUtils {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, String[]> parameters = (Map<String, String[]>) request.getParameterMap();
+        Map<String, String[]> parameters = request.getParameterMap();
         for (Map.Entry<String, String[]> parameter : parameters.entrySet()) {
             if (name.equalsIgnoreCase(parameter.getKey())) {
                 if (parameter.getValue() == null) {
@@ -67,7 +67,7 @@ public class HttpUtils {
                 result[i] = URLDecoder.decode(result[i], "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 // should not happen
-                throw new CmisRuntimeException(e.getMessage(), e);
+                throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
             }
         }
 

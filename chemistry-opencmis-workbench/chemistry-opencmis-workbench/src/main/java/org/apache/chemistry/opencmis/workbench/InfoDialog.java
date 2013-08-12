@@ -38,6 +38,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+
 public class InfoDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
@@ -76,7 +78,7 @@ public class InfoDialog extends JDialog {
 
         Properties sysProps = System.getProperties();
         for (Object key : new TreeSet<Object>(sysProps.keySet())) {
-            readme.append(key).append(" = ").append(sysProps.get(key)).append("\n");
+            readme.append(key).append(" = ").append(sysProps.get(key)).append('\n');
         }
 
         readme.append("\n---------------------------------------------------------\n");
@@ -119,7 +121,7 @@ public class InfoDialog extends JDialog {
                     result.append('\n');
                 }
 
-                br.close();
+                IOUtils.closeQuietly(br);
             } catch (Exception e) {
             }
         } else {

@@ -223,7 +223,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
                     + Base64.encodeBytes((username + ":" + password).getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
             // shouldn't happen...
-            return Collections.emptyList();
+            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
         }
     }
 

@@ -112,7 +112,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(n.toString());
@@ -133,7 +133,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(escape(s));
@@ -141,7 +141,6 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
 
         parametersMap.put(parameterIndex, sb.toString());
     }
-
 
     public void setStringContains(int parameterIndex, String str) {
         if (str == null) {
@@ -171,7 +170,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(escape(oid.getId()));
@@ -192,7 +191,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(escape(u.toString()));
@@ -213,7 +212,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(escape(u.toString()));
@@ -230,7 +229,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         StringBuilder sb = new StringBuilder();
         for (boolean b : bool) {
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             sb.append(b ? "TRUE" : "FALSE");
@@ -259,7 +258,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             if (prefix) {
@@ -292,7 +291,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             if (prefix) {
@@ -321,7 +320,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         StringBuilder sb = new StringBuilder();
         for (long l : ms) {
             if (sb.length() > 0) {
-                sb.append(",");
+                sb.append(',');
             }
 
             if (prefix) {
@@ -394,13 +393,13 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             char c = str.charAt(i);
 
             if (c == '\'' || c == '\\') {
-                sb.append("\\");
+                sb.append('\\');
             }
 
             sb.append(c);
         }
 
-        sb.append("'");
+        sb.append('\'');
 
         return sb.toString();
     }
@@ -411,19 +410,19 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             char c = str.charAt(i);
 
             if (c == '\'') {
-                sb.append("\\");
+                sb.append('\\');
             } else if (c == '\\') {
                 if (i + 1 < str.length() && (str.charAt(i + 1) == '%' || str.charAt(i + 1) == '_')) {
                     // no additional back slash
                 } else {
-                    sb.append("\\");
+                    sb.append('\\');
                 }
             }
 
             sb.append(c);
         }
 
-        sb.append("'");
+        sb.append('\'');
 
         return sb.toString();
     }
@@ -434,7 +433,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             char c = str.charAt(i);
 
             if (c == '\\') {
-                sb.append("\\");
+                sb.append('\\');
             } else if (c == '\'' || c == '\"') {
                 sb.append("\\\\\\");
             }
@@ -442,7 +441,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             sb.append(c);
         }
 
-        sb.append("'");
+        sb.append('\'');
 
         return sb.toString();
     }

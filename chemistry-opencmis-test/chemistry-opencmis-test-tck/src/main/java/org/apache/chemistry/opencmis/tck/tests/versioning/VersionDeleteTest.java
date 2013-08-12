@@ -22,7 +22,6 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -97,10 +97,8 @@ public class VersionDeleteTest extends AbstractSessionTest {
                 "text/plain", new ByteArrayInputStream(contentBytes));
 
         ObjectId newVersionId = pwc.checkIn(true, null, contentStream, "test version " + version);
-        try {
-            contentStream.getStream().close();
-        } catch (IOException ioe) {
-        }
+
+        IOUtils.closeQuietly(contentStream);
 
         Document newVersion = (Document) session.getObject(newVersionId, SELECT_ALL_NO_CACHE_OC);
 

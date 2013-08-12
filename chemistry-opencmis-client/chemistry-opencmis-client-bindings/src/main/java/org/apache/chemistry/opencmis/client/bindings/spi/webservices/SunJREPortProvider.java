@@ -71,8 +71,7 @@ public class SunJREPortProvider extends AbstractPortProvider {
 
             // set streaming for services that transport content
             if (serviceHolder.getService().handlesContent()) {
-                ((BindingProvider) portObject).getRequestContext().put(
-                        JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
+                portObject.getRequestContext().put(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, CHUNK_SIZE);
             }
 
             // add SOAP and HTTP authentication headers

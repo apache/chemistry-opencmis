@@ -374,7 +374,7 @@ public class FolderTable extends JTable implements FolderListener {
                         }
 
                         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-                            return (List<File>) Collections.singletonList(tempTransFile);
+                            return Collections.singletonList(tempTransFile);
                         }
                     };
                 }

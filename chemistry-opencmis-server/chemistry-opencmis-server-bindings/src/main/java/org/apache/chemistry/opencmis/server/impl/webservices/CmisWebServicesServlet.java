@@ -37,6 +37,7 @@ import javax.xml.ws.WebServiceFeature;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
@@ -122,13 +123,7 @@ public class CmisWebServicesServlet extends WSServlet {
         } catch (IOException e) {
             throw new ServletException("Cannot read file '" + path + "': " + e.getMessage(), e);
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
+            IOUtils.closeQuietly(reader);
         }
     }
 

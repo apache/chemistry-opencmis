@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.workbench.RandomInputStream;
 
@@ -279,9 +280,7 @@ public class ClientModel {
             return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
                     versioningState, null, null, null);
         } finally {
-            if (content != null && content.getStream() != null) {
-                content.getStream().close();
-            }
+            IOUtils.closeQuietly(content);
         }
     }
 
@@ -305,9 +304,7 @@ public class ClientModel {
             return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
                     versioningState, null, null, null);
         } finally {
-            if (content != null && content.getStream() != null) {
-                content.getStream().close();
-            }
+            IOUtils.closeQuietly(content);
         }
     }
 

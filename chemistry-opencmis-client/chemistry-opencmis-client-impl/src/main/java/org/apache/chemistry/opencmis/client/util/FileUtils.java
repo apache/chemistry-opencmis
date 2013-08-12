@@ -70,12 +70,12 @@ public class FileUtils {
         if (session == null) {
             throw new IllegalArgumentException("session must be set!");
         }
-        if (pathOrIdOfObject == null) {
+        if (pathOrIdOfObject == null || pathOrIdOfObject.length() == 0) {
             throw new IllegalArgumentException("pathOrIdOfObject must be set!");
         }
 
         CmisObject result = null;
-        if (pathOrIdOfObject.startsWith("/")) {
+        if (pathOrIdOfObject.charAt(0) == '/') {
             result = session.getObjectByPath(pathOrIdOfObject);
         } else {
             result = session.getObject(pathOrIdOfObject);

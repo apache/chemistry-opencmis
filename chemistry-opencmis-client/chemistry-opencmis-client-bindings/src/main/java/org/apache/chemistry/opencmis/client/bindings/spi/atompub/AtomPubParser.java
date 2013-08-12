@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.Service
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -144,10 +145,7 @@ public class AtomPubParser {
             } catch (Exception e) {
             }
 
-            try {
-                stream.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(stream);
         }
     }
 

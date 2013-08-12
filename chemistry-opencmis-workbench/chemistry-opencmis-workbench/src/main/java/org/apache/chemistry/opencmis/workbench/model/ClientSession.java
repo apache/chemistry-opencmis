@@ -266,7 +266,7 @@ public class ClientSession {
                 PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
                 if (propDef != null) {
                     if (filter.length() > 0) {
-                        filter.append(",");
+                        filter.append(',');
                     }
                     filter.append(propDef.getQueryName());
                 }
@@ -294,7 +294,7 @@ public class ClientSession {
                 PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
                 if (propDef != null) {
                     if (filter.length() > 0) {
-                        filter.append(",");
+                        filter.append(',');
                     }
                     filter.append(propDef.getQueryName());
                 }

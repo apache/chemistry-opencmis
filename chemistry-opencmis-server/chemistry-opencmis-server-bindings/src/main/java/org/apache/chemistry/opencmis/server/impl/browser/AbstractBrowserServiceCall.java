@@ -44,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
@@ -208,6 +209,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             try {
                 cookieValue = URLEncoder.encode(value, "UTF-8");
             } catch (UnsupportedEncodingException e) {
+                throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
             }
 
             Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);

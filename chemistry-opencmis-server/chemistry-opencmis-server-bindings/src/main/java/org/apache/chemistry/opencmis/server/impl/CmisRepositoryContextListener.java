@@ -29,6 +29,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,10 +88,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
             LOG.warn("Cannot load configuration: " + e, e);
             return null;
         } finally {
-            try {
-                stream.close();
-            } catch (IOException ioe) {
-            }
+            IOUtils.closeQuietly(stream);
         }
 
         // get 'class' property

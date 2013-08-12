@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
@@ -534,13 +535,7 @@ public class MultipartParser {
 
             return true;
         } catch (IOException e) {
-            if (contentStream != null) {
-                try {
-                    contentStream.close();
-                } catch (Exception e2) {
-                    // ignore
-                }
-            }
+            IOUtils.closeQuietly(contentStream);
 
             skipEpilogue();
 
@@ -575,11 +570,7 @@ public class MultipartParser {
             }
         } catch (Exception e) {
             if (contentStream != null) {
-                try {
-                    contentStream.close();
-                } catch (Exception e2) {
-                    // ignore
-                }
+                IOUtils.closeQuietly(contentStream);
             }
 
             skipEpilogue();

@@ -88,8 +88,8 @@ public final class Base64 {
 
     private static final byte WHITE_SPACE_ENC = -5; // Indicates white space in
                                                     // encoding
-                                                    private static final byte EQUALS_SIGN_ENC = -1; // Indicates equals sign in
-                                                    // encoding
+    private static final byte EQUALS_SIGN_ENC = -1; // Indicates equals sign in
+    // encoding
 
     /* ******** S T A N D A R D B A S E 6 4 A L P H A B E T ******** */
 
@@ -594,22 +594,10 @@ public final class Base64 {
             throw e;
         } // end catch
         finally {
-            try {
-                oos.close();
-            } catch (Exception e) {
-            }
-            try {
-                gzos.close();
-            } catch (Exception e) {
-            }
-            try {
-                b64os.close();
-            } catch (Exception e) {
-            }
-            try {
-                baos.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(oos);
+            IOUtils.closeQuietly(gzos);
+            IOUtils.closeQuietly(b64os);
+            IOUtils.closeQuietly(baos);
         } // end finally
 
         // Return value according to relevant encoding.
@@ -872,18 +860,9 @@ public final class Base64 {
                 throw e;
             } // end catch
             finally {
-                try {
-                    gzos.close();
-                } catch (Exception e) {
-                }
-                try {
-                    b64os.close();
-                } catch (Exception e) {
-                }
-                try {
-                    baos.close();
-                } catch (Exception e) {
-                }
+                IOUtils.closeQuietly(gzos);
+                IOUtils.closeQuietly(b64os);
+                IOUtils.closeQuietly(baos);
             } // end finally
 
             return baos.toByteArray();
@@ -1246,18 +1225,9 @@ public final class Base64 {
                     // Just return originally-decoded bytes
                 } // end catch
                 finally {
-                    try {
-                        baos.close();
-                    } catch (Exception e) {
-                    }
-                    try {
-                        gzis.close();
-                    } catch (Exception e) {
-                    }
-                    try {
-                        bais.close();
-                    } catch (Exception e) {
-                    }
+                    IOUtils.closeQuietly(baos);
+                    IOUtils.closeQuietly(gzis);
+                    IOUtils.closeQuietly(bais);
                 } // end finally
 
             } // end if: gzipped
@@ -1352,14 +1322,8 @@ public final class Base64 {
             throw e; // Catch and throw in order to execute finally{}
         } // end catch
         finally {
-            try {
-                bais.close();
-            } catch (Exception e) {
-            }
-            try {
-                ois.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(bais);
+            IOUtils.closeQuietly(ois);
         } // end finally
 
         return obj;
@@ -1400,10 +1364,7 @@ public final class Base64 {
             throw e; // Catch and throw to execute finally{} block
         } // end catch: java.io.IOException
         finally {
-            try {
-                bos.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(bos);
         } // end finally
 
     } // end encodeToFile
@@ -1437,10 +1398,7 @@ public final class Base64 {
             throw e; // Catch and throw to execute finally{} block
         } // end catch: java.io.IOException
         finally {
-            try {
-                bos.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(bos);
         } // end finally
 
     } // end decodeToFile
@@ -1498,10 +1456,7 @@ public final class Base64 {
             throw e; // Catch and release to execute finally{}
         } // end catch: java.io.IOException
         finally {
-            try {
-                bis.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(bis);
         } // end finally
 
         return decodedData;
@@ -1567,10 +1522,7 @@ public final class Base64 {
             throw e; // Catch and release to execute finally{}
         } // end catch: java.io.IOException
         finally {
-            try {
-                bis.close();
-            } catch (Exception e) {
-            }
+            IOUtils.closeQuietly(bis);
         } // end finally
 
         return encodedData;
@@ -1599,10 +1551,7 @@ public final class Base64 {
             throw e; // Catch and release to execute finally{}
         } // end catch
         finally {
-            try {
-                out.close();
-            } catch (Exception ex) {
-            }
+            IOUtils.closeQuietly(out);
         } // end finally
     } // end encodeFileToFile
 
@@ -1629,10 +1578,7 @@ public final class Base64 {
             throw e; // Catch and release to execute finally{}
         } // end catch
         finally {
-            try {
-                out.close();
-            } catch (Exception ex) {
-            }
+            IOUtils.closeQuietly(out);
         } // end finally
     } // end decodeFileToFile
 
