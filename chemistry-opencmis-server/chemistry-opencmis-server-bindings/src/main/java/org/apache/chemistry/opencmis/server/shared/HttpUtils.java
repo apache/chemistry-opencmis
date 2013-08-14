@@ -32,6 +32,8 @@ public class HttpUtils {
      * Extracts a string parameter.
      */
     public static String getStringParameter(final HttpServletRequest request, final String name) {
+        assert request != null;
+
         if (name == null) {
             return null;
         }
@@ -54,6 +56,8 @@ public class HttpUtils {
      * Splits the path into its fragments.
      */
     public static String[] splitPath(final HttpServletRequest request) {
+        assert request != null;
+
         int prefixLength = request.getContextPath().length() + request.getServletPath().length();
         String p = request.getRequestURI().substring(prefixLength);
 

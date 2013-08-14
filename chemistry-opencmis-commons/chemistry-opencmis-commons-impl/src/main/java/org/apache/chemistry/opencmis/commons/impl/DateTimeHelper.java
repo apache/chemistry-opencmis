@@ -28,7 +28,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DateTimeHelper {
+public final class DateTimeHelper {
 
     private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 
@@ -56,6 +56,9 @@ public class DateTimeHelper {
 
     private static final Pattern HTTP_DATETIME3 = Pattern
             .compile("\\w{3} (\\w{3}) ([0-3 ]\\d) ([0-2]\\d):([0-5]\\d):([0-5]\\d) (\\d{4})");
+
+    private DateTimeHelper() {
+    }
 
     /**
      * Parses a xsd:dateTime string.
@@ -281,6 +284,9 @@ public class DateTimeHelper {
     }
 
     private static void add2d(final StringBuilder sb, int value) {
+        assert sb != null;
+        assert value >= 0;
+
         if (value < 10) {
             sb.append('0');
         }
@@ -288,6 +294,9 @@ public class DateTimeHelper {
     }
 
     private static void add3d(final StringBuilder sb, int value) {
+        assert sb != null;
+        assert value >= 0;
+
         if (value < 10) {
             sb.append('0');
         }
@@ -298,6 +307,9 @@ public class DateTimeHelper {
     }
 
     private static void add4d(final StringBuilder sb, int value) {
+        assert sb != null;
+        assert value >= 0;
+
         if (value < 10) {
             sb.append('0');
         }

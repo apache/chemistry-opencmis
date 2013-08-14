@@ -43,6 +43,12 @@ public class MultiFilingService {
     public static class RemoveObjectFromFolder extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 

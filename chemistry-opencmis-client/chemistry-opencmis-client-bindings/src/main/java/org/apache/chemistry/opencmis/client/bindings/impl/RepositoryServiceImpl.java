@@ -47,6 +47,8 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
      * Constructor.
      */
     public RepositoryServiceImpl(BindingSession session) {
+        assert session != null;
+
         this.session = session;
     }
 

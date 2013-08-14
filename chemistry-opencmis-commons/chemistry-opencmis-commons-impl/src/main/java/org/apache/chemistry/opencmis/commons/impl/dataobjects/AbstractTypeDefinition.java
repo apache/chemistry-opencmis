@@ -53,6 +53,8 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
     private TypeMutability typeMutability;
 
     public void initialize(TypeDefinition typeDefinition) {
+        assert typeDefinition != null;
+
         setId(typeDefinition.getId());
         setLocalName(typeDefinition.getLocalName());
         setLocalNamespace(typeDefinition.getLocalNamespace());

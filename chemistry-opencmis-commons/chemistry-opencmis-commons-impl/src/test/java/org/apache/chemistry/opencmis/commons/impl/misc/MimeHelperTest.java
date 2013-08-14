@@ -31,72 +31,55 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
+
 public class MimeHelperTest extends TestCase {
 
+    @Test
     public void testEncodeContentDisposition() {
-        assertEquals("inline; filename=foo.bar",
-                encodeContentDisposition("inline", "foo.bar"));
-        assertEquals("attachment; filename=foo.bar",
-                encodeContentDisposition(null, "foo.bar"));
-        assertEquals("attachment; filename*=UTF-8''caf%C3%A9.pdf",
-                encodeContentDisposition(null, "caf\u00e9.pdf"));
-        assertEquals(
-                "attachment; filename*=UTF-8''%20%27%2A%25%20abc%20%C2%81%C2%82%0D%0A%09",
+        assertEquals("inline; filename=foo.bar", encodeContentDisposition("inline", "foo.bar"));
+        assertEquals("attachment; filename=foo.bar", encodeContentDisposition(null, "foo.bar"));
+        assertEquals("attachment; filename*=UTF-8''caf%C3%A9.pdf", encodeContentDisposition(null, "caf\u00e9.pdf"));
+        assertEquals("attachment; filename*=UTF-8''%20%27%2A%25%20abc%20%C2%81%C2%82%0D%0A%09",
                 encodeContentDisposition(null, " '*% abc \u0081\u0082\r\n\t"));
     }
 
+    @Test
     public void testDecodeContentDisposition() {
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String> expected = new HashMap<String, String>();
 
-        assertEquals("attachment",
-                decodeContentDisposition("attachment; a=b; c=d", params));
+        assertEquals("attachment", decodeContentDisposition("attachment; a=b; c=d", params));
         expected.put("a", "b");
         expected.put("c", "d");
         assertEquals(expected, params);
         params.clear();
         expected.clear();
 
-        assertEquals(
-                "inline",
-                decodeContentDisposition(
-                        "  inline ; a = \"b b\" (this is a comment) ; c =d;",
-                        params));
+        assertEquals("inline", decodeContentDisposition("  inline ; a = \"b b\" (this is a comment) ; c =d;", params));
         expected.put("a", "b b");
         expected.put("c", "d");
         assertEquals(expected, params);
         params.clear();
         expected.clear();
 
-        assertEquals(
-                "inline",
-                decodeContentDisposition(
-                        "inline; modification-date=\"Wed, 12 Feb 1997 16:29:51 -0500\"",
-                        params));
-        assertEquals(Collections.singletonMap("modification-date",
-                "Wed, 12 Feb 1997 16:29:51 -0500"), params);
+        assertEquals("inline",
+                decodeContentDisposition("inline; modification-date=\"Wed, 12 Feb 1997 16:29:51 -0500\"", params));
+        assertEquals(Collections.singletonMap("modification-date", "Wed, 12 Feb 1997 16:29:51 -0500"), params);
         params.clear();
     }
 
+    @Test
     public void testDecodeContentDispositionFilename() {
         assertNull(decodeContentDispositionFilename("attachment; a=b; c=d;"));
         assertNull(decodeContentDispositionFilename("inline"));
         assertNull(decodeContentDispositionFilename("inline; modification-date=\"Wed, 12 Feb 1997 16:29:51 -0500\""));
-        assertEquals(
-                "foo.bar",
-                decodeContentDispositionFilename("attachment; filename=foo.bar"));
-        assertEquals(
-                "foo.bar",
-                decodeContentDispositionFilename("attachment; filename = \"foo.bar\""));
-        assertEquals(
-                "foo.bar",
+        assertEquals("foo.bar", decodeContentDispositionFilename("attachment; filename=foo.bar"));
+        assertEquals("foo.bar", decodeContentDispositionFilename("attachment; filename = \"foo.bar\""));
+        assertEquals("foo.bar",
                 decodeContentDispositionFilename(" guess ; filename = (this is rfc822 a comment) \"foo.bar\""));
-        assertEquals(
-                "caf\u00e9.pdf",
-                decodeContentDispositionFilename("foo; filename*=UTF-8''caf%C3%A9.pdf"));
-        assertEquals(
-                "caf\u00e9.pdf",
-                decodeContentDispositionFilename("bar; filename*=ISO-8859-1''caf%E9.pdf"));
+        assertEquals("caf\u00e9.pdf", decodeContentDispositionFilename("foo; filename*=UTF-8''caf%C3%A9.pdf"));
+        assertEquals("caf\u00e9.pdf", decodeContentDispositionFilename("bar; filename*=ISO-8859-1''caf%E9.pdf"));
     }
 
 }

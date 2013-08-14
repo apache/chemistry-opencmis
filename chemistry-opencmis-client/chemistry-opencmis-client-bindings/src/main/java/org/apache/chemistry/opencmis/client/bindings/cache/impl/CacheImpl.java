@@ -306,6 +306,8 @@ public class CacheImpl implements Cache {
     // ---- internal ----
 
     private static String getFormattedKeys(String[] keys) {
+        assert keys != null;
+
         StringBuilder sb = new StringBuilder();
         for (String k : keys) {
             if (sb.length() > 0) {

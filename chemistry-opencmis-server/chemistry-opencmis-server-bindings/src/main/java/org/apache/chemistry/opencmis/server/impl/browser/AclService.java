@@ -40,6 +40,12 @@ public class AclService {
     public static class GetACL extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+            
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
@@ -65,6 +71,12 @@ public class AclService {
     public static class ApplyACL extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION,

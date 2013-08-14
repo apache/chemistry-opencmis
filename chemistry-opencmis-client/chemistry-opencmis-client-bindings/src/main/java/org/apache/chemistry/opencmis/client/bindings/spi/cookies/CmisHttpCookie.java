@@ -337,7 +337,6 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
 
             @Override
             void validate(String v, CmisHttpCookie cookie) {
-                return;
             }
         });
         attributeSet.put("secure", new Setter() {
@@ -387,7 +386,6 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
 
             @Override
             void validate(String v, CmisHttpCookie cookie) {
-                return;
             }
         });
     }

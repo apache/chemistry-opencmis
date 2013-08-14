@@ -85,6 +85,12 @@ public class ObjectService {
     public static class CreateDocument extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
@@ -129,6 +135,12 @@ public class ObjectService {
     public static class CreateDocumentFromSource extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String sourceId = getStringParameter(request, PARAM_SOURCE_ID);
@@ -176,6 +188,12 @@ public class ObjectService {
     public static class CreateFolder extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
@@ -211,6 +229,12 @@ public class ObjectService {
     public static class CreatePolicy extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
@@ -246,6 +270,12 @@ public class ObjectService {
     public static class CreateItem extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
@@ -281,6 +311,12 @@ public class ObjectService {
     public static class CreateRelationship extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
@@ -315,6 +351,12 @@ public class ObjectService {
     public static class UpdateProperties extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String typeId = ((BrowserCallContextImpl) context).getTypeId();
@@ -360,6 +402,12 @@ public class ObjectService {
     public static class BulkUpdateProperties extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             ControlParser cp = new ControlParser(request);
 
             // get object ids and change tokens
@@ -413,6 +461,12 @@ public class ObjectService {
     public static class GetProperties extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
@@ -449,6 +503,12 @@ public class ObjectService {
     public static class GetObject extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
@@ -493,6 +553,12 @@ public class ObjectService {
     public static class GetAllowableActions extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
 
@@ -511,6 +577,12 @@ public class ObjectService {
     public static class GetRenditions extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
@@ -539,6 +611,12 @@ public class ObjectService {
     public static class GetContentStream extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String streamId = getStringParameter(request, PARAM_STREAM_ID);
@@ -606,6 +684,12 @@ public class ObjectService {
     public static class DeleteObject extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
@@ -623,6 +707,12 @@ public class ObjectService {
     public static class DeleteTree extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
@@ -651,6 +741,12 @@ public class ObjectService {
     public static class DeleteContentStream extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
@@ -685,6 +781,12 @@ public class ObjectService {
     public static class SetContentStream extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
@@ -729,6 +831,12 @@ public class ObjectService {
     public static class AppendContentStream extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             boolean isLastChunk = getBooleanParameter(request, Constants.CONTROL_IS_LAST_CHUNK, false);
@@ -773,6 +881,12 @@ public class ObjectService {
     public static class MoveObject extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String targetFolderId = getStringParameter(request, PARAM_TARGET_FOLDER_ID);

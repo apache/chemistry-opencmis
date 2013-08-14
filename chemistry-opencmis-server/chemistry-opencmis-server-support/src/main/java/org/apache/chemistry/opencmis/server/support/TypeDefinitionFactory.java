@@ -90,7 +90,7 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 /**
  * Type definition factory.
  */
-public class TypeDefinitionFactory {
+public final class TypeDefinitionFactory {
 
     private static final Set<String> NEW_CMIS11_PROPERTIES = new HashSet<String>();
     static {

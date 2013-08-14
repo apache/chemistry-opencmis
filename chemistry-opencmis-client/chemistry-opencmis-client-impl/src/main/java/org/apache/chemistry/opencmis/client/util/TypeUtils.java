@@ -61,7 +61,7 @@ import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
-public class TypeUtils {
+public final class TypeUtils {
 
     private TypeUtils() {
     }

@@ -174,7 +174,7 @@ public class SessionImpl implements Session {
     }
 
     private Locale determineLocale(Map<String, String> parameters) {
-        Locale locale = null;
+        Locale result = null;
 
         String language = parameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
         String country = parameters.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
@@ -182,22 +182,22 @@ public class SessionImpl implements Session {
 
         if (variant != null) {
             // all 3 parameter must not be null and valid
-            locale = new Locale(language, country, variant);
+            result = new Locale(language, country, variant);
         } else {
             if (country != null) {
                 // 2 parameter must not be null and valid
-                locale = new Locale(language, country);
+                result = new Locale(language, country);
             } else {
                 if (language != null) {
                     // 1 parameter must not be null and valid
-                    locale = new Locale(language);
+                    result = new Locale(language);
                 } else {
-                    locale = Locale.getDefault();
+                    result = Locale.getDefault();
                 }
             }
         }
 
-        return locale;
+        return result;
     }
 
     private ObjectFactory createObjectFactory() {
@@ -262,7 +262,8 @@ public class SessionImpl implements Session {
     }
 
     public ObjectFactory getObjectFactory() {
-        return this.objectFactory;
+        assert objectFactory != null;
+        return objectFactory;
     }
 
     public ItemIterable<Document> getCheckedOutDocs() {

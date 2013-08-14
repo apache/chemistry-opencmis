@@ -48,6 +48,8 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
             ObjectFactory objectFactory, AuthenticationProvider authenticationProvider, Cache cache) {
         super(data);
 
+        assert sessionFactory != null;
+
         this.parameters = new HashMap<String, String>(parameters);
         this.parameters.put(SessionParameter.REPOSITORY_ID, getId());
 

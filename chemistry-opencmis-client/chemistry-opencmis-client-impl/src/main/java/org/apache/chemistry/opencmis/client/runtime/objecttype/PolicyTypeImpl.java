@@ -39,6 +39,9 @@ public class PolicyTypeImpl extends PolicyTypeDefinitionImpl implements PolicyTy
     private final ObjectTypeHelper helper;
 
     public PolicyTypeImpl(Session session, PolicyTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         helper = new ObjectTypeHelper(session, this);
     }

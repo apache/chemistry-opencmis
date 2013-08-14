@@ -52,6 +52,12 @@ public class NavigationService {
     public static class GetChildren extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = getStringParameter(request, Constants.PARAM_ID);
             String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -183,6 +189,12 @@ public class NavigationService {
     public static class GetDescendants extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = getStringParameter(request, Constants.PARAM_ID);
             BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
@@ -269,6 +281,12 @@ public class NavigationService {
     public static class GetFolderTree extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = getStringParameter(request, Constants.PARAM_ID);
             BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
@@ -356,6 +374,12 @@ public class NavigationService {
     public static class GetObjectParents extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
             String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -426,6 +450,12 @@ public class NavigationService {
     public static class GetCheckedOutDocs extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = getStringParameter(request, Constants.PARAM_FOLDER_ID);
             String filter = getStringParameter(request, Constants.PARAM_FILTER);

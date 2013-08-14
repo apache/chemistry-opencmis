@@ -1354,6 +1354,8 @@ public final class WSConverter {
      * Converts a choices list.
      */
     private static void convertChoiceDecimalList(List<Choice<BigDecimal>> choices, List<CmisChoiceDecimal> target) {
+        assert target != null;
+
         if (choices == null) {
             return;
         }
@@ -1401,6 +1403,8 @@ public final class WSConverter {
      * Converts a choices list.
      */
     private static void convertChoiceBooleanList(List<Choice<Boolean>> choices, List<CmisChoiceBoolean> target) {
+        assert target != null;
+
         if (choices == null) {
             return;
         }
@@ -1449,6 +1453,8 @@ public final class WSConverter {
      */
     private static void convertChoiceDateTimeList(List<Choice<GregorianCalendar>> choices,
             List<CmisChoiceDateTime> target) {
+        assert target != null;
+
         if (choices == null) {
             return;
         }
@@ -1496,6 +1502,8 @@ public final class WSConverter {
      * Converts a choices list.
      */
     private static void convertChoiceHtmlList(List<Choice<String>> choices, List<CmisChoiceHtml> target) {
+        assert target != null;
+
         if (choices == null) {
             return;
         }
@@ -1543,6 +1551,8 @@ public final class WSConverter {
      * Converts a choices list.
      */
     private static void convertChoiceUriList(List<Choice<String>> choices, List<CmisChoiceUri> target) {
+        assert target != null;
+
         if (choices == null) {
             return;
         }

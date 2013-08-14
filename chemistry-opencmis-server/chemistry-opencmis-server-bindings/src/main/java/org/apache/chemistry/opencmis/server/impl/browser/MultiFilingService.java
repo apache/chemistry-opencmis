@@ -44,6 +44,12 @@ public class MultiFilingService {
     public static class AddObjectToFolder extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String folderId = getStringParameter(request, PARAM_FOLDER_ID);
@@ -80,6 +86,12 @@ public class MultiFilingService {
     public static class RemoveObjectFromFolder extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String folderId = getStringParameter(request, PARAM_FOLDER_ID);

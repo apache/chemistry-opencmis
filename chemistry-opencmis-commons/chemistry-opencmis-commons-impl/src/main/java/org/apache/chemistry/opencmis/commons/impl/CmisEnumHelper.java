@@ -49,7 +49,10 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 /**
  * Helper methods to turn a value into a CMIS enum.
  */
-public class CmisEnumHelper {
+public final class CmisEnumHelper {
+
+    private CmisEnumHelper() {
+    }
 
     @SuppressWarnings("unchecked")
     public static <E extends Enum<?>> E fromValue(final String value, final Class<E> clazz) {

@@ -41,6 +41,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionEleme
 public abstract class XMLWalker<T> {
 
     public T walk(XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         final T result = prepareTarget(parser, parser.getName());
 
         next(parser);
@@ -72,20 +74,29 @@ public abstract class XMLWalker<T> {
     }
 
     protected boolean isCmisNamespace(QName name) {
+        assert name != null;
+
         return XMLConstants.NAMESPACE_CMIS.hashCode() == name.getNamespaceURI().hashCode()
                 && XMLConstants.NAMESPACE_CMIS.equals(name.getNamespaceURI());
     }
 
     protected boolean isAtomNamespace(QName name) {
+        assert name != null;
+
         return XMLConstants.NAMESPACE_ATOM.hashCode() == name.getNamespaceURI().hashCode()
                 && XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI());
     }
 
     protected boolean isTag(QName name, String tag) {
+        assert name != null;
+        assert tag != null;
+
         return tag.hashCode() == name.getLocalPart().hashCode() && tag.equals(name.getLocalPart());
     }
 
     protected void handleExtension(XMLStreamReader parser, ExtensionsData extData) throws XMLStreamException {
+        assert parser != null;
+
         List<CmisExtensionElement> extensions = extData.getExtensions();
         if (extensions == null) {
             extensions = new ArrayList<CmisExtensionElement>();
@@ -101,6 +112,8 @@ public abstract class XMLWalker<T> {
 
     private CmisExtensionElement handleExtensionLevel(final XMLStreamReader parser, final int level)
             throws XMLStreamException {
+        assert parser != null;
+
         final QName name = parser.getName();
         Map<String, String> attributes = null;
         StringBuilder sb = new StringBuilder();
@@ -170,10 +183,14 @@ public abstract class XMLWalker<T> {
     }
 
     protected String readText(final XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         return XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH);
     }
 
     protected Boolean readBoolean(final XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         String value = readText(parser);
 
         if ("true".equals(value) || "1".equals(value)) {
@@ -188,6 +205,8 @@ public abstract class XMLWalker<T> {
     }
 
     protected BigInteger readInteger(final XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         String value = readText(parser);
 
         try {
@@ -198,6 +217,8 @@ public abstract class XMLWalker<T> {
     }
 
     protected BigDecimal readDecimal(final XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         String value = readText(parser);
 
         try {
@@ -208,6 +229,8 @@ public abstract class XMLWalker<T> {
     }
 
     protected GregorianCalendar readDateTime(final XMLStreamReader parser) throws XMLStreamException {
+        assert parser != null;
+
         String value = readText(parser);
 
         GregorianCalendar result = DateTimeHelper.parseXmlDateTime(value);
@@ -219,6 +242,9 @@ public abstract class XMLWalker<T> {
     }
 
     public <E extends Enum<E>> E readEnum(final XMLStreamReader parser, final Class<E> clazz) throws XMLStreamException {
+        assert parser != null;
+        assert clazz != null;
+
         return CmisEnumHelper.fromValue(readText(parser), clazz);
     }
 

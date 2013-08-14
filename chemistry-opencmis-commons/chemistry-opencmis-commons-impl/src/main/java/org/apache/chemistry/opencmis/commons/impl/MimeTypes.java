@@ -457,6 +457,8 @@ public final class MimeTypes {
             mime = EXT2MIME.get("");
         }
 
+        assert mime != null;
+
         return mime;
     }
 

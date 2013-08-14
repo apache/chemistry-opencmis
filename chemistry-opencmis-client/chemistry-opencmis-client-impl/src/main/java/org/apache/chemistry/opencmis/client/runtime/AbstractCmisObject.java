@@ -213,7 +213,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
      * Returns the session object.
      */
     protected SessionImpl getSession() {
-        return this.session;
+        return session;
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     protected ObjectType getObjectType() {
         readLock();
         try {
-            return this.objectType;
+            return objectType;
         } finally {
             readUnlock();
         }

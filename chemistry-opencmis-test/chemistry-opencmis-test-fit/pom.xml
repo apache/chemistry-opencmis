@@ -84,7 +84,7 @@
 					<encoding>UTF-8</encoding>
 					<reuseForks>true</reuseForks>
 					<forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-					<argLine>-Xmx512m</argLine>	
+					<argLine>-Xmx512m -ea:org.apache.chemistry</argLine>	
 				</configuration>
 				<executions>
 					<execution>

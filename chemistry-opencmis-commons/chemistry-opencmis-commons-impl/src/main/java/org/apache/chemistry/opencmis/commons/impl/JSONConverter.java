@@ -1634,6 +1634,8 @@ public final class JSONConverter {
      * Converts choices.
      */
     private static <T> JSONArray convertChoices(final List<Choice<T>> choices, final Cardinality cardinality) {
+        assert cardinality != null;
+
         if (choices == null) {
             return null;
         }

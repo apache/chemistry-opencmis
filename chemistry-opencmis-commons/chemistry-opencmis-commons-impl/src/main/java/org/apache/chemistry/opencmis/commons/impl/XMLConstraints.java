@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-public class XMLConstraints {
-    
+public final class XMLConstraints {
+
     public static final int MAX_STRING_LENGTH = 100 * 1024;
 
     public static final int MAX_EXTENSIONS_WIDTH = 100;

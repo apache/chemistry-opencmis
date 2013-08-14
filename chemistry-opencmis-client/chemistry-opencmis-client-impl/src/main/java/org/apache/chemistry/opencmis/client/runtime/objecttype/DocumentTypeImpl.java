@@ -39,6 +39,9 @@ public class DocumentTypeImpl extends DocumentTypeDefinitionImpl implements Docu
     private final ObjectTypeHelper helper;
 
     public DocumentTypeImpl(Session session, DocumentTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         setContentStreamAllowed(typeDefinition.getContentStreamAllowed());
         setIsVersionable(typeDefinition.isVersionable());

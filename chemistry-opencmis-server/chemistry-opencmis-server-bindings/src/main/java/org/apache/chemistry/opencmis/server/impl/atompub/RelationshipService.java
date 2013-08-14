@@ -44,6 +44,12 @@ public class RelationshipService {
     public static class GetObjectRelationships extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
             Boolean includeSubRelationshipTypes = getBooleanParameter(request, Constants.PARAM_SUB_RELATIONSHIP_TYPES);

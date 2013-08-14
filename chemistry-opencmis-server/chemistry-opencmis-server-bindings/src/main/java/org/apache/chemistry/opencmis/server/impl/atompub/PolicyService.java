@@ -71,6 +71,12 @@ public class PolicyService {
     public static class GetAppliedPolicies extends AbstractPoliciesServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
             String filter = getStringParameter(request, Constants.PARAM_FILTER);
@@ -131,6 +137,12 @@ public class PolicyService {
     public static class ApplyPolicy extends AbstractPoliciesServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
 
@@ -175,6 +187,12 @@ public class PolicyService {
     public static class RemovePolicy extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
             String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);

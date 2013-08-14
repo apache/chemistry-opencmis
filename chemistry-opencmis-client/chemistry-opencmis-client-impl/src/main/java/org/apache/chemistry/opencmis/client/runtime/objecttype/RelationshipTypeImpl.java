@@ -42,6 +42,9 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
     private List<ObjectType> allowedTargetTypes;
 
     public RelationshipTypeImpl(Session session, RelationshipTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         setAllowedSourceTypes(typeDefinition.getAllowedSourceTypeIds());
         setAllowedTargetTypes(typeDefinition.getAllowedTargetTypeIds());

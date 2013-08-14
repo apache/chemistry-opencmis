@@ -47,6 +47,8 @@ public class TypeDefinitionCache implements Serializable {
      *            the session object
      */
     public TypeDefinitionCache(BindingSession session) {
+        assert session != null;
+
         int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
         if (repCount < 1) {
             repCount = CACHE_SIZE_REPOSITORIES;

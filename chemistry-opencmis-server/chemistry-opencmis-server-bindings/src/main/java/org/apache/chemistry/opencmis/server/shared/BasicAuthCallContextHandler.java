@@ -42,6 +42,8 @@ public class BasicAuthCallContextHandler implements CallContextHandler, Serializ
     }
 
     public Map<String, String> getCallContextMap(HttpServletRequest request) {
+        assert request != null;
+
         Map<String, String> result = null;
 
         String authHeader = request.getHeader("Authorization");

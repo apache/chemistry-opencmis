@@ -61,6 +61,12 @@ public class RepositoryService {
     public static class GetRepositories extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // execute
             List<RepositoryInfo> infoDataList = service.getRepositoryInfos(null);
 
@@ -83,6 +89,12 @@ public class RepositoryService {
     public static class GetRepositoryInfo extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // execute
             RepositoryInfo ri = service.getRepositoryInfo(repositoryId, null);
 
@@ -103,6 +115,12 @@ public class RepositoryService {
     public static class GetLastResult extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             String token = getStringParameter(request, PARAM_TOKEN);
             String cookieName = getCookieName(token);
             String cookieValue = null;
@@ -140,6 +158,12 @@ public class RepositoryService {
     public static class GetTypeChildren extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, PARAM_TYPE_ID);
             boolean includePropertyDefinitions = getBooleanParameter(request, PARAM_PROPERTY_DEFINITIONS, false);
@@ -159,6 +183,12 @@ public class RepositoryService {
     public static class GetTypeDescendants extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, PARAM_TYPE_ID);
             BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
@@ -188,6 +218,12 @@ public class RepositoryService {
     public static class GetTypeDefinition extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, PARAM_TYPE_ID);
 
@@ -206,6 +242,12 @@ public class RepositoryService {
     public static class CreateType extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeStr = getStringParameter(request, CONTROL_TYPE);
             if (typeStr == null) {
@@ -240,6 +282,12 @@ public class RepositoryService {
     public static class UpdateType extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeStr = getStringParameter(request, CONTROL_TYPE);
             if (typeStr == null) {
@@ -271,6 +319,12 @@ public class RepositoryService {
     public static class DeleteType extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, CONTROL_TYPE_ID);
 

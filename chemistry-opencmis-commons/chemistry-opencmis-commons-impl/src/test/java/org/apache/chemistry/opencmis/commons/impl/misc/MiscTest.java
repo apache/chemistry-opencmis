@@ -25,18 +25,21 @@ package org.apache.chemistry.opencmis.commons.impl.misc;
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.junit.Test;
 
 /**
  * Tests miscellaneous details.
  */
 public class MiscTest extends TestCase {
 
+    @Test
     public void testUrlBuilder() {
         assertEquals("http://host/test", (new UrlBuilder("http://host/test")).toString());
         assertEquals("http://host/test?query=value", (new UrlBuilder("http://host/test?query=value")).toString());
         assertEquals("http://host/test", (new UrlBuilder("http://host/test?")).toString());
     }
 
+    @Test
     public void testUrlBuilderAddParameter() {
         UrlBuilder urlBuilder;
 
@@ -54,6 +57,7 @@ public class MiscTest extends TestCase {
         assertEquals("http://host/test?query=caf%C3%A9+cr%C3%A8me", urlBuilder.toString());
     }
 
+    @Test
     public void testUrlBuilderAddPath() {
         UrlBuilder urlBuilder;
 
@@ -83,6 +87,7 @@ public class MiscTest extends TestCase {
         assertEquals("http://host/test/path/caf%C3%A9%20d%40d", urlBuilder.toString());
     }
 
+    @Test
     public void testUrlBuilderAddPathSegment() {
         UrlBuilder urlBuilder;
 

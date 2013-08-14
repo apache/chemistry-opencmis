@@ -17,6 +17,9 @@ public class SecondaryTypeImpl extends SecondaryTypeDefinitionImpl implements Se
     private final ObjectTypeHelper helper;
 
     public SecondaryTypeImpl(Session session, SecondaryTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         helper = new ObjectTypeHelper(session, this);
     }

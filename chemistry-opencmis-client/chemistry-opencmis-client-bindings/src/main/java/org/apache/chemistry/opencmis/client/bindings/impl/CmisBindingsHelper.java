@@ -61,6 +61,8 @@ public final class CmisBindingsHelper {
      * @return the SPI object
      */
     public static CmisSpi getSPI(BindingSession session) {
+        assert session != null;
+
         // fetch from session
         CmisSpi spi = (CmisSpi) session.get(SPI_OBJECT);
         if (spi != null) {
@@ -92,6 +94,8 @@ public final class CmisBindingsHelper {
             session.writeUnlock();
         }
 
+        assert spi != null;
+
         return spi;
     }
 
@@ -99,6 +103,8 @@ public final class CmisBindingsHelper {
      * Gets the HTTP Invoker object from the session.
      */
     public static HttpInvoker getHttpInvoker(BindingSession session) {
+        assert session != null;
+
         HttpInvoker invoker = (HttpInvoker) session.get(HTTP_INVOKER_OBJECT);
 
         if (invoker != null) {
@@ -129,6 +135,8 @@ public final class CmisBindingsHelper {
             session.writeUnlock();
         }
 
+        assert invoker != null;
+
         return invoker;
     }
 
@@ -136,6 +144,8 @@ public final class CmisBindingsHelper {
      * Returns a CMIS version if the user set one, <code>null</code> otherwise.
      */
     public static CmisVersion getForcedCmisVersion(BindingSession session) {
+        assert session != null;
+
         return (CmisVersion) session.get(FORCE_CMIS_VERSION);
     }
 
@@ -144,6 +154,8 @@ public final class CmisBindingsHelper {
      * if no authentication provider is set.
      */
     public static AuthenticationProvider getAuthenticationProvider(BindingSession session) {
+        assert session != null;
+
         return (AuthenticationProvider) session.get(AUTHENTICATION_PROVIDER_OBJECT);
     }
 
@@ -151,6 +163,8 @@ public final class CmisBindingsHelper {
      * Returns the repository info cache from the session.
      */
     public static RepositoryInfoCache getRepositoryInfoCache(BindingSession session) {
+        assert session != null;
+
         return (RepositoryInfoCache) session.get(REPOSITORY_INFO_CACHE);
     }
 
@@ -158,6 +172,8 @@ public final class CmisBindingsHelper {
      * Returns the type definition cache from the session.
      */
     public static TypeDefinitionCache getTypeDefinitionCache(BindingSession session) {
+        assert session != null;
+
         return (TypeDefinitionCache) session.get(TYPE_DEFINTION_CACHE);
     }
 }

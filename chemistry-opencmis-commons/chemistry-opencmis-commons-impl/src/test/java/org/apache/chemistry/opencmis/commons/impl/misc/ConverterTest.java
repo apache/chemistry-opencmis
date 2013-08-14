@@ -54,12 +54,14 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefiniti
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
+import org.junit.Test;
 
 /**
  * Tests converter methods.
  */
 public class ConverterTest extends TestCase {
 
+    @Test
     public void testRepositoryInfo() throws Exception {
         // dry run
         RepositoryInfoImpl obj1 = new RepositoryInfoImpl();
@@ -130,6 +132,7 @@ public class ConverterTest extends TestCase {
         assertDataObjectsEquals("RepositoryInfo", obj1, obj2);
     }
 
+    @Test
     public void testTypeDefinition() throws Exception {
         // dry run
         DocumentTypeDefinitionImpl obj1 = new DocumentTypeDefinitionImpl();
@@ -161,6 +164,7 @@ public class ConverterTest extends TestCase {
         assertDataObjectsEquals("TypeDefinition", obj1, obj2);
     }
 
+    @Test
     public void testObject() throws Exception {
         // dry run
         ObjectDataImpl obj1 = new ObjectDataImpl();

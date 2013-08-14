@@ -113,6 +113,8 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     }
 
     public void initialize(Session session, Map<String, String> parameters) {
+        assert session != null;
+
         this.session = session;
     }
 

@@ -25,11 +25,15 @@ import java.io.Reader;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
-public class IOUtils {
+public final class IOUtils {
+
+    private IOUtils() {
+    }
 
     /**
      * Closes a stream and ignores any exceptions.
      */
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public static void closeQuietly(final Closeable closeable) {
         try {
             if (closeable != null) {
@@ -53,9 +57,14 @@ public class IOUtils {
     /**
      * Consumes and closes the provided stream.
      */
+    @SuppressWarnings({ "PMD.EmptyCatchBlock", "PMD.EmptyWhileStmt" })
     public static void consumeAndClose(final InputStream stream) {
+        if (stream == null) {
+            return;
+        }
+
         try {
-            byte[] buffer = new byte[4096];
+            final byte[] buffer = new byte[4096];
             while (stream.read(buffer) > -1) {
             }
         } catch (IOException e) {
@@ -68,9 +77,14 @@ public class IOUtils {
     /**
      * Consumes and closes the provided reader.
      */
+    @SuppressWarnings({ "PMD.EmptyCatchBlock", "PMD.EmptyWhileStmt" })
     public static void consumeAndClose(final Reader reader) {
+        if (reader == null) {
+            return;
+        }
+
         try {
-            char[] buffer = new char[4096];
+            final char[] buffer = new char[4096];
             while (reader.read(buffer) > -1) {
             }
         } catch (IOException e) {

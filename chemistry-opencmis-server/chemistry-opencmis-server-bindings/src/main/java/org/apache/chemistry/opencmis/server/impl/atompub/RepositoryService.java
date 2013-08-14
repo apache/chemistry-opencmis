@@ -52,6 +52,12 @@ public class RepositoryService {
     public static class GetRepositories extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             repositoryId = getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
 
@@ -222,6 +228,12 @@ public class RepositoryService {
     public static class GetTypeChildren extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
             boolean includePropertyDefinitions = getBooleanParameter(request, Constants.PARAM_PROPERTY_DEFINITIONS,
@@ -312,6 +324,12 @@ public class RepositoryService {
     public static class GetTypeDescendants extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, Constants.PARAM_TYPE_ID);
             BigInteger depth = getBigIntegerParameter(request, Constants.PARAM_DEPTH);
@@ -390,6 +408,12 @@ public class RepositoryService {
     public static class GetTypeDefinition extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, Constants.PARAM_ID);
 
@@ -414,6 +438,12 @@ public class RepositoryService {
     public static class CreateType extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // parse entry
             ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
@@ -445,6 +475,12 @@ public class RepositoryService {
     public static class UpdateType extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // parse entry
             ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
@@ -476,6 +512,12 @@ public class RepositoryService {
     public static class DeleteType extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String typeId = getStringParameter(request, Constants.PARAM_ID);
 

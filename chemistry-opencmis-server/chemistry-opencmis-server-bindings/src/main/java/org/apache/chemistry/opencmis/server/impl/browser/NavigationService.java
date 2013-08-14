@@ -61,6 +61,12 @@ public class NavigationService {
     public static class GetChildren extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);
@@ -97,6 +103,12 @@ public class NavigationService {
     public static class GetDescendants extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
@@ -133,6 +145,12 @@ public class NavigationService {
     public static class GetFolderTree extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
@@ -169,6 +187,12 @@ public class NavigationService {
     public static class GetFolderParent extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);
@@ -196,6 +220,12 @@ public class NavigationService {
     public static class GetObjectParents extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);
@@ -231,6 +261,12 @@ public class NavigationService {
     public static class GetCheckedOutDocs extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);

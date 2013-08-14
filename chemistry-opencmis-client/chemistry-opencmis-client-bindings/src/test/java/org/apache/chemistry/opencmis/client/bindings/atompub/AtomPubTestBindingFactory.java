@@ -25,10 +25,6 @@ import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
-/**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
 public class AtomPubTestBindingFactory {
     
     private AtomPubTestBindingFactory() {

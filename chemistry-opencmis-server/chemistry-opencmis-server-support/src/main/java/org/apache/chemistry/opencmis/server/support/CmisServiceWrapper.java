@@ -84,10 +84,10 @@ public class CmisServiceWrapper<T extends CmisService> implements CmisService {
 
         this.service = service;
 
-        setDefaultTypesMaxItems(defaultTypesMaxItems);
-        setDefaultTypesDepth(defaultTypesDepth);
-        setDefaultMaxItems(defaultMaxItems);
-        setDefaultDepth(defaultDepth);
+        this.defaultTypesMaxItems = defaultTypesMaxItems;
+        this.defaultTypesDepth = defaultTypesDepth;
+        this.defaultMaxItems = defaultMaxItems;
+        this.defaultDepth = defaultDepth;
     }
 
     // --- wrapper operations ---

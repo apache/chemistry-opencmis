@@ -60,6 +60,8 @@ public class CacheImpl implements Cache {
     }
 
     public void initialize(Session session, Map<String, String> parameters) {
+        assert parameters != null;
+
         lock.writeLock().lock();
         try {
             // cache size
@@ -273,7 +275,7 @@ public class CacheImpl implements Cache {
     }
 
     public void remove(String objectId) {
-        if(objectId == null) {
+        if (objectId == null) {
             return;
         }
 

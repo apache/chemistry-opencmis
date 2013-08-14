@@ -21,8 +21,8 @@ package org.apache.chemistry.opencmis.client.runtime.objecttype;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.FolderType;
-import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
@@ -38,6 +38,9 @@ public class FolderTypeImpl extends FolderTypeDefinitionImpl implements FolderTy
     private final ObjectTypeHelper helper;
 
     public FolderTypeImpl(Session session, FolderTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         helper = new ObjectTypeHelper(session, this);
     }

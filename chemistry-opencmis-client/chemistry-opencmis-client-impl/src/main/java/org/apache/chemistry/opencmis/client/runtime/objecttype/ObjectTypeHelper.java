@@ -41,6 +41,9 @@ public class ObjectTypeHelper implements Serializable {
     private ObjectType parentType;
 
     public ObjectTypeHelper(Session session, ObjectType objectType) {
+        assert session != null;
+        assert objectType != null;
+
         this.session = session;
         this.objectType = objectType;
     }

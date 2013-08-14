@@ -259,7 +259,7 @@ public abstract class AbstractXMLConverterTest {
      */
     protected String format(byte[] xmlDocument) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setAttribute("indent-number", new Integer(2));
+        tf.setAttribute("indent-number", Integer.valueOf(2));
 
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");

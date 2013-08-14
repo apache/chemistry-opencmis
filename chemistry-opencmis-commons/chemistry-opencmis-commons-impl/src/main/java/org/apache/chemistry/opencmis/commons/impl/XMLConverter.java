@@ -149,7 +149,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XMLConverter {
+public final class XMLConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLConverter.class);
 

@@ -119,6 +119,8 @@ public abstract class AbstractServiceCall implements ServiceCall {
      */
     public boolean sendContentStreamHeaders(ContentStream content, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
+        assert request != null;
+        assert response != null;
 
         // check if Last-Modified header should be set
         if (content instanceof LastModifiedContentStream) {

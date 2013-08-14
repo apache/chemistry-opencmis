@@ -52,6 +52,12 @@ public class DiscoveryService {
     public static class Query extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String statement = getStringParameter(request, Constants.PARAM_STATEMENT);
             if (statement == null || statement.length() == 0) {
@@ -89,6 +95,12 @@ public class DiscoveryService {
     public static class GetContentChanges extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String changeLogToken = getStringParameter(request, PARAM_CHANGE_LOG_TOKEN);
             Boolean includeProperties = getBooleanParameter(request, PARAM_PROPERTIES);

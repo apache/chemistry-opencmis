@@ -35,6 +35,9 @@ public class ItemTypeImpl extends ItemTypeDefinitionImpl implements ItemType {
     private final ObjectTypeHelper helper;
 
     public ItemTypeImpl(Session session, ItemTypeDefinition typeDefinition) {
+        assert session != null;
+        assert typeDefinition != null;
+
         initialize(typeDefinition);
         helper = new ObjectTypeHelper(session, this);
     }

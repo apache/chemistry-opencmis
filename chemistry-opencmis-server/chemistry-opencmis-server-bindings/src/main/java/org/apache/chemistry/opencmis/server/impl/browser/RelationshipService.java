@@ -49,6 +49,12 @@ public class RelationshipService {
     public static class GetObjectRelationships extends AbstractBrowserServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean includeSubRelationshipTypes = getBooleanParameter(request, PARAM_SUB_RELATIONSHIP_TYPES);
