@@ -219,12 +219,12 @@ public class LoremIpsum {
         initializeDictionary(this.dictionary);
     };
 
-    public LoremIpsum(String sample, String[] dictionary) {
+    public LoremIpsum(String sample, String[] newDictionary) {
         this.sample = sample;
         this.dictionary = null;
         generateChains(this.sample);
         generateStatistics(this.sample);
-        initializeDictionary(dictionary);
+        initializeDictionary(newDictionary);
     };
 
     public LoremIpsum(String sample) {

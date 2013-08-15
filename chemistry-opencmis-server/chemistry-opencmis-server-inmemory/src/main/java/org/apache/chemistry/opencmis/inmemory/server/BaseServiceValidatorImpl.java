@@ -41,6 +41,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
 public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
+    protected static final String UNKNOWN_OBJECT_ID = "Unknown object id: ";
+    protected static final String UNKNOWN_REPOSITORY_ID = "Unknown repository id: ";
+    protected static final String OBJECT_ID_CANNOT_BE_NULL = "Object Id cannot be null.";
+    protected static final String REPOSITORY_ID_CANNOT_BE_NULL = "Repository Id cannot be null.";
     protected final StoreManager fStoreManager;
 
     public BaseServiceValidatorImpl(StoreManager sm) {
@@ -60,23 +64,23 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
      */
     protected StoredObject checkStandardParameters(String repositoryId, String objectId) {
         if (null == repositoryId) {
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+            throw new CmisInvalidArgumentException(REPOSITORY_ID_CANNOT_BE_NULL);
         }
 
         if (null == objectId) {
-            throw new CmisInvalidArgumentException("Object Id cannot be null.");
+            throw new CmisInvalidArgumentException(OBJECT_ID_CANNOT_BE_NULL);
         }
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (objStore == null) {
-            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+            throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY_ID + repositoryId);
         }
 
         StoredObject so = objStore.getObjectById(objectId);
 
         if (so == null) {
-            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+            throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
         }
 
         return so;
@@ -84,7 +88,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected StoredObject checkStandardParametersByPath(String repositoryId, String path, String user) {
         if (null == repositoryId) {
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+            throw new CmisInvalidArgumentException(REPOSITORY_ID_CANNOT_BE_NULL);
         }
 
         if (null == path) {
@@ -94,7 +98,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (objStore == null) {
-            throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+            throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY_ID + repositoryId);
         }
 
         StoredObject so = objStore.getObjectByPath(path, user);
@@ -111,7 +115,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         StoredObject so = null;
 
         if (null == repositoryId) {
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+            throw new CmisInvalidArgumentException(REPOSITORY_ID_CANNOT_BE_NULL);
         }
 
         if (null != objectId) {
@@ -119,13 +123,13 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
             if (objStore == null) {
-                throw new CmisObjectNotFoundException("Unknown repository id: " + repositoryId);
+                throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY_ID + repositoryId);
             }
 
             so = objStore.getObjectById(objectId);
 
             if (so == null) {
-                throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+                throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
             }
         }
 
@@ -135,13 +139,13 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     protected StoredObject checkExistingObjectId(ObjectStore objStore, String objectId) {
 
         if (null == objectId) {
-            throw new CmisInvalidArgumentException("Object Id cannot be null.");
+            throw new CmisInvalidArgumentException(OBJECT_ID_CANNOT_BE_NULL);
         }
 
         StoredObject so = objStore.getObjectById(objectId);
 
         if (so == null) {
-            throw new CmisObjectNotFoundException("Unknown object id: " + objectId);
+            throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
         }
 
         return so;
@@ -149,13 +153,13 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
     protected void checkRepositoryId(String repositoryId) {
         if (null == repositoryId) {
-            throw new CmisInvalidArgumentException("Repository Id cannot be null.");
+            throw new CmisInvalidArgumentException(REPOSITORY_ID_CANNOT_BE_NULL);
         }
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         if (objStore == null) {
-            throw new CmisInvalidArgumentException("Unknown repository id: " + repositoryId);
+            throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY_ID + repositoryId);
         }
     }
 

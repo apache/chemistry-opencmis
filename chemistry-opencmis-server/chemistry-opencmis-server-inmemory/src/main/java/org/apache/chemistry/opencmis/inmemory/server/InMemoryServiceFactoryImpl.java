@@ -73,7 +73,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(100);
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(2);
     private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
-    private static CallContext OVERRIDE_CTX;
+    private static CallContext overrideCtx;
 
     private Map<String, String> inMemoryServiceParameters;
     private boolean fUseOverrideCtx = false;
@@ -88,8 +88,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     @Override
     public void init(Map<String, String> parameters) {
         LOG.info("Initializing in-memory repository...");
-
-        System.out.println(parameters);
+        LOG.debug("Init paramaters: " + parameters);
 
         inMemoryServiceParameters = parameters;
         String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
@@ -126,9 +125,11 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         parameters.put(ConfigConstants.DEPLOYMENT_TIME, strDate);
 
-        initStorageManager(parameters);
+        boolean created = initStorageManager(parameters);
 
-        fillRepositoryIfConfigured(parameters);
+        if (created) {
+            fillRepositoryIfConfigured(parameters);
+        }
 
         Long cleanInterval = ConfigurationSettings
                 .getConfigurationValueAsLong(ConfigConstants.CLEAN_REPOSITORY_INTERVAL);
@@ -140,7 +141,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     }
 
     public static void setOverrideCallContext(CallContext ctx) {
-        OVERRIDE_CTX = ctx;
+        overrideCtx = ctx;
     }
 
     @Override
@@ -151,15 +152,15 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         // accessed from everywhere
         // Some unit tests set their own context. So if we find one then we use
         // this one and ignore the provided one. Otherwise we set a new context.
-        if (fUseOverrideCtx && null != OVERRIDE_CTX) {
-            context = OVERRIDE_CTX;
+        if (fUseOverrideCtx && null != overrideCtx) {
+            context = overrideCtx;
         }
 
         InMemoryService inMemoryService = InMemoryServiceContext.getCmisService();
         if (inMemoryService == null) {
             LOG.debug("Creating new InMemoryService instance!");
             CmisServiceWrapper<InMemoryService> wrapperService;
-            inMemoryService = new InMemoryService(inMemoryServiceParameters, storeManager);
+            inMemoryService = new InMemoryService(storeManager);
             wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
                     DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
             InMemoryServiceContext.setWrapperService(wrapperService);
@@ -168,7 +169,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         inMemoryService.setCallContext(context);
 
         LOG.debug("stop getService()");
-        return inMemoryService; // wrapperService;
+        return inMemoryService;
     }
 
     @Override
@@ -204,8 +205,9 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         return storeManager;
     }
 
-    private void initStorageManager(Map<String, String> parameters) {
+    private boolean initStorageManager(Map<String, String> parameters) {
         // initialize in-memory management
+        boolean created = false;
         String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
         if (null == repositoryClassName) {
             repositoryClassName = StoreManagerImpl.class.getName();
@@ -231,6 +233,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             } else {
                 String typeCreatorClassName = parameters.get(ConfigConstants.TYPE_CREATOR_CLASS);
                 storeManager.createAndInitRepository(repositoryId, typeCreatorClassName);
+                created = true;
             }
         }
 
@@ -248,7 +251,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                 LOG.warn("Type Definitions are configured in XML file but type manager cannot create types. Type definitions are ignored.");
             }
         }
-
+        return created;
     }
 
     private void importTypesFromFile(TypeManagerCreatable tmc, String typeDefsFileName) {
@@ -394,8 +397,6 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             }
         }
 
-        // List<String> allAvailableRepositories =
-        // storeManager.getAllRepositoryIds();
         String repositoryId = parameters.get(ConfigConstants.REPOSITORY_ID);
         String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
         String contentKindStr = parameters.get(ConfigConstants.CONTENT_KIND);
@@ -406,7 +407,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             // create an initial temporary service instance to fill the
             // repository
 
-            InMemoryService svc = new InMemoryService(inMemoryServiceParameters, storeManager);
+            InMemoryService svc = new InMemoryService(storeManager);
 
             BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
 
@@ -506,8 +507,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                 // Dump the tree
                 gen.dumpFolder(rootFolderId, "*");
             } catch (Exception e) {
-                LOG.error("Could not create folder hierarchy with documents. " + e);
-                e.printStackTrace();
+                LOG.error("Could not create folder hierarchy with documents. ", e);
             }
             destroy();
         } // if
@@ -517,7 +517,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     class CleanManager {
 
         private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        ScheduledFuture<?> cleanerHandle = null;
+        private ScheduledFuture<?> cleanerHandle = null;
 
         public void startCleanRepositoryJob(long intervalInMinutes) {
 

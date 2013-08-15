@@ -47,7 +47,8 @@ import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
 public class DefaultTypeSystemCreator implements TypeCreator {
-    public static final List<TypeDefinition> singletonTypes = buildTypesList();
+    private static final String BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR = "Builtin InMemory type definition ";
+    public static final List<TypeDefinition> SINGLETON_TYPES = buildTypesList();
     public static final String COMPLEX_TYPE = "ComplexType";
     public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     public static final String VERSIONED_TYPE = "VersionableType";
@@ -62,15 +63,15 @@ public class DefaultTypeSystemCreator implements TypeCreator {
      */
     @Override
 	public List<TypeDefinition> createTypesList() {
-        return singletonTypes;
+        return SINGLETON_TYPES;
     }
 
     public static List<TypeDefinition> getTypesList() {
-        return singletonTypes;
+        return SINGLETON_TYPES;
     }
 
     public static TypeDefinition getTypeById(String typeId) {
-        for (TypeDefinition typeDef : singletonTypes) {
+        for (TypeDefinition typeDef : SINGLETON_TYPES) {
             if (typeDef.getId().equals(typeId)) {
                 return typeDef;
             }
@@ -269,14 +270,6 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             prop9.setDefaultValue(Collections.singletonList("blue"));
             cmisComplexType.addPropertyDefinition(prop9);
 
-            /*
-             * try short form: / PropertyCreationHelper.addElemToPicklist(prop9,
-             * "red"); PropertyCreationHelper.addElemToPicklist(prop9, "green");
-             * PropertyCreationHelper.addElemToPicklist(prop9, "blue");
-             * PropertyCreationHelper.addElemToPicklist(prop9, "black");
-             * PropertyCreationHelper.setDefaultValue(prop9, "blue"); /
-             */
-
             // add type to types collection
             typesList.add(cmisComplexType);
 
@@ -285,17 +278,17 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             cmisDocTypeTopLevel = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisDocumentType().getId());
             cmisDocTypeTopLevel.setId(TOPLEVEL_TYPE);
             cmisDocTypeTopLevel.setDisplayName("Document type with properties, Level 1");
-            cmisDocTypeTopLevel.setDescription("Builtin InMemory type definition " + TOPLEVEL_TYPE);
+            cmisDocTypeTopLevel.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + TOPLEVEL_TYPE);
 
             MutableTypeDefinition cmisDocTypeLevel1;        
             cmisDocTypeLevel1 = typeFactory.createChildTypeDefinition(cmisDocTypeTopLevel, LEVEL1_TYPE);
             cmisDocTypeLevel1.setDisplayName("Document type with inherited properties, Level 2");
-            cmisDocTypeLevel1 .setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
+            cmisDocTypeLevel1 .setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + LEVEL1_TYPE);
 
             MutableTypeDefinition cmisDocTypeLevel2;        
             cmisDocTypeLevel2 = typeFactory.createChildTypeDefinition(cmisDocTypeLevel1, LEVEL2_TYPE);
             cmisDocTypeLevel2.setDisplayName("Document type with inherited properties, Level 3");
-            cmisDocTypeLevel2.setDescription("Builtin InMemory type definition " + LEVEL2_TYPE);
+            cmisDocTypeLevel2.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + LEVEL2_TYPE);
 
             PropertyStringDefinitionImpl propTop = PropertyCreationHelper.createStringDefinition("StringPropTopLevel",
                     "Sample String Property", Updatability.READWRITE);
@@ -319,8 +312,8 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             cmisVersionedType = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisDocumentType().getId());
             cmisVersionedType.setId(VERSIONED_TYPE);
             cmisVersionedType.setDisplayName("Versioned Type");
-            cmisVersionedType.setDescription("Builtin InMemory type definition " + VERSIONED_TYPE);
-            cmisVersionedType.setIsVersionable(true); // make it a versionable type;
+            cmisVersionedType.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + VERSIONED_TYPE);
+            cmisVersionedType.setIsVersionable(true); // make it a versionable type
 
             // create a single String property definition
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition("VersionedStringProp",
@@ -336,7 +329,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             itemType = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisItemType().getId());
             itemType.setId(ITEM_TYPE);
             itemType.setDisplayName("MyItemType");
-            itemType.setDescription("Builtin InMemory type definition " + ITEM_TYPE);
+            itemType.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + ITEM_TYPE);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(itemType);
 
             // create a single String property definition
@@ -352,7 +345,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisSecondaryType().getId());
             cmisSecondaryType.setId(SECONDARY_TYPE_ID);
             cmisSecondaryType.setDisplayName("MySecondaryType");
-            cmisSecondaryType.setDescription("Builtin InMemory type definition " + SECONDARY_TYPE_ID);
+            cmisSecondaryType.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + SECONDARY_TYPE_ID);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
             cmisSecondaryType.setIsFileable(false);
             

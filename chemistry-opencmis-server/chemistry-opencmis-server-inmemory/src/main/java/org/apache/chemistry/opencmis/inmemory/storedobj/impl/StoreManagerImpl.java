@@ -50,6 +50,8 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -61,7 +63,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.inmemory.RepositoryInfoCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
@@ -79,13 +80,12 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  */
 public class StoreManagerImpl implements StoreManager {
 
+    private static final String UNKNOWN_REPOSITORY = "Unknown repository ";
     private static final String CMIS_READ = "cmis:read";
     private static final String CMIS_WRITE = "cmis:write";
     private static final String CMIS_ALL = "cmis:all";
 
-    protected final BindingsObjectFactory fObjectFactory;
-    protected RepositoryInfo fRepositoryInfo;
-    protected CmisServiceValidator validator;
+    private final BindingsObjectFactory fObjectFactory;
     
     private static final String OPENCMIS_VERSION;
     private static final String OPENCMIS_SERVER;
@@ -138,7 +138,7 @@ public class StoreManagerImpl implements StoreManager {
 	public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
         if (fMapRepositoryToObjectStore.containsKey(repositoryId)
                 || fMapRepositoryToTypeManager.containsKey(repositoryId)) {
-            throw new RuntimeException("Cannot add repository, repository " + repositoryId + " already exists.");
+            throw new CmisInvalidArgumentException("Cannot add repository, repository " + repositoryId + " already exists.");
         }
 
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
@@ -167,7 +167,7 @@ public class StoreManagerImpl implements StoreManager {
 	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY + repositoryId);
         }
 
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
@@ -185,10 +185,11 @@ public class StoreManagerImpl implements StoreManager {
 
     @Override
 	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
-            int depth) {
+            int depthParam) {
+        int depth = depthParam;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
@@ -212,7 +213,7 @@ public class StoreManagerImpl implements StoreManager {
             boolean includePropertyDefinitions) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
         Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId, includePropertyDefinitions);
         return typeColl;
@@ -223,7 +224,7 @@ public class StoreManagerImpl implements StoreManager {
         List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
         
@@ -268,48 +269,16 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         RepositoryInfo repoInfo = createRepositoryInfo(repositoryId);
-
         return repoInfo;
     }
 
     public void clearTypeSystem(String repositoryId) {
         TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+            throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
 
         typeManager.clearTypeSystem();
-    }
-
-    public void initRepositoryInfo(String repositoryId, String repoInfoCreatorClassName) {
-        RepositoryInfoCreator repoCreator = null;
-
-        if (repoInfoCreatorClassName != null) {
-            Object obj = null;
-            try {
-                obj = Class.forName(repoInfoCreatorClassName).newInstance();
-            } catch (InstantiationException e) {
-                throw new RuntimeException(
-                        "Illegal class to create type system, must implement RepositoryInfoCreator interface.", e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                        "Illegal class to create type system, must implement RepositoryInfoCreator interface.", e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(
-                        "Illegal class to create type system, must implement RepositoryInfoCreator interface.", e);
-            }
-
-            if (obj instanceof RepositoryInfoCreator) {
-                repoCreator = (RepositoryInfoCreator) obj;
-                fRepositoryInfo = repoCreator.createRepositoryInfo();
-            } else {
-                throw new RuntimeException(
-                        "Illegal class to create repository info, must implement RepositoryInfoCreator interface.");
-            }
-        } else {
-            // create a default repository info
-            createRepositoryInfo(repositoryId);
-        }
     }
 
     public static List<TypeDefinition> initTypeSystem(String typeCreatorClassName) {
@@ -323,20 +292,20 @@ public class StoreManagerImpl implements StoreManager {
             try {
                 obj = Class.forName(typeCreatorClassName).newInstance();
             } catch (InstantiationException e) {
-                throw new RuntimeException(
+                throw new CmisRuntimeException(
                         "Illegal class to create type system, must implement TypeCreator interface.", e);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(
+                throw new CmisRuntimeException(
                         "Illegal class to create type system, must implement TypeCreator interface.", e);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(
+                throw new CmisRuntimeException(
                         "Illegal class to create type system, must implement TypeCreator interface.", e);
             }
 
             if (obj instanceof TypeCreator) {
                 typeCreator = (TypeCreator) obj;
             } else {
-                throw new RuntimeException("Illegal class to create type system, must implement TypeCreator interface.");
+                throw new CmisRuntimeException("Illegal class to create type system, must implement TypeCreator interface.");
             }
 
             // retrieve the list of available types from the configured class.
@@ -352,7 +321,7 @@ public class StoreManagerImpl implements StoreManager {
         List<TypeDefinition> typeDefs = null;
         TypeManagerImpl typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
-            throw new RuntimeException("Unknown repository " + repositoryId);
+            throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY + repositoryId);
         }
 
         if (null != typeCreatorClassName) {
@@ -516,7 +485,6 @@ public class StoreManagerImpl implements StoreManager {
 
         repoInfo.setCapabilities(caps);
 
-        fRepositoryInfo = repoInfo;
         return repoInfo;
     }
 
@@ -600,9 +568,6 @@ public class StoreManagerImpl implements StoreManager {
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 
-        // LOG.debug("Query result, number of matching objects: " +
-        // objList.getNumItems());
         return objList;
     }
-
 }

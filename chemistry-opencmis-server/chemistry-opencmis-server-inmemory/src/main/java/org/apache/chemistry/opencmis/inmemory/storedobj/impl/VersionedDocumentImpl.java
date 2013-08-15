@@ -72,7 +72,7 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
             // checked-out. In AtomPub binding cancelCheckout
             // mapped to a deleteVersion() call!
             DocumentVersion pwc = getPwc();
-            if (pwc == version) {
+            if (pwc == version) { //NOSONAR
                 cancelCheckOut(false); // note object is already deleted from
                                        // map in ObjectStore
                 return !fVersions.isEmpty();
@@ -236,6 +236,8 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
             if (!getName().equals(nameLatestVer)) {
                 setName(nameLatestVer);
             }
+        }
+        if (deleteInObjectStore) {
         }
 
     }

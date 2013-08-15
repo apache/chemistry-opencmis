@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
@@ -45,21 +46,20 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion, MultiFiling {
 
-    private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     private ContentStreamDataImpl fContent;
-    private final VersionedDocumentImpl fContainer; // the document this version belongs
-    // to
+    private final VersionedDocumentImpl fContainer; // the document this version belongs to
     private String fComment; // checkin comment
-    boolean fIsMajor;
-    boolean fIsPwc; // true if this is the PWC
+    private boolean fIsMajor;
+    private boolean fIsPwc; // true if this is the PWC
 
     public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
             VersioningState verState) {
         super();
         setRepositoryId(repositoryId);
         fContainer = (VersionedDocumentImpl) container;
-        setContent(content, false);
+        setContentIntern(content, false);
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
         fProperties = new HashMap<String, PropertyData<?>>();
@@ -74,6 +74,10 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 
     @Override
 	public void setContent(ContentStream content, boolean mustPersist) {
+        setContentIntern(content, mustPersist);
+    }
+    
+    private void setContentIntern(ContentStream content, boolean mustPersist) {
         if (null == content) {
             fContent = null;
         } else {
@@ -84,8 +88,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             try {
                 fContent.setContent(content.getStream());
             } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed to get content from InputStream", e);
+                throw new CmisRuntimeException("Failed to get content from InputStream", e);
             }
         }
     }
@@ -100,7 +103,6 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             try {
                 fContent.appendContent(content.getStream());
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new CmisStorageException("Failed to append content: IO Exception", e);
             }
         }

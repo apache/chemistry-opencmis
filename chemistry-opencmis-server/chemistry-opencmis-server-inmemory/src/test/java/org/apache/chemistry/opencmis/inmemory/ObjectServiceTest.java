@@ -210,7 +210,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createDocumentNoCatch("/(%#$aöÜ", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            createDocumentNoCatch("/(%#$a����", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -242,7 +242,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createFolderNoCatch("/(%#$���������������������������", fRootFolderId, FOLDER_TYPE_ID);
+            createFolderNoCatch("/(%#$���������������������������������������������������������������������������������", fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -929,10 +929,10 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.info("starting testGetObjectByPath() with specal chars...");
             log.info("  creating object");
 
-            String docID = createDocument("Hänschen", fRootFolderId, false);
+            String docID = createDocument("H��nschen", fRootFolderId, false);
             log.info("  getting object by path with special chars");
             try {
-                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/Hänschen", "*", false, IncludeRelationships.NONE, null, false,
+                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H��nschen", "*", false, IncludeRelationships.NONE, null, false,
                         false, null);
                 assertNotNull(res);
                assertNotNull(res.getId());
@@ -987,13 +987,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            ContentStream contentStream = createContent(MAX_SIZE + 1);
+            ContentStream contentStream = createContent(MAX_SIZE + 1, MAX_SIZE, null);
             Properties props = createDocumentProperties("TestMaxContentSize", DOCUMENT_TYPE_ID);
             fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, null,
                     null, null, null);
             fail("createDocument with exceeded content size should fail.");
         } catch (CmisInvalidArgumentException e) {
-            log.debug("createDocument with exceeded failed as excpected.");
+            log.debug("createDocument with exceeded failed as expected.");
         } catch (Exception e1) {
             log.debug("createDocument with exceeded failed with wrong exception (expected CmisInvalidArgumentException, got "
                     + e1.getClass().getName() + ").");

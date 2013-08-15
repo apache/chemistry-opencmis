@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -48,12 +47,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InMemoryService extends AbstractCmisService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryService.class.getName());
 
     private final StoreManager storeManager; // singleton root of everything
 
@@ -71,13 +66,13 @@ public class InMemoryService extends AbstractCmisService {
         return storeManager;
     }
 
-    public InMemoryService(Map<String, String> parameters, StoreManager sm) {
+    public InMemoryService(StoreManager sm) {
         storeManager = sm;
         fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
         fNavSvc = new InMemoryNavigationServiceImpl(storeManager);
         fObjSvc = new InMemoryObjectServiceImpl(storeManager);
         fVerSvc = new InMemoryVersioningServiceImpl(storeManager, fObjSvc);
-        fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager, fRepSvc, fNavSvc);
+        fDisSvc = new InMemoryDiscoveryServiceImpl(storeManager);
         fMultiSvc = new InMemoryMultiFilingServiceImpl(storeManager);
         fRelSvc = new InMemoryRelationshipServiceImpl(storeManager, fRepSvc);
         fPolSvc = new InMemoryPolicyServiceImpl(storeManager);

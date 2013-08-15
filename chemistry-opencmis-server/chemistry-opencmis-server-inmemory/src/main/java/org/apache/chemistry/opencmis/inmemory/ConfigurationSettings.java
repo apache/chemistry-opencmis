@@ -20,16 +20,17 @@ package org.apache.chemistry.opencmis.inmemory;
 
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigurationSettings {
+public final class ConfigurationSettings {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationSettings.class.getName());
 
     private static ConfigurationSettings singleInstance;
 
-    final Map<String, String> parameters;
+    private final Map<String, String> parameters;
 
     private ConfigurationSettings(Map<String, String> parameters) {
         this.parameters = parameters;
@@ -42,7 +43,7 @@ public class ConfigurationSettings {
     public static String getConfigurationValueAsString(String key) {
         if (null == singleInstance) {
             LOG.error("ConfigurationSettings are not initialized. Initialize before reading values");
-            throw new RuntimeException("ConfigurationSettings are not initialized.");
+            throw new CmisRuntimeException("ConfigurationSettings are not initialized.");
         }
         return singleInstance.getConfigurationValueIntern(key);
     }

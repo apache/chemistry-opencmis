@@ -219,7 +219,6 @@ public class InMemoryQueryProcessor {
                         result = ((Comparable<Object>) propVal1).compareTo(propVal2);
                     }
                 } else {
-                    // String funcName = ((FunctionReference) sel).getName();
                     // evaluate function here, currently ignore
                     result = 0;
                 }
@@ -245,9 +244,7 @@ public class InMemoryQueryProcessor {
      *            object stored in the in-memory repository
      */
     private void match(StoredObject so, String user, boolean searchAllVersions) {
-        // log.debug("checkMatch() for object: " + so.getId());
         // first check if type is matching...
-
         // as we don't support joins take first type
         String queryName = queryObj.getTypes().values().iterator().next(); 
 
@@ -303,8 +300,8 @@ public class InMemoryQueryProcessor {
 
         @Override
         public Boolean walkNot(Tree opNode, Tree node) {
-            boolean matches = walkPredicate(node);
-            return !matches;
+            boolean hasMatched = walkPredicate(node);
+            return !hasMatched;
         }
 
         @Override
@@ -551,8 +548,6 @@ public class InMemoryQueryProcessor {
         protected Integer compareTo(Tree leftChild, Tree rightChild) {
             Object rVal = walkExpr(rightChild);
 
-            // log.debug("retrieve node from where: " +
-            // System.identityHashCode(leftChild) + " is " + leftChild);
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             Object val = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);

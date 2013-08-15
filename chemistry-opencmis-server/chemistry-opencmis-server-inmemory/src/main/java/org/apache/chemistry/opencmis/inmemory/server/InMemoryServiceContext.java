@@ -25,13 +25,13 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
  * Helper class to associate context information with each incoming call
  *
  */
-public class InMemoryServiceContext {
+public final class InMemoryServiceContext {
     
     private static class ContextHolder {
         private CmisServiceWrapper<InMemoryService> wrapper;
         private CallContext callContext;
 
-        ContextHolder(CmisServiceWrapper<InMemoryService> wrapper) {
+        private ContextHolder(CmisServiceWrapper<InMemoryService> wrapper) {
             this.wrapper = wrapper;
         }
 

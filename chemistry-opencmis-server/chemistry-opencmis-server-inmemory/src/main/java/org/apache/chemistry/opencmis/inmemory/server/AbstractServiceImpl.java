@@ -22,6 +22,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -94,7 +95,7 @@ public class AbstractServiceImpl {
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
         if (typeDefC == null) {
-            throw new RuntimeException("Cannot create object, a type with id " + typeId + " is unknown");
+            throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
         }
 
         return typeDefC.getTypeDefinition();
@@ -151,8 +152,7 @@ public class AbstractServiceImpl {
 
     protected void checkIsVersionableObject(StoredObject so) {
         if (!(so instanceof VersionedDocument || so instanceof DocumentVersion)) {
-            throw new RuntimeException(
-                    "Object is of a versionable type but not instance of VersionedDocument or DocumentVersion.");
+            throw new CmisInvalidArgumentException("Object " + so.getId() + " must of a versionable type.");
         }
     }
 

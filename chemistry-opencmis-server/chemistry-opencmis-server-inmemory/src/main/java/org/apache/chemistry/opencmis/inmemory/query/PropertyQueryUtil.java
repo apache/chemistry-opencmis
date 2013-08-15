@@ -29,13 +29,15 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Policy;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 public class PropertyQueryUtil {
+    
+    private PropertyQueryUtil() {        
+    }
     
     public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd) {
         ContentStream content = null;
@@ -74,7 +76,7 @@ public class PropertyQueryUtil {
             return so.getTypeId();
         }
         if (propertyId.equals(PropertyIds.BASE_TYPE_ID)) {
-            return null; // TOODO: return so.getBaseTypeId());
+            return null; // base type id not available from so;
         }
         if (propertyId.equals(PropertyIds.CREATED_BY)) {
             return so.getCreatedBy();

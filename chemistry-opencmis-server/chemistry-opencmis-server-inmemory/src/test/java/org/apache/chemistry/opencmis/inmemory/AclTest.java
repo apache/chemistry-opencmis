@@ -262,7 +262,12 @@ public class AclTest {
     @Test
     public void testCloneAcl() {
         InMemoryAcl acl = createDefaultAcl();
-        InMemoryAcl acl2 = acl.clone();
+        InMemoryAcl acl2 = null;
+        try {
+            acl2 = acl.clone();
+        } catch (CloneNotSupportedException e) {
+            fail("Clone not supported");
+        }
         assertFalse(acl == acl2);
         assertEquals(acl, acl2);
     }

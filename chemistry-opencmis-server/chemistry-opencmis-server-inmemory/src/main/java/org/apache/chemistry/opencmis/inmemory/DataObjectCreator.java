@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -55,9 +54,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  * @author Jens A collection of utility functions to fill the data objects used
  *         as return values for the service object calls
  */
-public class DataObjectCreator {
-
-    public static BigInteger MINUS_ONE = BigInteger.valueOf(-1L);
+public final class DataObjectCreator {
 
     // Utility class
     private DataObjectCreator() {
@@ -170,7 +167,6 @@ public class DataObjectCreator {
     public static Acl fillACL(StoredObject so) {
         AccessControlListImpl acl = new AccessControlListImpl();
         List<Ace> aces = new ArrayList<Ace>();
-        // TODO to be completed if ACLs are implemented
         acl.setAces(aces);
         return acl;
     }

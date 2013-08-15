@@ -31,15 +31,7 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.FolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.ItemTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PolicyTypeDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyHtmlDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyIdDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
-import org.apache.chemistry.opencmis.commons.definitions.PropertyUriDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.SecondaryTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -58,14 +50,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefini
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
@@ -82,7 +66,10 @@ public class TypeValidator {
     
     private static final Object CMIS_USER = "cmis:user";
 
-	public static void checkType(TypeManager tm, TypeDefinition td) {
+	private TypeValidator() {	    
+	}
+	
+    public static void checkType(TypeManager tm, TypeDefinition td) {
 
 	    if(null == td) {
 	        throw new CmisInvalidArgumentException("Cannot add type, because the type defintion is null.");  
@@ -101,7 +88,7 @@ public class TypeValidator {
         checkTypeId(tm, td.getId());
         checkTypeQueryName(tm, td.getQueryName());
         checkTypeLocalName(tm, td.getLocalName());
-        checkBaseAndParentType(tm, td);
+        checkBaseAndParentType(td);
         
         if (null != td.getPropertyDefinitions())
             TypeValidator.checkProperties(tm, td.getPropertyDefinitions().values());        
@@ -405,7 +392,7 @@ public class TypeValidator {
         }
     }
 
-    private static void checkBaseAndParentType(TypeManager tm, TypeDefinition td) {
+    private static void checkBaseAndParentType(TypeDefinition td) {
         if (null == td.getBaseTypeId()) 
             throw new CmisInvalidArgumentException("You cannot create a type without a base type id: " + td.getId());
         if (null == td.getParentTypeId()) 

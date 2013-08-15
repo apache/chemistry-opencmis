@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +28,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jens
  */
-public class StoreManagerFactory {
+public final class StoreManagerFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(StoreManagerFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StoreManagerFactory.class);
 
     private StoreManagerFactory() {
     }
@@ -41,26 +42,23 @@ public class StoreManagerFactory {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
             String msg = "Failed to create StoredObjectCreator, class " + className + " does not exist.";
-            log.error(msg, e);
-            e.printStackTrace();
-            throw new RuntimeException(msg, e);
+            LOG.error(msg, e);
+            throw new CmisRuntimeException(msg, e);
         }
 
         Object obj = null;
         try {
             obj = clazz.newInstance();
         } catch (InstantiationException e) {
-            log.error("Failed to create StoredObjectCreator from class " + className, e);
-            e.printStackTrace();
+            LOG.error("Failed to create StoredObjectCreator from class " + className, e);
         } catch (IllegalAccessException e) {
-            log.error("Failed to create StoredObjectCreator from class " + className, e);
-            e.printStackTrace();
+            LOG.error("Failed to create StoredObjectCreator from class " + className, e);
         }
 
         if (obj instanceof StoreManager) {
             return (StoreManager) obj;
         } else {
-            log.error("Failed to create StoredObjectCreator, class " + className
+            LOG.error("Failed to create StoredObjectCreator, class " + className
                     + " does not implement interface StoredObjectCreator");
             return null;
         }

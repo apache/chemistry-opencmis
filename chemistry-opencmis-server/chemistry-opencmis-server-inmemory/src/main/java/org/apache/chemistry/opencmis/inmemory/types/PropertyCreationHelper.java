@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -86,7 +87,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class PropertyCreationHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(PropertyCreationHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyCreationHelper.class);
 
     private PropertyCreationHelper() {
     }
@@ -225,7 +226,7 @@ public final class PropertyCreationHelper {
         }
         if (FilterParser.isContainedInFilter(PropertyIds.BASE_TYPE_ID, requestedIds)) {
             if (td == null) {
-                log.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
+                LOG.warn("getPropertiesFromObject(), cannot get type definition, a type with id " + typeId
                         + " is unknown");
                 return null;
             } else {
@@ -349,12 +350,7 @@ public final class PropertyCreationHelper {
                 if (!funcEntry.getKey().equals("SCORE"))
                     queryName = funcEntry.getKey();
 
-                // PropertyDecimal pd =
-                // objFactory.createPropertyDecimalData(queryName,
-                // BigDecimal.valueOf(1.0));
-                // does not give me an impl class, so directly use it
                 PropertyDecimalImpl pd = new PropertyDecimalImpl();
-
                 // fixed dummy value
                 pd.setValue(BigDecimal.valueOf(1.0));
                 pd.setId(queryName);
@@ -467,8 +463,6 @@ public final class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            // AllowableActions allowableActions =
-            // DataObjectCreator.fillAllowableActions(so, user);
             AllowableActions allowableActions = so.getAllowableActions(user);
             od.setAllowableActions(allowableActions);
         }
@@ -602,7 +596,7 @@ public final class PropertyCreationHelper {
             clone.setValues(((PropertyUriImpl) prop).getValues());
             ad = clone;
         } else {
-            throw new RuntimeException("Unknown property type: " + prop.getClass());
+            throw new CmisRuntimeException("Unknown property type: " + prop.getClass());
         }
 
         ad.setDisplayName(prop.getDisplayName());

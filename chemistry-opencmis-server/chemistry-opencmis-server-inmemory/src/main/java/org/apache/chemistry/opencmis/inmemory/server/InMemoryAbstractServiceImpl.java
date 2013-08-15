@@ -50,7 +50,6 @@ public class InMemoryAbstractServiceImpl {
         this.fStoreManager = storeManager;
         this.validator = validator;
         this.fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
-
     }
 
     protected InMemoryAbstractServiceImpl(StoreManager storeManager) {

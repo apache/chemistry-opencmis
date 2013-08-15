@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-public class ConfigConstants {
+public final class ConfigConstants {
     public static final String REPOSITORY_ID = "InMemoryServer.RepositoryId";
     public static final String TYPE_XML = "InMemoryServer.TypeDefinitionsFile";
     public static final String TYPE_CREATOR_CLASS = "InMemoryServer.TypesCreatorClass";

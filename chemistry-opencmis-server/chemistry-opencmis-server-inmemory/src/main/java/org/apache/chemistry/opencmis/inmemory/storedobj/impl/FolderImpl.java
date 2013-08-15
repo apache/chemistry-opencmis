@@ -39,13 +39,12 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderImpl extends StoredObjectImpl implements Folder {
     private static final Logger LOG = LoggerFactory.getLogger(FilingImpl.class.getName());
-    protected String parentId;
+    private String parentId;
     
     public FolderImpl() {
         super();
@@ -76,10 +75,6 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
                     PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, allowedChildObjects));
         }
 
-//        if (FilterParser.isContainedInFilter(PropertyIds.PATH, requestedIds)) {
-//            String path = getPath();
-//            properties.put(PropertyIds.PATH, objFactory.createPropertyStringData(PropertyIds.PATH, path));
-//        }
     }
 
     @Override

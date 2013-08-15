@@ -28,16 +28,18 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 
 public class InMemoryAce {
 
+    private static final String ANONYMOUS = "anonymous";
+    private static final String ANYONE = "anyone";
     private final String principalId;    
     private Permission permission;
-    private static InMemoryAce DEFAULT_ACE = new InMemoryAce(InMemoryAce.getAnyoneUser(), Permission.ALL);
+    private static final InMemoryAce DEFAULT_ACE = new InMemoryAce(InMemoryAce.getAnyoneUser(), Permission.ALL);
     
     public static final String getAnyoneUser() {
-        return "anyone";
+        return ANYONE;
     }
 
     public static final String getAnonymousUser() {
-        return "anonymous";
+        return ANONYMOUS;
     }
     
     public static final InMemoryAce getDefaultAce() {

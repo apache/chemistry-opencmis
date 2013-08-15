@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -97,7 +98,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     /**
      * Simple id generator that uses just an integer
      */
-    private static int NEXT_UNUSED_ID = 100;
+    private static int nextUnusedId = 100;
 
     /**
      * a concurrent HashMap as core element to hold all objects in the
@@ -115,7 +116,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     private final Lock fLock = new ReentrantLock();
 
     final String fRepositoryId;
-    FolderImpl fRootFolder = null;
+    private FolderImpl fRootFolder = null;
 
     public ObjectStoreImpl(String repositoryId) {
         fRepositoryId = repositoryId;
@@ -123,7 +124,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private static synchronized Integer getNextId() {
-        return NEXT_UNUSED_ID++;
+        return nextUnusedId++;
     }
 
     private synchronized Integer getNextAclId() {
@@ -179,7 +180,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         StoredObject obj = fStoredObjectMap.get(objectId);
 
         if (null == obj) {
-            throw new RuntimeException("Cannot delete object with id  " + objectId + ". Object does not exist.");
+            throw new CmisObjectNotFoundException("Cannot delete object with id  " + objectId + ". Object does not exist.");
         }
 
         if (obj instanceof FolderImpl) {
@@ -596,17 +597,13 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     @Override
-    public ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user, boolean usePwc) {
+    public ChildrenResult getChildren(Folder folder, int maxItemsParam, int skipCountParam, String user, boolean usePwc) {
         List<Fileable> children = getChildren(folder, user, usePwc);
         sortFolderList(children);
 
-        if (maxItems < 0) {
-            maxItems = children.size();
-        }
-        if (skipCount < 0) {
-            skipCount = 0;
-        }
-
+        int maxItems = maxItemsParam < 0 ? children.size() : maxItemsParam;
+        int skipCount = skipCountParam < 0 ? 0 : skipCountParam;
+        
         int from = Math.min(skipCount, children.size());
         int to = Math.min(maxItems + from, children.size());
         int noItems = children.size();

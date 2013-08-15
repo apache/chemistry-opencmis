@@ -30,12 +30,14 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -49,15 +51,8 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
     
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDiscoveryServiceImpl.class);
 
-    final InMemoryNavigationServiceImpl fNavigationService; // real implementation of
-    // the service
-    final InMemoryRepositoryServiceImpl fRepositoryService;
-
-    public InMemoryDiscoveryServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc,
-            InMemoryNavigationServiceImpl navSvc) {
+    public InMemoryDiscoveryServiceImpl(StoreManager storeManager) {
         super(storeManager);
-        fNavigationService = navSvc;
-        fRepositoryService = repSvc;
     }
 
     public ObjectList getContentChanges(CallContext context, String repositoryId, Holder<String> changeLogToken,
@@ -82,8 +77,9 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         changeEventInfo.setChangeTime(new GregorianCalendar());
         odImpl.setChangeEventInfo(changeEventInfo);
         if (includePolicyIds != null && includePolicyIds) {
-            // TODO set policies
-            // odImpl.setPolicyIds(policyIds)
+            PolicyIdList policies = new PolicyIdListImpl();
+            // TODO fill list
+            odImpl.setPolicyIds(policies);
         }
         lod.add(odImpl);
 

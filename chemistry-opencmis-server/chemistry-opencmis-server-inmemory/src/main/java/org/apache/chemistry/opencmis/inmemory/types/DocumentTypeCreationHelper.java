@@ -43,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
@@ -58,7 +59,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefin
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
-public class DocumentTypeCreationHelper {
+public final class DocumentTypeCreationHelper {
     
     public static class InMemoryDocumentType extends DocumentTypeDefinitionImpl {
 
@@ -168,7 +169,7 @@ public class DocumentTypeCreationHelper {
         }
     }
 
-    private static final List<TypeDefinition> defaultTypes = createCmisDefaultTypes();
+    private static final List<TypeDefinition> DEFAULT_TYPES = createCmisDefaultTypes();
     private static TypeDefinitionFactory typeFactory;
     private static MutableDocumentTypeDefinition cmisTypeDoc;
     private static MutableFolderTypeDefinition cmisTypeFolder;
@@ -240,12 +241,12 @@ public class DocumentTypeCreationHelper {
 
     public static List<TypeDefinition> createMapWithDefaultTypes() {
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
-        typesList.addAll(defaultTypes);
+        typesList.addAll(DEFAULT_TYPES);
         return typesList;
     }
 
     public static final List<TypeDefinition> getDefaultTypes() {
-        return defaultTypes;
+        return DEFAULT_TYPES;
     }
     
     private static void addPropertyDefinition(PropertyDefinition<?> propertyDefinition)  {
@@ -284,43 +285,43 @@ public class DocumentTypeCreationHelper {
     }
     
     private static List<TypeDefinition> createCmisDefaultTypes() {
-        TypeDefinitionFactory typeFactory = getTypeDefinitionFactory();
+        TypeDefinitionFactory typeFactoryLocal = getTypeDefinitionFactory();
         
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         // create root types:
         try {
-            cmisTypeDoc = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypeDoc = typeFactoryLocal.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeDoc);
             cmisTypeDoc.setTypeMutability(getBaseTypeMutability());
             cmisTypeDoc.setContentStreamAllowed(ContentStreamAllowed.ALLOWED);
             cmisTypeDoc.setIsVersionable(false);
             typesList.add(cmisTypeDoc);
 
-            cmisTypeFolder = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypeFolder = typeFactoryLocal.createFolderTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeFolder);
             cmisTypeFolder.setTypeMutability(getBaseTypeMutability());
             typesList.add(cmisTypeFolder);
             
-            cmisTypeRel = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypeRel = typeFactoryLocal.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeRel);
             cmisTypeRel.setTypeMutability(getBaseTypeMutability());
             cmisTypeRel.setIsFileable(false);
             typesList.add(cmisTypeRel);
 
-            cmisTypePolicy = typeFactory.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypePolicy = typeFactoryLocal.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypePolicy);
             cmisTypePolicy.setTypeMutability(getBaseTypeMutability());
             cmisTypePolicy.setIsFileable(false);
             typesList.add(cmisTypePolicy);
             
-            cmisTypeItem = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypeItem = typeFactoryLocal.createItemTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeItem);
             cmisTypeItem.setTypeMutability(getBaseTypeMutability());
             cmisTypeItem.setIsFileable(true);
             typesList.add(cmisTypeItem);
             
-            cmisTypeSecondary = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, null);
+            cmisTypeSecondary = typeFactoryLocal.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeSecondary);
             cmisTypeSecondary.setTypeMutability(getBaseTypeMutability());
             cmisTypeSecondary.setIsFileable(false);
@@ -338,7 +339,7 @@ public class DocumentTypeCreationHelper {
             typeFactory.setDefaultControllableAcl(true);
             typeFactory.setDefaultControllablePolicy(true);
             typeFactory.setDefaultNamespace("http://apache.org");
-            //        typeFactory.setDefaultIsFulltextIndexed(false);
+            typeFactory.setDefaultIsFulltextIndexed(false);
             typeFactory.setDefaultQueryable(true);
             TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
             typeMutability.setCanCreate(true);
@@ -516,23 +517,13 @@ public class DocumentTypeCreationHelper {
         propId = PropertyCreationHelper.createIdDefinition(PropertyIds.TARGET_ID, "Target Id", Updatability.READWRITE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
-        
-//        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.,
-//                "allowedSourceTypes", Updatability.READWRITE);
-//        propId.setIsRequired(false);
-//        propertyDefinitions.put(propId.getId(), propId);
-//        
-//        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.,
-//                "allowedTargetTypes", Updatability.READWRITE);
-//        propId.setIsRequired(false);
-//        propertyDefinitions.put(propId.getId(), propId);
     }
 
     public static void mergePropertyDefinitions(Map<String, PropertyDefinition<?>> existingPpropertyDefinitions,
             Map<String, PropertyDefinition<?>> newPropertyDefinitions) {
         for (String propId : newPropertyDefinitions.keySet()) {
             if (existingPpropertyDefinitions.containsKey(propId)) {
-                throw new RuntimeException("You can't set a property with id " + propId
+                throw new CmisInvalidArgumentException("You can't set a property with id " + propId
                         + ". This property id already exists already or exists in supertype");
             }
         }

@@ -91,19 +91,6 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
      * 
      * @see
      * org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl
-     * #checkRepositoryId(java.lang.String)
-     */
-    @Override
-    protected void checkRepositoryId(String repositoryId) {
-
-        super.checkRepositoryId(repositoryId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl
      * #checkParams(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
@@ -677,8 +664,6 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             ExtensionsData extension) {
 
         StoredObject so = super.cancelCheckOut(context, repositoryId, objectId, extension);
-        // StoredObject container = so instanceof DocumentVersion ?
-        // ((DocumentVersion)so).getParentDocument() : so;
         checkWriteAccess(repositoryId, context.getUsername(), so);
         return so;
     }
@@ -697,8 +682,6 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             Acl removeAces, List<String> policyIds, ExtensionsData extension) {
 
         StoredObject so = super.checkIn(context, repositoryId, objectId, addAces, removeAces, policyIds, extension);
-        // StoredObject container = so instanceof DocumentVersion ?
-        // ((DocumentVersion)so).getParentDocument() : so;
 
         if (null != addAces || null != removeAces)
             throw new CmisInvalidArgumentException(

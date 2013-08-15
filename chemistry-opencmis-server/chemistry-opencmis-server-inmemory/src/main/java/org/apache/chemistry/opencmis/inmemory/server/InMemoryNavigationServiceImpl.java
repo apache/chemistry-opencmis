@@ -330,9 +330,6 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean includePathSegments, int level, int maxLevels, boolean folderOnly, ObjectInfoHandler objectInfos,
             String user) {
 
-        // log.info("getDescendantsIntern: " + folderId + ", in level " + level
-        // + ", max levels " + maxLevels);
-
         List<ObjectInFolderContainer> childrenOfFolderId = null;
         if (maxLevels == -1 || level < maxLevels) {
             String orderBy = PropertyIds.NAME;
@@ -411,7 +408,6 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         parent.setRelationships(DataObjectCreator.getRelationships(tm, objStore, includeRelationships, parentFolder, user));
         
         if (includeAllowableActions != null && includeAllowableActions) {
-            //  AllowableActions allowableActions = DataObjectCreator.fillAllowableActions(spo, user);
           	AllowableActions allowableActions = parentFolder.getAllowableActions(user);
           	parent.setAllowableActions(allowableActions);
           }

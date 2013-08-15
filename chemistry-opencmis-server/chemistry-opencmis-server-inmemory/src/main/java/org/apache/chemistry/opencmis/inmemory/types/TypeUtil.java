@@ -52,6 +52,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefin
 
 public final class TypeUtil {
     
+    private TypeUtil() {        
+    }
+    
     public static TypeDefinition cloneType(TypeDefinition type) {
         if (type instanceof DocumentTypeDefinition)
             return cloneTypeDoc((DocumentTypeDefinition) type);

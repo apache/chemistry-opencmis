@@ -32,13 +32,13 @@ public class InMemoryAcl implements Cloneable{
     private List<InMemoryAce> acl;
     private int id;
     @SuppressWarnings("serial")
-    private static InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(InMemoryAce.getDefaultAce()); }} );
+    private static final InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(InMemoryAce.getDefaultAce()); }} );
     private static class AceComparator<T extends InMemoryAce> implements Comparator<T> {
 
         @Override
 		public int compare(T o1, T o2) {
             if (null == o1 || null == o2) {
-                if (o1 == o2)
+                if (o1 == o2) //NOSONAR
                     return 0;
                 else if (o1 == null)
                     return 1;
@@ -51,7 +51,7 @@ public class InMemoryAcl implements Cloneable{
         
     };
     
-    private static Comparator<? super InMemoryAce> COMP = new AceComparator<InMemoryAce>();
+    private static final Comparator<? super InMemoryAce> COMP = new AceComparator<InMemoryAce>();
     
     public static InMemoryAcl createFromCommonsAcl(Acl commonsAcl) {
         InMemoryAcl acl = new InMemoryAcl();
@@ -224,7 +224,7 @@ public class InMemoryAcl implements Cloneable{
     }
 
     @Override
-	public InMemoryAcl clone() {
+	public InMemoryAcl clone() throws CloneNotSupportedException {
         InMemoryAcl newAcl = new InMemoryAcl(acl);
         return newAcl; 
     }

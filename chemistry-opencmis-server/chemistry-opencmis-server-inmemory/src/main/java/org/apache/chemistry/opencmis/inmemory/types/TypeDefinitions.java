@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 @XmlRootElement
 public class TypeDefinitions {
 
-    protected List<CmisTypeDefinitionType> type;
+    private List<CmisTypeDefinitionType> type;
 
     @XmlElement(namespace = XMLConstants.NAMESPACE_RESTATOM, name = "type")
     public List<CmisTypeDefinitionType> getTypeDefinitions() {

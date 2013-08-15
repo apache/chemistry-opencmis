@@ -19,7 +19,7 @@
 
 package org.apache.chemistry.opencmis.inmemory;
 
-public class NameValidator {
+public final class NameValidator {
 
     public static final String ERROR_ILLEGAL_ID = "Id contains illegal characters, allowed are 'a'..'z', 'A'..'Z', '0'..'9', '-', '_'";
     public static final String ERROR_ILLEGAL_NAME = "Name contains illegal characters, not allowed are '/', '\\', ':', '\"', '*'. '?', '<','>', '|'";

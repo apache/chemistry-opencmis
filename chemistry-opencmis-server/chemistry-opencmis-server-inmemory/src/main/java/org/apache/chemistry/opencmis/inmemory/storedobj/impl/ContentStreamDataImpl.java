@@ -40,8 +40,8 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContentStreamDataImpl.class.getName());
 
-    private static long TOTAL_LENGTH  = 0L;
-    private static long TOTAL_CALLS  = 0L;
+    private static long totalLength  = 0L;
+    private static long totalCalls  = 0L;
     
     private int fLength;
 
@@ -65,29 +65,32 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     }
 
     public void setContent(InputStream in) throws IOException {
-        fStreamLimitOffset = fStreamLimitLength = -1;
+        fStreamLimitOffset = -1;
+        fStreamLimitLength = -1;
         if (null == in) {
             fContent = null; // delete content
             fLength = 0;
         } else {
             byte[] buffer = new byte[0xFFFF];
             ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
-            for (int len = 0; (len = in.read(buffer)) != -1;) {
+            int len = in.read(buffer);
+            while (len != -1) {
                 contentStream.write(buffer, 0, len);
                 fLength += len;
                 if (sizeLimitKB > 0 && fLength > sizeLimitKB * 1024) {
                     throw new CmisInvalidArgumentException("Content size exceeds max. allowed size of " + sizeLimitKB
                             + "KB.");
                 }
+                len = in.read(buffer);
             }
             fContent = contentStream.toByteArray();
             fLength = contentStream.size();
             contentStream.close();
             in.close();
         }
-        TOTAL_LENGTH += fLength;
-        LOG.debug("setting content stream, total no calls " + ++TOTAL_CALLS + ".");
-        LOG.debug("setting content stream, new size total " + (TOTAL_LENGTH / (1024 * 1024)) + "MB.");
+        totalLength += fLength;
+        LOG.debug("setting content stream, total no calls " + ++totalCalls + ".");
+        LOG.debug("setting content stream, new size total " + (totalLength / (1024 * 1024)) + "MB.");
     }
     
     public void appendContent(InputStream is) throws IOException {
@@ -100,25 +103,27 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
             
             // first read existing stream
             contentStream.write(fContent);
-            TOTAL_LENGTH -= fLength;
+            totalLength -= fLength;
             
             // then append new content
-            for (int len = 0; (len = is.read(buffer)) != -1;) {
+            int len = is.read(buffer);
+            while (len != -1) {
                 contentStream.write(buffer, 0, len);
                 fLength += len;
                 if (sizeLimitKB > 0 && fLength > sizeLimitKB * 1024) {
                     throw new CmisInvalidArgumentException("Content size exceeds max. allowed size of " + sizeLimitKB
                             + "KB.");
                 }
+                len = is.read(buffer);
             }
             fContent = contentStream.toByteArray();
             fLength = contentStream.size();
             contentStream.close();
             is.close();
         }
-        TOTAL_LENGTH += fLength;
-        LOG.debug("setting content stream, total no calls " + ++TOTAL_CALLS + ".");
-        LOG.debug("setting content stream, new size total " + (TOTAL_LENGTH / (1024 * 1024)) + "MB.");
+        totalLength += fLength;
+        LOG.debug("setting content stream, total no calls " + ++totalCalls + ".");
+        LOG.debug("setting content stream, new size total " + (totalLength / (1024 * 1024)) + "MB.");
     }
 
     @Override

@@ -51,7 +51,7 @@ public class DocumentImpl extends FilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentImpl.class.getName());
-    private final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     public static final int THUMBNAIL_SIZE = 100;
 
@@ -90,8 +90,7 @@ public class DocumentImpl extends FilingImpl implements Document {
             try {
                 fContent.setContent(content.getStream());
             } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed to get content from InputStream", e);
+                throw new CmisRuntimeException("Failed to get content from InputStream", e);
             }
         }
     }
@@ -106,7 +105,6 @@ public class DocumentImpl extends FilingImpl implements Document {
             try {
                 fContent.appendContent(content.getStream());
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new CmisStorageException("Failed to append content: IO Exception", e);
             }
         }

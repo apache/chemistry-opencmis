@@ -87,8 +87,9 @@ public class ImageThumbnailGenerator {
         return storeImageinByteArray(resizedImage);
     }
     
-    private BufferedImage scaleLongerSideTo(BufferedImage bi, int longerSideLength) throws IOException {
+    private BufferedImage scaleLongerSideTo(BufferedImage bi, int longerSideLengthParam) throws IOException {
         int width, height;
+        int longerSideLength = longerSideLengthParam;
         
         if (longerSideLength <= 0)
             longerSideLength = 100;
@@ -108,7 +109,6 @@ public class ImageThumbnailGenerator {
     private BufferedImage scaleImage(BufferedImage originalImage, int width, int height) {
         
         BufferedImage resizedImage = new BufferedImage(width, height, originalImage.getType()); 
-        //        ColorSpace.TYPE_RGB);
         Graphics2D g = resizedImage.createGraphics();
 
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

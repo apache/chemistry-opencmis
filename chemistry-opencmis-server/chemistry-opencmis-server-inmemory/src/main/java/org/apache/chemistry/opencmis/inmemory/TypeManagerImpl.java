@@ -114,8 +114,7 @@ public class TypeManagerImpl implements TypeManagerCreatable {
             createCmisDefaultTypes();
 
         // merge all types from the list and build the correct hierachy with
-        // children
-        // and property lists
+        // children and property lists
         if (null != typesList) {
             for (TypeDefinition typeDef : typesList) {
                 addTypeDefinition(typeDef, true);
@@ -208,7 +207,6 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         if (null != typeDefinition.getPropertyDefinitions())
          {
             addInheritedPropertyDefinitions(propDefs, typeDefinition.getPropertyDefinitions());
-        // propDefs.putAll(typeDefinition.getPropertyDefinitions());
         }
 
         TypeDefinitionContainer parentTypeContainer = fTypesMap.get(typeDefinition.getParentTypeId());
@@ -237,17 +235,6 @@ public class TypeManagerImpl implements TypeManagerCreatable {
 
     private static boolean isRootType(TypeDefinitionContainer c) {
         return (c.getTypeDefinition().getId().equals(c.getTypeDefinition().getBaseTypeId().value()));
-//        if (c.getTypeDefinition().equals(InMemoryFolderTypeDefinition.getRootFolderType())
-//                || c.getTypeDefinition().equals(InMemoryDocumentTypeDefinition.getRootDocumentType())
-//                || c.getTypeDefinition().equals(InMemoryRelationshipTypeDefinition.getRootRelationshipType())
-//                || c.getTypeDefinition().equals(InMemoryPolicyTypeDefinition.getRootPolicyType())
-//                || c.getTypeDefinition().equals(InMemoryItemTypeDefinition.getRootItemType()) // CMIS 1.1
-//                || c.getTypeDefinition().equals(InMemorySecondaryTypeDefinition.getRootSecondaryType()) // CMIS 1.1
-//                ) {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     private static PropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> src) {

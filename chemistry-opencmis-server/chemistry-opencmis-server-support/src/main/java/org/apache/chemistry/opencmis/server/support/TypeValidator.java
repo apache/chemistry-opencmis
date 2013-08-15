@@ -62,7 +62,6 @@ public class TypeValidator {
     }
 
     private static boolean isMandatorySystemProperty(String propertyId) {
-        // TODO Auto-generated method stub
         return propertyId.equals(PropertyIds.OBJECT_TYPE_ID);
     }
 
