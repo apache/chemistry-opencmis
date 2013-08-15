@@ -240,8 +240,9 @@ public final class PropertyCreationHelper {
         Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
         for (PropertyDefinition<?> propDef : propDefs.values()) {
             if (!properties.containsKey(propDef.getId())
-                    && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
+                    && FilterParser.isContainedInFilter(propDef.getId(), requestedIds)) {
                 properties.put(propDef.getId(), getEmptyValue(propDef));
+            }
         }
 
         // fill not-set properties from secondary types
@@ -251,8 +252,9 @@ public final class PropertyCreationHelper {
             propDefs = td.getPropertyDefinitions();
             for (PropertyDefinition<?> propDef : propDefs.values()) {
                 if (!properties.containsKey(propDef.getId())
-                        && FilterParser.isContainedInFilter(propDef.getId(), requestedIds))
+                        && FilterParser.isContainedInFilter(propDef.getId(), requestedIds)) {
                     properties.put(propDef.getId(), getEmptyValue(propDef));
+                }
             }
         }
 
@@ -297,8 +299,9 @@ public final class PropertyCreationHelper {
             // add all values that are not set:
             Map<String, PropertyDefinition<?>> propDefs = primaryType.getPropertyDefinitions();
             for (PropertyDefinition<?> propDef : propDefs.values()) {
-                if (!mappedProperties.containsKey(propDef.getQueryName()))
+                if (!mappedProperties.containsKey(propDef.getQueryName())) {
                     mappedProperties.put(propDef.getId(), getEmptyValue(propDef));
+                }
             }
 
         } else {
@@ -324,8 +327,9 @@ public final class PropertyCreationHelper {
                     // add all values that are not set:
                     Map<String, PropertyDefinition<?>> propDefs = typeDef.getPropertyDefinitions();
                     for (PropertyDefinition<?> propDef : propDefs.values()) {
-                        if (!mappedProperties.containsKey(propDef.getQueryName()))
+                        if (!mappedProperties.containsKey(propDef.getQueryName())) {
                             mappedProperties.put(propDef.getId(), getEmptyValue(propDef));
+                        }
                     }
                 } else {
                     // replace all ids with query names or alias:
@@ -347,8 +351,9 @@ public final class PropertyCreationHelper {
             String queryName;
             if (funcEntry.getValue().equals("SCORE")) {
                 queryName = "SEARCH_SCORE";
-                if (!funcEntry.getKey().equals("SCORE"))
+                if (!funcEntry.getKey().equals("SCORE")) {
                     queryName = funcEntry.getKey();
+                }
 
                 PropertyDecimalImpl pd = new PropertyDecimalImpl();
                 // fixed dummy value
@@ -419,8 +424,9 @@ public final class PropertyCreationHelper {
         }
 
         List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
-        if (null != renditions && renditions.size() > 0)
+        if (null != renditions && renditions.size() > 0) {
             od.setRenditions(renditions);
+        }
 
         if (null != includeACL && includeACL) {
             int aclId = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAclId() : so.getAclId();
@@ -478,8 +484,9 @@ public final class PropertyCreationHelper {
         }
 
         List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
-        if (null != renditions && renditions.size() > 0)
+        if (null != renditions && renditions.size() > 0) {
             od.setRenditions(renditions);
+        }
 
         od.setProperties(props);
 
@@ -536,24 +543,25 @@ public final class PropertyCreationHelper {
 
     private static AbstractPropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
     	AbstractPropertyData<?> emptyValue;
-        if (propDef.getPropertyType().equals(PropertyType.BOOLEAN))
-        	emptyValue =  new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
-        else if (propDef.getPropertyType().equals(PropertyType.DATETIME))
-        	emptyValue =  new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
-        else if (propDef.getPropertyType().equals(PropertyType.DECIMAL))
-        	emptyValue =  new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
-        else if (propDef.getPropertyType().equals(PropertyType.HTML))
+        if (propDef.getPropertyType().equals(PropertyType.BOOLEAN)) {
+            emptyValue =  new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.DATETIME)) {
+            emptyValue =  new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.DECIMAL)) {
+            emptyValue =  new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.HTML)) {
             emptyValue =  new PropertyHtmlImpl(propDef.getId(), (String) null);
-        else if (propDef.getPropertyType().equals(PropertyType.ID))
-        	emptyValue =  new PropertyIdImpl(propDef.getId(), (String) null);
-        else if (propDef.getPropertyType().equals(PropertyType.INTEGER))
-        	emptyValue =  new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
-        else if (propDef.getPropertyType().equals(PropertyType.STRING))
-        	emptyValue =  new PropertyStringImpl(propDef.getId(), (String) null);
-        else if (propDef.getPropertyType().equals(PropertyType.URI))
-        	emptyValue =  new PropertyUriImpl(propDef.getId(), (String) null);
-        else
-        	emptyValue =  null;
+        } else if (propDef.getPropertyType().equals(PropertyType.ID)) {
+            emptyValue =  new PropertyIdImpl(propDef.getId(), (String) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.INTEGER)) {
+            emptyValue =  new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.STRING)) {
+            emptyValue =  new PropertyStringImpl(propDef.getId(), (String) null);
+        } else if (propDef.getPropertyType().equals(PropertyType.URI)) {
+            emptyValue =  new PropertyUriImpl(propDef.getId(), (String) null);
+        } else {
+            emptyValue =  null;
+        }
         emptyValue.setDisplayName(propDef.getDisplayName());
         emptyValue.setQueryName(propDef.getQueryName());
         emptyValue.setLocalName(propDef.getLocalName());

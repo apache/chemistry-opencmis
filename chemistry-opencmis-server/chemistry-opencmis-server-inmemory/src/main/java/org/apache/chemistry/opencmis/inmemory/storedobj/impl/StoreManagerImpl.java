@@ -196,16 +196,19 @@ public class StoreManagerImpl implements StoreManager {
 
         if (tc != null) {
             if (depth == -1) {
-                if (includePropertyDefinitions)
+                if (includePropertyDefinitions) {
                     return tc;
-                else
+                } else {
                     depth = Integer.MAX_VALUE;
-            } else if (depth == 0 || depth < -1)
+                }
+            } else if (depth == 0 || depth < -1) {
                 throw new CmisInvalidArgumentException("illegal depth value: " + depth);
+            }
 
             return cloneTypeList(depth, includePropertyDefinitions, tc, null);
-        } else
+        } else {
             return null;
+        }
     }
 
     @Override
@@ -234,15 +237,19 @@ public class StoreManagerImpl implements StoreManager {
             rootTypes = new ArrayList<TypeDefinitionContainer>(rootTypes);
             TypeDefinitionContainer tcItem = null, tcSecondary = null;
             for(TypeDefinitionContainer tc : rootTypes) {
-                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value()))
+                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value())) {
                     tcItem = tc;
-                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_SECONDARY.value()))
+                }
+                if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
                     tcSecondary = tc;
+                }
             }
-            if (tcItem != null)
+            if (tcItem != null) {
                 rootTypes.remove(tcItem);
-            if (tcSecondary != null)
+            }
+            if (tcSecondary != null) {
                 rootTypes.remove(tcSecondary);
+            }
         }
         
         if (includePropertyDefinitions) {
@@ -527,8 +534,9 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(tdClone);
-        if (null != parent)
+        if (null != parent) {
             parent.getChildren().add(tdcClone);
+        }
 
         if (depth > 0) {
             List<TypeDefinitionContainer> children = tdc.getChildren();

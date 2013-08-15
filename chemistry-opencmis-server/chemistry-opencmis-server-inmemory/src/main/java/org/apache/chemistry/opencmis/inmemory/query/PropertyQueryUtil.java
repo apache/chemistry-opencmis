@@ -50,20 +50,27 @@ public class PropertyQueryUtil {
         
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
-        if (so instanceof Content)
+        if (so instanceof Content) {
             content = ((Content) so).getContent(0, 0);
-        if (so instanceof DocumentVersion)
+        }
+        if (so instanceof DocumentVersion) {
             ver = (DocumentVersion) so;
-        if (so instanceof VersionedDocument)
+        }
+        if (so instanceof VersionedDocument) {
             verDoc = (VersionedDocument) so;
-        if (so instanceof Folder)
+        }
+        if (so instanceof Folder) {
             folder = (Folder) so;
-        if (so instanceof Document)
+        }
+        if (so instanceof Document) {
             doc = (Document) so;
-        if (so instanceof Relationship)
+        }
+        if (so instanceof Relationship) {
             rel = (Relationship) so;
-        if (so instanceof Policy)
+        }
+        if (so instanceof Policy) {
             pol = (Policy) so;
+        }
 
         // generic properties:
         if (propertyId.equals(PropertyIds.NAME)) {
@@ -178,9 +185,9 @@ public class PropertyQueryUtil {
         
        // try custom property:
        PropertyData<?> lVal = so.getProperties().get(propertyId);
-       if (null == lVal)
-           return null;
-       else if (pd.getCardinality() == Cardinality.SINGLE) {
+       if (null == lVal) {
+        return null;
+    } else if (pd.getCardinality() == Cardinality.SINGLE) {
            return lVal.getFirstValue();
        } else {
            return lVal.getValues();

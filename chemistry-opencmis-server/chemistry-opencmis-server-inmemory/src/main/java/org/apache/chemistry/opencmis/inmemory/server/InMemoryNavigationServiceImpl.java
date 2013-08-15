@@ -293,7 +293,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         for (Fileable child : children.getChildren()) {
 
             if (!cmis11 && child instanceof Item)
+             {
                 continue; // ignore items for CMIS 1.0 
+            }
             
             ObjectInFolderDataImpl oifd = new ObjectInFolderDataImpl();
             if (includePathSegments != null && includePathSegments) {
@@ -373,8 +375,9 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 ObjectData objData = PropertyCreationHelper.getObjectData(tm, objStore, parent, filter, user, includeAllowableActions, 
                         includeRelationships, renditionFilter, false, true, null);
                 parentData.setObject(objData);
-                if (null != includeRelativePathSegment && includeRelativePathSegment)
+                if (null != includeRelativePathSegment && includeRelativePathSegment) {
                     parentData.setRelativePathSegment(sop.getPathSegment());
+                }
                 result.add(parentData);
                 if (objectInfos != null) {
                     ObjectInfoImpl objectInfo = new ObjectInfoImpl();

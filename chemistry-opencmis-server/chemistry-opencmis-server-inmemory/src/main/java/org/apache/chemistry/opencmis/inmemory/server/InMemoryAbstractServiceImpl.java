@@ -59,8 +59,9 @@ public class InMemoryAbstractServiceImpl {
     }
 
     protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
-        if (null == properties)
+        if (null == properties) {
             return null;
+        }
         
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
         TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
@@ -72,8 +73,9 @@ public class InMemoryAbstractServiceImpl {
     }
 
     protected List<TypeDefinition> getTypeDefinition(String repositoryId, List<String> typeIds) {
-        if (null == typeIds || typeIds.isEmpty())
+        if (null == typeIds || typeIds.isEmpty()) {
             return null;
+        }
         
         List<TypeDefinition> result = new ArrayList<TypeDefinition>(typeIds.size());
         for (String typeId : typeIds) {
@@ -168,8 +170,9 @@ public class InMemoryAbstractServiceImpl {
         if (so instanceof VersionedDocument || so instanceof DocumentVersion) {
             VersionedDocument verDoc = getVersionedDocumentOfObjectId(so);
             return verDoc.isCheckedOut() && user.equals(verDoc.getCheckedOutBy());
-        } else
+        } else {
             return false;
+        }
         
 
     }

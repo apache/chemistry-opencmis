@@ -257,8 +257,9 @@ public final class DocumentTypeCreationHelper {
     }
 
     private static String getQueryName(String id) {
-        if (null == id)
+        if (null == id) {
             return null;
+        }
         
         StringBuffer sb = new StringBuffer(id);
         for (int i=0; i<sb.length(); i++) {

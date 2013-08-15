@@ -36,7 +36,6 @@ import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
@@ -96,9 +95,11 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     }
 
     public static TypeDefinition getTypeById(String typeId) {
-        for (TypeDefinition typeDef : singletonTypes)
-            if (typeDef.getId().equals(typeId))
+        for (TypeDefinition typeDef : singletonTypes) {
+            if (typeDef.getId().equals(typeId)) {
                 return typeDef;
+            }
+        }
         return null;
     }
 

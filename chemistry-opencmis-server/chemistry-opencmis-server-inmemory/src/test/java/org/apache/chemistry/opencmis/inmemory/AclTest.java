@@ -296,8 +296,9 @@ public class AclTest {
 
     private boolean hasCommonsAce(Acl acl, String principalId, String permission) {
         for (Ace ace : acl.getAces()) {
-            if (ace.getPrincipalId().equals(principalId) && ace.getPermissions().get(0).equals(permission))
+            if (ace.getPrincipalId().equals(principalId) && ace.getPermissions().get(0).equals(permission)) {
                 return true;
+            }
         }
         return false;
         

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 
 public class FilingImpl extends StoredObjectImpl implements Fileable, MultiFiling {

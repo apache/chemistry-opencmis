@@ -228,8 +228,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		ObjectInFolderList list = fNavSvc.getChildren(fRepositoryId, folderId, null, null, false, IncludeRelationships.NONE, null, null,
@@ -246,8 +247,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		List<ObjectInFolderContainer> list2 = fNavSvc.getDescendants(fRepositoryId, folderId, MINUS_ONE, null, null, null, null, null, null);
@@ -263,8 +265,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		List<ObjectInFolderContainer> list3 = fNavSvc.getFolderTree(fRepositoryId, folderId, BigInteger.ONE, null, null, null, null, null, null);
@@ -279,8 +282,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		List<ObjectParentData> list4 = fNavSvc.getObjectParents(fRepositoryId, folderId, null, null, null, null, null, null);
@@ -295,8 +299,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		ObjectData list5 = fNavSvc.getFolderParent(fRepositoryId, folderId, null, null);
@@ -312,8 +317,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 		switchCallContext("Reader");
 		ObjectList list6 = fNavSvc.getCheckedOutDocs(fRepositoryId, folderId, null, null, null, IncludeRelationships.NONE, 
@@ -363,8 +369,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get acl of folder");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get acl of folder");
+        }
 		
 		switchCallContext("Reader");
 		Acl acl = fAclSvc.getAcl(fRepositoryId, folderId, null, null);
@@ -380,8 +387,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get acl of doc)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get acl of doc)");
+        }
 		
 		switchCallContext("Reader");
 		Acl docAcl = fAclSvc.getAcl(fRepositoryId, docId, true, null);
@@ -397,8 +405,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions)");
+        }
 		
 //		switchCallContext("Writer");
         switchCallContext("TestAdmin");
@@ -446,8 +455,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to create a document");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to create a document");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -458,8 +468,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to create a folder");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to create a folder");
+        }
 		
 		/*
 		exceptionThrown = false;
@@ -498,8 +509,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get properties of the folder");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get properties of the folder");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -510,8 +522,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get properties of the document");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get properties of the document");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -523,8 +536,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get renditions of the document");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get renditions of the document");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -536,8 +550,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions to get contentStream of the document");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions to get contentStream of the document");
+        }
 		
 		switchCallContext("Reader");
 		exceptionThrown = false;
@@ -551,8 +566,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to update properties of the document");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to update properties of the document");
+        }
 		
 		exceptionThrown = false;
 		properties = createDocumentProperties( "name", "typeId");
@@ -565,8 +581,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to update properties of the document");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to update properties of the document");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -578,8 +595,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to move document");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to move document");
+        }
 		
 		switchCallContext("Writer");
 		exceptionThrown = false;
@@ -592,8 +610,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Writer has no permissions to move document to admin folder");
+		if (!exceptionThrown) {
+            fail("Writer has no permissions to move document to admin folder");
+        }
 		
 		switchCallContext("Reader");
 		exceptionThrown = false;
@@ -605,8 +624,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to delete document ");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to delete document ");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -617,8 +637,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to delete admin folder ");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to delete admin folder ");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -630,8 +651,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to set content ");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to set content ");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -643,8 +665,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to delete content ");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to delete content ");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -656,8 +679,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permissions to delete tree ");
+		if (!exceptionThrown) {
+            fail("Reader has no permissions to delete tree ");
+        }
 	}
 	
 	@Test
@@ -684,8 +708,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permissions at the document to add a parent");
+		if (!exceptionThrown) {
+            fail("TestUser has no permissions at the document to add a parent");
+        }
 		
 		exceptionThrown = false;
 		switchCallContext("Reader");  // has no permission at the folder
@@ -698,8 +723,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permission at the folder to add a parent");
+		if (!exceptionThrown) {
+            fail("Reader has no permission at the folder to add a parent");
+        }
 		
 		switchCallContext("TestAdmin");
 		fMultiSvc.addObjectToFolder(fRepositoryId, docId, noReadFolderId, true, null);
@@ -715,8 +741,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has no permission at the folder to remove a parent");
+		if (!exceptionThrown) {
+            fail("Reader has no permission at the folder to remove a parent");
+        }
 		
 		switchCallContext("TestUser"); 
 		try
@@ -728,8 +755,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permission at the object to remove a parent");
+		if (!exceptionThrown) {
+            fail("TestUser has no permission at the object to remove a parent");
+        }
 	}
 	
 	@Test
@@ -753,8 +781,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permission to checkout)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permission to checkout)");
+        }
 		
 		// Reader has only read permission
 		switchCallContext("Reader");
@@ -768,8 +797,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has not enough permission to checkout)");
+		if (!exceptionThrown) {
+            fail("Reader has not enough permission to checkout)");
+        }
 		
 		// checkout
 		switchCallContext("TestAdmin");
@@ -793,8 +823,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permission to cancelCheckOut)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permission to cancelCheckOut)");
+        }
 		switchCallContext("TestAdmin");
 		fAclSvc.applyAcl(fRepositoryId, docId, testUserAcl, null, AclPropagation.OBJECTONLY, null);
 		switchCallContext("TestUser");
@@ -818,8 +849,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Reader has not enough permission to cancelCheckOut)");
+		if (!exceptionThrown) {
+            fail("Reader has not enough permission to cancelCheckOut)");
+        }
 		switchCallContext("TestAdmin");
 		fAclSvc.applyAcl(fRepositoryId, docId, readWriteAcl, null, AclPropagation.OBJECTONLY, null);
 		switchCallContext("Writer");
@@ -846,8 +878,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has no permission to checkIn)");
+		if (!exceptionThrown) {
+            fail("TestUser has no permission to checkIn)");
+        }
 		switchCallContext("TestAdmin");
 		fAclSvc.applyAcl(fRepositoryId, docId, testUserAcl, null, AclPropagation.OBJECTONLY, null);
 		switchCallContext("TestUser");
@@ -876,8 +909,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("Writer has not enough permission to checkIn)");
+		if (!exceptionThrown) {
+            fail("Writer has not enough permission to checkIn)");
+        }
 		switchCallContext("TestAdmin");
 		fAclSvc.applyAcl(fRepositoryId, docId, readWriteAcl, null, AclPropagation.OBJECTONLY, null);
 		switchCallContext("Writer");
@@ -897,8 +931,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has not enough permission to getObjectOfLatestVersion)");
+		if (!exceptionThrown) {
+            fail("TestUser has not enough permission to getObjectOfLatestVersion)");
+        }
 		
 		exceptionThrown = false;
 		try
@@ -910,8 +945,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has not enough permission to getAllVersions)");
+		if (!exceptionThrown) {
+            fail("TestUser has not enough permission to getAllVersions)");
+        }
 
 
 		exceptionThrown = false;
@@ -924,8 +960,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 		{
 			exceptionThrown = true;
 		}
-		if (!exceptionThrown)
-			fail("TestUser has not enough permission to getAllVersions)");
+		if (!exceptionThrown) {
+            fail("TestUser has not enough permission to getAllVersions)");
+        }
 	}
 	
 		
@@ -1154,15 +1191,17 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	        properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
 	        Properties props = fFactory.createPropertiesData(properties);
 
-	        if (withContent)
-	            contentStream = createContent();
+	        if (withContent) {
+                contentStream = createContent();
+            }
 
 	        String id = null;
 	        try {
 	            id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, VersioningState.NONE, null,
 	                    null, null, null);
-	            if (null == id)
-	                fail("createDocument failed.");
+	            if (null == id) {
+                    fail("createDocument failed.");
+                }
 	        } catch (Exception e) {
 	            fail("createDocument() failed with exception: " + e);
 	        }
@@ -1182,14 +1221,18 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	    }
 
 	    private static boolean aclEquals(Acl acl1, Acl acl2) {
-	        if (acl1 == acl2)
-	            return true;
-	        if (acl1 == null || acl2 == null)
-	            return false;
-	        if (acl1.getClass() != acl2.getClass())
-	            return false;
-            if (acl1.getAces().size() != acl2.getAces().size())
+	        if (acl1 == acl2) {
+                return true;
+            }
+	        if (acl1 == null || acl2 == null) {
                 return false;
+            }
+	        if (acl1.getClass() != acl2.getClass()) {
+                return false;
+            }
+            if (acl1.getAces().size() != acl2.getAces().size()) {
+                return false;
+            }
 	        for (int i=0; i<acl1.getAces().size(); i++) {
 	            aclHasAce(acl1.getAces(), acl2.getAces().get(i));
 	        }
@@ -1198,13 +1241,17 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 
 	    private static boolean aclHasAce( List<Ace> aces, Ace ace) {
 	        for (Ace ace2 : aces) {
-                if (!ace.getPrincipalId().equals(ace2.getPrincipalId()))
+                if (!ace.getPrincipalId().equals(ace2.getPrincipalId())) {
                     continue;
-                if (ace.getPermissions().size() != ace2.getPermissions().size())
+                }
+                if (ace.getPermissions().size() != ace2.getPermissions().size()) {
                     continue;
-                for (int i=0; i<ace2.getPermissions().size(); i++)
-                    if (!aceHasPermission(ace.getPermissions(), ace2.getPermissions().get(i)))
+                }
+                for (int i=0; i<ace2.getPermissions().size(); i++) {
+                    if (!aceHasPermission(ace.getPermissions(), ace2.getPermissions().get(i))) {
                         continue;
+                    }
+                }
 
                 return true;
 	        }
@@ -1212,9 +1259,11 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	    }
 
 	   private static boolean aceHasPermission( List<String> permissions, String permission) {
-	      for (String permission2 : permissions)
-	          if (permission2.equals(permission))
-	              return true;
+	      for (String permission2 : permissions) {
+            if (permission2.equals(permission)) {
+                return true;
+            }
+        }
 	      return false;
 	   }
 
@@ -1233,8 +1282,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	        boolean found = false;
 	        for (ObjectInFolderData folder : folderData) {
 	            LOG.info("   found folder id " + folder.getObject().getId());
-	            if (id.equals(folder.getObject().getId()))
-	                found = true;
+	            if (id.equals(folder.getObject().getId())) {
+                    found = true;
+                }
 	        }
             assertTrue("Failed to find folder id " + id, found);          
 	    }
@@ -1246,11 +1296,13 @@ public class AclPermissionsTest extends AbstractServiceTest  {
 	    
         private boolean objectInFolderContainerHasId(List<ObjectInFolderContainer> folderList, String id) {
             for (ObjectInFolderContainer fc : folderList) {
-                if (id.equals(fc.getObject().getObject().getId()))
+                if (id.equals(fc.getObject().getObject().getId())) {
                     return true;
+                }
                 List<ObjectInFolderContainer> children = fc.getChildren();
-                if (children != null && objectInFolderContainerHasId(children, id))
+                if (children != null && objectInFolderContainerHasId(children, id)) {
                     return true;
+                }
             }
             return false;                  
         }
@@ -1259,8 +1311,9 @@ public class AclPermissionsTest extends AbstractServiceTest  {
             boolean found = false;
             for (ObjectData od : objList.getObjects()) {
                 LOG.info("   found object id " + od.getId());
-                if (id.equals(od.getId()))
+                if (id.equals(od.getId())) {
                     found = true;
+                }
 
             }
             assertTrue("Failed to find object id " + id, found);                  

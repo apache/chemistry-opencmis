@@ -48,7 +48,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
@@ -570,8 +569,9 @@ public class InMemoryQueryProcessor {
             List<Tree> terms = getChildrenAsList(node);
             for (Tree term: terms) {
                 Boolean foundOnce = walkSearchExpr(term);
-                if (foundOnce== null || !foundOnce)
+                if (foundOnce== null || !foundOnce) {
                     return false;
+                }
             }
             return true;
         }
@@ -581,8 +581,9 @@ public class InMemoryQueryProcessor {
             List<Tree> terms = getChildrenAsList(node);
             for (Tree term: terms) {
                 Boolean foundOnce = walkSearchExpr(term);
-                if (foundOnce!= null && foundOnce)
+                if (foundOnce!= null && foundOnce) {
                     return true;
+                }
             }
             return false;
         }
@@ -615,8 +616,9 @@ public class InMemoryQueryProcessor {
         private boolean findText(String nodeText) {
             Content cont = (Content)so;
             String pattern = StringUtil.unescape(nodeText, "\\'-");
-            if (null == pattern)
-            	throw new CmisInvalidArgumentException("Illegal Escape sequence in text search expression " + nodeText);
+            if (null == pattern) {
+                throw new CmisInvalidArgumentException("Illegal Escape sequence in text search expression " + nodeText);
+            }
             
             if (so instanceof Content && cont.hasContent()) {
                 ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent(0, -1);
@@ -625,8 +627,9 @@ public class InMemoryQueryProcessor {
 	                String text = new String(ba);
 	                int match = text.indexOf(pattern);
 	                return match >= 0;
-                } else
-                	return false;
+                } else {
+                    return false;
+                }
             }
             return false;
         }
@@ -735,15 +738,17 @@ public class InMemoryQueryProcessor {
     }
 
     private void doAdditionalChecks(CmisQueryWalker walker) {
-        if (walker.getNumberOfContainsClauses() > 1)
+        if (walker.getNumberOfContainsClauses() > 1) {
             throw new CmisInvalidArgumentException("More than one CONTAINS clause is not allowed");
+        }
         List<JoinSpec> joins = queryObj.getJoins();
-        if (null == secondaryTypeIds && joins.size() > 0)
+        if (null == secondaryTypeIds && joins.size() > 0) {
             throw new CmisInvalidArgumentException("JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
-        else if (null != secondaryTypeIds) {
+        } else if (null != secondaryTypeIds) {
             for (JoinSpec join : joins) {
-                if (!join.kind.equals("LEFT"))
+                if (!join.kind.equals("LEFT")) {
                     throw new CmisInvalidArgumentException("JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
+                }
             }
         }
     }

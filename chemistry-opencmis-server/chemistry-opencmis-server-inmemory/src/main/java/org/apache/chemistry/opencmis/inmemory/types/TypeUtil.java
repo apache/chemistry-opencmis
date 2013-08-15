@@ -56,20 +56,21 @@ public final class TypeUtil {
     }
     
     public static TypeDefinition cloneType(TypeDefinition type) {
-        if (type instanceof DocumentTypeDefinition)
+        if (type instanceof DocumentTypeDefinition) {
             return cloneTypeDoc((DocumentTypeDefinition) type);
-        else if (type instanceof FolderTypeDefinition)
+        } else if (type instanceof FolderTypeDefinition) {
             return cloneTypeFolder((FolderTypeDefinition) type);
-        else if (type instanceof PolicyTypeDefinition)
+        } else if (type instanceof PolicyTypeDefinition) {
             return cloneTypePolicy((PolicyTypeDefinition) type);
-        else if (type instanceof ItemTypeDefinition)
+        } else if (type instanceof ItemTypeDefinition) {
             return cloneTypeItem((ItemTypeDefinition) type);
-        else if (type instanceof RelationshipTypeDefinition)
+        } else if (type instanceof RelationshipTypeDefinition) {
             return cloneTypeRelationship((RelationshipTypeDefinition) type);
-        else if (type instanceof SecondaryTypeDefinition)
+        } else if (type instanceof SecondaryTypeDefinition) {
             return cloneTypeSecondary((SecondaryTypeDefinition) type);
-        else
-            return null;        
+        } else {
+            return null;
+        }        
     }
 
     public static AbstractPropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> pd) {
@@ -136,8 +137,9 @@ public final class TypeUtil {
             pdUriDef.setChoices(pdSrc.getChoices());
             pdUriDef.setDefaultValue(pdSrc.getDefaultValue());
             return pdUriDef;
-        } else 
+        } else {
             return null;
+        }
     }
 
     public static DocumentTypeDefinitionImpl cloneTypeDoc(DocumentTypeDefinition type) {

@@ -73,25 +73,27 @@ public enum Permission {
     
     public static Permission fromCmisString(String strPerm) {
         Permission permission;
-        if (strPerm.equals(EnumBasicPermissions.CMIS_READ.value())) 
+        if (strPerm.equals(EnumBasicPermissions.CMIS_READ.value())) {
             permission = Permission.READ;
-        else if (strPerm.equals(EnumBasicPermissions.CMIS_WRITE.value())) 
+        } else if (strPerm.equals(EnumBasicPermissions.CMIS_WRITE.value())) {
             permission = Permission.WRITE;
-        else if (strPerm.equals(EnumBasicPermissions.CMIS_ALL.value())) 
+        } else if (strPerm.equals(EnumBasicPermissions.CMIS_ALL.value())) {
             permission = Permission.ALL;
-        else
+        } else {
             throw new IllegalArgumentException("InMemory only supports CMIS basic permissions read, write, all.");
+        }
         return permission;
      }
 
     public String toCmisString() {
-        if (this.equals(READ)) 
+        if (this.equals(READ)) {
             return EnumBasicPermissions.CMIS_READ.value();
-        else if (this.equals(WRITE)) 
+        } else if (this.equals(WRITE)) {
             return EnumBasicPermissions.CMIS_WRITE.value();
-        else if (this.equals(ALL)) 
+        } else if (this.equals(ALL)) {
             return EnumBasicPermissions.CMIS_ALL.value();
-        else
+        } else {
             return "";
+        }
     }
 }

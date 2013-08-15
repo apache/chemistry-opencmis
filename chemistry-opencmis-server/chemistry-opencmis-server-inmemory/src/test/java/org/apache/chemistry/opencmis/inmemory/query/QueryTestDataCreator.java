@@ -429,10 +429,12 @@ public class QueryTestDataCreator {
 
     private Properties createDocumentProperties(String name, String typeId, Map<String, Object> propertyMap) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
-        if (name != null)
+        if (name != null) {
             properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
-        if (typeId != null)
+        }
+        if (typeId != null) {
             properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
+        }
         for (Map.Entry<String,Object> propEntry :propertyMap.entrySet()) {
             PropertyData<?> pd =
             createPropertyData(propEntry.getKey(), propEntry.getValue());

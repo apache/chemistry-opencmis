@@ -46,10 +46,11 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
         int aclId;
         StoredObject so = validator.getAcl(context, repositoryId, objectId, extension);
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        if (so instanceof DocumentVersion)
+        if (so instanceof DocumentVersion) {
             aclId = ((DocumentVersion) so).getParentDocument().getAclId();
-        else
+        } else {
             aclId = so.getAclId();
+        }
         
         Acl acl = objectStore.getAcl(aclId);
 

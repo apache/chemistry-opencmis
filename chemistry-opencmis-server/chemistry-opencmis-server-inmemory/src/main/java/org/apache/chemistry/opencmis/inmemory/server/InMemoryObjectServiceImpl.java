@@ -138,11 +138,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             newPD.addProperty(prop);
         }
 
-        if (null != properties)
+        if (null != properties) {
             // overwrite all new properties
             for (PropertyData<?> prop : properties.getProperties().values()) {
                 newPD.addProperty(prop);
             }
+        }
 
         String res = createDocument(context, repositoryId, newPD, folderId, content, versioningState, policies,
                 addAces, removeAces, null);
@@ -254,8 +255,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
         }
 
-        if (so.getChangeToken() != null && (changeToken == null || !so.getChangeToken().equals(changeToken.getValue())))
+        if (so.getChangeToken() != null && (changeToken == null || !so.getChangeToken().equals(changeToken.getValue()))) {
             throw new CmisUpdateConflictException("deleteContentStream failed, ChangeToken does not match.");
+        }
 
         if (!(so instanceof Content)) {
             throw new CmisObjectNotFoundException("Id" + objectId
@@ -575,8 +577,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // validate content allowed
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-        if (!(typeDef instanceof DocumentTypeDefinition))
+        if (!(typeDef instanceof DocumentTypeDefinition)) {
             throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
+        }
         TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
         if (so instanceof Document) {
@@ -637,10 +640,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
         List<String> newSecondaryTypeIds = pdSec == null ? null : pdSec.getValues();
         Set<String> secondaryTypeIds = new HashSet<String>();
-        if (null != existingSecondaryTypeIds)
+        if (null != existingSecondaryTypeIds) {
             secondaryTypeIds.addAll(existingSecondaryTypeIds);
-        if (null != newSecondaryTypeIds)
+        }
+        if (null != newSecondaryTypeIds) {
             secondaryTypeIds.addAll(newSecondaryTypeIds);
+        }
 
         // Find secondary type definitions to delete (null means not set --> do
         // not change, empty --> remove all secondary types)
@@ -663,9 +668,10 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
                 if (cmis11 && null == propDef) {
                     TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
-                    if (null == typeDefSecondary)
+                    if (null == typeDefSecondary) {
                         throw new CmisInvalidArgumentException("Cannot update property " + key
                                 + ": not contained in type");
+                    }
                     propDef = typeDefSecondary.getPropertyDefinitions().get(key);
                 }
                 
@@ -686,10 +692,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     hasUpdatedProp = true;
                 } else {
                     if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
-                        if (!isCheckedOut)
+                        if (!isCheckedOut) {
                             throw new CmisUpdateConflictException(
                                     "updateProperties failed, following property can't be updated, because it is not checked-out: "
                                             + key);
+                        }
                     } else if (propDef.getUpdatability() != Updatability.READWRITE) {
                         throw new CmisConstraintException(
                                 "updateProperties failed, following property can't be updated, because it is not writable: "
@@ -781,8 +788,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // validate content allowed
         TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
-        if (!(typeDef instanceof DocumentTypeDefinition))
+        if (!(typeDef instanceof DocumentTypeDefinition)) {
             throw new CmisInvalidArgumentException("Object does not refer to a document, can't set content");
+        }
         TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
         if (so instanceof Document) {
@@ -1048,20 +1056,23 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // get required properties
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.SOURCE_ID);
         String sourceId = (String) pd.getFirstValue();
-        if (null == sourceId || sourceId.length() == 0)
+        if (null == sourceId || sourceId.length() == 0) {
             throw new CmisInvalidArgumentException("Cannot create a relationship without a sourceId.");
+        }
 
         pd = properties.getProperties().get(PropertyIds.TARGET_ID);
         String targetId = (String) pd.getFirstValue();
-        if (null == targetId || targetId.length() == 0)
+        if (null == targetId || targetId.length() == 0) {
             throw new CmisInvalidArgumentException("Cannot create a relationship without a targetId.");
+        }
 
         TypeDefinition typeDef = getTypeDefinition(repositoryId, properties);
 
         // check if the given type is a relationship type
-        if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_RELATIONSHIP))
+        if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_RELATIONSHIP)) {
             throw new CmisInvalidArgumentException("Cannot create a relationship, with a non-relationship type: "
                     + typeDef.getId());
+        }
 
         StoredObject[] relationObjects = validator.createRelationship(context, repositoryId, sourceId, targetId,
                 policies, extension);
@@ -1278,10 +1289,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             boolean checkMandatory, boolean cmis11) {
         TypeDefinition typeDef;
 
-        if (null != so)
+        if (null != so) {
             typeDef = getTypeDefinition(repositoryId, so);
-        else
+        } else {
             typeDef = getTypeDefinition(repositoryId, properties);
+        }
 
         // check properties for validity
         if (!cmis11) {
@@ -1311,8 +1323,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
     private TypeDefinition getSecondaryTypeDefinition(String repositoryId, Set<String> secondaryTypeIds,
             String propertyId) {
-        if (null == secondaryTypeIds || secondaryTypeIds.isEmpty())
+        if (null == secondaryTypeIds || secondaryTypeIds.isEmpty()) {
             return null;
+        }
 
         for (String typeId : secondaryTypeIds) {
             TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);

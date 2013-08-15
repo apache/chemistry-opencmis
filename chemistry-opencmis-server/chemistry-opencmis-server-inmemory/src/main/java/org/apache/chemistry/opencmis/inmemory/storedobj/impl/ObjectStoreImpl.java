@@ -146,7 +146,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
     @Override
     public StoredObject getObjectByPath(String path, String user) {
-        StoredObject so = findObjectWithPathInDescendents(path, user, Folder.PATH_SEPARATOR, fRootFolder);
+        StoredObject so = findObjectWithPathInDescendents(path, user, Filing.PATH_SEPARATOR, fRootFolder);
         return so;
     }
 
@@ -156,12 +156,14 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         } else if (fo instanceof Folder) {
             List<Fileable> children = getChildren((Folder) fo);
             for (Fileable child : children) {
-                String foundPath = prefix.length() == 1 ? prefix + child.getName() : prefix + Folder.PATH_SEPARATOR
+                String foundPath = prefix.length() == 1 ? prefix + child.getName() : prefix + Filing.PATH_SEPARATOR
                         + child.getName();
                 if (path.startsWith(foundPath)) {
                     Fileable found = findObjectWithPathInDescendents(path, user, foundPath, child);
                     if (null != found)
+                     {
                         return found;   // note that there can be multiple folders with the same prefix like folder1, folder10
+                    }
                 }
             }
         }
@@ -274,15 +276,17 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         doc.setRepositoryId(fRepositoryId);
         doc.setName(name);
         if (null != folder) {
-            if (hasChild(folder, name))
+            if (hasChild(folder, name)) {
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
                         + " already exists in folder " + getFolderPath(folder.getId()));
+            }
             doc.addParentId(folder.getId());
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
-        if (null != policies)
+        if (null != policies) {
             doc.setAppliedPolicies(policies);
+        }
         String id = storeObject(doc);
         doc.setId(id);
         return doc;
@@ -297,13 +301,15 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         item.setRepositoryId(fRepositoryId);
         item.setName(name);
         if (null != folder) {
-            if (hasChild(folder, name))
+            if (hasChild(folder, name)) {
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
                         + " already exists in folder " + getFolderPath(folder.getId()));
+            }
             item.addParentId(folder.getId());
         }
-        if (null != policies)
+        if (null != policies) {
             item.setAppliedPolicies(policies);
+        }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         item.setAclId(aclId);
         String id = storeObject(item);
@@ -326,15 +332,17 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         version.createSystemBasePropertiesWhenCreated(propMap, user);
         version.setCustomProperties(propMap);
         if (null != folder) {
-            if (hasChild(folder, name))
+            if (hasChild(folder, name)) {
                 throw new CmisNameConstraintViolationException("Cannot create document an object with name " + name
                         + " already exists in folder " + getFolderPath(folder.getId()));
+            }
             doc.addParentId(folder.getId());
         }
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
-        if (null != policies)
+        if (null != policies) {
             doc.setAppliedPolicies(policies);
+        }
         id = storeObject(version);
         version.setId(id);
         return version;
@@ -356,8 +364,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
         int aclId = getAclId(((FolderImpl) parent), addACEs, removeACEs);
         folder.setAclId(aclId);
-        if (null != policies)
+        if (null != policies) {
             folder.setAppliedPolicies(policies);
+        }
 
         String id = storeObject(folder);
         folder.setId(id);
@@ -392,10 +401,12 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         rel.setCustomProperties(propMap);
         rel.setRepositoryId(fRepositoryId);
         rel.setName(name);
-        if (null != sourceObject)
+        if (null != sourceObject) {
             rel.setSource(sourceObject.getId());
-        if (null != targetObject)
+        }
+        if (null != targetObject) {
             rel.setTarget(targetObject.getId());
+        }
         int aclId = getAclId(null, addACEs, removeACEs);
         rel.setAclId(aclId);
         String id = storeObject(rel);
@@ -461,8 +472,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
                     }
                 }
             }
-        } else
+        } else {
             res = getAllRelationships(objectId, direction);
+        }
         return res;
     }
 
@@ -477,11 +489,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         Folder folder = (Folder) getObjectById(folderId);
         if (null == folder.getParentId()) {
             if (sb.length() == 0) {
-                sb.insert(0, Folder.PATH_SEPARATOR);
+                sb.insert(0, Filing.PATH_SEPARATOR);
             }
         } else {
             sb.insert(0, folder.getName());
-            sb.insert(0, Folder.PATH_SEPARATOR);
+            sb.insert(0, Filing.PATH_SEPARATOR);
             insertPathSegment(sb, folder.getParentId());
         }
     }
@@ -508,8 +520,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     public List<Integer> getAllAclsForUser(String principalId, Permission permission) {
         List<Integer> acls = new ArrayList<Integer>();
         for (InMemoryAcl acl : fAcls) {
-            if (acl.hasPermission(principalId, permission))
+            if (acl.hasPermission(principalId, permission)) {
                 acls.add(acl.getId());
+            }
         }
         return acls;
     }
@@ -531,49 +544,60 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         } else {
             aclId = so.getAclId();
             newAcl = getInMemoryAcl(aclId);
-            if (null == newAcl)
+            if (null == newAcl) {
                 newAcl = new InMemoryAcl();
-            else
+            } else {
                 // copy list so that we can safely change it without effecting
                 // the original
                 newAcl = new InMemoryAcl(newAcl.getAces());
+            }
         }
 
-        if (newAcl.size() == 0 && addACEs == null && removeACEs == null)
+        if (newAcl.size() == 0 && addACEs == null && removeACEs == null) {
             return 0;
+        }
 
-        if (null != removeACEs)
+        if (null != removeACEs) {
             for (Ace ace : removeACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
-                if (inMemAce.equals(InMemoryAce.getDefaultAce()))
+                if (inMemAce.equals(InMemoryAce.getDefaultAce())) {
                     removeDefaultAcl = true;
+                }
             }
+        }
 
         if (so != null && 0 == aclId && !removeDefaultAcl)
+         {
             return 0; // if object grants full access to everyone and it will
                       // not be removed we do nothing
+        }
 
         // add ACEs
-        if (null != addACEs)
+        if (null != addACEs) {
             for (Ace ace : addACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
                 if (inMemAce.equals(InMemoryAce.getDefaultAce()))
+                 {
                     return 0; // if everyone has full access there is no need to
+                }
                               // add additional ACLs.
                 newAcl.addAce(inMemAce);
             }
+        }
 
         // remove ACEs
-        if (null != removeACEs)
+        if (null != removeACEs) {
             for (Ace ace : removeACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
                 newAcl.removeAce(inMemAce);
             }
+        }
 
-        if (newAcl.size() > 0)
+        if (newAcl.size() > 0) {
             return addAcl(newAcl);
-        else
+        } else {
             return 0;
+        }
     }
 
     private void deleteFolder(String folderId, String user) {
@@ -627,8 +651,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
                          DocumentVersion ver;
                         if (usePwc) {
                             ver = ((VersionedDocument) pathObj).getPwc();
-                            if (null == ver)
+                            if (null == ver) {
                                 ver = ((VersionedDocument) pathObj).getLatestVersion(false);
+                            }
                         } else {
                             ver = ((VersionedDocument) pathObj).getLatestVersion(false);
                         }
@@ -695,9 +720,10 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
             }
             for (String folderId : so.getParentIds()) {
                 Folder folder = (Folder) getObjectById(folderId);
-                if (hasChild(folder, newName))
+                if (hasChild(folder, newName)) {
                     throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
                             + ". This path already exists in parent " + getFolderPath(folder.getId()) + ".");
+                }
             }
             so.setName(newName);
         } finally {
@@ -707,10 +733,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
     private boolean hasChild(Folder folder, String name) {
         List<Fileable> children = getChildren(folder);
-        for (Fileable child : children)
+        for (Fileable child : children) {
             if (child.getName().equals(name)) {
                 return true;
             }
+        }
         return false;
     }
 
@@ -752,14 +779,16 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     private void checkAccess(String principalId, StoredObject so, Permission permission) {
-        if (!hasAccess(principalId, so, permission))
+        if (!hasAccess(principalId, so, permission)) {
             throw new CmisPermissionDeniedException("Object with id " + so.getId() + " and name " + so.getName()
                     + " does not grant " + permission.toString() + " access to principal " + principalId);
+        }
     }
 
     private boolean hasAccess(String principalId, StoredObject so, Permission permission) {
-        if (null != principalId && principalId.equals(ADMIN_PRINCIPAL_ID))
+        if (null != principalId && principalId.equals(ADMIN_PRINCIPAL_ID)) {
             return true;
+        }
         List<Integer> aclIds = getAllAclsForUser(principalId, permission);
         return aclIds.contains(((StoredObjectImpl) so).getAclId());
     }
@@ -767,17 +796,18 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     private InMemoryAcl getInMemoryAcl(int aclId) {
 
         for (InMemoryAcl acl : fAcls) {
-            if (aclId == acl.getId())
+            if (aclId == acl.getId()) {
                 return acl;
+            }
         }
         return null;
     }
 
     private int setAcl(StoredObjectImpl so, Acl acl) {
         int aclId;
-        if (null == acl || acl.getAces().isEmpty())
+        if (null == acl || acl.getAces().isEmpty()) {
             aclId = 0;
-        else {
+        } else {
             aclId = getAclId(null, acl, null);
         }
         so.setAclId(aclId);
@@ -793,8 +823,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
      */
     private int hasAcl(InMemoryAcl acl) {
         for (InMemoryAcl acl2 : fAcls) {
-            if (acl2.equals(acl))
+            if (acl2.equals(acl)) {
                 return acl2.getId();
+            }
         }
         return -1;
     }
@@ -802,8 +833,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     private int addAcl(InMemoryAcl acl) {
         int aclId = -1;
 
-        if (null == acl)
+        if (null == acl) {
             return 0;
+        }
 
         lock();
         try {
@@ -896,8 +928,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         // iterate over all the objects and check for each if the type matches
         for (String objectId : getIds()) {
             StoredObject so = getObjectById(objectId);
-            if (so.getTypeId().equals(typeId))
+            if (so.getTypeId().equals(typeId)) {
                 return true;
+            }
         }
         return false;
     }
@@ -911,10 +944,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
                         "Cannot assign new parent folder, this name already exists in target folder.");
             }
             MultiFiling mfi;
-            if (so instanceof MultiFiling) 
+            if (so instanceof MultiFiling) {
                 mfi = (MultiFiling) so;
-            else
+            } else {
                 throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
+            }
                 
             addParentIntern(mfi, parent);
         } finally {
@@ -927,10 +961,11 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         try {
             lock();
             MultiFiling mfi;
-            if (so instanceof MultiFiling) 
+            if (so instanceof MultiFiling) {
                 mfi = (MultiFiling) so;
-            else
+            } else {
                 throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
+            }
 
             removeParentIntern(mfi, parent);
         } finally {

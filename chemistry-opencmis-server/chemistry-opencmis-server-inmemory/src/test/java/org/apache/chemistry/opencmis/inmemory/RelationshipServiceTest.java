@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -103,8 +102,9 @@ public class RelationshipServiceTest extends AbstractServiceTest {
         List<PropertyData<?>> relProps2 = createRelationshipProperties(REL_CUSTOM_PROP_VALUE);
         final String id2 = createRelationship("CrossReference2", ObjectServiceTest.TEST_RELATION_TYPE_ID, docId2,
                 targetId, relProps2);
-        if (id2 != null)
+        if (id2 != null) {
             log.info("createRelationship succeeded with created id: " + id2);
+        }
         assertNotNull(id2);
 
         List<String> relIds = new ArrayList<String>() {
@@ -195,8 +195,9 @@ public class RelationshipServiceTest extends AbstractServiceTest {
         assertNotNull(id1);
         final String id2 = createRelationship("CrossReference2", ObjectServiceTest.TEST_RELATION_TYPE_ID, docId2,
                 targetId, null);
-        if (id2 != null)
+        if (id2 != null) {
             log.info("createRelationship succeeded with created id: " + id2);
+        }
         assertNotNull(id2);
 
         List<String> relIds = new ArrayList<String>() {
@@ -585,12 +586,14 @@ public class RelationshipServiceTest extends AbstractServiceTest {
         String relId = (String) objectData.getProperties().getProperties().get(PropertyIds.OBJECT_ID).getFirstValue();
         assertTrue(expectedRelIds.remove(relId));
         assertEquals(BaseTypeId.CMIS_RELATIONSHIP, objectData.getBaseTypeId());
-        if (null != expectedTypeId)
+        if (null != expectedTypeId) {
             assertEquals(expectedTypeId, objectData.getProperties().getProperties().get(PropertyIds.OBJECT_TYPE_ID)
                     .getFirstValue());
-        if (expectedTypeId != null && expectedTypeId.equals(ObjectServiceTest.TEST_RELATION_TYPE_ID))
+        }
+        if (expectedTypeId != null && expectedTypeId.equals(ObjectServiceTest.TEST_RELATION_TYPE_ID)) {
             assertEquals(REL_CUSTOM_PROP_VALUE,
                     objectData.getProperties().getProperties().get(ObjectServiceTest.REL_STRING_PROP).getFirstValue());
+        }
         String sourceId = (String) objectData.getProperties().getProperties().get(PropertyIds.SOURCE_ID)
                 .getFirstValue();
         String targetId = (String) objectData.getProperties().getProperties().get(PropertyIds.TARGET_ID)
@@ -623,8 +626,9 @@ public class RelationshipServiceTest extends AbstractServiceTest {
             List<PropertyData<?>> additionalProperties) {
 
         List<PropertyData<?>> properties = additionalProperties;
-        if (null == additionalProperties)
+        if (null == additionalProperties) {
             properties = new ArrayList<PropertyData<?>>();
+        }
 
         properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, name));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));

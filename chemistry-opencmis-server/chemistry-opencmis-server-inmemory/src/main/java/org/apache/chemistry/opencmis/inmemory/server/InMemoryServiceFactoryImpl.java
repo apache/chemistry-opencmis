@@ -38,6 +38,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -98,7 +99,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         ConfigurationSettings.init(parameters);
 
-        String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
+        String repositoryClassName = parameters.get(ConfigConstants.REPOSITORY_CLASS);
         if (null == repositoryClassName) {
             repositoryClassName = StoreManagerImpl.class.getName();
         }
@@ -208,7 +209,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private boolean initStorageManager(Map<String, String> parameters) {
         // initialize in-memory management
         boolean created = false;
-        String repositoryClassName = (String) parameters.get(ConfigConstants.REPOSITORY_CLASS);
+        String repositoryClassName = parameters.get(ConfigConstants.REPOSITORY_CLASS);
         if (null == repositoryClassName) {
             repositoryClassName = StoreManagerImpl.class.getName();
         }
@@ -240,9 +241,9 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         // check if a type definitions XML file is configured. if yes import
         // type definitions
         String typeDefsFileName = parameters.get(ConfigConstants.TYPE_XML);
-        if (null == typeDefsFileName)
+        if (null == typeDefsFileName) {
             LOG.info("No file name for type definitions given, no types will be created.");
-        else {
+        } else {
             TypeManager typeManager = storeManager.getTypeManager(repositoryId);
             if (typeManager instanceof TypeManagerCreatable) {
                 TypeManagerCreatable tmc = (TypeManagerCreatable) typeManager;
@@ -273,7 +274,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             // walk through all nested tags in top element
             while (true) {
                 int event = parser.getEventType();
-                if (event == XMLStreamReader.START_ELEMENT) {
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     QName name = parser.getName();
                     if (name.getLocalPart().equals("type")) {
                         typeDef = XMLConverter.convertTypeDefinition(parser);
@@ -285,7 +286,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                         tmc.addTypeDefinition(typeDef, false);
                     } 
                     XMLUtils.next(parser);
-                } else if (event == XMLStreamReader.END_ELEMENT) {
+                } else if (event == XMLStreamConstants.END_ELEMENT) {
                     break;
                 } else {
                     if (!next(parser)) {
@@ -446,19 +447,20 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             }
 
             ObjectGenerator.CONTENT_KIND contentKind;
-            if (null == contentKindStr)
+            if (null == contentKindStr) {
                 contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
-            else {
-                if (contentKindStr.equals("static/text"))
+            } else {
+                if (contentKindStr.equals("static/text")) {
                     contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
-                else if (contentKindStr.equals("lorem/text"))
+                } else if (contentKindStr.equals("lorem/text")) {
                     contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
-                else if (contentKindStr.equals("lorem/html"))
+                } else if (contentKindStr.equals("lorem/html")) {
                     contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
-                else if (contentKindStr.equals("fractal/jpeg"))
+                } else if (contentKindStr.equals("fractal/jpeg")) {
                     contentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
-                else
+                } else {
                     contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+                }
             }
             // Create a hierarchy of folders and fill it with some documents
             ObjectGenerator gen = new ObjectGenerator(objectFactory, svc, svc, svc, repositoryId, contentKind);

@@ -250,10 +250,11 @@ public class AbstractServiceTest {
         ContentStreamDataImpl content = new ContentStreamDataImpl(maxSizeInKB);
         content.setFileName("data.txt");
         
-        if (null == mimeType)
+        if (null == mimeType) {
             content.setMimeType("text/plain");
-        else
+        } else {
             content.setMimeType(mimeType);
+        }
         int len = sizeInKB * 1024;
         byte[] b = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a }; // 32
@@ -426,7 +427,7 @@ public class AbstractServiceTest {
     }
 
     protected String getStringProperty(ObjectData objData, String propertyKey) {
-        PropertyData<? extends Object> pd = (PropertyData<? extends Object>) objData.getProperties().getProperties()
+        PropertyData<? extends Object> pd = objData.getProperties().getProperties()
                 .get(PropertyIds.PATH);
         assertNotNull(pd.getFirstValue());
         assertTrue(pd.getFirstValue() instanceof String);

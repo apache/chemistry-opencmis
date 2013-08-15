@@ -201,8 +201,9 @@ public class DocumentImpl extends FilingImpl implements Document {
             long maxItems, long skipCount) {
 
         String tokenizer = "[\\s;]";
-        if (null==renditionFilter)
+        if (null==renditionFilter) {
             return null;
+        }
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
 
@@ -233,8 +234,9 @@ public class DocumentImpl extends FilingImpl implements Document {
 
     @Override
     public ContentStream getRenditionContent(String streamId, long offset, long length) {     
-        if (null == fContent)
+        if (null == fContent) {
             return null;
+        }
         
         String mimeType = fContent.getMimeType();
         
@@ -258,8 +260,9 @@ public class DocumentImpl extends FilingImpl implements Document {
                 return getIconFromResourceDir("/text-html.png");
             } else if (isPlainText(mimeType)) {
                 return getIconFromResourceDir("/text-x-generic.png");
-            } else
+            } else {
                 return null;
+            }
         } catch (IOException e) {
             LOG.error("Failed to generate rendition: ", e);
             throw new CmisRuntimeException("Failed to generate rendition: " + e);
@@ -268,31 +271,33 @@ public class DocumentImpl extends FilingImpl implements Document {
     
     @Override
     public boolean hasRendition(String user) {
-        if (null == fContent)
+        if (null == fContent) {
             return false;
+        }
         
         String mimeType = fContent.getMimeType();
         
-        if (isImage(mimeType))
+        if (isImage(mimeType)) {
             return true;
-        else if (isAudio(mimeType))
+        } else if (isAudio(mimeType)) {
             return true;
-        else if (isVideo(mimeType))
+        } else if (isVideo(mimeType)) {
             return true;
-        else if (isPDF(mimeType))
+        } else if (isPDF(mimeType)) {
             return true;
-        else if (isPowerpoint(mimeType))
+        } else if (isPowerpoint(mimeType)) {
             return true;
-        else if (isExcel(mimeType))
+        } else if (isExcel(mimeType)) {
             return true;
-        else if (isWord(mimeType))
+        } else if (isWord(mimeType)) {
             return true;
-        else if (isHtml(mimeType))
+        } else if (isHtml(mimeType)) {
             return true;
-        else if (isPlainText(mimeType))
+        } else if (isPlainText(mimeType)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
 

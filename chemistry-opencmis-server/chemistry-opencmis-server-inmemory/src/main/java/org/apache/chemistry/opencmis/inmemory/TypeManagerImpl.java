@@ -110,8 +110,9 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      */
     public void initTypeSystem(List<TypeDefinition> typesList, boolean createCmisDefaultTypes) {
 
-        if (createCmisDefaultTypes)
+        if (createCmisDefaultTypes) {
             createCmisDefaultTypes();
+        }
 
         // merge all types from the list and build the correct hierachy with
         // children and property lists

@@ -47,19 +47,22 @@ public class InMemoryAce {
     }
     
     public InMemoryAce(Ace commonsAce) {
-        if (null == commonsAce || null == commonsAce.getPrincipalId() || null == commonsAce.getPermissions())
+        if (null == commonsAce || null == commonsAce.getPrincipalId() || null == commonsAce.getPermissions()) {
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");
+        }
         List<String> perms = commonsAce.getPermissions();
-        if (perms.size() != 1)
+        if (perms.size() != 1) {
             throw new IllegalArgumentException("InMemory only supports ACEs with a single permission.");
+        }
         String perm = perms.get(0);
         this.principalId = commonsAce.getPrincipalId();
         this.permission = Permission.fromCmisString(perm);        
     }
 
     public InMemoryAce(String prinicpalId, Permission permission) {
-        if (null == prinicpalId || null == permission)
+        if (null == prinicpalId || null == permission) {
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");
+        }
         
         this.principalId = prinicpalId;
         this.permission = permission;        
@@ -88,20 +91,26 @@ public class InMemoryAce {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         InMemoryAce other = (InMemoryAce) obj;
-        if (permission != other.permission)
+        if (permission != other.permission) {
             return false;
+        }
         if (principalId == null) {
-            if (other.principalId != null)
+            if (other.principalId != null) {
                 return false;
-        } else if (!principalId.equals(other.principalId))
+            }
+        } else if (!principalId.equals(other.principalId)) {
             return false;
+        }
         return true;
     }
 

@@ -109,11 +109,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
 
         DocumentVersion pwc = getPwc();
 
-        if (null != content)
+        if (null != content) {
             pwc.setContent(content, false);
+        }
 
-        if (null != properties && null != properties.getProperties())
+        if (null != properties && null != properties.getProperties()) {
             ((DocumentVersionImpl) pwc).setCustomProperties(properties.getProperties());
+        }
 
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);
@@ -143,8 +145,9 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
 	public DocumentVersion getLatestVersion(boolean major) {
 
         DocumentVersion latest = null;
-        if (fVersions.size() == 0)
+        if (fVersions.size() == 0) {
             return null;
+        }
 
         if (major) {
             for (DocumentVersion ver : fVersions) {

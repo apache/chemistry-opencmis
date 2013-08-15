@@ -166,10 +166,11 @@ public class StoredObjectImpl implements StoredObject {
 
     @Override
     public List<String> getAppliedPolicies() {
-        if (null == policyIds)
+        if (null == policyIds) {
             return null;
-        else
+        } else {
             return Collections.unmodifiableList(policyIds);
+        }
     }
 
     public void setAppliedPolicies(List<String> newPolicies) {
@@ -336,9 +337,10 @@ public class StoredObjectImpl implements StoredObject {
         // constructor.
         setModifiedBy(user);
         if (null != properties) {
-           if (null != properties.get(PropertyIds.DESCRIPTION))
-               setDescription((String) properties.get(PropertyIds.DESCRIPTION)
+           if (null != properties.get(PropertyIds.DESCRIPTION)) {
+            setDescription((String) properties.get(PropertyIds.DESCRIPTION)
                        .getFirstValue());
+        }
 
            if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
                secondaryTypeIds.clear();
@@ -534,17 +536,19 @@ public class StoredObjectImpl implements StoredObject {
     }
 
     protected boolean testRenditionFilterForImage(String[] formats) {
-        if (formats.length == 1 && null != formats[0] && formats[0].equals("cmis:none"))
+        if (formats.length == 1 && null != formats[0] && formats[0].equals("cmis:none")) {
             return false;
-        else
+        } else {
             return arrayContainsString(formats, "*") || arrayContainsString(formats, "image/*")
                     || arrayContainsString(formats, "image/jpeg");
+        }
     }
 
     private boolean arrayContainsString(String[] formats, String val) {
         for (String s : formats) {
-            if (val.equals(s))
+            if (val.equals(s)) {
                 return true;
+            }
         }
         return false;
     }

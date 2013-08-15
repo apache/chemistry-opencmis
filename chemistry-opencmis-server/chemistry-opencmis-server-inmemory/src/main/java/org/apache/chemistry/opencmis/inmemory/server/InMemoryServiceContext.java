@@ -60,9 +60,9 @@ public final class InMemoryServiceContext {
     
     public static synchronized InMemoryService getCmisService() {
         ContextHolder holder = threadLocalService.get();
-        if (null == holder)
+        if (null == holder) {
             return null;
-        else {
+        } else {
             CmisServiceWrapper<InMemoryService> wrapperService = holder.getServiceWrapper();
             return wrapperService == null ? null : wrapperService.getWrappedService();
         }        
@@ -70,9 +70,9 @@ public final class InMemoryServiceContext {
     
     public static synchronized void  setCallContext(CallContext context) {
         ContextHolder holder = threadLocalService.get();
-        if (null == holder)
+        if (null == holder) {
             throw new IllegalStateException("Cannot store call context, no service wrapper set.");
-        else {
+        } else {
             holder.setCallContext(context);
         }        
     }

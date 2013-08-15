@@ -117,8 +117,9 @@ public final class DataObjectCreator {
 
             set.add(Action.CAN_CREATE_DOCUMENT);
             set.add(Action.CAN_CREATE_FOLDER);
-            if (cmis11)
+            if (cmis11) {
                 set.add(Action.CAN_CREATE_ITEM);
+            }
             set.add(Action.CAN_GET_CHILDREN);
         }
 
@@ -143,22 +144,27 @@ public final class DataObjectCreator {
                 set.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
                 set.add(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
             }
-            if (isDocument)
+            if (isDocument) {
                 if (isVersioned) {
-                    if (canCheckIn)
+                    if (canCheckIn) {
                         set.add(Action.CAN_SET_CONTENT_STREAM);
-                } else
+                    }
+                } else {
                     set.add(Action.CAN_SET_CONTENT_STREAM);
+                }
+            }
         }
 
         if (hasRendition) {
             set.add(Action.CAN_GET_RENDITIONS);
         }
 
-        if (canSetAcl)
+        if (canSetAcl) {
             set.add(Action.CAN_APPLY_ACL);
-        if (canGetAcl)
+        }
+        if (canGetAcl) {
             set.add(Action.CAN_GET_ACL);
+        }
 
         allowableActions.setAllowableActions(set);
         return allowableActions;
@@ -194,10 +200,11 @@ public final class DataObjectCreator {
         if (includeRelationships != IncludeRelationships.NONE) {
             RelationshipDirection relationshipDirection = RelationshipDirection.SOURCE;
             // source is default
-            if (includeRelationships == IncludeRelationships.TARGET)
+            if (includeRelationships == IncludeRelationships.TARGET) {
                 relationshipDirection = RelationshipDirection.TARGET;
-            else if (includeRelationships == IncludeRelationships.BOTH)
+            } else if (includeRelationships == IncludeRelationships.BOTH) {
                 relationshipDirection = RelationshipDirection.EITHER;
+            }
             
             List<StoredObject> relationships = objStore.getRelationships(spo.getId(), null, relationshipDirection); 
             List<ObjectData> res = new ArrayList<ObjectData>(relationships.size());

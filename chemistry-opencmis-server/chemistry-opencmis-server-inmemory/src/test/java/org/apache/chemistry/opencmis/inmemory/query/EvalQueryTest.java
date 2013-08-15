@@ -1105,10 +1105,11 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("Query result, number of matching objects: " + res.getNumItems());
         for (ObjectData od : res.getObjects()) {
             PropertyData<?> propData = od.getProperties().getProperties().get(PropertyIds.NAME);
-            if (null != propData)
+            if (null != propData) {
                 log.debug("Found matching object: " + propData.getFirstValue());
-            else
+            } else {
                 log.debug("Found matching object: (unknown, no name)");
+            }
         }
         return res;
     }

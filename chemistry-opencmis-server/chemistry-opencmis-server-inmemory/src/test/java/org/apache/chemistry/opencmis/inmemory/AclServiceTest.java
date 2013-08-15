@@ -339,27 +339,32 @@ public class AclServiceTest extends AbstractServiceTest {
     
     private boolean aclHasPermission(Acl acl, String principalId, String permission) {
         for (Ace ace : acl.getAces()) {
-            if (ace.getPrincipalId().equals(principalId) && aceContainsPermission(ace, permission))
-                return true;            
+            if (ace.getPrincipalId().equals(principalId) && aceContainsPermission(ace, permission)) {
+                return true;
+            }            
         }
         return false;
     }
     
     private boolean aclHasNoPermission(Acl acl, String principalId) {
-        if (null == acl)
+        if (null == acl) {
             return false;
+        }
         
         for (Ace ace : acl.getAces()) {
-            if (ace.getPrincipalId().equals(principalId))
+            if (ace.getPrincipalId().equals(principalId)) {
                 return false;
+            }
         }
         return true;
     }
     
     private boolean aceContainsPermission(Ace ace, String permission) {
-        for (String acePerm : ace.getPermissions())
-            if (permission.equals(acePerm))
+        for (String acePerm : ace.getPermissions()) {
+            if (permission.equals(acePerm)) {
                 return true;
+            }
+        }
         return false;
     }
 }

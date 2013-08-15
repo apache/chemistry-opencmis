@@ -38,12 +38,13 @@ public class InMemoryAcl implements Cloneable{
         @Override
 		public int compare(T o1, T o2) {
             if (null == o1 || null == o2) {
-                if (o1 == o2) //NOSONAR
+                if (o1 == o2) {
                     return 0;
-                else if (o1 == null)
+                } else if (o1 == null) {
                     return 1;
-                else
+                } else {
                     return -1;
+                }
             }
             int res = o1.getPrincipalId().compareTo(o2.getPrincipalId());
             return res;
@@ -59,8 +60,9 @@ public class InMemoryAcl implements Cloneable{
             if (acl.hasPrincipal(cace.getPrincipalId())) {
                 Permission perm = acl.getPermission(cace.getPrincipalId());
                 Permission newPerm = Permission.fromCmisString(cace.getPermissions().get(0));
-                if (perm.ordinal() > newPerm.ordinal())
+                if (perm.ordinal() > newPerm.ordinal()) {
                     acl.setPermission(cace.getPrincipalId(), newPerm);
+                }
             } else {
                 acl.addAce(new InMemoryAce(cace));
             }
@@ -82,12 +84,14 @@ public class InMemoryAcl implements Cloneable{
         Collections.sort(this.acl, COMP);
         for (int i=0 ; i<acl.size(); i++) {
             InMemoryAce ace = acl.get(i);
-            if (ace == null)
-                throw new IllegalArgumentException("Cannot create ACLs with a null principal id or permission.");        
+            if (ace == null) {
+                throw new IllegalArgumentException("Cannot create ACLs with a null principal id or permission.");
+            }        
         }
         for (int i=0 ; i<acl.size()-1; i++) {
-            if (acl.get(i).equals(acl.get(i+1)))
+            if (acl.get(i).equals(acl.get(i+1))) {
                 throw new IllegalArgumentException("Cannot create ACLs with same principal id in more than one ACE.");
+            }
         }
     }
     
@@ -104,11 +108,13 @@ public class InMemoryAcl implements Cloneable{
     }
     
     public boolean addAce(InMemoryAce ace) {
-        if (ace == null)
+        if (ace == null) {
             return false;
+        }
         for (InMemoryAce ace2: acl) {
-            if (ace2.getPrincipalId().equals(ace.getPrincipalId()))
+            if (ace2.getPrincipalId().equals(ace.getPrincipalId())) {
                 return false;
+            }
         }
         acl.add(ace);
         Collections.sort(acl, COMP);
@@ -120,14 +126,16 @@ public class InMemoryAcl implements Cloneable{
     }
     
     public void mergeAcl(InMemoryAcl acl2) {
-        if (acl2 == null)
+        if (acl2 == null) {
             return;
+        }
         for (InMemoryAce ace: acl2.getAces()) {
             InMemoryAce existingAce  = getAce(ace.getPrincipalId());
-            if (existingAce == null)
-                acl.add(ace);   
-            else if (existingAce.getPermission().ordinal() < ace.getPermission().ordinal())
+            if (existingAce == null) {
+                acl.add(ace);
+            } else if (existingAce.getPermission().ordinal() < ace.getPermission().ordinal()) {
                 existingAce.setPermission(ace.getPermission());
+            }
         }
         Collections.sort(this.acl, COMP);
     }
@@ -138,37 +146,45 @@ public class InMemoryAcl implements Cloneable{
     }
 
     private InMemoryAce getAce(String principalId) {
-        if (null == principalId)
+        if (null == principalId) {
             return null;
+        }
         
         for (InMemoryAce ace : acl) {
-            if (ace.getPrincipalId().equals(principalId))
+            if (ace.getPrincipalId().equals(principalId)) {
                 return ace;
+            }
         }
         return null;
     }
 
     public boolean hasPermission(String principalId, Permission permission) {
-        if (null == permission)
+        if (null == permission) {
             return false;
+        }
         
-        if (null == principalId)
-            for (InMemoryAce ace : acl)
-                if (ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser()))
+        if (null == principalId) {
+            for (InMemoryAce ace : acl) {
+                if (ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser())) {
                     return ace.hasPermission(permission);
+                }
+            }
+        }
        
         for (InMemoryAce ace : acl) {
             if (ace.getPrincipalId().equals(principalId) || ace.getPrincipalId().equals(InMemoryAce.getAnyoneUser())
-                    || ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser()))
+                    || ace.getPrincipalId().equals(InMemoryAce.getAnonymousUser())) {
                 return ace.hasPermission(permission);
+            }
         }
         return false;
     }
 
     public void setPermission(String principalId, Permission permission) {        
         for (InMemoryAce ace : acl) {
-            if (ace.getPrincipalId().equals(principalId))
+            if (ace.getPrincipalId().equals(principalId)) {
                 ace.setPermission(permission);
+            }
         }
         throw new IllegalArgumentException("Unknown principalId in setPermission: " + principalId);
     }
@@ -187,18 +203,23 @@ public class InMemoryAcl implements Cloneable{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         InMemoryAcl other = (InMemoryAcl) obj;
         if (acl == null) {
-            if (other.acl != null)
+            if (other.acl != null) {
                 return false;
-        } else if (!acl.equals(other.acl))
+            }
+        } else if (!acl.equals(other.acl)) {
             return false;
+        }
         return true;
     }
 
@@ -209,16 +230,18 @@ public class InMemoryAcl implements Cloneable{
             
     private boolean hasPrincipal(String principalId) {
         for (InMemoryAce ace: acl) {
-            if (ace.getPrincipalId().equals(principalId))
+            if (ace.getPrincipalId().equals(principalId)) {
                 return true;
+            }
         }
         return false;
     }
 
     public Acl toCommonsAcl() {
         List<Ace> commonsAcl = new ArrayList<Ace>();
-        for (InMemoryAce memAce : acl)
+        for (InMemoryAce memAce : acl) {
             commonsAcl.add(memAce.toCommonsAce());
+        }
         
         return new AccessControlListImpl(commonsAcl); 
     }

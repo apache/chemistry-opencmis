@@ -176,10 +176,12 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         if (policyIds != null && policyIds.size() > 0) {
             for (String policyId : policyIds) {
                 TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, policyId);
-                if (tdc == null)
+                if (tdc == null) {
                     throw new CmisInvalidArgumentException("Unknown policy type: " + policyId);
-                if (tdc.getTypeDefinition().getBaseTypeId() != BaseTypeId.CMIS_POLICY)
+                }
+                if (tdc.getTypeDefinition().getBaseTypeId() != BaseTypeId.CMIS_POLICY) {
                     throw new CmisInvalidArgumentException( policyId + " is not a policy type");
+                }
             }
         }
     }
@@ -519,8 +521,9 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
         StoredObject[] sos = checkParams(repositoryId, policyId, objectId);
         StoredObject pol = sos[0];
-        if (!(pol instanceof Policy))
+        if (!(pol instanceof Policy)) {
             throw new CmisInvalidArgumentException("Id " + policyId + " is not a policy object.");
+        }
         return sos;
     }
 

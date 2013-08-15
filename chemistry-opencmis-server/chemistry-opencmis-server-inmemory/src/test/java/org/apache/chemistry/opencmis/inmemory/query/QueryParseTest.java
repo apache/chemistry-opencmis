@@ -494,7 +494,7 @@ public class QueryParseTest extends AbstractQueryTest {
     	try {
             checkTreeWhere(statement);    		
     	} catch (Exception e) {
-    		LOG.error("Exception is: ", e);
+    		LOG.debug("Exception is: ", e);
     		assertTrue(e instanceof CmisInvalidArgumentException);
     		assertTrue(e.getMessage().contains("illegal tokens after end"));
     	}
@@ -645,8 +645,9 @@ public class QueryParseTest extends AbstractQueryTest {
             for (int i=0; i<count; i++) {
                 Tree child = node.getChild(i);
                 node = findTextSearchNode(child); // recursive descent
-                if (null != node)
+                if (null != node) {
                     return node;
+                }
             }
             return null;
         }        

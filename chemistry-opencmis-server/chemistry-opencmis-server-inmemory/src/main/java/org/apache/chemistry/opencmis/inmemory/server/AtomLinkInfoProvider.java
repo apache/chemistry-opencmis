@@ -133,9 +133,9 @@ public class AtomLinkInfoProvider {
         }
 
         List<RenditionData> renditions = so.getRenditions("*", 0, 0);
-        if (renditions == null || renditions.size() == 0)
+        if (renditions == null || renditions.size() == 0) {
             objInfo.setRenditionInfos(null);
-        else {
+        } else {
             List<RenditionInfo> infos = new ArrayList<RenditionInfo>();
             for (RenditionData rendition : renditions) {
                 RenditionInfoImpl info = new RenditionInfoImpl();
@@ -153,13 +153,15 @@ public class AtomLinkInfoProvider {
         objInfo.setSupportsRelationships(true);
         List<StoredObject> rels = objStore.getRelationships(so.getId(), null, RelationshipDirection.SOURCE);
         List<String> srcIds = new ArrayList<String>(rels.size());
-        for (StoredObject rel : rels)
+        for (StoredObject rel : rels) {
             srcIds.add(rel.getId());
+        }
         
         rels = objStore.getRelationships(so.getId(), null, RelationshipDirection.TARGET);
         List<String> targetIds = new ArrayList<String>(rels.size());
-        for (StoredObject rel : rels)
+        for (StoredObject rel : rels) {
             targetIds.add(rel.getId());
+        }
         objInfo.setRelationshipSourceIds(srcIds);
         objInfo.setRelationshipTargetIds(targetIds);
 

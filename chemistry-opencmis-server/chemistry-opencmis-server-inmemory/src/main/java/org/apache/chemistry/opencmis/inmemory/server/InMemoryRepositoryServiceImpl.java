@@ -146,12 +146,14 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
 
-        if (null == repositoryId)
+        if (null == repositoryId) {
             throw new CmisInvalidArgumentException("Repository id may not be null");
+        }
 
         TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
         
         AbstractTypeDefinition newType = TypeValidator.completeType(type);
         TypeValidator.adjustTypeNamesAndId(newType);
@@ -163,12 +165,14 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         String typeId = type.getId();
         TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
         
         TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
-        if (null == typeDefC)
+        if (null == typeDefC) {
             throw new CmisInvalidArgumentException("Cannot update type unknown type id: " + typeId);
+        }
 
         typeManager.updateTypeDefinition(type);
         return type;
@@ -177,12 +181,14 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         
         TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
-        if (null == typeManager)
+        if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
+        }
         
         TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
-        if (null == typeDefC)
+        if (null == typeDefC) {
             throw new CmisInvalidArgumentException("Cannot delete type unknown type id: " + typeId);
+        }
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         if (objectStore.isTypeInUse(typeId)) {

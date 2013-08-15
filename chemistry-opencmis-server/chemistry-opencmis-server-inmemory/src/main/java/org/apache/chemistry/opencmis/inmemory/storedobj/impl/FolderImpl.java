@@ -85,8 +85,9 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
 
     @Override
 	public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
-        if (null==renditionFilter)
+        if (null==renditionFilter) {
             return null;
+        }
         String tokenizer = "[\\s;]";
         String[] formats = renditionFilter.split(tokenizer);
         boolean isImageRendition = testRenditionFilterForImage(formats);
@@ -127,10 +128,11 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
 
     @Override
     public List<String> getParentIds() {
-        if (parentId == null)
+        if (parentId == null) {
             return Collections.emptyList();
-        else
+        } else {
             return Collections.singletonList(parentId);
+        }
     }
 
     @Override
