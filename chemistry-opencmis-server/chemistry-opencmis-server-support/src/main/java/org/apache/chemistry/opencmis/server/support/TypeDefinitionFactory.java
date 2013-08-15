@@ -108,6 +108,7 @@ public final class TypeDefinitionFactory {
 
     private String defaultNamespace;
     private boolean defaultControllableAcl;
+    private boolean defaultIsFullTextIndexed;
     private boolean defaultControllablePolicy;
     private boolean defaultQueryable;
     private boolean defaultFulltextIndexed;
@@ -269,6 +270,14 @@ public final class TypeDefinitionFactory {
 
     public void setDefaultNamespace(String defaultNamespace) {
         this.defaultNamespace = defaultNamespace;
+    }
+
+    public boolean getDefaultIsFulltextIndexed() {
+        return defaultIsFullTextIndexed;
+    }
+
+    public void setDefaultIsFulltextIndexed(boolean defaultIsFullTextIndexed) {
+        this.defaultIsFullTextIndexed = defaultIsFullTextIndexed;
     }
 
     public boolean getDefaultControllableAcl() {
