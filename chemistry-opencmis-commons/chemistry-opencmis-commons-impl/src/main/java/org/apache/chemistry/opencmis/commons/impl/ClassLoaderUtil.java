@@ -18,7 +18,10 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
-public class ClassLoaderUtil {
+public final class ClassLoaderUtil {
+
+    private ClassLoaderUtil() {
+    }
 
     /**
      * Loads a class. If the context class loader is set, it is used.

@@ -66,6 +66,7 @@ public final class IOUtils {
         try {
             final byte[] buffer = new byte[4096];
             while (stream.read(buffer) > -1) {
+                // just consume
             }
         } catch (IOException e) {
             // ignore
@@ -86,6 +87,7 @@ public final class IOUtils {
         try {
             final char[] buffer = new char[4096];
             while (reader.read(buffer) > -1) {
+                // just consume
             }
         } catch (IOException e) {
             // ignore
