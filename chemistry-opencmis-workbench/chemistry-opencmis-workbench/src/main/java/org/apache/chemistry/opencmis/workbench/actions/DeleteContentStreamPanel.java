@@ -50,7 +50,7 @@ public class DeleteContentStreamPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         ((Document) getObject()).deleteContentStream();
         return true;
     }

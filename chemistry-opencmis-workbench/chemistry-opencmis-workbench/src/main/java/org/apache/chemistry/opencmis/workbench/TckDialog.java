@@ -324,7 +324,7 @@ public class TckDialog {
         }
     }
 
-    private class TestTreeNode extends DefaultMutableTreeNode {
+    private static class TestTreeNode extends DefaultMutableTreeNode {
         private static final long serialVersionUID = 1L;
 
         private final JTree tree;

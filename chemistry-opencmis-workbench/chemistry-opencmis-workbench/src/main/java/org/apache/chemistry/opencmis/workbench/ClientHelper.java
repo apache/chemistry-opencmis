@@ -91,7 +91,7 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientHelper {
+public final class ClientHelper {
 
     public static final Color LINK_COLOR = new Color(105, 29, 21);
     public static final Color LINK_SELECTED_COLOR = new Color(255, 255, 255);

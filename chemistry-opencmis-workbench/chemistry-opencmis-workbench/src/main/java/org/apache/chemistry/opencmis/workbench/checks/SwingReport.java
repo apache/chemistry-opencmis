@@ -81,8 +81,7 @@ public class SwingReport extends AbstractCmisTestReport {
     }
 
     @Override
-    public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
-            throws Exception {
+    public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer) {
         this.parameters = parameters;
         this.groups = groups;
         new SwingReportDialog();

@@ -50,7 +50,7 @@ public class PropertyUpdatePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         new PropertyEditorFrame(getClientModel(), getObject());
         return false;
     }

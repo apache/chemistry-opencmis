@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -39,5 +42,12 @@ public class TransientWrapper implements Serializable {
     @Override
     public String toString() {
         return (object == null ? "(no object)" : "(transient) " + object.toString());
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        object = null;
     }
 }

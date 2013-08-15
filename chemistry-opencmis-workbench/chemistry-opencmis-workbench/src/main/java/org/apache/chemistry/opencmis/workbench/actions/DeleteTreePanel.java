@@ -71,7 +71,7 @@ public class DeleteTreePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         List<String> ids = ((Folder) getObject()).deleteTree(allVersionsBox.isSelected(),
                 (UnfileObject) unfileObjectsBox.getSelectedItem(), continueOnFailureBox.isSelected());
 

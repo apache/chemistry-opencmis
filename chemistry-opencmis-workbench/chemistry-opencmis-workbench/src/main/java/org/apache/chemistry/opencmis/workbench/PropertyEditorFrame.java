@@ -31,6 +31,7 @@ import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -520,7 +521,7 @@ public class PropertyEditorFrame extends JFrame {
             });
         }
 
-        public Object getPropertyValue() throws Exception {
+        public Object getPropertyValue() throws ParseException {
             commitEdit();
             return getValue();
         }
@@ -544,7 +545,7 @@ public class PropertyEditorFrame extends JFrame {
             return result;
         }
 
-        public Object getPropertyValue() throws Exception {
+        public Object getPropertyValue() {
             return ((BigDecimal) super.getValue()).toBigIntegerExact();
         }
     }

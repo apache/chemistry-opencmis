@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.actions;
 
+import java.io.FileNotFoundException;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -68,7 +70,7 @@ public class AppendContentStreamPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() throws FileNotFoundException {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
 
         try {

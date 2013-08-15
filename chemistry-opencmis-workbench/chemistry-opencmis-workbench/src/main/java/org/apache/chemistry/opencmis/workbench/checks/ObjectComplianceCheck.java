@@ -34,7 +34,7 @@ public class ObjectComplianceCheck extends AbstractSessionTest {
 
     private String objectId;
 
-    public ObjectComplianceCheck(String objectId) throws Exception {
+    public ObjectComplianceCheck(String objectId) {
         this.objectId = objectId;
     }
 
@@ -45,7 +45,7 @@ public class ObjectComplianceCheck extends AbstractSessionTest {
     }
 
     @Override
-    public void run(Session session) throws Exception {
+    public void run(Session session) {
         CmisObject object = session.getObject(objectId, SELECT_ALL_NO_CACHE_OC);
         String[] propertiesToCheck = getAllProperties(object);
 

@@ -64,7 +64,7 @@ public class CopyPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         ObjectId targetFolderId = new ObjectIdImpl(targetFolderField.getText());
         ((Document) getObject()).copy(targetFolderId);
         return true;

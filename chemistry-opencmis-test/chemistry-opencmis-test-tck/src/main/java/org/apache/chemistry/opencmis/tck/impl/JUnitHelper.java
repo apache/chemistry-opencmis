@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
 import org.junit.Assert;
 
-public class JUnitHelper {
+public final class JUnitHelper {
 
     public static final String JUNIT_PARAMETERS = "org.apache.chemistry.opencmis.tck.junit.parameters";
 
@@ -85,6 +85,8 @@ public class JUnitHelper {
     }
 
     private static class JUnitProgressMonitor implements CmisTestProgressMonitor {
+        
+        @SuppressWarnings("PMD.SystemPrintln")
         public void startGroup(CmisTestGroup group) {
             System.out.println(group.getName() + " (" + group.getTests().size() + " tests)");
         }
@@ -92,6 +94,7 @@ public class JUnitHelper {
         public void endGroup(CmisTestGroup group) {
         }
 
+        @SuppressWarnings("PMD.SystemPrintln")
         public void startTest(CmisTest test) {
             System.out.println("  " + test.getName());
         }
@@ -99,6 +102,7 @@ public class JUnitHelper {
         public void endTest(CmisTest test) {
         }
 
+        @SuppressWarnings("PMD.SystemPrintln")
         public void message(String msg) {
             System.out.println(msg);
         }

@@ -49,10 +49,14 @@ import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.details.DetailsTabs;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientFrame extends JFrame implements WindowListener {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ClientFrame.class);
 
     public static final String SYSPROP_SCRIPTS = ClientSession.WORKBENCH_PREFIX + "scripts";
 
@@ -127,7 +131,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                         macAppClass.getMethod("setDockIconImage", new Class<?>[] { Image.class }).invoke(macApp,
                                 new Object[] { icon.getImage() });
                     } catch (Exception e) {
-                        // ignore
+                        LOG.debug("Could not set dock icon!", e);
                     }
                 }
 
@@ -136,10 +140,10 @@ public class ClientFrame extends JFrame implements WindowListener {
                     fullscreenClass.getMethod("setWindowCanFullScreen", new Class<?>[] { Window.class, Boolean.TYPE })
                             .invoke(fullscreenClass, this, true);
                 } catch (Exception e) {
-                    // ignore
+                    LOG.debug("Could not add fullscreen button!", e);
                 }
             } catch (Exception e) {
-                // ignore
+                LOG.debug("Could not get com.apple.eawt.Application object!", e);
             }
         }
 

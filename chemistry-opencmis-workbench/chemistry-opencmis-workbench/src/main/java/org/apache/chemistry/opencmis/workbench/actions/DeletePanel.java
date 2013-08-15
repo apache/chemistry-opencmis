@@ -55,7 +55,7 @@ public class DeletePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         getObject().delete(allVersionsBox.isSelected());
         return false;
     }

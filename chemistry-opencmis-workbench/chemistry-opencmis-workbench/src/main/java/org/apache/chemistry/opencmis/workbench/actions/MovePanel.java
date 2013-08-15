@@ -70,7 +70,7 @@ public class MovePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws Exception {
+    public boolean doAction() {
         ObjectId targetFolderId = new ObjectIdImpl(targetFolderField.getText());
         FileableCmisObject before = (FileableCmisObject) getObject();
         FileableCmisObject after = before.move(getClientModel().getCurrentFolder(), targetFolderId);
