@@ -47,7 +47,7 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
  */
 /**
  * @author d058463
- *
+ * 
  */
 public interface StoredObject {
 
@@ -57,12 +57,12 @@ public interface StoredObject {
      * @return id of this object
      */
     String getId();
-    
+
     /**
      * Set the id of this object
      * 
      * @param id
-     *      id of this object
+     *            id of this object
      */
     void setId(String id);
 
@@ -95,28 +95,29 @@ public interface StoredObject {
      *            id of the type this object gets assigned.
      */
     void setTypeId(String type);
-    
+
     /**
      * CMIS 1.1 get ids of all secondary types
-     * @return
-     *      list of type ids
+     * 
+     * @return list of type ids
      */
     List<String> getSecondaryTypeIds();
 
     /**
      * CMIS 1.1: set description of an object
+     * 
      * @param description
-     *      description of this object
+     *            description of this object
      */
     void setDescription(String description);
-    
+
     /**
      * CMIS 1.1: get description of an object
-     * @return
-     *      description of this object
+     * 
+     * @return description of this object
      */
     String getDescription();
-    
+
     /**
      * Retrieve the user who created the document
      * 
@@ -176,11 +177,12 @@ public interface StoredObject {
 
     /**
      * Set the date and time of the last modification of this object
+     * 
      * @param calendar
-     *      timestamp of last modification
+     *            timestamp of last modification
      */
     void setModifiedAt(GregorianCalendar calendar);
-    
+
     /**
      * Get the repository id of this object where the object is stored.
      * 
@@ -263,73 +265,71 @@ public interface StoredObject {
      *            parameters
      */
     void setCustomProperties(Map<String, PropertyData<?>> properties);
-    
+
     /**
      * get the Acl id of the stored object
      */
     int getAclId();
-    
-	/*
-     * get the allowable actions  of the object
+
+    /*
+     * get the allowable actions of the object
      */
-	AllowableActions getAllowableActions(String user);
-	
+    AllowableActions getAllowableActions(String user);
+
     /**
-     * check if the document can generate a renditions and rendition is visible for user
-     * @return
-     *   true if rendition exists, false if not.
+     * check if the document can generate a renditions and rendition is visible
+     * for user
+     * 
+     * @return true if rendition exists, false if not.
      */
-    public boolean hasRendition(String user);
-    
-	/**
+    boolean hasRendition(String user);
+
+    /**
      * get the rendition this objects supports
      * 
      * @param renditionFilter
      * @param maxItems
      * @param skipCount
      * @param extension
-     * @return
-     *      List of renditions or null if no renditions are available for this object
+     * @return List of renditions or null if no renditions are available for
+     *         this object
      */
-    public List<RenditionData> getRenditions(String renditionFilter,
-            long maxItems, long skipCount);
-    
+    List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount);
+
     /**
      * get the rendition of this object
      * 
      * @param streamId
-     *      stream if of rendition
+     *            stream if of rendition
      * @param offset
-     *      offset in rendition content
+     *            offset in rendition content
      * @param length
-     *      length of rendition content
-     * @return
-     *     ContentStream containing the rendition
+     *            length of rendition content
+     * @return ContentStream containing the rendition
      */
-    public ContentStream getRenditionContent(String streamId, long offset, long length);
-    
+    ContentStream getRenditionContent(String streamId, long offset, long length);
+
     /**
      * get applied policies of this object
      * 
-     * @return
-     *      list of ids of policies applied to this object
+     * @return list of ids of policies applied to this object
      */
-    public List<String> getAppliedPolicies();
-    
+    List<String> getAppliedPolicies();
+
     /**
      * add an id of a policy to an object
      * 
      * @param policyId
-     *      id of policy to add
+     *            id of policy to add
      */
-    public void addAppliedPolicy(String policyId);
-    
+    void addAppliedPolicy(String policyId);
+
     /**
      * remove an id of a policy from an object
      * 
      * @param policyId
-     *      id of policy to remove
+     *            id of policy to remove
      */
-    public void removePolicy(String policyId);
+    void removePolicy(String policyId);
 
 }

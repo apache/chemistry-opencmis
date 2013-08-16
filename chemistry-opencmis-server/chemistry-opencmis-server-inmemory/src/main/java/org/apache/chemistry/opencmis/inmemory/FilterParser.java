@@ -29,7 +29,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 /**
  * @author Jens
  */
-public class FilterParser {
+public final class FilterParser {
 
     // Utility class
     private FilterParser() {

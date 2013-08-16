@@ -392,8 +392,7 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             throw new CmisConstraintException("ACLs on policies are not suported.");
         }
 
-        StoredObject so = super
-                .createPolicy(context, repositoryId, folderId, addAces, removeAces, policyIds, extension);
+        StoredObject so = super.createPolicy(context, repositoryId, folderId, addAces, removeAces, policyIds, extension);
         checkAllAccess(repositoryId, context.getUsername(), so);
         return so;
     }
@@ -650,8 +649,6 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             ExtensionsData extension, Holder<Boolean> contentCopied) {
 
         StoredObject so = super.checkOut(context, repositoryId, objectId, extension, contentCopied);
-        // StoredObject container = so instanceof DocumentVersion ?
-        // ((DocumentVersion)so).getParentDocument() : so;
         checkWriteAccess(repositoryId, context.getUsername(), so);
         return so;
     }

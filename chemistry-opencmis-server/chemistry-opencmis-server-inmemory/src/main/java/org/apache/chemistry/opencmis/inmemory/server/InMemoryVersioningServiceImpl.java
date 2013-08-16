@@ -182,7 +182,6 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         VersionedDocument verDoc = (VersionedDocument) so;
-        res = new ArrayList<ObjectData>();
         List<DocumentVersion> versions = verDoc.getAllVersions();
         for (DocumentVersion version : versions) {
             ObjectData objData = getObject(context, repositoryId, version.getId(), filter, includeAllowableActions,

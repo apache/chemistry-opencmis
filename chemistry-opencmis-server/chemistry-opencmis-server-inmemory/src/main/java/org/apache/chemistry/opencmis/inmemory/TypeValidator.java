@@ -57,24 +57,25 @@ import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
- * A helper class doing some consistency checks when new type definitions are added to the system
+ * A helper class doing some consistency checks when new type definitions are
+ * added to the system
  * 
  * @author Jens
- *
+ * 
  */
-public class TypeValidator {
-    
+public final class TypeValidator {
+
     private static final Object CMIS_USER = "cmis:user";
 
-	private TypeValidator() {	    
-	}
-	
+    private TypeValidator() {
+    }
+
     public static void checkType(TypeManager tm, TypeDefinition td) {
 
-	    if(null == td) {
-	        throw new CmisInvalidArgumentException("Cannot add type, because the type defintion is null.");  
-	    }
-	    
+        if (null == td) {
+            throw new CmisInvalidArgumentException("Cannot add type, because the type defintion is null.");
+        }
+
         if (null == tm.getTypeById(td.getParentTypeId())) {
             throw new CmisInvalidArgumentException("Cannot add type, because parent with id " + td.getParentTypeId()
                     + " does not exist.");
@@ -89,19 +90,19 @@ public class TypeValidator {
         checkTypeQueryName(tm, td.getQueryName());
         checkTypeLocalName(tm, td.getLocalName());
         checkBaseAndParentType(td);
-        
+
         if (null != td.getPropertyDefinitions()) {
             TypeValidator.checkProperties(tm, td.getPropertyDefinitions().values());
-        }        
+        }
     }
-    
+
     public static AbstractTypeDefinition completeType(TypeDefinition type) {
         if (type instanceof DocumentTypeDefinition) {
             return completeTypeDoc((DocumentTypeDefinition) type);
         } else if (type instanceof FolderTypeDefinition) {
             return completeTypeFolder((FolderTypeDefinition) type);
         } else if (type instanceof PolicyTypeDefinition) {
-            return completeTypePolicy((PolicyTypeDefinition)type);
+            return completeTypePolicy((PolicyTypeDefinition) type);
         } else if (type instanceof ItemTypeDefinition) {
             return completeTypeItem((ItemTypeDefinition) type);
         } else if (type instanceof RelationshipTypeDefinition) {
@@ -110,7 +111,7 @@ public class TypeValidator {
             return completeTypeSecondary((SecondaryTypeDefinition) type);
         } else {
             return null;
-        }        
+        }
     }
 
     public static void adjustTypeNamesAndId(AbstractTypeDefinition typeDef) {
@@ -156,7 +157,7 @@ public class TypeValidator {
         tm.setCanUpdate(true);
         td.setTypeMutability(tm);
         td.setExtensions(td.getExtensions());
-        
+
         Map<String, PropertyDefinition<?>> propDefsNew = new LinkedHashMap<String, PropertyDefinition<?>>();
         if (null != td.getPropertyDefinitions()) {
             Map<String, PropertyDefinition<?>> propDefs = td.getPropertyDefinitions();
@@ -180,7 +181,7 @@ public class TypeValidator {
             if (!NameValidator.isValidId(pd2.getId())) {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             }
-    
+
             // check query name syntax
             if (null == pd2.getQueryName()) {
                 throw new CmisInvalidArgumentException("property query name cannot be null.");
@@ -188,7 +189,7 @@ public class TypeValidator {
             if (!NameValidator.isValidQueryName(pd2.getQueryName())) {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             }
-    
+
             // check local name syntax
             if (null == pd2.getLocalName()) {
                 throw new CmisInvalidArgumentException("property local name cannot be null.");
@@ -196,7 +197,7 @@ public class TypeValidator {
             if (!NameValidator.isValidLocalName(pd2.getLocalName())) {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             }
-            
+
             for (TypeDefinitionContainer tdc : tdl) {
                 TypeDefinition td = tdc.getTypeDefinition();
                 if (null != td.getPropertyDefinitions()) {
@@ -208,20 +209,20 @@ public class TypeValidator {
                         }
                         // check if query name is used
                         if (pd1.getQueryName().equals(pd2.getQueryName())) {
-                            throw new CmisConstraintException("Property query name " + pd2.getQueryName() + " already in use in type "
-                                    + td.getQueryName());
+                            throw new CmisConstraintException("Property query name " + pd2.getQueryName()
+                                    + " already in use in type " + td.getQueryName());
                         }
                         // check if local name is used
                         if (pd1.getLocalName().equals(pd2.getLocalName())) {
-                            throw new CmisConstraintException("Property local name " + pd2.getLocalName() + " already in use in type "
-                                    + td.getId());
+                            throw new CmisConstraintException("Property local name " + pd2.getLocalName()
+                                    + " already in use in type " + td.getId());
                         }
                     }
                 }
             }
-        }        
+        }
     }
-    
+
     private static void adjustPropertyNamesAndId(AbstractPropertyDefinition<?> propDef) {
         if (null == propDef.getId()) {
             propDef.setId(UUID.randomUUID().toString());
@@ -242,8 +243,8 @@ public class TypeValidator {
     private static String replaceInvalidCharacters(String id) {
         // if there are illegal characters adjust them
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i<id.length(); i++) {
-            if (NameValidator.isValidId(id.substring(i, i+1))) {
+        for (int i = 0; i < id.length(); i++) {
+            if (NameValidator.isValidId(id.substring(i, i + 1))) {
                 sb.append(id.charAt(i));
             } else {
                 sb.append('_');
@@ -284,13 +285,13 @@ public class TypeValidator {
         ItemTypeDefinitionImpl td = TypeUtil.cloneTypeItem(type);
         td.initialize(type);
         completeAbstractTypeDefinition(td);
-        return td;        
+        return td;
     }
 
     private static SecondaryTypeDefinitionImpl completeTypeSecondary(SecondaryTypeDefinition type) {
         SecondaryTypeDefinitionImpl td = TypeUtil.cloneTypeSecondary(type);
         completeAbstractTypeDefinition(td);
-        return td;        
+        return td;
     }
 
     private static PolicyTypeDefinitionImpl completeTypePolicy(PolicyTypeDefinition type) {
@@ -299,11 +300,12 @@ public class TypeValidator {
         return null;
     }
 
-    // When creating types PropertyDefinitions may only be partially filled, fill all fields
+    // When creating types PropertyDefinitions may only be partially filled,
+    // fill all fields
     // to make a complete definition
     private static AbstractPropertyDefinition<?> completePropertyDef(PropertyDefinition<?> pdSrc) {
         AbstractPropertyDefinition<?> newPropDef = TypeUtil.clonePropertyDefinition(pdSrc);
-        
+
         if (null == newPropDef.getPropertyType()) {
             throw new CmisInvalidArgumentException("Property " + pdSrc.getId() + "has no property type.");
         }
@@ -337,41 +339,41 @@ public class TypeValidator {
     }
 
     public static Acl expandAclMakros(String user, Acl acl) {
-     	boolean mustCopy = false;
-    	
-    	if (user == null || acl == null || acl.getAces() == null) {
+        boolean mustCopy = false;
+
+        if (user == null || acl == null || acl.getAces() == null) {
             return acl;
         }
-    	
-     	for (Ace ace: acl.getAces()) {
-    		String principal = ace.getPrincipalId();
-    		if (principal != null && principal.equals(CMIS_USER)) {
-    			mustCopy = true;
-    		}
-    	}
-    	
-    	if (mustCopy) {
-    		AccessControlListImpl result = new AccessControlListImpl();
-    		List<Ace> list = new ArrayList<Ace>(acl.getAces().size());
-        	for (Ace ace: acl.getAces()) {
-        		String principal = ace.getPrincipalId();
-        		if (principal != null && principal.equals(CMIS_USER)) {
-        			AccessControlEntryImpl ace2 = new AccessControlEntryImpl();
-        			ace2.setPermissions(ace.getPermissions());
-        			ace2.setExtensions(ace.getExtensions());
-        			ace2.setPrincipal(new AccessControlPrincipalDataImpl(user));
-        			list.add(ace2);
-        		} else {
+
+        for (Ace ace : acl.getAces()) {
+            String principal = ace.getPrincipalId();
+            if (principal != null && principal.equals(CMIS_USER)) {
+                mustCopy = true;
+            }
+        }
+
+        if (mustCopy) {
+            AccessControlListImpl result = new AccessControlListImpl();
+            List<Ace> list = new ArrayList<Ace>(acl.getAces().size());
+            for (Ace ace : acl.getAces()) {
+                String principal = ace.getPrincipalId();
+                if (principal != null && principal.equals(CMIS_USER)) {
+                    AccessControlEntryImpl ace2 = new AccessControlEntryImpl();
+                    ace2.setPermissions(ace.getPermissions());
+                    ace2.setExtensions(ace.getExtensions());
+                    ace2.setPrincipal(new AccessControlPrincipalDataImpl(user));
+                    list.add(ace2);
+                } else {
                     list.add(ace);
-                }        		
-        	}    		
-    		result.setAces(list);
-    		return result;
-    	} else {
+                }
+            }
+            result.setAces(list);
+            return result;
+        } else {
             return acl;
         }
     }
-    
+
     private static void checkTypeId(TypeManager tm, String typeId) {
 
         if (null == typeId) {
@@ -385,10 +387,10 @@ public class TypeValidator {
 
         if (null != tm.getTypeById(typeId)) {
             throw new CmisInvalidArgumentException("You cannot add type with id " + typeId
-                    + " because it already exists.");           
+                    + " because it already exists.");
         }
     }
-    
+
     private static void checkTypeQueryName(TypeManager tm, String queryName) {
 
         if (null == queryName) {
@@ -398,16 +400,16 @@ public class TypeValidator {
         if (!NameValidator.isValidQueryName(queryName)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
-        
+
         // check set query name is unique in the type system
         if (null != tm.getTypeByQueryName(queryName)) {
             throw new CmisInvalidArgumentException("You cannot add type with query name " + queryName
-                    + " because it already exists.");           
+                    + " because it already exists.");
         }
     }
-    
+
     private static void checkTypeLocalName(TypeManager tm, String localName) {
-        
+
         if (null == localName) {
             throw new CmisInvalidArgumentException("Local name cannot be null.");
         }
@@ -415,12 +417,12 @@ public class TypeValidator {
         if (!NameValidator.isValidLocalName(localName)) {
             throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
-        
+
         for (TypeDefinitionContainer tdc : tm.getTypeDefinitionList()) {
             if (tdc.getTypeDefinition().getLocalName().equals(localName)) {
                 throw new CmisConstraintException("You cannot add type with local name " + localName
                         + " because it already exists.");
-            }                       
+            }
         }
     }
 
@@ -431,7 +433,7 @@ public class TypeValidator {
         if (null == td.getParentTypeId()) {
             throw new CmisInvalidArgumentException("You cannot create a type without a parent type id: " + td.getId());
         }
-        
+
     }
 
 }

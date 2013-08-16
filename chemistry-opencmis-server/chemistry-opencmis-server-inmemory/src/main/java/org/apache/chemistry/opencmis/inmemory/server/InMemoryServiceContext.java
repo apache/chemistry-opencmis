@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
  */
 public final class InMemoryServiceContext {
     
-    private static class ContextHolder {
+    private static final class ContextHolder {
         private CmisServiceWrapper<InMemoryService> wrapper;
         private CallContext callContext;
 
@@ -49,6 +49,9 @@ public final class InMemoryServiceContext {
     }
     
     private static ThreadLocal<ContextHolder> threadLocalService = new ThreadLocal<ContextHolder>();
+    
+    private InMemoryServiceContext() {
+    }
     
     public static synchronized void setWrapperService(CmisServiceWrapper<InMemoryService> wrapperService) {
         threadLocalService.remove();

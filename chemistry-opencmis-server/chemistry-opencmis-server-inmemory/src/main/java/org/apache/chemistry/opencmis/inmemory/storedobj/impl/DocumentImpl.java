@@ -42,16 +42,17 @@ import org.slf4j.LoggerFactory;
 /**
  * InMemory Stored Document A document is a stored object that has a path and
  * (optional) content
- *
+ * 
  * @author Jens
- *
+ * 
  */
 
 public class DocumentImpl extends FilingImpl implements Document {
     private ContentStreamDataImpl fContent;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentImpl.class.getName());
-    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings.getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
+    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings
+            .getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     public static final int THUMBNAIL_SIZE = 100;
 
@@ -60,7 +61,7 @@ public class DocumentImpl extends FilingImpl implements Document {
     }
 
     @Override
-	public ContentStream getContent(long offset, long length) {
+    public ContentStream getContent(long offset, long length) {
         if (null == fContent) {
             return null;
         } else if (offset <= 0 && length < 0) {
@@ -71,7 +72,7 @@ public class DocumentImpl extends FilingImpl implements Document {
     }
 
     @Override
-	public void setContent(ContentStream content, boolean mustPersist) {
+    public void setContent(ContentStream content, boolean mustPersist) {
         if (null == content) {
             fContent = null;
         } else {
@@ -94,12 +95,13 @@ public class DocumentImpl extends FilingImpl implements Document {
             }
         }
     }
-    
+
     @Override
-	public void appendContent(ContentStream content) {
+    public void appendContent(ContentStream content) {
         if (null == content) {
             return;
-        } if (null == fContent) {
+        }
+        if (null == fContent) {
             setContent(content, true);
         } else {
             try {
@@ -109,7 +111,6 @@ public class DocumentImpl extends FilingImpl implements Document {
             }
         }
     }
-
 
     @Override
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
@@ -122,86 +123,87 @@ public class DocumentImpl extends FilingImpl implements Document {
         // properties always to be set
 
         if (FilterParser.isContainedInFilter(PropertyIds.IS_IMMUTABLE, requestedIds)) {
-            properties.put(PropertyIds.IS_IMMUTABLE, objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE,
-                    false));
+            properties.put(PropertyIds.IS_IMMUTABLE,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_IMMUTABLE, false));
         }
 
         // Set the content related properties
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_FILE_NAME, requestedIds)) {
             properties.put(PropertyIds.CONTENT_STREAM_FILE_NAME, objFactory.createPropertyStringData(
-                    PropertyIds.CONTENT_STREAM_FILE_NAME, null != fContent ? fContent.getFileName() : (String)null) );
+                    PropertyIds.CONTENT_STREAM_FILE_NAME, null != fContent ? fContent.getFileName() : (String) null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_ID, requestedIds)) {
-            properties.put(PropertyIds.CONTENT_STREAM_ID, objFactory.createPropertyStringData(
-                    PropertyIds.CONTENT_STREAM_ID, (String) null));
+            properties.put(PropertyIds.CONTENT_STREAM_ID,
+                    objFactory.createPropertyStringData(PropertyIds.CONTENT_STREAM_ID, (String) null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_LENGTH, requestedIds)) {
-            properties.put(PropertyIds.CONTENT_STREAM_LENGTH, objFactory.createPropertyIntegerData(
-                    PropertyIds.CONTENT_STREAM_LENGTH, null != fContent ? fContent.getBigLength() : null));
+            properties.put(
+                    PropertyIds.CONTENT_STREAM_LENGTH,
+                    objFactory.createPropertyIntegerData(PropertyIds.CONTENT_STREAM_LENGTH,
+                            null != fContent ? fContent.getBigLength() : null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CONTENT_STREAM_MIME_TYPE, requestedIds)) {
             properties.put(PropertyIds.CONTENT_STREAM_MIME_TYPE, objFactory.createPropertyStringData(
-                    PropertyIds.CONTENT_STREAM_MIME_TYPE, null != fContent ? fContent.getMimeType() : (String)null) );
+                    PropertyIds.CONTENT_STREAM_MIME_TYPE, null != fContent ? fContent.getMimeType() : (String) null));
         }
-        
+
         // Spec requires versioning properties even for unversioned documents
         // overwrite the version related properties
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_ID, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_ID, objFactory.createPropertyIdData(
-                    PropertyIds.VERSION_SERIES_ID, getId()));
+            properties.put(PropertyIds.VERSION_SERIES_ID,
+                    objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_ID, getId()));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, requestedIds)) {
-            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, objFactory.createPropertyBooleanData(
-                    PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, false));
+            properties.put(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT, false));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, objFactory.createPropertyStringData(
-                    PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, (String)null));
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
+                    objFactory.createPropertyStringData(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, (String) null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, requestedIds)) {
-            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, objFactory.createPropertyIdData(
-                    PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, (String)null));
+            properties.put(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
+                    objFactory.createPropertyIdData(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, (String) null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_VERSION, requestedIds)) {
-            properties.put(PropertyIds.IS_LATEST_VERSION, objFactory.createPropertyBooleanData(
-                    PropertyIds.IS_LATEST_VERSION, true));
+            properties.put(PropertyIds.IS_LATEST_VERSION,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_LATEST_VERSION, true));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_MAJOR_VERSION, requestedIds)) {
-            properties.put(PropertyIds.IS_MAJOR_VERSION, objFactory.createPropertyBooleanData(
-                    PropertyIds.IS_MAJOR_VERSION, true));
+            properties.put(PropertyIds.IS_MAJOR_VERSION,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_MAJOR_VERSION, true));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.IS_LATEST_MAJOR_VERSION, requestedIds)) {
-            properties.put(PropertyIds.IS_LATEST_MAJOR_VERSION, objFactory.createPropertyBooleanData(
-                    PropertyIds.IS_LATEST_MAJOR_VERSION, true));
+            properties.put(PropertyIds.IS_LATEST_MAJOR_VERSION,
+                    objFactory.createPropertyBooleanData(PropertyIds.IS_LATEST_MAJOR_VERSION, true));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.CHECKIN_COMMENT, requestedIds)) {
-            properties.put(PropertyIds.CHECKIN_COMMENT, objFactory.createPropertyStringData(
-                    PropertyIds.CHECKIN_COMMENT, (String )null));
+            properties.put(PropertyIds.CHECKIN_COMMENT,
+                    objFactory.createPropertyStringData(PropertyIds.CHECKIN_COMMENT, (String) null));
         }
         if (FilterParser.isContainedInFilter(PropertyIds.VERSION_LABEL, requestedIds)) {
-            properties.put(PropertyIds.VERSION_LABEL, objFactory.createPropertyStringData(PropertyIds.VERSION_LABEL,
-                    (String) null));
+            properties.put(PropertyIds.VERSION_LABEL,
+                    objFactory.createPropertyStringData(PropertyIds.VERSION_LABEL, (String) null));
         }
-        
+
         // CMIS 1.1
         if (FilterParser.isContainedInFilter(PropertyIds.IS_PRIVATE_WORKING_COPY, requestedIds)) {
             properties.put(PropertyIds.IS_PRIVATE_WORKING_COPY,
                     objFactory.createPropertyBooleanData(PropertyIds.IS_PRIVATE_WORKING_COPY, false));
         }
-        
+
     }
 
     @Override
-	public boolean hasContent() {
+    public boolean hasContent() {
         return null != fContent;
     }
 
     @Override
-    public List<RenditionData> getRenditions(String renditionFilter,
-            long maxItems, long skipCount) {
+    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
 
         String tokenizer = "[\\s;]";
-        if (null==renditionFilter) {
+        if (null == renditionFilter) {
             return null;
         }
         String[] formats = renditionFilter.split(tokenizer);
@@ -233,13 +235,13 @@ public class DocumentImpl extends FilingImpl implements Document {
     }
 
     @Override
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {     
+    public ContentStream getRenditionContent(String streamId, long offset, long length) {
         if (null == fContent) {
             return null;
         }
-        
+
         String mimeType = fContent.getMimeType();
-        
+
         try {
             if (isImage(mimeType)) {
                 ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
@@ -268,67 +270,47 @@ public class DocumentImpl extends FilingImpl implements Document {
             throw new CmisRuntimeException("Failed to generate rendition: " + e);
         }
     }
-    
+
     @Override
     public boolean hasRendition(String user) {
         if (null == fContent) {
             return false;
         }
-        
-        String mimeType = fContent.getMimeType();
-        
-        if (isImage(mimeType)) {
-            return true;
-        } else if (isAudio(mimeType)) {
-            return true;
-        } else if (isVideo(mimeType)) {
-            return true;
-        } else if (isPDF(mimeType)) {
-            return true;
-        } else if (isPowerpoint(mimeType)) {
-            return true;
-        } else if (isExcel(mimeType)) {
-            return true;
-        } else if (isWord(mimeType)) {
-            return true;
-        } else if (isHtml(mimeType)) {
-            return true;
-        } else if (isPlainText(mimeType)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
+        String mimeType = fContent.getMimeType();
+
+        return isImage(mimeType) || isAudio(mimeType) || isVideo(mimeType) || isPDF(mimeType) || isPowerpoint(mimeType)
+                || isExcel(mimeType) || isWord(mimeType) || isHtml(mimeType) || isPlainText(mimeType);
+    }
 
     private boolean isImage(String mimeType) {
         return mimeType.startsWith("image/");
     }
 
     private boolean isWord(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
-                mimeType.equals("application/ms-word");
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                || mimeType.equals("application/ms-word");
     }
 
     private boolean isExcel(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ||
-                mimeType.equals("application/vnd.ms-excel");
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                || mimeType.equals("application/vnd.ms-excel");
     }
-    
+
     private boolean isPowerpoint(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.slideshow") ||
-                mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation") ||
-                mimeType.equals("application/vnd.ms-powerpoint");
+        return mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.slideshow")
+                || mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")
+                || mimeType.equals("application/vnd.ms-powerpoint");
     }
-    
+
     private boolean isPDF(String mimeType) {
         return mimeType.equals("application/pdf");
     }
-    
+
     private boolean isHtml(String mimeType) {
-       return mimeType.equals("text/html");
+        return mimeType.equals("text/html");
     }
-    
+
     private boolean isAudio(String mimeType) {
         return mimeType.startsWith("audio/");
     }
@@ -336,9 +318,9 @@ public class DocumentImpl extends FilingImpl implements Document {
     private boolean isVideo(String mimeType) {
         return mimeType.startsWith("video/");
     }
-    
+
     private boolean isPlainText(String mimeType) {
         return mimeType.equals("text/plain");
     }
 
- }
+}

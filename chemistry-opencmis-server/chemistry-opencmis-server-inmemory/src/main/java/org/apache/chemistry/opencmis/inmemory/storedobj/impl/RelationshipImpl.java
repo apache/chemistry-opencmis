@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 
 public class RelationshipImpl extends StoredObjectImpl implements Relationship {
-    
+
     private String sourceObjId;
     private String targetObjId;
 
@@ -37,7 +37,7 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
     }
 
     @Override
-	public String getSourceObjectId() {
+    public String getSourceObjectId() {
         return sourceObjId;
     }
 
@@ -46,7 +46,7 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
     }
 
     @Override
-	public String getTargetObjectId() {
+    public String getTargetObjectId() {
         return targetObjId;
     }
 
@@ -58,21 +58,18 @@ public class RelationshipImpl extends StoredObjectImpl implements Relationship {
     public void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds) {
 
-       super.fillProperties(properties, objFactory, requestedIds);
-        
-        if (FilterParser.isContainedInFilter(PropertyIds.SOURCE_ID, requestedIds)) {
-            properties.put(PropertyIds.SOURCE_ID, objFactory.createPropertyStringData(
-                    PropertyIds.SOURCE_ID, sourceObjId) );
-        }
-        
-        if (FilterParser.isContainedInFilter(PropertyIds.TARGET_ID, requestedIds)) {
-            properties.put(PropertyIds.TARGET_ID, objFactory.createPropertyStringData(
-                    PropertyIds.TARGET_ID, targetObjId));
-        }
-        
-    }
+        super.fillProperties(properties, objFactory, requestedIds);
 
-    
-    
+        if (FilterParser.isContainedInFilter(PropertyIds.SOURCE_ID, requestedIds)) {
+            properties.put(PropertyIds.SOURCE_ID,
+                    objFactory.createPropertyStringData(PropertyIds.SOURCE_ID, sourceObjId));
+        }
+
+        if (FilterParser.isContainedInFilter(PropertyIds.TARGET_ID, requestedIds)) {
+            properties.put(PropertyIds.TARGET_ID,
+                    objFactory.createPropertyStringData(PropertyIds.TARGET_ID, targetObjId));
+        }
+
+    }
 
 }

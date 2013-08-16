@@ -86,7 +86,7 @@ public class StoreManagerImpl implements StoreManager {
     private static final String CMIS_ALL = "cmis:all";
 
     private final BindingsObjectFactory fObjectFactory;
-    
+
     private static final String OPENCMIS_VERSION;
     private static final String OPENCMIS_SERVER;
 
@@ -121,7 +121,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public List<String> getAllRepositoryIds() {
+    public List<String> getAllRepositoryIds() {
         Set<String> repIds = fMapRepositoryToObjectStore.keySet();
         List<String> result = new ArrayList<String>();
         result.addAll(repIds);
@@ -129,16 +129,17 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public void initRepository(String repositoryId) {
+    public void initRepository(String repositoryId) {
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
         fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
     }
 
     @Override
-	public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
+    public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
         if (fMapRepositoryToObjectStore.containsKey(repositoryId)
                 || fMapRepositoryToTypeManager.containsKey(repositoryId)) {
-            throw new CmisInvalidArgumentException("Cannot add repository, repository " + repositoryId + " already exists.");
+            throw new CmisInvalidArgumentException("Cannot add repository, repository " + repositoryId
+                    + " already exists.");
         }
 
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
@@ -149,22 +150,22 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public ObjectStore getObjectStore(String repositoryId) {
+    public ObjectStore getObjectStore(String repositoryId) {
         return fMapRepositoryToObjectStore.get(repositoryId);
     }
 
     @Override
-	public CmisServiceValidator getServiceValidator() {
+    public CmisServiceValidator getServiceValidator() {
         return new InMemoryServiceValidatorImpl(this);
     }
 
     @Override
-	public BindingsObjectFactory getObjectFactory() {
+    public BindingsObjectFactory getObjectFactory() {
         return fObjectFactory;
     }
 
     @Override
-	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
+    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY + repositoryId);
@@ -184,7 +185,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
+    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
             int depthParam) {
         int depth = depthParam;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
@@ -212,7 +213,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
+    public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
             boolean includePropertyDefinitions) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -223,20 +224,20 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
+    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
         List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
-        
+
         // remove cmis:item and cmis:secondary for CMIS 1.0
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         if (!cmis11) {
             rootTypes = new ArrayList<TypeDefinitionContainer>(rootTypes);
             TypeDefinitionContainer tcItem = null, tcSecondary = null;
-            for(TypeDefinitionContainer tc : rootTypes) {
+            for (TypeDefinitionContainer tc : rootTypes) {
                 if (tc.getTypeDefinition().getId().equals(BaseTypeId.CMIS_ITEM.value())) {
                     tcItem = tc;
                 }
@@ -251,7 +252,7 @@ public class StoreManagerImpl implements StoreManager {
                 rootTypes.remove(tcSecondary);
             }
         }
-        
+
         if (includePropertyDefinitions) {
             result = rootTypes;
         } else {
@@ -269,7 +270,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public RepositoryInfo getRepositoryInfo(String repositoryId) {
+    public RepositoryInfo getRepositoryInfo(String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
         if (null == sm) {
             return null;
@@ -296,23 +297,21 @@ public class StoreManagerImpl implements StoreManager {
             Object obj = null;
             TypeCreator typeCreator = null;
 
+            final String message = "Illegal class to create type system, must implement TypeCreator interface.";
             try {
                 obj = Class.forName(typeCreatorClassName).newInstance();
             } catch (InstantiationException e) {
-                throw new CmisRuntimeException(
-                        "Illegal class to create type system, must implement TypeCreator interface.", e);
+                throw new CmisRuntimeException(message, e);
             } catch (IllegalAccessException e) {
-                throw new CmisRuntimeException(
-                        "Illegal class to create type system, must implement TypeCreator interface.", e);
+                throw new CmisRuntimeException(message, e);
             } catch (ClassNotFoundException e) {
-                throw new CmisRuntimeException(
-                        "Illegal class to create type system, must implement TypeCreator interface.", e);
+                throw new CmisRuntimeException(message, e);
             }
 
             if (obj instanceof TypeCreator) {
                 typeCreator = (TypeCreator) obj;
             } else {
-                throw new CmisRuntimeException("Illegal class to create type system, must implement TypeCreator interface.");
+                throw new CmisRuntimeException(message);
             }
 
             // retrieve the list of available types from the configured class.
@@ -427,21 +426,16 @@ public class StoreManagerImpl implements StoreManager {
         list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_OBJECT, CMIS_WRITE));
-        ;
-        list.add(createMapping(PermissionMapping.CAN_ADD_TO_FOLDER_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_REMOVE_FROM_FOLDER_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_CHECKOUT_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_CANCEL_CHECKOUT_DOCUMENT, CMIS_WRITE));
-        ;
+
         list.add(createMapping(PermissionMapping.CAN_CHECKIN_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_GET_OBJECT_RELATIONSHIPS_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_ADD_POLICY_POLICY, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_REMOVE_POLICY_POLICY, CMIS_WRITE));
-        ;
+
         list.add(createMapping(PermissionMapping.CAN_GET_APPLIED_POLICIES_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, CMIS_READ));
         list.add(createMapping(PermissionMapping.CAN_APPLY_ACL_OBJECT, CMIS_ALL));
@@ -450,28 +444,32 @@ public class StoreManagerImpl implements StoreManager {
         for (PermissionMapping pm : list) {
             map.put(pm.getKey(), pm);
         }
-        
+
         List<BaseTypeId> changesOnType;
         // CMIS 1.1 extensions
         if (cmis11) {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_1.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_1);
-            changesOnType = new ArrayList<BaseTypeId>() {{
-                add(BaseTypeId.CMIS_DOCUMENT);
-                add(BaseTypeId.CMIS_FOLDER);
-                add(BaseTypeId.CMIS_ITEM);
-            }};
-            
-            Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>() {{
-                add(PropertyType.BOOLEAN);
-                add(PropertyType.DATETIME);
-                add(PropertyType.DECIMAL);
-                add(PropertyType.HTML);
-                add(PropertyType.ID);
-                add(PropertyType.INTEGER);
-                add(PropertyType.STRING);
-                add(PropertyType.URI);
-            }};
+            changesOnType = new ArrayList<BaseTypeId>() {
+                {
+                    add(BaseTypeId.CMIS_DOCUMENT);
+                    add(BaseTypeId.CMIS_FOLDER);
+                    add(BaseTypeId.CMIS_ITEM);
+                }
+            };
+
+            Set<PropertyType> propertyTypeSet = new HashSet<PropertyType>() {
+                {
+                    add(PropertyType.BOOLEAN);
+                    add(PropertyType.DATETIME);
+                    add(PropertyType.DECIMAL);
+                    add(PropertyType.HTML);
+                    add(PropertyType.ID);
+                    add(PropertyType.INTEGER);
+                    add(PropertyType.STRING);
+                    add(PropertyType.URI);
+                }
+            };
             CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
             creatablePropertyTypes.setCanCreate(propertyTypeSet);
             caps.setCreatablePropertyTypes(creatablePropertyTypes);
@@ -479,10 +477,12 @@ public class StoreManagerImpl implements StoreManager {
         } else {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);
-            changesOnType = new ArrayList<BaseTypeId>() {{
-                add(BaseTypeId.CMIS_DOCUMENT);
-                add(BaseTypeId.CMIS_FOLDER);
-            }};
+            changesOnType = new ArrayList<BaseTypeId>() {
+                {
+                    add(BaseTypeId.CMIS_DOCUMENT);
+                    add(BaseTypeId.CMIS_FOLDER);
+                }
+            };
         }
         repoInfo.setChangesOnType(changesOnType);
 
@@ -548,25 +548,23 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-	public TypeManagerCreatable getTypeManager(String repositoryId) {
+    public TypeManagerCreatable getTypeManager(String repositoryId) {
         TypeManagerCreatable typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         return typeManager;
     }
 
     @Override
-    public
-	boolean supportsSingleFiling(String repositoryId) {
-    	return false;
+    public boolean supportsSingleFiling(String repositoryId) {
+        return false;
     }
-    
+
     @Override
-    public
-	boolean supportsMultiFilings(String repositoryId) {
-    	return true;
+    public boolean supportsMultiFilings(String repositoryId) {
+        return true;
     }
-    
+
     @Override
-	public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+    public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount) {
         TypeManager tm = getTypeManager(repositoryId);

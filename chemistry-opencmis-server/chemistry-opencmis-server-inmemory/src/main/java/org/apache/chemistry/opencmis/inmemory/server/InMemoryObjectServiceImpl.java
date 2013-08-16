@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExists
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
@@ -609,6 +610,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectInfoHandler objectInfos) {
 
         LOG.debug("start updateProperties()");
+        if (properties == null) {
+            throw new CmisRuntimeException("update properties: no properties given for object id: " + objectId.getValue());
+        }
         StoredObject so = validator.updateProperties(context, repositoryId, objectId, extension);
         String user = context.getUsername();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
@@ -658,75 +662,73 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         // update properties:
-        if (properties != null) {
-            for (String key : properties.getProperties().keySet()) {
-                if (key.equals(PropertyIds.NAME)) {
-                    continue; // ignore here
-                }
-
-                PropertyData<?> value = properties.getProperties().get(key);
-                PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
-                if (cmis11 && null == propDef) {
-                    TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
-                    if (null == typeDefSecondary) {
-                        throw new CmisInvalidArgumentException("Cannot update property " + key
-                                + ": not contained in type");
-                    }
-                    propDef = typeDefSecondary.getPropertyDefinitions().get(key);
-                }
-                
-                if (null == propDef) {
-                    throw new CmisInvalidArgumentException("Unknown property " + key
-                            + ": not contained in type (or any secondary type)");                        
-                }
-
-                if (value.getValues() == null || value.getFirstValue() == null) {
-                    // delete property
-                    // check if a required a property
-                    if (propDef.isRequired()) {
-                        throw new CmisConstraintException(
-                                "updateProperties failed, following property can't be deleted, because it is required: "
-                                        + key);
-                    }
-                    oldProperties.remove(key);
-                    hasUpdatedProp = true;
-                } else {
-                    if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
-                        if (!isCheckedOut) {
-                            throw new CmisUpdateConflictException(
-                                    "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                            + key);
-                        }
-                    } else if (propDef.getUpdatability() != Updatability.READWRITE) {
-                        throw new CmisConstraintException(
-                                "updateProperties failed, following property can't be updated, because it is not writable: "
-                                        + key);
-                    }
-                    oldProperties.put(key, value);
-                    hasUpdatedProp = true;
-                }
+        for (String key : properties.getProperties().keySet()) {
+            if (key.equals(PropertyIds.NAME)) {
+                continue; // ignore here
             }
 
-            // get name from properties and perform special rename to check if
-            // path already exists
-            PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
-            if (pd != null && so instanceof Filing) {
-                String newName = (String) pd.getFirstValue();
-                boolean hasParent = ((Filing) so).hasParent();
-                if (so instanceof Folder && !hasParent) {
-                    throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
+            PropertyData<?> value = properties.getProperties().get(key);
+            PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(key);
+            if (cmis11 && null == propDef) {
+                TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
+                if (null == typeDefSecondary) {
+                    throw new CmisInvalidArgumentException("Cannot update property " + key
+                            + ": not contained in type");
                 }
-                if (newName == null || newName.equals("")) {
-                    throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+                propDef = typeDefSecondary.getPropertyDefinitions().get(key);
+            }
+
+            if (null == propDef) {
+                throw new CmisInvalidArgumentException("Unknown property " + key
+                        + ": not contained in type (or any secondary type)");                        
+            }
+
+            if (value.getValues() == null || value.getFirstValue() == null) {
+                // delete property
+                // check if a required a property
+                if (propDef.isRequired()) {
+                    throw new CmisConstraintException(
+                            "updateProperties failed, following property can't be deleted, because it is required: "
+                                    + key);
                 }
-                if (!NameValidator.isValidName(newName)) {
-                    throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+                oldProperties.remove(key);
+                hasUpdatedProp = true;
+            } else {
+                if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
+                    if (!isCheckedOut) {
+                        throw new CmisUpdateConflictException(
+                                "updateProperties failed, following property can't be updated, because it is not checked-out: "
+                                        + key);
+                    }
+                } else if (propDef.getUpdatability() != Updatability.READWRITE) {
+                    throw new CmisConstraintException(
+                            "updateProperties failed, following property can't be updated, because it is not writable: "
+                                    + key);
                 }
-                // Note: the test for duplicated name in folder is left to the object store
-                ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
-                objStoreFiling.rename((Fileable)so, (String) pd.getFirstValue()); 
+                oldProperties.put(key, value);
                 hasUpdatedProp = true;
             }
+        }
+
+        // get name from properties and perform special rename to check if
+        // path already exists
+        PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+        if (pd != null && so instanceof Filing) {
+            String newName = (String) pd.getFirstValue();
+            boolean hasParent = ((Filing) so).hasParent();
+            if (so instanceof Folder && !hasParent) {
+                throw new CmisConstraintException("updateProperties failed, you cannot rename the root folder");
+            }
+            if (newName == null || newName.equals("")) {
+                throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+            }
+            if (!NameValidator.isValidName(newName)) {
+                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+            }
+            // Note: the test for duplicated name in folder is left to the object store
+            ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
+            objStoreFiling.rename((Fileable)so, (String) pd.getFirstValue()); 
+            hasUpdatedProp = true;
         }
 
         if (hasUpdatedProp) {
@@ -944,11 +946,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
-            List<String> policies, Acl addACEs, Acl removeACEs, ExtensionsData extension) {
+            List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        addACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
-        removeACEs = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
-                removeACEs);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                removeAces);
         Properties propertiesNew = properties;
         
         validator.createFolder(context, repositoryId, folderId, policies, extension);
@@ -987,7 +989,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         validateProperties(repositoryId, null, propertiesNew, false, cmis11);
 
         // validate ACL
-        TypeValidator.validateAcl(typeDef, addACEs, removeACEs);
+        TypeValidator.validateAcl(typeDef, aclAdd, aclRemove);
 
         StoredObject so = null;
         // create folder
@@ -1011,7 +1013,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         Folder newFolder = objStore.createFolder(folderName, propertiesNew.getProperties(), user, parent, policies,
-                addACEs, removeACEs);
+                aclAdd, aclRemove);
         LOG.debug("stop createFolder()");
         return newFolder;
     }
@@ -1037,7 +1039,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         String policyText = (String) pd.getFirstValue();
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        StoredObject storedObject = objStore.createPolicy(name, policyText, propMap, user);
+        StoredObject storedObject = objStore.createPolicy(name, policyText, propMap, user, aclAdd, aclRemove);
 
         return storedObject;
     }
@@ -1078,14 +1080,17 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 policies, extension);
 
         // set default properties
+        Properties propertiesNew;
         Map<String, PropertyData<?>> propMap = properties.getProperties();
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
-        if (propMapNew != propMap) {
-            properties = new PropertiesImpl(propMapNew.values());
+        if (propMapNew != propMap) { // NOSONAR
+            propertiesNew = new PropertiesImpl(propMapNew.values());
+        } else {
+            propertiesNew = properties;
         }
 
         boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
-        validateProperties(repositoryId, null, properties, false, cmis11);
+        validateProperties(repositoryId, null, propertiesNew, false, cmis11);
 
         // validate ACL
         TypeValidator.validateAcl(typeDef, aclAdd, aclRemove);
@@ -1104,7 +1109,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
-        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1], propMap,
+        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1], propMapNew,
                 user, aclAdd, aclRemove);
         return storedObject;
     }
@@ -1167,8 +1172,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // set properties that are not set but have a default:
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);
         if (propMapNew != propMap) { // NOSONAR
-            properties = new PropertiesImpl(propMapNew.values());
-            propMap = propMapNew;
+            propertiesNew = new PropertiesImpl(propMapNew.values());
         }
 
         boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
@@ -1182,7 +1186,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = null;
 
         // Now we are sure to have document type definition:
-        so = objectStore.createItem(name, propMap, user, folder, policies, aclAdd, aclRemove);
+        so = objectStore.createItem(name, propMapNew, user, folder, policies, aclAdd, aclRemove);
         return so;
     }
 

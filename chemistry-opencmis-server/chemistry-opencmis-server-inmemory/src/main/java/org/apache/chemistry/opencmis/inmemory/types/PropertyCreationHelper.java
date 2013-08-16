@@ -269,8 +269,9 @@ public final class PropertyCreationHelper {
         return props;
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, ObjectStore objectStore, TypeDefinition primaryType, List<TypeDefinition> secondaryTypes,
-            Map<String, String> requestedIds, Map<String, String> requestedFuncs) {
+    public static Properties getPropertiesFromObject(StoredObject so, ObjectStore objectStore,
+            TypeDefinition primaryType, List<TypeDefinition> secondaryTypes, Map<String, String> requestedIds,
+            Map<String, String> requestedFuncs) {
         // build properties collection
 
         List<String> idList = new ArrayList<String>(requestedIds.values());
@@ -290,7 +291,7 @@ public final class PropertyCreationHelper {
         }
 
         Map<String, PropertyData<?>> mappedProperties = new HashMap<String, PropertyData<?>>();
-        
+
         // primary type:
         if (requestedIds.containsValue("*")) {
             for (Map.Entry<String, PropertyData<?>> prop : properties.entrySet()) {
@@ -316,7 +317,7 @@ public final class PropertyCreationHelper {
                 }
             }
         }
-        
+
         // secondary types:
         if (null != secondaryTypes) {
             for (TypeDefinition typeDef : secondaryTypes) {
@@ -342,10 +343,10 @@ public final class PropertyCreationHelper {
                             addNotSetPropertyToMap(mappedProperties, typeDef, propAlias.getValue(), queryNameOrAlias);
                         }
                     }
-                }            
+                }
             }
         }
-        
+
         // add functions:
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
             String queryName;
@@ -393,12 +394,12 @@ public final class PropertyCreationHelper {
             String queryName = propDef.getQueryName();
             String localName = propDef.getLocalName();
             String displayName = propDef.getDisplayName();
-            
+
             AbstractPropertyData<?> ad = clonePropertyData(propData);
             ad.setQueryName(queryNameOrAlias == null ? queryName : queryNameOrAlias);
             ad.setLocalName(localName);
             ad.setDisplayName(displayName);
-            
+
             mappedProperties.put(queryName, ad);
         }
     }
@@ -429,7 +430,8 @@ public final class PropertyCreationHelper {
         }
 
         if (null != includeACL && includeACL) {
-            int aclId = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAclId() : so.getAclId();
+            int aclId = so instanceof DocumentVersion ? ((DocumentVersion) so).getParentDocument().getAclId() : so
+                    .getAclId();
             Acl acl = objectStore.getAcl(aclId);
             od.setAcl(acl);
         }
@@ -465,7 +467,8 @@ public final class PropertyCreationHelper {
         ObjectDataImpl od = new ObjectDataImpl();
 
         // build properties collection
-        Properties props = getPropertiesFromObject(so, objectStore, primaryType, secondaryTypes, requestedProperties, requestedFuncs);
+        Properties props = getPropertiesFromObject(so, objectStore, primaryType, secondaryTypes, requestedProperties,
+                requestedFuncs);
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
@@ -498,9 +501,7 @@ public final class PropertyCreationHelper {
             String displayName, Cardinality card, Updatability upd) {
 
         if (!NameValidator.isValidId(id)) {
-            if (!NameValidator.isValidId(id)) {
-                throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
-            }
+            throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
         }
 
         prop.setId(id);
@@ -542,25 +543,25 @@ public final class PropertyCreationHelper {
     }
 
     private static AbstractPropertyData<?> getEmptyValue(PropertyDefinition<?> propDef) {
-    	AbstractPropertyData<?> emptyValue;
+        AbstractPropertyData<?> emptyValue;
         if (propDef.getPropertyType().equals(PropertyType.BOOLEAN)) {
-            emptyValue =  new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
+            emptyValue = new PropertyBooleanImpl(propDef.getId(), (Boolean) null);
         } else if (propDef.getPropertyType().equals(PropertyType.DATETIME)) {
-            emptyValue =  new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
+            emptyValue = new PropertyDateTimeImpl(propDef.getId(), (GregorianCalendar) null);
         } else if (propDef.getPropertyType().equals(PropertyType.DECIMAL)) {
-            emptyValue =  new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
+            emptyValue = new PropertyDecimalImpl(propDef.getId(), (BigDecimal) null);
         } else if (propDef.getPropertyType().equals(PropertyType.HTML)) {
-            emptyValue =  new PropertyHtmlImpl(propDef.getId(), (String) null);
+            emptyValue = new PropertyHtmlImpl(propDef.getId(), (String) null);
         } else if (propDef.getPropertyType().equals(PropertyType.ID)) {
-            emptyValue =  new PropertyIdImpl(propDef.getId(), (String) null);
+            emptyValue = new PropertyIdImpl(propDef.getId(), (String) null);
         } else if (propDef.getPropertyType().equals(PropertyType.INTEGER)) {
-            emptyValue =  new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
+            emptyValue = new PropertyIntegerImpl(propDef.getId(), (BigInteger) null);
         } else if (propDef.getPropertyType().equals(PropertyType.STRING)) {
-            emptyValue =  new PropertyStringImpl(propDef.getId(), (String) null);
+            emptyValue = new PropertyStringImpl(propDef.getId(), (String) null);
         } else if (propDef.getPropertyType().equals(PropertyType.URI)) {
-            emptyValue =  new PropertyUriImpl(propDef.getId(), (String) null);
+            emptyValue = new PropertyUriImpl(propDef.getId(), (String) null);
         } else {
-            emptyValue =  null;
+            throw new CmisRuntimeException("Unknown property type " + propDef.getPropertyType());
         }
         emptyValue.setDisplayName(propDef.getDisplayName());
         emptyValue.setQueryName(propDef.getQueryName());

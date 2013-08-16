@@ -51,10 +51,10 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDe
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 
 public final class TypeUtil {
-    
-    private TypeUtil() {        
+
+    private TypeUtil() {
     }
-    
+
     public static TypeDefinition cloneType(TypeDefinition type) {
         if (type instanceof DocumentTypeDefinition) {
             return cloneTypeDoc((DocumentTypeDefinition) type);
@@ -70,7 +70,7 @@ public final class TypeUtil {
             return cloneTypeSecondary((SecondaryTypeDefinition) type);
         } else {
             return null;
-        }        
+        }
     }
 
     public static AbstractPropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> pd) {
@@ -167,36 +167,36 @@ public final class TypeUtil {
     public static ItemTypeDefinitionImpl cloneTypeItem(ItemTypeDefinition type) {
         ItemTypeDefinitionImpl td = new ItemTypeDefinitionImpl();
         td.initialize(type);
-        return td;        
+        return td;
     }
-    
+
     public static SecondaryTypeDefinitionImpl cloneTypeSecondary(SecondaryTypeDefinition type) {
         SecondaryTypeDefinitionImpl td = new SecondaryTypeDefinitionImpl();
         td.initialize(type);
-        return td;        
+        return td;
     }
-    
+
     public static PolicyTypeDefinitionImpl cloneTypePolicy(PolicyTypeDefinition type) {
         PolicyTypeDefinitionImpl td = new PolicyTypeDefinitionImpl();
         td.initialize(td);
         return null;
     }
-    
-	public static String getQueryNameFromId(String id) {
-		StringBuffer sb = new StringBuffer(id.length());
-		for (int i = 0; i < id.length(); i++) {
-			char c = id.charAt(i);
-			if (c == '.' || c == ' ' || c == ',' || c == '\'' || c == '"'
-					|| c == '\\' || c == '(' || c == ')') {
-				sb.append('_');
-			} else {
-				sb.append(c);
-			}
-		}
-		return sb.toString();
-	}
 
-    private static void initializeAbstractPropertyDefinition(PropertyDefinition<?> pdSrc, AbstractPropertyDefinition<?> pdTarget) {
+    public static String getQueryNameFromId(String id) {
+        StringBuffer sb = new StringBuffer(id.length());
+        for (int i = 0; i < id.length(); i++) {
+            char c = id.charAt(i);
+            if (c == '.' || c == ' ' || c == ',' || c == '\'' || c == '"' || c == '\\' || c == '(' || c == ')') {
+                sb.append('_');
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static void initializeAbstractPropertyDefinition(PropertyDefinition<?> pdSrc,
+            AbstractPropertyDefinition<?> pdTarget) {
         pdTarget.setCardinality(pdSrc.getCardinality());
         pdTarget.setDescription(pdSrc.getDescription());
         pdTarget.setDisplayName(pdSrc.getDisplayName());
@@ -213,6 +213,5 @@ public final class TypeUtil {
         pdTarget.setQueryName(pdSrc.getQueryName());
         pdTarget.setUpdatability(pdSrc.getUpdatability());
     }
-
 
 }

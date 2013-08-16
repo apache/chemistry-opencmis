@@ -76,7 +76,6 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
     private static CallContext overrideCtx;
 
-    private Map<String, String> inMemoryServiceParameters;
     private boolean fUseOverrideCtx = false;
     private StoreManager storeManager; // singleton root of everything
     private CleanManager cleanManager = null;
@@ -91,9 +90,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         LOG.info("Initializing in-memory repository...");
         LOG.debug("Init paramaters: " + parameters);
 
-        inMemoryServiceParameters = parameters;
-        String overrideCtx = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
-        if (null != overrideCtx) {
+        String overrideCtxParam = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
+        if (null != overrideCtxParam) {
             fUseOverrideCtx = true;
         }
 
@@ -120,7 +118,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
         String encryptTempFilesStr = parameters.get(ConfigConstants.ENCRYPT_TEMP_FILES);
         encrypt = (encryptTempFilesStr == null ? super.encryptTempFiles() : Boolean.parseBoolean(encryptTempFilesStr));
-        
+
         Date deploymentTime = new Date();
         String strDate = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US).format(deploymentTime);
 
@@ -148,13 +146,13 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     @Override
     public CmisService getService(CallContext context) {
         LOG.debug("start getService()");
-
+        CallContext contextToUse = context;
         // Attach the CallContext to a thread local context that can be
         // accessed from everywhere
         // Some unit tests set their own context. So if we find one then we use
         // this one and ignore the provided one. Otherwise we set a new context.
         if (fUseOverrideCtx && null != overrideCtx) {
-            context = overrideCtx;
+            contextToUse = overrideCtx;
         }
 
         InMemoryService inMemoryService = InMemoryServiceContext.getCmisService();
@@ -167,7 +165,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             InMemoryServiceContext.setWrapperService(wrapperService);
         }
 
-        inMemoryService.setCallContext(context);
+        inMemoryService.setCallContext(contextToUse);
 
         LOG.debug("stop getService()");
         return inMemoryService;
@@ -244,13 +242,9 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (null == typeDefsFileName) {
             LOG.info("No file name for type definitions given, no types will be created.");
         } else {
-            TypeManager typeManager = storeManager.getTypeManager(repositoryId);
-            if (typeManager instanceof TypeManagerCreatable) {
-                TypeManagerCreatable tmc = (TypeManagerCreatable) typeManager;
-                importTypesFromFile(tmc, typeDefsFileName);
-            } else {
-                LOG.warn("Type Definitions are configured in XML file but type manager cannot create types. Type definitions are ignored.");
-            }
+            TypeManagerCreatable typeManager = storeManager.getTypeManager(repositoryId);
+            TypeManagerCreatable tmc = (TypeManagerCreatable) typeManager;
+            importTypesFromFile(tmc, typeDefsFileName);
         }
         return created;
     }
@@ -284,7 +278,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                                     .setPropertyDefinitions(new LinkedHashMap<String, PropertyDefinition<?>>());
                         }
                         tmc.addTypeDefinition(typeDef, false);
-                    } 
+                    }
                     XMLUtils.next(parser);
                 } else if (event == XMLStreamConstants.END_ELEMENT) {
                     break;
@@ -327,73 +321,73 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         class DummyCallContext implements CallContext {
 
             @Override
-			public String get(String key) {
+            public String get(String key) {
                 return null;
             }
 
             @Override
-			public String getBinding() {
+            public String getBinding() {
                 return null;
             }
 
             @Override
-			public boolean isObjectInfoRequired() {
+            public boolean isObjectInfoRequired() {
                 return false;
             }
 
             @Override
-			public CmisVersion getCmisVersion() {
+            public CmisVersion getCmisVersion() {
                 return CmisVersion.CMIS_1_1;
             }
 
             @Override
-			public String getRepositoryId() {
+            public String getRepositoryId() {
                 return null;
             }
 
             @Override
-			public String getLocale() {
+            public String getLocale() {
                 return null;
             }
 
             @Override
-			public BigInteger getOffset() {
+            public BigInteger getOffset() {
                 return null;
             }
 
             @Override
-			public BigInteger getLength() {
+            public BigInteger getLength() {
                 return null;
             }
 
             @Override
-			public String getPassword() {
+            public String getPassword() {
                 return null;
             }
 
             @Override
-			public String getUsername() {
+            public String getUsername() {
                 return null;
             }
 
             @Override
-			public File getTempDirectory() {
+            public File getTempDirectory() {
 
                 return tempDir;
             }
 
             @Override
-			public boolean encryptTempFiles() {
+            public boolean encryptTempFiles() {
                 return encrypt;
             }
 
             @Override
-			public int getMemoryThreshold() {
+            public int getMemoryThreshold() {
                 return memoryThreshold;
             }
 
             @Override
-			public long getMaxContentSize() {
+            public long getMaxContentSize() {
                 return maxContentSize;
             }
         }
@@ -525,7 +519,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
 
             final Runnable cleaner = new Runnable() {
                 @Override
-				public void run() {
+                public void run() {
                     LOG.info("Cleaning repository as part of a scheduled maintenance job.");
                     for (String repositoryId : storeManager.getAllRepositoryIds()) {
                         ObjectStore store = storeManager.getObjectStore(repositoryId);

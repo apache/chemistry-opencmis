@@ -25,9 +25,9 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 
 public class FilingImpl extends StoredObjectImpl implements Fileable, MultiFiling {
-    
+
     private List<String> parentIds = new ArrayList<String>(1);
-    
+
     FilingImpl() {
         super();
     }
@@ -46,7 +46,7 @@ public class FilingImpl extends StoredObjectImpl implements Fileable, MultiFilin
     public String getPathSegment() {
         return super.getName();
     }
-    
+
     @Override
     public void addParentId(String parentId) {
         parentIds.add(parentId);

@@ -50,6 +50,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
  */
 public class StoredObjectImpl implements StoredObject {
 
+    private static final int BUFFER_SIZE = 65536;
     private static final String UNKNOWN_USER = "unknown";
     public static final String RENDITION_MIME_TYPE_JPEG = "image/jpeg";
     public static final String RENDITION_MIME_TYPE_PNG = "image/png";
@@ -524,13 +525,16 @@ public class StoredObjectImpl implements StoredObject {
         content.setMimeType("image/png");
 
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
-        byte[] buffer = new byte[65536];
+        byte[] buffer = new byte[BUFFER_SIZE];
         int noBytesRead = 0;
-
-        while ((noBytesRead = imageStream.read(buffer)) >= 0) {
-            ba.write(buffer, 0, noBytesRead);
+        try {
+            while ((noBytesRead = imageStream.read(buffer)) >= 0) {
+                ba.write(buffer, 0, noBytesRead);
+            }
+        } finally {
+            ba.close();
+            imageStream.close();
         }
-
         content.setContent(new ByteArrayInputStream(ba.toByteArray()));
         return content;
     }

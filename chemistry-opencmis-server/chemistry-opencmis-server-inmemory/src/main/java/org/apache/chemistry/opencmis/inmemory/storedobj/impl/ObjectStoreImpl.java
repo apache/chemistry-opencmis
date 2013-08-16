@@ -53,8 +53,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFili
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The object store is the central core of the in-memory repository. It is based
@@ -88,7 +86,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectStoreImpl.class);
+    private static final int FIRST_ID = 100;
 
     /**
      * user id for administrator always having all rights
@@ -98,7 +96,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     /**
      * Simple id generator that uses just an integer
      */
-    private static int nextUnusedId = 100;
+    private static int nextUnusedId = FIRST_ID;
 
     /**
      * a concurrent HashMap as core element to hold all objects in the
@@ -115,7 +113,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
     private final Lock fLock = new ReentrantLock();
 
-    final String fRepositoryId;
+    private final String fRepositoryId;
     private FolderImpl fRootFolder = null;
 
     public ObjectStoreImpl(String repositoryId) {
@@ -252,7 +250,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     // /////////////////////////////////////////
     // private helper methods
 
-    private void createRootFolder() {
+    private final void createRootFolder() {
         FolderImpl rootFolder = new FolderImpl();
         rootFolder.setName("RootFolder");
         rootFolder.setParentId(null);
@@ -289,6 +287,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         }
         String id = storeObject(doc);
         doc.setId(id);
+        applyAcl(doc, addACEs, removeACEs);
         return doc;
     }
 
@@ -314,6 +313,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         item.setAclId(aclId);
         String id = storeObject(item);
         item.setId(id);
+        applyAcl(item, addACEs, removeACEs);
         return item;
     }
 
@@ -345,6 +345,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         }
         id = storeObject(version);
         version.setId(id);
+        applyAcl(doc, addACEs, removeACEs);
         return version;
     }
 
@@ -352,7 +353,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     public Folder createFolder(String name, Map<String, PropertyData<?>> propMap, String user, Folder parent,
             List<String> policies, Acl addACEs, Acl removeACEs) {
 
-        if (null != parent && hasChild(parent, name)) {
+        if (null == parent) {
+            throw new CmisInvalidArgumentException("Cannot create root folder.");            
+        } else if (hasChild(parent, name)) {
             throw new CmisNameConstraintViolationException("Cannot create folder, this name already exists in parent folder.");
         }
         FolderImpl folder = new FolderImpl(name, parent.getId());
@@ -370,6 +373,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
 
         String id = storeObject(folder);
         folder.setId(id);
+        applyAcl(folder, addACEs, removeACEs);
         return folder;
     }
 
@@ -380,7 +384,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
     }
 
     @Override
-    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user) {
+    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user, Acl addACEs, Acl removeACEs) {
         PolicyImpl policy = new PolicyImpl();
         policy.createSystemBasePropertiesWhenCreated(propMap, user);
         policy.setCustomProperties(propMap);
@@ -389,6 +393,7 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         policy.setPolicyText(policyText);
         String id = storeObject(policy);
         policy.setId(id);
+        applyAcl(policy, addACEs, removeACEs);
         return policy;
     }
 
@@ -407,10 +412,9 @@ public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
         if (null != targetObject) {
             rel.setTarget(targetObject.getId());
         }
-        int aclId = getAclId(null, addACEs, removeACEs);
-        rel.setAclId(aclId);
         String id = storeObject(rel);
         rel.setId(id);
+        applyAcl(rel, addACEs, removeACEs);
         return rel;
     }
 

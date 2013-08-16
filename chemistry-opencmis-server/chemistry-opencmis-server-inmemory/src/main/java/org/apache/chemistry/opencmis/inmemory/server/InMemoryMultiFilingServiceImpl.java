@@ -49,12 +49,13 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin addObjectToFolder()");
 
-        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension);
-
         if (allVersions != null && null != allVersions && !allVersions.booleanValue()) {
             throw new CmisNotSupportedException(
                     "Cannot add object to folder, version specific filing is not supported.");
         }
+
+        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension);
+
         StoredObject so = sos[0];
         StoredObject folder = sos[1];
         ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, folder);

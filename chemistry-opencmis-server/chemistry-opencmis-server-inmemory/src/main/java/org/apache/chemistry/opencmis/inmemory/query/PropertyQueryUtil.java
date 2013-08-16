@@ -34,11 +34,11 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
-public class PropertyQueryUtil {
-    
-    private PropertyQueryUtil() {        
+public final class PropertyQueryUtil {
+
+    private PropertyQueryUtil() {
     }
-    
+
     public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd) {
         ContentStream content = null;
         DocumentVersion ver = null;
@@ -47,7 +47,7 @@ public class PropertyQueryUtil {
         Document doc = null;
         Relationship rel = null;
         Policy pol = null;
-        
+
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Content) {
@@ -154,18 +154,12 @@ public class PropertyQueryUtil {
             }
         }
 
-        if (folder != null) {
-            // not supported: ALLOWED_CHILD_OBJECT_TYPE_IDS
-            // not supported: PATH
-            if (propertyId.equals(PropertyIds.PARENT_ID)) {
-                return folder.getParentId();
-            }
+        if (folder != null && propertyId.equals(PropertyIds.PARENT_ID)) {
+            return folder.getParentId();
         }
 
-        if (doc != null) {
-            if (propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
-                return false;
-            }
+        if (doc != null && propertyId.equals(PropertyIds.IS_IMMUTABLE)) {
+            return false;
         }
 
         if (rel != null) {
@@ -176,22 +170,20 @@ public class PropertyQueryUtil {
                 return rel.getTargetObjectId();
             }
         }
-        
-        if (pol != null) {
-            if (propertyId.equals(PropertyIds.POLICY_TEXT)) {
-                return pol.getPolicyText();
-            }
+
+        if (pol != null && propertyId.equals(PropertyIds.POLICY_TEXT)) {
+            return pol.getPolicyText();
         }
-        
-       // try custom property:
-       PropertyData<?> lVal = so.getProperties().get(propertyId);
-       if (null == lVal) {
-        return null;
-    } else if (pd.getCardinality() == Cardinality.SINGLE) {
-           return lVal.getFirstValue();
-       } else {
-           return lVal.getValues();
-       }
+
+        // try custom property:
+        PropertyData<?> lVal = so.getProperties().get(propertyId);
+        if (null == lVal) {
+            return null;
+        } else if (pd.getCardinality() == Cardinality.SINGLE) {
+            return lVal.getFirstValue();
+        } else {
+            return lVal.getValues();
+        }
     }
 
 }

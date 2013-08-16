@@ -22,6 +22,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory.query;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -82,7 +84,7 @@ public class InMemoryQueryProcessor {
     private Tree whereTree;
     private ObjectStoreImpl objStore;
     private List<TypeDefinition> secondaryTypeIds;
-    
+
     public InMemoryQueryProcessor(ObjectStoreImpl objStore) {
         this.objStore = objStore;
     }
@@ -94,7 +96,7 @@ public class InMemoryQueryProcessor {
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
-        processQueryAndCatchExc(statement, tm ); // calls query processor
+        processQueryAndCatchExc(statement, tm); // calls query processor
 
         // iterate over all the objects and check for each if the query matches
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
@@ -146,12 +148,11 @@ public class InMemoryQueryProcessor {
         if (start > 0 || stop > 0) {
             matches = matches.subList(start, stop);
         }
-       
-        
+
         List<ObjectData> objDataList = new ArrayList<ObjectData>();
         Map<String, String> props = queryObj.getRequestedPropertiesByAlias();
         Map<String, String> funcs = queryObj.getRequestedFuncsByAlias();
-        
+
         for (StoredObject so : matches) {
             String queryName = queryObj.getTypes().values().iterator().next();
             TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
@@ -172,10 +173,10 @@ public class InMemoryQueryProcessor {
             }
             // check secondary types
             List<String> secTypeIds = so.getSecondaryTypeIds();
-            for (String secTypeId: secTypeIds) {
+            for (String secTypeId : secTypeIds) {
                 if (secTypeId.equals(td.getId())) {
                     return true;
-                }             
+                }
             }
             // check parent type
             TypeDefinition parentTD = queryObj.getParentType(typeId);
@@ -192,7 +193,7 @@ public class InMemoryQueryProcessor {
         class ResultComparator implements Comparator<StoredObject> {
 
             @Override
-			@SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked")
             public int compare(StoredObject so1, StoredObject so2) {
                 SortSpec s = orderBy.get(0);
                 CmisSelector sel = s.getSelector();
@@ -204,7 +205,7 @@ public class InMemoryQueryProcessor {
                 } else if (sel instanceof ColumnReference) {
                     String propId = ((ColumnReference) sel).getPropertyId();
                     PropertyDefinition<?> pd = ((ColumnReference) sel).getPropertyDefinition();
-                    
+
                     Object propVal1 = PropertyQueryUtil.getProperty(so1, propId, pd);
                     Object propVal2 = PropertyQueryUtil.getProperty(so2, propId, pd);
 
@@ -238,19 +239,19 @@ public class InMemoryQueryProcessor {
      * Check for each object contained in the in-memory repository if it matches
      * the current query expression. If yes add it to the list of matched
      * objects.
-     *
+     * 
      * @param so
      *            object stored in the in-memory repository
      */
     private void match(StoredObject so, String user, boolean searchAllVersions) {
         // first check if type is matching...
         // as we don't support joins take first type
-        String queryName = queryObj.getTypes().values().iterator().next(); 
+        String queryName = queryObj.getTypes().values().iterator().next();
 
         TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
-        
+
         // we are only interested in versions not in the series
-        boolean skip = so instanceof VersionedDocument; 
+        boolean skip = so instanceof VersionedDocument;
 
         boolean typeMatches = typeMatches(td, so);
         if (!searchAllVersions && so instanceof DocumentVersion
@@ -268,8 +269,7 @@ public class InMemoryQueryProcessor {
         if (null != node) {
             match = evalWhereNode(so, user, node);
         }
-        if (match && objStore.hasReadAccess(user, so))
-         {
+        if (match && objStore.hasReadAccess(user, so)) {
             matches.add(so); // add to list
         }
     }
@@ -278,7 +278,7 @@ public class InMemoryQueryProcessor {
      * For each object check if it matches and append it to match-list if it
      * does. We do here our own walking mechanism so that we can pass additional
      * parameters and define the return types.
-     *
+     * 
      * @param node
      *            node in where clause
      * @return true if it matches, false if it not matches
@@ -485,15 +485,15 @@ public class InMemoryQueryProcessor {
             }
 
             String propVal = (String) PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
-            
+
             if (null == propVal) {
-            	return false;
+                return false;
             } else {
-            	String pattern = translatePattern((String) rVal); // SQL to Java
-            	// regex
-            	// syntax
-            	Pattern p = Pattern.compile(pattern);
-            	return p.matcher(propVal).matches();
+                String pattern = translatePattern((String) rVal); // SQL to Java
+                // regex
+                // syntax
+                Pattern p = Pattern.compile(pattern);
+                return p.matcher(propVal).matches();
             }
         }
 
@@ -550,10 +550,11 @@ public class InMemoryQueryProcessor {
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             Object val = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
-            if (val==null) {
+            if (val == null) {
                 return null;
             } else if (val instanceof List<?>) {
-                throw new IllegalStateException("You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
+                throw new IllegalStateException(
+                        "You can't query operators <, <=, ==, !=, >=, > on multi-value properties ");
             } else {
                 return InMemoryQueryProcessor.this.compareTo(pd, val, rVal);
             }
@@ -563,79 +564,84 @@ public class InMemoryQueryProcessor {
         public List<Object> onLiteralList(Tree node) {
             return (List<Object>) walkExpr(node);
         }
-        
+
         @Override
         protected Boolean walkTextAnd(Tree node) {
             List<Tree> terms = getChildrenAsList(node);
-            for (Tree term: terms) {
+            for (Tree term : terms) {
                 Boolean foundOnce = walkSearchExpr(term);
-                if (foundOnce== null || !foundOnce) {
+                if (foundOnce == null || !foundOnce) {
                     return false;
                 }
             }
             return true;
         }
-        
+
         @Override
         protected Boolean walkTextOr(Tree node) {
             List<Tree> terms = getChildrenAsList(node);
-            for (Tree term: terms) {
+            for (Tree term : terms) {
                 Boolean foundOnce = walkSearchExpr(term);
-                if (foundOnce!= null && foundOnce) {
+                if (foundOnce != null && foundOnce) {
                     return true;
                 }
             }
             return false;
         }
-        
+
         @Override
         protected Boolean walkTextMinus(Tree node) {
             return !findText(node.getChild(0).getText());
         }
-        
+
         @Override
         protected Boolean walkTextWord(Tree node) {
             return findText(node.getText());
         }
-        
+
         @Override
         protected Boolean walkTextPhrase(Tree node) {
             String phrase = node.getText();
-            return findText(phrase.substring(1, phrase.length()-1));
+            return findText(phrase.substring(1, phrase.length() - 1));
         }
-        
+
         private List<Tree> getChildrenAsList(Tree node) {
             List<Tree> res = new ArrayList<Tree>(node.getChildCount());
-            for (int i=0; i<node.getChildCount(); i++) {
-                Tree childNnode =  node.getChild(i);
+            for (int i = 0; i < node.getChildCount(); i++) {
+                Tree childNnode = node.getChild(i);
                 res.add(childNnode);
             }
             return res;
         }
-        
+
         private boolean findText(String nodeText) {
-            Content cont = (Content)so;
+            Content cont = (Content) so;
             String pattern = StringUtil.unescape(nodeText, "\\'-");
             if (null == pattern) {
                 throw new CmisInvalidArgumentException("Illegal Escape sequence in text search expression " + nodeText);
             }
-            
+
             if (so instanceof Content && cont.hasContent()) {
                 ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent(0, -1);
                 if (cdi.getMimeType().startsWith("text/")) {
-	                byte[] ba = cdi.getBytes();
-	                String text = new String(ba);
-	                int match = text.indexOf(pattern);
-	                return match >= 0;
+                    byte[] ba = cdi.getBytes();
+                    String text;
+                    try {
+                        text = new String(ba, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new CmisRuntimeException("Internal error: Unsupported encoding UTF-8", e);
+                    }
+                    int match = text.indexOf(pattern);
+                    return match >= 0;
                 } else {
                     return false;
                 }
             }
             return false;
         }
-                
+
     }
-    
+
     private boolean hasParent(Filing objInFolder, String folderId, String user) {
         List<String> parents = objStore.getParentIds(objInFolder, user);
 
@@ -696,7 +702,7 @@ public class InMemoryQueryProcessor {
             if (rVal instanceof Double) {
                 return lDoubleValue.compareTo((Double) rVal);
             } else if (rVal instanceof Long) {
-                return lDoubleValue.compareTo(Double.valueOf( ((Long)rVal)) );
+                return lDoubleValue.compareTo(Double.valueOf(((Long) rVal)));
             } else {
                 throwIncompatibleTypesException(lValue, rVal);
             }
@@ -743,11 +749,13 @@ public class InMemoryQueryProcessor {
         }
         List<JoinSpec> joins = queryObj.getJoins();
         if (null == secondaryTypeIds && joins.size() > 0) {
-            throw new CmisInvalidArgumentException("JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
+            throw new CmisInvalidArgumentException(
+                    "JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
         } else if (null != secondaryTypeIds) {
             for (JoinSpec join : joins) {
                 if (!join.kind.equals("LEFT")) {
-                    throw new CmisInvalidArgumentException("JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
+                    throw new CmisInvalidArgumentException(
+                            "JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
                 }
             }
         }
@@ -757,35 +765,37 @@ public class InMemoryQueryProcessor {
     public static String translatePattern(String wildcardString) {
         int index = 0;
         int start = 0;
+        String wildcard = wildcardString;
+
         StringBuffer res = new StringBuffer();
 
         while (index >= 0) {
-            index = wildcardString.indexOf('%', start);
+            index = wildcard.indexOf('%', start);
             if (index < 0) {
-                res.append(wildcardString.substring(start));
-            } else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
-                res.append(wildcardString.substring(start, index));
+                res.append(wildcard.substring(start));
+            } else if (index == 0 || index > 0 && wildcard.charAt(index - 1) != '\\') {
+                res.append(wildcard.substring(start, index));
                 res.append(".*");
             } else {
-                res.append(wildcardString.substring(start, index + 1));
+                res.append(wildcard.substring(start, index + 1));
             }
             start = index + 1;
         }
-        wildcardString = res.toString();
+        wildcard = res.toString();
 
         index = 0;
         start = 0;
         res = new StringBuffer();
 
         while (index >= 0) {
-            index = wildcardString.indexOf('_', start);
+            index = wildcard.indexOf('_', start);
             if (index < 0) {
-                res.append(wildcardString.substring(start));
-            } else if (index == 0 || index > 0 && wildcardString.charAt(index - 1) != '\\') {
-                res.append(wildcardString.substring(start, index));
+                res.append(wildcard.substring(start));
+            } else if (index == 0 || index > 0 && wildcard.charAt(index - 1) != '\\') {
+                res.append(wildcard.substring(start, index));
                 res.append(".");
             } else {
-                res.append(wildcardString.substring(start, index + 1));
+                res.append(wildcard.substring(start, index + 1));
             }
             start = index + 1;
         }

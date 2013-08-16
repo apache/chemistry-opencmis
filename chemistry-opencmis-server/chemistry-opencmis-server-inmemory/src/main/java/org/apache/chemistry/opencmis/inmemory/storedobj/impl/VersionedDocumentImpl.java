@@ -47,7 +47,7 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-	public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
+    public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
 
         if (isCheckedOut()) {
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
@@ -66,13 +66,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-	public boolean deleteVersion(DocumentVersion version) {
+    public boolean deleteVersion(DocumentVersion version) {
         if (fIsCheckedOut) {
             // Note: Do not throw an exception here if the document is
             // checked-out. In AtomPub binding cancelCheckout
             // mapped to a deleteVersion() call!
             DocumentVersion pwc = getPwc();
-            if (pwc == version) { //NOSONAR
+            if (pwc == version) { // NOSONAR
                 cancelCheckOut(false); // note object is already deleted from
                                        // map in ObjectStore
                 return !fVersions.isEmpty();
@@ -87,12 +87,12 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-	public void cancelCheckOut(String user) {
+    public void cancelCheckOut(String user) {
         cancelCheckOut(true);
     }
 
     @Override
-	public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
+    public void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
             List<String> policyIds, String user) {
         if (fIsCheckedOut) {
             if (fCheckedOutUser.equals(user)) {
@@ -119,13 +119,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
 
         pwc.setCheckinComment(checkinComment);
         pwc.commit(isMajor);
-        if (policyIds != null && policyIds.size() > 0 ) {
+        if (policyIds != null && policyIds.size() > 0) {
             ((DocumentVersionImpl) pwc).setAppliedPolicies(policyIds);
         }
     }
 
     @Override
-	public DocumentVersion checkOut(ContentStream content, String user) {
+    public DocumentVersion checkOut(ContentStream content, String user) {
         if (fIsCheckedOut) {
             throw new CmisConstraintException("Error: Can't checkout, Document " + getId() + " is already checked out.");
         }
@@ -137,12 +137,12 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-	public List<DocumentVersion> getAllVersions() {
+    public List<DocumentVersion> getAllVersions() {
         return fVersions;
     }
 
     @Override
-	public DocumentVersion getLatestVersion(boolean major) {
+    public DocumentVersion getLatestVersion(boolean major) {
 
         DocumentVersion latest = null;
         if (fVersions.size() == 0) {
@@ -156,13 +156,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
                 }
             }
         } else {
-        	if (null == getPwc()) {
-        		latest = fVersions.get(fVersions.size() - 1);
-        	} else if (fVersions.size() > 1) {
-        		latest = fVersions.get(fVersions.size() - 2);
-        	} else {
-        		latest = null;
-        	}
+            if (null == getPwc()) {
+                latest = fVersions.get(fVersions.size() - 1);
+            } else if (fVersions.size() > 1) {
+                latest = fVersions.get(fVersions.size() - 2);
+            } else {
+                latest = null;
+            }
             if (null == getPwc()) {
                 latest = fVersions.get(fVersions.size() - 1);
             } else if (fVersions.size() > 1) {
@@ -175,17 +175,17 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-	public boolean isCheckedOut() {
+    public boolean isCheckedOut() {
         return fIsCheckedOut;
     }
 
     @Override
-	public String getCheckedOutBy() {
+    public String getCheckedOutBy() {
         return fCheckedOutUser;
     }
 
     @Override
-	public DocumentVersion getPwc() {
+    public DocumentVersion getPwc() {
         for (DocumentVersion ver : fVersions) {
             if (ver.isPwc()) {
                 return ver;

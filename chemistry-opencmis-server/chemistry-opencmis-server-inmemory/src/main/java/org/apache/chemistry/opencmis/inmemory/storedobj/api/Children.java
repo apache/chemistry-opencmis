@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface Children {
     
-    public class ChildrenResult {
+    class ChildrenResult {
         private int noItems;
         private List<? extends StoredObject> children;
                 

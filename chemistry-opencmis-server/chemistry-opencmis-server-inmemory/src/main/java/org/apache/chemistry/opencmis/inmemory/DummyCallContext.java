@@ -29,6 +29,8 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 public class DummyCallContext implements CallContext {
+    private static final int FOUR_M = 4;
+    private static final int SIZE_KB = 1024;
     private final Map<String, Object> fParameter = new HashMap<String, Object>();
 
     public DummyCallContext() {
@@ -44,52 +46,52 @@ public class DummyCallContext implements CallContext {
     }
 
     @Override
-	public boolean isObjectInfoRequired() {
+    public boolean isObjectInfoRequired() {
         return false;
     }
 
     @Override
-	public Object get(String key) {
+    public Object get(String key) {
         return fParameter.get(key);
     }
 
     @Override
-	public String getBinding() {
+    public String getBinding() {
         return BINDING_ATOMPUB;
     }
-    
+
     @Override
-	public CmisVersion getCmisVersion() {
+    public CmisVersion getCmisVersion() {
         return CmisVersion.CMIS_1_1;
     }
 
     @Override
-	public String getRepositoryId() {
+    public String getRepositoryId() {
         return (String) get(REPOSITORY_ID);
     }
 
     @Override
-	public String getLocale() {
+    public String getLocale() {
         return (String) get(LOCALE);
     }
 
     @Override
-	public BigInteger getOffset() {
+    public BigInteger getOffset() {
         return (BigInteger) get(OFFSET);
     }
 
     @Override
-	public BigInteger getLength() {
+    public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
 
     @Override
-	public String getPassword() {
+    public String getPassword() {
         return (String) get(PASSWORD);
     }
 
     @Override
-	public String getUsername() {
+    public String getUsername() {
         return (String) get(USERNAME);
     }
 
@@ -98,22 +100,22 @@ public class DummyCallContext implements CallContext {
     }
 
     @Override
-	public File getTempDirectory() {
+    public File getTempDirectory() {
         return null;
     }
 
     @Override
-	public boolean encryptTempFiles() {
+    public boolean encryptTempFiles() {
         return false;
     }
 
     @Override
-	public int getMemoryThreshold() {
-        return 4 * 1024 * 1024;
+    public int getMemoryThreshold() {
+        return FOUR_M * SIZE_KB * SIZE_KB;
     }
 
     @Override
-	public long getMaxContentSize() {
-        return 4 * 1024 * 1024 * 1024;
+    public long getMaxContentSize() {
+        return FOUR_M * SIZE_KB * SIZE_KB * SIZE_KB;
     }
 }

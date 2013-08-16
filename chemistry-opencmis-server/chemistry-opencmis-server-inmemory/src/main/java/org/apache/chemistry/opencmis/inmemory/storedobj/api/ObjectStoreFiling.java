@@ -25,16 +25,16 @@ public interface ObjectStoreFiling {
     public static class ChildrenResult {
         private int noItems;
         private List<Fileable> children;
-                
+
         public ChildrenResult(List<Fileable> children, int noItems) {
             this.children = children;
             this.noItems = noItems;
         }
-        
+
         public int getNoItems() {
             return noItems;
         }
-        
+
         public List<Fileable> getChildren() {
             return children;
         }
@@ -50,10 +50,11 @@ public interface ObjectStoreFiling {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
-     * @param user 
-     * 			user to determine visible children
-     * @param usePwc 
-     * 			if true return private working copy otherwise return latest version; 
+     * @param user
+     *            user to determine visible children
+     * @param usePwc
+     *            if true return private working copy otherwise return latest
+     *            version;
      * 
      * @return list of children objects
      */
@@ -70,22 +71,22 @@ public interface ObjectStoreFiling {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
-     * @param user 
+     * @param user
      * @return list of children folders
      */
     ChildrenResult getFolderChildren(Folder folder, int maxItems, int skipCount, String user);
 
     /**
      * get all parent ids of this object visible for a user
+     * 
      * @param user
-     *      user who can see parents
-     * @return
-     *      list of folder ids
+     *            user who can see parents
+     * @return list of folder ids
      */
-    public List<String> getParentIds(Filing spo, String user);
-    
+    List<String> getParentIds(Filing spo, String user);
+
     /**
-     * Move an object to a different folder. 
+     * Move an object to a different folder.
      * 
      * @param so
      *            object to be moved
@@ -98,10 +99,11 @@ public interface ObjectStoreFiling {
 
     /**
      * Rename an object
+     * 
      * @param so
-     *      object to be renamed
+     *            object to be renamed
      * @param newName
-     *      new name to be assigned
+     *            new name to be assigned
      */
-    public void rename(Fileable so, String newName);
+    void rename(Fileable so, String newName);
 }

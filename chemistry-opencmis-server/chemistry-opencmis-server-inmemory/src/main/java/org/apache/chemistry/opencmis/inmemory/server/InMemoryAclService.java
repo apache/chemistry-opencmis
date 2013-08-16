@@ -51,7 +51,7 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
         } else {
             aclId = so.getAclId();
         }
-        
+
         Acl acl = objectStore.getAcl(aclId);
 
         if (context.isObjectInfoRequired()) {
@@ -59,33 +59,35 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-        
+
         return acl;
     }
 
-    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aclAdd, Acl aclRemove, AclPropagation aclPropagation,
-            ExtensionsData extension, ObjectInfoHandler objectInfos) {
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl aclAdd, Acl aclRemove,
+            AclPropagation aclPropagation, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        Acl addAces  = TypeValidator.expandAclMakros(context.getUsername(), aclAdd);
-        Acl removeAces  = TypeValidator.expandAclMakros(context.getUsername(), aclRemove);
-        
-    	StoredObject so = validator.applyAcl(context, repositoryId, objectId, aclPropagation, extension);
-        Acl acl = fStoreManager.getObjectStore(repositoryId).applyAcl(so, addAces, removeAces, aclPropagation, context.getUsername());
-        
+        Acl addAces = TypeValidator.expandAclMakros(context.getUsername(), aclAdd);
+        Acl removeAces = TypeValidator.expandAclMakros(context.getUsername(), aclRemove);
+
+        StoredObject so = validator.applyAcl(context, repositoryId, objectId, aclPropagation, extension);
+        Acl acl = fStoreManager.getObjectStore(repositoryId).applyAcl(so, addAces, removeAces, aclPropagation,
+                context.getUsername());
+
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
-        return acl;       
+        return acl;
     }
-    
-    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl acesParam, AclPropagation aclPropagation) {
-        
-        Acl aces  = TypeValidator.expandAclMakros(context.getUsername(), acesParam);
 
-    	StoredObject so = validator.applyAcl(context, repositoryId, objectId);
-        return fStoreManager.getObjectStore(repositoryId).applyAcl(so, aces, aclPropagation, context.getUsername());        
+    public Acl applyAcl(CallContext context, String repositoryId, String objectId, Acl acesParam,
+            AclPropagation aclPropagation) {
+
+        Acl aces = TypeValidator.expandAclMakros(context.getUsername(), acesParam);
+
+        StoredObject so = validator.applyAcl(context, repositoryId, objectId);
+        return fStoreManager.getObjectStore(repositoryId).applyAcl(so, aces, aclPropagation, context.getUsername());
     }
 
 }
