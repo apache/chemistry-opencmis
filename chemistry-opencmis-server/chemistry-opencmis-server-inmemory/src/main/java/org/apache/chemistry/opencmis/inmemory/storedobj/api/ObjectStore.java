@@ -424,7 +424,7 @@ public interface ObjectStore {
      *            user who can see parents
      * @return list of folder ids
      */
-    List<String> getParentIds(Filing spo, String user);
+    List<String> getParentIds(StoredObject so, String user);
 
     /**
      * Add this document to a new parent folder as child object

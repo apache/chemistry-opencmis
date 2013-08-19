@@ -243,13 +243,11 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         List<ObjectParentData> result = null;
 
         Filing spo = null;
-        if (so instanceof Filing) {
-            spo = (Filing) so;
-        } else {
+        if (!(so instanceof Filing)) {
             return Collections.emptyList();
         }
 
-        result = getObjectParentsIntern(repositoryId, spo, filter, context.isObjectInfoRequired() ? objectInfos : null,
+        result = getObjectParentsIntern(repositoryId, so, filter, context.isObjectInfoRequired() ? objectInfos : null,
                 includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment,
                 context.getUsername());
 
@@ -358,14 +356,14 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         return childrenOfFolderId;
     }
 
-    private List<ObjectParentData> getObjectParentsIntern(String repositoryId, Filing sop, String filter,
+    private List<ObjectParentData> getObjectParentsIntern(String repositoryId, StoredObject so, String filter,
             ObjectInfoHandler objectInfos, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includeRelativePathSegment, String user) {
 
         List<ObjectParentData> result = null;
         result = new ArrayList<ObjectParentData>();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        List<String> parentIds = objStore.getParentIds(sop, user);
+        List<String> parentIds = objStore.getParentIds(so, user);
         if (null != parentIds) {
             for (String parentId : parentIds) {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
@@ -374,8 +372,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                 ObjectData objData = PropertyCreationHelper.getObjectData(tm, objStore, parent, filter, user,
                         includeAllowableActions, includeRelationships, renditionFilter, false, true, null);
                 parentData.setObject(objData);
-                if (null != includeRelativePathSegment && includeRelativePathSegment) {
-                    parentData.setRelativePathSegment(sop.getPathSegment());
+                if (null != includeRelativePathSegment && includeRelativePathSegment && so instanceof Fileable) {
+                    parentData.setRelativePathSegment(((Fileable)so).getPathSegment());
                 }
                 result.add(parentData);
                 if (objectInfos != null) {
@@ -389,14 +387,14 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         return result;
     }
 
-    private ObjectData getFolderParentIntern(String repositoryId, Filing sop, String filter,
+    private ObjectData getFolderParentIntern(String repositoryId, StoredObject so, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String user,
             ObjectInfoHandler objectInfos) {
 
         ObjectDataImpl parent = new ObjectDataImpl();
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        List<String> parents = objStore.getParentIds(sop, user);
+        List<String> parents = objStore.getParentIds(so, user);
         if (null == parents || parents.isEmpty()) {
             return null;
         }

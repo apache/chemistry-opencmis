@@ -745,12 +745,16 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public List<String> getParentIds(Filing fileable, String user) {
-        List<String> visibleParents = new ArrayList<String>(); 
+    public List<String> getParentIds(StoredObject so, String user) {
+        List<String> visibleParents = new ArrayList<String>();
+        if (!(so instanceof Fileable)) {
+            throw new CmisInvalidArgumentException("Object is not fileable: " + so.getId());
+        }
+        Filing fileable = (Fileable) so;
         List<String> parents = fileable.getParentIds();
         for (String id: parents) {
-            StoredObject so = getObjectById(id);
-            if (hasReadAccess(user, so)) {
+            StoredObject parent = getObjectById(id);
+            if (hasReadAccess(user, parent)) {
                 visibleParents.add(id);
             }
         }

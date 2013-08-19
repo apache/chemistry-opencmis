@@ -517,7 +517,7 @@ public class InMemoryQueryProcessor {
 
             // check if object is in folder
             if (so instanceof Filing) {
-                return hasParent((Filing) so, folderId, user);
+                return hasParent(so, folderId, user);
             } else {
                 return false;
             }
@@ -538,7 +538,7 @@ public class InMemoryQueryProcessor {
 
             // check if object is in folder
             if (so instanceof Filing) {
-                return hasAncestor((Filing) so, folderId, user);
+                return hasAncestor(so, folderId, user);
             } else {
                 return false;
             }
@@ -642,7 +642,7 @@ public class InMemoryQueryProcessor {
 
     }
 
-    private boolean hasParent(Filing objInFolder, String folderId, String user) {
+    private boolean hasParent(StoredObject objInFolder, String folderId, String user) {
         List<String> parents = objStore.getParentIds(objInFolder, user);
 
         for (String parentId : parents) {
@@ -653,7 +653,7 @@ public class InMemoryQueryProcessor {
         return false;
     }
 
-    private boolean hasAncestor(Filing objInFolder, String folderId, String user) {
+    private boolean hasAncestor(StoredObject objInFolder, String folderId, String user) {
         List<String> parents = objStore.getParentIds(objInFolder, user);
 
         for (String parentId : parents) {

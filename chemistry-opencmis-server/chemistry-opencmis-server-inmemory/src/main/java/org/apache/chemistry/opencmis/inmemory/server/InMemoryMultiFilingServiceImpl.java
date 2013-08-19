@@ -95,7 +95,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             }
         } else {
             checkObjects(repositoryId, so, null);
-            List<String> parentIds = objStore.getParentIds((Filing) so,  context.getUsername());
+            List<String> parentIds = objStore.getParentIds(so,  context.getUsername());
             for (String parentId: parentIds) {
                 Folder parent = (Folder) objStore.getObjectById(parentId);
                 objStore.removeParent(so, parent);

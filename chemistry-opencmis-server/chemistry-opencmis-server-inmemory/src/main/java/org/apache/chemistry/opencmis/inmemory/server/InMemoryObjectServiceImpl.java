@@ -485,14 +485,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         Folder targetFolder = null;
         Folder sourceFolder = null;
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
-        Filing spo = null;
         String user = context.getUsername();
 
         if (null == so) {
             throw new CmisObjectNotFoundException("Unknown object: " + objectId.getValue());
-        } else if (so instanceof Filing) {
-            spo = (Filing) so;
-        } else {
+        } else if (!(so instanceof Filing)) {
             throw new CmisInvalidArgumentException("Object must be fileable: " + objectId.getValue());
         }
 
@@ -516,7 +513,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         boolean foundOldParent = false;
-        for (String parentId : objectStore.getParentIds(spo, user)) {
+        for (String parentId : objectStore.getParentIds(so, user)) {
             if (parentId.equals(soSource.getId())) {
                 foundOldParent = true;
                 break;
