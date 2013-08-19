@@ -34,12 +34,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExists
  */
 public interface Document extends FileableCmisObject, DocumentProperties {
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    TransientDocument getTransientDocument();
-
     // object service
 
     /**

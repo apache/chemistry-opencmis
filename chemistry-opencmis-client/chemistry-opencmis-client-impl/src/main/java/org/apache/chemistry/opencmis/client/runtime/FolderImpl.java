@@ -68,26 +68,6 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         initialize(session, objectType, objectData, context);
     }
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    @Override
-    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
-        TransientFolderImpl tf = new TransientFolderImpl();
-        tf.initialize(getSession(), this);
-
-        return tf;
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    public org.apache.chemistry.opencmis.client.api.TransientFolder getTransientFolder() {
-        return (org.apache.chemistry.opencmis.client.api.TransientFolder) getTransientObject();
-    }
-
     public Document createDocument(Map<String, ?> properties, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces,
             OperationContext context) {

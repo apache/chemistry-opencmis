@@ -195,16 +195,6 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      */
     <T> T getAdapter(Class<T> adapterInterface);
 
-    /**
-     * Returns a transient object adapter.
-     * 
-     * @see TransientCmisObject
-     * 
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    TransientCmisObject getTransientObject();
-
     // session handling
 
     /**

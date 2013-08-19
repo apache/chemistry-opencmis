@@ -59,26 +59,6 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         initialize(session, objectType, objectData, context);
     }
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    @Override
-    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
-        TransientDocumentImpl td = new TransientDocumentImpl();
-        td.initialize(getSession(), this);
-
-        return td;
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    public org.apache.chemistry.opencmis.client.api.TransientDocument getTransientDocument() {
-        return (org.apache.chemistry.opencmis.client.api.TransientDocument) getTransientObject();
-    }
-
     // properties
 
     public String getCheckinComment() {

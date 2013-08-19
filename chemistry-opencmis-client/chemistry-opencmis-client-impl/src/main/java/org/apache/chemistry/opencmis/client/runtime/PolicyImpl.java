@@ -35,26 +35,6 @@ public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
         initialize(session, objectType, objectData, context);
     }
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    @Override
-    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
-        TransientPolicyImpl tp = new TransientPolicyImpl();
-        tp.initialize(getSession(), this);
-
-        return tp;
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    public org.apache.chemistry.opencmis.client.api.TransientPolicy getTransientPolicy() {
-        return (org.apache.chemistry.opencmis.client.api.TransientPolicy) getTransientObject();
-    }
-
     public String getPolicyText() {
         return getPropertyValue(PropertyIds.POLICY_TEXT);
     }

@@ -164,7 +164,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public List<SecondaryType> getSecondaryTypes() {
         return null;
     }
-    
+
     public List<ObjectType> findObjectType(String id) {
         return null;
     }
@@ -209,11 +209,6 @@ public class CmisObjectMock implements CmisObject, Serializable {
     }
 
     public <T> T getAdapter(Class<T> adapterInterface) {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    public org.apache.chemistry.opencmis.client.api.TransientCmisObject getTransientObject() {
         return null;
     }
 }

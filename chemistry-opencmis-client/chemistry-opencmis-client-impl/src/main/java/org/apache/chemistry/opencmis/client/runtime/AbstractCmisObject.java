@@ -612,30 +612,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- adapters ---
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
     public <T> T getAdapter(Class<T> adapterInterface) {
-        if (adapterInterface == null) {
-            return null;
-        }
-        if (adapterInterface.equals(org.apache.chemistry.opencmis.client.api.TransientCmisObject.class)) {
-            return (T) createTransientCmisObject();
-        }
-        return null;
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    public org.apache.chemistry.opencmis.client.api.TransientCmisObject getTransientObject() {
-        return getAdapter(org.apache.chemistry.opencmis.client.api.TransientCmisObject.class);
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
         return null;
     }
 

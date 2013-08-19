@@ -25,9 +25,4 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Policy extends FileableCmisObject, PolicyProperties {
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    TransientPolicy getTransientPolicy();
 }

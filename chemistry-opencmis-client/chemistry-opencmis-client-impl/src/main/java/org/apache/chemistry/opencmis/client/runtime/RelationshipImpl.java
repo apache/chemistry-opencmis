@@ -37,26 +37,6 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         initialize(session, objectType, objectData, context);
     }
 
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    @Override
-    protected org.apache.chemistry.opencmis.client.api.TransientCmisObject createTransientCmisObject() {
-        TransientRelationshipImpl tr = new TransientRelationshipImpl();
-        tr.initialize(getSession(), this);
-
-        return tr;
-    }
-
-    /**
-     * @deprecated Support for transient objects will be removed in the future.
-     */
-    @Deprecated
-    public org.apache.chemistry.opencmis.client.api.TransientRelationship getTransientRelationship() {
-        return (org.apache.chemistry.opencmis.client.api.TransientRelationship) getTransientObject();
-    }
-
     public CmisObject getSource() {
         return getSource(getSession().getDefaultContext());
     }
