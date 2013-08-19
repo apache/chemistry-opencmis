@@ -77,8 +77,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling.ChildrenResult;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -518,7 +516,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         boolean foundOldParent = false;
-        for (String parentId : ((ObjectStoreFiling)objectStore).getParentIds(spo, user)) {
+        for (String parentId : objectStore.getParentIds(spo, user)) {
             if (parentId.equals(soSource.getId())) {
                 foundOldParent = true;
                 break;
@@ -533,11 +531,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisNotSupportedException("Destination of a move cannot be a subfolder of the source");
         }
 
-        if (objectStore instanceof ObjectStoreFiling) {
-            ((ObjectStoreFiling) objectStore).move(so, sourceFolder, targetFolder);
-        } else {
-            throw new CmisInvalidArgumentException("Repository " + repositoryId + "does not support Filing");
-        }
+        objectStore.move(so, sourceFolder, targetFolder);
         objectId.setValue(so.getId());
 
         LOG.debug("stop moveObject()");
@@ -726,8 +720,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             }
             // Note: the test for duplicated name in folder is left to the object store
-            ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
-            objStoreFiling.rename((Fileable)so, (String) pd.getFirstValue()); 
+            objStore.rename((Fileable)so, (String) pd.getFirstValue()); 
             hasUpdatedProp = true;
         }
 
@@ -1199,7 +1192,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             if (targetId.equals(sourceId)) {
                 return true;
             }
-            List<String>parentIds = ((ObjectStoreFiling)objStore).getParentIds(folder, user);
+            List<String>parentIds = objStore.getParentIds(folder, user);
             targetId = parentIds == null || parentIds.isEmpty() ? null : parentIds.get(0);    
             if (null != targetId) {
                 folder = (Folder) objStore.getObjectById(targetId);
@@ -1223,8 +1216,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private boolean deleteRecursive(ObjectStore objStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
         
-        ObjectStoreFiling filingStore = (ObjectStoreFiling) objStore;
-        ChildrenResult childrenResult = filingStore.getChildren(parentFolder, -1, -1, "Admin", true);
+        ObjectStore.ChildrenResult childrenResult = objStore.getChildren(parentFolder, -1, -1, "Admin", true);
         List<Fileable> children = childrenResult.getChildren();
 
         if (null == children) {

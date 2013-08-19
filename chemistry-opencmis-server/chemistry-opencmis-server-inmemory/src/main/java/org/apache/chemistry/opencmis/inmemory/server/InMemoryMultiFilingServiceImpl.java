@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -30,7 +29,6 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.slf4j.Logger;
@@ -53,15 +51,15 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             throw new CmisNotSupportedException(
                     "Cannot add object to folder, version specific filing is not supported.");
         }
-
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension);
 
         StoredObject so = sos[0];
         StoredObject folder = sos[1];
-        ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, folder);
+        checkObjects(repositoryId, so, folder);
 
         Folder newParent = (Folder) folder;
-        osmf.addParent(so, newParent);
+        objStore.addParent(so, newParent);
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
             fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
@@ -77,14 +75,15 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin removeObjectFromFolder()");
 
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject[] sos = validator.removeObjectFromFolder(context, repositoryId, objectId, folderId, extension);
         StoredObject so = sos[0];
         if (null != folderId) {
             StoredObject folder = sos[1];
-            ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, folder);
+            checkObjects(repositoryId, so, folder);
             Folder parent = (Folder) folder;
 
-            osmf.removeParent(so, parent);
+            objStore.removeParent(so, parent);
 
             // To be able to provide all Atom links in the response we need
             // additional information:
@@ -95,11 +94,11 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
                 objectInfos.addObjectInfo(objectInfo);
             }
         } else {
-            ObjectStoreMultiFiling osmf = checkObjects(repositoryId, so, null);
-            List<String> parentIds = osmf.getParentIds((Filing) so,  context.getUsername());
+            checkObjects(repositoryId, so, null);
+            List<String> parentIds = objStore.getParentIds((Filing) so,  context.getUsername());
             for (String parentId: parentIds) {
-                Folder parent = (Folder) ((ObjectStore)osmf).getObjectById(parentId);
-                osmf.removeParent(so, parent);
+                Folder parent = (Folder) objStore.getObjectById(parentId);
+                objStore.removeParent(so, parent);
             }
 
             // To be able to provide all Atom links in the response we need
@@ -114,12 +113,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         LOG.debug("End removeObjectFromFolder()");
     }
 
-    private ObjectStoreMultiFiling checkObjects(String repositoryId, StoredObject so, StoredObject folder) {
-        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        if (!(objStore instanceof ObjectStoreMultiFiling)) {
-            throw new CmisInvalidArgumentException("Repository Id " + repositoryId + " does not support multi-filing");
-        }
-
+    private void checkObjects(String repositoryId, StoredObject so, StoredObject folder) {
         if ((so instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, object id " + folder.getId()
                     + " is a folder and folders are not multi-filed.");
@@ -128,9 +122,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         if (folder != null && !(folder instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
                     + " does not refer to a folder.");
-        }
-        
-        return (ObjectStoreMultiFiling) objStore;
+        }        
     }
 
 }

@@ -54,7 +54,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Item;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -277,7 +276,6 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         List<ObjectInFolderData> folderList = new ArrayList<ObjectInFolderData>();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject so = objStore.getObjectById(folderId);
-        ObjectStoreFiling objStoreFiling = (ObjectStoreFiling) objStore;
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so == null) {
@@ -288,8 +286,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             return null; // it is a document and has no children
         }
 
-        ObjectStoreFiling.ChildrenResult children = folderOnly ? objStoreFiling.getFolderChildren((Folder) so,
-                maxItems, skipCount, user) : objStoreFiling.getChildren((Folder) so, maxItems, skipCount, user,
+        ObjectStore.ChildrenResult children = folderOnly ? objStore.getFolderChildren((Folder) so,
+                maxItems, skipCount, user) : objStore.getChildren((Folder) so, maxItems, skipCount, user,
                 includePwc);
 
         for (Fileable child : children.getChildren()) {
@@ -367,7 +365,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         List<ObjectParentData> result = null;
         result = new ArrayList<ObjectParentData>();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        List<String> parentIds = ((ObjectStoreFiling) objStore).getParentIds(sop, user);
+        List<String> parentIds = objStore.getParentIds(sop, user);
         if (null != parentIds) {
             for (String parentId : parentIds) {
                 ObjectParentDataImpl parentData = new ObjectParentDataImpl();
@@ -398,7 +396,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         ObjectDataImpl parent = new ObjectDataImpl();
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        List<String> parents = ((ObjectStoreFiling) objStore).getParentIds(sop, user);
+        List<String> parents = objStore.getParentIds(sop, user);
         if (null == parents || parents.isEmpty()) {
             return null;
         }

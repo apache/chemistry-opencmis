@@ -49,7 +49,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStoreMultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
@@ -84,7 +83,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  * implement finer grained locks on a folder or document rather than the
  * complete repository.
  */
-public class ObjectStoreImpl implements ObjectStore, ObjectStoreMultiFiling {
+public class ObjectStoreImpl implements ObjectStore {
 
     private static final int FIRST_ID = 100;
 
