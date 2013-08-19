@@ -18,15 +18,15 @@
  */
 package org.apache.chemistry.opencmis.jcr.type;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.jcr.JcrDocument;
 import org.apache.chemistry.opencmis.jcr.JcrFolder;
 import org.apache.chemistry.opencmis.jcr.JcrNode;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 /**
  * Implemented by type handlers that provides a type that is or inherits from cmis:document.

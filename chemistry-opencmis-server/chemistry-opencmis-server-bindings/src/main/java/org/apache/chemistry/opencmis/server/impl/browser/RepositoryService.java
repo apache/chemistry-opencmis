@@ -28,7 +28,6 @@ import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TOKEN;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_TYPE_ID;
 
 import java.math.BigInteger;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
@@ -128,7 +128,7 @@ public class RepositoryService {
             if (request.getCookies() != null) {
                 for (Cookie cookie : request.getCookies()) {
                     if (cookieName.equals(cookie.getName())) {
-                        cookieValue = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                        cookieValue = IOUtils.decodeURL(cookie.getValue());
                         break;
                     }
                 }

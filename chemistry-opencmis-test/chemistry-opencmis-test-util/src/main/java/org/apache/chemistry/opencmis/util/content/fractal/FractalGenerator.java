@@ -51,27 +51,27 @@ import org.slf4j.LoggerFactory;
 public class FractalGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(FractalGenerator.class);
 
-    private final static int ZOOM_STEPS_PER_BATCH = 10;
-    private final static int DEFAULT_MAX_ITERATIONS = 33;
-    private final static ComplexRectangle INITIAL_RECT = new ComplexRectangle(-2.1, 1.1, -1.3, 1.3);
-    private final static ComplexRectangle INITIAL_JULIA_RECT = new ComplexRectangle(-2.0, 2.0, -2.0, 2.0);
-    private final static int INITIAL_ITERATIONS = 33;
+    private static final int ZOOM_STEPS_PER_BATCH = 10;
+    private static final int DEFAULT_MAX_ITERATIONS = 33;
+    private static final ComplexRectangle INITIAL_RECT = new ComplexRectangle(-2.1, 1.1, -1.3, 1.3);
+    private static final ComplexRectangle INITIAL_JULIA_RECT = new ComplexRectangle(-2.0, 2.0, -2.0, 2.0);
+    private static final int INITIAL_ITERATIONS = 33;
 
     // Color:
     private Map<String, int[]> colorTable;
-    private final String COLORS_BLACK_AND_WHITE = "black & white";
-    private final String COLORS_BLUE_ICE = "blue ice";
-    private final String COLORS_FUNKY = "funky";
-    private final String COLORS_PASTEL = "pastel";
-    private final String COLORS_PSYCHEDELIC = "psychedelic";
-    private final String COLORS_PURPLE_HAZE = "purple haze";
-    private final String COLORS_RADICAL = "radical";
-    private final String COLORS_RAINBOW = "rainbow";
-    private final String COLORS_RAINBOWS = "rainbows";
-    private final String COLORS_SCINTILLATION = "scintillation";
-    private final String COLORS_WARPED = "warped";
-    private final String COLORS_WILD = "wild";
-    private final String COLORS_ZEBRA = "zebra";
+    private static final String COLORS_BLACK_AND_WHITE = "black & white";
+    private static final String COLORS_BLUE_ICE = "blue ice";
+    private static final String COLORS_FUNKY = "funky";
+    private static final String COLORS_PASTEL = "pastel";
+    private static final String COLORS_PSYCHEDELIC = "psychedelic";
+    private static final String COLORS_PURPLE_HAZE = "purple haze";
+    private static final String COLORS_RADICAL = "radical";
+    private static final String COLORS_RAINBOW = "rainbow";
+    private static final String COLORS_RAINBOWS = "rainbows";
+    private static final String COLORS_SCINTILLATION = "scintillation";
+    private static final String COLORS_WARPED = "warped";
+    private static final String COLORS_WILD = "wild";
+    private static final String COLORS_ZEBRA = "zebra";
     private final String[] colorSchemes = { COLORS_BLACK_AND_WHITE, COLORS_BLUE_ICE, COLORS_FUNKY, COLORS_PASTEL,
             COLORS_PSYCHEDELIC, COLORS_PURPLE_HAZE, COLORS_RADICAL, COLORS_RAINBOW, COLORS_RAINBOWS,
             COLORS_SCINTILLATION, COLORS_WARPED, COLORS_WILD, COLORS_ZEBRA };

@@ -19,8 +19,8 @@
 package org.apache.chemistry.opencmis.tck.tests.control;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
-import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.ArrayList;
 import java.util.Collections;

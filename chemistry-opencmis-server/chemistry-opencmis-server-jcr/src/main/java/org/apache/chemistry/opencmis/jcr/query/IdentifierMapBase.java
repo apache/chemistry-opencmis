@@ -18,10 +18,10 @@
  */
 package org.apache.chemistry.opencmis.jcr.query;
 
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * This abstract base class provides support for implementing {@link IdentifierMap}.

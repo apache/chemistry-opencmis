@@ -62,6 +62,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
             try {
                 return BaseTypeId.fromValue((String) value);
             } catch (Exception e) {
+                // invalid base type -> return null
             }
         }
 
@@ -155,7 +156,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
     public String toString() {
         return "Object Data [properties=" + properties + ", allowable actions=" + allowableActions
                 + ", change event info=" + changeEventInfo + ", ACL=" + acl + ", is exact ACL=" + isExactAcl
-                + ", policy ids=" + policyIds + ", relationships=" + relationships + ", renditions=" + renditions
-                + "]" + super.toString();
+                + ", policy ids=" + policyIds + ", relationships=" + relationships + ", renditions=" + renditions + "]"
+                + super.toString();
     }
 }

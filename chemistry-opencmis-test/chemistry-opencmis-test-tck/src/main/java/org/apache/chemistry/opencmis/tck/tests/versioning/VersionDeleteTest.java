@@ -22,7 +22,6 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -87,12 +86,8 @@ public class VersionDeleteTest extends AbstractSessionTest {
         addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC " + version + " compliance"));
 
         // check in
-        byte[] contentBytes;
-        try {
-            contentBytes = content.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            contentBytes = content.getBytes();
-        }
+        byte[] contentBytes = IOUtils.getUTF8Bytes(content);
+
         ContentStream contentStream = new ContentStreamImpl(doc.getName(), BigInteger.valueOf(contentBytes.length),
                 "text/plain", new ByteArrayInputStream(contentBytes));
 

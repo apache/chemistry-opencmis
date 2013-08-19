@@ -19,6 +19,16 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
@@ -33,13 +43,6 @@ import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class XPathBuilderTest {
 

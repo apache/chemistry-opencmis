@@ -21,8 +21,9 @@ package org.apache.chemistry.opencmis.server.support.filter;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -174,9 +175,9 @@ public class LoggingFilter implements Filter {
 
     private void writeTextToFile(String filename, String content) {
         PrintWriter pw = null;
-        FileWriter fw = null;
+        OutputStreamWriter fw = null;
         try {
-            fw = new FileWriter(filename);
+            fw = new OutputStreamWriter(new FileOutputStream(filename), "UTF-8");
             pw = new PrintWriter(fw);
 
             Scanner scanner = new Scanner(content);
@@ -188,11 +189,9 @@ public class LoggingFilter implements Filter {
 
             pw.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } finally {
-            if (pw != null) {
-                pw.close();
-            }
+            IOUtils.closeQuietly(pw);
             IOUtils.closeQuietly(fw);
         }
     }
@@ -428,8 +427,7 @@ public class LoggingFilter implements Filter {
                 }
                 return writer;
             } catch (IOException e) {
-                LOG.error("Failed to get PrintWriter in LoggingFilter: " + e);
-                e.printStackTrace();
+                LOG.error("Failed to get PrintWriter in LoggingFilter: " + e, e);
                 return null;
             }
         }

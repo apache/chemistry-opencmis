@@ -506,8 +506,9 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
                     objectIdsAndChangeTokens, properties, addSecondaryTypeIds, removeSecondaryTypeIds, extData);
 
-            if (objectIdAndChangeToken != null) {
-                // TODO: fix
+            if (objectIdAndChangeToken != null && result != null) {
+                // TODO: add workaround
+                // see: https://tools.oasis-open.org/issues/browse/CMIS-754
             }
 
             setExtensionValues(extData, extension);

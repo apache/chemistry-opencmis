@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -143,12 +144,7 @@ public class VersioningStateCreateTest extends AbstractSessionTest {
     }
 
     private ContentStream getContentStream() {
-        byte[] contentBytes = null;
-        try {
-            contentBytes = "some content".getBytes("UTF-8");
-        } catch (Exception e) {
-            contentBytes = "some content".getBytes();
-        }
+        byte[] contentBytes = IOUtils.getUTF8Bytes("some content");
 
         return new ContentStreamImpl("content.txt", BigInteger.valueOf(contentBytes.length), "text/plain",
                 new ByteArrayInputStream(contentBytes));

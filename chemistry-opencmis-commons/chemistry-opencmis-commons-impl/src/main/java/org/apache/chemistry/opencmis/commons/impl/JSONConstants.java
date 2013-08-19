@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 /**
  * JSON object constants.
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class JSONConstants {
 
     public static final String ERROR_EXCEPTION = "exception";

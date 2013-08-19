@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;

@@ -19,13 +19,14 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
-import org.apache.chemistry.opencmis.commons.enums.Action;
-import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
-import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.util.Set;
+
+import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
+import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 /**
  * Instances of this class represent a non versionable cmis:document backed by an underlying JCR <code>Node</code>. 

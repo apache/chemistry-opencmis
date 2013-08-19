@@ -19,10 +19,8 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -44,9 +42,9 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
@@ -181,7 +179,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             return "cmis%";
         }
 
-        return "cmis_" + Base64.encodeBytes(token.getBytes()).replace('=', '%');
+        return "cmis_" + Base64.encodeBytes(IOUtils.getUTF8Bytes(token)).replace('=', '%');
     }
 
     /**
@@ -205,12 +203,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
     public void setCookie(HttpServletRequest request, HttpServletResponse response, String repositoryId, String token,
             String value, int expiry) {
         if (token != null && token.length() > 0) {
-            String cookieValue = value;
-            try {
-                cookieValue = URLEncoder.encode(value, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
-            }
+            String cookieValue = IOUtils.encodeURL(value);
 
             Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);
             transactionCookie.setMaxAge(expiry);

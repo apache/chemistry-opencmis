@@ -26,8 +26,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 /**
  * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified

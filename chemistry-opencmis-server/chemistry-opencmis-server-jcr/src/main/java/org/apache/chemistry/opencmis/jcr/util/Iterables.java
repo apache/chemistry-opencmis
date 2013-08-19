@@ -19,11 +19,11 @@
 
 package org.apache.chemistry.opencmis.jcr.util;
 
+import java.util.Iterator;
+
 import org.apache.commons.collections.iterators.EmptyIterator;
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.apache.commons.collections.iterators.SingletonIterator;
-
-import java.util.Iterator;
 
 public class Iterables {
     private Iterables() {}

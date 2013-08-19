@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Content stream data implementation.
@@ -57,12 +58,15 @@ public class ContentStreamImpl extends AbstractExtensionData implements ContentS
      * Convenience constructor for tests.
      */
     public ContentStreamImpl(String filename, String mimetype, String string) {
-        byte[] bytes;
+        if (string == null) {
+            throw new IllegalArgumentException("String must be set!");
+        }
+
+        byte[] bytes = null;
         try {
             bytes = string.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // cannot happen
-            bytes = string.getBytes();
+            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'!", e);
         }
 
         this.filename = filename;

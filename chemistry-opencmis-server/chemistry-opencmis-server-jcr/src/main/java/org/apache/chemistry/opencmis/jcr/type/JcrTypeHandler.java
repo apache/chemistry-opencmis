@@ -18,14 +18,14 @@
  */
 package org.apache.chemistry.opencmis.jcr.type;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.jcr.JcrNode;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.PathManager;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 /**
  * Provides operations for a specific CMIS object type.

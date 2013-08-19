@@ -19,8 +19,6 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
-import javax.jcr.Binary;
-import javax.jcr.RepositoryException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+
+import javax.jcr.Binary;
+import javax.jcr.RepositoryException;
 
 /**
  * <code>JcrBinary</code> implements the JCR <code>Binary</code> interface.

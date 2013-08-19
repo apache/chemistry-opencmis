@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class XMLConstants {
 
     private XMLConstants() {

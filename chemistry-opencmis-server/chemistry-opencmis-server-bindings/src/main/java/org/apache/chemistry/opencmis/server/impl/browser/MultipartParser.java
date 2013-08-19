@@ -124,7 +124,8 @@ public class MultipartParser {
         byte[][] values = rawFields.get(name);
 
         if (values == null) {
-            rawFields.put(name, new byte[][] { value });
+            byte[][] newValue = new byte[][] { value };
+            rawFields.put(name, newValue);
         } else {
             byte[][] newValues = new byte[values.length + 1][];
             System.arraycopy(values, 0, newValues, 0, values.length);

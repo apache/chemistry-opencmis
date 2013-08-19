@@ -19,11 +19,13 @@
 package org.apache.chemistry.opencmis.tck.report;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestReport;
 
@@ -36,6 +38,11 @@ public abstract class AbstractCmisTestReport implements CmisTestReport {
             throws Exception;
 
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, File file) throws Exception {
-        createReport(parameters, groups, new FileWriter(file));
+        Writer writer = new OutputStreamWriter(new FileOutputStream(file), IOUtils.UTF8);
+        try {
+            createReport(parameters, groups, writer);
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
     }
 }

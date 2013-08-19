@@ -19,6 +19,9 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.runtime.tree.Tree;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -26,9 +29,6 @@ import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictLexer;
 import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
 import org.apache.chemistry.opencmis.server.support.query.TextSearchLexer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This implementation of {@link PredicateWalkerBase} traverses the parse tree of a CMIS query.

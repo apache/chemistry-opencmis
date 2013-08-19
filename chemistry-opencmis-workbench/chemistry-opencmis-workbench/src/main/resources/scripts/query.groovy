@@ -16,10 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
 
 String cql = "SELECT cmis:objectId, cmis:name, cmis:contentStreamLength FROM cmis:document"
 

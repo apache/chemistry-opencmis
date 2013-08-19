@@ -18,10 +18,10 @@
  */
 package org.apache.chemistry.opencmis.jcr.type;
 
+import javax.jcr.Node;
+
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.jcr.JcrFolder;
-
-import javax.jcr.Node;
 
 /**
  * Implemented by type handlers that provides a type that is or inherits from cmis:folder.

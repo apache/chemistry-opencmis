@@ -16,10 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
+import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 
 
 Folder folder = (Folder) session.getObjectByPath("/");

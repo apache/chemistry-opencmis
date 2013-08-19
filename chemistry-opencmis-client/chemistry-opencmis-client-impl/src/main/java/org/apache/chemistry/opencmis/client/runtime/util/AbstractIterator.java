@@ -54,9 +54,9 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
     }
 
     public long getPageNumItems() {
-        Page<T> page = getCurrentPage();
-        if (page != null) {
-            List<T> items = page.getItems();
+        Page<T> currentPage = getCurrentPage();
+        if (currentPage != null) {
+            List<T> items = currentPage.getItems();
             if (items != null) {
                 return items.size();
             }
@@ -67,11 +67,11 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
     public long getTotalNumItems() {
         if (totalNumItems == null) {
             totalNumItems = Long.valueOf(-1);
-            Page<T> page = getCurrentPage();
-            if (page != null) {
+            Page<T> currentPage = getCurrentPage();
+            if (currentPage != null) {
                 // set number of items
-                if (page.getTotalNumItems() != null) {
-                    totalNumItems = page.getTotalNumItems();
+                if (currentPage.getTotalNumItems() != null) {
+                    totalNumItems = currentPage.getTotalNumItems();
                 }
             }
         }
@@ -81,10 +81,10 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
     public boolean getHasMoreItems() {
         if (hasMoreItems == null) {
             hasMoreItems = Boolean.FALSE;
-            Page<T> page = getCurrentPage();
-            if (page != null) {
-                if (page.getHasMoreItems() != null) {
-                    hasMoreItems = page.getHasMoreItems();
+            Page<T> currentPage = getCurrentPage();
+            if (currentPage != null) {
+                if (currentPage.getHasMoreItems() != null) {
+                    hasMoreItems = currentPage.getHasMoreItems();
                 }
             }
         }

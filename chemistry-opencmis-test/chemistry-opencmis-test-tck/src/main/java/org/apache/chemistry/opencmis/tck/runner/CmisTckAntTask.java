@@ -114,7 +114,7 @@ public class CmisTckAntTask extends Task {
                         output = new File(DEFAULT_REPORT_NAME + ".html");
                     }
                 } else {
-                    throw new Exception("Unknown format!");
+                    throw new BuildException("Unknown format!");
                 }
             }
 

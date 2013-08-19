@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -27,6 +26,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
 /**
  * HttpServletRequest wrapper that reads the query string in container
@@ -57,12 +58,12 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
         for (String nameValuePair : nameValuePairs) {
             int x = nameValuePair.indexOf('=');
             if (x > 0) {
-                String name = URLDecoder.decode(nameValuePair.substring(0, x), "UTF-8");
-                String value = (x == nameValuePair.length() - 1 ? "" : URLDecoder.decode(
-                        nameValuePair.substring(x + 1), "UTF-8"));
+                String name = IOUtils.decodeURL(nameValuePair.substring(0, x));
+                String value = (x == nameValuePair.length() - 1 ? "" : IOUtils
+                        .decodeURL(nameValuePair.substring(x + 1)));
                 addParameter(name, value);
             } else {
-                String name = URLDecoder.decode(nameValuePair, "UTF-8");
+                String name = IOUtils.decodeURL(nameValuePair);
                 addParameter(name, (String) null);
             }
         }

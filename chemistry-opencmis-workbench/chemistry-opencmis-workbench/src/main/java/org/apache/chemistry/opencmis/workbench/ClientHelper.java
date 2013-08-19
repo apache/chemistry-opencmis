@@ -35,14 +35,12 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -85,6 +83,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -296,8 +295,8 @@ public final class ClientHelper {
     public static File createTempFile(String filename) {
         String tempDir = System.getProperty("java.io.tmpdir");
         File clientTempDir = new File(tempDir, "cmisworkbench");
-        if (!clientTempDir.exists()) {
-            clientTempDir.mkdirs();
+        if (!clientTempDir.exists() && !clientTempDir.mkdirs()) {
+            throw new CmisRuntimeException("Could not create directory for temp file!");
         }
         clientTempDir.deleteOnExit();
 
@@ -469,7 +468,7 @@ public final class ClientHelper {
             return ClientHelper.class.getResource(path).toURI();
         } catch (URISyntaxException e) {
             // not very likely
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             return null;
         }
     }
@@ -499,35 +498,8 @@ public final class ClientHelper {
         }
 
         try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-            final StringBuilder sb = new StringBuilder();
-            String s;
-            boolean header = true;
-
-            while ((s = reader.readLine()) != null) {
-                // remove header
-                if (header) {
-                    String st = s.trim();
-                    if (st.length() == 0) {
-                        header = false;
-                        continue;
-                    }
-
-                    char c = st.charAt(0);
-                    header = (c == '/') || (c == '*') || (c == '#');
-                    if (header) {
-                        continue;
-                    }
-                }
-
-                sb.append(s);
-                sb.append('\n');
-            }
-
-            reader.close();
-
-            return sb.toString();
-        } catch (Exception e) {
+            return IOUtils.readAllLinesAndRemoveHeader(stream);
+        } catch (IOException e1) {
             return "";
         }
     }

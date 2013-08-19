@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl;
 /**
  * Constants for CMIS server and client.
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
 
     /**

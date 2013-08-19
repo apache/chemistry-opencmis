@@ -58,7 +58,8 @@ public class LoginDialog extends JDialog {
 
     public static final String SYSPROP_LOGIN_TAB = ClientSession.WORKBENCH_PREFIX + "logintab";
 
-    private final static ServiceLoader<AbstractLoginTab> TAB_SERVICE_LOADER = ServiceLoader.load(AbstractLoginTab.class);
+    private static final ServiceLoader<AbstractLoginTab> TAB_SERVICE_LOADER = ServiceLoader
+            .load(AbstractLoginTab.class);
 
     private JTabbedPane loginTabs;
     private BasicLoginTab basicLoginTab;

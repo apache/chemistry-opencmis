@@ -18,12 +18,10 @@
  */
 package org.apache.chemistry.opencmis.tck.runner;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,31 +88,7 @@ public abstract class AbstractRunner {
             throw new IllegalArgumentException("Stream is null!");
         }
 
-        BufferedReader reader = null;
-        Map<String, String> loadParams = new HashMap<String, String>();
-
-        try {
-            reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.length() == 0 || line.charAt(0) == '#') {
-                    continue;
-                }
-
-                int x = line.indexOf('=');
-                if (x < 0) {
-                    loadParams.put(line.trim(), "");
-                } else {
-                    loadParams.put(line.substring(0, x).trim(), line.substring(x + 1).trim());
-                }
-            }
-
-            setParameters(loadParams);
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
+        setParameters(IOUtils.readAllLinesAsMap(stream));
     }
 
     public Map<String, String> getParameters() {
@@ -122,48 +96,33 @@ public abstract class AbstractRunner {
     }
 
     private String loadTCKTimestamp() {
-        StringBuilder result = new StringBuilder();
-
         InputStream stream = getClass().getResourceAsStream(TCK_BUILD_TIMESTAMP);
         if (stream != null) {
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
-                String s = null;
-                while ((s = br.readLine()) != null) {
-                    result.append(s);
-                }
-
-                br.close();
-            } catch (Exception e) {
+                return IOUtils.readAllLines(stream);
+            } catch (IOException e) {
+                return "";
             }
         }
 
-        return result.toString();
+        return "";
     }
 
     private String loadTCKRevision() {
-        String result = null;
-
         InputStream stream = getClass().getResourceAsStream(TCK_REVISION);
+
         if (stream != null) {
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-                result = br.readLine();
-                br.close();
-            } catch (Exception e) {
-            }
-
-            if (result != null) {
-                try {
-                    result = String.valueOf(Integer.parseInt(result.trim()));
-                } catch (NumberFormatException nfe) {
-                    result = null;
-                }
+                String revStr = IOUtils.readFirstLine(stream);
+                return String.valueOf(Integer.parseInt(revStr.trim()));
+            } catch (NumberFormatException e) {
+                return null;
+            } catch (IOException e) {
+                return null;
             }
         }
 
-        return result;
+        return null;
     }
 
     // --- groups ---
@@ -185,22 +144,8 @@ public abstract class AbstractRunner {
             throw new IllegalArgumentException("Stream is null!");
         }
 
-        BufferedReader reader = null;
-
-        try {
-            reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.length() == 0 || line.charAt(0) == '#') {
-                    continue;
-                }
-
-                addGroup(line);
-            }
-        } finally {
-            IOUtils.closeQuietly(reader);
+        for (String groupName : IOUtils.readAllLinesAsList(stream)) {
+            addGroup(groupName);
         }
     }
 
@@ -233,7 +178,7 @@ public abstract class AbstractRunner {
         } else if (o instanceof CmisTest) {
             group = new WrapperCmisTestGroup((CmisTest) o);
         } else {
-            throw new Exception("Not a CmisTestGroup or CmisTest class!");
+            throw new InstantiationException("Not a CmisTestGroup or CmisTest class!");
         }
 
         addGroup(group);

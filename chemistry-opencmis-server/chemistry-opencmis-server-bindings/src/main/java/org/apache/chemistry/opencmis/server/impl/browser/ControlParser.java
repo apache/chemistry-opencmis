@@ -109,6 +109,7 @@ public class ControlParser {
                 result = -1;
             }
         } catch (NumberFormatException e) {
+            // return default value (-1)
         }
 
         return result;
@@ -131,6 +132,7 @@ public class ControlParser {
                 result = -1;
             }
         } catch (NumberFormatException e) {
+            // return default value (-1)
         }
 
         return result;

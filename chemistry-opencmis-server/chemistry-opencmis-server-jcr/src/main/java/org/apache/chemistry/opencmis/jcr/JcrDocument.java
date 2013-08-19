@@ -19,6 +19,17 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Set;
+
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.Action;
@@ -33,16 +44,6 @@ import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Set;
 
 /**
  * Instances of this class represent a cmis:document backed by an underlying JCR <code>Node</code>.

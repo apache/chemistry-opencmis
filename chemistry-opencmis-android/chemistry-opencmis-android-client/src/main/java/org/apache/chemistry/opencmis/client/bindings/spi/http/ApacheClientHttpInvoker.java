@@ -23,7 +23,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocket;
@@ -106,7 +105,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
         // build new socket factory
         return new LayeredSocketFactory() {
 
-            public boolean isSecure(Socket sock) throws IllegalArgumentException {
+            public boolean isSecure(Socket sock) {
                 return true;
             }
 
@@ -114,8 +113,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
                 return (SSLSocket) sf.createSocket();
             }
 
-            public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
-                    UnknownHostException {
+            public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) sf.createSocket(socket, host, port, autoClose);
                 verify(hv, host, sslSocket);
 
@@ -123,7 +121,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
             }
 
             public Socket connectSocket(Socket sock, String host, int port, InetAddress localAddress, int localPort,
-                    HttpParams params) throws IOException, UnknownHostException, ConnectTimeoutException {
+                    HttpParams params) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) (sock != null ? sock : createSocket());
 
                 if (localAddress != null || localPort > 0) {

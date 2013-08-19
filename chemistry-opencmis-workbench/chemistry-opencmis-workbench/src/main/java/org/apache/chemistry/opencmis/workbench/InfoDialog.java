@@ -22,9 +22,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.TreeSet;
 
@@ -108,26 +107,15 @@ public class InfoDialog extends JDialog {
     }
 
     private String loadText(String file, String defaultText) {
-        StringBuilder result = new StringBuilder();
-
         InputStream stream = getClass().getResourceAsStream(file);
         if (stream != null) {
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
-                String s = null;
-                while ((s = br.readLine()) != null) {
-                    result.append(s);
-                    result.append('\n');
-                }
-
-                IOUtils.closeQuietly(br);
-            } catch (Exception e) {
+                return IOUtils.readAllLines(stream);
+            } catch (IOException e) {
+                return defaultText;
             }
-        } else {
-            result.append(defaultText);
         }
 
-        return result.toString();
+        return defaultText;
     }
 }

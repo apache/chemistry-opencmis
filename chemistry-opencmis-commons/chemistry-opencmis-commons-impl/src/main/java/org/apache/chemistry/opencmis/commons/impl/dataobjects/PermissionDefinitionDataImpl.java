@@ -38,14 +38,6 @@ public class PermissionDefinitionDataImpl extends AbstractExtensionData implemen
         this.permission = permission;
     }
 
-    /**
-     * @deprecated use {@link #setId(String)} instead
-     */
-    @Deprecated
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
     public String getDescription() {
         return description;
     }

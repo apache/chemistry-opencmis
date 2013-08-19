@@ -91,7 +91,7 @@ public class BrowseServlet extends HttpServlet {
             builderFactory.setNamespaceAware(true);
             builder = builderFactory.newDocumentBuilder();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             return;
         }
 
@@ -118,7 +118,7 @@ public class BrowseServlet extends HttpServlet {
 
                         LOG.info("Stylesheet: '" + stylesheetKey + "' -> '" + stylesheetFileName + "'");
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.error(e.getMessage(), e);
                     }
                 }
             }

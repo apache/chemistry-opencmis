@@ -162,7 +162,7 @@ public final class XMLConverter {
     // ---------------
 
     public static void writeRepositoryInfo(XmlSerializer writer, CmisVersion cmisVersion, String namespace,
-            RepositoryInfo source) throws IllegalArgumentException, IllegalStateException, IOException {
+            RepositoryInfo source) throws IOException {
         if (source == null) {
             return;
         }
@@ -210,7 +210,7 @@ public final class XMLConverter {
     }
 
     public static void writeRepositoryCapabilities(XmlSerializer writer, CmisVersion cmisVersion,
-            RepositoryCapabilities source) throws IllegalArgumentException, IllegalStateException, IOException {
+            RepositoryCapabilities source) throws IOException {
         if (source == null) {
             return;
         }
@@ -300,7 +300,7 @@ public final class XMLConverter {
     }
 
     public static void writeAclCapabilities(XmlSerializer writer, CmisVersion cmisVersion, AclCapabilities source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null) {
             return;
         }
@@ -343,7 +343,7 @@ public final class XMLConverter {
     }
 
     public static void writeExtendedFeatures(XmlSerializer writer, CmisVersion cmisVersion, ExtensionFeature source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null) {
             return;
         }
@@ -375,7 +375,7 @@ public final class XMLConverter {
     // --------------------------
 
     public static void writeTypeDefinition(XmlSerializer writer, CmisVersion cmisVersion, String namespace,
-            TypeDefinition source) throws IllegalArgumentException, IllegalStateException, IOException {
+            TypeDefinition source) throws IOException {
         if (source == null) {
             return;
         }
@@ -472,7 +472,7 @@ public final class XMLConverter {
     }
 
     public static void writePropertyDefinition(XmlSerializer writer, CmisVersion cmisVersion,
-            PropertyDefinition<?> source) throws IllegalArgumentException, IllegalStateException, IOException {
+            PropertyDefinition<?> source) throws IOException {
         if (source == null) {
             return;
         }
@@ -603,8 +603,7 @@ public final class XMLConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static void writeChoice(XmlSerializer writer, PropertyType propType, Choice<?> source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+    public static void writeChoice(XmlSerializer writer, PropertyType propType, Choice<?> source) throws IOException {
         if (source == null) {
             return;
         }
@@ -665,12 +664,12 @@ public final class XMLConverter {
     // -----------------------
 
     public static void writeObject(XmlSerializer writer, CmisVersion cmisVersion, String namespace, ObjectData source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         writeObject(writer, cmisVersion, false, TAG_OBJECT, namespace, source);
     }
 
     public static void writeObject(XmlSerializer writer, CmisVersion cmisVersion, boolean root, String name,
-            String namespace, ObjectData source) throws IllegalArgumentException, IllegalStateException, IOException {
+            String namespace, ObjectData source) throws IOException {
 
         if (source == null) {
             return;
@@ -772,7 +771,7 @@ public final class XMLConverter {
 
     @SuppressWarnings("unchecked")
     public static void writeProperty(XmlSerializer writer, PropertyData<?> source, boolean isDefaultValue)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null) {
             return;
         }
@@ -860,7 +859,7 @@ public final class XMLConverter {
     }
 
     public static void writeAllowableActions(XmlSerializer writer, CmisVersion cmisVersion, boolean root,
-            AllowableActions source) throws IllegalArgumentException, IllegalStateException, IOException {
+            AllowableActions source) throws IOException {
         if (source == null) {
             return;
         }
@@ -890,7 +889,7 @@ public final class XMLConverter {
     }
 
     public static void writeAcl(XmlSerializer writer, CmisVersion cmisVersion, boolean root, Acl source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null) {
             return;
         }
@@ -939,7 +938,7 @@ public final class XMLConverter {
     // -------------
 
     public static void writeQuery(XmlSerializer writer, CmisVersion cmisVersion, QueryTypeImpl source)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null) {
             return;
         }
@@ -966,7 +965,7 @@ public final class XMLConverter {
     // -------------------
 
     public static void writeBulkUpdate(XmlSerializer writer, String namespace, BulkUpdateImpl bulkUpdate)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (bulkUpdate == null || bulkUpdate.getObjectIdAndChangeToken() == null) {
             return;
         }
@@ -1040,7 +1039,7 @@ public final class XMLConverter {
     }
 
     private static void writeExtensionElement(XmlSerializer writer, CmisExtensionElement source, LinkedList<String> ns)
-            throws IllegalArgumentException, IllegalStateException, IOException {
+            throws IOException {
         if (source == null || source.getName() == null) {
             return;
         }
@@ -2134,7 +2133,7 @@ public final class XMLConverter {
         }
     };
 
-    private static abstract class ChoiceAtomPubXMLWalker<T> extends XMLWalker<ChoiceImpl<T>> {
+    private abstract static class ChoiceAtomPubXMLWalker<T> extends XMLWalker<ChoiceImpl<T>> {
 
         public void addToChoiceList(XmlPullParser parser, AbstractPropertyDefinition<T> propDef)
                 throws XmlPullParserException {
@@ -2572,7 +2571,7 @@ public final class XMLConverter {
         }
     };
 
-    private static abstract class PropertyAtomPubXMLWalker<T extends AbstractPropertyData<?>> extends XMLWalker<T> {
+    private abstract static class PropertyAtomPubXMLWalker<T extends AbstractPropertyData<?>> extends XMLWalker<T> {
 
         protected abstract T createTarget(XmlPullParser parser, QName name);
 
@@ -2614,7 +2613,7 @@ public final class XMLConverter {
 
     };
 
-    private static abstract class PropertyStringAtomPubXMLWalker<T extends AbstractPropertyData<String>> extends
+    private abstract static class PropertyStringAtomPubXMLWalker<T extends AbstractPropertyData<String>> extends
             PropertyAtomPubXMLWalker<T> {
         @Override
         protected void addValue(XmlPullParser parser, T target) throws XmlPullParserException {

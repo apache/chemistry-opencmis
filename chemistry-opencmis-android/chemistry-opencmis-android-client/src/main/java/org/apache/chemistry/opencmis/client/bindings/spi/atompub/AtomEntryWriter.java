@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
@@ -58,7 +59,7 @@ import android.util.Xml;
  */
 public class AtomEntryWriter {
 
-    public static final String ENCODING = "UTF-8";
+    public static final String ENCODING = IOUtils.UTF8;
 
     private static final int BUFFER_SIZE = 64 * 1024;
 

@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
@@ -218,7 +219,7 @@ public class FormDataWriter {
     public void write(OutputStream out) throws IOException {
         if (contentStream == null || contentStream.getStream() == null) {
             boolean first = true;
-            byte[] amp = "&".getBytes("UTF-8");
+            byte[] amp = IOUtils.getUTF8Bytes("&");
 
             for (Map.Entry<String, String> param : parameters.entrySet()) {
                 if (first) {
@@ -227,7 +228,7 @@ public class FormDataWriter {
                     out.write(amp);
                 }
 
-                out.write((param.getKey() + "=" + URLEncoder.encode(param.getValue(), "UTF-8")).getBytes("UTF-8"));
+                out.write(IOUtils.getUTF8Bytes(param.getKey() + "=" + URLEncoder.encode(param.getValue(), "UTF-8")));
             }
         } else {
             writeLine(out);
@@ -287,6 +288,6 @@ public class FormDataWriter {
 
     private void writeLine(OutputStream out, String s) throws IOException {
         s = (s == null ? CRLF : s + CRLF);
-        out.write(s.getBytes("UTF-8"));
+        out.write(IOUtils.getUTF8Bytes(s));
     }
 }

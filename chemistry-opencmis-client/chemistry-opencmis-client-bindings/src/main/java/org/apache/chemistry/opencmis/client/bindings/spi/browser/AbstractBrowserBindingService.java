@@ -59,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoBrowserBindingImpl;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.ContainerFactory;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 /**
@@ -206,9 +207,12 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
     protected CmisBaseException convertStatusCode(int code, String message, String errorContent, Throwable t) {
         Object obj = null;
         try {
-            JSONParser parser = new JSONParser();
-            obj = parser.parse(errorContent);
-        } catch (Exception pe) {
+            if (errorContent != null) {
+                JSONParser parser = new JSONParser();
+                obj = parser.parse(errorContent);
+            }
+        } catch (JSONParseException pe) {
+            // error content is not valid JSON -> ignore
         }
 
         if (obj instanceof JSONObject) {

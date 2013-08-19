@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
+import java.io.File;
+
+import org.apache.chemistry.opencmis.client.api.Folder;
 
 cmis = new scripts.CMIS(session)
 

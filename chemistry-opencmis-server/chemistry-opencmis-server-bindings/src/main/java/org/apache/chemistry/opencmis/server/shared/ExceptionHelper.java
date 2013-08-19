@@ -72,6 +72,7 @@ public final class ExceptionHelper {
                 return node;
             }
         } catch (Exception e) {
+            assert false;
         }
 
         return null;

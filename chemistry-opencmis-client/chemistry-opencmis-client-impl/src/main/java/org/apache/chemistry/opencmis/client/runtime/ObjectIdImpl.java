@@ -35,7 +35,11 @@ public class ObjectIdImpl implements ObjectId, Serializable {
      * Constructor.
      */
     public ObjectIdImpl(String id) {
-        setId(id);
+        if (id == null || id.length() == 0) {
+            throw new IllegalArgumentException("Id must be set!");
+        }
+
+        this.id = id;
     }
 
     public String getId() {
@@ -46,7 +50,7 @@ public class ObjectIdImpl implements ObjectId, Serializable {
      * Sets the id.
      */
     public void setId(String id) {
-        if ((id == null) || (id.length() == 0)) {
+        if (id == null || id.length() == 0) {
             throw new IllegalArgumentException("Id must be set!");
         }
 

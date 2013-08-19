@@ -22,5 +22,5 @@ import java.util.EventListener;
 
 public interface ObjectListener extends EventListener {
 
-	void objectLoaded(ClientModelEvent event);
+    void objectLoaded(ClientModelEvent event);
 }

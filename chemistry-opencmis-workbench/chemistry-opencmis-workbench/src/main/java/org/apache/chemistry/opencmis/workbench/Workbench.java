@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
 
 import javax.swing.JDialog;
@@ -27,9 +26,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Workbench {
 
-    public Workbench() throws InterruptedException, InvocationTargetException {
+    private static final Logger LOG = LoggerFactory.getLogger(Workbench.class);
+
+    public Workbench() {
         // set Mac OS X name
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "CMIS Workbench");
 
@@ -37,27 +41,31 @@ public class Workbench {
         Authenticator.setDefault(null);
 
         // set up Swing
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
-                try {
-                    boolean nimbus = false;
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    try {
+                        boolean nimbus = false;
 
-                    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                        if ("Nimbus".equals(info.getName())) {
-                            UIManager.setLookAndFeel(info.getClassName());
-                            nimbus = true;
-                            break;
+                        for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                            if ("Nimbus".equals(info.getName())) {
+                                UIManager.setLookAndFeel(info.getClassName());
+                                nimbus = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if (!nimbus) {
-                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                        if (!nimbus) {
+                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Nimbus not available: " + e.getMessage(), e);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            LOG.warn("Nimbus not available: " + e.getMessage(), e);
+        }
 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
@@ -71,7 +79,7 @@ public class Workbench {
         });
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new Workbench();
     }
 }

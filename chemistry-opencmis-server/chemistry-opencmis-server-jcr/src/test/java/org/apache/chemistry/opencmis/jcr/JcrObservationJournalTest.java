@@ -22,6 +22,7 @@ package org.apache.chemistry.opencmis.jcr;
 import java.math.BigInteger;
 
 import junit.framework.Assert;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;

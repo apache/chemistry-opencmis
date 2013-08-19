@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.tools.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.tools.mapper.MapperException;
 import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;

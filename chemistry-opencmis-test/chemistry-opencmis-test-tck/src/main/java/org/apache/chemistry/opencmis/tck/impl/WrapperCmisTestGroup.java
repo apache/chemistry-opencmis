@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.tck.CmisTest;
 public class WrapperCmisTestGroup extends AbstractCmisTestGroup {
     private final CmisTest test;
 
-    public WrapperCmisTestGroup(CmisTest test) throws Exception {
+    public WrapperCmisTestGroup(CmisTest test) {
         if (test == null) {
             throw new IllegalArgumentException("Test is null!");
         }

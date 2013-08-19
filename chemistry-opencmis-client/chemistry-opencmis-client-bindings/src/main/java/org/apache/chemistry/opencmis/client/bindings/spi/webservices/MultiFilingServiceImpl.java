@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.setExtensionValues;
 
+import javax.xml.ws.Holder;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -28,8 +30,6 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.MultiFilingServicePort;
 import org.apache.chemistry.opencmis.commons.spi.MultiFilingService;
-
-import javax.xml.ws.Holder;
 
 /**
  * MultiFiling Service Web Services client.

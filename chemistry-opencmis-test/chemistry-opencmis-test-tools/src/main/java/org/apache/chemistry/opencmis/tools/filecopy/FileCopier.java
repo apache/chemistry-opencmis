@@ -41,19 +41,19 @@ import org.apache.chemistry.opencmis.tools.parser.MetadataParserTika;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-    
+
 public class FileCopier {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(FileCopier.class.getName());
     // initialize configurator to get parsers and property mappings
-    private static final Configurator CFG = Configurator.getInstance(); 
+    private static final Configurator CFG = Configurator.getInstance();
     private static int TOTAL_NUM = 0;
-    
+
     private Session session;
-    
+
     public FileCopier() {
     }
-    
+
     public void connect(Map<String, String> parameters) {
         System.out.println("Connecting to a repository ...");
 
@@ -64,7 +64,7 @@ public class FileCopier {
 
         LOG.debug("Got a connection to repository.");
     }
-        
+
     public void copyRecursive(String folderName, String folderId) {
 
         try {
@@ -72,38 +72,37 @@ public class FileCopier {
             if (fileOrDir.isDirectory()) {
                 String newFolderId = createFolderInRepository(fileOrDir.getAbsolutePath(), folderId);
                 File[] children = fileOrDir.listFiles();
-                for (File file: children) {
+                for (File file : children) {
                     if (!file.getName().equals(".") && !file.getName().equals("..")) {
                         copyRecursive(file.getAbsolutePath(), newFolderId);
                     }
                 }
             } else {
                 copyFileToRepository(fileOrDir.getAbsolutePath(), folderId);
-            }            
+            }
         } catch (Exception e) {
             LOG.error(e.toString(), e);
-        } finally {  
         }
     }
-    
+
     private String copyFileToRepository(String fileName, String folderId) {
         LOG.debug("uploading file " + fileName);
         FileInputStream is = null;
         Map<String, Object> properties = new HashMap<String, Object>();
         Folder parentFolder;
         String id = null;
-        
+
         if (null == folderId)
             parentFolder = session.getRootFolder();
         else
             parentFolder = (Folder) session.getObject(folderId);
-        
+
         try {
             File f = new File(fileName);
-            Tika tika = new Tika();     
+            Tika tika = new Tika();
             String mimeType = tika.detect(f);
-            LOG.info("Detected MIME type: "+ mimeType);
-            
+            LOG.info("Detected MIME type: " + mimeType);
+
             // extract metadata: first get a parser
             MetadataParser parser = CFG.getParser(mimeType);
             if (null == parser) {
@@ -121,31 +120,32 @@ public class FileCopier {
                 if (null == td)
                     throw new MapperException("CMIS type " + typeId + " does not exist on server.");
 
-                LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
+                LOG.info("Detected MIME type: " + mimeType + " is mapped to CMIS type id: " + td.getId());
                 parser.extractMetadata(f, td, session);
                 properties = parser.getCmisProperties();
             }
-                        
+
             // check if there is an overridden content type configured
             int posLastDot = f.getName().indexOf('.');
-            String ext = posLastDot < 0 ? null : f.getName().substring(posLastDot+1, f.getName().length());
+            String ext = posLastDot < 0 ? null : f.getName().substring(posLastDot + 1, f.getName().length());
             String overridden = null;
             if (null != ext && (overridden = CFG.getContentType(ext)) != null)
                 mimeType = overridden;
             long length = f.length();
-            
+
             is = new FileInputStream(fileName);
 
-            ContentStream contentStream = session.getObjectFactory().createContentStream(fileName,
-                    length, mimeType, is);
+            ContentStream contentStream = session.getObjectFactory()
+                    .createContentStream(fileName, length, mimeType, is);
             if (!properties.containsKey(PropertyIds.NAME))
                 properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
             LOG.debug("uploading document with content lenth: " + contentStream.getLength());
             Document doc = parentFolder.createDocument(properties, contentStream, VersioningState.NONE);
             is.close();
-            
+
             id = doc.getId();
-            LOG.info("New document created with id: " + id + ", name: " +  properties.get(PropertyIds.NAME) + " in folder: " + parentFolder.getId());
+            LOG.info("New document created with id: " + id + ", name: " + properties.get(PropertyIds.NAME)
+                    + " in folder: " + parentFolder.getId());
             LOG.debug("total number of creations : " + ++TOTAL_NUM);
         } catch (Exception e) {
             LOG.error("Failed to create CMIS document.", e);
@@ -157,12 +157,12 @@ public class FileCopier {
                     LOG.error(e.toString(), e);
                 }
             }
-            LOG.debug("Conversion and transfer done.");    
+            LOG.debug("Conversion and transfer done.");
         }
         return id;
     }
-    
-    private  String createFolderInRepository(String fileName, String parentFolderId) {
+
+    private String createFolderInRepository(String fileName, String parentFolderId) {
         Folder parentFolder;
         String id = null;
         if (null == parentFolderId)
@@ -179,19 +179,19 @@ public class FileCopier {
             LOG.debug("New folder created with id: " + folder.getId() + ", path: " + folder.getPaths().get(0));
         } catch (Exception e) {
             LOG.error("Failed to create CMIS document.", e);
-        } finally {
         }
-        LOG.info("New folder created with id: " + id + ", name: " +  properties.get(PropertyIds.NAME) + " in parent folder: " + parentFolder.getId());
+        LOG.info("New folder created with id: " + id + ", name: " + properties.get(PropertyIds.NAME)
+                + " in parent folder: " + parentFolder.getId());
         return id;
     }
-    
+
     public void listMetadata(String fileName) {
         try {
             File f = new File(fileName);
-            Tika tika = new Tika();     
+            Tika tika = new Tika();
             String mimeType = tika.detect(f);
-            LOG.info("Detected MIME type: "+ mimeType);
-            
+            LOG.info("Detected MIME type: " + mimeType);
+
             // extract metadata: first get a parser
             MetadataParser parser = CFG.getParser(mimeType);
             if (null == parser) {
@@ -205,39 +205,37 @@ public class FileCopier {
                 String typeId = mapper.getMappedTypeId();
                 if (null == typeId)
                     throw new MapperException("No CMIS type configured for mime type" + mimeType);
-                
+
                 // Session available? if yes do conversion
                 TypeDefinition td = null;
-                if (null!= session) {
+                if (null != session) {
                     td = session.getTypeDefinition(typeId);
                     if (null == td)
                         throw new MapperException("CMIS type " + typeId + " does not exist on server.");
                     else
-                    	LOG.info("Detected MIME type: "+ mimeType + " is mapped to CMIS type id: " + td.getId());
+                        LOG.info("Detected MIME type: " + mimeType + " is mapped to CMIS type id: " + td.getId());
                 }
-                
+
                 parser.extractMetadata(f, td, session);
                 Map<String, Object> properties = parser.getCmisProperties();
                 for (Map.Entry<String, Object> entry : properties.entrySet()) {
                     LOG.info("Found metadata tag " + entry.getKey() + "mapped to " + entry.getValue());
                 }
-            }                        
+            }
         } catch (Exception e) {
             LOG.error("Failed to list metadata", e);
-        } finally {
         }
-        LOG.debug("Conversion and transfer done.");            
+        LOG.debug("Conversion and transfer done.");
     }
-    
+
     static public void main(String[] args) {
         String fileName = args[0];
         LOG.debug("extracting CMIS properties for file " + fileName);
         try {
-            new FileCopier().listMetadata(fileName);            
+            new FileCopier().listMetadata(fileName);
         } catch (Exception e) {
             LOG.error(e.toString(), e);
-        } finally {
         }
-        LOG.debug("Extraction done.");    
+        LOG.debug("Extraction done.");
     }
 }

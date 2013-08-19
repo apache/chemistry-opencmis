@@ -36,9 +36,9 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumBasicPermissions;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAce;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.InMemoryAcl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.Permission;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.Test;
 
 public class AclTest {
 

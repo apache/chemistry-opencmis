@@ -19,6 +19,8 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
@@ -26,8 +28,6 @@ import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
-
-import java.util.List;
 
 /**
  * Abstract base class for translating a CMIS query statement to a JCR XPath

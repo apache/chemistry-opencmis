@@ -59,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyData;
@@ -144,14 +145,14 @@ public abstract class AbstractXMLConverterTest {
         InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
         if (schema10stream != null) {
             StreamSource core10 = new StreamSource(schema10stream);
-            StreamSource test10 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA10.getBytes("UTF-8")));
+            StreamSource test10 = new StreamSource(new ByteArrayInputStream(IOUtils.getUTF8Bytes(TEST_SCHEMA10)));
             schema10 = sf.newSchema(new Source[] { core10, test10 });
         }
 
         InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
         if (schema11stream != null) {
             StreamSource core11 = new StreamSource(schema11stream);
-            StreamSource test11 = new StreamSource(new ByteArrayInputStream(TEST_SCHEMA11.getBytes("UTF-8")));
+            StreamSource test11 = new StreamSource(new ByteArrayInputStream(IOUtils.getUTF8Bytes(TEST_SCHEMA11)));
             schema11 = sf.newSchema(new Source[] { core11, test11 });
         }
 

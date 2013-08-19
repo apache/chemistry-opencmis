@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.client.api.*
+import org.apache.chemistry.opencmis.client.api.Tree;
 
 session.rootFolder.getDescendants(-1).each {
     printTree(it, 0)

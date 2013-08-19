@@ -20,8 +20,10 @@
 package org.apache.jackrabbit.core.security;
 
 import java.lang.reflect.Field;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;

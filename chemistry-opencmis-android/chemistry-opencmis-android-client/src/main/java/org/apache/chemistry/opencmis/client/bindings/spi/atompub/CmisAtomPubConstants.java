@@ -85,7 +85,7 @@ public final class CmisAtomPubConstants {
 
     // Android Parser Specific
     public static final String TAG_PROPERTY = "property";
-    public static final String ATTR__PROPERTY_ID = "id";
+    public static final String ATTR_PROPERTY_ID = "id";
     public static final String ATTR_PROPERTY_LOCALNAME = "localName";
     public static final String ATTR_PROPERTY_DISPLAYNAME = "displayName";
     public static final String ATTR_PROPERTY_QUERYNAME = "queryName";

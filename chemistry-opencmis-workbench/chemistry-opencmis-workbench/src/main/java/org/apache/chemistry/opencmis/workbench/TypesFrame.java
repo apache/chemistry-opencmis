@@ -84,13 +84,7 @@ public class TypesFrame extends JFrame {
         super();
 
         this.model = model;
-
-        try {
-            repInfo = model.getRepositoryInfo();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        repInfo = model.getRepositoryInfo();
 
         createGUI();
         loadData();
@@ -191,7 +185,7 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
                         }
-                        
+
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
@@ -217,7 +211,7 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
                         }
-                        
+
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
@@ -280,7 +274,7 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().createType(type);
                         }
-                        
+
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
@@ -306,7 +300,7 @@ public class TypesFrame extends JFrame {
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().createType(type);
                         }
-                        
+
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
@@ -453,10 +447,10 @@ public class TypesFrame extends JFrame {
             return true;
         }
 
-        int answer = JOptionPane.showConfirmDialog(this,
-                "The type defintion has the following issues.\n" + sb.toString()
+        int answer = JOptionPane
+                .showConfirmDialog(this, "The type defintion has the following issues.\n" + sb.toString()
                         + "\n\nDo you want to proceed anyway?", "Type Definition Validation",
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         return answer == JOptionPane.YES_OPTION;
     }

@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -218,13 +218,8 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             password = "";
         }
 
-        try {
-            return Collections.singletonList("Basic "
-                    + Base64.encodeBytes((username + ":" + password).getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
-            // shouldn't happen...
-            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'", e);
-        }
+        return Collections
+                .singletonList("Basic " + Base64.encodeBytes(IOUtils.getUTF8Bytes(username + ":" + password)));
     }
 
     /**

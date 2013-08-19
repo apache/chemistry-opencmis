@@ -19,6 +19,12 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.GregorianCalendar;
+
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
@@ -32,10 +38,6 @@ import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.GregorianCalendar;
-
-import static org.junit.Assert.*;
 
 public class QueryTranslatorTest {
     private String jcrTypeCondition;

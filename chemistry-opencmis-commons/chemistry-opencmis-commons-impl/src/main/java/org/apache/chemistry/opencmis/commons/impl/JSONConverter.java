@@ -1563,6 +1563,7 @@ public final class JSONConverter {
             setIfNotNull(JSON_PROPERTY_TYPE_MAX_LENGTH, ((PropertyStringDefinition) propertyDefinition).getMaxLength(),
                     result);
         } else if (propertyDefinition instanceof PropertyIdDefinition) {
+            // nothing to do
         } else if (propertyDefinition instanceof PropertyIntegerDefinition) {
             setIfNotNull(JSON_PROPERTY_TYPE_MIN_VALUE, ((PropertyIntegerDefinition) propertyDefinition).getMinValue(),
                     result);
@@ -1578,13 +1579,18 @@ public final class JSONConverter {
                 result.put(JSON_PROPERTY_TYPE_PRECISION, precision.value());
             }
         } else if (propertyDefinition instanceof PropertyBooleanDefinition) {
+            // nothing to do
         } else if (propertyDefinition instanceof PropertyDateTimeDefinition) {
             DateTimeResolution resolution = ((PropertyDateTimeDefinition) propertyDefinition).getDateTimeResolution();
             if (resolution != null) {
                 result.put(JSON_PROPERTY_TYPE_RESOLUTION, resolution.value());
             }
         } else if (propertyDefinition instanceof PropertyHtmlDefinition) {
+            // nothing to do
         } else if (propertyDefinition instanceof PropertyUriDefinition) {
+            // nothing to do
+        } else {
+            assert false;
         }
 
         // default value
@@ -2488,11 +2494,16 @@ public final class JSONConverter {
         }
 
         result.setObjects(objects);
-        result.setHasMoreItems(getBoolean(json, isQueryResult ? JSON_QUERYRESULTLIST_NUM_ITEMS
-                : JSON_OBJECTLIST_HAS_MORE_ITEMS));
-        result.setNumItems(getInteger(json, isQueryResult ? JSON_QUERYRESULTLIST_NUM_ITEMS : JSON_OBJECTLIST_NUM_ITEMS));
 
-        convertExtension(json, result, isQueryResult ? QUERYRESULTLIST_KEYS : OBJECTLIST_KEYS);
+        if (isQueryResult) {
+            result.setHasMoreItems(getBoolean(json, JSON_QUERYRESULTLIST_NUM_ITEMS));
+            result.setNumItems(getInteger(json, JSON_QUERYRESULTLIST_NUM_ITEMS));
+            convertExtension(json, result, QUERYRESULTLIST_KEYS);
+        } else {
+            result.setHasMoreItems(getBoolean(json, JSON_OBJECTLIST_HAS_MORE_ITEMS));
+            result.setNumItems(getInteger(json, JSON_OBJECTLIST_NUM_ITEMS));
+            convertExtension(json, result, OBJECTLIST_KEYS);
+        }
 
         return result;
     }

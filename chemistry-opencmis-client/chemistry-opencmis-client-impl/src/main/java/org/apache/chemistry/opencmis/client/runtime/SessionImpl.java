@@ -213,7 +213,7 @@ public class SessionImpl implements Session {
 
             Object of = objectFactoryClass.newInstance();
             if (!(of instanceof ObjectFactory)) {
-                throw new Exception("Class does not implement ObjectFactory!");
+                throw new InstantiationException("Class does not implement ObjectFactory!");
             }
 
             ((ObjectFactory) of).initialize(this, parameters);
@@ -237,7 +237,7 @@ public class SessionImpl implements Session {
 
             Object of = cacheClass.newInstance();
             if (!(of instanceof Cache)) {
-                throw new Exception("Class does not implement Cache!");
+                throw new InstantiationException("Class does not implement Cache!");
             }
 
             ((Cache) of).initialize(this, parameters);
@@ -497,7 +497,7 @@ public class SessionImpl implements Session {
 
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
-        final ObjectFactory objectFactory = this.getObjectFactory();
+        final ObjectFactory of = this.getObjectFactory();
 
         return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(this.getDefaultContext()
                 .getMaxItemsPerPage()) {
@@ -513,7 +513,7 @@ public class SessionImpl implements Session {
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
                 for (TypeDefinition typeDefinition : tdl.getList()) {
-                    page.add(objectFactory.convertTypeDefinition(typeDefinition));
+                    page.add(of.convertTypeDefinition(typeDefinition));
                 }
 
                 return new AbstractPageFetcher.Page<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
@@ -589,7 +589,7 @@ public class SessionImpl implements Session {
         }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-        final ObjectFactory objectFactory = this.getObjectFactory();
+        final ObjectFactory of = this.getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
         return new CollectionIterable<QueryResult>(new AbstractPageFetcher<QueryResult>(ctxt.getMaxItemsPerPage()) {
@@ -611,7 +611,7 @@ public class SessionImpl implements Session {
                             continue;
                         }
 
-                        page.add(objectFactory.convertQueryResult(objectData));
+                        page.add(of.convertQueryResult(objectData));
                     }
                 }
 
@@ -632,7 +632,7 @@ public class SessionImpl implements Session {
         }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-        final ObjectFactory objectFactory = this.getObjectFactory();
+        final ObjectFactory of = this.getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
         final StringBuilder statement = new StringBuilder("SELECT ");
 
@@ -677,7 +677,7 @@ public class SessionImpl implements Session {
                             continue;
                         }
 
-                        page.add(objectFactory.convertObject(objectData, ctxt));
+                        page.add(of.convertObject(objectData, ctxt));
                     }
                 }
 

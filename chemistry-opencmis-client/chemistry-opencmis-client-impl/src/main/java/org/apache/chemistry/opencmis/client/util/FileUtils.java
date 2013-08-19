@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
@@ -181,11 +181,7 @@ public final class FileUtils {
 
         byte[] contentBytes = new byte[0];
         if (content != null) {
-            try {
-                contentBytes = content.getBytes("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                contentBytes = content.getBytes();
-            }
+            contentBytes = IOUtils.getUTF8Bytes(content);
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(contentBytes);

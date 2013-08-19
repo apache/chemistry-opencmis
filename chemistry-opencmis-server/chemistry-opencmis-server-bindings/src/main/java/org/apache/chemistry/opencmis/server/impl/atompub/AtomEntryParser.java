@@ -420,7 +420,7 @@ public class AtomEntryParser {
                         cappedStream.deductBytes(bytes.length);
                     }
                 } else if (event == XMLStreamReader.START_ELEMENT) {
-                    throw new RuntimeException("Unexpected tag: " + parser.getName());
+                    throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
                 }
 
                 if (!XMLUtils.next(parser)) {
@@ -469,7 +469,7 @@ public class AtomEntryParser {
                         cappedStream.deductBytes(len);
                     }
                 } else if (event == XMLStreamReader.START_ELEMENT) {
-                    throw new RuntimeException("Unexpected tag: " + parser.getName());
+                    throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
                 }
 
                 if (!XMLUtils.next(parser)) {

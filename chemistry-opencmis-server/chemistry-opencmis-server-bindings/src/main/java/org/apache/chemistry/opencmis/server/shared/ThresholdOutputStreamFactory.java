@@ -23,7 +23,7 @@ import java.io.File;
 /**
  * A factory for {@link ThresholdOutputStream} objects.
  */
-public class ThresholdOutputStreamFactory {
+public final class ThresholdOutputStreamFactory {
 
     private File tempDir;
     private int memoryThreshold;

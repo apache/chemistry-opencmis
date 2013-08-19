@@ -19,11 +19,11 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
-import org.apache.chemistry.opencmis.jcr.util.ISO8601;
-import org.apache.chemistry.opencmis.jcr.util.Iterables;
-
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.apache.chemistry.opencmis.jcr.util.ISO8601;
+import org.apache.chemistry.opencmis.jcr.util.Iterables;
 
 /**
  * This implementation of {@link Evaluator} results in an instance of a {@link XPathBuilder} which

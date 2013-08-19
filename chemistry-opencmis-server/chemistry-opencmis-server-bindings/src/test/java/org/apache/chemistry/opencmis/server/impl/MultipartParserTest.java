@@ -75,13 +75,13 @@ public class MultipartParserTest {
         byte[] content = "Test content!".getBytes("ISO-8859-1");
         byte[] formdata = ("\r\n--"
                 + boundary
-                + "\r\nContent-Disposition: form-data; name=\"fileUploader\"; filename=\"ä.txt\"\r\nContent-Type: text/plain\r\n\r\n"
+                + "\r\nContent-Disposition: form-data; name=\"fileUploader\"; filename=\"Ä.txt\"\r\nContent-Type: text/plain\r\n\r\n"
                 + new String(content) + "\r\n--" + boundary
                 + "\r\nContent-Disposition: form-data; name=\"fileUploader-data\"\r\n\r\n\r\n--" + boundary
                 + "\r\nContent-Disposition: form-data; name=\"objectid\"\r\n\r\nf6bad54b4696bf2ac9249805\r\n--"
                 + boundary + "\r\nContent-Disposition: form-data; name=\"cmisaction\"\r\n\r\ncreateDocument\r\n--"
                 + boundary + "\r\nContent-Disposition: form-data; name=\"propertyId[0]\"\r\n\r\ncmis:name\r\n--"
-                + boundary + "\r\nContent-Disposition: form-data; name=\"propertyValue[0]\"\r\n\r\nä.txt\r\n--"
+                + boundary + "\r\nContent-Disposition: form-data; name=\"propertyValue[0]\"\r\n\r\nÄ.txt\r\n--"
                 + boundary
                 + "\r\nContent-Disposition: form-data; name=\"propertyId[1]\"\r\n\r\ncmis:objectTypeId\r\n--"
                 + boundary + "\r\nContent-Disposition: form-data; name=\"propertyValue[1]\"\r\n\r\ncmis:document\r\n--"
@@ -96,12 +96,12 @@ public class MultipartParserTest {
         values.put("objectid", "f6bad54b4696bf2ac9249805");
         values.put("cmisaction", "createDocument");
         values.put("propertyId[0]", "cmis:name");
-        values.put("propertyValue[0]", "ä.txt");
+        values.put("propertyValue[0]", "Ä.txt");
         values.put("propertyId[1]", "cmis:objectTypeId");
         values.put("propertyValue[1]", "cmis:document");
         values.put("token", "855475d8a6169b5f57111f5921f56136");
 
-        assertMultipartBasics(parser, 9, values, true, "ä.txt", "text/plain", content);
+        assertMultipartBasics(parser, 9, values, true, "Ä.txt", "text/plain", content);
     }
 
     @Test
@@ -351,7 +351,7 @@ public class MultipartParserTest {
     @Test(expected = CmisInvalidArgumentException.class)
     public void testTwoContentParts() throws Exception {
         String boundary = "-?-";
-        byte[] content = "abcäöü".getBytes();
+        byte[] content = "abc������".getBytes();
         byte[] formdata = ("\r\n--" + boundary + "\r\n"
                 + "Content-Disposition: form-data; name=\"content1\"; filename=\"file1\"\r\n"
                 + "Content-Type: application/something\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"

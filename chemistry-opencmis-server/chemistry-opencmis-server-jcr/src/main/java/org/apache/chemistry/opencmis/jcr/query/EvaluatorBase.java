@@ -19,10 +19,10 @@
 
 package org.apache.chemistry.opencmis.jcr.query;
 
-import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
-
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 
 /**
  * This abstract base class implements all methods of the {@link Evaluator} interface

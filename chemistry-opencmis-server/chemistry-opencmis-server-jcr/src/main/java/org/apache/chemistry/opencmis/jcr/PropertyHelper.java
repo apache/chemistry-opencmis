@@ -19,6 +19,11 @@
 
 package org.apache.chemistry.opencmis.jcr;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -35,11 +40,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  * Helper class with utility functions for handling {@link Properties}.

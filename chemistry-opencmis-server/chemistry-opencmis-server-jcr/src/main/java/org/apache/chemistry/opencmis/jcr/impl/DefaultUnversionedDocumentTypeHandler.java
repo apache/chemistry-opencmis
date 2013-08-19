@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.jcr.impl;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
@@ -25,10 +29,6 @@ import org.apache.chemistry.opencmis.jcr.JcrDocument;
 import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
 import org.apache.chemistry.opencmis.jcr.JcrUnversionedDocument;
 import org.apache.chemistry.opencmis.jcr.query.IdentifierMap;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 /**
  * Type handler that provides cmis:unversioned-document.
