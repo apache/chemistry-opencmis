@@ -204,7 +204,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
 
         // check getObjectOfLatestVersion()
         if (countLatest == 1) {
-            Document latestVersion = versions.get(0).getObjectOfLatestVersion(false);
+            Document latestVersion = versions.get(0).getObjectOfLatestVersion(false, SELECT_ALL_NO_CACHE_OC);
             addResult(
                     results,
                     checkObject(session, latestVersion, properties,
