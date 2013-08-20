@@ -1184,7 +1184,8 @@ public final class JSONConverter {
                 propDef = type.getPropertyDefinitions().get(property.getId());
             }
             if (propDef == null && typeCache != null && objectId != null && propertyMode != PropertyMode.CHANGE) {
-                type = typeCache.getTypeDefinitionForObject(objectId);
+                typeCache.getTypeDefinitionForObject(objectId);
+                propDef = typeCache.getPropertyDefinition(property.getId());
             }
 
             String propId = (propertyMode == PropertyMode.QUERY ? property.getQueryName() : property.getId());
