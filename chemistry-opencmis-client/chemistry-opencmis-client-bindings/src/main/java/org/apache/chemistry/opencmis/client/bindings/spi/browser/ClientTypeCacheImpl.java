@@ -51,10 +51,12 @@ public class ClientTypeCacheImpl implements TypeCache {
 
     public TypeDefinition getTypeDefinitionForObject(String objectId) {
         // not used
+        assert false;
         return null;
     }
 
     public PropertyDefinition<?> getPropertyDefinition(String propId) {
+        assert false;
         return null;
     }
 }

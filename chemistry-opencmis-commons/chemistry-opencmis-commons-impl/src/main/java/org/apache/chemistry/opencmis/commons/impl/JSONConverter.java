@@ -173,7 +173,12 @@ public final class JSONConverter {
     }
 
     public enum PropertyMode {
-        OBJECT, QUERY, CHANGE
+        /** object */
+        OBJECT,
+        /** query result */
+        QUERY,
+        /** change event */
+        CHANGE
     }
 
     /**
@@ -1168,12 +1173,18 @@ public final class JSONConverter {
         JSONObject result = new JSONObject();
 
         for (PropertyData<?> property : properties.getPropertyList()) {
+            assert property != null;
+            assert property.getId() != null;
+
             PropertyDefinition<?> propDef = null;
             if (typeCache != null) {
                 propDef = typeCache.getPropertyDefinition(property.getId());
             }
             if (propDef == null && type != null) {
                 propDef = type.getPropertyDefinitions().get(property.getId());
+            }
+            if (propDef == null && typeCache != null && objectId != null && propertyMode != PropertyMode.CHANGE) {
+                type = typeCache.getTypeDefinitionForObject(objectId);
             }
 
             String propId = (propertyMode == PropertyMode.QUERY ? property.getQueryName() : property.getId());
