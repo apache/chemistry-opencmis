@@ -45,6 +45,8 @@ import com.drew.metadata.jpeg.JpegDirectory;
 
 public class PropertyMapperExif extends AbstractPropertyMapper {
 
+    private static final int SECS_PER_HOUR = 3600;
+    private static final int SECS_PER_MINUTE = 60;
     private static final Logger LOG = LoggerFactory.getLogger(PropertyMapperExif.class.getName());
     private static final String EXIF_DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
 
@@ -57,6 +59,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
 
     protected Map<String, Object> propMap;
 
+    @Override
     public boolean initialize(String cfgPrefix, String typeKey, Properties properties) {
         super.initialize(cfgPrefix, typeKey, properties);
         reset();
@@ -82,9 +85,11 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         for (String key : keys) {
             if (key.startsWith(prefix)) {
                 String id = key.substring(prefix.length());
-                String cmisPropId = properties.getProperty(key).trim();
-                if (null == cmisPropId)
+                String cmisPropId = properties.getProperty(key);
+                if (null == cmisPropId) {
                     throw new MapperException("Configuration key " + key + " must have a value assigned");
+                }
+                cmisPropId = cmisPropId.trim();
                 LOG.debug("Found mapping for type " + dirKey + " with " + id + " to " + cmisPropId);
                 propMap.put(id, cmisPropId);
             }
@@ -139,8 +144,9 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         if (null != propId) {
             if (null != td) {
                 PropertyDefinition<?> pd = td.getPropertyDefinitions().get(propId);
-                if (null == pd)
+                if (null == pd) {
                     throw new MapperException("Unknown property id " + propId + " in type definition " + td.getId());
+                }
                 PropertyType pt = pd.getPropertyType();
                 Object convValue = convertValue(dir, tag, pt);
                 propMap.put(propId, convValue);
@@ -195,8 +201,9 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                     }
                     String s = ((String) src);
                     res = s;
-                } else
+                } else {
                     res = null;
+                }
             }
         } else if (ExifDirectory.class.equals(dir.getClass())) {
             // is there a property mapped to this tag?
@@ -219,9 +226,10 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                 }
                 if (clazz.equals(Rational.class)) {
                     // expect a CMIS decimal property
-                    if (propType != PropertyType.DECIMAL)
+                    if (propType != PropertyType.DECIMAL) {
                         throw new MapperException("Tag value has type Rational and expected CMIS Decimal, but found: "
                                 + propType + " for tag: " + tag);
+                    }
 
                     if (tag.getTagType() == ExifDirectory.TAG_SHUTTER_SPEED) {
                         // requires special handling, see Tika impl.
@@ -257,7 +265,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                         DateFormat formatter = new SimpleDateFormat(dateFormat);
                         GregorianCalendar cal;
                         try {
-                            Date date = (Date) formatter.parse((String) src);
+                            Date date = formatter.parse((String) src);
                             // convert date to GreogorianCalendar as CMIS
                             // expects
                             cal = new GregorianCalendar();
@@ -293,9 +301,6 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                     res = b;
                 } else {
                     LOG.debug("Tag value has unsupported type: " + clazz.getName() + " for EXIF tag: " + tag);
-                    // throw new
-                    // MapperException("Tag value has unsupported type: " +
-                    // clazz.getName() + " for tag: " + tag);
                 }
             }
         } else if (JpegDirectory.class.equals(dir.getClass())) {
@@ -314,9 +319,10 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                 Class<?> clazz = src.getClass();
 
                 if (clazz.equals(Integer.class)) {
-                    if (propType != PropertyType.INTEGER)
+                    if (propType != PropertyType.INTEGER) {
                         throw new MapperException("Tag value has type Integer and expected CMIS Integer, but found: "
                                 + propType + " for tag: " + tag);
+                    }
                     // convert to a long
                     long l = ((Integer) src).longValue();
                     res = l;
@@ -349,7 +355,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         int deg = components[0].intValue();
         double min = components[1].doubleValue();
         double sec = components[2].doubleValue();
-        Double d = (deg + min / 60 + sec / 3600);
+        Double d = (deg + min / SECS_PER_MINUTE + sec / SECS_PER_HOUR);
         if (d > 0.0 && mustInvert) {
             d = -d;
         }

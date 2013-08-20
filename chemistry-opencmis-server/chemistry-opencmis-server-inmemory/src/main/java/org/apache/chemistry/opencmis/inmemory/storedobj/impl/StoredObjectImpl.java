@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
@@ -519,22 +520,23 @@ public class StoredObjectImpl implements StoredObject {
 
     protected ContentStream getIconFromResourceDir(String name) throws IOException {
 
-        InputStream imageStream = this.getClass().getResourceAsStream(name);
-        ContentStreamDataImpl content = new ContentStreamDataImpl(0);
-        content.setFileName(name);
-        content.setMimeType("image/png");
-
+        InputStream imageStream = StoredObjectImpl.class.getResourceAsStream(name);
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         byte[] buffer = new byte[BUFFER_SIZE];
         int noBytesRead = 0;
+
         try {
             while ((noBytesRead = imageStream.read(buffer)) >= 0) {
                 ba.write(buffer, 0, noBytesRead);
             }
         } finally {
-            ba.close();
-            imageStream.close();
+            IOUtils.closeQuietly(ba);
+            IOUtils.closeQuietly(imageStream);
         }
+        
+        ContentStreamDataImpl content = new ContentStreamDataImpl(0);
+        content.setFileName(name);
+        content.setMimeType("image/png");
         content.setContent(new ByteArrayInputStream(ba.toByteArray()));
         return content;
     }

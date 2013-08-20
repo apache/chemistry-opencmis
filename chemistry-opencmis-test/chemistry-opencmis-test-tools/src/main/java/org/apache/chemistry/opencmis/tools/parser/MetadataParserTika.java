@@ -43,7 +43,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MetadataParserTika extends AbstractMetadataParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataParserTika.class.getName());
-    private Session session;
 
     public MetadataParserTika() {
     }
@@ -68,10 +67,13 @@ public class MetadataParserTika extends AbstractMetadataParser {
                         if (td != null) {
                             PropertyDefinition<?> propDef = getMappedPropertyDefinition(td.getId(), propertyId, session);                            
                             Object convVal = mapper.convertValue(propertyId, propDef, val);
-                            if (null != convVal)
+                            if (null != convVal) {
                                 cmisProperties.put(propertyId, convVal);
-                        } else
+                            }
+                        }
+                        else {
                             cmisProperties.put(propertyId, val); // omit conversion if no type definition is available
+                        }
                     }
                 }
             }
@@ -82,16 +84,17 @@ public class MetadataParserTika extends AbstractMetadataParser {
         }
     }
 
-    private PropertyDefinition<?> getMappedPropertyDefinition(String typeId, String propertyId, Session session) {
-        String typeIdOrg = typeId;
-        while (null != typeId) {
-            TypeDefinition td = session.getTypeDefinition(typeId);
+    private PropertyDefinition<?> getMappedPropertyDefinition(String typeId, String propertyId, Session session) throws MapperException {
+        String typeIdMod = typeId;
+        while (null != typeIdMod) {
+            TypeDefinition td = session.getTypeDefinition(typeIdMod);
             PropertyDefinition<?> propDef = td.getPropertyDefinitions().get(propertyId);
-            if (null != propDef)
+            if (null != propDef) {
                 return propDef;
-            typeId = td.getParentTypeId();
+            }
+            typeIdMod = td.getParentTypeId();
         }
-        throw new MapperException("Mapping error: unknown property "+ propertyId + " in type definition " + typeIdOrg);
+        throw new MapperException("Mapping error: unknown property "+ propertyId + " in type definition " + typeId);
     }    
     
     public void listMetadata(File f) throws MapperException {

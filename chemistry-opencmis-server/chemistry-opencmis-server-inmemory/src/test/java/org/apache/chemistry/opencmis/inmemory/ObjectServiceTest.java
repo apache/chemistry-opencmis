@@ -491,7 +491,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         // Create a hierarchy of folders and fill it with some documents
 
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
-                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
+                ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
         int levels = 2; // create a hierarchy with two levels
         int childrenPerLevel = 2; // create two folders on each level
 
@@ -618,7 +618,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testDeleteTree() {
         log.info("starting testDeleteTree() ...");
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
-                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
+                ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
         String rootFolderId = createFolder();
         // Set the type id for all created documents:
         gen.setDocumentTypeId(DocumentTypeCreationHelper.getCmisDocumentType().getId());
@@ -1516,7 +1516,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         final String propertyFilter = PropertyIds.OBJECT_ID + "," + PropertyIds.NAME; 
         String rootFolderId = createFolder();
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
-                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
+                ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
         // Set the type id for all created documents:
         gen.setDocumentTypeId(DocumentTypeCreationHelper.getCmisDocumentType().getId());
         // Set the type id for all created folders:

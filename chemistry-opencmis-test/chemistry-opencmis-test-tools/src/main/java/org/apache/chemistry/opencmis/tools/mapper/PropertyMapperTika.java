@@ -45,9 +45,9 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
     private Map<String, String> tokenizerMap = new HashMap<String, String> (); // tag to tokenizer regexp
 
     public PropertyMapperTika() {
-        reset();
     }
     
+    @Override
     public boolean initialize(String cfgPrefix, String typeKey, Properties properties) {
         super.initialize(cfgPrefix, typeKey, properties);
         buildIdMap(typeKey, properties);
@@ -63,23 +63,27 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
         return propId;
     }
 
-    public Object convertValue(String key, PropertyDefinition<?> propDef, String strValue) {
+    public Object convertValue(String key, PropertyDefinition<?> propDef, String strValueParam) {
+        String strValue = strValueParam; 
         Object value = null;
         PropertyType pt = propDef.getPropertyType();
         
-        if (null == pt)
+        if (null == pt) {
             value = null;
-        else if (null != strValue && strValue.length() > 0) {
+        } else if (null != strValue && strValue.length() > 0) {
             // Tika has a bug and sometimes fails to parse MP3 tags, then generates '\0' in String
             // see https://issues.apache.org/jira/browse/TIKA-887
             int lastIllegalPos = -1;
             for (int i=0; i<strValue.length(); i++) {
               int c = strValue.codePointAt(i);
-              if (Character.isISOControl(c))
-                  lastIllegalPos = i;                  
+              if (Character.isISOControl(c)) {
+                lastIllegalPos = i;
+            }                  
             }
             if (lastIllegalPos >= 0)
+             {
                 strValue = strValue.substring(lastIllegalPos+1); // use remaining part after illegal char
+            }
 
             switch (pt) {
             case STRING:
@@ -87,38 +91,41 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
             case URI:
             case ID:
                 
-                if (propDef.getCardinality() == Cardinality.SINGLE)
+                if (propDef.getCardinality() == Cardinality.SINGLE) {
                     value = strValue;
-                else {
+                } else {
                     String tokenizer = tokenizerMap.containsKey(key) ? tokenizerMap.get(key) : "\\W";
                     String[] result = strValue.split(tokenizer);
                     List<String> valList = new ArrayList<String>();
-                    for (String s : result)
+                    for (String s : result) {
                         valList.add(s.trim());
+                    }
                     value = valList;
                 }
                 break;
             case INTEGER:
-                if (propDef.getCardinality() == Cardinality.SINGLE)
+                if (propDef.getCardinality() == Cardinality.SINGLE) {
                     value = Integer.valueOf(strValue);
-                else {
+                } else {
                         String tokenizer = tokenizerMap.containsKey(key) ? tokenizerMap.get(key) : "\\W";
                         String[] result = strValue.split(tokenizer);
                         List<Integer> valList = new ArrayList<Integer>();
-                        for (String s : result)
+                        for (String s : result) {
                             valList.add(Integer.valueOf(s.trim()));
+                        }
                         value = valList;
                     }
                 break;
             case DECIMAL:
-                if (propDef.getCardinality() == Cardinality.SINGLE)
-                    value = Double.valueOf(strValue);                
-                else {
+                if (propDef.getCardinality() == Cardinality.SINGLE) {
+                    value = Double.valueOf(strValue);
+                } else {
                     String tokenizer = tokenizerMap.containsKey(key) ? tokenizerMap.get(key) : "[\\s;:]";                        
                     String[] result = strValue.split(tokenizer);
                         List<Double> valList = new ArrayList<Double>();
-                        for (String s : result)
+                        for (String s : result) {
                             valList.add(Double.valueOf(s.trim()));
+                        }
                         value = valList;
                     }
                 break;
@@ -146,7 +153,6 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
                     LOG.error("Could not parse date: " + strValue + " (check date format");
                     LOG.error(e.toString(), e);
                     value = null;
-                    e.printStackTrace();
                 }
                 break;
             default:
@@ -164,17 +170,21 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
         for (String key : keys) {
             if (key.startsWith(prefix)) {
                 String id = key.substring(prefix.length());
-                String cmisPropId = properties.getProperty(key).trim();
-                if (null == cmisPropId)
+                String cmisPropId = properties.getProperty(key);
+                if (null == cmisPropId) {
                     throw new MapperException("Configuration key " + key + " must have a value assigned");
+                }
+                cmisPropId = cmisPropId.trim();
                 LOG.debug("Found mapping for type " + typeKey + " with " + id + " to " + cmisPropId);
                 propMapTags.put(id,  cmisPropId);
             }
             if (key.startsWith(tokenizerPrefix)) {
                 String id = key.substring(tokenizerPrefix.length());
-                String regex = properties.getProperty(key).trim();
-                if (null == regex)
+                String regex = properties.getProperty(key);
+                if (null == regex) {
                     throw new MapperException("Configuration key " + key + " must have a value assigned");
+                }
+                regex = regex.trim();
                 LOG.debug("Found tokenizer mapping for property " + id + " to " + regex);
                 tokenizerMap.put(id, regex);
             }

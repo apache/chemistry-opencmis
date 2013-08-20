@@ -25,7 +25,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.CONTENT_KIND;
+import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.ContentKind;
 
 public class MultiThreadedObjectGenerator {
 
@@ -87,7 +87,7 @@ public class MultiThreadedObjectGenerator {
 
     private static ObjectGenerator createObjectGenerator(CmisBinding binding, String repoId, int docsPerFolder,
             int foldersPerFolders, int depth, String documentType, String folderType, int contentSizeInKB,
-            String rootFolderId, CONTENT_KIND contentKind, boolean doCleanup) {
+            String rootFolderId, ContentKind contentKind, boolean doCleanup) {
 
         BindingsObjectFactory objectFactory = binding.getObjectFactory();
         NavigationService navSvc = binding.getNavigationService();
@@ -121,7 +121,7 @@ public class MultiThreadedObjectGenerator {
 
     public static ObjectGeneratorRunner prepareForCreateTree(CmisBinding binding, String repoId, int docsPerFolder,
             int foldersPerFolders, int depth, String documentType, String folderType, int contentSizeInKB,
-            String rootFolderId, CONTENT_KIND contentKind, boolean doCleanup) {
+            String rootFolderId, ContentKind contentKind, boolean doCleanup) {
 
         ObjectGenerator objGen = createObjectGenerator(binding, repoId, docsPerFolder, foldersPerFolders, depth,
                 documentType, folderType, contentSizeInKB, rootFolderId, contentKind, doCleanup);
@@ -135,7 +135,7 @@ public class MultiThreadedObjectGenerator {
 
     public static ObjectGeneratorRunner[] prepareForCreateTreeMT(CmisBinding provider, String repoId,
             int docsPerFolder, int foldersPerFolders, int depth, String documentType, String folderType,
-            int contentSizeInKB, String[] rootFolderIds, CONTENT_KIND contentKind, boolean doCleanup) {
+            int contentSizeInKB, String[] rootFolderIds, ContentKind contentKind, boolean doCleanup) {
 
         ObjectGeneratorRunner[] runners = new ObjectGeneratorRunner[rootFolderIds.length];
         for (int i = 0; i < rootFolderIds.length; i++) {
@@ -154,7 +154,7 @@ public class MultiThreadedObjectGenerator {
 
     public static ObjectGeneratorRunner prepareForCreateDocument(CmisBinding provider, String repoId,
             String documentType, int contentSizeInKB, String rootFolderId, int noDocuments, 
-            CONTENT_KIND contentKind, boolean doCleanup) {
+            ContentKind contentKind, boolean doCleanup) {
 
         ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, documentType, null, contentSizeInKB,
                 rootFolderId, contentKind, doCleanup);
@@ -167,7 +167,7 @@ public class MultiThreadedObjectGenerator {
 
     public static ObjectGeneratorRunner[] prepareForCreateDocumentMT(int threadCount, CmisBinding binding,
             String repoId, String documentType, int contentSizeInKB, String rootFolderId, int noDocuments,
-            CONTENT_KIND contentKind, boolean doCleanup) {
+            ContentKind contentKind, boolean doCleanup) {
 
         ObjectGeneratorRunner[] runners = new ObjectGeneratorRunner[threadCount];
         for (int i = 0; i < threadCount; i++) {

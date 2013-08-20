@@ -439,20 +439,20 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                 contentSizeKB = Integer.parseInt(contentSizeKBStr);
             }
 
-            ObjectGenerator.CONTENT_KIND contentKind;
+            ObjectGenerator.ContentKind contentKind;
             if (null == contentKindStr) {
-                contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+                contentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT;
             } else {
                 if (contentKindStr.equals("static/text")) {
-                    contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+                    contentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
                 } else if (contentKindStr.equals("lorem/text")) {
-                    contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+                    contentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT;
                 } else if (contentKindStr.equals("lorem/html")) {
-                    contentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
+                    contentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_HTML;
                 } else if (contentKindStr.equals("fractal/jpeg")) {
-                    contentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
+                    contentKind = ObjectGenerator.ContentKind.IMAGE_FRACTAL_JPEG;
                 } else {
-                    contentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+                    contentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
                 }
             }
             // Create a hierarchy of folders and fill it with some documents

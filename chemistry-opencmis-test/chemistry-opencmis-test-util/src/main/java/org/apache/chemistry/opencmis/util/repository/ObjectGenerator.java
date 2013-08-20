@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.util.repository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ObjectGenerator {
 
+    private static final int KILO = 1024;
     private static final Logger LOG = LoggerFactory.getLogger(ObjectGenerator.class);
     private final BindingsObjectFactory fFactory;
     NavigationService fNavSvc;
@@ -81,7 +83,7 @@ public class ObjectGenerator {
      * supported kinds of content
      *
      */
-    public enum CONTENT_KIND {StaticText, LoremIpsumText, LoremIpsumHtml, ImageFractalJpeg};
+    public enum ContentKind {STATIC_TEXT, LOREM_IPSUM_TEXT, LOREM_IPSUM_HTML, IMAGE_FRACTAL_JPEG};
 
     /**
      * Indicates if / how many documents are created in each folder
@@ -130,7 +132,7 @@ public class ObjectGenerator {
     /**
      * Kind of content to create
      */
-    private CONTENT_KIND fContentKind;
+    private ContentKind fContentKind;
     
 
     private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
@@ -150,7 +152,7 @@ public class ObjectGenerator {
     private FractalGenerator fractalGenerator = null;
 
     public ObjectGenerator(BindingsObjectFactory factory, NavigationService navSvc, ObjectService objSvc,
-            RepositoryService repSvc, String repositoryId, CONTENT_KIND contentKind) {
+            RepositoryService repSvc, String repositoryId, ContentKind contentKind) {
         super();
         fFactory = factory;
         fNavSvc = navSvc;
@@ -197,11 +199,11 @@ public class ObjectGenerator {
         fContentSizeInK = sizeInK;
     }
     
-    public CONTENT_KIND getContentKind() {
+    public ContentKind getContentKind() {
         return fContentKind;
     }
     
-    public void setLoreIpsumGenerator(CONTENT_KIND contentKind) {
+    public void setLoreIpsumGenerator(ContentKind contentKind) {
         fContentKind = contentKind;
     }
 
@@ -373,7 +375,8 @@ public class ObjectGenerator {
     }
 
     public void resetCounters() {
-        fDocumentsInTotalCount = fFoldersInTotalCount = 0;
+        fDocumentsInTotalCount = 0;
+        fFoldersInTotalCount = 0;
     }
 
     public void printTimings() {
@@ -453,16 +456,16 @@ public class ObjectGenerator {
         
         if (fContentSizeInK > 0) {
             switch (fContentKind) {
-            case StaticText:
+            case STATIC_TEXT:
                 contentStream = createContentStaticText();
                 break;
-            case LoremIpsumText:
+            case LOREM_IPSUM_TEXT:
                 contentStream = createContentLoremIpsumText();
                 break;
-            case LoremIpsumHtml:
+            case LOREM_IPSUM_HTML:
                 contentStream = createContentLoremIpsumHtml();
                 break;
-            case ImageFractalJpeg:
+            case IMAGE_FRACTAL_JPEG:
                 contentStream = createContentFractalimageJpeg();
                 break;
             }
@@ -477,7 +480,7 @@ public class ObjectGenerator {
         }
 
         if (null == id) {
-            throw new RuntimeException("createDocument failed.");
+            LOG.error("createDocument failed.");
         }
         ++fDocumentsInTotalCount;
         return id;
@@ -514,11 +517,15 @@ public class ObjectGenerator {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.html");
         content.setMimeType("text/html");
-        int len = fContentSizeInK * 1024; // size of document in K
+        int len = fContentSizeInK * KILO; // size of document in K
         
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsFullHtml(len, true);
-        content.setStream(new ByteArrayInputStream(text.getBytes()));
+        try {
+            content.setStream(new ByteArrayInputStream(text.getBytes("UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Unsupported Encoding Exception", e);
+        }
         return content;
     }
 
@@ -558,8 +565,9 @@ public class ObjectGenerator {
     }
 
     public ContentStream createContentFractalimageJpeg() {
-        if (null == fractalGenerator)
+        if (null == fractalGenerator) {
             fractalGenerator = new FractalGenerator();
+        }
 
         ContentStreamImpl content = null;
 

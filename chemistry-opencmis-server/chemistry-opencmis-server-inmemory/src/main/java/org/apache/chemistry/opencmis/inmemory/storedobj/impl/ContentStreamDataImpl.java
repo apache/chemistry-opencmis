@@ -71,6 +71,10 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         totalLength += length;
     }
     
+    private static synchronized void decreaseTotalLength(int length) {
+        totalLength -= length;
+    }
+    
     private static synchronized long getTotalCalls () {
         return totalCalls;
     }
@@ -125,7 +129,7 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
 
             // first read existing stream
             contentStream.write(fContent);
-            totalLength -= fLength;
+            decreaseTotalLength(fLength);
 
             // then append new content
             int len = is.read(buffer);
@@ -143,9 +147,10 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
             contentStream.close();
             is.close();
         }
-        totalLength += fLength;
-        LOG.debug("setting content stream, total no calls " + ++totalCalls + ".");
-        LOG.debug("setting content stream, new size total " + (totalLength / (SIZE_KB * SIZE_KB)) + "MB.");
+        increaseTotalLength(fLength);
+        increaseTotalCalls();
+        LOG.debug("setting content stream, total no calls " + getTotalCalls() + ".");
+        LOG.debug("setting content stream, new size total " + (getTotalLength() / (SIZE_KB * SIZE_KB)) + "MB.");
     }
 
     @Override

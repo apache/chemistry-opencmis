@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.tools.mapper.Configurator;
 import org.apache.chemistry.opencmis.tools.mapper.MapperException;
 import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;
@@ -47,7 +48,7 @@ public class FileCopier {
     private static final Logger LOG = LoggerFactory.getLogger(FileCopier.class.getName());
     // initialize configurator to get parsers and property mappings
     private static final Configurator CFG = Configurator.getInstance();
-    private static int TOTAL_NUM = 0;
+    private static int totalNum = 0;
 
     private Session session;
 
@@ -92,10 +93,11 @@ public class FileCopier {
         Folder parentFolder;
         String id = null;
 
-        if (null == folderId)
+        if (null == folderId) {
             parentFolder = session.getRootFolder();
-        else
+        } else {
             parentFolder = (Folder) session.getObject(folderId);
+        }
 
         try {
             File f = new File(fileName);
@@ -111,14 +113,17 @@ public class FileCopier {
             } else {
                 parser.reset();
                 PropertyMapper mapper = CFG.getPropertyMapper(mimeType);
-                if (null == mapper)
+                if (null == mapper) {
                     throw new MapperException("Unknown mime type (no configuration): " + mimeType);
+                }
                 String typeId = mapper.getMappedTypeId();
-                if (null == typeId)
+                if (null == typeId) {
                     throw new MapperException("No CMIS type configured for mime type" + mimeType);
+                }
                 TypeDefinition td = session.getTypeDefinition(typeId);
-                if (null == td)
+                if (null == td) {
                     throw new MapperException("CMIS type " + typeId + " does not exist on server.");
+                }
 
                 LOG.info("Detected MIME type: " + mimeType + " is mapped to CMIS type id: " + td.getId());
                 parser.extractMetadata(f, td, session);
@@ -129,16 +134,18 @@ public class FileCopier {
             int posLastDot = f.getName().indexOf('.');
             String ext = posLastDot < 0 ? null : f.getName().substring(posLastDot + 1, f.getName().length());
             String overridden = null;
-            if (null != ext && (overridden = CFG.getContentType(ext)) != null)
+            if (null != ext && (overridden = CFG.getContentType(ext)) != null) {
                 mimeType = overridden;
+            }
             long length = f.length();
 
             is = new FileInputStream(fileName);
 
             ContentStream contentStream = session.getObjectFactory()
                     .createContentStream(fileName, length, mimeType, is);
-            if (!properties.containsKey(PropertyIds.NAME))
+            if (!properties.containsKey(PropertyIds.NAME)) {
                 properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
+            }
             LOG.debug("uploading document with content lenth: " + contentStream.getLength());
             Document doc = parentFolder.createDocument(properties, contentStream, VersioningState.NONE);
             is.close();
@@ -146,8 +153,10 @@ public class FileCopier {
             id = doc.getId();
             LOG.info("New document created with id: " + id + ", name: " + properties.get(PropertyIds.NAME)
                     + " in folder: " + parentFolder.getId());
-            LOG.debug("total number of creations : " + ++TOTAL_NUM);
-        } catch (Exception e) {
+            LOG.debug("total number of creations : " + ++totalNum);
+        } catch (IOException e) {
+            LOG.error("Failed to create CMIS document.", e);
+        } catch (CmisBaseException e) {
             LOG.error("Failed to create CMIS document.", e);
         } finally {
             if (null != is) {
@@ -165,10 +174,11 @@ public class FileCopier {
     private String createFolderInRepository(String fileName, String parentFolderId) {
         Folder parentFolder;
         String id = null;
-        if (null == parentFolderId)
+        if (null == parentFolderId) {
             parentFolder = session.getRootFolder();
-        else
+        } else {
             parentFolder = (Folder) session.getObject(parentFolderId);
+        }
         Map<String, Object> properties = new HashMap<String, Object>();
         File f = new File(fileName);
         properties.put(PropertyIds.NAME, f.getName().replaceAll(" ", "_"));
@@ -200,20 +210,23 @@ public class FileCopier {
                 mpt.listMetadata(f);
             } else {
                 PropertyMapper mapper = CFG.getPropertyMapper(mimeType);
-                if (null == mapper)
+                if (null == mapper) {
                     throw new MapperException("Unknown mime type (no configuration): " + mimeType);
+                }
                 String typeId = mapper.getMappedTypeId();
-                if (null == typeId)
+                if (null == typeId) {
                     throw new MapperException("No CMIS type configured for mime type" + mimeType);
+                }
 
                 // Session available? if yes do conversion
                 TypeDefinition td = null;
                 if (null != session) {
                     td = session.getTypeDefinition(typeId);
-                    if (null == td)
+                    if (null == td) {
                         throw new MapperException("CMIS type " + typeId + " does not exist on server.");
-                    else
+                    } else {
                         LOG.info("Detected MIME type: " + mimeType + " is mapped to CMIS type id: " + td.getId());
+                    }
                 }
 
                 parser.extractMetadata(f, td, session);
@@ -222,13 +235,13 @@ public class FileCopier {
                     LOG.info("Found metadata tag " + entry.getKey() + "mapped to " + entry.getValue());
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOG.error("Failed to list metadata", e);
         }
         LOG.debug("Conversion and transfer done.");
     }
 
-    static public void main(String[] args) {
+    public static void main(String[] args) {
         String fileName = args[0];
         LOG.debug("extracting CMIS properties for file " + fileName);
         try {

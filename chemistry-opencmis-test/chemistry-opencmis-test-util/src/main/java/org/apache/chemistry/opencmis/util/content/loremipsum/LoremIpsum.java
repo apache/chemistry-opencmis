@@ -46,6 +46,7 @@ public class LoremIpsum {
             this.len2 = len2;
         }
 
+        @Override
         public String toString() {
             return "WordLengthPair: len1: " + len1 + ", len2: " + len2;
         }
@@ -358,8 +359,9 @@ public class LoremIpsum {
 
         result.replace(0, 1, result.substring(0, 1).toUpperCase());
         int strLen = result.length() - 1;
-        if (wordDelimiter.length() > 0 && wordDelimiter.charAt(0) == result.charAt(strLen))
+        if (wordDelimiter.length() > 0 && wordDelimiter.charAt(0) == result.charAt(strLen)) {
             result.deleteCharAt(strLen);
+        }
         result.append(".");
         return result.toString();
     }
@@ -398,8 +400,9 @@ public class LoremIpsum {
         while (text.length() < quantity) {
             para = generateParagraph(false);
             text.append(para);
-            if (text.length() < quantity)
+            if (text.length() < quantity) {
                 text.append(between);
+            }
         }
 
         text.append(end);
@@ -575,8 +578,9 @@ public class LoremIpsum {
             }
         }
 
-        if (words.size() == 0)
+        if (words.size() == 0) {
             throw new RuntimeException("Invalid dictionary.");
+        }
     }
 
     /**
@@ -730,7 +734,7 @@ public class LoremIpsum {
     }
 
     public static double mean(double[] values) {
-        return sum(values) / ((double) (Math.max(values.length, 1)));
+        return sum(values) / ((Math.max(values.length, 1)));
     }
 
     public static double variance(double[] values) {
@@ -746,7 +750,7 @@ public class LoremIpsum {
     public static double sigma(int[] values) {
         double[] d = new double[values.length];
         for (int i = 0; i < values.length; i++) {
-            d[i] = (double) values[i];
+            d[i] = values[i];
         }
 
         return sigma(d);
@@ -773,10 +777,11 @@ public class LoremIpsum {
     }
 
     public static boolean contains(String[] array, String val) {
-        for (String s : array)
+        for (String s : array) {
             if (s.equals(val)) {
                 return true;
             }
+        }
         return false;
     }
 

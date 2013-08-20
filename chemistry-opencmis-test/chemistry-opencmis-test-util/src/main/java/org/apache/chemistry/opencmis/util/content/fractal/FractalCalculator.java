@@ -73,10 +73,11 @@ final class FractalCalculator {
                 double zI = iRangeMin + (imageHeight - y) * delta;
 
                 // Is the point inside the set?
-                if (useJulia)
+                if (useJulia) {
                     noIterations[x][y] = testPointJuliaSet(zR, zI, maxIterations);
-                else
-                    noIterations[x][y] = testPointMandelbrot(zR, zI, maxIterations);            
+                } else {
+                    noIterations[x][y] = testPointMandelbrot(zR, zI, maxIterations);
+                }            
             }
         }
         return noIterations;

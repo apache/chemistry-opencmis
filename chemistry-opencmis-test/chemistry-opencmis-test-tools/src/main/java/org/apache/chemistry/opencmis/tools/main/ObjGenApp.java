@@ -18,13 +18,9 @@
  */
 package org.apache.chemistry.opencmis.tools.main;
 
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,11 +41,12 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.tools.filecopy.FileCopier;
 import org.apache.chemistry.opencmis.util.repository.MultiThreadedObjectGenerator;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.CONTENT_KIND;
+import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.ContentKind;
 import org.apache.chemistry.opencmis.util.repository.TimeLogger;
 
 public class ObjGenApp {
 
+    private static final int BUFSIZE = 64 * 1024;
     private static final String PROP_USER = SessionParameter.USER;
     private static final String PROP_PASSWORD = SessionParameter.PASSWORD;
     private static final String DEFAULT_USER = "user";
@@ -79,32 +76,30 @@ public class ObjGenApp {
     private static final String FILE_NAME_PATTERN = "FileName";
     private static final String LOCAL_FILE = "File";
     private static final String LOCAL_DIR = "Dir";
-
     private static final String BINDING_ATOM = "atompub";
     private static final String BINDING_WS = "webservices";
     private static final String BINDING_BROWSER = "browser";
 
-    BindingType fBindingType;
-    private CONTENT_KIND fContentKind;
-    CmisBinding binding;
+    private BindingType fBindingType;
+    private ContentKind fContentKind;
+    private CmisBinding binding;
 
-    OptionSpec<String> fCmd;
-    OptionSpec<Integer> fDepth;
-    OptionSpec<Integer> fContentSize;
-    OptionSpec<Integer> fFolderPerFolder;
-    OptionSpec<Integer> fDocsPerFolder;
-    OptionSpec<String> fFolderType;
-    OptionSpec<String> fDocType;
-    OptionSpec<String> fRepoId;
-    OptionSpec<Integer> fCount;
-    OptionSpec<Boolean> fCleanup;
-    OptionSpec<String> fRootFolder;
-    OptionSpec<Integer> fThreads;
-    OptionSpec<String> fFileName;
-    OptionSpec<String> fContentKindStr;
-    OptionSpec<String> fFileNamePattern;
-    OptionSpec<String> fLocalDir;
-    OptionSpec<String> fLocalFile;
+    private OptionSpec<String> fCmd;
+    private OptionSpec<Integer> fDepth;
+    private OptionSpec<Integer> fContentSize;
+    private OptionSpec<Integer> fFolderPerFolder;
+    private OptionSpec<Integer> fDocsPerFolder;
+    private OptionSpec<String> fFolderType;
+    private OptionSpec<String> fDocType;
+    private OptionSpec<String> fRepoId;
+    private OptionSpec<Integer> fCount;
+    private OptionSpec<Boolean> fCleanup;
+    private OptionSpec<String> fRootFolder;
+    private OptionSpec<Integer> fThreads;
+    private OptionSpec<String> fContentKindStr;
+    private OptionSpec<String> fFileNamePattern;
+    private OptionSpec<String> fLocalDir;
+    private OptionSpec<String> fLocalFile;
 
     public static void main(String[] args) {
 
@@ -146,8 +141,6 @@ public class ObjGenApp {
                 .describedAs("folder id used as root to create objects (default repository root folder)");
         fThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1)
                 .describedAs("Number of threads to start in parallel");
-        // fFileName =
-        // parser.accepts(FILE).withRequiredArg().ofType(String.class).describedAs("Input File");
         fContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
                 .describedAs("kind of content: static/text, lorem/text, lorem/html, fractal/jpeg");
         fFileNamePattern = parser.accepts(FILE_NAME_PATTERN).withOptionalArg().ofType(String.class)
@@ -162,41 +155,43 @@ public class ObjGenApp {
             usage(parser);
         }
 
-        String binding = getBinding();
+        String bindingStr = getBindingProperty();
 
-        if (binding.equals(BINDING_WS)) {
+        if (bindingStr.equals(BINDING_WS)) {
             fBindingType = BindingType.WEBSERVICES;
-        } else if (binding.equals(BINDING_ATOM)) {
+        } else if (bindingStr.equals(BINDING_ATOM)) {
             fBindingType = BindingType.ATOMPUB;
-        } else if (binding.equals(BINDING_BROWSER)) {
+        } else if (bindingStr.equals(BINDING_BROWSER)) {
             fBindingType = BindingType.BROWSER;
         } else {
-            System.out.println("Error: Unknown binding: " + binding + " allowed values: " + BINDING_WS + " or "
+            System.out.println("Error: Unknown binding: " + bindingStr + " allowed values: " + BINDING_WS + " or "
                     + BINDING_ATOM + " or " + BINDING_BROWSER);
             return;
         }
-
+        
         String kind = options.valueOf(fContentKindStr);
         if (null == kind) {
             if (options.valueOf(fContentSize) > 0) {
-                fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+                fContentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
             } else {
                 fContentKind = null;
             }
         } else if (kind.equals("static/text")) {
-            fContentKind = ObjectGenerator.CONTENT_KIND.StaticText;
+            fContentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
         } else if (kind.equals("lorem/text")) {
-            fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumText;
+            fContentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT;
         } else if (kind.equals("lorem/html")) {
-            fContentKind = ObjectGenerator.CONTENT_KIND.LoremIpsumHtml;
+            fContentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_HTML;
         } else if (kind.equals("fractal/jpeg")) {
-            fContentKind = ObjectGenerator.CONTENT_KIND.ImageFractalJpeg;
+            fContentKind = ObjectGenerator.ContentKind.IMAGE_FRACTAL_JPEG;
         } else {
             System.out.println("Unknown content kind: " + options.valueOf(fContentKindStr));
             System.out.println("  must be one of static/text, lorem/text, lorem/html, fractal/jpeg");
             usage(parser);
         }
 
+        initClientBindings();
+        
         if (null == options.valueOf(fCmd)) {
             System.out.println("No command given.");
             usage(parser);
@@ -208,8 +203,6 @@ public class ObjGenApp {
             createFolders(options);
         } else if (options.valueOf(fCmd).equals("RepositoryInfo")) {
             repositoryInfo(options);
-            // } else if (options.valueOf(fCmd).equals("CreateTypes")) {
-            // createTypes(options);
         } else if (options.valueOf(fCmd).equals("CreateFiles")) {
             createFiles(options);
         } else if (options.valueOf(fCmd).equals("CopyFiles")) {
@@ -221,21 +214,6 @@ public class ObjGenApp {
             usage(parser);
         }
     }
-
-    // private void preInitExpensiveTasks() {
-    // // JAXB initialization is very expensive, count this separate:
-    // TimeLogger logger = new TimeLogger("Initialization");
-    // logger.start();
-    // try {
-    // JaxBHelper.createMarshaller();
-    // }
-    // catch (JAXBException e) {
-    // System.out.print("Failuer in JAXB init: " + e);
-    // e.printStackTrace();
-    // } // dummy call just to get initialized
-    // logger.stop();
-    // logger.printTimes();
-    // }
 
     private static void usage(OptionParser parser) {
         try {
@@ -255,7 +233,7 @@ public class ObjGenApp {
             System.out
                     .println("java -D"
                             + PROP_ATOMPUB_URL
-                            + "=http://localhost:8080/opencmis/atom -cp ... "
+                            + "=http://localhost:8080/inmemory/atom -cp ... "
                             + "org.apache.chemistry.opencmis.util.repository.ObjGenApp --Binding=AtomPub --Command=CreateDocument "
                             + "--RepositoryId=A1 --ContentSizeInKB=25 --ContentKind=lorem/text");
             return;
@@ -268,7 +246,7 @@ public class ObjGenApp {
             String documentType, String folderType, int contentSizeInKB, String rootFolderId, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator.prepareForCreateTree(
-                getClientBindings(), repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType,
+                binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType,
                 contentSizeInKB, rootFolderId, fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         runner.doCreateTree();
@@ -287,12 +265,12 @@ public class ObjGenApp {
 
         // Step 1: create a root folder for each thread
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-                .prepareForCreateFolder(getClientBindings(), repoId, folderType, rootFolderId, noThreads, doCleanup);
+                .prepareForCreateFolder(binding, repoId, folderType, rootFolderId, noThreads, doCleanup);
         String[] folderIds = runner.doCreateFolder();
 
         // Step 2: fill each root folder with an object tree
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateTreeMT(getClientBindings(), repoId, docsPerFolder, foldersPerFolders, depth,
+                .prepareForCreateTreeMT(binding, repoId, docsPerFolder, foldersPerFolders, depth,
                         documentType, folderType, contentSizeInKB, folderIds, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
@@ -378,7 +356,7 @@ public class ObjGenApp {
             int docCount, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-                .prepareForCreateDocument(getClientBindings(), repoId, documentType, contentSizeInKB, rootFolderId,
+                .prepareForCreateDocument(binding, repoId, documentType, contentSizeInKB, rootFolderId,
                         docCount, fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         String[] ids = runner.doCreateDocument();
@@ -402,7 +380,7 @@ public class ObjGenApp {
             String rootFolderId, int docCount, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateDocumentMT(noThreads, getClientBindings(), repoId, documentType, contentSizeInKB,
+                .prepareForCreateDocumentMT(noThreads, binding, repoId, documentType, contentSizeInKB,
                         rootFolderId, docCount, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
@@ -412,7 +390,7 @@ public class ObjGenApp {
     private void createFolders(String repoId, String folderType, String rootFolderId, int noFolders, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-                .prepareForCreateFolder(getClientBindings(), repoId, folderType, rootFolderId, noFolders, doCleanup);
+                .prepareForCreateFolder(binding, repoId, folderType, rootFolderId, noFolders, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         String[] ids = runner.doCreateFolder();
         System.out.println();
@@ -434,14 +412,14 @@ public class ObjGenApp {
             boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateFolderMT(noThreads, getClientBindings(), repoId, folderType, rootFolderId, noFolders,
+                .prepareForCreateFolderMT(noThreads, binding, repoId, folderType, rootFolderId, noFolders,
                         doCleanup);
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Folder creation succeeded.");
     }
 
     private void callRepoInfo(String repositoryId, int count) {
-        RepositoryService repSvc = getClientBindings().getRepositoryService();
+        RepositoryService repSvc = binding.getRepositoryService();
         TimeLogger timeLogger = new TimeLogger("RepoInfoTest");
         RepositoryInfo repoInfo = null;
         for (int i = 0; i < count; i++) {
@@ -483,16 +461,16 @@ public class ObjGenApp {
                 System.out.println("Generating file: " + fileName);
                 if (contentSize > 0) {
                     switch (fContentKind) {
-                    case StaticText:
+                    case STATIC_TEXT:
                         contentStream = objGen.createContentStaticText();
                         break;
-                    case LoremIpsumText:
+                    case LOREM_IPSUM_TEXT:
                         contentStream = objGen.createContentLoremIpsumText();
                         break;
-                    case LoremIpsumHtml:
+                    case LOREM_IPSUM_HTML:
                         contentStream = objGen.createContentLoremIpsumHtml();
                         break;
-                    case ImageFractalJpeg:
+                    case IMAGE_FRACTAL_JPEG:
                         contentStream = objGen.createContentFractalimageJpeg();
                         break;
                     }
@@ -501,7 +479,7 @@ public class ObjGenApp {
                 // write to a file:
                 is = contentStream.getStream();
                 os = new FileOutputStream(fileName);
-                byte[] b = new byte[64 * 1024];
+                byte[] b = new byte[BUFSIZE];
                 int read;
                 while ((read = is.read(b)) != -1) {
                     os.write(b, 0, read);
@@ -545,7 +523,7 @@ public class ObjGenApp {
         System.out.println("Repository id is: " + repoId);
         System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
 
-        Map<String, String> parameters = getConnectionParameters(getBinding(), repoId);
+        Map<String, String> parameters = getConnectionParameters(getBindingProperty(), repoId);
         FileCopier fc = new FileCopier();
         fc.connect(parameters);
         fc.copyRecursive(name, folderId);
@@ -586,7 +564,7 @@ public class ObjGenApp {
         return parameters;
     }
 
-    private CmisBinding getClientBindings() {
+    private void initClientBindings() {
         if (binding == null) {
             if (fBindingType == BindingType.ATOMPUB) {
                 binding = createAtomBinding(getAtomPubUrl(), getUser(), getPassword());
@@ -598,7 +576,6 @@ public class ObjGenApp {
                 binding = createBrowserBinding(getBrowserUrl(), getUser(), getPassword());
             }
         }
-        return binding;
     }
 
     private static void filLoginParams(Map<String, String> parameters, String user, String password) {
@@ -700,7 +677,7 @@ public class ObjGenApp {
         }
     }
 
-    private static String getBinding() {
+    private static String getBindingProperty() {
         return System.getProperty(PROP_BINDING, DEFAULT_BINDING);
     }
 
@@ -733,47 +710,9 @@ public class ObjGenApp {
                 break;
             } else {
                 customHeaders.put(PROP_CUSTOM + i++, val);
-                // int posCol = val.indexOf(':');
-                // if (posCol <= 0) {
-                // LOG.warn("Ignoring custom header "+ val +
-                // ": no colon found.");
-                // } else {
-                // String headerKey = PROP_CUSTOM + val.substring(0,
-                // posCol).trim();
-                // String headerVal = val.substring(posCol+1).trim();
-                // LOG.debug("Adding custom header " + headerKey + ":" +
-                // headerVal);
-                // customHeaders.put(headerKey, headerVal);
-                // }
             }
         }
         return customHeaders;
-    }
-
-    private static void getUrl(String urlStr) {
-        URL url;
-        InputStream is;
-        InputStreamReader isr;
-        BufferedReader r;
-        String str;
-
-        try {
-            System.out.println("Reading URL: " + urlStr);
-            url = new URL(urlStr);
-            is = url.openStream();
-            isr = new InputStreamReader(is);
-            r = new BufferedReader(isr);
-            do {
-                str = r.readLine();
-                if (str != null) {
-                    System.out.println(str);
-                }
-            } while (str != null);
-        } catch (MalformedURLException e) {
-            System.out.println("Must enter a valid URL" + e);
-        } catch (IOException e) {
-            System.out.println("Can not connect" + e);
-        }
     }
 
 }

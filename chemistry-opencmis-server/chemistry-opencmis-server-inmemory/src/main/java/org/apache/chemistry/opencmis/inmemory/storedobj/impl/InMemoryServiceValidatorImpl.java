@@ -392,9 +392,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
             throw new CmisConstraintException("ACLs on policies are not suported.");
         }
 
-        StoredObject so = super.createPolicy(context, repositoryId, folderId, addAces, removeAces, policyIds, extension);
-        checkAllAccess(repositoryId, context.getUsername(), so);
-        return so;
+        super.createPolicy(context, repositoryId, null, null, null, null, extension);
+        return null;
     }
 
     @Override

@@ -27,8 +27,6 @@ import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;
 
 public abstract class AbstractMetadataParser implements MetadataParser {
     
-    // private static final Logger LOG = LoggerFactory.getLogger(AbstractMetadataParser.class.getName());
-
     protected Map<String, Object> cmisProperties;
     protected PropertyMapper mapper = null;
     
@@ -49,8 +47,9 @@ public abstract class AbstractMetadataParser implements MetadataParser {
         cmisProperties = new HashMap<String, Object>();
         mapper.reset();
 
-        if (null == typeId)
+        if (null == typeId) {
             throw new MapperException("No CMIS Type configured in this parser.");
+        }
         cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
     }
     

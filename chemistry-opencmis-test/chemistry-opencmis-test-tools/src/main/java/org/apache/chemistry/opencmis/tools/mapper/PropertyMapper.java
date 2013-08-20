@@ -88,6 +88,6 @@ public interface PropertyMapper {
      * @return
      *      array with content types
      */
-    public String[] getContentTypes();
+    String[] getContentTypes();
 
 }

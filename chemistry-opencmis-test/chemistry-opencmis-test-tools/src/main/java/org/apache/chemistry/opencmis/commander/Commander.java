@@ -19,7 +19,11 @@
 package org.apache.chemistry.opencmis.commander;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
  *
  */
-public class Commander {
+public final class Commander {
 
     private static final Map<String, Command> COMMAND_MAP = new LinkedHashMap<String, Command>();
     static {
@@ -46,13 +50,19 @@ public class Commander {
         addCommand(new DeleteCommand());
     }
 
-    private final PrintWriter fPW;
 
     /**
      * Constructor.
      */
-    public Commander(String[] args) {
-        fPW = new PrintWriter(System.out);
+    public static void main(String[] args) {
+        PrintWriter fPW = null;
+        try {
+            fPW = new PrintWriter(new OutputStreamWriter(System.out, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            System.err.println("Wrong encoding, UTF-8 not supported: " + ex);
+            ex.printStackTrace();
+            return;
+        }
 
         if (args.length < 2) {
             printUsage(fPW);
@@ -76,14 +86,12 @@ public class Commander {
 
             // execute
             command.execute(binding, commandArgs, fPW);
+        } catch (CmisBaseException e) {
+            fPW.println("Exception:");
+            fPW.println(e);
         } catch (Exception e) {
             fPW.println("Exception:");
-
-            if (e instanceof CmisBaseException) {
-                fPW.println(e);
-            } else {
-                e.printStackTrace(fPW);
-            }
+            e.printStackTrace(fPW);
         } finally {
             fPW.flush();
         }
@@ -105,31 +113,38 @@ public class Commander {
 
     /**
      * Creates the provider object
+     * @throws IOException 
+     * @throws  
      */
-    private static CmisBinding createBinding(String configFile) throws Exception {
+    private static CmisBinding createBinding(String configFile) throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(configFile));
-
-        Map<String, String> sessionParameters = new HashMap<String, String>();
-
-        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
-            String value = properties.getProperty(key);
-            sessionParameters.put(key, value);
+        InputStream is = new FileInputStream(configFile);
+        try {
+            properties.load(is);
+    
+            Map<String, String> sessionParameters = new HashMap<String, String>();
+    
+            for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+                String key = (String) e.nextElement();
+                String value = properties.getProperty(key);
+                sessionParameters.put(key, value);
+            }
+    
+            CmisBindingFactory factory = CmisBindingFactory.newInstance();
+    
+            CmisBinding result = null;
+            if (sessionParameters.containsKey(SessionParameter.ATOMPUB_URL)) {
+                result = factory.createCmisAtomPubBinding(sessionParameters);
+            } else if (sessionParameters.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE)) {
+                result = factory.createCmisWebServicesBinding(sessionParameters);
+            } else {
+                throw new IllegalArgumentException("Cannot find CMIS binding information in config file!");
+            }
+    
+            return result;
+        } finally {
+            is.close();
         }
-
-        CmisBindingFactory factory = CmisBindingFactory.newInstance();
-
-        CmisBinding result = null;
-        if (sessionParameters.containsKey(SessionParameter.ATOMPUB_URL)) {
-            result = factory.createCmisAtomPubBinding(sessionParameters);
-        } else if (sessionParameters.containsKey(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE)) {
-            result = factory.createCmisWebServicesBinding(sessionParameters);
-        } else {
-            throw new IllegalArgumentException("Cannot find CMIS binding information in config file!");
-        }
-
-        return result;
     }
 
     /**
@@ -141,12 +156,5 @@ public class Commander {
         }
 
         COMMAND_MAP.put(command.getCommandName().toLowerCase(), command);
-    }
-
-    /**
-     * Main.
-     */
-    public static void main(String[] args) {
-        new Commander(args);
     }
 }

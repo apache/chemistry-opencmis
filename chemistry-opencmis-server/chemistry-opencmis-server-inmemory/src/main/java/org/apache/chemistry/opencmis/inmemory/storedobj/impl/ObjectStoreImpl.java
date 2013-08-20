@@ -249,7 +249,7 @@ public class ObjectStoreImpl implements ObjectStore {
     // /////////////////////////////////////////
     // private helper methods
 
-    private final void createRootFolder() {
+    private void createRootFolder() {
         FolderImpl rootFolder = new FolderImpl();
         rootFolder.setName("RootFolder");
         rootFolder.setParentId(null);

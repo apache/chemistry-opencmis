@@ -33,15 +33,15 @@ public class Configurator {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class.getName());
 
-    private static Configurator INSTANCE;
+    private static Configurator instance;
     private static final String PREFIX = "mapping.contentType";
 
     public static Configurator getInstance() {
-        if (null == INSTANCE) {
-            INSTANCE = new Configurator();
+        if (null == instance) {
+            instance = new Configurator();
         }
 
-        return INSTANCE;
+        return instance;
     }
 
     private Properties properties;
@@ -59,7 +59,6 @@ public class Configurator {
 
     // just for unit tests
     Configurator(Properties props) {
-        // contentTypeMapperMap = new HashMap<String, PropertyMapper>();
         this.properties = props;
     }
 
@@ -80,21 +79,6 @@ public class Configurator {
             }
         }
         return parser;
-
-        // for (String contentType : contentTypes) {
-        // if (contentType.equals(mimeType))
-        // return cmisTypeId;
-        // boolean isStar = contentType.endsWith("/*");
-        // if (isStar) {
-        // String generalPartParam = mimeType.substring(0,
-        // mimeType.indexOf('/'));
-        // String generalPartCfg = contentType.substring(0,
-        // mimeType.indexOf('/'));
-        // if (generalPartParam.equals(generalPartCfg))
-        // return cmisTypeId;
-        // }
-        // }
-        // return null;
     }
 
     private void loadProperties() {
@@ -204,8 +188,6 @@ public class Configurator {
                                 // configured
             className = MetadataParserTika.class.getName();
         }
-        // throw new MapperException("Missing parser class in properties: " +
-        // PREFIX + "." + typeKey + ".parserClass");
 
         Object obj = null;
 
@@ -235,8 +217,6 @@ public class Configurator {
         if (null == className) {
             className = PropertyMapperTika.class.getName();
         }
-        // throw new MapperException("Missing property mapper in properties: " +
-        // PREFIX + "." + typeKey + ".mapperClass");
 
         Object obj = null;
 

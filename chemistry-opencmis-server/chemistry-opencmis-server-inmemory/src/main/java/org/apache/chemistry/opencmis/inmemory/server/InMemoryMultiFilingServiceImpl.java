@@ -47,7 +47,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
 
         LOG.debug("Begin addObjectToFolder()");
 
-        if (allVersions != null && null != allVersions && !allVersions.booleanValue()) {
+        if (allVersions != null && !allVersions.booleanValue()) {
             throw new CmisNotSupportedException(
                     "Cannot add object to folder, version specific filing is not supported.");
         }

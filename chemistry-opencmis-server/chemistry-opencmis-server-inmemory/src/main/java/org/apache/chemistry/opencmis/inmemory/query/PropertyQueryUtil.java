@@ -83,7 +83,7 @@ public final class PropertyQueryUtil {
             return so.getTypeId();
         }
         if (propertyId.equals(PropertyIds.BASE_TYPE_ID)) {
-            return null; // base type id not available from so;
+            return null; // base type id not available from so
         }
         if (propertyId.equals(PropertyIds.CREATED_BY)) {
             return so.getCreatedBy();

@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 
+    private static final int MAX_FOLDERS_IN_GET_DESC = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryNavigationServiceImpl.class);
 
     public InMemoryNavigationServiceImpl(StoreManager storeManager) {
@@ -333,8 +334,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
         if (maxLevels == -1 || level < maxLevels) {
             String orderBy = PropertyIds.NAME;
             ObjectInFolderList children = getChildrenIntern(repositoryId, folderId, filter, orderBy,
-                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegments, 1000, 0,
-                    folderOnly, false, objectInfos, user);
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegments,
+                    MAX_FOLDERS_IN_GET_DESC, 0, folderOnly, false, objectInfos, user);
             childrenOfFolderId = new ArrayList<ObjectInFolderContainer>();
             if (null != children) {
 

@@ -48,7 +48,10 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 /**
  * @author Jens
  */
-public class TypeValidator {
+public final class TypeValidator {
+    
+    private TypeValidator() {        
+    }
 
     public static void validateRequiredSystemProperties(Properties properties) {
         if (properties == null || properties.getProperties() == null) {
@@ -58,7 +61,6 @@ public class TypeValidator {
         if (!properties.getProperties().containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             throw new CmisInvalidArgumentException("Cannot create object, type id is missing");
         }
-
     }
 
     private static boolean isMandatorySystemProperty(String propertyId) {

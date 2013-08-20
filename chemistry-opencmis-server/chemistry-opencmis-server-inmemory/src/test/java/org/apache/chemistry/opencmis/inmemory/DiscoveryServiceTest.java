@@ -60,7 +60,7 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
         log.info("starting testQuery() ...");
 
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId, 
-                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
+                ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
         gen.setNumberOfDocumentsToCreatePerFolder(3);
         gen.setDocumentTypeId(TEST_DOCUMENT_TYPE_ID);
         gen.setFolderTypeId(TEST_FOLDER_TYPE_ID);
@@ -130,7 +130,7 @@ public class DiscoveryServiceTest extends AbstractServiceTest {
         String statement;
         ObjectList res;
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
-                ObjectGenerator.CONTENT_KIND.LoremIpsumText);
+                ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
         gen.setNumberOfDocumentsToCreatePerFolder(3);
         gen.setDocumentTypeId(TEST_DOCUMENT_TYPE_ID);
         gen.setFolderTypeId(TEST_FOLDER_TYPE_ID);
