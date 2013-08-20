@@ -64,6 +64,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
@@ -550,8 +551,6 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
-        ContentStreamImpl result = new ContentStreamImpl();
-
         // find the link
         String link = null;
         if (streamId != null) {
@@ -582,7 +581,22 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
         }
 
-        result.setFileName(null);
+        // get filename from Content-Disposition header
+        String filename = null;
+        String contentDisposition = resp.getContentDisposition();
+        if (contentDisposition != null) {
+            filename = MimeHelper.decodeContentDispositionFilename(contentDisposition);
+        }
+
+        // build result object
+        ContentStreamImpl result;
+        if (resp.getResponseCode() == 206) {
+            result = new PartialContentStreamImpl();
+        } else {
+            result = new ContentStreamImpl();
+        }
+
+        result.setFileName(filename);
         result.setLength(resp.getContentLength());
         result.setMimeType(resp.getContentTypeHeader());
         result.setStream(resp.getStream());

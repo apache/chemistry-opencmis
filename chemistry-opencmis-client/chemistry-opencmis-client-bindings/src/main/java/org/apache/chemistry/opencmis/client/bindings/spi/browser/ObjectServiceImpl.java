@@ -346,17 +346,19 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
         }
 
+        // get filename from Content-Disposition header
+        String filename = null;
+        String contentDisposition = resp.getContentDisposition();
+        if (contentDisposition != null) {
+            filename = MimeHelper.decodeContentDispositionFilename(contentDisposition);
+        }
+
+        // build result object
         ContentStreamImpl result;
         if (resp.getResponseCode() == 206) {
             result = new PartialContentStreamImpl();
         } else {
             result = new ContentStreamImpl();
-        }
-
-        String filename = null;
-        String contentDisposition = resp.getHeader("Content-Disposition");
-        if (contentDisposition != null) {
-            filename = MimeHelper.decodeContentDispositionFilename(contentDisposition);
         }
 
         result.setFileName(filename);

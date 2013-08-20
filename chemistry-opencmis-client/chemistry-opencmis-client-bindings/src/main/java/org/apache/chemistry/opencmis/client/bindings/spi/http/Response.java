@@ -232,6 +232,10 @@ public class Response {
         return getHeader("Content-Encoding");
     }
 
+    public String getContentDisposition() {
+        return getHeader("Content-Disposition");
+    }
+
     public String getCharset() {
         return charset;
     }
