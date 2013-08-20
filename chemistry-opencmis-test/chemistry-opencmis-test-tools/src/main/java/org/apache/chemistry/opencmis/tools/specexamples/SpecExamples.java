@@ -73,36 +73,29 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main {
+public class SpecExamples {
 
+    private static final int BUFSIZE = 32 * 1024;
+    private static final int SLEEP_TIME = 200;
     private static final String MULTIFILED_DOCUMENT = "MultifiledDocument";
     private static final String MULTIFILED_FOLDER_2 = "MultifiledFolder2";
     private static final String MULTIFILED_FOLDER_1 = "MultifiledFolder1";
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SpecExamples.class.getName());
     private static final BigInteger TYPE_DEPTH_ALL = BigInteger.valueOf(-1);
     private static final BigInteger MAX_ITEMS = null;
     private static final BigInteger SKIP_COUNT = BigInteger.valueOf(0);
     private static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     private static final String VERSIONED_TYPE = "VersionableType";
     private static final String VERSIONED_PROP = "VersionedStringProp";
-    private static String LOGDIR = System.getProperty("java.io.tmpdir");// +
+    private static final String LOGDIR = System.getProperty("java.io.tmpdir");// +
                                                                         // File.separator;
-    private static String ROOT_URL = "http://localhost:8080/inmemory";
-    private static String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory"; // required
-                                                                                   // by
-                                                                                   // OASIS
-                                                                                   // rules,
-                                                                                   // add
-                                                                                   // this
-                                                                                   // host
-                                                                                   // to
-                                                                                   // your
-                                                                                   // hosts
-                                                                                   // file
+    private static final String ROOT_URL = "http://localhost:8080/inmemory";
+    private static final String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory"; 
+      // required by OASIS rules, add this host to your hosts file
+    
     static int NO_FILES_LOGGED = 0;
 
-    private String targetDir = System.getProperty("java.io.tmpdir");// +
-                                                                    // File.separator;
+    private String targetDir = System.getProperty("java.io.tmpdir");
     private BindingsObjectFactory objFactory = new BindingsObjectFactoryImpl();
     private BindingType bindingType;
     private String rootFolderId;
@@ -117,14 +110,13 @@ public class Main {
 
     private List<String> idsToDelete = new ArrayList<String>();
     private String multiFiledDoc;
-    private String multiFiledFolder1;
     private String multiFiledFolder2;
     private String changeToken;
 
     private static final String[] URLS = { ROOT_URL + "/atom", ROOT_URL + "/services", ROOT_URL + "/browser" };
     private static final BindingType[] BINDINGS = { BindingType.ATOMPUB, BindingType.WEBSERVICES, BindingType.BROWSER };
 
-    public Main() {
+    public SpecExamples() {
     }
 
     public void runAllBindings() {
@@ -300,15 +292,16 @@ public class Main {
     }
 
     private void getDescendants(String folderId) {
-        final BigInteger DEPTH = BigInteger.valueOf(3);
+        final BigInteger depth = BigInteger.valueOf(3);
         LOG.debug("getDescendants " + folderId);
-        navSvc.getDescendants(repositoryId, folderId, DEPTH, "*", true /* includeAllowableActions */,
+        navSvc.getDescendants(repositoryId, folderId, depth, "*", true /* includeAllowableActions */,
                 IncludeRelationships.NONE, null /* renditionFilter */, true /* includePathSegment */, null);
         renameFiles("getDescendants");
         LOG.debug("getDescendants() done.");
     }
 
     private void getObjectParents(String folderId) {
+        String multiFiledFolder1;
         // get object parents first add object to two folders then get parents
         LOG.debug("getObjectsParents " + folderId);
         multiFiledFolder1 = createFolderIntern(MULTIFILED_FOLDER_1, BaseTypeId.CMIS_FOLDER.value(), folderId);
@@ -330,9 +323,9 @@ public class Main {
         multiSvc.removeObjectFromFolder(repositoryId, multiFiledDoc, multiFiledFolder2, null);
         renameFiles("removeObjectFromFolder");
         try {
-            Thread.sleep(200);
+            Thread.sleep(SLEEP_TIME);
         } catch (InterruptedException e) {
-
+            LOG.error("Thread interrupted: ", e);
         }
         LOG.debug("removeObjectFromFolder() done.");
     }
@@ -399,8 +392,9 @@ public class Main {
             for (ObjectInFolderData child : children) {
                 String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME)
                         .getFirstValue();
-                if (name.equals(nameChild))
+                if (name.equals(nameChild)) {
                     return child.getObject().getId();
+                }
             }
         }
         return id;
@@ -430,8 +424,9 @@ public class Main {
             for (ObjectInFolderData child : children) {
                 String nameChild = (String) child.getObject().getProperties().getProperties().get(PropertyIds.NAME)
                         .getFirstValue();
-                if (name.equals(nameChild))
+                if (name.equals(nameChild)) {
                     return child.getObject().getId();
+                }
             }
         }
         return id;
@@ -441,7 +436,7 @@ public class Main {
         ContentStreamImpl content = new ContentStreamImpl();
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
-        int len = 32 * 1024;
+        int len = BUFSIZE;
         byte[] b = { 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a,
                 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x0c, 0x0a }; // 32
         // Bytes
@@ -451,7 +446,8 @@ public class Main {
                 ba.write(b);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to fill content stream with data", e);
+            LOG.error("Failed to fill content stream with data", e);
+            return null;
         }
         content.setStream(new ByteArrayInputStream(ba.toByteArray()));
         content.setLength(BigInteger.valueOf(len));
@@ -516,8 +512,9 @@ public class Main {
         List<ObjectInFolderData> children = result.getObjects();
         LOG.debug(" found " + children.size() + " folders in getChildren()");
         for (ObjectInFolderData child : children) {
-            if (baseTypeId.equals(child.getObject().getBaseTypeId()))
+            if (baseTypeId.equals(child.getObject().getBaseTypeId())) {
                 return child.getObject().getId();
+            }
         }
         return null;
     }
@@ -625,30 +622,35 @@ public class Main {
         }
         File in = new File(fileNameInReq);
         File out = new File(targetDir + File.separator + name + "-request.log");
-        if (out.exists())
+        if (out.exists()) {
             out.delete();
+        }
         boolean ok = in.renameTo(out);
-        if (ok)
+        if (ok) {
             LOG.debug("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " succeeded.");
-        else
+        } else {
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
+        }
 
         in = new File(fileNameInResp);
         out = new File(targetDir + File.separator + name + "-response.log");
-        if (out.exists())
+        if (out.exists()) {
             out.delete();
+        }
         ok = in.renameTo(out);
-        if (ok)
+        if (ok) {
             LOG.debug("Renaming file " + in.getAbsolutePath() + "to " + out.getAbsolutePath() + " succeeded.");
-        else
+        } else {
             LOG.warn("Renaming file " + in.getAbsolutePath() + " to " + out.getAbsolutePath() + " failed.");
+        }
     }
 
     private void createZipFile(String zipFileName, String[] dirs) {
 
         File out = new File(zipFileName);
-        if (out.exists())
+        if (out.exists()) {
             out.delete();
+        }
 
         FileOutputStream fout = null;
         ZipOutputStream zout = null;
@@ -678,19 +680,21 @@ public class Main {
                     addDirectory(zout, prefix + File.separator + files[i].getName(), files[i]);
                 } else {
                     LOG.debug("Create Zip, adding file " + files[i].getName());
-                    byte[] buffer = new byte[65536];
+                    byte[] buffer = new byte[BUFSIZE];
                     FileInputStream fin = new FileInputStream(files[i]);
-                    String zipEntryName = prefix + File.separator + files[i].getName();
-                    LOG.debug("   adding entry " + zipEntryName);
-                    zout.putNextEntry(new ZipEntry(zipEntryName));
+                    try {
+                        String zipEntryName = prefix + File.separator + files[i].getName();
+                        LOG.debug("   adding entry " + zipEntryName);
+                        zout.putNextEntry(new ZipEntry(zipEntryName));
 
-                    int length;
-                    while ((length = fin.read(buffer)) > 0) {
-                        zout.write(buffer, 0, length);
-                    }
-
-                    zout.closeEntry();
-                    fin.close();
+                        int length;
+                        while ((length = fin.read(buffer)) > 0) {
+                            zout.write(buffer, 0, length);
+                        }
+                    } finally {
+                        IOUtils.closeQuietly(fin);;
+                        zout.closeEntry();
+                    };
                 }
             }
         }
@@ -709,10 +713,11 @@ public class Main {
 
             File dirToDelete = new File(dir);
             boolean ok = dirToDelete.delete();
-            if (ok)
+            if (ok) {
                 LOG.debug("Deleting dir " + dirToDelete.getAbsolutePath() + " succeeded.");
-            else
+            } else {
                 LOG.warn("Deleting dir " + dirToDelete.getAbsolutePath() + " failed.");
+            }
         }
         new File("./target/logs/log4j.log").delete();
         LOG.debug("... done.");
@@ -722,11 +727,12 @@ public class Main {
         File dir = new File(directoryPath);
         FileFilter fileFilter = new WildcardFileFilter(wildcardFilter);
         File[] files = dir.listFiles(fileFilter);
-        if (files != null)
+        if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 boolean ok = files[i].delete();
                 LOG.debug("Deleting file: " + files[i] + ", success: " + ok);
             }
+        }
     }
 
     private static String findLastFile(String directoryPath, String wildcardFilter) {
@@ -740,35 +746,38 @@ public class Main {
             // listFiles
             // does not always get the most recent state, ugly workaround
             try {
-                Thread.sleep(250);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
+                LOG.error("Thread interrupted: ", e);
             }
             files = dir.listFiles(fileFilter);
-            if (files.length < NO_FILES_LOGGED)
+            if (files.length < NO_FILES_LOGGED) {
                 LOG.error("WARNING TOO FEW FILES EVEN AFTER SECOND TRY!!!");
+            }
         }
         NO_FILES_LOGGED = files.length;
         Arrays.sort(files);
-        if (files.length == 0)
+        if (files.length == 0) {
             return null;
-        else
+        } else {
             return files[files.length - 1].getAbsolutePath();
+        }
     }
 
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equals("-clean")) {
             LOG.debug("Cleaning up generated files...");
-            Main.clean();
+            SpecExamples.clean();
             LOG.debug("... cleaning up done.");
         } else {
             LOG.debug("Starting generating spec examples...");
-            Main main = new Main();
+            SpecExamples main = new SpecExamples();
             main.runAllBindings();
             LOG.debug("... finished generating spec examples.");
         }
     }
 
-    static private boolean deleteDirRecursive(File path) {
+    private static boolean deleteDirRecursive(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
             for (int i = 0; i < files.length; i++) {
