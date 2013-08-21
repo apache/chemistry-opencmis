@@ -29,15 +29,17 @@ import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHand
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 /**
- * Instances of this class represent a non versionable cmis:document backed by an underlying JCR <code>Node</code>. 
+ * Instances of this class represent a non versionable cmis:document backed by
+ * an underlying JCR <code>Node</code>.
  */
 public class JcrUnversionedDocument extends JcrDocument {
-    
-    public JcrUnversionedDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+
+    public JcrUnversionedDocument(Node node, JcrTypeManager typeManager, PathManager pathManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);
     }
 
-    //------------------------------------------< protected >--- 
+    // ------------------------------------------< protected >---
 
     @Override
     protected Node getContextNode() throws RepositoryException {
@@ -86,7 +88,7 @@ public class JcrUnversionedDocument extends JcrDocument {
 
     @Override
     protected String getCheckedOutId() {
-        return null;   
+        return null;
     }
 
     @Override
@@ -96,8 +98,7 @@ public class JcrUnversionedDocument extends JcrDocument {
 
     @Override
     protected String getCheckInComment() {
-        return "";   
+        return "";
     }
-
 
 }

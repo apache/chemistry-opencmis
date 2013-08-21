@@ -77,7 +77,8 @@ public class ChangeLogFrame extends JFrame {
         changeLogTokenField = new JTextField();
         try {
             changeLogTokenField.setText(model.getRepositoryInfo().getLatestChangeLogToken());
-        } catch (Exception e1) {
+        } catch (Exception e) {
+            changeLogTokenField.setText("");
         }
         inputPanel.add(changeLogTokenField, BorderLayout.CENTER);
 
@@ -196,6 +197,7 @@ public class ChangeLogFrame extends JFrame {
                     return event.getChangeTime();
                 case 3:
                     return event.getProperties().entrySet();
+                default:
                 }
 
                 return null;

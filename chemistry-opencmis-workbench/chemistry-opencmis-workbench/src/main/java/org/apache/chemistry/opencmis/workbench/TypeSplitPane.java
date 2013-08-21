@@ -384,6 +384,7 @@ public class TypeSplitPane extends JSplitPane {
                     return propDef.isOpenChoice();
                 case 15:
                     return propDef.getChoices();
+                default:
                 }
 
                 return null;

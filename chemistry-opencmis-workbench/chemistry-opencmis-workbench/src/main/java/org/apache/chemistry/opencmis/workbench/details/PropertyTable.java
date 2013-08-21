@@ -65,6 +65,7 @@ public class PropertyTable extends AbstractDetailsTable {
             return property.getDefinition().getPropertyType().value();
         case 3:
             return property.getValues();
+        default:
         }
 
         return null;

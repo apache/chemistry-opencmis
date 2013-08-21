@@ -58,8 +58,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Type Manager.
  */
-public class JcrTypeManager implements TypeManager { 
-    private static final Logger log = LoggerFactory.getLogger(JcrTypeManager.class);
+public class JcrTypeManager implements TypeManager {
+    private static final Logger LOG = LoggerFactory.getLogger(JcrTypeManager.class);
 
     public static final String DOCUMENT_TYPE_ID = "cmis:document";
     public static final String FOLDER_TYPE_ID = "cmis:folder";
@@ -75,8 +75,10 @@ public class JcrTypeManager implements TypeManager {
 
     /**
      * Adds a type to collection with inheriting base type properties.
-     * @param type  type to add
-     * @return  <code>true</code> iff the type was successfully added
+     * 
+     * @param type
+     *            type to add
+     * @return <code>true</code> iff the type was successfully added
      */
     public boolean addType(TypeDefinition type) {
         if (type == null) {
@@ -96,17 +98,13 @@ public class JcrTypeManager implements TypeManager {
             TypeDefinition baseType;
             if (newType.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
                 baseType = copyTypeDefinition(fTypes.get(DOCUMENT_TYPE_ID).getTypeDefinition());
-            }
-            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+            } else if (newType.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
                 baseType = copyTypeDefinition(fTypes.get(FOLDER_TYPE_ID).getTypeDefinition());
-            }
-            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
+            } else if (newType.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
                 baseType = copyTypeDefinition(fTypes.get(RELATIONSHIP_TYPE_ID).getTypeDefinition());
-            }
-            else if (newType.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
+            } else if (newType.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
                 baseType = copyTypeDefinition(fTypes.get(POLICY_TYPE_ID).getTypeDefinition());
-            }
-            else {
+            } else {
                 return false;
             }
 
@@ -121,7 +119,7 @@ public class JcrTypeManager implements TypeManager {
         // add it
         addTypeInternal(newType);
 
-        log.info("Added type '" + newType.getId() + "'.");
+        LOG.info("Added type '" + newType.getId() + "'.");
 
         return true;
     }
@@ -132,20 +130,18 @@ public class JcrTypeManager implements TypeManager {
     }
 
     public static boolean isVersionable(TypeDefinition typeDef) {
-        return typeDef instanceof DocumentTypeDefinition
-                ? ((DocumentTypeDefinition) typeDef).isVersionable()
-                : false;
+        return typeDef instanceof DocumentTypeDefinition ? ((DocumentTypeDefinition) typeDef).isVersionable() : false;
     }
 
     public static TypeDefinition copyTypeDefinition(TypeDefinition type) {
         return WSConverter.convert(WSConverter.convert(type));
     }
-    
+
     /**
      * See CMIS 1.0 section 2.2.2.3 getTypeChildren
      */
-    public TypeDefinitionList getTypeChildren(String typeId, boolean includePropertyDefinitions,
-            BigInteger maxItems, BigInteger skipCount) {
+    public TypeDefinitionList getTypeChildren(String typeId, boolean includePropertyDefinitions, BigInteger maxItems,
+            BigInteger skipCount) {
 
         TypeDefinitionListImpl result = new TypeDefinitionListImpl(new ArrayList<TypeDefinition>());
 
@@ -170,8 +166,7 @@ public class JcrTypeManager implements TypeManager {
 
             result.setHasMoreItems(result.getList().size() + skip < 2);
             result.setNumItems(BigInteger.valueOf(2));
-        }
-        else {
+        } else {
             TypeDefinitionContainer tc = fTypes.get(typeId);
             if (tc == null || tc.getChildren() == null) {
                 return result;
@@ -224,8 +219,7 @@ public class JcrTypeManager implements TypeManager {
         if (typeId == null) {
             result.add(getTypesDescendants(d, fTypes.get(FOLDER_TYPE_ID), ipd));
             result.add(getTypesDescendants(d, fTypes.get(DOCUMENT_TYPE_ID), ipd));
-        }
-        else {
+        } else {
             TypeDefinitionContainer tc = fTypes.get(typeId);
             if (tc != null) {
                 result.add(getTypesDescendants(d, tc, ipd));
@@ -235,7 +229,7 @@ public class JcrTypeManager implements TypeManager {
         return result;
     }
 
-    //------------------------------------------< JcrTypeManager >---
+    // ------------------------------------------< JcrTypeManager >---
 
     public TypeDefinitionContainer getTypeById(String typeId) {
         return fTypes.get(typeId);
@@ -248,7 +242,7 @@ public class JcrTypeManager implements TypeManager {
                 return typeDef;
             }
         }
-        
+
         return null;
     }
 
@@ -262,7 +256,7 @@ public class JcrTypeManager implements TypeManager {
         List<TypeDefinitionContainer> types = new ArrayList<TypeDefinitionContainer>(2);
         types.add(fTypes.get(FOLDER_TYPE_ID));
         types.add(fTypes.get(DOCUMENT_TYPE_ID));
-        return types; 
+        return types;
     }
 
     public String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName) {
@@ -374,32 +368,32 @@ public class JcrTypeManager implements TypeManager {
         AbstractPropertyDefinition<?> result;
 
         switch (datatype) {
-            case BOOLEAN:
-                result = new PropertyBooleanDefinitionImpl();
-                break;
-            case DATETIME:
-                result = new PropertyDateTimeDefinitionImpl();
-                break;
-            case DECIMAL:
-                result = new PropertyDecimalDefinitionImpl();
-                break;
-            case HTML:
-                result = new PropertyHtmlDefinitionImpl();
-                break;
-            case ID:
-                result = new PropertyIdDefinitionImpl();
-                break;
-            case INTEGER:
-                result = new PropertyIntegerDefinitionImpl();
-                break;
-            case STRING:
-                result = new PropertyStringDefinitionImpl();
-                break;
-            case URI:
-                result = new PropertyUriDefinitionImpl();
-                break;
-            default:
-                throw new RuntimeException("Unknown datatype! Spec change?");
+        case BOOLEAN:
+            result = new PropertyBooleanDefinitionImpl();
+            break;
+        case DATETIME:
+            result = new PropertyDateTimeDefinitionImpl();
+            break;
+        case DECIMAL:
+            result = new PropertyDecimalDefinitionImpl();
+            break;
+        case HTML:
+            result = new PropertyHtmlDefinitionImpl();
+            break;
+        case ID:
+            result = new PropertyIdDefinitionImpl();
+            break;
+        case INTEGER:
+            result = new PropertyIntegerDefinitionImpl();
+            break;
+        case STRING:
+            result = new PropertyStringDefinitionImpl();
+            break;
+        case URI:
+            result = new PropertyUriDefinitionImpl();
+            break;
+        default:
+            throw new RuntimeException("Unknown datatype! Spec change?");
         }
 
         result.setId(id);
@@ -417,7 +411,7 @@ public class JcrTypeManager implements TypeManager {
         return result;
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     /**
      * Adds a type to collection.

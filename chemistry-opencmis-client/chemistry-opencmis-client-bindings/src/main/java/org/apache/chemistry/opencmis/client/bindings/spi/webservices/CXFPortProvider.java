@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
- * Apache CXF JAX-WS implementation
+ * Apache CXF JAX-WS implementation.
  */
 public class CXFPortProvider extends AbstractPortProvider {
     private static final Logger LOG = LoggerFactory.getLogger(CXFPortProvider.class);

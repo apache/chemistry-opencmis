@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultFolderTypeHandler extends AbstractJcrTypeHandler implements JcrFolderTypeHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultFolderTypeHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultFolderTypeHandler.class);
 
     private static class FolderIdentifierMap extends DefaultIdentifierMapBase {
 
@@ -94,12 +94,11 @@ public class DefaultFolderTypeHandler extends AbstractJcrTypeHandler implements 
             addMixins(node);
             // compile the properties
             updateProperties(node, properties);
-            //save changes
+            // save changes
             node.getSession().save();
             return getJcrNode(node);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
     }

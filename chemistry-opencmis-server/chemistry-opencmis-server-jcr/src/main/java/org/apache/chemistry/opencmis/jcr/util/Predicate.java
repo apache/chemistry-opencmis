@@ -20,15 +20,16 @@
 package org.apache.chemistry.opencmis.jcr.util;
 
 /**
- * Interface for predicates of type <code>T</code>, i.e. functions from <code>T</code>
- * to <code>boolean</code>.
+ * Interface for predicates of type <code>T</code>, i.e. functions from
+ * <code>T</code> to <code>boolean</code>.
  */
 public interface Predicate<T> {
 
     /**
      * Evaluates the predicate for the given object.
-     *
-     * @param t some object
+     * 
+     * @param t
+     *            some object
      * @return predicate result
      */
     boolean evaluate(T t);

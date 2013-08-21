@@ -32,20 +32,20 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  */
 public class CmisBindingFactory {
 
-    /** Default CMIS AtomPub binding SPI implementation */
+    /** Default CMIS AtomPub binding SPI implementation. */
     public static final String BINDING_SPI_ATOMPUB = "org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubSpi";
-    /** Default CMIS Web Services binding SPI implementation */
+    /** Default CMIS Web Services binding SPI implementation. */
     public static final String BINDING_SPI_WEBSERVICES = "org.apache.chemistry.opencmis.client.bindings.spi.webservices.CmisWebServicesSpi";
-    /** Default CMIS Browser binding SPI implementation */
+    /** Default CMIS Browser binding SPI implementation. */
     public static final String BINDING_SPI_BROWSER = "org.apache.chemistry.opencmis.client.bindings.spi.browser.CmisBrowserBindingSpi";
-    /** Default CMIS local binding SPI implementation */
+    /** Default CMIS local binding SPI implementation. */
     public static final String BINDING_SPI_LOCAL = "org.apache.chemistry.opencmis.client.bindings.spi.local.CmisLocalSpi";
 
-    /** Default HTTP invoker class */
+    /** Default HTTP invoker clas.s */
     public static final String DEFAULT_HTTP_INVOKER = "org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker";
-    /** Standard authentication provider class */
+    /** Standard authentication provider class. */
     public static final String STANDARD_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.StandardAuthenticationProvider";
-    /** NTLM authentication provider class */
+    /** NTLM authentication provider class. */
     public static final String NTLM_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.NTLMAuthenticationProvider";
 
     private Map<String, String> defaults;

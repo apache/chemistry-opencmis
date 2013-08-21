@@ -33,9 +33,9 @@ import javax.jcr.Binary;
 import javax.jcr.RepositoryException;
 
 /**
- * <code>JcrBinary</code> implements the JCR <code>Binary</code> interface.
- * This is mostly a copy from org.apache.jackrabbit.value.BinaryImpl in
- * Apache Jackrabbit's jcr-commons module. 
+ * <code>JcrBinary</code> implements the JCR <code>Binary</code> interface. This
+ * is mostly a copy from org.apache.jackrabbit.value.BinaryImpl in Apache
+ * Jackrabbit's jcr-commons module.
  */
 public class JcrBinary implements Binary {
 
@@ -62,14 +62,17 @@ public class JcrBinary implements Binary {
     public static final Binary EMPTY = new JcrBinary(EMPTY_BYTE_ARRAY);
 
     /**
-     * Creates a new <code>JcrBinary</code> instance from an <code>InputStream</code>.
-     * The contents of the stream is spooled to a temporary file or to a byte buffer
-     * if its size is smaller than {@link #MAX_BUFFER_SIZE}.
-     * The input stream is closed by this implementation.
-     *
-     * @param in  stream to be represented as a <code>JcrBinary</code> instance
-     * @throws IOException if an error occurs while reading from the stream or
-     *      writing to the temporary file
+     * Creates a new <code>JcrBinary</code> instance from an
+     * <code>InputStream</code>. The contents of the stream is spooled to a
+     * temporary file or to a byte buffer if its size is smaller than
+     * {@link #MAX_BUFFER_SIZE}. The input stream is closed by this
+     * implementation.
+     * 
+     * @param in
+     *            stream to be represented as a <code>JcrBinary</code> instance
+     * @throws IOException
+     *             if an error occurs while reading from the stream or writing
+     *             to the temporary file
      */
     public JcrBinary(InputStream in) throws IOException {
         byte[] spoolBuffer = new byte[0x2000];
@@ -83,8 +86,7 @@ public class JcrBinary implements Binary {
                     // spool to temp file
                     out.write(spoolBuffer, 0, read);
                     len += read;
-                }
-                else if (len + read > MAX_BUFFER_SIZE) {
+                } else if (len + read > MAX_BUFFER_SIZE) {
                     // threshold for keeping data in memory exceeded;
                     // create temp file and spool buffer contents
 
@@ -94,8 +96,7 @@ public class JcrBinary implements Binary {
                     out.write(spoolBuffer, 0, read);
                     buffer = null;
                     len += read;
-                }
-                else {
+                } else {
                     // reallocate new buffer and spool old buffer contents
                     byte[] newBuffer = new byte[len + read];
                     System.arraycopy(buffer, 0, newBuffer, 0, len);
@@ -104,8 +105,7 @@ public class JcrBinary implements Binary {
                     len += read;
                 }
             }
-        }
-        finally {
+        } finally {
             in.close();
             if (out != null) {
                 out.close();
@@ -117,9 +117,12 @@ public class JcrBinary implements Binary {
     }
 
     /**
-     * Creates a new <code>JcrBinary</code> instance from a <code>byte[]</code> array.
+     * Creates a new <code>JcrBinary</code> instance from a <code>byte[]</code>
+     * array.
      * 
-     * @param buffer byte array to be represented as a <code>JcrBinary</code> instance
+     * @param buffer
+     *            byte array to be represented as a <code>JcrBinary</code>
+     *            instance
      */
     public JcrBinary(byte[] buffer) {
         if (buffer == null) {
@@ -134,12 +137,10 @@ public class JcrBinary implements Binary {
             try {
                 // this instance is backed by a temp file
                 return new FileInputStream(tmpFile);
-            }
-            catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 throw new RepositoryException("already disposed");
             }
-        }
-        else {
+        } else {
             // this instance is backed by an in-memory buffer
             return new ByteArrayInputStream(buffer);
         }
@@ -152,19 +153,16 @@ public class JcrBinary implements Binary {
             try {
                 raf.seek(position);
                 return raf.read(b);
-            }
-            finally {
+            } finally {
                 raf.close();
             }
-        }
-        else {
+        } else {
             // this instance is backed by an in-memory buffer
             int length = Math.min(b.length, buffer.length - (int) position);
             if (length > 0) {
                 System.arraycopy(buffer, (int) position, b, 0, length);
                 return length;
-            }
-            else {
+            } else {
                 return -1;
             }
         }
@@ -174,8 +172,7 @@ public class JcrBinary implements Binary {
         if (tmpFile != null) {
             // this instance is backed by a temp file
             return tmpFile.exists() ? tmpFile.length() : -1;
-        }
-        else {
+        } else {
             // this instance is backed by an in-memory buffer
             return buffer.length;
         }
@@ -185,8 +182,7 @@ public class JcrBinary implements Binary {
         if (tmpFile != null) {
             // this instance is backed by a temp file
             tmpFile.delete();
-        }
-        else {
+        } else {
             // this instance is backed by an in-memory buffer
             buffer = EMPTY_BYTE_ARRAY;
         }

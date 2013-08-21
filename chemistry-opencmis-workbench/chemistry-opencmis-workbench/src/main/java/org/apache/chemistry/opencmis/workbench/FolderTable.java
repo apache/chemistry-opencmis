@@ -270,6 +270,7 @@ public class FolderTable extends JTable implements FolderListener {
                 return obj.getLastModifiedBy();
             case ID_COLUMN:
                 return obj.getId();
+            default:
             }
 
             return "";
@@ -285,6 +286,7 @@ public class FolderTable extends JTable implements FolderListener {
             case 5:
             case 7:
                 return GregorianCalendar.class;
+            default:
             }
 
             return String.class;

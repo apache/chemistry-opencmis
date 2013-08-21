@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for mapping JCR paths to CMIS paths
  */
 public class PathManager {
-    private static final Logger log = LoggerFactory.getLogger(PathManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PathManager.class);
 
     /**
      * Identifier of the root folder
@@ -46,7 +46,9 @@ public class PathManager {
     private final String jcrRootPath;
 
     /**
-     * Create a new <code>PathManager</code> instance for the given JCR root path.
+     * Create a new <code>PathManager</code> instance for the given JCR root
+     * path.
+     * 
      * @param jcrRootPath
      */
     public PathManager(String jcrRootPath) {
@@ -54,7 +56,7 @@ public class PathManager {
     }
 
     /**
-     * @return  the JCR root path
+     * @return the JCR root path
      */
     public String getJcrRootPath() {
         return jcrRootPath;
@@ -62,29 +64,29 @@ public class PathManager {
 
     /**
      * Determines whether a JCR <code>Node</code> is the root node wrt. to this
-     * <code>PathManager</code> instance. That is, whether the path of the node is
-     * equal to this instance's JCR root path.
+     * <code>PathManager</code> instance. That is, whether the path of the node
+     * is equal to this instance's JCR root path.
      * 
      * @param node
-     * @return  <code>true</code> iff <code>node</code> is the root node wrt. to
-     *      this <code>PathManager</code> instance.
+     * @return <code>true</code> iff <code>node</code> is the root node wrt. to
+     *         this <code>PathManager</code> instance.
      */
     public boolean isRoot(Node node) {
         try {
             return node.getPath().equals(jcrRootPath);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
      * Determine the CMIS path given a JCR <code>Node</code>.
-     *
+     * 
      * @param node
      * @return
-     * @throws IllegalArgumentException  when <code>node</code> is not part of the hierarchy
+     * @throws IllegalArgumentException
+     *             when <code>node</code> is not part of the hierarchy
      */
     public String getPath(Node node) {
         try {
@@ -94,16 +96,16 @@ public class PathManager {
 
             String path = node.getPath().substring(jcrRootPath.length());
             return path.startsWith("/") ? path : '/' + path;
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
      * @param cmisPath
-     * @return  <code>true</code> iff <code>cmisPath</code> equals {@link PathManager#CMIS_ROOT_PATH}
+     * @return <code>true</code> iff <code>cmisPath</code> equals
+     *         {@link PathManager#CMIS_ROOT_PATH}
      */
     public static boolean isRoot(String cmisPath) {
         return CMIS_ROOT_PATH.equals(cmisPath);
@@ -111,7 +113,7 @@ public class PathManager {
 
     /**
      * @param cmisPath
-     * @return  <code>true</code> iff <code>cmisPath</code>
+     * @return <code>true</code> iff <code>cmisPath</code>
      */
     public static boolean isAbsolute(String cmisPath) {
         return cmisPath.startsWith(CMIS_ROOT_PATH);
@@ -119,33 +121,38 @@ public class PathManager {
 
     /**
      * Create a CMIS path from a parent path and a child element
-     * @param cmisPath  parent path
-     * @param child  child element
+     * 
+     * @param cmisPath
+     *            parent path
+     * @param child
+     *            child element
      * @return
      */
     public static String createCmisPath(String cmisPath, String child) {
-        return cmisPath.length() > 0 && cmisPath.charAt(cmisPath.length() - 1) == '/'
-                ? cmisPath + child
-                : cmisPath + '/' + child;
+        return cmisPath.length() > 0 && cmisPath.charAt(cmisPath.length() - 1) == '/' ? cmisPath + child : cmisPath
+                + '/' + child;
     }
 
     /**
-     * Relativize an CMIS path wrt. to a prefix.  
+     * Relativize an CMIS path wrt. to a prefix.
+     * 
      * @param prefix
      * @param cmisPath
-     * @return  a string <code>r</code> such that <code>prefix</code> + <code>r</code> = <code>cmisPath</code> 
-     * @throws IllegalArgumentException  if <code>prefix</code> is not a prefix of <code>cmisPath</code>
+     * @return a string <code>r</code> such that <code>prefix</code> +
+     *         <code>r</code> = <code>cmisPath</code>
+     * @throws IllegalArgumentException
+     *             if <code>prefix</code> is not a prefix of
+     *             <code>cmisPath</code>
      */
     public static String relativize(String prefix, String cmisPath) {
         if (cmisPath.startsWith(prefix)) {
             return cmisPath.substring(prefix.length());
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(prefix + " is not a prefix of " + cmisPath);
         }
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     private static String normalize(String path) {
         if (path == null || path.length() == 0) {

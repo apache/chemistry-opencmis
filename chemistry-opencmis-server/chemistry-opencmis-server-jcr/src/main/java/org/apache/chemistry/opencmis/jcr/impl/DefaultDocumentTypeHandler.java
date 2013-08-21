@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implements JcrDocumentTypeHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrFolder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrFolder.class);
 
     public String getTypeId() {
         return BaseTypeId.CMIS_DOCUMENT.value();
@@ -100,47 +100,43 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
     public boolean canHandle(Node node) throws RepositoryException {
         return node.isNodeType(NodeType.NT_FILE) && node.isNodeType(supportedVersioningType(node));
     }
-    
+
     protected String supportedVersioningType(Node node) throws RepositoryException {
-    	if (Util.supportOption(node, Repository.OPTION_SIMPLE_VERSIONING_SUPPORTED)) {
-    		return NodeType.MIX_SIMPLE_VERSIONABLE;
-    	}
-    	
-    	if(Util.supportOption(node, Repository.OPTION_VERSIONING_SUPPORTED)) {
-    		return NodeType.MIX_VERSIONABLE;
-    	}
-    	
-    	throw new RepositoryException("The repository does not support versioning!");
+        if (Util.supportOption(node, Repository.OPTION_SIMPLE_VERSIONING_SUPPORTED)) {
+            return NodeType.MIX_SIMPLE_VERSIONABLE;
+        }
+
+        if (Util.supportOption(node, Repository.OPTION_VERSIONING_SUPPORTED)) {
+            return NodeType.MIX_VERSIONABLE;
+        }
+
+        throw new RepositoryException("The repository does not support versioning!");
     }
 
-
     public JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties,
-                                  ContentStream contentStream, VersioningState versioningState) {
+            ContentStream contentStream, VersioningState versioningState) {
         try {
             Node fileNode = parentFolder.getNode().addNode(name, NodeType.NT_FILE);
-            addFileNodeMixins(fileNode,versioningState);
+            addFileNodeMixins(fileNode, versioningState);
             Node contentNode = fileNode.addNode(Node.JCR_CONTENT, NodeType.NT_RESOURCE);
             addContentNodeMixins(contentNode);
             // compile the properties
             setContentNodeProperties(contentNode, properties);
             // write content, if available
             updateContentNode(contentStream, contentNode);
-            //save changes
+            // save changes
             fileNode.getSession().save();
             return getJcrNode(fileNode, versioningState);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
-        }
-        catch (IOException e) {
-            log.debug(e.getMessage(), e);
+        } catch (IOException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
     }
 
-    protected JcrNode getJcrNode(Node fileNode, VersioningState versioningState)
-            throws RepositoryException {
+    protected JcrNode getJcrNode(Node fileNode, VersioningState versioningState) throws RepositoryException {
         JcrNode jcrFileNode = getJcrNode(fileNode);
         if (versioningState == VersioningState.NONE) {
             return jcrFileNode;
@@ -154,18 +150,16 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
         }
     }
 
-    protected void updateContentNode(ContentStream contentStream, Node contentNode)
-            throws IOException, RepositoryException {
-        Binary binary = contentStream == null || contentStream.getStream() == null
-                ? JcrBinary.EMPTY
-                : new JcrBinary(new BufferedInputStream(contentStream.getStream()));
+    protected void updateContentNode(ContentStream contentStream, Node contentNode) throws IOException,
+            RepositoryException {
+        Binary binary = contentStream == null || contentStream.getStream() == null ? JcrBinary.EMPTY : new JcrBinary(
+                new BufferedInputStream(contentStream.getStream()));
         try {
             contentNode.setProperty(Property.JCR_DATA, binary);
             if (contentStream != null && contentStream.getMimeType() != null) {
                 contentNode.setProperty(Property.JCR_MIMETYPE, contentStream.getMimeType());
             }
-        }
-        finally {
+        } finally {
             binary.dispose();
         }
     }
@@ -178,8 +172,7 @@ public class DefaultDocumentTypeHandler extends AbstractJcrTypeHandler implement
         contentNode.addMixin(NodeType.MIX_CREATED);
     }
 
-    protected void addFileNodeMixins(Node fileNode, VersioningState versioningState)
-            throws RepositoryException {
+    protected void addFileNodeMixins(Node fileNode, VersioningState versioningState) throws RepositoryException {
         if (versioningState != VersioningState.NONE) {
             fileNode.addMixin(supportedVersioningType(fileNode));
         }

@@ -42,7 +42,7 @@ public class CappedInputStream extends InputStream {
     }
 
     /**
-     * Returns the counter;
+     * Returns the counter.
      */
     public long getCounter() {
         return counter;

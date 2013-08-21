@@ -2831,6 +2831,7 @@ public final class JSONConverter {
                 return cal;
             }
             throw new CmisRuntimeException("Invalid DateTime value!");
+        default:
         }
 
         throw new CmisRuntimeException("Unkown property type!");

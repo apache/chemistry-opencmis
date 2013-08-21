@@ -24,7 +24,8 @@ import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.jcr.JcrFolder;
 
 /**
- * Implemented by type handlers that provides a type that is or inherits from cmis:folder.
+ * Implemented by type handlers that provides a type that is or inherits from
+ * cmis:folder.
  */
 public interface JcrFolderTypeHandler extends JcrTypeHandler {
 
@@ -32,9 +33,9 @@ public interface JcrFolderTypeHandler extends JcrTypeHandler {
 
     /**
      * See CMIS 1.0 section 2.2.4.3 createFolder
-     *
+     * 
      * @throws org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException
-     *
+     * 
      */
     JcrFolder createFolder(JcrFolder parentFolder, String name, Properties properties);
 }

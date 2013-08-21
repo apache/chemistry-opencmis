@@ -79,6 +79,7 @@ public class ACLTable extends AbstractDetailsTable {
             return ace.getPermissions();
         case 2:
             return ace.isDirect();
+        default:
         }
 
         return null;

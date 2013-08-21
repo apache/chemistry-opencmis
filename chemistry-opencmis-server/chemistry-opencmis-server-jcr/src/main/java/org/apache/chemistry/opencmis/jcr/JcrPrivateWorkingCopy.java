@@ -28,11 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Instances of this class represent a private working copy of a cmis:document backed by an underlying
- * JCR <code>Node</code>.
+ * Instances of this class represent a private working copy of a cmis:document
+ * backed by an underlying JCR <code>Node</code>.
  */
 public class JcrPrivateWorkingCopy extends JcrVersionBase {
-    private static final Logger log = LoggerFactory.getLogger(JcrPrivateWorkingCopy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrPrivateWorkingCopy.class);
 
     /**
      * Name of a private working copy
@@ -41,12 +41,13 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
 
     public JcrPrivateWorkingCopy(Node node, JcrTypeManager typeManager, PathManager pathManager,
             JcrTypeHandlerManager typeHandlerManager) {
-        
+
         super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**
-     * @return <code>true</code> iff <code>versionName</code> is the name of private working copy.
+     * @return <code>true</code> iff <code>versionName</code> is the name of
+     *         private working copy.
      * @see JcrPrivateWorkingCopy#PWC_NAME
      */
     public static boolean denotesPwc(String versionName) {
@@ -55,22 +56,22 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
 
     /**
      * @param objectId
-     * @return <code>true</code> iff <code>objectId</code> is the id of a private working copy.
+     * @return <code>true</code> iff <code>objectId</code> is the id of a
+     *         private working copy.
      * @see JcrPrivateWorkingCopy#PWC_NAME
      */
     public static boolean isPwc(String objectId) {
-        return objectId.equals(PWC_NAME);   
+        return objectId.equals(PWC_NAME);
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     @Override
     protected Node getContextNode() {
         try {
             return getNode().getNode(Node.JCR_CONTENT);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
         }
     }
@@ -102,7 +103,7 @@ public class JcrPrivateWorkingCopy extends JcrVersionBase {
 
     @Override
     protected boolean isLatestMajorVersion() throws RepositoryException {
-        return false; 
+        return false;
     }
 
     @Override

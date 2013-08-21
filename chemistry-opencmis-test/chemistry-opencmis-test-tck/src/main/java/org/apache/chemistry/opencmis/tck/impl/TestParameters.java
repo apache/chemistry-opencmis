@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.tck.impl;
 
-public class TestParameters {
+public final class TestParameters {
 
     public static final String DEFAULT_FOLDER_TYPE = "org.apache.chemistry.opencmis.tck.default.folderType";
     public static final String DEFAULT_FOLDER_TYPE_VALUE = "cmis:folder";
@@ -40,4 +40,7 @@ public class TestParameters {
 
     public static final String DEFAULT_ACL_PRINCIPAL = "org.apache.chemistry.opencmis.tck.default.principal";
     public static final String DEFAULT_ACL_PRINCIPAL_VALUE = "cmis:user";
+
+    private TestParameters() {
+    }
 }

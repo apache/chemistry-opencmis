@@ -80,6 +80,7 @@ public class RelationshipTable extends AbstractDetailsTable {
             return relationship.getSourceId();
         case 4:
             return relationship.getTarget();
+        default:
         }
 
         return null;

@@ -177,6 +177,7 @@ public class VersionTable extends AbstractDetailsTable {
             return version.getContentStreamMimeType();
         case 8:
             return version.getContentStreamLength() == -1 ? null : version.getContentStreamLength();
+        default:
         }
 
         return null;

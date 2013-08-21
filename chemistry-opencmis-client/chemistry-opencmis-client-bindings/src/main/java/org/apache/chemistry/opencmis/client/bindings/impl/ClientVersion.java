@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
-public class ClientVersion {
-    
+public final class ClientVersion {
+
     public static final String OPENCMIS_VERSION;
     public static final String OPENCMIS_CLIENT;
 
@@ -32,5 +32,8 @@ public class ClientVersion {
             OPENCMIS_VERSION = p.getImplementationVersion();
             OPENCMIS_CLIENT = "Apache Chemistry OpenCMIS/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
         }
+    }
+
+    private ClientVersion() {
     }
 }

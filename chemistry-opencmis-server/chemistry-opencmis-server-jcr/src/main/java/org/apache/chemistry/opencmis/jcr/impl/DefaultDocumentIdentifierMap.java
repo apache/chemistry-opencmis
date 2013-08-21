@@ -43,7 +43,6 @@ public class DefaultDocumentIdentifierMap extends DefaultIdentifierMapBase {
 
     @Override
     public String jcrTypeCondition() {
-        return (isVersionable ? "" : "not") +
-                "(@jcr:mixinTypes = 'mix:simpleVersionable')";
+        return (isVersionable ? "" : "not") + "(@jcr:mixinTypes = 'mix:simpleVersionable')";
     }
 }

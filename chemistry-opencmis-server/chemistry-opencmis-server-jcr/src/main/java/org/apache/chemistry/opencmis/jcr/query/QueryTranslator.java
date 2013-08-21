@@ -31,11 +31,10 @@ import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
 
 /**
  * Abstract base class for translating a CMIS query statement to a JCR XPath
- * query statement.
- * Overriding class need to implement methods for mapping CMIS ids to JCR paths,
- * CMIS property names to JCR property names, CMIS type names to JCR type name and
- * in addition a method for adding further constraints to a query based on a CMIS
- * type. 
+ * query statement. Overriding class need to implement methods for mapping CMIS
+ * ids to JCR paths, CMIS property names to JCR property names, CMIS type names
+ * to JCR type name and in addition a method for adding further constraints to a
+ * query based on a CMIS type.
  */
 public abstract class QueryTranslator {
     private final JcrTypeManager typeManager;
@@ -43,8 +42,8 @@ public abstract class QueryTranslator {
     private QueryObject queryObject;
 
     /**
-     * Create a new query translator which uses the provided <code>typeManager</code>
-     * to resolve CMIS type names to CMIS types.
+     * Create a new query translator which uses the provided
+     * <code>typeManager</code> to resolve CMIS type names to CMIS types.
      * 
      * @param typeManager
      */
@@ -65,8 +64,8 @@ public abstract class QueryTranslator {
     }
 
     /**
-     * @return  the {@link QueryObject} from the last translation performed through
-     *      {@link QueryTranslator#translateToXPath(String)}.
+     * @return the {@link QueryObject} from the last translation performed
+     *         through {@link QueryTranslator#translateToXPath(String)}.
      */
     public QueryObject getQueryObject() {
         return queryObject;
@@ -94,63 +93,73 @@ public abstract class QueryTranslator {
         return "/jcr:root" + pathExpression + elementTest + predicates + orderByClause;
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     /**
      * Map a CMIS objectId to an absolute JCR path. This method is called to
      * resolve the folder if of folder predicates (i.e. IN_FOLDER, IN_TREE).
-     *
-     * @param id  objectId
-     * @return  absolute JCR path corresponding to <code>id</code>.
+     * 
+     * @param id
+     *            objectId
+     * @return absolute JCR path corresponding to <code>id</code>.
      */
     protected abstract String jcrPathFromId(String id);
 
     /**
-     * Map a column name in the CMIS query to the corresponding relative JCR path.
-     * The path must be relative to the context node.
-     *
-     * @param fromType  Type on which the CMIS query is performed
-     * @param name  column name
-     * @return  relative JCR path 
+     * Map a column name in the CMIS query to the corresponding relative JCR
+     * path. The path must be relative to the context node.
+     * 
+     * @param fromType
+     *            Type on which the CMIS query is performed
+     * @param name
+     *            column name
+     * @return relative JCR path
      */
     protected abstract String jcrPathFromCol(TypeDefinition fromType, String name);
 
     /**
      * Map a CMIS type to the corresponding JCR type name.
+     * 
      * @see #jcrTypeCondition(TypeDefinition)
-     *
-     * @param fromType  CMIS type
-     * @return  name of the JCR type corresponding to <code>fromType</code>
+     * 
+     * @param fromType
+     *            CMIS type
+     * @return name of the JCR type corresponding to <code>fromType</code>
      */
     protected abstract String jcrTypeName(TypeDefinition fromType);
 
     /**
-     * Create and additional condition in order for the query to only return nodes
-     * of the right type. This condition and-ed to the condition determined by the
-     * CMIS query's where clause.
+     * Create and additional condition in order for the query to only return
+     * nodes of the right type. This condition and-ed to the condition
+     * determined by the CMIS query's where clause.
      * <p/>
-     * A CMIS query for non versionable documents should for example result in the
-     * following XPath query:
+     * A CMIS query for non versionable documents should for example result in
+     * the following XPath query:
      * <p/>
+     * 
      * <pre>
      *   element(*, nt:file)[not(@jcr:mixinTypes = 'mix:simpleVersionable')]
      * </pre>
+     * 
      * Here the element test is covered by {@link #jcrTypeName(TypeDefinition)}
-     * while the predicate is covered by this method.  
-     *
+     * while the predicate is covered by this method.
+     * 
      * @see #jcrTypeName(TypeDefinition)
-     *
+     * 
      * @param fromType
-     * @return  Additional condition or <code>null</code> if none. 
+     * @return Additional condition or <code>null</code> if none.
      */
-    protected abstract String jcrTypeCondition(TypeDefinition fromType);  
+    protected abstract String jcrTypeCondition(TypeDefinition fromType);
 
     /**
-     * Build a XPath path expression for the CMIS type queried for and a folder predicate.
-     *
-     * @param fromType  CMIS type queried for
-     * @param folderPredicate  folder predicate
-     * @return  a valid XPath path expression or <code>null</code> if none.
+     * Build a XPath path expression for the CMIS type queried for and a folder
+     * predicate.
+     * 
+     * @param fromType
+     *            CMIS type queried for
+     * @param folderPredicate
+     *            folder predicate
+     * @return a valid XPath path expression or <code>null</code> if none.
      */
     protected String buildPathExpression(TypeDefinition fromType, String folderPredicate) {
         return folderPredicate == null ? "//" : folderPredicate;
@@ -158,86 +167,88 @@ public abstract class QueryTranslator {
 
     /**
      * Build a XPath element test for the given CMIS type.
-     *
-     * @param fromType  CMIS type queried for
-     * @return  a valid XPath element test. 
+     * 
+     * @param fromType
+     *            CMIS type queried for
+     * @return a valid XPath element test.
      */
     protected String buildElementTest(TypeDefinition fromType) {
         return "element(*," + jcrTypeName(fromType) + ")";
     }
 
     /**
-     * Build a XPath predicate for the given CMIS type and an additional condition.
-     * The additional condition should be and-ed to the condition resulting from
-     * evaluating <code>fromType</code>.
-     *
-     * @param fromType  CMIS type queried for
-     * @param condition  additional condition.
-     * @return  a valid XPath predicate or <code>null</code> if none. 
+     * Build a XPath predicate for the given CMIS type and an additional
+     * condition. The additional condition should be and-ed to the condition
+     * resulting from evaluating <code>fromType</code>.
+     * 
+     * @param fromType
+     *            CMIS type queried for
+     * @param condition
+     *            additional condition.
+     * @return a valid XPath predicate or <code>null</code> if none.
      */
     protected String buildPredicates(TypeDefinition fromType, String condition) {
         String typeCondition = jcrTypeCondition(fromType);
 
         if (typeCondition == null) {
             return condition == null ? "" : "[" + condition + "]";
-        }
-        else if (condition == null) {
+        } else if (condition == null) {
             return "[" + typeCondition + "]";
-        }
-        else {
-            return "[" + typeCondition + " and " + condition + "]"; 
+        } else {
+            return "[" + typeCondition + " and " + condition + "]";
         }
     }
 
     /**
-     * Build a XPath order by clause for the given CMIS type and a list of {@link SortSpec}s.
-     *
-     * @param fromType  CMIS type queried for
-     * @param orderBys  <code>SortSpec</code>s
-     * @return  a valid XPath order by clause 
+     * Build a XPath order by clause for the given CMIS type and a list of
+     * {@link SortSpec}s.
+     * 
+     * @param fromType
+     *            CMIS type queried for
+     * @param orderBys
+     *            <code>SortSpec</code>s
+     * @return a valid XPath order by clause
      */
     protected String buildOrderByClause(TypeDefinition fromType, List<SortSpec> orderBys) {
         StringBuilder orderSpecs = new StringBuilder();
 
         for (SortSpec orderBy : orderBys) {
-            String selector = jcrPathFromCol(fromType, orderBy.getSelector().getName());  
+            String selector = jcrPathFromCol(fromType, orderBy.getSelector().getName());
             boolean ascending = orderBy.isAscending();
 
             if (orderSpecs.length() > 0) {
                 orderSpecs.append(',');
             }
 
-            orderSpecs
-                .append(selector)
-                .append(' ')
-                .append(ascending ? "ascending" : "descending");
+            orderSpecs.append(selector).append(' ').append(ascending ? "ascending" : "descending");
         }
 
-        return orderSpecs.length() > 0
-                ? "order by " + orderSpecs
-                : "";
+        return orderSpecs.length() > 0 ? "order by " + orderSpecs : "";
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     private static String getFolderPredicate(XPathBuilder parseResult) {
         if (parseResult == null) {
             return null;
         }
-        
+
         String folderPredicate = null;
         for (XPathBuilder p : parseResult.folderPredicates()) {
             if (folderPredicate == null) {
                 folderPredicate = p.xPath();
-            }
-            else {
+            } else {
                 throw new CmisInvalidArgumentException("Query may only contain a single folder predicate");
             }
         }
 
-        // See the class comment on XPathBuilder for details on affirmative literals
-        if (folderPredicate != null &&                             // IF has single folder predicate
-            !Boolean.FALSE.equals(parseResult.eval(false))) {      // AND folder predicate is not affirmative
+        // See the class comment on XPathBuilder for details on affirmative
+        // literals
+        if (folderPredicate != null && // IF has single folder predicate
+                !Boolean.FALSE.equals(parseResult.eval(false))) { // AND folder
+                                                                  // predicate
+                                                                  // is not
+                                                                  // affirmative
             throw new CmisInvalidArgumentException("Folder predicate " + folderPredicate + " is not affirmative.");
         }
 
@@ -252,9 +263,10 @@ public abstract class QueryTranslator {
     }
 
     private static String getCondition(XPathBuilder parseResult) {
-        // No condition if either parseResult is null or when it evaluates to true under
+        // No condition if either parseResult is null or when it evaluates to
+        // true under
         // the valuation which assigns true to the folder predicate.
         return parseResult == null || Boolean.TRUE.equals(parseResult.eval(true)) ? null : parseResult.xPath();
     }
-    
+
 }

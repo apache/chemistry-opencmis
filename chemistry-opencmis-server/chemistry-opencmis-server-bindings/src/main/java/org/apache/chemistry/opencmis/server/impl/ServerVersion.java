@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl;
 
-public class ServerVersion {
+public final class ServerVersion {
 
     public static final String OPENCMIS_VERSION;
     public static final String OPENCMIS_SERVER;
@@ -32,5 +32,8 @@ public class ServerVersion {
             OPENCMIS_VERSION = p.getImplementationVersion();
             OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
         }
+    }
+
+    private ServerVersion() {
     }
 }

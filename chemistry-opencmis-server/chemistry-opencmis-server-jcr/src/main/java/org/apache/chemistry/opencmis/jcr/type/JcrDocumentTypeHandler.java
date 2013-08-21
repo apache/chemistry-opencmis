@@ -29,7 +29,8 @@ import org.apache.chemistry.opencmis.jcr.JcrFolder;
 import org.apache.chemistry.opencmis.jcr.JcrNode;
 
 /**
- * Implemented by type handlers that provides a type that is or inherits from cmis:document.
+ * Implemented by type handlers that provides a type that is or inherits from
+ * cmis:document.
  */
 public interface JcrDocumentTypeHandler extends JcrTypeHandler {
 
@@ -37,9 +38,10 @@ public interface JcrDocumentTypeHandler extends JcrTypeHandler {
 
     /**
      * See CMIS 1.0 section 2.2.4.1 createDocument
-     *
+     * 
      * @throws org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException
-     *
+     * 
      */
-    JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties, ContentStream contentStream, VersioningState versioningState);
+    JcrNode createDocument(JcrFolder parentFolder, String name, Properties properties, ContentStream contentStream,
+            VersioningState versioningState);
 }

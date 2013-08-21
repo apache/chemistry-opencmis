@@ -58,9 +58,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple helper class for the tests that generates a sample folder hierarchy
  * and optionally documents in it.
- *
+ * 
  * @author Jens
- *
+ * 
  */
 public class ObjectGenerator {
 
@@ -81,9 +81,11 @@ public class ObjectGenerator {
 
     /**
      * supported kinds of content
-     *
+     * 
      */
-    public enum ContentKind {STATIC_TEXT, LOREM_IPSUM_TEXT, LOREM_IPSUM_HTML, IMAGE_FRACTAL_JPEG};
+    public enum ContentKind {
+        STATIC_TEXT, LOREM_IPSUM_TEXT, LOREM_IPSUM_HTML, IMAGE_FRACTAL_JPEG
+    };
 
     /**
      * Indicates if / how many documents are created in each folder
@@ -128,12 +130,11 @@ public class ObjectGenerator {
      * size of content in KB, if 0 create documents without content
      */
     private int fContentSizeInK = 0;
-    
+
     /**
      * Kind of content to create
      */
     private ContentKind fContentKind;
-    
 
     private static final String NAMEPROPVALPREFIXDOC = "My_Document-";
     private static final String NAMEPROPVALPREFIXFOLDER = "My_Folder-";
@@ -145,7 +146,7 @@ public class ObjectGenerator {
      * use UUIDs to generate folder and document names
      */
     private boolean fUseUuids;
-    
+
     /**
      * generator for images
      */
@@ -198,11 +199,11 @@ public class ObjectGenerator {
     public void setContentSizeInKB(int sizeInK) {
         fContentSizeInK = sizeInK;
     }
-    
+
     public ContentKind getContentKind() {
         return fContentKind;
     }
-    
+
     public void setLoreIpsumGenerator(ContentKind contentKind) {
         fContentKind = contentKind;
     }
@@ -245,7 +246,7 @@ public class ObjectGenerator {
     /**
      * retrieve the index-th folder from given level of the hierarchy starting
      * at rootId
-     *
+     * 
      * @param rootId
      * @param level
      * @param index
@@ -269,7 +270,7 @@ public class ObjectGenerator {
 
     /**
      * retrieve the index-th document from given folder
-     *
+     * 
      * @param folderId
      *            folder to retrieve document from
      * @param index
@@ -301,7 +302,7 @@ public class ObjectGenerator {
 
     /**
      * return the total number of documents created
-     *
+     * 
      * @return
      */
     public int getDocumentsInTotal() {
@@ -310,7 +311,7 @@ public class ObjectGenerator {
 
     /**
      * return the total number of folders created
-     *
+     * 
      * @return
      */
     public int getFoldersInTotal() {
@@ -453,7 +454,7 @@ public class ObjectGenerator {
         LOG.debug("create document in folder " + folderId);
         Properties props = createDocumentProperties(no, level);
         String id = null;
-        
+
         if (fContentSizeInK > 0) {
             switch (fContentKind) {
             case STATIC_TEXT:
@@ -518,7 +519,7 @@ public class ObjectGenerator {
         content.setFileName("data.html");
         content.setMimeType("text/html");
         int len = fContentSizeInK * KILO; // size of document in K
-        
+
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsFullHtml(len, true);
         try {
@@ -534,7 +535,7 @@ public class ObjectGenerator {
         content.setFileName("data.txt");
         content.setMimeType("text/plain");
         int len = fContentSizeInK * 1024; // size of document in K
-        
+
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsPlainText(len, 80, true);
         content.setStream(new ByteArrayInputStream(text.getBytes()));
@@ -577,7 +578,7 @@ public class ObjectGenerator {
             content.setFileName("image.jpg");
             content.setMimeType("image/jpeg");
             content.setStream(new ByteArrayInputStream(bos.toByteArray()));
-            bos.close();            
+            bos.close();
         } catch (IOException e) {
             System.err.println("Error when generating fractal image: " + e);
             e.printStackTrace();
@@ -732,11 +733,11 @@ public class ObjectGenerator {
     }
 
     public void createTypes(TypeDefinitionList typeDefList) {
-        
-        fTimeLoggerCreateType.reset();         
+
+        fTimeLoggerCreateType.reset();
         for (TypeDefinition td : typeDefList.getList()) {
             // TODO: enable this if available!
-//            fRepSvc.createTypeDefinition(fRepositoryId, td);
+            // fRepSvc.createTypeDefinition(fRepositoryId, td);
         }
     }
 }

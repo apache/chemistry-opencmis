@@ -35,7 +35,8 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * Calendar cal = ...
  * Folder folder = ...
  * 
- * QueryStatement qs = session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? > TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)");
+ * QueryStatement qs = 
+ *   session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? > TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)");
  * 
  * qs.setProperty(1, "cmis:document", "cmis:name");
  * qs.setProperty(2, "cmis:document", "cmis:objectId");
@@ -94,31 +95,25 @@ public interface QueryStatement extends Cloneable {
     void setStringLike(int parameterIndex, String str);
 
     /**
-     * Sets the designated parameter to the given string in a CMIS contains statement.
-     * Note that the CMIS specification requires two levels of escaping. The first level
-     * escapes ', ", \ characters to \', \" and \\. The characters *, ? and - are
-     * interpreted as text search operators and are not escaped on first level. If *, ?, -  
-     * shall be used as literals, they must be passed escaped with \*, \? and \- to 
-     * this method.
+     * Sets the designated parameter to the given string in a CMIS contains
+     * statement. Note that the CMIS specification requires two levels of
+     * escaping. The first level escapes ', ", \ characters to \', \" and \\.
+     * The characters *, ? and - are interpreted as text search operators and
+     * are not escaped on first level. If *, ?, - shall be used as literals,
+     * they must be passed escaped with \*, \? and \- to this method.
      * 
      * For all statements in a CONTAINS() clause it is required to isolate those
-     * from a query statement. Therefore a second level escaping is performed. On
-     * the second level grammar ", ', - and \ are escaped with a \. See the spec for
-     * further details.
-     *  
-     *  Summary (input --> first level escaping --> second level escaping and output):
-     *      * --> * --> *
-     *      ? --> ? --> ?
-     *      - --> - --> -
-     *      \ --> \\ --> \\\\  (for any other character following other than * ? -)
-     *      \* --> \* --> \\*
-     *      \? --> \? --> \\?
-     *      \- --> \- --> \\-
-     *      ' --> \' --> \\\'
-     *      " --> \" --> \\\"
+     * from a query statement. Therefore a second level escaping is performed.
+     * On the second level grammar ", ', - and \ are escaped with a \. See the
+     * spec for further details.
+     * 
+     * Summary (input --> first level escaping --> second level escaping and
+     * output): * --> * --> * ? --> ? --> ? - --> - --> - \ --> \\ --> \\\\ (for
+     * any other character following other than * ? -) \* --> \* --> \\* \? -->
+     * \? --> \\? \- --> \- --> \\- ' --> \' --> \\\' " --> \" --> \\\"
      */
     void setStringContains(int parameterIndex, String str);
-    
+
     /**
      * Sets the designated parameter to the given object id.
      */
@@ -153,19 +148,22 @@ public interface QueryStatement extends Cloneable {
      * Sets the designated parameter to the given DateTime value.
      */
     void setDateTime(int parameterIndex, long... ms);
-    
+
     /**
-     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     * Sets the designated parameter to the given DateTime value with the prefix
+     * 'TIMESTAMP '.
      */
     void setDateTimeTimestamp(int parameterIndex, Calendar... cal);
 
     /**
-     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     * Sets the designated parameter to the given DateTime value with the prefix
+     * 'TIMESTAMP '.
      */
     void setDateTimeTimestamp(int parameterIndex, Date... date);
 
     /**
-     * Sets the designated parameter to the given DateTime value with the prefix 'TIMESTAMP '.
+     * Sets the designated parameter to the given DateTime value with the prefix
+     * 'TIMESTAMP '.
      */
     void setDateTimeTimestamp(int parameterIndex, long... ms);
 

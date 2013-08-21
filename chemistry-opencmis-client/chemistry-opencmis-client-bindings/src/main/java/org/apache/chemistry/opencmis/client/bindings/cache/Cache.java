@@ -63,7 +63,7 @@ public interface Cache extends Serializable {
      * @param keys
      *            the keys
      * @return the object or
-     *         <code>null<code> if the branch or leaf doesn't exist
+     *         <code>null</code> if the branch or leaf doesn't exist
      */
     Object get(String... keys);
 

@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Iterator filtering out items which do not match a given predicate.
+ * 
  * @param <T>
  */
 public class FilterIterator<T> implements Iterator<T> {
@@ -34,9 +35,11 @@ public class FilterIterator<T> implements Iterator<T> {
 
     /**
      * Create a new filtered iterator based on the given <code>iterator</code>.
-     *
-     * @param iterator  iterator to filter
-     * @param predicate  only item matching this predicate are included
+     * 
+     * @param iterator
+     *            iterator to filter
+     * @param predicate
+     *            only item matching this predicate are included
      */
     public FilterIterator(Iterator<T> iterator, Predicate<T> predicate) {
         this.iterator = iterator;
@@ -59,8 +62,7 @@ public class FilterIterator<T> implements Iterator<T> {
             T e = next;
             next = null;
             return e;
-        }
-        else {
+        } else {
             throw new NoSuchElementException();
         }
     }

@@ -44,13 +44,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Instances of this class represent a versionable cmis:document and its versions backed by an underlying
- * JCR <code>Node</code>. 
+ * Instances of this class represent a versionable cmis:document and its
+ * versions backed by an underlying JCR <code>Node</code>.
  */
 public abstract class JcrVersionBase extends JcrDocument {
     private static final Logger log = LoggerFactory.getLogger(JcrVersionBase.class);
 
-    protected JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+    protected JcrVersionBase(Node node, JcrTypeManager typeManager, PathManager pathManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);
     }
 
@@ -68,20 +69,20 @@ public abstract class JcrVersionBase extends JcrDocument {
                 }
 
                 public JcrVersion next() {
-                    return new JcrVersion(getNode(), versions.nextVersion(), typeManager, pathManager, typeHandlerManager);
+                    return new JcrVersion(getNode(), versions.nextVersion(), typeManager, pathManager,
+                            typeHandlerManager);
                 }
 
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
             };
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
-    
+
     @Override
     public void delete(boolean allVersions, boolean isPwc) {
         Node node = getNode();
@@ -89,21 +90,17 @@ public abstract class JcrVersionBase extends JcrDocument {
             if (node.isCheckedOut()) {
                 if (isPwc) {
                     cancelCheckout(node);
-                }
-                else {
+                } else {
                     throw new CmisStorageException("Cannot delete checked out document: " + getId());
                 }
-            }
-            else if (allVersions) {
+            } else if (allVersions) {
                 checkout(node);
                 node.remove();
                 node.getSession().save();
-            }
-            else {
+            } else {
                 throw new CmisRuntimeException("Cannot delete a single version");
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -111,7 +108,7 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     /**
      * See CMIS 1.0 section 2.2.7.1 checkOut
-     *
+     * 
      * @throws CmisRuntimeException
      */
     public JcrPrivateWorkingCopy checkout() {
@@ -123,8 +120,7 @@ public abstract class JcrVersionBase extends JcrDocument {
 
             checkout(node);
             return getPwc();
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -132,7 +128,7 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     /**
      * See CMIS 1.0 section 2.2.7.3 checkedIn
-     *
+     * 
      * @throws CmisRuntimeException
      */
     public JcrVersion checkin(Properties properties, ContentStream contentStream, String checkinComment) {
@@ -154,8 +150,7 @@ public abstract class JcrVersionBase extends JcrDocument {
             // todo handle checkinComment
             checkin(node);
             return (JcrVersion) create(node);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -163,25 +158,26 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     /**
      * See CMIS 1.0 section 2.2.7.2 cancelCheckout
-     *
+     * 
      * @throws CmisRuntimeException
      */
     public void cancelCheckout() {
         Node node = getNode();
         try {
             cancelCheckout(node);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
-     * Get the private working copy of the versions series or throw an exception if not checked out.
-     *
-     * @return  a {@link JcrPrivateWorkingCopy} instance
-     * @throws CmisObjectNotFoundException  if not checked out
+     * Get the private working copy of the versions series or throw an exception
+     * if not checked out.
+     * 
+     * @return a {@link JcrPrivateWorkingCopy} instance
+     * @throws CmisObjectNotFoundException
+     *             if not checked out
      * @throws CmisRuntimeException
      */
     public JcrPrivateWorkingCopy getPwc() {
@@ -189,12 +185,10 @@ public abstract class JcrVersionBase extends JcrDocument {
             Node node = getNode();
             if (node.isCheckedOut()) {
                 return new JcrPrivateWorkingCopy(getNode(), typeManager, pathManager, typeHandlerManager);
-            }
-            else {
+            } else {
                 throw new CmisObjectNotFoundException("Not checked out document has no private working copy");
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -202,9 +196,12 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     /**
      * Get a specific version by name
-     * @param name  name of the version to get
-     * @return  a {@link JcrVersion} instance for <code>name</code>
-     * @throws CmisObjectNotFoundException  if a version <code>name</code> does not exist
+     * 
+     * @param name
+     *            name of the version to get
+     * @return a {@link JcrVersion} instance for <code>name</code>
+     * @throws CmisObjectNotFoundException
+     *             if a version <code>name</code> does not exist
      * @throws CmisRuntimeException
      */
     public JcrVersion getVersion(String name) {
@@ -213,25 +210,22 @@ public abstract class JcrVersionBase extends JcrDocument {
             VersionHistory versionHistory = getVersionHistory(node);
             Version version = versionHistory.getVersion(name);
             return new JcrVersion(node, version, typeManager, pathManager, typeHandlerManager);
-        }
-        catch (UnsupportedRepositoryOperationException e) {
+        } catch (UnsupportedRepositoryOperationException e) {
             log.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (VersionException e) {
+        } catch (VersionException e) {
             log.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     /**
-     * @return  Id of the version representing the base of this versions series
+     * @return Id of the version representing the base of this versions series
      * @throws RepositoryException
      */
     protected String getBaseNodeId() throws RepositoryException {
@@ -241,13 +235,13 @@ public abstract class JcrVersionBase extends JcrDocument {
     }
 
     /**
-     * @return  Id of the private working copy of this version series
+     * @return Id of the private working copy of this version series
      * @throws RepositoryException
      */
     protected String getPwcId() throws RepositoryException {
         return null;
     }
-    
+
     @Override
     protected void compileProperties(PropertiesImpl properties, Set<String> filter, ObjectInfoImpl objectInfo)
             throws RepositoryException {
@@ -267,7 +261,7 @@ public abstract class JcrVersionBase extends JcrDocument {
         setAction(result, Action.CAN_CHECK_IN, true);
         return result;
     }
-    
+
     @Override
     protected String getTypeIdInternal() {
         return JcrTypeManager.DOCUMENT_TYPE_ID;
@@ -280,19 +274,15 @@ public abstract class JcrVersionBase extends JcrDocument {
 
     @Override
     protected String getCheckedOutId() throws RepositoryException {
-        return isCheckedOut()
-                ? getVersionSeriesId() + "/pwc"
-                : null;
+        return isCheckedOut() ? getVersionSeriesId() + "/pwc" : null;
     }
 
     @Override
     protected String getCheckedOutBy() throws RepositoryException {
-        return isCheckedOut()
-                ? getNode().getSession().getUserID()
-                : null;
+        return isCheckedOut() ? getNode().getSession().getUserID() : null;
     }
-    
-    //------------------------------------------< private >---
+
+    // ------------------------------------------< private >---
 
     private static void checkout(Node node) throws RepositoryException {
         getVersionManager(node).checkout(node.getPath());
@@ -306,5 +296,5 @@ public abstract class JcrVersionBase extends JcrDocument {
         Version base = getBaseVersion(node);
         getVersionManager(node).restore(base, true);
     }
-    
+
 }

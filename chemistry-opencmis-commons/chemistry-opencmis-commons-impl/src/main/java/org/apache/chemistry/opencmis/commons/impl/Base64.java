@@ -323,7 +323,7 @@ public final class Base64 {
      * <b>and</b> URLSAFE in which case one of them will be picked, though there
      * is no guarantee as to which one will be picked.
      */
-    private static final byte[] getAlphabet(int options) {
+    private static byte[] getAlphabet(int options) {
         if ((options & URL_SAFE) == URL_SAFE) {
             return _URL_SAFE_ALPHABET;
         } else if ((options & ORDERED) == ORDERED) {
@@ -339,7 +339,7 @@ public final class Base64 {
      * URL_SAFE in which case one of them will be picked, though there is no
      * guarantee as to which one will be picked.
      */
-    private static final byte[] getDecodabet(int options) {
+    private static byte[] getDecodabet(int options) {
         if ((options & URL_SAFE) == URL_SAFE) {
             return _URL_SAFE_DECODABET;
         } else if ((options & ORDERED) == ORDERED) {

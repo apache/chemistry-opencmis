@@ -243,8 +243,8 @@ public class LoremIpsum {
     /**
      * Generates a single lorem ipsum paragraph, of random length.
      * 
-     * @param {boolean} optStartWithLorem Whether to start the sentence with
-     *        the standard "Lorem ipsum..." first sentence.
+     * @param {boolean} optStartWithLorem Whether to start the sentence with the
+     *        standard "Lorem ipsum..." first sentence.
      * @return {string} The generated sentence.
      */
     public String generateParagraph(boolean optStartWithLorem) {
@@ -274,8 +274,8 @@ public class LoremIpsum {
     /**
      * Generates a single sentence, of random length.
      * 
-     * @param {boolean} optStartWithLorem Whether to start the setnence with
-     *        the standard "Lorem ipsum..." first sentence.
+     * @param {boolean} optStartWithLorem Whether to start the setnence with the
+     *        standard "Lorem ipsum..." first sentence.
      * @return {string} The generated sentence.
      */
     public String generateSentence(boolean optStartWithLorem) {

@@ -118,7 +118,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns if the property is inherited by a parent type.
      * 
      * @return <code>true</code> - is inherited;
-     *         <code>false</false> - is not inherited; <code>null</code> -
+     *         <code>false</code> - is not inherited; <code>null</code> -
      *         unknown (noncompliant repository)
      * 
      * @cmis 1.0
@@ -129,7 +129,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns if the property is required.
      * 
      * @return <code>true</code> - is required;
-     *         <code>false</false> - is not required; <code>null</code> -
+     *         <code>false</code> - is not required; <code>null</code> -
      *         unknown (noncompliant repository)
      * 
      * @cmis 1.0
@@ -140,7 +140,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns if the property is queryable.
      * 
      * @return <code>true</code> - is queryable;
-     *         <code>false</false> - is not queryable; <code>null</code> -
+     *         <code>false</code> - is not queryable; <code>null</code> -
      *         unknown (noncompliant repository)
      * 
      * @cmis 1.0
@@ -151,7 +151,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns if the property is Orderable.
      * 
      * @return <code>true</code> - is Orderable;
-     *         <code>false</false> - is not Orderable; <code>null</code> -
+     *         <code>false</code> - is not Orderable; <code>null</code> -
      *         unknown (noncompliant repository)
      * 
      * @cmis 1.0
@@ -162,7 +162,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
      * Returns if the property supports open choice.
      * 
      * @return <code>true</code> - supports open choice;
-     *         <code>false</false> - does not support open choice; <code>null</code>
+     *         <code>false</code> - does not support open choice; <code>null</code>
      *         - unknown or not applicable
      * 
      * @cmis 1.0

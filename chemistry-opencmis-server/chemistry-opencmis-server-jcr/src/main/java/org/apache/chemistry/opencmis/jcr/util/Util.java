@@ -28,20 +28,21 @@ import javax.jcr.RepositoryException;
  * Miscellaneous utility functions
  */
 public final class Util {
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Convert from <code>Calendar</code> to a <code>GregorianCalendar</code>.
      * 
      * @param date
-     * @return  <code>date</code> if it is an instance of <code>GregorianCalendar</code>.
-     *   Otherwise a new <code>GregorianCalendar</code> instance for <code>date</code>.
+     * @return <code>date</code> if it is an instance of
+     *         <code>GregorianCalendar</code>. Otherwise a new
+     *         <code>GregorianCalendar</code> instance for <code>date</code>.
      */
     public static GregorianCalendar toCalendar(Calendar date) {
         if (date instanceof GregorianCalendar) {
             return (GregorianCalendar) date;
-        }
-        else {
+        } else {
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeZone(date.getTimeZone());
             calendar.setTimeInMillis(date.getTimeInMillis());
@@ -50,13 +51,16 @@ public final class Util {
     }
 
     /**
-     * Replace every occurrence of <code>target</code> in <code>string</code> with
-     * <code>replacement</code>.
-     *
-     * @param string  string to do replacement on
-     * @param target  string to search for
-     * @param replacement  string to replace with
-     * @return  string with replacing done
+     * Replace every occurrence of <code>target</code> in <code>string</code>
+     * with <code>replacement</code>.
+     * 
+     * @param string
+     *            string to do replacement on
+     * @param target
+     *            string to search for
+     * @param replacement
+     *            string to replace with
+     * @return string with replacing done
      */
     public static String replace(String string, String target, String replacement) {
         if ("".equals(target)) {
@@ -74,8 +78,7 @@ public final class Util {
             j = string.indexOf(target, k);
             if (j < 0) {
                 result.append(string.substring(k));
-            }
-            else {
+            } else {
                 result.append(string.substring(k, j)).append(replacement);
             }
 
@@ -87,22 +90,28 @@ public final class Util {
 
     /**
      * Escapes a JCR path such that it can be used in a XPath query
+     * 
      * @param path
-     * @return  escaped path
+     * @return escaped path
      */
     public static String escape(String path) {
-        return replace(path, " ", "_x0020_"); // fixme do more thorough escaping of path
+        return replace(path, " ", "_x0020_"); // fixme do more thorough escaping
+                                              // of path
     }
-    
+
     /**
      * The repository's support option definition.
-     * @param node JCR node
-     * @param option requested repository's option
+     * 
+     * @param node
+     *            JCR node
+     * @param option
+     *            requested repository's option
      * @return true if repository supports option, otherwise false.
-     * @throws RepositoryException thrown when any error with repository was occurred.
+     * @throws RepositoryException
+     *             thrown when any error with repository was occurred.
      */
     public static boolean supportOption(Node node, String option) throws RepositoryException {
-    	return Boolean.valueOf(node.getSession().getRepository().getDescriptor(option));
+        return Boolean.valueOf(node.getSession().getRepository().getDescriptor(option));
     }
 
 }

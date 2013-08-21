@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.client.runtime.util;
 
 
 /**
- * CMIS Collection Iterable
+ * CMIS Collection Iterable.
  */
 public class CollectionIterable<T> extends AbstractIterable<T> {
 
     /**
-     * Construct
+     * Constructor.
      *
      * @param pageFetcher
      */
@@ -34,7 +34,7 @@ public class CollectionIterable<T> extends AbstractIterable<T> {
     }
 
     /**
-     * Construct
+     * Constructor.
      *
      * @param position
      * @param pageFetcher

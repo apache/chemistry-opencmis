@@ -125,6 +125,7 @@ public abstract class AbstractWebServicesService {
             return new CmisUpdateConflictException(msg, code, errorContent);
         case VERSIONING:
             return new CmisVersioningException(msg, code, errorContent);
+        default:
         }
 
         return new CmisRuntimeException("Unknown exception[" + ex.getFaultInfo().getType().value() + "]: " + msg);
@@ -141,6 +142,7 @@ public abstract class AbstractWebServicesService {
             transformrt.transform(new DOMSource(node), new StreamResult(sw));
             return sw.toString();
         } catch (TransformerException e) {
+            assert false;
         }
 
         return "";

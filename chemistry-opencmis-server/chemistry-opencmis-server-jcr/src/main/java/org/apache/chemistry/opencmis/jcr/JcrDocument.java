@@ -46,33 +46,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Instances of this class represent a cmis:document backed by an underlying JCR <code>Node</code>.
+ * Instances of this class represent a cmis:document backed by an underlying JCR
+ * <code>Node</code>.
  */
 public abstract class JcrDocument extends JcrNode {
-    private static final Logger log = LoggerFactory.getLogger(JcrDocument.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrDocument.class);
 
     public static final String MIME_UNKNOWN = "application/octet-stream";
 
-    protected JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+    protected JcrDocument(Node node, JcrTypeManager typeManager, PathManager pathManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**
-     * @return  <code>true</code> iff the document is checked out
+     * @return <code>true</code> iff the document is checked out
      */
     public boolean isDocumentCheckedOut() {
         try {
             return getNode().isCheckedOut();
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
      * See CMIS 1.0 section 2.2.4.10 getContentStream
-     *
+     * 
      * @throws CmisObjectNotFoundException
      * @throws CmisRuntimeException
      */
@@ -86,28 +87,30 @@ public abstract class JcrDocument extends JcrNode {
             result.setFileName(getNodeName());
             result.setLength(BigInteger.valueOf(data.getLength()));
             result.setMimeType(getPropertyOrElse(contentNode, Property.JCR_MIMETYPE, MIME_UNKNOWN));
-            result.setStream(new BufferedInputStream(data.getBinary().getStream()));  // stream closed by consumer
+            result.setStream(new BufferedInputStream(data.getBinary().getStream())); // stream
+                                                                                     // closed
+                                                                                     // by
+                                                                                     // consumer
 
             return result;
-        }
-        catch (PathNotFoundException e) {
-            log.debug(e.getMessage(), e);
+        } catch (PathNotFoundException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
      * See CMIS 1.0 section 2.2.4.16 setContentStream
-     *
+     * 
      * @throws CmisStorageException
      */
     public JcrNode setContentStream(ContentStream contentStream, boolean overwriteFlag) {
         try {
-            // get content node. For version series this is *not* the same as the
+            // get content node. For version series this is *not* the same as
+            // the
             // context node. See CMIS-438.
             Node contentNode = getNode().getNode(Node.JCR_CONTENT);
             Property data = contentNode.getProperty(Property.JCR_DATA);
@@ -117,9 +120,7 @@ public abstract class JcrDocument extends JcrNode {
                 throw new CmisContentAlreadyExistsException("Content already exists!");
             }
 
-            JcrVersionBase jcrVersion = isVersionable()
-                    ? asVersion()
-                    : null;
+            JcrVersionBase jcrVersion = isVersionable() ? asVersion() : null;
 
             boolean autoCheckout = jcrVersion != null && !jcrVersion.isCheckedOut();
             if (autoCheckout) {
@@ -127,16 +128,14 @@ public abstract class JcrDocument extends JcrNode {
             }
 
             // write content, if available
-            Binary binary = contentStream == null || contentStream.getStream() == null
-                    ? JcrBinary.EMPTY
+            Binary binary = contentStream == null || contentStream.getStream() == null ? JcrBinary.EMPTY
                     : new JcrBinary(new BufferedInputStream(contentStream.getStream()));
             try {
                 contentNode.setProperty(Property.JCR_DATA, binary);
                 if (contentStream != null && contentStream.getMimeType() != null) {
                     contentNode.setProperty(Property.JCR_MIMETYPE, contentStream.getMimeType());
                 }
-            }
-            finally {
+            } finally {
                 binary.dispose();
             }
 
@@ -145,74 +144,72 @@ public abstract class JcrDocument extends JcrNode {
             if (autoCheckout) {
                 // auto versioning -> return new version created by checkin
                 return jcrVersion.checkin(null, null, "auto checkout");
-            }
-            else if (jcrVersion != null) {
+            } else if (jcrVersion != null) {
                 // the node is checked out -> return pwc.
                 return jcrVersion.getPwc();
-            }
-            else {
+            } else {
                 // non versionable -> return this
                 return this;
             }
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
-        }
-        catch (IOException e) {
-            log.debug(e.getMessage(), e);
+        } catch (IOException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
 
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     /**
-     * @return  the value of the <code>cmis:isLatestVersion</code> property
+     * @return the value of the <code>cmis:isLatestVersion</code> property
      * @throws RepositoryException
      */
     protected abstract boolean isLatestVersion() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:isMajorVersion</code> property
+     * @return the value of the <code>cmis:isMajorVersion</code> property
      * @throws RepositoryException
      */
     protected abstract boolean isMajorVersion() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:isLatestMajorVersion</code> property
+     * @return the value of the <code>cmis:isLatestMajorVersion</code> property
      * @throws RepositoryException
      */
     protected abstract boolean isLatestMajorVersion() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:versionLabel</code> property
+     * @return the value of the <code>cmis:versionLabel</code> property
      * @throws RepositoryException
      */
     protected abstract String getVersionLabel() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:isVersionSeriesCheckedOut</code> property
+     * @return the value of the <code>cmis:isVersionSeriesCheckedOut</code>
+     *         property
      * @throws RepositoryException
      */
     protected abstract boolean isCheckedOut() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:versionSeriesCheckedOutId</code> property
+     * @return the value of the <code>cmis:versionSeriesCheckedOutId</code>
+     *         property
      * @throws RepositoryException
      */
     protected abstract String getCheckedOutId() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:versionSeriesCheckedOutBy</code> property
+     * @return the value of the <code>cmis:versionSeriesCheckedOutBy</code>
+     *         property
      * @throws RepositoryException
      */
     protected abstract String getCheckedOutBy() throws RepositoryException;
 
-
     /**
-     * @return  the value of the <code>cmis:checkinComment</code> property
+     * @return the value of the <code>cmis:checkinComment</code> property
      * @throws RepositoryException
      */
     protected abstract String getCheckInComment() throws RepositoryException;

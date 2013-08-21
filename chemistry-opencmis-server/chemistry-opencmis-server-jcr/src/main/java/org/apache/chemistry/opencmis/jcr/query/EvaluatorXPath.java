@@ -26,9 +26,10 @@ import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.jcr.util.Iterables;
 
 /**
- * This implementation of {@link Evaluator} results in an instance of a {@link XPathBuilder} which
- * can be used to validated the where clause of the original CMIS query and translate it to a
- * corresponding (i.e. semantically equal) XPath condition. 
+ * This implementation of {@link Evaluator} results in an instance of a
+ * {@link XPathBuilder} which can be used to validated the where clause of the
+ * original CMIS query and translate it to a corresponding (i.e. semantically
+ * equal) XPath condition.
  */
 public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
 
@@ -55,11 +56,11 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
             public String xPath() {
                 if (eval(true) != null) {
                     return eval(true) ? "true()" : "false()";
-                }
-                else {
+                } else {
                     return "not(" + op.xPath() + ")";
                 }
             }
+
             public Boolean eval(Boolean folderPredicateValuation) {
                 return not(op.eval(folderPredicateValuation));
             }
@@ -76,17 +77,19 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
             public String xPath() {
                 if (eval(true) != null) {
                     return eval(true) ? "true()" : "false()";
-                }
-                else if (op1.eval(true) != null) {  // if not null, op1 must be true -> shortcut evaluation to op2
+                } else if (op1.eval(true) != null) { // if not null, op1 must be
+                                                     // true -> shortcut
+                                                     // evaluation to op2
                     return op2.xPath();
-                }
-                else if (op2.eval(true) != null) {  // if not null, op2 must be true -> shortcut evaluation to op1
+                } else if (op2.eval(true) != null) { // if not null, op2 must be
+                                                     // true -> shortcut
+                                                     // evaluation to op1
                     return op1.xPath();
-                }
-                else {
+                } else {
                     return op1.xPath() + " and " + op2.xPath();
                 }
             }
+
             public Boolean eval(Boolean folderPredicateValuation) {
                 return and(op1.eval(folderPredicateValuation), op2.eval(folderPredicateValuation));
             }
@@ -103,17 +106,19 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
             public String xPath() {
                 if (eval(true) != null) {
                     return eval(true) ? "true()" : "false()";
-                }
-                else if (op1.eval(true) != null) {  // if not null, op1 must be false -> shortcut evaluation to op2
+                } else if (op1.eval(true) != null) { // if not null, op1 must be
+                                                     // false -> shortcut
+                                                     // evaluation to op2
                     return op2.xPath();
-                }
-                else if (op2.eval(true) != null) {  // if not null, op2 must be false -> shortcut evaluation to op2
+                } else if (op2.eval(true) != null) { // if not null, op2 must be
+                                                     // false -> shortcut
+                                                     // evaluation to op2
                     return op1.xPath();
-                }
-                else {
+                } else {
                     return "(" + op1.xPath() + " or " + op2.xPath() + ")";
                 }
             }
+
             public Boolean eval(Boolean folderPredicateValuation) {
                 return or(op1.eval(folderPredicateValuation), op2.eval(folderPredicateValuation));
             }
@@ -156,27 +161,27 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
 
     @Override
     public XPathBuilder in(XPathBuilder op1, XPathBuilder op2) {
-        return super.in(op1, op2);    // todo implement in
+        return super.in(op1, op2); // todo implement in
     }
 
     @Override
     public XPathBuilder notIn(XPathBuilder op1, XPathBuilder op2) {
-        return super.notIn(op1, op2);    // todo implement notIn
+        return super.notIn(op1, op2); // todo implement notIn
     }
 
     @Override
     public XPathBuilder inAny(XPathBuilder op1, XPathBuilder op2) {
-        return super.inAny(op1, op2);    // todo implement inAny
+        return super.inAny(op1, op2); // todo implement inAny
     }
 
     @Override
     public XPathBuilder notInAny(XPathBuilder op1, XPathBuilder op2) {
-        return super.notInAny(op1, op2);    // todo implement notInAny
+        return super.notInAny(op1, op2); // todo implement notInAny
     }
 
     @Override
     public XPathBuilder eqAny(XPathBuilder op1, XPathBuilder op2) {
-        return super.eqAny(op1, op2);    // todo implement eqAny
+        return super.eqAny(op1, op2); // todo implement eqAny
     }
 
     @Override
@@ -199,7 +204,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         return new FunctionBuilder("jcr:like", op1, op2) {
             @Override
             public String xPath() {
-                return "not(" + super.xPath() + ")"; 
+                return "not(" + super.xPath() + ")";
             }
         };
     }
@@ -210,7 +215,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
     }
 
     @Override
-    public XPathBuilder inFolder(XPathBuilder op1,XPathBuilder op2) {
+    public XPathBuilder inFolder(XPathBuilder op1, XPathBuilder op2) {
         return new FolderPredicateBuilder(op2.xPath(), false);
     }
 
@@ -221,7 +226,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
 
     @Override
     public XPathBuilder list(List<XPathBuilder> ops) {
-        return super.list(ops);    // todo implement list
+        return super.list(ops); // todo implement list
     }
 
     @Override
@@ -279,7 +284,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         return new TextPhraseBuilder(phrase);
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     /**
      * Resolve from a CMIS object id to the corresponding absolute JCR path.
@@ -290,49 +295,50 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
     }
 
     /**
-     * Resolve from a column name in the query to the corresponding
-     * relative JCR path. The path must be relative to the context node.
-     * This default implementations simply returns <code>name</code>.
+     * Resolve from a column name in the query to the corresponding relative JCR
+     * path. The path must be relative to the context node. This default
+     * implementations simply returns <code>name</code>.
      */
     protected String jcrPathFromCol(String name) {
-        return name; 
+        return name;
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     /**
-     * @return  <code>null</code> if <code>b</code> is <code>null</code>, <code>!b</code> otherwise.
+     * @return <code>null</code> if <code>b</code> is <code>null</code>,
+     *         <code>!b</code> otherwise.
      */
     private static Boolean not(Boolean b) {
         return b == null ? null : !b;
     }
 
     /**
-     * @return 
-     *  <ul><li><code>true</code> if either of <code>b1</code> and <code>b2</code> is <code>true</code>,</li>
-     *      <li><code>false</code> if both <code>b1</code> and <code>b2</code> are <code>false</code>,</li>
-     *      <li><code>null</code> otherwise.</li></ul>
+     * @return <ul>
+     *         <li><code>true</code> if either of <code>b1</code> and
+     *         <code>b2</code> is <code>true</code>,</li>
+     *         <li><code>false</code> if both <code>b1</code> and
+     *         <code>b2</code> are <code>false</code>,</li>
+     *         <li><code>null</code> otherwise.</li>
+     *         </ul>
      */
     private static Boolean or(Boolean b1, Boolean b2) {
-        return Boolean.TRUE.equals(b1) || Boolean.TRUE.equals(b2)
-                ? Boolean.TRUE
-                : Boolean.FALSE.equals(b1) && Boolean.FALSE.equals(b2)
-                        ? Boolean.FALSE
-                        : null;
+        return Boolean.TRUE.equals(b1) || Boolean.TRUE.equals(b2) ? Boolean.TRUE : Boolean.FALSE.equals(b1)
+                && Boolean.FALSE.equals(b2) ? Boolean.FALSE : null;
     }
 
     /**
-     * @return
-     *  <ul><li><code>false</code> if either of <code>b1</code> and <code>b2</code> is <code>false</code>,</li>
-     *      <li><code>true</code> if both <code>b1</code> and <code>b2</code> are <code>true</code>,</li>
-     *      <li><code>null</code> otherwise.</li></ul>
+     * @return <ul>
+     *         <li><code>false</code> if either of <code>b1</code> and
+     *         <code>b2</code> is <code>false</code>,</li>
+     *         <li><code>true</code> if both <code>b1</code> and <code>b2</code>
+     *         are <code>true</code>,</li>
+     *         <li><code>null</code> otherwise.</li>
+     *         </ul>
      */
     private static Boolean and(Boolean b1, Boolean b2) {
-        return Boolean.FALSE.equals(b1) || Boolean.FALSE.equals(b2)
-                ? Boolean.FALSE
-                : Boolean.TRUE.equals(b1) && Boolean.TRUE.equals(b2)
-                        ? Boolean.TRUE
-                        : null;
+        return Boolean.FALSE.equals(b1) || Boolean.FALSE.equals(b2) ? Boolean.FALSE : Boolean.TRUE.equals(b1)
+                && Boolean.TRUE.equals(b2) ? Boolean.TRUE : null;
     }
 
     private static class RelOpBuilder implements XPathBuilder {
@@ -362,7 +368,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
     private class FolderPredicateBuilder implements XPathBuilder {
         private final String folderId;
         private final boolean includeDescendants;
-        
+
         public FolderPredicateBuilder(String folderId, boolean includeDescendants) {
             this.folderId = stripQuotes(folderId);
             this.includeDescendants = includeDescendants;
@@ -381,9 +387,8 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
 
         private String stripQuotes(String string) {
-            return (string.startsWith("'") || string.startsWith("\"")) && string.length() >= 2
-                    ? string.substring(1, string.length() - 1)
-                    : string;
+            return (string.startsWith("'") || string.startsWith("\"")) && string.length() >= 2 ? string.substring(1,
+                    string.length() - 1) : string;
         }
 
     }
@@ -398,7 +403,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
     }
 
-    private static class LiteralBuilder extends PrimitiveBuilder  {
+    private static class LiteralBuilder extends PrimitiveBuilder {
         private final String xPath;
 
         public LiteralBuilder(String value) {
@@ -426,7 +431,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
     }
 
-    private class ColRefBuilder extends PrimitiveBuilder  {
+    private class ColRefBuilder extends PrimitiveBuilder {
         private final String colRef;
 
         public ColRefBuilder(String colRef) {
@@ -434,7 +439,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
 
         public String xPath() {
-            return jcrPathFromCol(colRef);   
+            return jcrPathFromCol(colRef);
         }
 
     }
@@ -459,9 +464,8 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         }
 
         public String xPath() {
-            return function == null
-                ? op1.xPath()
-                : function + "(" + op1.xPath() + (op2 == null ? "" : ", " + op2.xPath()) + ")";
+            return function == null ? op1.xPath() : function + "(" + op1.xPath()
+                    + (op2 == null ? "" : ", " + op2.xPath()) + ")";
         }
     }
 
@@ -482,14 +486,14 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
         private final String relOp;
 
         public TextOpBuilder(List<XPathBuilder> ops, String relOp) {
-            this.ops = ops;   
+            this.ops = ops;
             this.relOp = relOp;
         }
 
         public String xPath() {
             StringBuilder sb = new StringBuilder();
             String sep = "";
-            for (XPathBuilder op: ops) {
+            for (XPathBuilder op : ops) {
                 sb.append(sep).append(op.xPath());
                 sep = relOp;
             }
@@ -497,7 +501,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
             return sb.toString();
         }
     }
-    
+
     private static class TextMinusBuilder extends PrimitiveBuilder {
         private final String text;
 
@@ -509,7 +513,7 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
             return "-" + escape(text);
         }
     }
-    
+
     private static class TextWordBuilder extends PrimitiveBuilder {
         private final String word;
 
@@ -535,9 +539,9 @@ public class EvaluatorXPath extends EvaluatorBase<XPathBuilder> {
     }
 
     /**
-     * Within the searchexp literal instances of single quote ('), double quote (")
-     * and hyphen (-) must be escaped with a backslash (\). Backslash itself must
-     * therefore also be escaped, ending up as double backslash (\\).
+     * Within the searchexp literal instances of single quote ('), double quote
+     * (") and hyphen (-) must be escaped with a backslash (\). Backslash itself
+     * must therefore also be escaped, ending up as double backslash (\\).
      */
     private static String escape(String s) {
         if (s == null) {

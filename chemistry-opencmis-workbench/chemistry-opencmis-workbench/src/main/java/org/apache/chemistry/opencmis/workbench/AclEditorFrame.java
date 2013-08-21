@@ -191,7 +191,7 @@ public class AclEditorFrame extends JFrame {
                 propagationPropagteButton.setEnabled(false);
             }
         } catch (Exception e) {
-            // ignore
+            propagationPropagteButton.setEnabled(true);
         }
 
         ButtonGroup propagtionGroup = new ButtonGroup();

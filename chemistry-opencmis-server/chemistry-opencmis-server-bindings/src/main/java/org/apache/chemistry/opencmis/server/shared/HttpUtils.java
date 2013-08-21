@@ -24,7 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
-public class HttpUtils {
+public final class HttpUtils {
+
+    private HttpUtils() {
+    }
 
     /**
      * Extracts a string parameter.

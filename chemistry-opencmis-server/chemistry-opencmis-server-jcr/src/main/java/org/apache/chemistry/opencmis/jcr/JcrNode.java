@@ -70,8 +70,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Common base class for all JCR <code>Node</code>s to be represented as CMIS objects. Instances of this class
- * are responsible for mapping from CMIS to JCR and vice versa.
+ * Common base class for all JCR <code>Node</code>s to be represented as CMIS
+ * objects. Instances of this class are responsible for mapping from CMIS to JCR
+ * and vice versa.
  */
 public abstract class JcrNode {
 
@@ -83,8 +84,8 @@ public abstract class JcrNode {
     public static final String USER_UNKNOWN = "unknown";
 
     /**
-     * Default value for cmis:createdBy and cmis:lastModifiedDate
-     * (Thu Jan 01 01:00:00 CET 1970)
+     * Default value for cmis:createdBy and cmis:lastModifiedDate (Thu Jan 01
+     * 01:00:00 CET 1970)
      */
     public static final GregorianCalendar DATE_UNKNOWN;
 
@@ -100,13 +101,15 @@ public abstract class JcrNode {
 
     /**
      * Create a new instance wrapping a JCR <code>node</code>.
-     *
-     * @param node  the JCR <code>node</code> to represent
+     * 
+     * @param node
+     *            the JCR <code>node</code> to represent
      * @param typeManager
      * @param pathManager
      * @param typeHandlerManager
      */
-    protected JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+    protected JcrNode(Node node, JcrTypeManager typeManager, PathManager pathManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         this.node = node;
         this.typeManager = typeManager;
         this.pathManager = pathManager;
@@ -114,134 +117,134 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the JCR <code>node</code> represented by this instance
+     * @return the JCR <code>node</code> represented by this instance
      */
     public Node getNode() {
         return node;
     }
 
     /**
-     * @return  the name of the CMIS object represented by this instance
-     * @throws  CmisRuntimeException
+     * @return the name of the CMIS object represented by this instance
+     * @throws CmisRuntimeException
      */
     public String getName() {
         try {
             return getNodeName();
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
-     * @return  the id of the CMIS object represented by this instance
-     * @throws  CmisRuntimeException
+     * @return the id of the CMIS object represented by this instance
+     * @throws CmisRuntimeException
      */
     public String getId() {
         try {
             return getObjectId();
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
     /**
-     * @return  the typeId of the CMIS object represented by this instance
+     * @return the typeId of the CMIS object represented by this instance
      */
     public String getTypeId() {
         return getTypeIdInternal();
     }
 
     /**
-     * @return  <code>true</code> iff this instance represent the root of the CMIS folder hierarchy.
+     * @return <code>true</code> iff this instance represent the root of the
+     *         CMIS folder hierarchy.
      */
     public boolean isRoot() {
         return pathManager.isRoot(node);
     }
 
     /**
-     * @return  <code>true</code> iff this instance represents a cmis:document type
+     * @return <code>true</code> iff this instance represents a cmis:document
+     *         type
      */
     public boolean isDocument() {
         return BaseTypeId.CMIS_DOCUMENT == getBaseTypeId();
     }
 
     /**
-     * @return  <code>true</code> iff this instance represents a cmis:folder type
+     * @return <code>true</code> iff this instance represents a cmis:folder type
      */
     public boolean isFolder() {
         return BaseTypeId.CMIS_FOLDER == getBaseTypeId();
     }
 
     /**
-     * @return  <code>true</code> iff this instance represents a versionable CMIS object
+     * @return <code>true</code> iff this instance represents a versionable CMIS
+     *         object
      */
     public boolean isVersionable() {
         TypeDefinition typeDef = typeManager.getType(getTypeIdInternal());
-        return typeDef instanceof DocumentTypeDefinition
-                ? ((DocumentTypeDefinition) typeDef).isVersionable()
-                : false;
+        return typeDef instanceof DocumentTypeDefinition ? ((DocumentTypeDefinition) typeDef).isVersionable() : false;
     }
 
     /**
-     * @return  this instance as a <code>JcrDocument</code>
-     * @throws CmisConstraintException if <code>this.isDocument() == false</code>
+     * @return this instance as a <code>JcrDocument</code>
+     * @throws CmisConstraintException
+     *             if <code>this.isDocument() == false</code>
      */
     public JcrDocument asDocument() {
         if (isDocument()) {
             return (JcrDocument) this;
-        }
-        else {
+        } else {
             throw new CmisConstraintException("Not a document: " + this);
         }
     }
 
     /**
-     * @return  this instance as a <code>JcrFolder</code>
-     * @throws CmisConstraintException if <code>this.isFolder() == false</code>
+     * @return this instance as a <code>JcrFolder</code>
+     * @throws CmisConstraintException
+     *             if <code>this.isFolder() == false</code>
      */
     public JcrFolder asFolder() {
         if (isFolder()) {
             return (JcrFolder) this;
-        }
-        else {
+        } else {
             throw new CmisObjectNotFoundException("Not a folder: " + this);
         }
     }
 
     /**
-     * @return  this instance as a <code>JcrVersionBase</code>
-     * @throws CmisConstraintException if <code>this.isVersionable() == false</code>
+     * @return this instance as a <code>JcrVersionBase</code>
+     * @throws CmisConstraintException
+     *             if <code>this.isVersionable() == false</code>
      */
     public JcrVersionBase asVersion() {
         if (isVersionable()) {
             return (JcrVersionBase) this;
-        }
-        else {
+        } else {
             throw new CmisObjectNotFoundException("Not a version: " + this);
         }
     }
 
     /**
-     * Factory method creating a new <code>JcrNode</code> from a node at a given JCR path.
-     *
-     * @param path  JCR path of the node
-     * @return  A new instance representing the JCR node at <code>path</code>
-     * @throws CmisObjectNotFoundException  if <code>path</code> does not identify a JCR node
+     * Factory method creating a new <code>JcrNode</code> from a node at a given
+     * JCR path.
+     * 
+     * @param path
+     *            JCR path of the node
+     * @return A new instance representing the JCR node at <code>path</code>
+     * @throws CmisObjectNotFoundException
+     *             if <code>path</code> does not identify a JCR node
      * @throws CmisRuntimeException
      */
     public JcrNode getNode(String path) {
         try {
             return create(node.getNode(path));
-        }
-        catch (PathNotFoundException e) {
+        } catch (PathNotFoundException e) {
             log.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -275,8 +278,7 @@ public abstract class JcrNode {
             }
 
             return result;
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -293,20 +295,19 @@ public abstract class JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.3.5 getObjectParents
-     *
-     * @return  parent of this object
-     * @throws  CmisObjectNotFoundException  if this is the root folder
-     * @throws  CmisRuntimeException
+     * 
+     * @return parent of this object
+     * @throws CmisObjectNotFoundException
+     *             if this is the root folder
+     * @throws CmisRuntimeException
      */
     public JcrFolder getParent() {
         try {
             return create(node.getParent()).asFolder();
-        }
-        catch (ItemNotFoundException e) {
+        } catch (ItemNotFoundException e) {
             log.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -314,7 +315,7 @@ public abstract class JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.4.12 updateProperties
-     *
+     * 
      * @throws CmisStorageException
      */
     public JcrNode updateProperties(Properties properties) {
@@ -332,17 +333,14 @@ public abstract class JcrNode {
                 String destPath = PathManager.createCmisPath(node.getParent().getPath(), newName);
                 session.move(node.getPath(), destPath);
                 newNode = session.getNode(destPath);
-            }
-            else {
+            } else {
                 newNode = node;
             }
 
             // Are there properties to update?
             PropertyUpdater propertyUpdater = PropertyUpdater.create(typeManager, getTypeId(), properties);
 
-            JcrVersionBase jcrVersion = isVersionable()
-                    ? asVersion()
-                    : null;
+            JcrVersionBase jcrVersion = isVersionable() ? asVersion() : null;
 
             // Update properties. Checkout if required
             boolean autoCheckout = false;
@@ -361,18 +359,15 @@ public abstract class JcrNode {
             if (autoCheckout) {
                 // auto versioning -> return new version created by checkin
                 return jcrVersion.checkin(null, null, "auto checkout");
-            }
-            else if (jcrVersion != null && jcrVersion.isCheckedOut()) {
+            } else if (jcrVersion != null && jcrVersion.isCheckedOut()) {
                 // the node is checked out -> return pwc.
                 JcrVersionBase jcrNewVersion = create(newNode).asVersion();
                 return jcrNewVersion.getPwc();
-            }
-            else {
+            } else {
                 // non versionable or not a new node -> return this
                 return create(newNode);
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
@@ -381,7 +376,7 @@ public abstract class JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.4.14 deleteObject
-     *
+     * 
      * @throws CmisRuntimeException
      */
     public void delete(boolean allVersions, boolean isPwc) {
@@ -389,8 +384,7 @@ public abstract class JcrNode {
             Session session = getNode().getSession();
             getNode().remove();
             session.save();
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -398,7 +392,7 @@ public abstract class JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.4.13 moveObject
-     *
+     * 
      * @throws CmisStorageException
      */
     public JcrNode move(JcrFolder parent) {
@@ -409,8 +403,7 @@ public abstract class JcrNode {
             Node newNode;
             if (srcPath.equals(destPath)) {
                 newNode = node;
-            }
-            else {
+            } else {
                 Session session = getNode().getSession();
                 session.move(srcPath, destPath);
                 newNode = session.getNode(destPath);
@@ -418,8 +411,7 @@ public abstract class JcrNode {
             }
 
             return create(newNode);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
@@ -429,40 +421,40 @@ public abstract class JcrNode {
     public String toString() {
         try {
             return node.getPath();
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             return e.getMessage();
         }
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     /**
-     * Retrieve the context node of the CMIS object represented by this instance. The
-     * context node is the node which is used to derive the common properties from
-     * (creation date, modification date, ...)
-     *
-     * @return  the context node
+     * Retrieve the context node of the CMIS object represented by this
+     * instance. The context node is the node which is used to derive the common
+     * properties from (creation date, modification date, ...)
+     * 
+     * @return the context node
      * @throws RepositoryException
      */
     protected abstract Node getContextNode() throws RepositoryException;
 
     /**
-     * @return  the value of the <code>cmis:baseTypeId</code> property
+     * @return the value of the <code>cmis:baseTypeId</code> property
      */
     protected abstract BaseTypeId getBaseTypeId();
 
     /**
-     * @return  the value of the <code>cmis:objectTypeId</code> property
+     * @return the value of the <code>cmis:objectTypeId</code> property
      */
     protected abstract String getTypeIdInternal();
 
     /**
      * Compile the properties of the CMIS object represented by this instance.
      * See CMIS 1.0 section 2.2.4.7 getObject
-     *
-     * @param properties  compilation of properties
+     * 
+     * @param properties
+     *            compilation of properties
      * @param filter
      * @param objectInfo
      * @throws RepositoryException
@@ -491,8 +483,8 @@ public abstract class JcrNode {
         // name
         String name = getNodeName();
         if (PathManager.CMIS_ROOT_ID.equals(objectId) && "".equals(name)) {
-        	//set default name for the root node
-        	name = PathManager.CMIS_ROOT_ID;
+            // set default name for the root node
+            name = PathManager.CMIS_ROOT_ID;
         }
         addPropertyString(properties, typeId, filter, PropertyIds.NAME, name);
         objectInfo.setName(name);
@@ -521,10 +513,11 @@ public abstract class JcrNode {
     }
 
     /**
-     * Compile the allowed actions on the CMIS object represented by this instance
-     * See CMIS 1.0 section 2.2.4.6 getAllowableActions
-     *
-     * @param aas  compilation of allowed actions
+     * Compile the allowed actions on the CMIS object represented by this
+     * instance See CMIS 1.0 section 2.2.4.6 getAllowableActions
+     * 
+     * @param aas
+     *            compilation of allowed actions
      * @return
      */
     protected Set<Action> compileAllowableActions(Set<Action> aas) {
@@ -546,7 +539,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the change token of the CMIS object represented by this instance
+     * @return the change token of the CMIS object represented by this instance
      * @throws RepositoryException
      */
     protected String getChangeToken() throws RepositoryException {
@@ -554,7 +547,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the last modifier of the CMIS object represented by this instance
+     * @return the last modifier of the CMIS object represented by this instance
      * @throws RepositoryException
      */
     protected String getLastModifiedBy() throws RepositoryException {
@@ -562,7 +555,8 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the last modification date of the CMIS object represented by this instance
+     * @return the last modification date of the CMIS object represented by this
+     *         instance
      * @throws RepositoryException
      */
     protected GregorianCalendar getLastModified() throws RepositoryException {
@@ -570,7 +564,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the creation date of the CMIS object represented by this instance
+     * @return the creation date of the CMIS object represented by this instance
      * @throws RepositoryException
      */
     protected GregorianCalendar getCreated() throws RepositoryException {
@@ -578,7 +572,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the creator of the CMIS object represented by this instance
+     * @return the creator of the CMIS object represented by this instance
      * @throws RepositoryException
      */
     protected String getCreatedBy() throws RepositoryException {
@@ -586,7 +580,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the name of the underlying JCR <code>node</code>.
+     * @return the name of the underlying JCR <code>node</code>.
      * @throws RepositoryException
      */
     protected String getNodeName() throws RepositoryException {
@@ -594,7 +588,7 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the object id of the CMIS object represented by this instance
+     * @return the object id of the CMIS object represented by this instance
      * @throws RepositoryException
      */
     protected String getObjectId() throws RepositoryException {
@@ -602,7 +596,8 @@ public abstract class JcrNode {
     }
 
     /**
-     * @return  the versions series id of the CMIS object represented by this instance
+     * @return the versions series id of the CMIS object represented by this
+     *         instance
      * @throws RepositoryException
      */
     protected String getVersionSeriesId() throws RepositoryException {
@@ -610,10 +605,12 @@ public abstract class JcrNode {
     }
 
     /**
-     * Factory method for creating a new <code>JcrNode</code> instance from a JCR <code>Node</code>
-     *
-     * @param node  the JCR <code>Node</code>
-     * @return  a new <code>JcrNode</code>
+     * Factory method for creating a new <code>JcrNode</code> instance from a
+     * JCR <code>Node</code>
+     * 
+     * @param node
+     *            the JCR <code>Node</code>
+     * @return a new <code>JcrNode</code>
      */
     protected final JcrNode create(Node node) {
         return typeHandlerManager.create(node);
@@ -639,7 +636,8 @@ public abstract class JcrNode {
     /**
      * Add string property to the CMIS object represented by this instance
      */
-    protected final void addPropertyString(PropertiesImpl props, String typeId, Set<String> filter, String id, String value) {
+    protected final void addPropertyString(PropertiesImpl props, String typeId, Set<String> filter, String id,
+            String value) {
         if (!checkAddProperty(props, typeId, filter, id)) {
             return;
         }
@@ -652,7 +650,8 @@ public abstract class JcrNode {
     /**
      * Add integer property to the CMIS object represented by this instance
      */
-    protected final void addPropertyInteger(PropertiesImpl props, String typeId, Set<String> filter, String id, long value) {
+    protected final void addPropertyInteger(PropertiesImpl props, String typeId, Set<String> filter, String id,
+            long value) {
         if (!checkAddProperty(props, typeId, filter, id)) {
             return;
         }
@@ -665,7 +664,8 @@ public abstract class JcrNode {
     /**
      * Add boolean property to the CMIS object represented by this instance
      */
-    protected final void addPropertyBoolean(PropertiesImpl props, String typeId, Set<String> filter, String id, boolean value) {
+    protected final void addPropertyBoolean(PropertiesImpl props, String typeId, Set<String> filter, String id,
+            boolean value) {
         if (!checkAddProperty(props, typeId, filter, id)) {
             return;
         }
@@ -689,18 +689,18 @@ public abstract class JcrNode {
         prop.setQueryName(id);
         props.addProperty(prop);
     }
-    
-	protected final void addPropertyList(PropertiesImpl props, String typeId, Set<String> filter, String id, 
-			List<String> values) {
-    	
-	   if (!checkAddProperty(props, typeId, filter, id)) {
-           return;
-       }
-	   
-       PropertyStringImpl prop = new PropertyStringImpl(id, values);
-       prop.setQueryName(id);
-       props.addProperty(prop);
-	   
+
+    protected final void addPropertyList(PropertiesImpl props, String typeId, Set<String> filter, String id,
+            List<String> values) {
+
+        if (!checkAddProperty(props, typeId, filter, id)) {
+            return;
+        }
+
+        PropertyStringImpl prop = new PropertyStringImpl(id, values);
+        prop.setQueryName(id);
+        props.addProperty(prop);
+
     }
 
     /**
@@ -728,8 +728,7 @@ public abstract class JcrNode {
         if (queryName != null && filter != null) {
             if (filter.contains(queryName)) {
                 filter.remove(queryName);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -744,7 +743,8 @@ public abstract class JcrNode {
         private final List<PropertyData<?>> removeProperties = new ArrayList<PropertyData<?>>();
         private final List<PropertyData<?>> updateProperties = new ArrayList<PropertyData<?>>();
 
-        private PropertyUpdater() { }
+        private PropertyUpdater() {
+        }
 
         public static PropertyUpdater create(JcrTypeManager typeManager, String typeId, Properties properties) {
             if (properties == null) {
@@ -789,15 +789,12 @@ public abstract class JcrNode {
 
                 // default or value
                 PropertyData<?> newProp;
-                newProp = PropertyHelper.isPropertyEmpty(prop)
-                        ? PropertyHelper.getDefaultValue(propDef)
-                        : prop;
+                newProp = PropertyHelper.isPropertyEmpty(prop) ? PropertyHelper.getDefaultValue(propDef) : prop;
 
                 // Schedule for remove or update
                 if (newProp == null) {
                     propertyUpdater.removeProperties.add(prop);
-                }
-                else {
+                } else {
                     propertyUpdater.updateProperties.add(newProp);
                 }
             }
@@ -811,14 +808,13 @@ public abstract class JcrNode {
 
         public void apply(Node node) {
             try {
-                for (PropertyData<?> prop: removeProperties) {
+                for (PropertyData<?> prop : removeProperties) {
                     JcrConverter.removeProperty(node, prop);
                 }
-                for (PropertyData<?> prop: updateProperties) {
+                for (PropertyData<?> prop : updateProperties) {
                     JcrConverter.setProperty(node, prop);
                 }
-            }
-            catch (RepositoryException e) {
+            } catch (RepositoryException e) {
                 log.debug(e.getMessage(), e);
                 throw new CmisStorageException(e.getMessage(), e);
             }
@@ -833,19 +829,23 @@ public abstract class JcrNode {
     }
 
     /**
-     * Utility function for retrieving the version history of a JCR <code>Node</code>.
-     *
-     * @param node  the node for which to retrieve the version history
-     * @return  version history of <code>node</code>
-     * @throws RepositoryException  if <code>node</code> is not versionable
+     * Utility function for retrieving the version history of a JCR
+     * <code>Node</code>.
+     * 
+     * @param node
+     *            the node for which to retrieve the version history
+     * @return version history of <code>node</code>
+     * @throws RepositoryException
+     *             if <code>node</code> is not versionable
      */
     protected static VersionHistory getVersionHistory(Node node) throws RepositoryException {
         return getVersionManager(node).getVersionHistory(node.getPath());
     }
 
     /**
-     * Utility function for retrieving the version manager from a JCR <code>Node</code>.
-     *
+     * Utility function for retrieving the version manager from a JCR
+     * <code>Node</code>.
+     * 
      * @param node
      * @return
      * @throws RepositoryException
@@ -855,34 +855,36 @@ public abstract class JcrNode {
     }
 
     /**
-     * Utility function for retrieving the base version of a JCR <code>Node</code>.
-     *
-     * @param node  the node for which to retrieve the base version
-     * @return  version base version of <code>node</code>
-     * @throws RepositoryException  if <code>node</code> is not versionable
+     * Utility function for retrieving the base version of a JCR
+     * <code>Node</code>.
+     * 
+     * @param node
+     *            the node for which to retrieve the base version
+     * @return version base version of <code>node</code>
+     * @throws RepositoryException
+     *             if <code>node</code> is not versionable
      */
     protected static Version getBaseVersion(Node node) throws RepositoryException {
         return getVersionManager(node).getBaseVersion(node.getPath());
     }
 
     /**
-     * Utility function to retrieve the length of a property of a JCR <code>Node</code>.
-     *
+     * Utility function to retrieve the length of a property of a JCR
+     * <code>Node</code>.
+     * 
      * @param node
      * @param propertyName
      * @return
      * @throws RepositoryException
      */
     protected static long getPropertyLength(Node node, String propertyName) throws RepositoryException {
-        return node.hasProperty(propertyName)
-            ? node.getProperty(propertyName).getLength()
-            : -1;
+        return node.hasProperty(propertyName) ? node.getProperty(propertyName).getLength() : -1;
     }
 
     /**
-     * Utility function for retrieving a string property from a JCR <code>Node</code> or a default
-     * value in case of an error.
-     *
+     * Utility function for retrieving a string property from a JCR
+     * <code>Node</code> or a default value in case of an error.
+     * 
      * @param node
      * @param propertyName
      * @param defaultValue
@@ -892,15 +894,13 @@ public abstract class JcrNode {
     protected static String getPropertyOrElse(Node node, String propertyName, String defaultValue)
             throws RepositoryException {
 
-        return node.hasProperty(propertyName)
-            ? node.getProperty(propertyName).getString()
-            : defaultValue;
+        return node.hasProperty(propertyName) ? node.getProperty(propertyName).getString() : defaultValue;
     }
 
     /**
-     * Utility function for retrieving a date property from a JCR <code>Node</code> or a default
-     * value in case of an error.
-     *
+     * Utility function for retrieving a date property from a JCR
+     * <code>Node</code> or a default value in case of an error.
+     * 
      * @param node
      * @param propertyName
      * @param defaultValue
@@ -913,15 +913,15 @@ public abstract class JcrNode {
         if (node.hasProperty(propertyName)) {
             Calendar date = node.getProperty(propertyName).getDate();
             return Util.toCalendar(date);
-        }
-        else {
+        } else {
             return defaultValue;
         }
     }
 
     /**
-     * Add <code>action</code> to <code>actions</code> iff <code>condition</code> is true.
-     *
+     * Add <code>action</code> to <code>actions</code> iff
+     * <code>condition</code> is true.
+     * 
      * @param actions
      * @param action
      * @param condition
@@ -929,8 +929,7 @@ public abstract class JcrNode {
     protected static void setAction(Set<Action> actions, Action action, boolean condition) {
         if (condition) {
             actions.add(action);
-        }
-        else {
+        } else {
             actions.remove(action);
         }
     }

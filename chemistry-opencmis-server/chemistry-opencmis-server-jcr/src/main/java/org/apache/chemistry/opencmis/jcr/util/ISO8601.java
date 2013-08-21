@@ -21,15 +21,18 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
- * The <code>ISO8601</code> utility class provides helper methods
- * to deal with date/time formatting using a specific ISO8601-compliant
- * format (see <a href="http://www.w3.org/TR/NOTE-datetime">ISO 8601</a>).
+ * The <code>ISO8601</code> utility class provides helper methods to deal with
+ * date/time formatting using a specific ISO8601-compliant format (see <a
+ * href="http://www.w3.org/TR/NOTE-datetime">ISO 8601</a>).
  * <p/>
  * The currently supported format is:
+ * 
  * <pre>
  *   &plusmn;YYYY-MM-DDThh:mm:ss.SSSTZD
  * </pre>
+ * 
  * where:
+ * 
  * <pre>
  *   &plusmn;YYYY = four-digit year with optional sign where values <= 0 are
  *           denoting years BCE and values > 0 are denoting years CE,
@@ -48,15 +51,18 @@ import java.util.TimeZone;
  * <em>Note:</em> This class is copied from org.apache.jackrabbit.util.ISO8601
  */
 public final class ISO8601 {
-    private ISO8601() { }
+    private ISO8601() {
+    }
 
     /**
      * Parses an ISO8601-compliant date/time string.
-     *
-     * @param text the date/time string to be parsed
+     * 
+     * @param text
+     *            the date/time string to be parsed
      * @return a <code>Calendar</code>, or <code>null</code> if the input could
      *         not be parsed
-     * @throws IllegalArgumentException if a <code>null</code> argument is passed
+     * @throws IllegalArgumentException
+     *             if a <code>null</code> argument is passed
      */
     public static Calendar parse(String text) {
         if (text == null) {
@@ -80,9 +86,9 @@ public final class ISO8601 {
         /**
          * the expected format of the remainder of the string is:
          * YYYY-MM-DDThh:mm:ss.SSSTZD
-         *
-         * note that we cannot use java.text.SimpleDateFormat for
-         * parsing because it can't handle years <= 0 and TZD's
+         * 
+         * note that we cannot use java.text.SimpleDateFormat for parsing
+         * because it can't handle years <= 0 and TZD's
          */
 
         int year, month, day, hour, min, sec, ms;
@@ -189,8 +195,8 @@ public final class ISO8601 {
 
         try {
             /**
-             * the following call will trigger an IllegalArgumentException
-             * if any of the set values are illegal or out of range
+             * the following call will trigger an IllegalArgumentException if
+             * any of the set values are illegal or out of range
              */
             cal.getTime();
             /**
@@ -205,14 +211,16 @@ public final class ISO8601 {
     }
 
     /**
-     * Formats a <code>Calendar</code> value into an ISO8601-compliant
-     * date/time string.
-     *
-     * @param cal the time value to be formatted into a date/time string.
+     * Formats a <code>Calendar</code> value into an ISO8601-compliant date/time
+     * string.
+     * 
+     * @param cal
+     *            the time value to be formatted into a date/time string.
      * @return the formatted date/time string.
-     * @throws IllegalArgumentException if a <code>null</code> argument is passed
-     * or the calendar cannot be represented as defined by ISO 8601 (i.e. year
-     * with more than four digits).
+     * @throws IllegalArgumentException
+     *             if a <code>null</code> argument is passed or the calendar
+     *             cannot be represented as defined by ISO 8601 (i.e. year with
+     *             more than four digits).
      */
     public static String format(Calendar cal) throws IllegalArgumentException {
         if (cal == null) {
@@ -220,11 +228,10 @@ public final class ISO8601 {
         }
 
         /**
-         * the format of the date/time string is:
-         * YYYY-MM-DDThh:mm:ss.SSSTZD
-         *
-         * note that we cannot use java.text.SimpleDateFormat for
-         * formatting because it can't handle years <= 0 and TZD's
+         * the format of the date/time string is: YYYY-MM-DDThh:mm:ss.SSSTZD
+         * 
+         * note that we cannot use java.text.SimpleDateFormat for formatting
+         * because it can't handle years <= 0 and TZD's
          */
         StringBuffer buf = new StringBuffer();
         // year ([-]YYYY)
@@ -253,8 +260,7 @@ public final class ISO8601 {
         int offset = tz.getOffset(cal.getTimeInMillis());
         if (offset == 0) {
             buf.append('Z');
-        } 
-        else {
+        } else {
             int hours = Math.abs(offset / (60 * 1000) / 60);
             int minutes = Math.abs(offset / (60 * 1000) % 60);
             buf.append(offset < 0 ? '-' : '+');
@@ -267,18 +273,18 @@ public final class ISO8601 {
 
     /**
      * Returns the astronomical year of the given calendar.
-     *
-     * @param cal a calendar instance.
+     * 
+     * @param cal
+     *            a calendar instance.
      * @return the astronomical year.
-     * @throws IllegalArgumentException if calendar cannot be represented as
-     *                                  defined by ISO 8601 (i.e. year with more
-     *                                  than four digits).
+     * @throws IllegalArgumentException
+     *             if calendar cannot be represented as defined by ISO 8601
+     *             (i.e. year with more than four digits).
      */
     public static int getYear(Calendar cal) throws IllegalArgumentException {
         // determine era and adjust year if necessary
         int year = cal.get(Calendar.YEAR);
-        if (cal.isSet(Calendar.ERA)
-                && cal.get(Calendar.ERA) == GregorianCalendar.BC) {
+        if (cal.isSet(Calendar.ERA) && cal.get(Calendar.ERA) == GregorianCalendar.BC) {
 
             // calculate year using astronomical system:
             // year n BCE => astronomical year -n + 1
@@ -286,8 +292,8 @@ public final class ISO8601 {
         }
 
         if (year > 9999 || year < -9999) {
-            throw new IllegalArgumentException("Calendar has more than four " +
-                    "year digits, cannot be formatted as ISO8601: " + year);
+            throw new IllegalArgumentException("Calendar has more than four "
+                    + "year digits, cannot be formatted as ISO8601: " + year);
         }
         return year;
     }
@@ -295,12 +301,15 @@ public final class ISO8601 {
     /**
      * Appends a zero-padded number to the given string buffer.
      * <p/>
-     * This is an internal helper method which doesn't perform any
-     * validation on the given arguments.
-     *
-     * @param buf String buffer to append to
-     * @param n number to append
-     * @param precision number of digits to append
+     * This is an internal helper method which doesn't perform any validation on
+     * the given arguments.
+     * 
+     * @param buf
+     *            String buffer to append to
+     * @param n
+     *            number to append
+     * @param precision
+     *            number of digits to append
      */
     private static void appendZeroPaddedInt(StringBuffer buf, int n, int precision) {
         if (n < 0) {

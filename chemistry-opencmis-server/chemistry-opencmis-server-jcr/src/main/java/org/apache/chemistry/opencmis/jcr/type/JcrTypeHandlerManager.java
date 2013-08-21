@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JcrTypeHandlerManager {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrTypeHandlerManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrTypeHandlerManager.class);
 
     private final PathManager pathManager;
     private final JcrTypeManager typeManager;
@@ -91,9 +91,8 @@ public class JcrTypeHandlerManager {
                         }
                     }
                     return false;
-                }
-                catch (RepositoryException e) {
-                    log.debug(e.getMessage(), e);
+                } catch (RepositoryException e) {
+                    LOG.debug(e.getMessage(), e);
                     throw new CmisRuntimeException(e.getMessage(), e);
                 }
             }
@@ -117,9 +116,8 @@ public class JcrTypeHandlerManager {
                 }
             }
             throw new CmisObjectNotFoundException("No object type for object '" + node.getIdentifier() + "'");
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
         }
     }

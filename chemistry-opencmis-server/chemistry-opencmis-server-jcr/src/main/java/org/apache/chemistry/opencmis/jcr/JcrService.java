@@ -69,7 +69,7 @@ public class JcrService extends AbstractCmisService {
         for (Session session : sessions.values()) {
             session.logout();
         }
-        
+
         super.close();
     }
 
@@ -81,7 +81,7 @@ public class JcrService extends AbstractCmisService {
         return context;
     }
 
-    //------------------------------------------< repository service >---
+    // ------------------------------------------< repository service >---
 
     @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
@@ -96,8 +96,9 @@ public class JcrService extends AbstractCmisService {
     @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        
-        return jcrRepository.getTypeChildren(login(repositoryId), typeId, includePropertyDefinitions, maxItems, skipCount);
+
+        return jcrRepository.getTypeChildren(login(repositoryId), typeId, includePropertyDefinitions, maxItems,
+                skipCount);
     }
 
     @Override
@@ -108,11 +109,11 @@ public class JcrService extends AbstractCmisService {
     @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
-        
+
         return jcrRepository.getTypesDescendants(login(repositoryId), typeId, depth, includePropertyDefinitions);
     }
 
-    //------------------------------------------< navigation service >---
+    // ------------------------------------------< navigation service >---
 
     @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
@@ -134,7 +135,8 @@ public class JcrService extends AbstractCmisService {
 
     @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-        return jcrRepository.getFolderParent(login(repositoryId), folderId, filter, this, context.isObjectInfoRequired());
+        return jcrRepository.getFolderParent(login(repositoryId), folderId, filter, this,
+                context.isObjectInfoRequired());
     }
 
     @Override
@@ -163,14 +165,14 @@ public class JcrService extends AbstractCmisService {
         return jcrRepository.getCheckedOutDocs(login(repositoryId), folderId, filter, orderBy, includeAllowableActions,
                 maxItems, skipCount);
     }
-    
-    //------------------------------------------< object service >---
+
+    // ------------------------------------------< object service >---
 
     @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
-        
+
         return jcrRepository.createDocument(login(repositoryId), properties, folderId, contentStream, versioningState);
     }
 
@@ -179,7 +181,8 @@ public class JcrService extends AbstractCmisService {
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
 
-        return jcrRepository.createDocumentFromSource(login(repositoryId), sourceId, properties, folderId, versioningState);
+        return jcrRepository.createDocumentFromSource(login(repositoryId), sourceId, properties, folderId,
+                versioningState);
     }
 
     @Override
@@ -192,7 +195,7 @@ public class JcrService extends AbstractCmisService {
     @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
-        
+
         jcrRepository.setContentStream(login(repositoryId), objectId, true, null);
     }
 
@@ -206,7 +209,7 @@ public class JcrService extends AbstractCmisService {
     @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
-        
+
         jcrRepository.deleteObject(login(repositoryId), objectId, allVersions);
     }
 
@@ -225,7 +228,7 @@ public class JcrService extends AbstractCmisService {
     @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
-        
+
         return jcrRepository.getContentStream(login(repositoryId), objectId, offset, length);
     }
 
@@ -242,7 +245,7 @@ public class JcrService extends AbstractCmisService {
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
-        
+
         return jcrRepository.getObjectByPath(login(repositoryId), path, filter, includeAllowableActions, includeAcl,
                 this, context.isObjectInfoRequired());
     }
@@ -267,7 +270,7 @@ public class JcrService extends AbstractCmisService {
         jcrRepository.updateProperties(login(repositoryId), objectId, properties, this, context.isObjectInfoRequired());
     }
 
-    //------------------------------------------< versioning service >---
+    // ------------------------------------------< versioning service >---
 
     @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
@@ -285,7 +288,7 @@ public class JcrService extends AbstractCmisService {
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
-        
+
         jcrRepository.checkIn(login(repositoryId), objectId, major, properties, contentStream, checkinComment);
     }
 
@@ -293,7 +296,7 @@ public class JcrService extends AbstractCmisService {
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
 
-        return jcrRepository.getAllVersions(login(repositoryId), versionSeriesId == null ? objectId : versionSeriesId, 
+        return jcrRepository.getAllVersions(login(repositoryId), versionSeriesId == null ? objectId : versionSeriesId,
                 filter, includeAllowableActions, this, context.isObjectInfoRequired());
     }
 
@@ -312,7 +315,7 @@ public class JcrService extends AbstractCmisService {
 
         ObjectData object = getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, false,
                 null, null, false, false, extension);
-        
+
         return object.getProperties();
     }
 
@@ -326,8 +329,8 @@ public class JcrService extends AbstractCmisService {
         return jcrRepository.query(login(repositoryId), statement, searchAllVersions, includeAllowableActions,
                 maxItems, skipCount);
     }
-    
-    //------------------------------------------< protected >---
+
+    // ------------------------------------------< protected >---
 
     protected Session login(String workspaceName) {
         if (context == null) {
@@ -338,9 +341,8 @@ public class JcrService extends AbstractCmisService {
         if (session == null) {
             String userName = context.getUsername();
             String password = context.getPassword();
-            Credentials credentials = userName == null
-                ? null
-                : new SimpleCredentials(userName, password == null ? "".toCharArray() : password.toCharArray());
+            Credentials credentials = userName == null ? null : new SimpleCredentials(userName,
+                    password == null ? "".toCharArray() : password.toCharArray());
 
             session = jcrRepository.login(credentials, workspaceName);
             sessions.put(workspaceName, session);

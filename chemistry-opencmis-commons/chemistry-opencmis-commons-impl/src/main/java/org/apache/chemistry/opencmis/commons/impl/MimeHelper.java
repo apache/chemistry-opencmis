@@ -441,11 +441,10 @@ public final class MimeHelper {
                         throw new ParseException("Invalid escape character");
                     }
                     value.append(header.charAt(i));
-                }
-                // line breaks are ignored, except for naked '\n' characters,
-                // which are consider
-                // parts of linear whitespace.
-                else if (ch == '\r') {
+                } else if (ch == '\r') {
+                    // line breaks are ignored, except for naked '\n'
+                    // characters, which are consider parts of linear
+                    // whitespace.
                     // see if this is a CRLF sequence, and skip the second if it
                     // is.
                     if (i < end - 1 && header.charAt(i + 1) == '\n') {
@@ -482,9 +481,8 @@ public final class MimeHelper {
                 } else if (ch == '\\') {
                     pos++;
                     requiresEscaping = true;
-                }
-                // we need to process line breaks also
-                else if (ch == '\r') {
+                } else if (ch == '\r') {
+                    // we need to process line breaks also
                     requiresEscaping = true;
                 }
             }
@@ -524,9 +522,8 @@ public final class MimeHelper {
                 } else if (ch == '\\') {
                     pos++;
                     requiresEscaping = true;
-                }
-                // we need to process line breaks also
-                else if (ch == '\r') {
+                } else if (ch == '\r') {
+                    // we need to process line breaks also
                     requiresEscaping = true;
                 }
             }

@@ -46,7 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link CmisServiceFactory} implementation which returns {@link JcrService} instances.  
+ * A {@link CmisServiceFactory} implementation which returns {@link JcrService}
+ * instances.
  */
 public class JcrServiceFactory extends AbstractServiceFactory {
     private static final Logger log = LoggerFactory.getLogger(JcrServiceFactory.class);
@@ -81,24 +82,25 @@ public class JcrServiceFactory extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        CmisServiceWrapper<JcrService> serviceWrapper = new CmisServiceWrapper<JcrService>(
-                createJcrService(jcrRepository, context), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES,
-                DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+        CmisServiceWrapper<JcrService> serviceWrapper = new CmisServiceWrapper<JcrService>(createJcrService(
+                jcrRepository, context), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS,
+                DEFAULT_DEPTH_OBJECTS);
 
         serviceWrapper.getWrappedService().setCallContext(context);
         return serviceWrapper;
     }
 
-    //------------------------------------------< factories >---
+    // ------------------------------------------< factories >---
 
     /**
-     * Acquire the JCR repository given a configuration. This implementation used
-     * {@link javax.imageio.spi.ServiceRegistry#lookupProviders(Class)} for
+     * Acquire the JCR repository given a configuration. This implementation
+     * used {@link javax.imageio.spi.ServiceRegistry#lookupProviders(Class)} for
      * locating <code>RepositoryFactory</code> instances. The first instance
-     * which can handle the <code>jcrConfig</code> parameters is used to
-     * acquire the repository. 
-     *
-     * @param jcrConfig  configuration determining the JCR repository to be returned
+     * which can handle the <code>jcrConfig</code> parameters is used to acquire
+     * the repository.
+     * 
+     * @param jcrConfig
+     *            configuration determining the JCR repository to be returned
      * @return
      * @throws RepositoryException
      */
@@ -112,22 +114,20 @@ public class JcrServiceFactory extends AbstractServiceFactory {
                 if (repository != null) {
                     log.debug("Successfully acquired JCR repository from factory " + factory);
                     return repository;
-                }
-                else {
+                } else {
                     log.debug("Could not acquire JCR repository from factory " + factory);
                 }
             }
             throw new CmisConnectionException("No JCR repository factory for configured parameters");
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisConnectionException(e.getMessage(), e);
         }
     }
 
     /**
-     * Create a <code>JcrService</code> from a <code>JcrRepository</code>JcrRepository> and
-     * <code>CallContext</code>.
+     * Create a <code>JcrService</code> from a <code>JcrRepository</code>
+     * JcrRepository> and <code>CallContext</code>.
      * 
      * @param jcrRepository
      * @param context
@@ -149,7 +149,7 @@ public class JcrServiceFactory extends AbstractServiceFactory {
         return typeHandlerManager;
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     private void readConfiguration(Map<String, String> parameters) {
         Map<String, String> map = new HashMap<String, String>();
@@ -215,7 +215,6 @@ public class JcrServiceFactory extends AbstractServiceFactory {
     public JcrTypeManager getTypeManager() {
         return typeManager;
     }
-
 
     public JcrRepository getJcrRepository() {
         return jcrRepository;

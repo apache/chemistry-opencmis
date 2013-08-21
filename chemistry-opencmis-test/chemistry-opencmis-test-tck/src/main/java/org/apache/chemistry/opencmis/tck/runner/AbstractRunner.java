@@ -97,6 +97,7 @@ public abstract class AbstractRunner {
 
     private String loadTCKTimestamp() {
         InputStream stream = getClass().getResourceAsStream(TCK_BUILD_TIMESTAMP);
+
         if (stream != null) {
             try {
                 return IOUtils.readAllLines(stream);

@@ -56,27 +56,29 @@ import org.apache.chemistry.opencmis.jcr.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Instances of this class represent a cmis:folder backed by an underlying JCR <code>Node</code>. 
+ * Instances of this class represent a cmis:folder backed by an underlying JCR
+ * <code>Node</code>.
  */
 public class JcrFolder extends JcrNode {
     private static final Logger log = LoggerFactory.getLogger(JcrFolder.class);
 
-    public JcrFolder(Node node, JcrTypeManager typeManager, PathManager pathManager, JcrTypeHandlerManager typeHandlerManager) {
+    public JcrFolder(Node node, JcrTypeManager typeManager, PathManager pathManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         super(node, typeManager, pathManager, typeHandlerManager);
     }
 
     /**
      * See CMIS 1.0 section 2.2.3.1 getChildren
      * 
-     * @return  Iterator of <code>JcrNode</code>. Children which are created in the checked out
-     *      state are left out from the iterator.
+     * @return Iterator of <code>JcrNode</code>. Children which are created in
+     *         the checked out state are left out from the iterator.
      * @throws CmisRuntimeException
      */
     public Iterator<JcrNode> getNodes() {
         try {
-            final FilterIterator<Node> nodes = new FilterIterator<Node>(getNode().getNodes(), typeHandlerManager.getNodePredicate());
+            final FilterIterator<Node> nodes = new FilterIterator<Node>(getNode().getNodes(),
+                    typeHandlerManager.getNodePredicate());
 
             Iterator<JcrNode> jcrNodes = new Iterator<JcrNode>() {
                 public boolean hasNext() {
@@ -92,28 +94,27 @@ public class JcrFolder extends JcrNode {
                 }
             };
 
-            // Filter out nodes which are checked out and do not have a version history (i.e. only a root version)
-            // These are created with VersioningState checkedout and not yet checked in.
+            // Filter out nodes which are checked out and do not have a version
+            // history (i.e. only a root version)
+            // These are created with VersioningState checkedout and not yet
+            // checked in.
             return new FilterIterator<JcrNode>(jcrNodes, new Predicate<JcrNode>() {
                 public boolean evaluate(JcrNode node) {
                     try {
                         if (node.isVersionable()) {
                             Version baseVersion = getBaseVersion(node.getNode());
                             return baseVersion.getPredecessors().length > 0;
-                        }
-                        else {
+                        } else {
                             return true;
                         }
-                    }
-                    catch (RepositoryException e) {
+                    } catch (RepositoryException e) {
                         log.debug(e.getMessage(), e);
                         throw new CmisRuntimeException(e.getMessage(), e);
                     }
                 }
             });
 
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -121,7 +122,7 @@ public class JcrFolder extends JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.4.2 createDocumentFromSource
-     *
+     * 
      * @throws CmisStorageException
      */
     public JcrNode addNodeFromSource(JcrDocument source, Properties properties) {
@@ -129,7 +130,7 @@ public class JcrFolder extends JcrNode {
             String destPath = PathManager.createCmisPath(getNode().getPath(), source.getName());
             Session session = getNode().getSession();
 
-            session.getWorkspace().copy(source.getNode().getPath(), destPath);  
+            session.getWorkspace().copy(source.getNode().getPath(), destPath);
             JcrNode jcrNode = create(session.getNode(destPath));
 
             // overlay new properties
@@ -139,8 +140,7 @@ public class JcrFolder extends JcrNode {
 
             session.save();
             return jcrNode;
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
@@ -148,7 +148,7 @@ public class JcrFolder extends JcrNode {
 
     /**
      * See CMIS 1.0 section 2.2.4.14 deleteObject
-     *
+     * 
      * @throws CmisRuntimeException
      */
     @Override
@@ -156,12 +156,10 @@ public class JcrFolder extends JcrNode {
         try {
             if (getNode().hasNodes()) {
                 throw new CmisConstraintException("Folder is not empty!");
-            }
-            else {
+            } else {
                 super.delete(allVersions, isPwc);
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
@@ -177,23 +175,21 @@ public class JcrFolder extends JcrNode {
         try {
             Node node = getNode();
             if (hasCheckOuts(node)) {
-                result.setIds(Collections.<String>singletonList(id));                
-            }
-            else {
+                result.setIds(Collections.<String> singletonList(id));
+            } else {
                 Session session = node.getSession();
                 node.remove();
                 session.save();
-                result.setIds(Collections.<String>emptyList());
+                result.setIds(Collections.<String> emptyList());
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             result.setIds(Collections.singletonList(id));
         }
 
         return result;
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     @Override
     protected void compileProperties(PropertiesImpl properties, Set<String> filter, ObjectInfoImpl objectInfo)
@@ -212,9 +208,8 @@ public class JcrFolder extends JcrNode {
         // folder properties
         if (pathManager.isRoot(getNode())) {
             objectInfo.setHasParent(false);
-            addPropertyList(properties, typeId, filter, PropertyIds.PARENT_ID, Collections.<String>emptyList());
-        }
-        else {
+            addPropertyList(properties, typeId, filter, PropertyIds.PARENT_ID, Collections.<String> emptyList());
+        } else {
             objectInfo.setHasParent(true);
             addPropertyId(properties, typeId, filter, PropertyIds.PARENT_ID, getParent().getObjectId());
         }
@@ -243,9 +238,7 @@ public class JcrFolder extends JcrNode {
 
     @Override
     protected String getObjectId() throws RepositoryException {
-        return isRoot()
-                ? PathManager.CMIS_ROOT_ID
-                : super.getObjectId();
+        return isRoot() ? PathManager.CMIS_ROOT_ID : super.getObjectId();
     }
 
     @Override
@@ -304,26 +297,25 @@ public class JcrFolder extends JcrNode {
                 addedProps.add(prop.getId());
             }
 
-            // check if required properties are missing and try to add default values if defined
+            // check if required properties are missing and try to add default
+            // values if defined
             for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
                 if (!addedProps.contains(propDef.getId()) && propDef.getUpdatability() != Updatability.READONLY) {
                     PropertyData<?> prop = PropertyHelper.getDefaultValue(propDef);
                     if (prop == null && propDef.isRequired()) {
                         throw new CmisConstraintException("Property '" + propDef.getId() + "' is required!");
-                    }
-                    else if (prop != null) {
+                    } else if (prop != null) {
                         JcrConverter.setProperty(node, prop);
                     }
                 }
             }
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.debug(e.getMessage(), e);
             throw new CmisStorageException(e.getMessage(), e);
         }
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     private static boolean hasCheckOuts(Node node) throws RepositoryException {
         // Build xpath query of the form
@@ -341,24 +333,26 @@ public class JcrFolder extends JcrNode {
         QueryResult queryResult = query.execute();
         return queryResult.getNodes().hasNext();
     }
-    
+
     /**
-     * Add property "cmis:allowedChildObjectTypeIds" to the CMIS object.
-     * See CMIS specification v.1.0, 2.1.5.4.2 Property Definitions.
+     * Add property "cmis:allowedChildObjectTypeIds" to the CMIS object. See
+     * CMIS specification v.1.0, 2.1.5.4.2 Property Definitions.
      * 
-     * @param properties - the properties of the CMIS object represented by this instance. 
+     * @param properties
+     *            - the properties of the CMIS object represented by this
+     *            instance.
      * @param filter
-     * @param typeId - type ID of the instance.
+     * @param typeId
+     *            - type ID of the instance.
      */
-	private void addPropertyAllowedChildObjectTypeIds(PropertiesImpl properties, 
-			Set<String> filter, String typeId) {
-		Iterator<TypeDefinitionContainer> typeDefIterator = super.typeManager.getTypeDefinitionList().iterator();
+    private void addPropertyAllowedChildObjectTypeIds(PropertiesImpl properties, Set<String> filter, String typeId) {
+        Iterator<TypeDefinitionContainer> typeDefIterator = super.typeManager.getTypeDefinitionList().iterator();
         List<String> typeIds = new ArrayList<String>(super.typeManager.getTypeDefinitionList().size());
         while (typeDefIterator.hasNext()) {
-        	TypeDefinitionContainer definition = typeDefIterator.next();
-        	typeIds.add(definition.getTypeDefinition().getId());
+            TypeDefinitionContainer definition = typeDefIterator.next();
+            typeIds.add(definition.getTypeDefinition().getId());
         }
-		addPropertyList(properties, typeId, filter, PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, typeIds);
-	}
-    
+        addPropertyList(properties, typeId, filter, PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS, typeIds);
+    }
+
 }

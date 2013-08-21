@@ -24,8 +24,8 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 /**
- * This abstract class takes care of collecting references set when the handler is added to
- * {@link JcrTypeHandlerManager}.
+ * This abstract class takes care of collecting references set when the handler
+ * is added to {@link JcrTypeHandlerManager}.
  */
 public abstract class AbstractJcrTypeHandler implements JcrTypeHandler {
 

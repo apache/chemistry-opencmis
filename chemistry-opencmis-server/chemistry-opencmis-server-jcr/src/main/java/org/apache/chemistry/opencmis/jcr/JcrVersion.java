@@ -29,8 +29,8 @@ import javax.jcr.version.Version;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 
 /**
- * Instances of this class represent a specific version of a cmis:document backed by an underlying
- * JCR <code>Node</code>.
+ * Instances of this class represent a specific version of a cmis:document
+ * backed by an underlying JCR <code>Node</code>.
  */
 public class JcrVersion extends JcrVersionBase {
     private static final Pattern VERSION_LABEL_PATTERN = Pattern.compile("(\\d+)(\\.(\\d+))?.*");
@@ -46,19 +46,18 @@ public class JcrVersion extends JcrVersionBase {
         this.version = version;
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     @Override
     protected Node getContextNode() throws RepositoryException {
         Node frozen = version.getFrozenNode();
         if (frozen.hasNode(Node.JCR_CONTENT)) {
             return frozen.getNode(Node.JCR_CONTENT);
-        }
-        else {
-            return getNode().getNode(Node.JCR_CONTENT);  // root version
+        } else {
+            return getNode().getNode(Node.JCR_CONTENT); // root version
         }
     }
-    
+
     @Override
     protected String getObjectId() throws RepositoryException {
         return getVersionSeriesId();
@@ -85,9 +84,7 @@ public class JcrVersion extends JcrVersionBase {
         String name = version.getName();
         String major = parseVersion(name, GROUP_MINOR);
 
-        return major == null
-                ? name
-                : (Integer.parseInt(major) + 1) + ".0";
+        return major == null ? name : (Integer.parseInt(major) + 1) + ".0";
     }
 
     @Override
@@ -95,23 +92,22 @@ public class JcrVersion extends JcrVersionBase {
         // todo set checkinComment
         return "";
     }
-    
-    //------------------------------------------< private >---
+
+    // ------------------------------------------< private >---
 
     private static String parseVersion(String name, int group) {
         Matcher matcher = VERSION_LABEL_PATTERN.matcher(name);
-        return matcher.matches()
-                ? matcher.group(group)
-                : null;
+        return matcher.matches() ? matcher.group(group) : null;
     }
 
     /**
      * Retrieve version name.
+     * 
      * @return version name
      * @throws RepositoryException
      */
     public String getVersionName() throws RepositoryException {
-    	return version.getName();
+        return version.getName();
     }
 
 }

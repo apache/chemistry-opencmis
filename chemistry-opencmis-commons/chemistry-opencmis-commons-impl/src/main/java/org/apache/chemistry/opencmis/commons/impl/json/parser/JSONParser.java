@@ -38,7 +38,8 @@ import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
  */
 public class JSONParser {
     public static final int S_INIT = 0;
-    public static final int S_IN_FINISHED_VALUE = 1;// string,number,boolean,null,object,array
+    public static final int S_IN_FINISHED_VALUE = 1; // string, number, boolean,
+                                                     // null, object, array
     public static final int S_IN_OBJECT = 2;
     public static final int S_IN_ARRAY = 3;
     public static final int S_PASSED_PAIR_KEY = 4;

@@ -68,6 +68,7 @@ public class PolicyTable extends AbstractDetailsTable {
             return policy.getName();
         case 1:
             return policy;
+        default:
         }
 
         return null;

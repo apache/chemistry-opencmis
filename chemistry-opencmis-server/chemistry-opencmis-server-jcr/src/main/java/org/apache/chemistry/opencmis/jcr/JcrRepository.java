@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * JCR back-end for CMIS server.
  */
 public class JcrRepository {
-    private static final Logger log = LoggerFactory.getLogger(JcrRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrRepository.class);
 
     protected final Repository repository;
     protected final JcrTypeManager typeManager;
@@ -98,14 +98,17 @@ public class JcrRepository {
     protected final JcrTypeHandlerManager typeHandlerManager;
 
     /**
-     * Create a new <code>JcrRepository</code> instance backed by a JCR repository.
-     *
-     * @param repository  the JCR repository
+     * Create a new <code>JcrRepository</code> instance backed by a JCR
+     * repository.
+     * 
+     * @param repository
+     *            the JCR repository
      * @param pathManager
-     * @param typeManager  
+     * @param typeManager
      * @param typeHandlerManager
      */
-    public JcrRepository(Repository repository, PathManager pathManager, JcrTypeManager typeManager, JcrTypeHandlerManager typeHandlerManager) {
+    public JcrRepository(Repository repository, PathManager pathManager, JcrTypeManager typeManager,
+            JcrTypeHandlerManager typeHandlerManager) {
         this.repository = repository;
         this.typeManager = typeManager;
         this.typeHandlerManager = typeHandlerManager;
@@ -125,17 +128,14 @@ public class JcrRepository {
     public Session login(Credentials credentials, String workspaceName) {
         try {
             return repository.login(credentials, workspaceName);
-        }
-        catch (LoginException e) {
-            log.debug(e.getMessage(), e);
+        } catch (LoginException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisPermissionDeniedException(e.getMessage(), e);
-        }
-        catch (NoSuchWorkspaceException e) {
-            log.debug(e.getMessage(), e);
+        } catch (NoSuchWorkspaceException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
@@ -144,7 +144,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.2.2 getRepositoryInfo
      */
     public RepositoryInfo getRepositoryInfo(Session session) {
-        log.debug("getRepositoryInfo");
+        LOG.debug("getRepositoryInfo");
 
         return compileRepositoryInfo(session.getWorkspace().getName());
     }
@@ -160,9 +160,8 @@ public class JcrRepository {
             }
 
             return infos;
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
@@ -172,8 +171,8 @@ public class JcrRepository {
      */
     public TypeDefinitionList getTypeChildren(Session session, String typeId, boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount) {
-        
-        log.debug("getTypesChildren");
+
+        LOG.debug("getTypesChildren");
         return typeManager.getTypeChildren(typeId, includePropertyDefinitions, maxItems, skipCount);
     }
 
@@ -181,7 +180,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.2.5 getTypeDefinition
      */
     public TypeDefinition getTypeDefinition(Session session, String typeId) {
-        log.debug("getTypeDefinition");
+        LOG.debug("getTypeDefinition");
 
         TypeDefinition type = typeManager.getType(typeId);
         if (type == null) {
@@ -197,7 +196,7 @@ public class JcrRepository {
     public List<TypeDefinitionContainer> getTypesDescendants(Session session, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions) {
 
-        log.debug("getTypesDescendants");
+        LOG.debug("getTypesDescendants");
         return typeManager.getTypesDescendants(typeId, depth, includePropertyDefinitions);
     }
 
@@ -207,7 +206,7 @@ public class JcrRepository {
     public String createDocument(Session session, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState) {
 
-        log.debug("createDocument");
+        LOG.debug("createDocument");
 
         // check properties
         if (properties == null || properties.getProperties() == null) {
@@ -235,7 +234,8 @@ public class JcrRepository {
         // get parent Node and create child
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
         JcrDocumentTypeHandler typeHandler = typeHandlerManager.getDocumentTypeHandler(typeId);
-        JcrNode jcrNode = typeHandler.createDocument(parent, JcrConverter.toJcrName(name), properties, contentStream, versioningState);
+        JcrNode jcrNode = typeHandler.createDocument(parent, JcrConverter.toJcrName(name), properties, contentStream,
+                versioningState);
         return jcrNode.getId();
     }
 
@@ -245,7 +245,7 @@ public class JcrRepository {
     public String createDocumentFromSource(Session session, String sourceId, Properties properties, String folderId,
             VersioningState versioningState) {
 
-        log.debug("createDocumentFromSource");
+        LOG.debug("createDocumentFromSource");
 
         // get parent folder Node
         JcrFolder parent = getJcrNode(session, folderId).asFolder();
@@ -271,7 +271,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.4.3 createFolder
      */
     public String createFolder(Session session, Properties properties, String folderId) {
-        log.debug("createFolder");
+        LOG.debug("createFolder");
 
         // check properties
         if (properties == null || properties.getProperties() == null) {
@@ -300,7 +300,7 @@ public class JcrRepository {
     public ObjectData moveObject(Session session, Holder<String> objectId, String targetFolderId,
             ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
-        log.debug("moveObject");
+        LOG.debug("moveObject");
 
         if (objectId == null || objectId.getValue() == null) {
             throw new CmisInvalidArgumentException("Id is not valid!");
@@ -320,7 +320,7 @@ public class JcrRepository {
     public void setContentStream(Session session, Holder<String> objectId, Boolean overwriteFlag,
             ContentStream contentStream) {
 
-        log.debug("setContentStream or deleteContentStream");
+        LOG.debug("setContentStream or deleteContentStream");
 
         if (objectId == null || objectId.getValue() == null) {
             throw new CmisInvalidArgumentException("Id is not valid!");
@@ -335,7 +335,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.4.14 deleteObject
      */
     public void deleteObject(Session session, String objectId, Boolean allVersions) {
-        log.debug("deleteObject");
+        LOG.debug("deleteObject");
 
         // get the node
         JcrNode jcrNode = getJcrNode(session, objectId);
@@ -344,9 +344,8 @@ public class JcrRepository {
             boolean isPwc = jcrNode.isVersionable()
                     && JcrPrivateWorkingCopy.isPwc(jcrNode.asVersion().getVersionLabel());
             jcrNode.delete(Boolean.TRUE.equals(allVersions), isPwc);
-        }
-        catch(RepositoryException rex) {
-            log.debug(rex.getMessage(), rex);
+        } catch (RepositoryException rex) {
+            LOG.debug(rex.getMessage(), rex);
             throw new CmisRuntimeException(rex.getMessage(), rex);
         }
     }
@@ -355,7 +354,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.4.15 deleteTree
      */
     public FailedToDeleteData deleteTree(Session session, String folderId) {
-        log.debug("deleteTree");
+        LOG.debug("deleteTree");
 
         // get the folder
         JcrFolder jcrFolder = getJcrNode(session, folderId).asFolder();
@@ -368,7 +367,7 @@ public class JcrRepository {
     public ObjectData updateProperties(Session session, Holder<String> objectId, Properties properties,
             ObjectInfoHandler objectInfos, boolean objectInfoRequired) {
 
-        log.debug("updateProperties");
+        LOG.debug("updateProperties");
 
         if (objectId == null) {
             throw new CmisInvalidArgumentException("Id is not valid!");
@@ -387,7 +386,7 @@ public class JcrRepository {
     public ObjectData getObject(Session session, String objectId, String filter, Boolean includeAllowableActions,
             ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
-        log.debug("getObject");
+        LOG.debug("getObject");
 
         // check id
         if (objectId == null) {
@@ -407,7 +406,8 @@ public class JcrRepository {
     public Properties getProperties(Session session, String objectId, String filter, Boolean includeAllowableActions,
             ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
-        ObjectData object = getObject(session, objectId, filter, includeAllowableActions, objectInfos, requiresObjectInfo);
+        ObjectData object = getObject(session, objectId, filter, includeAllowableActions, objectInfos,
+                requiresObjectInfo);
         return object.getProperties();
     }
 
@@ -415,7 +415,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.4.6 getAllowableActions
      */
     public AllowableActions getAllowableActions(Session session, String objectId) {
-        log.debug("getAllowableActions");
+        LOG.debug("getAllowableActions");
 
         JcrNode jcrNode = getJcrNode(session, objectId);
         return jcrNode.getAllowableActions();
@@ -425,7 +425,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.4.10 getContentStream
      */
     public ContentStream getContentStream(Session session, String objectId, BigInteger offset, BigInteger length) {
-        log.debug("getContentStream");
+        LOG.debug("getContentStream");
 
         if (offset != null || length != null) {
             throw new CmisInvalidArgumentException("Offset and Length are not supported!");
@@ -433,7 +433,7 @@ public class JcrRepository {
 
         // get the node
         JcrDocument jcrDocument = getJcrNode(session, objectId).asDocument();
-        return jcrDocument.getContentStream();        
+        return jcrDocument.getContentStream();
     }
 
     /**
@@ -443,7 +443,7 @@ public class JcrRepository {
             Boolean includeAllowableActions, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
             ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
-        log.debug("getChildren");
+        LOG.debug("getChildren");
 
         // skip and max
         int skip = skipCount == null ? 0 : skipCount.intValue();
@@ -474,7 +474,7 @@ public class JcrRepository {
         Set<String> splitFilter = splitFilter(filter);
         Iterator<JcrNode> childNodes = jcrFolder.getNodes();
         while (childNodes.hasNext()) {
-            JcrNode child = childNodes.next();            
+            JcrNode child = childNodes.next();
             count++;
 
             if (skip > 0) {
@@ -510,7 +510,7 @@ public class JcrRepository {
             String filter, Boolean includeAllowableActions, Boolean includePathSegment, ObjectInfoHandler objectInfos,
             boolean requiresObjectInfo, boolean foldersOnly) {
 
-        log.debug("getDescendants or getFolderTree");
+        LOG.debug("getDescendants or getFolderTree");
 
         // check depth
         int d = depth == null ? 2 : depth.intValue();
@@ -560,7 +560,7 @@ public class JcrRepository {
             Boolean includeAllowableActions, Boolean includeRelativePathSegment, ObjectInfoHandler objectInfos,
             boolean requiresObjectInfo) {
 
-        log.debug("getObjectParents");
+        LOG.debug("getObjectParents");
 
         // get the file or folder
         JcrNode jcrNode = getJcrNode(session, objectId);
@@ -592,12 +592,13 @@ public class JcrRepository {
     /**
      * See CMIS 1.0 section 2.2.4.9 getObjectByPath
      */
-    public ObjectData getObjectByPath(Session session, String folderPath, String filter, boolean includeAllowableActions,
-            boolean includeACL, ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
+    public ObjectData getObjectByPath(Session session, String folderPath, String filter,
+            boolean includeAllowableActions, boolean includeACL, ObjectInfoHandler objectInfos,
+            boolean requiresObjectInfo) {
 
-        log.debug("getObjectByPath");
+        LOG.debug("getObjectByPath");
 
-        // check path 
+        // check path
         if (folderPath == null || !PathManager.isAbsolute(folderPath)) {
             throw new CmisInvalidArgumentException("Invalid folder path!");
         }
@@ -606,8 +607,7 @@ public class JcrRepository {
         JcrNode jcrNode;
         if (PathManager.isRoot(folderPath)) {
             jcrNode = root;
-        }
-        else {
+        } else {
             String path = PathManager.relativize(PathManager.CMIS_ROOT_PATH, folderPath);
             jcrNode = root.getNode(path);
         }
@@ -621,7 +621,7 @@ public class JcrRepository {
     public ObjectList getCheckedOutDocs(Session session, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount) {
 
-        log.debug("getCheckedOutDocs");
+        LOG.debug("getCheckedOutDocs");
 
         // skip and max
         int skip = skipCount == null ? 0 : skipCount.intValue();
@@ -636,10 +636,11 @@ public class JcrRepository {
 
         try {
             // Build xpath query of the form
-            // '//path/to/folderId//*[jcr:isCheckedOut='true' and (not(@jcr:createdBy) or @jcr:createdBy='admin')]'
-            String xPath = "/*[jcr:isCheckedOut='true' " +
-                    "and (not(@jcr:createdBy) or @jcr:createdBy='" + session.getUserID() + "')]";
-            
+            // '//path/to/folderId//*[jcr:isCheckedOut='true' and
+            // (not(@jcr:createdBy) or @jcr:createdBy='admin')]'
+            String xPath = "/*[jcr:isCheckedOut='true' " + "and (not(@jcr:createdBy) or @jcr:createdBy='"
+                    + session.getUserID() + "')]";
+
             if (folderId != null) {
                 JcrFolder jcrFolder = getJcrNode(session, folderId).asFolder();
                 String path = jcrFolder.getNode().getPath();
@@ -647,8 +648,7 @@ public class JcrRepository {
                     path = "";
                 }
                 xPath = '/' + Util.escape(path) + xPath;
-            }
-            else {
+            } else {
                 xPath = '/' + xPath;
             }
 
@@ -684,7 +684,7 @@ public class JcrRepository {
                     result.setHasMoreItems(true);
                     continue;
                 }
-                
+
                 // build and add child object
                 JcrPrivateWorkingCopy jcrVersion = jcrNode.asVersion().getPwc();
                 ObjectData objectData = jcrVersion.compileObjectType(splitFilter, includeAllowableActions, null, false);
@@ -693,9 +693,8 @@ public class JcrRepository {
 
             result.setNumItems(BigInteger.valueOf(count));
             return result;
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
@@ -704,9 +703,9 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.7.1 checkOut
      */
     public void checkOut(Session session, Holder<String> objectId, Holder<Boolean> contentCopied) {
-        log.debug("checkout");
+        LOG.debug("checkout");
 
-        // check id 
+        // check id
         if (objectId == null || objectId.getValue() == null) {
             throw new CmisInvalidArgumentException("Object Id must be set.");
         }
@@ -729,7 +728,7 @@ public class JcrRepository {
      * See CMIS 1.0 section 2.2.7.2 cancelCheckout
      */
     public void cancelCheckout(Session session, String objectId) {
-        log.debug("cancelCheckout");
+        LOG.debug("cancelCheckout");
 
         // check id
         if (objectId == null) {
@@ -752,7 +751,7 @@ public class JcrRepository {
     public void checkIn(Session session, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment) {
 
-        log.debug("checkin");
+        LOG.debug("checkin");
 
         // check id
         if (objectId == null || objectId.getValue() == null) {
@@ -763,11 +762,10 @@ public class JcrRepository {
         JcrNode jcrNode;
         try {
             jcrNode = getJcrNode(session, objectId.getValue());
-        }
-        catch (CmisObjectNotFoundException e) {
+        } catch (CmisObjectNotFoundException e) {
             throw new CmisUpdateConflictException(e.getCause().getMessage(), e.getCause());
         }
-        
+
         if (!jcrNode.isVersionable()) {
             throw new CmisUpdateConflictException("Not a version: " + jcrNode);
         }
@@ -783,7 +781,7 @@ public class JcrRepository {
     public List<ObjectData> getAllVersions(Session session, String objectId, String filter,
             Boolean includeAllowableActions, ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
-        log.debug("getAllVersions");
+        LOG.debug("getAllVersions");
 
         // check id
         if (objectId == null) {
@@ -824,8 +822,7 @@ public class JcrRepository {
             // CMIS mandates descending order
             Collections.reverse(allVersions);
             return allVersions;
-        }
-        else {
+        } else {
             // Single version
             ObjectData objectData = jcrNode.compileObjectType(splitFilter, includeAllowableActions, objectInfos,
                     requiresObjectInfo);
@@ -841,14 +838,14 @@ public class JcrRepository {
     public ObjectList query(final Session session, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount) {
 
-        log.debug("query");
+        LOG.debug("query");
 
         if (searchAllVersions) {
             throw new CmisNotSupportedException("Not supported: query for all versions");
         }
 
         // skip and max
-        int skip = skipCount == null ? 0 : skipCount.intValue();  
+        int skip = skipCount == null ? 0 : skipCount.intValue();
         if (skip < 0) {
             skip = 0;
         }
@@ -864,10 +861,9 @@ public class JcrRepository {
                 try {
                     JcrFolder folder = getJcrNode(session, id).asFolder();
                     String path = folder.getNode().getPath();
-                    return Util.escape(path);                    
-                }
-                catch (RepositoryException e) {
-                    log.debug(e.getMessage(), e);
+                    return Util.escape(path);
+                } catch (RepositoryException e) {
+                    LOG.debug(e.getMessage(), e);
                     throw new CmisRuntimeException(e.getMessage(), e);
                 }
             }
@@ -889,7 +885,7 @@ public class JcrRepository {
         };
 
         String xPath = queryTranslator.translateToXPath(statement);
-        try {  
+        try {
             // Execute query
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(xPath, Query.XPATH);
@@ -898,7 +894,8 @@ public class JcrRepository {
                 query.setOffset(skip);
             }
             if (max < Integer.MAX_VALUE) {
-                query.setLimit(max + 1);    // One more in order to detect whether there are more items
+                query.setLimit(max + 1); // One more in order to detect whether
+                                         // there are more items
             }
 
             QueryResult queryResult = query.execute();
@@ -929,14 +926,13 @@ public class JcrRepository {
             result.setHasMoreItems(nodes.hasNext());
             result.setNumItems(BigInteger.valueOf(count));
             return result;
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
-    //------------------------------------------< protected >---
+    // ------------------------------------------< protected >---
 
     protected RepositoryInfo compileRepositoryInfo(String repositoryId) {
         RepositoryInfoImpl fRepositoryInfo = new RepositoryInfoImpl();
@@ -970,7 +966,7 @@ public class JcrRepository {
         capabilities.setSupportsGetFolderTree(true);
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
         fRepositoryInfo.setCapabilities(capabilities);
-        
+
         return fRepositoryInfo;
     }
 
@@ -982,11 +978,7 @@ public class JcrRepository {
         StringBuilder description = new StringBuilder();
 
         for (String key : repository.getDescriptorKeys()) {
-            description
-                    .append(key)
-                    .append('=')
-                    .append(repository.getDescriptor(key))
-                    .append('\n');
+            description.append(key).append('=').append(repository.getDescriptor(key)).append('\n');
         }
 
         return description.toString();
@@ -1004,28 +996,25 @@ public class JcrRepository {
 
             Node node = session.getNodeByIdentifier(id);
             JcrNode jcrNode = typeHandlerManager.create(node);
-            
-            // if node isn't under versioning, then return retrieved object 
+
+            // if node isn't under versioning, then return retrieved object
             if (!jcrNode.isVersionable()) {
-            	return jcrNode;
+                return jcrNode;
             }
-            
+
             JcrVersionBase versionNode = jcrNode.asVersion();
             if (JcrPrivateWorkingCopy.denotesPwc(versionNode.getVersionLabel())) {
                 return versionNode.getPwc();
-            }
-            else {
-               JcrVersion version = versionNode.getVersion(((JcrVersion) versionNode).getVersionName());
-               return version;
+            } else {
+                JcrVersion version = versionNode.getVersion(((JcrVersion) versionNode).getVersionName());
+                return version;
             }
 
-        }
-        catch (ItemNotFoundException e) {
-            log.debug(e.getMessage(), e);
+        } catch (ItemNotFoundException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
@@ -1033,29 +1022,26 @@ public class JcrRepository {
     protected Node getRootNode(Session session) {
         try {
             return session.getNode(pathManager.getJcrRootPath());
-        }
-        catch (PathNotFoundException e) {
-            log.debug(e.getMessage(), e);
+        } catch (PathNotFoundException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (ItemNotFoundException e) {
-            log.debug(e.getMessage(), e);
+        } catch (ItemNotFoundException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisObjectNotFoundException(e.getMessage(), e);
-        }
-        catch (RepositoryException e) {
-            log.debug(e.getMessage(), e);
+        } catch (RepositoryException e) {
+            LOG.debug(e.getMessage(), e);
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
 
-    //------------------------------------------< private >---
+    // ------------------------------------------< private >---
 
     /**
      * Transitively gather the children of a node down to a specific depth
      */
-    private static void gatherDescendants(JcrFolder jcrFolder, List<ObjectInFolderContainer> list,
-            boolean foldersOnly, int depth, Set<String> filter, Boolean includeAllowableActions,
-            Boolean includePathSegments, ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
+    private static void gatherDescendants(JcrFolder jcrFolder, List<ObjectInFolderContainer> list, boolean foldersOnly,
+            int depth, Set<String> filter, Boolean includeAllowableActions, Boolean includePathSegments,
+            ObjectInfoHandler objectInfos, boolean requiresObjectInfo) {
 
         // iterate through children
         Iterator<JcrNode> childNodes = jcrFolder.getNodes();
@@ -1120,7 +1106,6 @@ public class JcrRepository {
 
         return result;
     }
-    
 
     public Repository getRepository() {
         return repository;
