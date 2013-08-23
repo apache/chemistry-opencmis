@@ -23,7 +23,7 @@
 	xsi:type="cmis:cmisTypeDocumentDefinitionType">
 	<cmis:id>myTestDocumentType</cmis:id>
 	<cmis:localName>myTestDocumentType</cmis:localName>
-	<cmis:localNamespace>http://opencmis.org/demo/</cmis:localNamespace>
+	<cmis:localNamespace>http://chemistry.apache.org/opencmis/demo/</cmis:localNamespace>
 	<cmis:parentId>cmis:document</cmis:parentId>
 	<cmis:displayName>My Test Document Type</cmis:displayName>
 	<cmis:queryName>TESTDOCTYPE</cmis:queryName>
@@ -32,7 +32,7 @@
 	<cmis:creatable>true</cmis:creatable>
 	<cmis:fileable>true</cmis:fileable>
 	<cmis:queryable>false</cmis:queryable>
-	<cmis:fulltextindexed>false</cmis:fulltextindexed>
+	<cmis:fulltextIndexed>false</cmis:fulltextIndexed>
 	<cmis:includedInSupertypeQuery>true</cmis:includedInSupertypeQuery>
 	<cmis:controllablePolicy>false</cmis:controllablePolicy>
 	<cmis:controllableACL>false</cmis:controllableACL>

@@ -117,6 +117,8 @@ public class FileShareTypeManager {
             newType.addPropertyDefinition(basePropDef);
         }
 
+        typeDefinitions.put(newType.getId(), newType);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Added type '{}'.", type.getId());
         }

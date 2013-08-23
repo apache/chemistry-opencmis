@@ -147,9 +147,24 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
                 userManager.addLogin(username, password);
             } else if (key.startsWith(PREFIX_TYPE)) {
                 // load type definition
-                String typeFile = replaceSystemProperties(parameters.get(key));
+                String typeFile = replaceSystemProperties(parameters.get(key).trim());
+                if (typeFile.length() == 0) {
+                    continue;
+                }
 
-                LOG.info("Loading type definition from file: {}", typeFile);
+                LOG.info("Loading type definition: {}", typeFile);
+
+                if (typeFile.charAt(0) == '/') {
+                    try {
+                        typeManager.loadTypeDefinitionFromResource(typeFile);
+                        continue;
+                    } catch (IllegalArgumentException e) {
+                        // resource not found -> try it as a regular file
+                    } catch (Exception e) {
+                        LOG.warn("Could not load type defintion from resource '{}': {}", typeFile, e.getMessage(), e);
+                        continue;
+                    }
+                }
 
                 try {
                     typeManager.loadTypeDefinitionFromFile(typeFile);
