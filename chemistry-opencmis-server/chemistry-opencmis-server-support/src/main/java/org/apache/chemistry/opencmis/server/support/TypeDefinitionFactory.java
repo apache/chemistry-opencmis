@@ -985,6 +985,7 @@ public final class TypeDefinitionFactory {
         result.setIsQueryable(sourcePropertyDefinition.isQueryable());
         result.setIsOrderable(sourcePropertyDefinition.isOrderable());
         result.setQueryName(sourcePropertyDefinition.getQueryName());
+        result.setIsOpenChoice(sourcePropertyDefinition.isOpenChoice());
 
         copyExtensions(sourcePropertyDefinition, result);
 
