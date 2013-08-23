@@ -389,6 +389,10 @@ public final class XMLConverter {
 
         writer.writeStartElement(namespace, TAG_TYPE);
         writer.writeNamespace(PREFIX_XSI, NAMESPACE_XSI);
+        String prefix = writer.getPrefix(namespace);
+        if (prefix != null) {
+            writer.writeNamespace(prefix, namespace);
+        }
 
         if (source.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
             writer.writeAttribute(PREFIX_XSI, NAMESPACE_XSI, "type", PREFIX_CMIS + ":" + ATTR_DOCUMENT_TYPE);
