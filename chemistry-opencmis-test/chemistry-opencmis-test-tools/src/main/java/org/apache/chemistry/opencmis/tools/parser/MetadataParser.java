@@ -33,8 +33,6 @@ import org.apache.chemistry.opencmis.tools.mapper.PropertyMapper;
  * created by the Configurator depending on the Content-Type to parse and
  * the corresponding parser configuration
  * 
- * @author Jens
- *
  */
 public interface MetadataParser {
     

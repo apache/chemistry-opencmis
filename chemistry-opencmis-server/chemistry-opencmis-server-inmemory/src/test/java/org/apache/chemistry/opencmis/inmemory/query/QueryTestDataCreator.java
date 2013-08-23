@@ -65,8 +65,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataIm
  * Utility class that fills the in-memory repository with some test objects that
  * can be used for query
  * 
- * @author Jens
- * 
  *         This class uses the following data for query testing. We have one
  *         document type "ComplexType" and one folder type "FolderType" The
  *         document type has one property of each of the types boolean, integer,

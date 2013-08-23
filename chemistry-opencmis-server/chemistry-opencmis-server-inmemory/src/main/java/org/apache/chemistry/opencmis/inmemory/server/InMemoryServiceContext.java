@@ -22,7 +22,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 
 /**
- * Helper class to associate context information with each incoming call
+ * Helper class to associate context information with each incoming call.
  * 
  */
 public final class InMemoryServiceContext {

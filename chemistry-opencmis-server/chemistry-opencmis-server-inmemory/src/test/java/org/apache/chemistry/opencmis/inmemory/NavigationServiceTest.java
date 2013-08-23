@@ -44,9 +44,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Jens
- */
+
 public class NavigationServiceTest extends AbstractServiceTest {
     private static final Logger log = LoggerFactory.getLogger(NavigationServiceTest.class);
     private static final int NUM_ROOT_FOLDERS = 10;

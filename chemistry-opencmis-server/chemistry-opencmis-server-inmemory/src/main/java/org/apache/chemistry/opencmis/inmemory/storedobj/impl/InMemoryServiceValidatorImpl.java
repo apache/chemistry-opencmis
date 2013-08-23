@@ -189,7 +189,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
      * org.apache.chemistry.opencmis.commons.data.ExtensionsData)
      */
     @Override
-    public StoredObject getChildren(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
+    public StoredObject getChildren(CallContext context, String repositoryId, String folderId, 
+            ExtensionsData extension) {
 
         StoredObject so = super.getChildren(context, repositoryId, folderId, extension);
         checkReadAccess(repositoryId, context.getUsername(), so);
@@ -490,7 +491,8 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
      * org.apache.chemistry.opencmis.commons.data.ExtensionsData)
      */
     @Override
-    public StoredObject getObjectByPath(CallContext context, String repositoryId, String path, ExtensionsData extension) {
+    public StoredObject getObjectByPath(CallContext context, String repositoryId, String path, 
+            ExtensionsData extension) {
 
         StoredObject so = super.getObjectByPath(context, repositoryId, path, extension);
         checkReadAccess(repositoryId, context.getUsername(), so);

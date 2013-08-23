@@ -27,9 +27,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
  * client (like a unit test) in class and the name of the class is passed to the
  * session. The in-memory repository creates an instance of this class to
  * generate the type system for this instance
- * 
- * @author Jens
- * 
  */
 public interface TypeCreator {
 

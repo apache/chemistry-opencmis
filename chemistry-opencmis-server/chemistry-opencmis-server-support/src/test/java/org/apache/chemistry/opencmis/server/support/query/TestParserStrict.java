@@ -22,10 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Jens
- * 
- */
 public class TestParserStrict extends AbstractParserTest {
 
     @Before

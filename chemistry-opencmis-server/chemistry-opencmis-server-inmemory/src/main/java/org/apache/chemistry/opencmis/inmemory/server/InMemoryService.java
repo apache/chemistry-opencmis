@@ -388,7 +388,8 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
-            String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
+            String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, 
+            ExtensionsData extension) {
         return fDisSvc.getContentChanges(getCallContext(), repositoryId, changeLogToken, includeProperties, filter,
                 includePolicyIds, includeAcl, maxItems, extension, this);
     }
@@ -410,7 +411,8 @@ public class InMemoryService extends AbstractCmisService {
     }
 
     @Override
-    public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
+    public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, 
+            ExtensionsData extension) {
         fMultiSvc.removeObjectFromFolder(getCallContext(), repositoryId, objectId, folderId, extension, this);
     }
 

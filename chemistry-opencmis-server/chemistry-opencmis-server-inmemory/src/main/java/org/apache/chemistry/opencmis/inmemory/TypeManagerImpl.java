@@ -41,15 +41,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Class that manages a type system for a repository types can be added, the
  * inheritance can be managed and type can be retrieved for a given type id.
- * 
- * @author Jens
- * 
  */
 public class TypeManagerImpl implements TypeManagerCreatable {
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeManagerImpl.class.getName());
     /**
-     * map from repository id to a types map
+     * map from repository id to a types map.
      */
     private final Map<String, TypeDefinitionContainer> fTypesMap = new HashMap<String, TypeDefinitionContainer>();
 
@@ -121,6 +118,8 @@ public class TypeManagerImpl implements TypeManagerCreatable {
      * @param typesList
      *            list of types to add to the repository
      * 
+     * @param createCmisDefaultTypes
+     *            indicates if CMIS base types should be added to list
      */
     public void initTypeSystem(List<TypeDefinition> typesList, boolean createCmisDefaultTypes) {
 
@@ -138,14 +137,13 @@ public class TypeManagerImpl implements TypeManagerCreatable {
 
     }
 
-    /**
-     * Add a type to the type system. Add all properties from inherited types,
-     * add type to children of parent types.
+    /*
+     * (non-Javadoc)
      * 
-     * @param repositoryId
-     *            repository to which the type is added
-     * @param cmisType
-     *            new type to add
+     * @see
+     * org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable
+     * #addTypeDefinition(org.apache.chemistry.opencmis.commons.definitions.
+     * TypeDefinition, boolean)
      */
     @Override
     public void addTypeDefinition(TypeDefinition cmisType, boolean addInheritedProperties) {
@@ -170,15 +168,25 @@ public class TypeManagerImpl implements TypeManagerCreatable {
         fTypesMap.put(cmisType.getId(), typeContainer);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable
+     * #updateTypeDefinition(org.apache.chemistry.opencmis.commons.definitions.
+     * TypeDefinition)
+     */
     @Override
     public void updateTypeDefinition(TypeDefinition typeDefinition) {
         throw new CmisNotSupportedException("updating a type definition is not supported.");
     }
 
-    /**
-     * Remove a type from a type system
+    /*
+     * (non-Javadoc)
      * 
-     * @param typeId
+     * @see
+     * org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable
+     * #deleteTypeDefinition(java.lang.String)
      */
     @Override
     public void deleteTypeDefinition(String typeId) {

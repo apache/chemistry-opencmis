@@ -30,38 +30,56 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
 /**
- * @author Jens
- * 
- *         This is the interface an implementation must provide to store any
- *         kind of CMIS objects. The ObjectStore is the topmost container of all
- *         CMIS object that get persisted. It is comparable to a file system,
- *         one object store exists per repository id. The object store allows
- *         access objects by an id. In addition a object can be retrieved by
- *         path. Typically the object store owns the list of object ids and
- *         maintains the path hierarchy.
+ * This is the interface an implementation must provide to store any kind of
+ * CMIS objects. The ObjectStore is the topmost container of all CMIS object
+ * that get persisted. It is comparable to a file system, one object store
+ * exists per repository id. The object store allows access objects by an id. In
+ * addition a object can be retrieved by path. Typically the object store owns
+ * the list of object ids and maintains the path hierarchy.
  */
 public interface ObjectStore {
 
+    /**
+     * Class to represent a result of get children calls.
+     */
     public static class ChildrenResult {
         private int noItems;
         private List<Fileable> children;
 
+        /**
+         * Create new children results object.
+         * 
+         * @param children
+         *            list of children
+         * @param noItems
+         *            number of items in result
+         */
         public ChildrenResult(List<Fileable> children, int noItems) {
             this.children = children;
             this.noItems = noItems;
         }
 
+        /**
+         * Get number of items in this result.
+         * 
+         * @return number of items
+         */
         public int getNoItems() {
             return noItems;
         }
 
+        /**
+         * Get the children objects.
+         * 
+         * @return list of children
+         */
         public List<Fileable> getChildren() {
             return children;
         }
     }
 
     /**
-     * Get the root folder of this object store
+     * Get the root folder of this object store.
      * 
      * @return the root folder of this store
      */
@@ -72,12 +90,14 @@ public interface ObjectStore {
      * 
      * @param path
      *            the path to the object
+     * @param user
+     *            user to check visibility
      * @return the stored object with this path
      */
     StoredObject getObjectByPath(String path, String user);
 
     /**
-     * get an object by its id
+     * get an object by its id.
      * 
      * @param folderId
      *            the id of the object
@@ -89,10 +109,12 @@ public interface ObjectStore {
      * Deletes an object from the store. For a folders the folder must be empty.
      * 
      * @param objectId
-     * @param user
+     *            id of object to be deleted
      * @param allVersions
      *            is TRUE all version of the document are deleted, otherwise
      *            just this one
+     * @param user
+     *            user to check visibility
      */
     void deleteObject(String objectId, Boolean allVersions, String user);
 
@@ -164,6 +186,10 @@ public interface ObjectStore {
      *            aces that are added
      * @param removeACEs
      *            aces that are removed
+     * @param contentStream
+     *            content stream of the object to create
+     * @param versioningState
+     *            version state of the object to be created in
      * @return versioned document object
      */
     DocumentVersion createVersionedDocument(String name, Map<String, PropertyData<?>> propMap, String user,
@@ -209,6 +235,10 @@ public interface ObjectStore {
      *            map of properties
      * @param user
      *            the user who creates the document
+     * @param addACEs
+     *            aces that are added
+     * @param removeACEs
+     *            aces that are removed
      * @return policy object
      */
     StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user,
@@ -216,7 +246,7 @@ public interface ObjectStore {
 
     /**
      * get all the children of this folder. To support paging an initial offset
-     * and a maximum number of children to retrieve can be passed
+     * and a maximum number of children to retrieve can be passed.
      * 
      * @param folder
      *            folder to get children from
@@ -246,6 +276,7 @@ public interface ObjectStore {
      * @param skipCount
      *            initial offset where to start fetching
      * @param user
+     *            the user who performs the call
      * @return list of children folders
      */
     ChildrenResult getFolderChildren(Folder folder, int maxItems, int skipCount, String user);
@@ -263,7 +294,7 @@ public interface ObjectStore {
     void move(StoredObject so, Folder oldParent, Folder newParent);
 
     /**
-     * Rename an object
+     * Rename an object.
      * 
      * @param so
      *            object to be renamed
@@ -273,14 +304,15 @@ public interface ObjectStore {
     void rename(Fileable so, String newName);
 
     /**
-     * Persist a new version in the store (created from a check-out)
+     * Persist a new version in the store (created from a check-out).
      * 
      * @param version
+     *      version to be stored
      */
     void storeVersion(DocumentVersion version);
 
     /**
-     * remove a version from the store (after a cancel check-out)
+     * remove a version from the store (after a cancel check-out).
      * 
      * @param version
      *            version to be deleted
@@ -288,7 +320,7 @@ public interface ObjectStore {
     void deleteVersion(DocumentVersion version);
 
     /**
-     * Persist an object after modifying the properties
+     * Persist an object after modifying the properties.
      * 
      * @param so
      *            object to be updated
@@ -296,7 +328,7 @@ public interface ObjectStore {
     void upateObject(StoredObject so);
 
     /**
-     * get the path of this folder (for folder in CMIS path is unique)
+     * get the path of this folder (for folder in CMIS path is unique).
      * 
      * @param folderId
      *            id of folder
@@ -310,7 +342,7 @@ public interface ObjectStore {
     void clear();
 
     /**
-     * For statistics: return the number of objects contained in the system
+     * For statistics: return the number of objects contained in the system.
      * 
      * @return number of stored objects
      */
@@ -322,6 +354,8 @@ public interface ObjectStore {
      * additional actions can take place (like assigning properties and a type)
      * before it is persisted.
      * 
+     * @param name
+     *            name of relationship
      * @param sourceObject
      *            source of the relationship
      * @param targetObject
@@ -330,8 +364,6 @@ public interface ObjectStore {
      *            map of properities
      * @param user
      *            the user who creates the document
-     * @param folder
-     *            the parent folder
      * @param addACEs
      *            aces that are added
      * @param removeACEs
@@ -356,7 +388,7 @@ public interface ObjectStore {
 
     /**
      * Apply a ACLs by relative adding and removing a list of ACEs to/from an
-     * object
+     * object.
      * 
      * @param so
      *            object where ACLs are applied
@@ -366,12 +398,14 @@ public interface ObjectStore {
      *            list of ACEs to be removed
      * @param aclPropagation
      *            enum value how to propagate ACLs to child objects
+     * @param user
+     *            the user who applies ACL
      * @return new ACL of object
      */
-    Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId);
+    Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String user);
 
     /**
-     * Apply a ACLs by setting a new list of ACEs to an object
+     * Apply a ACLs by setting a new list of ACEs to an object.
      * 
      * @param so
      *            object where ACLs are applied
@@ -379,12 +413,15 @@ public interface ObjectStore {
      *            list of ACEs to be applied
      * @param aclPropagation
      *            enum value how to propagate ACLs to child objects
+     * @param user
+     *            user who executes the call and needs to have permission to
+     *            apply ACL
      * @return new ACL of object
      */
-    Acl applyAcl(StoredObject so, Acl aces, AclPropagation aclPropagation, String principalId);
+    Acl applyAcl(StoredObject so, Acl aces, AclPropagation aclPropagation, String user);
 
     /**
-     * Check if this store contains any object with the given type id
+     * Check if this store contains any object with the given type id.
      * 
      * @param typeId
      *            id of type definition to check
@@ -394,20 +431,21 @@ public interface ObjectStore {
     boolean isTypeInUse(String typeId);
 
     /**
-     * Get relationships to and from an object
+     * Get relationships to and from an object.
      * 
      * @param objectId
      *            id of object to get relationships with
-     * @param subTypeIds
+     * @param typeIds
      *            list of all types to be included
-     * @param relationshipDirection
+     * @param direction
      *            direction of relationship
      * @return
+     *            list of relationships belonging to this object
      */
     List<StoredObject> getRelationships(String objectId, List<String> typeIds, RelationshipDirection direction);
 
     /**
-     * get an ACL object from an ACL id
+     * get an ACL object from an ACL id.
      * 
      * @param aclId
      *            id of ACL
@@ -417,8 +455,10 @@ public interface ObjectStore {
 
     // Multifiling methods:
     /**
-     * get all parent ids of this object visible for a user
+     * get all parent ids of this object visible for a user.
      * 
+     * @param so
+     *            objects to get parents from
      * @param user
      *            user who can see parents
      * @return list of folder ids
@@ -426,18 +466,22 @@ public interface ObjectStore {
     List<String> getParentIds(StoredObject so, String user);
 
     /**
-     * Add this document to a new parent folder as child object
+     * Add this document to a new parent folder as child object.
      * 
-     * @param parentId
-     *            id of parent folder the document is to be added to
+     * @param so
+     *            objects to be added
+     * @param parent
+     *            parent folder the object is to be added to
      */
     void addParent(StoredObject so, Folder parent);
 
     /**
-     * Remove this object from the children of parent
+     * Remove this object from the children of parent.
      * 
-     * @param parentId
-     *            id of parent folder the document is to be removed from
+     * @param so
+     *            object to be removed
+     * @param parent
+     *            parent folder the object is to be removed from
      */
     void removeParent(StoredObject so, Folder parent);
 

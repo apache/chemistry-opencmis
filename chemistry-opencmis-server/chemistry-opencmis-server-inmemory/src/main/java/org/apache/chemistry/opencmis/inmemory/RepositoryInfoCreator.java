@@ -25,9 +25,6 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
  * implemented by a client (like a unit test) in class and the name of the class
  * is passed to the session. The in-memory repository creates an instance of
  * this class to generate the repository info for its instance.
- * 
- * @author Jens
- * 
  */
 public interface RepositoryInfoCreator {
     RepositoryInfo createRepositoryInfo();

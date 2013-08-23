@@ -38,8 +38,6 @@ import com.drew.metadata.Tag;
  * A parser implementation using a lower level interface to get more control about the 
  * EXIF tags than Tika provides
  * 
- * @author Jens
- *
  */
 public class MetadataParserExif extends AbstractMetadataParser  {
 

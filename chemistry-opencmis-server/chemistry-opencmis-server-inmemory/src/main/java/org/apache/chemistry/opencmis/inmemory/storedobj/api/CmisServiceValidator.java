@@ -69,7 +69,8 @@ public interface CmisServiceValidator {
     StoredObject createPolicy(CallContext context, String repositoryId, String folderId, Acl addAces, Acl removeAces,
             List<String> policyIds, ExtensionsData extension);
 
-    StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId, ExtensionsData extension);
+    StoredObject getAllowableActions(CallContext context, String repositoryId, String objectId, 
+            ExtensionsData extension);
 
     StoredObject getObject(CallContext context, String repositoryId, String objectId, ExtensionsData extension);
 
@@ -145,7 +146,8 @@ public interface CmisServiceValidator {
     StoredObject[] removePolicy(CallContext context, String repositoryId, String policyId, String objectId,
             ExtensionsData extension);
 
-    StoredObject getAppliedPolicies(CallContext context, String repositoryId, String objectId, ExtensionsData extension);
+    StoredObject getAppliedPolicies(CallContext context, String repositoryId, String objectId, 
+            ExtensionsData extension);
 
     StoredObject create(CallContext context, String repositoryId, String folderId, ExtensionsData extension);
 

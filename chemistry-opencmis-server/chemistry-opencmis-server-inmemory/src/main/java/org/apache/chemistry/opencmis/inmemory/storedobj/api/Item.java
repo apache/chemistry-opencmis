@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+/**
+ * Interface to represent a CMIS item according to the CMIS specification.
+ * 
+ */
 public interface Item extends Fileable {
 
 }

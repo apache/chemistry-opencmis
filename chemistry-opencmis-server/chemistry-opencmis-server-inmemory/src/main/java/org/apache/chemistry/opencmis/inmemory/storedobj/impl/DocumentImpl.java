@@ -41,10 +41,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * InMemory Stored Document A document is a stored object that has a path and
- * (optional) content
- * 
- * @author Jens
- * 
+ * (optional) content.
  */
 
 public class DocumentImpl extends FilingImpl implements Document {

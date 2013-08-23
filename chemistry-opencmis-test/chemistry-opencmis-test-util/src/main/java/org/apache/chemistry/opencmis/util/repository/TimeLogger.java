@@ -25,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Simple utility class for time logging Note: NOT thread safe!
- *
- * @author Jens
- *
  */
 public class TimeLogger {
     private static final Logger LOG = LoggerFactory.getLogger(TimeLogger.class);

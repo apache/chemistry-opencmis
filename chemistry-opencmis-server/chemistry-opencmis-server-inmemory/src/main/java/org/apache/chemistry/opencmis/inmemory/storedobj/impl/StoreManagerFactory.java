@@ -24,9 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * create objects that are stored in a persistent store
- * 
- * @author Jens
+ * Create objects that are stored in a persistent store.
  */
 public final class StoreManagerFactory {
 

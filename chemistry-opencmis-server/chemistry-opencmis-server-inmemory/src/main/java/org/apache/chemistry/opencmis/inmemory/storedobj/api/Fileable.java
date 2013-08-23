@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+/**
+ * Interface for convenience representing objects that can be filed to a folder.
+ *
+ */
 public interface Fileable extends StoredObject, Filing {
 
 }

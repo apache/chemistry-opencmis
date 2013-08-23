@@ -18,9 +18,23 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+/**
+ * Interface representing a policy according to the CMIS specification.
+ * 
+ */
 public interface Relationship {
 
+    /**
+     * get the source objects of this relation.
+     * 
+     * @return list of object ids
+     */
     String getSourceObjectId();
 
+    /**
+     * get the target objects of this relation.
+     * 
+     * @return list of object ids
+     */
     String getTargetObjectId();
 }

@@ -92,10 +92,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Jens
- */
-
 public class ObjectServiceTest extends AbstractServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(ObjectServiceTest.class);

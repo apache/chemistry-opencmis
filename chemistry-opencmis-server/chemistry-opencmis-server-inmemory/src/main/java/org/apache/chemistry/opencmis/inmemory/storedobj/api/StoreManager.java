@@ -34,14 +34,13 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
  * information can be retrieved or set, a repository can be created or for a
  * given repository the store can be retrieved.
  * 
- * @author Jens
  */
 public interface StoreManager {
 
     /**
-     * return a list of all available repositories
+     * Return a list of all available repositories.
      * 
-     * @return
+     * @return list of repository ids
      */
     List<String> getAllRepositoryIds();
 
@@ -52,30 +51,28 @@ public interface StoreManager {
      * 
      * @param repositoryId
      *            id of repository to initialize
-     * @param isCreated
-     *            true if the repository was just created and is initialized for
-     *            the first time false if it existed before and is reloaded
      */
     void initRepository(String repositoryId);
 
     /**
-     * get the object store for the given repository id.
+     * Get the object store for the given repository id.
      * 
      * @param repositoryId
+     *            repository id of object
      * @return the object store in which objects for this repository are stored.
      */
     ObjectStore getObjectStore(String repositoryId);
 
     /**
-     * get a permission and parameter validating instance
+     * Get a permission and parameter validating instance.
      * 
      * @return validator and permission checker
      */
     CmisServiceValidator getServiceValidator();
 
     /**
-     * create a new repository with the given id. Create the repository,
-     * initiate the type system and initialize it so that it is ready for use
+     * Create a new repository with the given id. Create the repository,
+     * initiate the type system and initialize it so that it is ready for use.
      * 
      * @param repositoryId
      *            id of repository
@@ -86,7 +83,7 @@ public interface StoreManager {
     void createAndInitRepository(String repositoryId, String typeCreatorClassName);
 
     /**
-     * retrieve a list with all type definitions.
+     * Retrieve a list with all type definitions.
      * 
      * @param repositoryId
      *            id of repository
@@ -98,7 +95,7 @@ public interface StoreManager {
     Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions);
 
     /**
-     * Retrieve a type definition for a give repository and type id
+     * Retrieve a type definition for a give repository and type id.
      * 
      * @param repositoryId
      *            id of repository
@@ -110,7 +107,7 @@ public interface StoreManager {
 
     /**
      * Retrieve a type definition for a give repository and type id with or
-     * without property definitions and limited to depth in hierarchy
+     * without property definitions and limited to depth in hierarchy.
      * 
      * @param repositoryId
      *            id of repository
@@ -127,7 +124,7 @@ public interface StoreManager {
             int depth);
 
     /**
-     * Retrieve a factory to create CMIS data structures used as containers
+     * Retrieve a factory to create CMIS data structures used as containers.
      * 
      * @return factory object
      */
@@ -136,17 +133,18 @@ public interface StoreManager {
     /**
      * Retrieve a list of root types in the repositories. Root types are
      * available by definition and need to to be created by a client. CMIS
-     * supports documents, folders, relations and policies as root types
+     * supports documents, folders, relations and policies as root types.
      * 
      * @param repositoryId
      *            id of repository
      * @param inclPropDefs
+     *            true to include property definitions, false otherwise
      * @return list of root types
      */
     List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean inclPropDefs);
 
     /**
-     * Retrieve the repository information for a repository
+     * Retrieve the repository information for a repository.
      * 
      * @param repositoryId
      *            id of repository
@@ -155,7 +153,7 @@ public interface StoreManager {
     RepositoryInfo getRepositoryInfo(String repositoryId);
 
     /**
-     * retrieve the type manager for a given repository
+     * Retrieve the type manager for a given repository.
      * 
      * @param repositoryId
      *            id of repository
@@ -163,24 +161,47 @@ public interface StoreManager {
      */
     TypeManagerCreatable getTypeManager(String repositoryId);
 
+    /**
+     * Get information if a repository supports single filing.
+     * 
+     * @param repositoryId
+     *            repository id of to get information from
+     * @return true if single filing is supported false otherwise
+     */
     boolean supportsSingleFiling(String repositoryId);
 
+    /**
+     * Get information if a repository supports multi filing.
+     * 
+     * @param repositoryId
+     *            repository id of to get information from
+     * @return true if multi filing is supported false otherwise
+     */
     boolean supportsMultiFilings(String repositoryId);
 
     /**
      * Execute a query against the repository (same parameter as the discovery
-     * service query method
+     * service query method.
      * 
      * @param user
+     *            user execuing the query
      * @param repositoryId
+     *            id of repository
      * @param statement
+     *            query statement
      * @param searchAllVersions
+     *            search in all versions of objects
      * @param includeAllowableActions
+     *            include allowable actions
      * @param includeRelationships
+     *            include relationships
      * @param renditionFilter
+     *            include renditions
      * @param maxItems
+     *            max number of items to return
      * @param skipCount
-     * @return
+     *            items to skip
+     * @return list of objects matching the query
      */
     ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,

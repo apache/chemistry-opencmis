@@ -20,27 +20,58 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 /**
  * The interface version adds the version specific functionality to an object.
- * It has minor and major versions, stores a comment and has a label
- * 
- * @author Jens
- * 
+ * It has minor and major versions, stores a comment and has a label.
  */
 public interface Version {
 
+    /**
+     * Check if this version is a major version.
+     * 
+     * @return true if major version, false if it is a minor version
+     */
     boolean isMajor();
 
+    /**
+     * Check if this version is a private working copy.
+     * 
+     * @return true if it a PWC, false if not
+     */
     boolean isPwc();
 
     /**
      * make the private working copy an official version.
+     * 
+     * @param isMajor
+     *            true if major version, false if it is a minor version
      */
     void commit(boolean isMajor);
 
+    /**
+     * Set the check.in comment.
+     * 
+     * @param comment
+     *            check-in comment
+     */
     void setCheckinComment(String comment);
 
+    /**
+     * Get the check-in comment.
+     * 
+     * @return check-in comment
+     */
     String getCheckinComment();
 
+    /**
+     * Get the version label.
+     * 
+     * @return the version label
+     */
     String getVersionLabel();
 
+    /**
+     * Get the versioned document (parent) of this version.
+     * 
+     * @return versioned document
+     */
     VersionedDocument getParentDocument();
 }

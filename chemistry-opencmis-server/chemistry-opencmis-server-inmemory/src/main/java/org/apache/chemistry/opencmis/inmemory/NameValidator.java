@@ -21,8 +21,10 @@ package org.apache.chemistry.opencmis.inmemory;
 
 public final class NameValidator {
 
-    public static final String ERROR_ILLEGAL_ID = "Id contains illegal characters, allowed are 'a'..'z', 'A'..'Z', '0'..'9', '-', '_'";
-    public static final String ERROR_ILLEGAL_NAME = "Name contains illegal characters, not allowed are '/', '\\', ':', '\"', '*'. '?', '<','>', '|'";
+    public static final String ERROR_ILLEGAL_ID = "Id contains illegal characters, allowed are "
+            + "'a'..'z', 'A'..'Z', '0'..'9', '-', '_'";
+    public static final String ERROR_ILLEGAL_NAME = "Name contains illegal characters, not allowed are "
+            + "'/', '\\', ':', '\"', '*'. '?', '<','>', '|'";
 
     // Utility class
     private NameValidator() {
@@ -30,10 +32,11 @@ public final class NameValidator {
 
     /**
      * check whether id contains only valid characters Allowed are 'a'..'z',
-     * 'A'..'Z', '0'..'9', '.', '-', ' ', '_';
+     * 'A'..'Z', '0'..'9', '.', '-', ' ', '_'.
      * 
      * @param s
      *            string to verify
+     * @return true if valid name, false otherwise
      */
     public static boolean isValidId(String s) {
         if (null == s || s.length() == 0) {
@@ -60,6 +63,7 @@ public final class NameValidator {
      * 
      * @param s
      *            string to verify
+     * @return true if valid name, false otherwise
      */
     public static boolean isValidName(String s) {
         if (null == s || s.length() == 0) {

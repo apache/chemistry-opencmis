@@ -37,8 +37,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A metadata parser using the Apache Tika library
- * @author Jens
- *
  */
 public class MetadataParserTika extends AbstractMetadataParser {
 

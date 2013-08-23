@@ -25,9 +25,6 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 
-/**
- * @author Jens
- */
 public final class FilterParser {
 
     // Utility class

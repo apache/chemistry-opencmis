@@ -45,9 +45,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 
 /**
  * StoredObject is the common superclass of all objects hold in the repository
- * Documents, Folders, Relationships and Policies
+ * Documents, Folders, Relationships and Policies.
  * 
- * @author Jens
  */
 public class StoredObjectImpl implements StoredObject {
 
@@ -325,10 +324,10 @@ public class StoredObjectImpl implements StoredObject {
         return now;
     }
 
-    /**
+    /*
      * Add CMIS_CREATED_BY, CMIS_CREATION_DATE, CMIS_LAST_MODIFIED_BY,
      * CMIS_LAST_MODIFICATION_DATE, CMIS_CHANGE_TOKEN system properties to the
-     * list of properties with current values
+     * list of properties with current values.
      */
     @SuppressWarnings("unchecked")
     private void addSystemBaseProperties(Map<String, PropertyData<?>> properties, String user, boolean isCreated) {
@@ -359,7 +358,7 @@ public class StoredObjectImpl implements StoredObject {
         }
     }
 
-    /**
+    /*
      * Add CMIS_CREATED_BY, CMIS_CREATION_DATE, CMIS_LAST_MODIFIED_BY,
      * CMIS_LAST_MODIFICATION_DATE, CMIS_CHANGE_TOKEN system properties to the
      * list of properties with current values

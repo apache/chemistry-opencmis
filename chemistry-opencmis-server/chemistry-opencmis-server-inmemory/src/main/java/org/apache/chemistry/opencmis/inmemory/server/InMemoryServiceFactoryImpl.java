@@ -23,7 +23,6 @@ import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
@@ -291,13 +291,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         } catch (Exception e) {
             LOG.error("Could not load type definitions from file '" + typeDefsFileName + "': " + e);
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ioe) {
-                    // ignore
-                }
-            }
+            IOUtils.closeQuietly(stream);
         }
     }
 

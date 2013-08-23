@@ -255,7 +255,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
         }
 
-        if (so.getChangeToken() != null && (changeToken == null || !so.getChangeToken().equals(changeToken.getValue()))) {
+        if (so.getChangeToken() != null && (changeToken == null
+                || !so.getChangeToken().equals(changeToken.getValue()))) {
             throw new CmisUpdateConflictException("deleteContentStream failed, ChangeToken does not match.");
         }
 
@@ -689,8 +690,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
                     if (!isCheckedOut) {
                         throw new CmisUpdateConflictException(
-                                "updateProperties failed, following property can't be updated, because it is not checked-out: "
-                                        + key);
+                                "updateProperties failed, following property can't be updated, because it is not "
+                                + "checked-out: " + key);
                     }
                 } else if (propDef.getUpdatability() != Updatability.READWRITE) {
                     throw new CmisConstraintException(
@@ -856,7 +857,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             StoredObject so = objectStore.getObjectById(folderId);
 
             if (null == so) {
-                throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId + " is invalid");
+                throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId 
+                        + " is invalid");
             }
 
             if (so instanceof Folder) {
@@ -971,7 +973,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check if the given type is a folder type
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER)) {
-            throw new CmisInvalidArgumentException("Cannot create a folder, with a non-folder type: " + typeDef.getId());
+            throw new CmisInvalidArgumentException("Cannot create a folder, with a non-folder type: "
+                    + typeDef.getId());
         }
 
         Map<String, PropertyData<?>> propMap = propertiesNew.getProperties();
@@ -1205,16 +1208,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return false;
     }
 
-    /**
+    /*
      * Recursively delete a tree by traversing it and first deleting all
-     * children and then the object itself
+     * children and then the object itself.
      * 
-     * @param objStore
-     * @param parentFolder
-     * @param continueOnFailure
-     * @param allVersions
-     * @param failedToDeleteIds
-     * @return returns true if operation should continue, false if it should
+     * returns true if operation should continue, false if it should
      *         stop
      */
     private boolean deleteRecursive(ObjectStore objStore, Folder parentFolder, boolean continueOnFailure,
@@ -1246,7 +1244,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return true;
     }
 
-    private static ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset, BigInteger length) {
+    private static ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset, 
+            BigInteger length) {
         ContentStream csd = null;
         long lOffset = offset == null ? 0 : offset.longValue();
         long lLength = length == null ? -1 : length.longValue();

@@ -81,10 +81,6 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Jens
- * 
- */
 public final class PropertyCreationHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyCreationHelper.class);
@@ -92,7 +88,8 @@ public final class PropertyCreationHelper {
     private PropertyCreationHelper() {
     }
 
-    public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName, Updatability upd) {
+    public static PropertyBooleanDefinitionImpl createBooleanDefinition(String id, String displayName, 
+            Updatability upd) {
         PropertyBooleanDefinitionImpl prop = new PropertyBooleanDefinitionImpl();
         createStandardDefinition(prop, id, PropertyType.BOOLEAN, displayName, Cardinality.SINGLE, upd);
         return prop;
@@ -119,7 +116,8 @@ public final class PropertyCreationHelper {
         return prop;
     }
 
-    public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName, Updatability upd) {
+    public static PropertyDecimalDefinitionImpl createDecimalDefinition(String id, String displayName, 
+            Updatability upd) {
         PropertyDecimalDefinitionImpl prop = new PropertyDecimalDefinitionImpl();
         createStandardDefinition(prop, id, PropertyType.DECIMAL, displayName, Cardinality.SINGLE, upd);
         return prop;
@@ -138,7 +136,8 @@ public final class PropertyCreationHelper {
         return prop;
     }
 
-    public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName, Updatability upd) {
+    public static PropertyHtmlDefinitionImpl createHtmlMultiDefinition(String id, String displayName, 
+            Updatability upd) {
         PropertyHtmlDefinitionImpl prop = new PropertyHtmlDefinitionImpl();
         createStandardDefinition(prop, id, PropertyType.HTML, displayName, Cardinality.MULTI, upd);
         return prop;
@@ -156,7 +155,8 @@ public final class PropertyCreationHelper {
         return prop;
     }
 
-    public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName, Updatability upd) {
+    public static PropertyIntegerDefinitionImpl createIntegerDefinition(String id, String displayName, 
+            Updatability upd) {
         PropertyIntegerDefinitionImpl prop = new PropertyIntegerDefinitionImpl();
         createStandardDefinition(prop, id, PropertyType.INTEGER, displayName, Cardinality.SINGLE, upd);
         return prop;

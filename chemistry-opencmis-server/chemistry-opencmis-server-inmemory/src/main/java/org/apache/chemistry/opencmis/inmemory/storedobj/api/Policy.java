@@ -18,8 +18,17 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
+/**
+ * Interface representing a policy according to the CMIS specification.
+ * 
+ */
 public interface Policy {
 
+    /**
+     * returns the policy text of this policy.
+     * 
+     * @return policy text
+     */
     String getPolicyText();
 
 }

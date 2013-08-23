@@ -57,9 +57,6 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.TypeValidator;
 import org.junit.Test;
 
-/**
- * @author Jens
- */
 public class TypeValidationTest extends TestCase {
 
     private static final String MY_DOC_TYPE = "MyDocType1";

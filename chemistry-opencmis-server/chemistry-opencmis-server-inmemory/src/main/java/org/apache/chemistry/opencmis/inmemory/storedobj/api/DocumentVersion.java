@@ -23,9 +23,6 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
  * id, is stored in the object store, has content and adds versioning
  * functionality. It does not have a path. It inherits also properties so each
  * version may have its own properties.
- * 
- * @author Jens
- * 
  */
 public interface DocumentVersion extends Version, Content, Fileable {
 

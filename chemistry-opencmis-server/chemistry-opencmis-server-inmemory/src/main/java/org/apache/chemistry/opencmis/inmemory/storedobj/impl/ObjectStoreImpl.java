@@ -88,23 +88,23 @@ public class ObjectStoreImpl implements ObjectStore {
     private static final int FIRST_ID = 100;
 
     /**
-     * user id for administrator always having all rights
+     * User id for administrator always having all rights.
      */
     public static final String ADMIN_PRINCIPAL_ID = "Admin";
 
     /**
-     * Simple id generator that uses just an integer
+     * Simple id generator that uses just an integer.
      */
     private static int nextUnusedId = FIRST_ID;
 
     /**
-     * a concurrent HashMap as core element to hold all objects in the
-     * repository
+     * A concurrent HashMap as core element to hold all objects in the
+     * repository.
      */
     private final Map<String, StoredObject> fStoredObjectMap = new ConcurrentHashMap<String, StoredObject>();
 
     /**
-     * a concurrent HashMap to hold all Acls in the repository
+     * A concurrent HashMap to hold all Acls in the repository.
      */
     private int nextUnusedAclId = 0;
 
@@ -470,10 +470,12 @@ public class ObjectStoreImpl implements ObjectStore {
                     if (so instanceof Relationship && so.getTypeId().equals(typeId)) {
                         Relationship ro = (Relationship) so;
                         if (ro.getSourceObjectId().equals(objectId)
-                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
+                                && (RelationshipDirection.EITHER == direction 
+                                    || RelationshipDirection.SOURCE == direction)) {
                             res.add(so);
                         } else if (ro.getTargetObjectId().equals(objectId)
-                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.TARGET == direction)) {
+                                && (RelationshipDirection.EITHER == direction 
+                                    || RelationshipDirection.TARGET == direction)) {
                             res.add(so);
                         }
                     }
@@ -506,7 +508,8 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
+    public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, 
+            String principalId) {
         if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
             return applyAcl(so, addAces, removeAces);
         } else {
@@ -624,7 +627,8 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public ChildrenResult getChildren(Folder folder, int maxItemsParam, int skipCountParam, String user, boolean usePwc) {
+    public ChildrenResult getChildren(Folder folder, int maxItemsParam, int skipCountParam, String user, 
+            boolean usePwc) {
         List<Fileable> children = getChildren(folder, user, usePwc);
         sortFolderList(children);
 
@@ -822,7 +826,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     /**
-     * check if an Acl is already known
+     * Check if an Acl is already known.
      * 
      * @param acl
      *            acl to be checked

@@ -34,20 +34,6 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
  * this interface are always concrete and can live in the object store. A stored
  * object always has an id, a name and properties.
  * 
- * @author Jens
- */
-
-/**
- * @author d058463
- *
- */
-/**
- * @author d058463
- *
- */
-/**
- * @author d058463
- * 
  */
 public interface StoredObject {
 
@@ -59,7 +45,7 @@ public interface StoredObject {
     String getId();
 
     /**
-     * Set the id of this object
+     * Set the id of this object.
      * 
      * @param id
      *            id of this object
@@ -67,7 +53,7 @@ public interface StoredObject {
     void setId(String id);
 
     /**
-     * Retrieve the name of this object
+     * Retrieve the name of this object.
      * 
      * @return name of this object
      */
@@ -97,14 +83,14 @@ public interface StoredObject {
     void setTypeId(String type);
 
     /**
-     * CMIS 1.1 get ids of all secondary types
+     * CMIS 1.1 get ids of all secondary types.
      * 
      * @return list of type ids
      */
     List<String> getSecondaryTypeIds();
 
     /**
-     * CMIS 1.1: set description of an object
+     * CMIS 1.1: set description of an object.
      * 
      * @param description
      *            description of this object
@@ -112,21 +98,21 @@ public interface StoredObject {
     void setDescription(String description);
 
     /**
-     * CMIS 1.1: get description of an object
+     * CMIS 1.1: get description of an object.
      * 
      * @return description of this object
      */
     String getDescription();
 
     /**
-     * Retrieve the user who created the document
+     * Retrieve the user who created the document.
      * 
      * @return user who created the document.
      */
     String getCreatedBy();
 
     /**
-     * Set the user who last modified the object. This method does not persist
+     * Set the user who last modified the object. This method does not persist.
      * the object.
      * 
      * @param createdBy
@@ -135,14 +121,14 @@ public interface StoredObject {
     void setCreatedBy(String createdBy);
 
     /**
-     * Retrieve the user who last modified the document
+     * Retrieve the user who last modified the document.
      * 
      * @return user who last modified the document.
      */
     String getModifiedBy();
 
     /**
-     * Set the user who last modified the object. This method does not persist
+     * Set the user who last modified the object. This method does not persist.
      * the object.
      * 
      * @param modifiedBy
@@ -150,6 +136,11 @@ public interface StoredObject {
      */
     void setModifiedBy(String modifiedBy);
 
+    /**
+     * Get the creation date.
+     * 
+     * @return date the object was created at
+     */
     GregorianCalendar getCreatedAt();
 
     /**
@@ -157,7 +148,7 @@ public interface StoredObject {
      * call this method externally. This method does not persist the object.
      * 
      * @param createdAt
-     *            date the object was created
+     *            date the object was created at
      */
     void setCreatedAt(GregorianCalendar createdAt);
 
@@ -176,7 +167,7 @@ public interface StoredObject {
     void setModifiedAtNow();
 
     /**
-     * Set the date and time of the last modification of this object
+     * Set the date and time of the last modification of this object.
      * 
      * @param calendar
      *            timestamp of last modification
@@ -187,6 +178,7 @@ public interface StoredObject {
      * Get the repository id of this object where the object is stored.
      * 
      * @return
+     *      repository id of this object
      */
     String getRepositoryId();
 
@@ -200,9 +192,9 @@ public interface StoredObject {
     void setRepositoryId(String repositoryId);
 
     /**
-     * Retrieve the list of properties
+     * Retrieve the list of properties.
      * 
-     * @return
+     * @return map of properties
      */
     Map<String, PropertyData<?>> getProperties();
 
@@ -217,7 +209,7 @@ public interface StoredObject {
 
     /**
      * Retrieve a change token uniquely identifying the state of the object when
-     * it was persisted (used for optimistic locking)
+     * it was persisted (used for optimistic locking).
      * 
      * @return String identifying the change token
      */
@@ -251,6 +243,16 @@ public interface StoredObject {
      */
     void updateSystemBasePropertiesWhenModified(Map<String, PropertyData<?>> properties, String user);
 
+    /**
+     * fill a passed map object with properties of this object.
+     * 
+     * @param properties
+     *            map to fill
+     * @param objFactory
+     *            object factory to create objects
+     * @param requestedIds
+     *            list of property ids being requested
+     */
     void fillProperties(Map<String, PropertyData<?>> properties, BindingsObjectFactory objFactory,
             List<String> requestedIds);
 
@@ -267,37 +269,47 @@ public interface StoredObject {
     void setCustomProperties(Map<String, PropertyData<?>> properties);
 
     /**
-     * get the Acl id of the stored object
+     * get the Acl id of the stored object.
+     * 
+     * @return acl id of the ACl of this object
      */
     int getAclId();
 
-    /*
-     * get the allowable actions of the object
+    /**
+     * get the allowable actions of the object.
+     * 
+     * @param user
+     *            user requesting allowable actions
+     * @return allowable actions of this object for the use
      */
     AllowableActions getAllowableActions(String user);
 
     /**
      * check if the document can generate a renditions and rendition is visible
-     * for user
+     * for user.
      * 
+     * @param user
+     *            user requesting allowable actions
      * @return true if rendition exists, false if not.
      */
     boolean hasRendition(String user);
 
     /**
-     * get the rendition this objects supports
+     * get the rendition this objects supports.
      * 
      * @param renditionFilter
+     *            filter of renditions to return
      * @param maxItems
+     *            max nubmer of items to return
      * @param skipCount
-     * @param extension
+     *            number of objects to skip in result
      * @return List of renditions or null if no renditions are available for
      *         this object
      */
     List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount);
 
     /**
-     * get the rendition of this object
+     * get the rendition of this object.
      * 
      * @param streamId
      *            stream if of rendition
@@ -310,14 +322,14 @@ public interface StoredObject {
     ContentStream getRenditionContent(String streamId, long offset, long length);
 
     /**
-     * get applied policies of this object
+     * get applied policies of this object.
      * 
      * @return list of ids of policies applied to this object
      */
     List<String> getAppliedPolicies();
 
     /**
-     * add an id of a policy to an object
+     * add an id of a policy to an object.
      * 
      * @param policyId
      *            id of policy to add
@@ -325,7 +337,7 @@ public interface StoredObject {
     void addAppliedPolicy(String policyId);
 
     /**
-     * remove an id of a policy from an object
+     * remove an id of a policy from an object.
      * 
      * @param policyId
      *            id of policy to remove

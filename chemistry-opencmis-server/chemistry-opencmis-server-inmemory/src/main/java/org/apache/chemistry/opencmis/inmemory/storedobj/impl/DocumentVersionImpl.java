@@ -40,9 +40,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * A class representing a single version of a document
- * 
- * @author Jens
- * 
  */
 public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVersion, MultiFiling {
 

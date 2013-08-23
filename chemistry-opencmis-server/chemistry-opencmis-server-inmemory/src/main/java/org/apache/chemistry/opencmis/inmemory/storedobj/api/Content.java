@@ -20,18 +20,27 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
+/**
+ * Interface to represent a content stream according to the CMIS spec.
+ *
+ */
 public interface Content {
 
     /**
      * return true if this object has content or false if there is no content
      * attached.
      * 
-     * @return
+     * @return true if hast content otherwise false
      */
     boolean hasContent();
 
     /**
-     * retrieve the content of a document
+     * Retrieve the content of a document.
+     * 
+     * @param offset
+     *            offset in content stream
+     * @param length
+     *            length of content to return
      * 
      * @return object containing mime-type, length and a stream with content
      */

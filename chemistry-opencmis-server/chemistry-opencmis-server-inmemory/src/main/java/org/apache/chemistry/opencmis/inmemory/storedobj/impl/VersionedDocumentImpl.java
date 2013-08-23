@@ -127,7 +127,8 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     @Override
     public DocumentVersion checkOut(ContentStream content, String user) {
         if (fIsCheckedOut) {
-            throw new CmisConstraintException("Error: Can't checkout, Document " + getId() + " is already checked out.");
+            throw new CmisConstraintException("Error: Can't checkout, Document " + getId() 
+                    + " is already checked out.");
         }
 
         // create PWC
@@ -241,6 +242,7 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
             }
         }
         if (deleteInObjectStore) {
+            // TODO:
         }
 
     }

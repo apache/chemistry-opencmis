@@ -167,8 +167,8 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
         return fMimeType;
     }
 
-    public void setMimeType(String fMimeType) {
-        this.fMimeType = fMimeType;
+    public void setMimeType(String mimeType) {
+        this.fMimeType = mimeType;
     }
 
     @Override

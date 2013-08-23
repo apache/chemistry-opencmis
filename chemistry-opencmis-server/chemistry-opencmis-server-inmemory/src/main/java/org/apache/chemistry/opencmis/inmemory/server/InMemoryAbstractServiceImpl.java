@@ -37,8 +37,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 /**
  * Common functionality for all service implementations
  * 
- * @author Jens
- * 
  */
 public class InMemoryAbstractServiceImpl {
 
@@ -81,7 +79,8 @@ public class InMemoryAbstractServiceImpl {
         for (String typeId : typeIds) {
             TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
             if (typeDefC == null) {
-                throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
+                throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId
+                        + " is unknown");
             }
             result.add(typeDefC.getTypeDefinition());
         }
@@ -98,11 +97,11 @@ public class InMemoryAbstractServiceImpl {
     /**
      * We allow checkin, cancel, checkout operations on a single version as well
      * as on a version series This method returns the versioned document
-     * (version series) in each case
+     * (version series) in each case.
      * 
-     * @param value
-     *            version or version series id of a document
-     * @return version series id
+     * @param so
+     *            version or versioned document
+     * @return versioned document
      */
     protected VersionedDocument getVersionedDocumentOfObjectId(StoredObject so) {
 
@@ -155,7 +154,8 @@ public class InMemoryAbstractServiceImpl {
 
     protected void testCheckedOutByCurrentUser(String user, VersionedDocument verDoc) {
         if (!user.equals(verDoc.getCheckedOutBy())) {
-            throw new CmisUpdateConflictException("User " + verDoc.getCheckedOutBy() + " has checked out the document.");
+            throw new CmisUpdateConflictException("User " + verDoc.getCheckedOutBy()
+                    + " has checked out the document.");
         }
     }
 

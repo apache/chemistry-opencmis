@@ -18,11 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
-/**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * @author Jens
- * 
- */
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;

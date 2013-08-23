@@ -45,9 +45,6 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 
-/**
- * @author Jens
- */
 public final class TypeValidator {
     
     private TypeValidator() {        

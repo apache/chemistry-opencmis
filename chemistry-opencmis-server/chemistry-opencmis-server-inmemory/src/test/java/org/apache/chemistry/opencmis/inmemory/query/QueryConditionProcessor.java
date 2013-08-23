@@ -27,9 +27,6 @@ import org.apache.chemistry.opencmis.server.support.query.PredicateWalkerBase;
  * An interface used by the walker when traversing the AST from the grammar. The
  * interface consists of callback methods that are called when a rule is
  * processed (as part of the WHERE statement)
- * 
- * @author Jens
- * 
  */
 public interface QueryConditionProcessor extends PredicateWalkerBase {
 

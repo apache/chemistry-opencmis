@@ -215,7 +215,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     @Override
-    public StoredObject getChildren(CallContext context, String repositoryId, String folderId, ExtensionsData extension) {
+    public StoredObject getChildren(CallContext context, String repositoryId, String folderId, 
+                ExtensionsData extension) {
 
         return checkStandardParameters(repositoryId, folderId);
     }
@@ -331,7 +332,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     @Override
-    public StoredObject getObjectByPath(CallContext context, String repositoryId, String path, ExtensionsData extension) {
+    public StoredObject getObjectByPath(CallContext context, String repositoryId, String path, 
+            ExtensionsData extension) {
 
         return checkStandardParametersByPath(repositoryId, path, context.getUsername());
     }

@@ -33,7 +33,6 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
-import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
@@ -76,9 +75,8 @@ import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
- * factory to create objects that are stored in the InMemory store
+ * Factory to create objects that are stored in the InMemory store.
  * 
- * @author Jens
  */
 public class StoreManagerImpl implements StoreManager {
 
@@ -105,12 +103,12 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     /**
-     * map from repository id to a type manager
+     * Map from repository id to a type manager.
      */
     private final Map<String, TypeManagerImpl> fMapRepositoryToTypeManager = new HashMap<String, TypeManagerImpl>();
 
     /**
-     * map from repository id to a object store
+     * Map from repository id to a object store.
      */
     private final Map<String, ObjectStore> fMapRepositoryToObjectStore = new HashMap<String, ObjectStore>();
 
@@ -425,7 +423,7 @@ public class StoreManagerImpl implements StoreManager {
         list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_WRITE));
-        ;
+
         list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
         list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));

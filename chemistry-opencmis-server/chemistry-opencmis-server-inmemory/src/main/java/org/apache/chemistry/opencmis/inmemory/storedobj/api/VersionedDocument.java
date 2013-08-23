@@ -30,16 +30,25 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  * In contrast to a non-versioned document it has no content, but versions
  * instead.
  * 
- * @author Jens
- * 
  */
 public interface VersionedDocument extends Filing, StoredObject {
 
+    /**
+     * Add a version to this document.
+     * 
+     * @param content
+     *            content stream of new version
+     * @param verState
+     *            versioning state of new version
+     * @param user
+     *            user adding the new vesion
+     * @return document version added
+     */
     DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
 
     /**
-     * delete a version from this object, throw exception if document is checked
-     * out or document does not contain this version
+     * Delete a version from this object, throw exception if document is checked
+     * out or document does not contain this version.
      * 
      * @param version
      *            version to be removed
@@ -48,21 +57,80 @@ public interface VersionedDocument extends Filing, StoredObject {
      */
     boolean deleteVersion(DocumentVersion version);
 
+    /**
+     * Test if current object is checked-out.
+     * 
+     * @return true if checked-out, false if not checked-out
+     */
     boolean isCheckedOut();
 
+    /**
+     * Cancel a check-out operation and discard the private working copy.
+     * 
+     * @param user
+     *            user doing the cancel check-out
+     */
     void cancelCheckOut(String user);
 
+    /**
+     * Perform a check-out operation.
+     * 
+     * @param content
+     *            content stream of object
+     * @param user
+     *            user who checks-out
+     * @return document version beinf the new private working copy
+     */
     DocumentVersion checkOut(ContentStream content, String user);
 
+    /**
+     * Check in a private working copy.
+     * 
+     * @param isMajor
+     *            true if this is a major version
+     * @param properties
+     *            properties to set
+     * @param content
+     *            content of the document
+     * @param checkinComment
+     *            comment to attach to check-in
+     * @param policyIds
+     *            list of policy ids to add
+     * @param user
+     *            user who does the check-in
+     */
     void checkIn(boolean isMajor, Properties properties, ContentStream content, String checkinComment,
             List<String> policyIds, String user);
 
+    /**
+     * Get all versions of this document.
+     * 
+     * @return list of document versions
+     */
     List<DocumentVersion> getAllVersions();
 
+    /**
+     * Get the latest version of this document.
+     * 
+     * @param major
+     *            true if latest major version, false to include minor versions
+     * @return
+     *            latest version of the document
+     */
     DocumentVersion getLatestVersion(boolean major);
 
+    /**
+     * Get the user who has checked out this document.
+     * 
+     * @return user id of user who has checked out this document
+     */
     String getCheckedOutBy();
 
+    /**
+     * Get the private working copy of this document.
+     * 
+     * @return private working copy
+     */
     DocumentVersion getPwc();
 
 }

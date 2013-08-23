@@ -32,10 +32,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
- * Common functionality for all service implementations
- * 
- * @author Jens
- * 
+ * Common functionality for all service implementations.
  */
 public class AbstractServiceImpl {
 
@@ -110,11 +107,11 @@ public class AbstractServiceImpl {
     /**
      * We allow checkin, cancel, checkout operations on a single version as well
      * as on a version series This method returns the versioned document
-     * (version series) in each case
+     * (version series) in each case.
      * 
-     * @param value
-     *            version or version series id of a document
-     * @return version series id
+     * @param so
+     *            version or versioned document
+     * @return versioned document
      */
     protected VersionedDocument getVersionedDocumentOfObjectId(StoredObject so) {
         VersionedDocument verDoc;
@@ -171,7 +168,8 @@ public class AbstractServiceImpl {
 
     protected void testIsCheckedOut(VersionedDocument verDoc) {
         if (!verDoc.isCheckedOut()) {
-            throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId() + " is not checked out.");
+            throw new CmisUpdateConflictException("Canot check-in: Document " + verDoc.getId()
+                    + " is not checked out.");
         }
     }
 

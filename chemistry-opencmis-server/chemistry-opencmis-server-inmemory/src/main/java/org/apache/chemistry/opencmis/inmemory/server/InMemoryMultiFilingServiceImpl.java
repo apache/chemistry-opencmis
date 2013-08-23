@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;

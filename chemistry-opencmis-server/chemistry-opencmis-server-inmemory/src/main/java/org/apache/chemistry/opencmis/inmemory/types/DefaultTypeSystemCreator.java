@@ -57,9 +57,10 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     public static final String LEVEL2_TYPE = "DocumentLevel2";
     public static final String SECONDARY_TYPE_ID = "MySecondaryType";
 
-    /**
-     * in the public interface of this class we return the singleton containing
-     * the required types for testing
+    /*
+     * In the public interface of this class we return the singleton containing
+     * the required types for testing.
+     * @see org.apache.chemistry.opencmis.inmemory.TypeCreator#createTypesList()
      */
     @Override
     public List<TypeDefinition> createTypesList() {

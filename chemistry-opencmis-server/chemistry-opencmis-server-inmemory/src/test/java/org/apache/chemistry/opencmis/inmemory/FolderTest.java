@@ -32,11 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * @author Jens
- */
-
-/**
  * Some test directly against the in-memory folder object.
  */
 public class FolderTest extends TestCase {

@@ -221,7 +221,7 @@ public final class DocumentTypeCreationHelper {
         type.setTypeMutability(parentTypeDefinition.getTypeMutability());
     }
 
-    /**
+    /*  
      * Creates a new mutable document type definition, which is a child of the
      * provided type definition. Property definitions are not added which is
      * useful for creating additional types at runtime
@@ -245,7 +245,7 @@ public final class DocumentTypeCreationHelper {
         return typesList;
     }
 
-    public static final List<TypeDefinition> getDefaultTypes() {
+    public static List<TypeDefinition> getDefaultTypes() {
         return DEFAULT_TYPES;
     }
 
@@ -358,7 +358,7 @@ public final class DocumentTypeCreationHelper {
     }
 
     /**
-     * create root types and a collection of sample types
+     * Create root types and a collection of sample types.
      * 
      * @return typesMap map filled with created types
      */

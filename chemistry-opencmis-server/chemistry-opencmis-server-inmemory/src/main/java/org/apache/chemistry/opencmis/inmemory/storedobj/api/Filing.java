@@ -26,8 +26,6 @@ import java.util.List;
  * where the parent is always a folder. Paths do not exist on its own but are
  * part of other objects (documents and folders). Most of the functionality is
  * defined in interfaces that are subclasses.
- * 
- * @author Jens
  */
 public interface Filing {
 
@@ -42,8 +40,6 @@ public interface Filing {
      * object this list must contain only one element. returns an empty list if
      * this is an unfiled document.
      * 
-     * @param user
-     *            user id
      * @return list of parent folders
      */
     List<String> getParentIds();
@@ -58,9 +54,10 @@ public interface Filing {
     boolean hasParent();
 
     /**
-     * get the path segment of this object
+     * get the path segment of this object.
      * 
      * @return
+     *      String with path segment
      */
     String getPathSegment();
 }

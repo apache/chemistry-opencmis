@@ -56,8 +56,6 @@ import org.slf4j.LoggerFactory;
  * Temporary test class until CMIS 1.1 bindings are completed. Until then we use
  * a special setup procedure to directly connect to the repository service
  * implementation of InMemory.
- * 
- * @author Jens
  */
 public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
 

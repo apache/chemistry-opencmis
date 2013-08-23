@@ -90,11 +90,36 @@ public class InMemoryQueryProcessor {
     }
 
     /**
-     * Main entry function to process a query from discovery service
+     * Main entry function to process a query from discovery service.
+     * 
+     * @param tm
+     *            type manager for the given repository
+     * @param objectStore
+     *            object store to gets object from
+     * @param user
+     *            user execuing the query
+     * @param repositoryId
+     *            id of repository
+     * @param statement
+     *            query statement
+     * @param searchAllVersions
+     *            search in all versions of objects
+     * @param includeAllowableActions
+     *            include allowable actions
+     * @param includeRelationships
+     *            include relationships
+     * @param renditionFilter
+     *            include renditions
+     * @param maxItems
+     *            max number of items to return
+     * @param skipCount
+     *            items to skip
+     * @return list of objects matching the query
      */
     public ObjectList query(TypeManager tm, ObjectStore objectStore, String user, String repositoryId,
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
-            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, 
+            BigInteger skipCount) {
 
         processQueryAndCatchExc(statement, tm); // calls query processor
 
@@ -110,6 +135,13 @@ public class InMemoryQueryProcessor {
         return objList;
     }
 
+    /**
+     * Process a query.
+     * @param statement
+     *      CMISQL statement to execute
+     * @param tm
+     *      type manager for the repository
+     */
     public void processQueryAndCatchExc(String statement, TypeManager tm) {
         QueryUtilStrict queryUtil = new QueryUtilStrict(statement, tm, null);
         queryUtil.processStatementUsingCmisExceptions();
@@ -120,8 +152,28 @@ public class InMemoryQueryProcessor {
         doAdditionalChecks(walker);
     }
 
+    /**
+     * Create the list of matching objects for this query. 
+     * @param tm
+     *  type manager for the given repository
+     * @param user
+     *  user execuing the query
+     * @param includeAllowableActions
+     *   include allowable actions
+     * @param includeRelationships
+     *  include relationships
+     * @param renditionFilter
+     *  include renditions
+     * @param maxItems
+     *  max number of items to return
+     * @param skipCount
+     *  items to skip
+     * @return
+     *  list of objects matching the query
+     */
     public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
-            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, 
+            BigInteger skipCount) {
 
         sortMatches();
 
@@ -235,13 +287,10 @@ public class InMemoryQueryProcessor {
 
     }
 
-    /**
+    /*
      * Check for each object contained in the in-memory repository if it matches
      * the current query expression. If yes add it to the list of matched
      * objects.
-     * 
-     * @param so
-     *            object stored in the in-memory repository
      */
     private void match(StoredObject so, String user, boolean searchAllVersions) {
         // first check if type is matching...
@@ -274,16 +323,12 @@ public class InMemoryQueryProcessor {
         }
     }
 
-    /**
+    /*
      * For each object check if it matches and append it to match-list if it
      * does. We do here our own walking mechanism so that we can pass additional
      * parameters and define the return types.
-     * 
-     * @param node
-     *            node in where clause
-     * @return true if it matches, false if it not matches
      */
-    boolean evalWhereNode(StoredObject so, String user, Tree node) {
+    private boolean evalWhereNode(StoredObject so, String user, Tree node) {
         return new InMemoryWhereClauseWalker(so, user).walkPredicate(node);
     }
 
@@ -679,7 +724,7 @@ public class InMemoryQueryProcessor {
                 throwIncompatibleTypesException(lValue, rVal);
             }
             break;
-        case INTEGER: {
+        case INTEGER:
             Long lLongValue = ((BigInteger) lValue).longValue();
             if (rVal instanceof Long) {
                 return (lLongValue).compareTo((Long) rVal);
@@ -689,7 +734,6 @@ public class InMemoryQueryProcessor {
                 throwIncompatibleTypesException(lValue, rVal);
             }
             break;
-        }
         case DATETIME:
             if (rVal instanceof GregorianCalendar) {
                 return ((GregorianCalendar) lValue).compareTo((GregorianCalendar) rVal);
@@ -697,7 +741,7 @@ public class InMemoryQueryProcessor {
                 throwIncompatibleTypesException(lValue, rVal);
             }
             break;
-        case DECIMAL: {
+        case DECIMAL:
             Double lDoubleValue = ((BigDecimal) lValue).doubleValue();
             if (rVal instanceof Double) {
                 return lDoubleValue.compareTo((Double) rVal);
@@ -707,7 +751,6 @@ public class InMemoryQueryProcessor {
                 throwIncompatibleTypesException(lValue, rVal);
             }
             break;
-        }
         case HTML:
         case STRING:
         case URI:
@@ -761,7 +804,14 @@ public class InMemoryQueryProcessor {
         }
     }
 
-    // translate SQL wildcards %, _ to Java regex syntax
+    /**
+     * Translate SQL wildcards %, _ to Java regex syntax.
+     * 
+     * @param wildcardString
+     *     string to process
+     * @return
+     *      string with replaced characters
+     */
     public static String translatePattern(String wildcardString) {
         int index = 0;
         int start = 0;

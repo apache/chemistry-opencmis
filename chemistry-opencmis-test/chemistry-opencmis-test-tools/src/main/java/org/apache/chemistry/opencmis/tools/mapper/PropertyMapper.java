@@ -30,9 +30,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * (see MetadataParser). It only reads a configuration and maps properties. The 
  * Configurator will read the configuration properties and instantiate implementations 
  * of this interface (one instance per CMIS type)
- * 
- * @author Jens
- *
  */
 public interface PropertyMapper {
     

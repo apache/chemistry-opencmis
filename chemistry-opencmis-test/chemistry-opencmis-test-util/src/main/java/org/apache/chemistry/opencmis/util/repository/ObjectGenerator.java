@@ -58,9 +58,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple helper class for the tests that generates a sample folder hierarchy
  * and optionally documents in it.
- * 
- * @author Jens
- * 
  */
 public class ObjectGenerator {
 

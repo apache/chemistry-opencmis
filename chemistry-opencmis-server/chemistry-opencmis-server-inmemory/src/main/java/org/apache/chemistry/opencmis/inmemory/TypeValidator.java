@@ -58,10 +58,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
  * A helper class doing some consistency checks when new type definitions are
- * added to the system
- * 
- * @author Jens
- * 
+ * added to the system.
  */
 public final class TypeValidator {
 

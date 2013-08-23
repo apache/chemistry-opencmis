@@ -23,24 +23,36 @@ import java.util.List;
 /**
  * A folder is a StoredObject that that has a path and children. Children can be
  * folder or documents
- * 
- * @author Jens
  */
 public interface Children {
 
-    class ChildrenResult {
+    /**
+     * Class to represent a result of get children calls
+     *
+     */
+    public final class ChildrenResult {
         private int noItems;
         private List<? extends StoredObject> children;
 
-        public ChildrenResult(List<? extends StoredObject> children, int noItems) {
+        private ChildrenResult(List<? extends StoredObject> children, int noItems) {
             this.children = children;
             this.noItems = noItems;
         }
 
+        /**
+         * Get number of items in this result.
+         * @return
+         *  number of items
+         */
         public int getNoItems() {
             return noItems;
         }
 
+        /**
+         * Get the children objects.
+         * @return
+         *      list of children
+         */
         public List<? extends StoredObject> getChildren() {
             return children;
         }
@@ -48,7 +60,7 @@ public interface Children {
 
     /**
      * get all the children of this folder. To support paging an initial offset
-     * and a maximum number of children to retrieve can be passed
+     * and a maximum number of children to retrieve can be passed.
      * 
      * @param maxItems
      *            max. number of items to return
@@ -74,12 +86,13 @@ public interface Children {
      * @param skipCount
      *            initial offset where to start fetching
      * @param user
+     *          user to determine visible children
      * @return list of children folders
      */
     ChildrenResult getFolderChildren(int maxItems, int skipCount, String user);
 
     /**
-     * indicate if a child with the given name exists in this folder
+     * indicate if a child with the given name exists in this folder.
      * 
      * @param name
      *            name to check

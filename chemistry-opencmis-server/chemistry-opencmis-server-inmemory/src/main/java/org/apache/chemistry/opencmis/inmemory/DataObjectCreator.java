@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
- * @author Jens A collection of utility functions to fill the data objects used
+ * A collection of utility functions to fill the data objects used
  *         as return values for the service object calls
  */
 public final class DataObjectCreator {

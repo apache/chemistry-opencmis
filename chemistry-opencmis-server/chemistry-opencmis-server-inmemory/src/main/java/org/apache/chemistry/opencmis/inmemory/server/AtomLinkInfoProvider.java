@@ -50,8 +50,6 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
  * service call provides (mainly to fill all the links). This class fills the
  * objectInfoHolder that was introduced for this purpose
  * 
- * @author Jens
- * 
  */
 public class AtomLinkInfoProvider {
 
@@ -63,16 +61,19 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for a single object
+     * binding for a single object.
      * 
      * @param repositoryId
      *            id of repository
-     * @param objectId
+     * @param so
      *            object to retrieve information for
-     * @param objectInfos
+     * @param od
+     *            object data
+     * @param objInfo
      *            Holder to fill with information
      */
-    public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectData od, ObjectInfoImpl objInfo) {
+    public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectData od, 
+            ObjectInfoImpl objInfo) {
         if (null == objInfo || null == so) {
             return;
         }
@@ -174,6 +175,17 @@ public class AtomLinkInfoProvider {
 
     }
 
+    /**
+     * FillObjectInfoHolder object with required information needed for Atom
+     * binding for a single object.
+     * 
+     * @param repositoryId
+     *            id of repository
+     * @param so
+     *            object to retrieve information for
+     * @param objectInfo
+     *            Holder to fill with information
+     */
     public void fillInformationForAtomLinks(String repositoryId, StoredObject so, ObjectInfoImpl objectInfo) {
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
@@ -184,13 +196,13 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for a single object
+     * binding for a single object.
      * 
      * @param repositoryId
      *            id of repository
      * @param objectId
      *            object to retrieve information for
-     * @param objectInfos
+     * @param objectInfo
      *            Holder to fill with information
      */
     public void fillInformationForAtomLinks(String repositoryId, String objectId, ObjectInfoImpl objectInfo) {
@@ -205,7 +217,7 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding after a getChildren() call in navigation service
+     * binding after a getChildren() call in navigation service.
      * 
      * @param repositoryId
      *            id of repository
@@ -238,7 +250,7 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for an object list
+     * binding for an object list.
      * 
      * @param repositoryId
      *            id of repository
@@ -279,16 +291,14 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for an ObjectInFolderContainer
+     * binding for an ObjectInFolderContainer.
      * 
      * @param repositoryId
      *            id of repository
-     * @param objectId
-     *            object to retrieve information for
      * @param objectInfos
      *            Holder to fill with information
-     * @param objList
-     *            result of getChildren call
+     * @param oifc
+     *            result of previous call
      */
     private void fillInformationForAtomLinks(String repositoryId, ObjectInfoHandler objectInfos,
             ObjectInFolderContainer oifc) {
@@ -312,7 +322,7 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for a list with ObjectInFolderContainers
+     * binding for a list with ObjectInFolderContainers.
      * 
      * @param repositoryId
      *            id of repository
@@ -350,7 +360,7 @@ public class AtomLinkInfoProvider {
 
     /**
      * FillObjectInfoHolder object with required information needed for Atom
-     * binding for a list with ObjectParentData objects
+     * binding for a list with ObjectParentData objects.
      * 
      * @param repositoryId
      *            id of repository
