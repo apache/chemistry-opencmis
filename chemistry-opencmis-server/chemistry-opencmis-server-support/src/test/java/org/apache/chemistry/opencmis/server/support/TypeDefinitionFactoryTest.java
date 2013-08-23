@@ -64,6 +64,32 @@ public class TypeDefinitionFactoryTest {
     }
 
     @Test
+    public void testCopy11() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+        CmisVersion cmisVersion = CmisVersion.CMIS_1_1;
+
+        TypeDefinition docType1 = tdf.createBaseDocumentTypeDefinition(cmisVersion);
+        TypeDefinition docType2 = tdf.copy(docType1, false, cmisVersion);
+        TypeDefinition docType3 = tdf.copy(docType1, true, cmisVersion);
+
+        assertTrue(docType2.getPropertyDefinitions().isEmpty());
+        assertEquals(docType1.getPropertyDefinitions().size(), docType3.getPropertyDefinitions().size());
+    }
+
+    @Test
+    public void testCopy10() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+        CmisVersion cmisVersion = CmisVersion.CMIS_1_0;
+
+        TypeDefinition docType1 = tdf.createBaseDocumentTypeDefinition(cmisVersion);
+        TypeDefinition docType2 = tdf.copy(docType1, false, cmisVersion);
+        TypeDefinition docType3 = tdf.copy(docType1, true, cmisVersion);
+
+        assertTrue(docType2.getPropertyDefinitions().isEmpty());
+        assertEquals(docType1.getPropertyDefinitions().size(), docType3.getPropertyDefinitions().size());
+    }
+
+    @Test
     public void testCreateTypeDefinitionList() {
         TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
         CmisVersion cmisVersion = CmisVersion.CMIS_1_1;

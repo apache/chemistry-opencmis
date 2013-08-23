@@ -714,7 +714,8 @@ public class ObjectService {
                     PropertiesImpl properties = new PropertiesImpl();
                     object.setProperties(properties);
 
-                    properties.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, idAndToken.getId()));
+                    properties.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID,
+                            idAndToken.getNewId() != null ? idAndToken.getNewId() : idAndToken.getId()));
 
                     if (idAndToken.getChangeToken() != null) {
                         properties.addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, idAndToken

@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,25 +15,15 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
 package org.apache.chemistry.opencmis.fileshare;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -42,7 +31,12 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileShareServiceFactory extends AbstractServiceFactory {
+/**
+ * FileShare Service Factory.
+ */
+public class FileShareCmisServiceFactory extends AbstractServiceFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileShareCmisServiceFactory.class);
 
     private static final String PREFIX_LOGIN = "login.";
     private static final String PREFIX_REPOSITORY = "repository.";
@@ -50,22 +44,45 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
     private static final String SUFFIX_READWRITE = ".readwrite";
     private static final String SUFFIX_READONLY = ".readonly";
 
+    /** Default maxItems value for getTypeChildren()}. */
     private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(50);
+
+    /** Default depth value for getTypeDescendants(). */
     private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(-1);
+
+    /**
+     * Default maxItems value for getChildren() and other methods returning
+     * lists of objects.
+     */
     private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(200);
+
+    /** Default depth value for getDescendants(). */
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileShareServiceFactory.class);
+    /** Each thread gets its own {@link FileShareCmisService} instance. */
+    private ThreadLocal<CmisServiceWrapper<FileShareCmisService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FileShareCmisService>>();
 
-    private RepositoryMap repositoryMap;
-    private TypeManager typeManager;
+    private FileShareRepositoryManager repositoryManager;
+    private FileShareUserManager userManager;
+    private FileShareTypeManager typeManager;
 
-    private ThreadLocal<CmisServiceWrapper<FileShareService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FileShareService>>();
+    public FileShareRepositoryManager getRepositoryManager() {
+        return repositoryManager;
+    }
+
+    public FileShareUserManager getUserManager() {
+        return userManager;
+    }
+
+    public FileShareTypeManager getTypeManager() {
+        return typeManager;
+    }
 
     @Override
     public void init(Map<String, String> parameters) {
-        repositoryMap = new RepositoryMap();
-        typeManager = new TypeManager(CmisVersion.CMIS_1_1);
+        repositoryManager = new FileShareRepositoryManager();
+        userManager = new FileShareUserManager();
+        typeManager = new FileShareTypeManager();
 
         readConfiguration(parameters);
     }
@@ -77,15 +94,22 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        repositoryMap.authenticate(context);
+        // authenticate the user
+        // if the authentication fails, authenticate() throws a
+        // CmisPermissionDeniedException
+        userManager.authenticate(context);
 
-        CmisServiceWrapper<FileShareService> wrapperService = threadLocalService.get();
+        // get service object for this thread
+        CmisServiceWrapper<FileShareCmisService> wrapperService = threadLocalService.get();
         if (wrapperService == null) {
-            wrapperService = new CmisServiceWrapper<FileShareService>(new FileShareService(repositoryMap),
-                    DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+            // there is no service object for this thread -> create one
+            FileShareCmisService fileShareService = new FileShareCmisService(repositoryManager);
+            wrapperService = new CmisServiceWrapper<FileShareCmisService>(fileShareService, DEFAULT_MAX_ITEMS_TYPES,
+                    DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
             threadLocalService.set(wrapperService);
         }
 
+        // hand over the call context to the service object
         wrapperService.getWrappedService().setCallContext(context);
 
         return wrapperService;
@@ -93,6 +117,10 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 
     // ---- helpers ----
 
+    /**
+     * Reads the configuration and sets up the repositories, logins, and type
+     * definitions.
+     */
     private void readConfiguration(Map<String, String> parameters) {
         List<String> keys = new ArrayList<String>(parameters.keySet());
         Collections.sort(keys);
@@ -114,14 +142,19 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
                     password = usernameAndPassword.substring(x + 1);
                 }
 
-                repositoryMap.addLogin(username, password);
+                LOG.info("Adding login '{}'.", username);
 
-                LOG.info("Added login '" + username + "'.");
+                userManager.addLogin(username, password);
             } else if (key.startsWith(PREFIX_TYPE)) {
                 // load type definition
-                TypeDefinition type = loadType(replaceSystemProperties(parameters.get(key)));
-                if (type != null) {
-                    typeManager.addType(type);
+                String typeFile = replaceSystemProperties(parameters.get(key));
+
+                LOG.info("Loading type definition from file: {}", typeFile);
+
+                try {
+                    typeManager.loadTypeDefinitionFromFile(typeFile);
+                } catch (Exception e) {
+                    LOG.warn("Could not load type defintion from file '{}': {}", typeFile, e.getMessage(), e);
                 }
             } else if (key.startsWith(PREFIX_REPOSITORY)) {
                 // configure repositories
@@ -137,30 +170,33 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
 
                 if (key.endsWith(SUFFIX_READWRITE)) {
                     // read-write users
-                    FileShareRepository fsr = repositoryMap.getRepository(repositoryId);
+                    FileShareRepository fsr = repositoryManager.getRepository(repositoryId);
                     for (String user : split(parameters.get(key))) {
-                        fsr.addUser(replaceSystemProperties(user), false);
+                        fsr.setUserReadWrite(replaceSystemProperties(user));
                     }
                 } else if (key.endsWith(SUFFIX_READONLY)) {
                     // read-only users
-                    FileShareRepository fsr = repositoryMap.getRepository(repositoryId);
+                    FileShareRepository fsr = repositoryManager.getRepository(repositoryId);
                     for (String user : split(parameters.get(key))) {
-                        fsr.addUser(replaceSystemProperties(user), true);
+                        fsr.setUserReadOnly(replaceSystemProperties(user));
                     }
                 } else {
                     // new repository
                     String root = replaceSystemProperties(parameters.get(key));
+
+                    LOG.info("Adding repository '{}': {}", repositoryId, root);
+
                     FileShareRepository fsr = new FileShareRepository(repositoryId, root, typeManager);
-
-                    repositoryMap.addRepository(fsr);
-
-                    LOG.info("Added repository '" + fsr.getRepositoryId() + "': " + root);
+                    repositoryManager.addRepository(fsr);
                 }
             }
         }
     }
 
-    private static List<String> split(String csl) {
+    /**
+     * Splits a string by comma.
+     */
+    private List<String> split(String csl) {
         if (csl == null) {
             return Collections.emptyList();
         }
@@ -173,7 +209,11 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
         return result;
     }
 
-    private static String replaceSystemProperties(String s) {
+    /**
+     * Finds all substrings in curly braces and replaces them with the value of
+     * the corresponding system property.
+     */
+    private String replaceSystemProperties(String s) {
         if (s == null) {
             return null;
         }
@@ -208,25 +248,4 @@ public class FileShareServiceFactory extends AbstractServiceFactory {
         return result.toString();
     }
 
-    private static TypeDefinition loadType(String filename) {
-        TypeDefinition result = null;
-
-        try {
-            InputStream stream = new BufferedInputStream(new FileInputStream(filename));
-
-            XMLStreamReader parser = XMLUtils.createParser(stream);
-            if (!XMLUtils.findNextStartElemenet(parser)) {
-                return null;
-            }
-
-            result = XMLConverter.convertTypeDefinition(parser);
-
-            parser.close();
-            stream.close();
-        } catch (Exception e) {
-            LOG.info("Could not load type: '" + filename + "'", e);
-        }
-
-        return result;
-    }
 }

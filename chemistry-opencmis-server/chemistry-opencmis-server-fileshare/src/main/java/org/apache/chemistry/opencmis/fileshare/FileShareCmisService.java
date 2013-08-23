@@ -1,6 +1,4 @@
-package org.apache.chemistry.opencmis.fileshare;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,7 +7,7 @@ package org.apache.chemistry.opencmis.fileshare;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -17,9 +15,8 @@ package org.apache.chemistry.opencmis.fileshare;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
+package org.apache.chemistry.opencmis.fileshare;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -28,6 +25,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -52,39 +50,47 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
- * FileShare service implementation.
+ * FileShare Service implementation.
  */
-public class FileShareService extends AbstractCmisService {
+public class FileShareCmisService extends AbstractCmisService {
 
-    private final RepositoryMap repositoryMap;
+    private final FileShareRepositoryManager repositoryManager;
     private CallContext context;
 
-    /**
-     * Constructor.
-     */
-    public FileShareService(RepositoryMap repositoryMap) {
-        this.repositoryMap = repositoryMap;
+    public FileShareCmisService(final FileShareRepositoryManager repositoryManager) {
+        this.repositoryManager = repositoryManager;
     }
 
-    // --- context ---
+    // --- Call Context ---
 
+    /**
+     * Sets the call context.
+     * 
+     * This method should only be called by the service factory.
+     */
     public void setCallContext(CallContext context) {
         this.context = context;
     }
 
+    /**
+     * Gets the call context.
+     */
     public CallContext getCallContext() {
         return context;
     }
 
+    /**
+     * Gets the repository for the current call.
+     */
     public FileShareRepository getRepository() {
-        return repositoryMap.getRepository(getCallContext().getRepositoryId());
+        return repositoryManager.getRepository(getCallContext().getRepositoryId());
     }
 
     // --- repository service ---
 
     @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-        for (FileShareRepository fsr : repositoryMap.getRepositories()) {
+        for (FileShareRepository fsr : repositoryManager.getRepositories()) {
             if (fsr.getRepositoryId().equals(repositoryId)) {
                 return fsr.getRepositoryInfo(getCallContext());
             }
@@ -97,7 +103,7 @@ public class FileShareService extends AbstractCmisService {
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
 
-        for (FileShareRepository fsr : repositoryMap.getRepositories()) {
+        for (FileShareRepository fsr : repositoryManager.getRepositories()) {
             result.add(fsr.getRepositoryInfo(getCallContext()));
         }
 
@@ -107,7 +113,7 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        return getRepository().getTypesChildren(getCallContext(), typeId, includePropertyDefinitions, maxItems,
+        return getRepository().getTypeChildren(getCallContext(), typeId, includePropertyDefinitions, maxItems,
                 skipCount);
     }
 
@@ -207,12 +213,6 @@ public class FileShareService extends AbstractCmisService {
     }
 
     @Override
-    public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-            ExtensionsData extension) {
-        getRepository().setContentStream(getCallContext(), objectId, true, null);
-    }
-
-    @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         getRepository().deleteObject(getCallContext(), objectId);
@@ -272,13 +272,32 @@ public class FileShareService extends AbstractCmisService {
     @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-        getRepository().setContentStream(getCallContext(), objectId, overwriteFlag, contentStream);
+        getRepository().changeContentStream(getCallContext(), objectId, overwriteFlag, contentStream, false);
+    }
+
+    @Override
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
+        getRepository().changeContentStream(getCallContext(), objectId, true, contentStream, true);
+    }
+
+    @Override
+    public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ExtensionsData extension) {
+        getRepository().changeContentStream(getCallContext(), objectId, true, null, false);
     }
 
     @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         getRepository().updateProperties(getCallContext(), objectId, properties, this);
+    }
+
+    @Override
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        return getRepository().bulkUpdateProperties(getCallContext(), objectIdAndChangeToken, properties, this);
     }
 
     // --- versioning service ---

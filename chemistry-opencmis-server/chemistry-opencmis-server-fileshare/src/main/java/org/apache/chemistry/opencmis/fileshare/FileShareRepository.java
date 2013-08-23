@@ -39,7 +39,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -48,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -59,7 +59,6 @@ import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
@@ -74,6 +73,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityChanges;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityJoin;
+import org.apache.chemistry.opencmis.commons.enums.CapabilityOrderBy;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -92,6 +92,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -101,7 +102,9 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FailedToDeleteDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.NewTypeSettableAttributesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
@@ -109,6 +112,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderCont
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectParentDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefinitionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
@@ -126,13 +130,16 @@ import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * File system back-end for CMIS server.
+ * Implements all repository operations.
  */
 public class FileShareRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileShareRepository.class);
 
     private static final String ROOT_ID = "@root@";
     private static final String SHADOW_EXT = ".cmis.xml";
@@ -146,39 +153,30 @@ public class FileShareRepository {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileShareRepository.class);
-
-    /** Repository id */
+    /** Repository id. */
     private final String repositoryId;
-    /** Root directory */
+    /** Root directory. */
     private final File root;
-    /** Types */
-    private final TypeManager types;
-    /** User table */
-    private final Map<String, Boolean> userMap;
-    /** Repository info */
-    private final RepositoryInfoImpl repositoryInfo;
+    /** Types. */
+    private final FileShareTypeManager typeManager;
+    /** Users. */
+    private final Map<String, Boolean> readWriteUserMap;
 
-    /**
-     * Constructor.
-     * 
-     * @param repId
-     *            CMIS repository id
-     * @param rootPath
-     *            root folder
-     * @param types
-     *            type manager object
-     */
-    public FileShareRepository(String repId, String rootPath, TypeManager types) {
+    /** CMIS 1.0 repository info. */
+    private final RepositoryInfo repositoryInfo10;
+    /** CMIS 1.1 repository info. */
+    private final RepositoryInfo repositoryInfo11;
+
+    public FileShareRepository(final String repositoryId, final String rootPath, final FileShareTypeManager typeManager) {
         // check repository id
-        if ((repId == null) || (repId.trim().length() == 0)) {
+        if (repositoryId == null || repositoryId.trim().length() == 0) {
             throw new IllegalArgumentException("Invalid repository id!");
         }
 
-        repositoryId = repId;
+        this.repositoryId = repositoryId;
 
         // check root folder
-        if ((rootPath == null) || (rootPath.trim().length() == 0)) {
+        if (rootPath == null || rootPath.trim().length() == 0) {
             throw new IllegalArgumentException("Invalid root folder!");
         }
 
@@ -187,28 +185,36 @@ public class FileShareRepository {
             throw new IllegalArgumentException("Root is not a directory!");
         }
 
-        // set types
-        this.types = types;
+        // set type manager objects
+        this.typeManager = typeManager;
 
-        // set up user table
-        userMap = new HashMap<String, Boolean>();
+        // set up read-write user map
+        readWriteUserMap = new HashMap<String, Boolean>();
 
-        // compile repository info
-        repositoryInfo = new RepositoryInfoImpl();
+        // set up repository infos
+        repositoryInfo10 = createRepositoryInfo(CmisVersion.CMIS_1_0);
+        repositoryInfo11 = createRepositoryInfo(CmisVersion.CMIS_1_1);
+    }
+
+    private RepositoryInfo createRepositoryInfo(CmisVersion cmisVersion) {
+        assert cmisVersion != null;
+
+        RepositoryInfoImpl repositoryInfo = new RepositoryInfoImpl();
 
         repositoryInfo.setId(repositoryId);
         repositoryInfo.setName(repositoryId);
         repositoryInfo.setDescription(repositoryId);
 
-        repositoryInfo.setCmisVersionSupported("1.0");
+        repositoryInfo.setCmisVersionSupported(cmisVersion.value());
 
         repositoryInfo.setProductName("OpenCMIS FileShare");
-        repositoryInfo.setProductVersion("0.1");
+        repositoryInfo.setProductVersion(ServerVersion.OPENCMIS_VERSION);
         repositoryInfo.setVendorName("OpenCMIS");
 
         repositoryInfo.setRootFolder(ROOT_ID);
 
         repositoryInfo.setThinClientUri("");
+        repositoryInfo.setChangesIncomplete(true);
 
         RepositoryCapabilitiesImpl capabilities = new RepositoryCapabilitiesImpl();
         capabilities.setCapabilityAcl(CapabilityAcl.DISCOVER);
@@ -226,22 +232,29 @@ public class FileShareRepository {
         capabilities.setSupportsGetFolderTree(true);
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
 
-        NewTypeSettableAttributesImpl typeSetAttributes = new NewTypeSettableAttributesImpl();
-        typeSetAttributes.setCanSetControllableAcl(false);
-        typeSetAttributes.setCanSetControllablePolicy(false);
-        typeSetAttributes.setCanSetCreatable(false);
-        typeSetAttributes.setCanSetDescription(false);
-        typeSetAttributes.setCanSetDisplayName(false);
-        typeSetAttributes.setCanSetFileable(false);
-        typeSetAttributes.setCanSetFulltextIndexed(false);
-        typeSetAttributes.setCanSetId(false);
-        typeSetAttributes.setCanSetIncludedInSupertypeQuery(false);
-        typeSetAttributes.setCanSetLocalName(false);
-        typeSetAttributes.setCanSetLocalNamespace(false);
-        typeSetAttributes.setCanSetQueryable(false);
-        typeSetAttributes.setCanSetQueryName(false);
+        if (cmisVersion != CmisVersion.CMIS_1_0) {
+            capabilities.setOrderByCapability(CapabilityOrderBy.NONE);
 
-        capabilities.setNewTypeSettableAttributes(typeSetAttributes);
+            NewTypeSettableAttributesImpl typeSetAttributes = new NewTypeSettableAttributesImpl();
+            typeSetAttributes.setCanSetControllableAcl(false);
+            typeSetAttributes.setCanSetControllablePolicy(false);
+            typeSetAttributes.setCanSetCreatable(false);
+            typeSetAttributes.setCanSetDescription(false);
+            typeSetAttributes.setCanSetDisplayName(false);
+            typeSetAttributes.setCanSetFileable(false);
+            typeSetAttributes.setCanSetFulltextIndexed(false);
+            typeSetAttributes.setCanSetId(false);
+            typeSetAttributes.setCanSetIncludedInSupertypeQuery(false);
+            typeSetAttributes.setCanSetLocalName(false);
+            typeSetAttributes.setCanSetLocalNamespace(false);
+            typeSetAttributes.setCanSetQueryable(false);
+            typeSetAttributes.setCanSetQueryName(false);
+
+            capabilities.setNewTypeSettableAttributes(typeSetAttributes);
+
+            CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
+            capabilities.setCreatablePropertyTypes(creatablePropertyTypes);
+        }
 
         repositoryInfo.setCapabilities(capabilities);
 
@@ -283,9 +296,11 @@ public class FileShareRepository {
         aclCapability.setPermissionMappingData(map);
 
         repositoryInfo.setAclCapabilities(aclCapability);
+
+        return repositoryInfo;
     }
 
-    private static PermissionDefinition createPermission(String permission, String description) {
+    private PermissionDefinition createPermission(String permission, String description) {
         PermissionDefinitionDataImpl pd = new PermissionDefinitionDataImpl();
         pd.setId(permission);
         pd.setDescription(description);
@@ -293,7 +308,7 @@ public class FileShareRepository {
         return pd;
     }
 
-    private static PermissionMapping createMapping(String key, String permission) {
+    private PermissionMapping createMapping(String key, String permission) {
         PermissionMappingDataImpl pm = new PermissionMappingDataImpl();
         pm.setKey(key);
         pm.setPermissions(Collections.singletonList(permission));
@@ -302,54 +317,67 @@ public class FileShareRepository {
     }
 
     /**
-     * Adds a user to the repository.
-     */
-    public void addUser(String user, boolean readOnly) {
-        if ((user == null) || (user.length() == 0)) {
-            return;
-        }
-
-        userMap.put(user, readOnly);
-    }
-
-    // --- the public stuff ---
-
-    /**
-     * Returns the repository id.
+     * Returns the id of this repository.
      */
     public String getRepositoryId() {
         return repositoryId;
     }
 
     /**
+     * Returns the root directory of this repository
+     */
+    public File getRootDirectory() {
+        return root;
+    }
+
+    /**
+     * Sets read-only flag for the given user.
+     */
+    public void setUserReadOnly(String user) {
+        if (user == null || user.length() == 0) {
+            return;
+        }
+
+        readWriteUserMap.put(user, true);
+    }
+
+    /**
+     * Sets read-write flag for the given user.
+     */
+    public void setUserReadWrite(String user) {
+        if (user == null || user.length() == 0) {
+            return;
+        }
+
+        readWriteUserMap.put(user, false);
+    }
+
+    // --- CMIS operations ---
+
+    /**
      * CMIS getRepositoryInfo.
      */
     public RepositoryInfo getRepositoryInfo(CallContext context) {
         debug("getRepositoryInfo");
+
         checkUser(context, false);
 
-        return repositoryInfo;
+        if (context.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            return repositoryInfo10;
+        } else {
+            return repositoryInfo11;
+        }
     }
 
     /**
      * CMIS getTypesChildren.
      */
-    public TypeDefinitionList getTypesChildren(CallContext context, String typeId, boolean includePropertyDefinitions,
+    public TypeDefinitionList getTypeChildren(CallContext context, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount) {
         debug("getTypesChildren");
         checkUser(context, false);
 
-        return types.getTypesChildren(context, typeId, includePropertyDefinitions, maxItems, skipCount);
-    }
-
-    /**
-     * CMIS getTypeDefinition.
-     */
-    public TypeDefinition getTypeDefinition(CallContext context, String typeId) {
-        debug("getTypeDefinition");
-        checkUser(context, false);
-
-        return types.getTypeDefinition(context, typeId);
+        return typeManager.getTypeChildren(context, typeId, includePropertyDefinitions, maxItems, skipCount);
     }
 
     /**
@@ -360,7 +388,17 @@ public class FileShareRepository {
         debug("getTypesDescendants");
         checkUser(context, false);
 
-        return types.getTypeDescendants(context, typeId, depth, includePropertyDefinitions);
+        return typeManager.getTypeDescendants(context, typeId, depth, includePropertyDefinitions);
+    }
+
+    /**
+     * CMIS getTypeDefinition.
+     */
+    public TypeDefinition getTypeDefinition(CallContext context, String typeId) {
+        debug("getTypeDefinition");
+        checkUser(context, false);
+
+        return typeManager.getTypeDefinition(context, typeId);
     }
 
     /**
@@ -371,8 +409,8 @@ public class FileShareRepository {
         debug("create");
         boolean userReadOnly = checkUser(context, true);
 
-        String typeId = getTypeId(properties);
-        TypeDefinition type = types.getType(typeId);
+        String typeId = FileShareUtils.getObjectTypeId(properties);
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
@@ -386,7 +424,7 @@ public class FileShareRepository {
             throw new CmisObjectNotFoundException("Cannot create object of type '" + typeId + "'!");
         }
 
-        return compileObjectType(context, getFile(objectId), null, false, false, userReadOnly, objectInfos);
+        return compileObjectData(context, getFile(objectId), null, false, false, userReadOnly, objectInfos);
     }
 
     /**
@@ -398,7 +436,7 @@ public class FileShareRepository {
         checkUser(context, true);
 
         // check properties
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             throw new CmisInvalidArgumentException("Properties must be set!");
         }
 
@@ -408,18 +446,17 @@ public class FileShareRepository {
         }
 
         // check type
-        String typeId = getTypeId(properties);
-        TypeDefinition type = types.getType(typeId);
+        String typeId = FileShareUtils.getObjectTypeId(properties);
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
 
         // compile the properties
-        Properties props = compileProperties(typeId, context.getUsername(),
-                millisToCalendar(System.currentTimeMillis()), context.getUsername(), properties);
+        PropertiesImpl props = compileWriteProperties(typeId, context.getUsername(), context.getUsername(), properties);
 
         // check the name
-        String name = getStringProperty(properties, PropertyIds.NAME);
+        String name = FileShareUtils.getStringProperty(properties, PropertyIds.NAME);
         if (!isValidName(name)) {
             throw new CmisNameConstraintViolationException("Name is not valid!");
         }
@@ -444,24 +481,13 @@ public class FileShareRepository {
         }
 
         // write content, if available
-        if ((contentStream != null) && (contentStream.getStream() != null)) {
-            try {
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(newFile), BUFFER_SIZE);
-                InputStream in = new BufferedInputStream(contentStream.getStream(), BUFFER_SIZE);
-
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int b;
-                while ((b = in.read(buffer)) > -1) {
-                    out.write(buffer, 0, b);
-                }
-
-                out.flush();
-                out.close();
-                in.close();
-            } catch (Exception e) {
-                throw new CmisStorageException("Could not write content: " + e.getMessage(), e);
-            }
+        if (contentStream != null && contentStream.getStream() != null) {
+            writeContent(newFile, contentStream.getStream());
         }
+
+        // set creation date
+        addPropertyDateTime(props, typeId, null, PropertyIds.CREATION_DATE,
+                FileShareUtils.millisToCalendar(newFile.lastModified()));
 
         // write properties
         writePropertiesFile(newFile, props);
@@ -500,17 +526,17 @@ public class FileShareRepository {
         readCustomProperties(source, sourceProperties, null, new ObjectInfoImpl());
 
         // get the type id
-        String typeId = getIdProperty(sourceProperties, PropertyIds.OBJECT_TYPE_ID);
+        String typeId = FileShareUtils.getIdProperty(sourceProperties, PropertyIds.OBJECT_TYPE_ID);
         if (typeId == null) {
-            typeId = TypeManager.DOCUMENT_TYPE_ID;
+            typeId = BaseTypeId.CMIS_DOCUMENT.value();
         }
 
         // copy properties
         PropertiesImpl newProperties = new PropertiesImpl();
         for (PropertyData<?> prop : sourceProperties.getProperties().values()) {
-            if ((prop.getId().equals(PropertyIds.OBJECT_TYPE_ID)) || (prop.getId().equals(PropertyIds.CREATED_BY))
-                    || (prop.getId().equals(PropertyIds.CREATION_DATE))
-                    || (prop.getId().equals(PropertyIds.LAST_MODIFIED_BY))) {
+            if (prop.getId().equals(PropertyIds.OBJECT_TYPE_ID) || prop.getId().equals(PropertyIds.CREATED_BY)
+                    || prop.getId().equals(PropertyIds.CREATION_DATE)
+                    || prop.getId().equals(PropertyIds.LAST_MODIFIED_BY)) {
                 continue;
             }
 
@@ -520,7 +546,7 @@ public class FileShareRepository {
         // replace properties
         if (properties != null) {
             // find new name
-            String newName = getStringProperty(properties, PropertyIds.NAME);
+            String newName = FileShareUtils.getStringProperty(properties, PropertyIds.NAME);
             if (newName != null) {
                 if (!isValidName(newName)) {
                     throw new CmisNameConstraintViolationException("Name is not valid!");
@@ -529,7 +555,7 @@ public class FileShareRepository {
             }
 
             // get the property definitions
-            TypeDefinition type = types.getType(typeId);
+            TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
             if (type == null) {
                 throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
             }
@@ -560,7 +586,7 @@ public class FileShareRepository {
         addPropertyId(newProperties, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
         addPropertyString(newProperties, typeId, null, PropertyIds.CREATED_BY, context.getUsername());
         addPropertyDateTime(newProperties, typeId, null, PropertyIds.CREATION_DATE,
-                millisToCalendar(System.currentTimeMillis()));
+                FileShareUtils.millisToCalendar(System.currentTimeMillis()));
         addPropertyString(newProperties, typeId, null, PropertyIds.LAST_MODIFIED_BY, context.getUsername());
 
         // check the file
@@ -578,19 +604,8 @@ public class FileShareRepository {
 
         // copy content
         try {
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(newFile));
-            InputStream in = new BufferedInputStream(new FileInputStream(source));
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int b;
-            while ((b = in.read(buffer)) > -1) {
-                out.write(buffer, 0, b);
-            }
-
-            out.flush();
-            out.close();
-            in.close();
-        } catch (Exception e) {
+            writeContent(newFile, new FileInputStream(source));
+        } catch (IOException e) {
             throw new CmisStorageException("Could not roead or write content: " + e.getMessage(), e);
         }
 
@@ -601,6 +616,31 @@ public class FileShareRepository {
     }
 
     /**
+     * Writes the content to disc.
+     */
+    private void writeContent(File newFile, InputStream stream) {
+        OutputStream out = null;
+        InputStream in = null;
+        try {
+            out = new BufferedOutputStream(new FileOutputStream(newFile), BUFFER_SIZE);
+            in = new BufferedInputStream(stream, BUFFER_SIZE);
+
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int b;
+            while ((b = in.read(buffer)) > -1) {
+                out.write(buffer, 0, b);
+            }
+
+            out.flush();
+        } catch (IOException e) {
+            throw new CmisStorageException("Could not write content: " + e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    /**
      * CMIS createFolder.
      */
     public String createFolder(CallContext context, Properties properties, String folderId) {
@@ -608,23 +648,22 @@ public class FileShareRepository {
         checkUser(context, true);
 
         // check properties
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             throw new CmisInvalidArgumentException("Properties must be set!");
         }
 
         // check type
-        String typeId = getTypeId(properties);
-        TypeDefinition type = types.getType(typeId);
+        String typeId = FileShareUtils.getObjectTypeId(properties);
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
 
         // compile the properties
-        Properties props = compileProperties(typeId, context.getUsername(),
-                millisToCalendar(System.currentTimeMillis()), context.getUsername(), properties);
+        PropertiesImpl props = compileWriteProperties(typeId, context.getUsername(), context.getUsername(), properties);
 
         // check the name
-        String name = getStringProperty(properties, PropertyIds.NAME);
+        String name = FileShareUtils.getStringProperty(properties, PropertyIds.NAME);
         if (!isValidName(name)) {
             throw new CmisNameConstraintViolationException("Name is not valid.");
         }
@@ -640,6 +679,10 @@ public class FileShareRepository {
         if (!newFolder.mkdir()) {
             throw new CmisStorageException("Could not create folder!");
         }
+
+        // set creation date
+        addPropertyDateTime(props, typeId, null, PropertyIds.CREATION_DATE,
+                FileShareUtils.millisToCalendar(newFolder.lastModified()));
 
         // write properties
         writePropertiesFile(newFolder, props);
@@ -686,15 +729,15 @@ public class FileShareRepository {
             }
         }
 
-        return compileObjectType(context, newFile, null, false, false, userReadOnly, objectInfos);
+        return compileObjectData(context, newFile, null, false, false, userReadOnly, objectInfos);
     }
 
     /**
-     * CMIS setContentStream and deleteContentStream.
+     * CMIS setContentStream, deleteContentStream, and appendContentStream.
      */
-    public void setContentStream(CallContext context, Holder<String> objectId, Boolean overwriteFlag,
-            ContentStream contentStream) {
-        debug("setContentStream or deleteContentStream");
+    public void changeContentStream(CallContext context, Holder<String> objectId, Boolean overwriteFlag,
+            ContentStream contentStream, boolean append) {
+        debug("setContentStream or deleteContentStream or appendContentStream");
         checkUser(context, true);
 
         if (objectId == null) {
@@ -708,33 +751,34 @@ public class FileShareRepository {
         }
 
         // check overwrite
-        boolean owf = (overwriteFlag == null ? true : overwriteFlag.booleanValue());
+        boolean owf = FileShareUtils.getBooleanParameter(overwriteFlag, true);
         if (!owf && file.length() > 0) {
             throw new CmisContentAlreadyExistsException("Content already exists!");
         }
 
+        OutputStream out = null;
+        InputStream in = null;
         try {
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
+            out = new BufferedOutputStream(new FileOutputStream(file, append), BUFFER_SIZE);
 
-            if ((contentStream == null) || (contentStream.getStream() == null)) {
+            if (contentStream == null || contentStream.getStream() == null) {
                 // delete content
                 out.write(new byte[0]);
             } else {
                 // set content
-                InputStream in = new BufferedInputStream(contentStream.getStream(), BUFFER_SIZE);
+                in = new BufferedInputStream(contentStream.getStream(), BUFFER_SIZE);
 
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int b;
                 while ((b = in.read(buffer)) > -1) {
                     out.write(buffer, 0, b);
                 }
-
-                in.close();
             }
-
-            out.close();
         } catch (Exception e) {
             throw new CmisStorageException("Could not write content: " + e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
         }
     }
 
@@ -792,6 +836,39 @@ public class FileShareRepository {
     }
 
     /**
+     * Removes a folder and its content.
+     */
+    private boolean deleteFolder(File folder, boolean continueOnFailure, FailedToDeleteDataImpl ftd) {
+        boolean success = true;
+
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                if (!deleteFolder(file, continueOnFailure, ftd)) {
+                    if (!continueOnFailure) {
+                        return false;
+                    }
+                    success = false;
+                }
+            } else {
+                if (!file.delete()) {
+                    ftd.getIds().add(getId(file));
+                    if (!continueOnFailure) {
+                        return false;
+                    }
+                    success = false;
+                }
+            }
+        }
+
+        if (!folder.delete()) {
+            ftd.getIds().add(getId(folder));
+            success = false;
+        }
+
+        return success;
+    }
+
+    /**
      * CMIS updateProperties.
      */
     public ObjectData updateProperties(CallContext context, Holder<String> objectId, Properties properties,
@@ -807,7 +884,7 @@ public class FileShareRepository {
         File file = getFile(objectId.getValue());
 
         // get and check the new name
-        String newName = getStringProperty(properties, PropertyIds.NAME);
+        String newName = FileShareUtils.getStringProperty(properties, PropertyIds.NAME);
         boolean isRename = (newName != null) && (!file.getName().equals(newName));
         if (isRename && !isValidName(newName)) {
             throw new CmisNameConstraintViolationException("Name is not valid!");
@@ -818,21 +895,21 @@ public class FileShareRepository {
         readCustomProperties(file, oldProperties, null, new ObjectInfoImpl());
 
         // get the type id
-        String typeId = getIdProperty(oldProperties, PropertyIds.OBJECT_TYPE_ID);
+        String typeId = FileShareUtils.getIdProperty(oldProperties, PropertyIds.OBJECT_TYPE_ID);
         if (typeId == null) {
-            typeId = (file.isDirectory() ? TypeManager.FOLDER_TYPE_ID : TypeManager.DOCUMENT_TYPE_ID);
+            typeId = (file.isDirectory() ? BaseTypeId.CMIS_FOLDER.value() : BaseTypeId.CMIS_DOCUMENT.value());
         }
 
         // get the creator
-        String creator = getStringProperty(oldProperties, PropertyIds.CREATED_BY);
+        String creator = FileShareUtils.getStringProperty(oldProperties, PropertyIds.CREATED_BY);
         if (creator == null) {
             creator = context.getUsername();
         }
 
         // get creation date
-        GregorianCalendar creationDate = getDateTimeProperty(oldProperties, PropertyIds.CREATION_DATE);
+        GregorianCalendar creationDate = FileShareUtils.getDateTimeProperty(oldProperties, PropertyIds.CREATION_DATE);
         if (creationDate == null) {
-            creationDate = millisToCalendar(file.lastModified());
+            creationDate = FileShareUtils.millisToCalendar(file.lastModified());
         }
 
         // compile the properties
@@ -865,7 +942,108 @@ public class FileShareRepository {
             }
         }
 
-        return compileObjectType(context, newFile, null, false, false, userReadOnly, objectInfos);
+        return compileObjectData(context, newFile, null, false, false, userReadOnly, objectInfos);
+    }
+
+    /**
+     * Checks and updates a property set that can be written to disc.
+     */
+    private Properties updateProperties(String typeId, String creator, GregorianCalendar creationDate, String modifier,
+            Properties oldProperties, Properties properties) {
+        PropertiesImpl result = new PropertiesImpl();
+
+        if (properties == null) {
+            throw new CmisConstraintException("No properties!");
+        }
+
+        // get the property definitions
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
+        if (type == null) {
+            throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
+        }
+
+        // copy old properties
+        for (PropertyData<?> prop : oldProperties.getProperties().values()) {
+            PropertyDefinition<?> propType = type.getPropertyDefinitions().get(prop.getId());
+
+            // do we know that property?
+            if (propType == null) {
+                throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
+            }
+
+            // only add read/write properties
+            if (propType.getUpdatability() != Updatability.READWRITE) {
+                continue;
+            }
+
+            result.addProperty(prop);
+        }
+
+        // update properties
+        for (PropertyData<?> prop : properties.getProperties().values()) {
+            PropertyDefinition<?> propType = type.getPropertyDefinitions().get(prop.getId());
+
+            // do we know that property?
+            if (propType == null) {
+                throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
+            }
+
+            // can it be set?
+            if (propType.getUpdatability() == Updatability.READONLY) {
+                throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");
+            }
+
+            if (propType.getUpdatability() == Updatability.ONCREATE) {
+                throw new CmisConstraintException("Property '" + prop.getId() + "' can only be set on create!");
+            }
+
+            // default or value
+            if (isEmptyProperty(prop)) {
+                addPropertyDefault(result, propType);
+            } else {
+                result.addProperty(prop);
+            }
+        }
+
+        addPropertyId(result, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
+        addPropertyString(result, typeId, null, PropertyIds.CREATED_BY, creator);
+        addPropertyDateTime(result, typeId, null, PropertyIds.CREATION_DATE, creationDate);
+        addPropertyString(result, typeId, null, PropertyIds.LAST_MODIFIED_BY, modifier);
+
+        return result;
+    }
+
+    /**
+     * CMIS bulkUpdateProperties.
+     */
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            ObjectInfoHandler objectInfos) {
+        debug("bulkUpdateProperties");
+        checkUser(context, true);
+
+        if (objectIdAndChangeToken == null) {
+            throw new CmisInvalidArgumentException("No object ids provided!");
+        }
+
+        List<BulkUpdateObjectIdAndChangeToken> result = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
+
+        for (BulkUpdateObjectIdAndChangeToken oid : objectIdAndChangeToken) {
+            if (oid == null) {
+                // ignore invalid ids
+                continue;
+            }
+            try {
+                Holder<String> oidHolder = new Holder<String>(oid.getId());
+                updateProperties(context, oidHolder, properties, objectInfos);
+
+                result.add(new BulkUpdateObjectIdAndChangeTokenImpl(oid.getId(), oidHolder.getValue(), null));
+            } catch (CmisBaseException e) {
+                // ignore exceptions - see specification
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -877,7 +1055,7 @@ public class FileShareRepository {
         boolean userReadOnly = checkUser(context, false);
 
         // check id
-        if ((objectId == null) && (versionServicesId == null)) {
+        if (objectId == null && versionServicesId == null) {
             throw new CmisInvalidArgumentException("Object Id must be set.");
         }
 
@@ -891,14 +1069,14 @@ public class FileShareRepository {
         File file = getFile(objectId);
 
         // set defaults if values not set
-        boolean iaa = (includeAllowableActions == null ? false : includeAllowableActions.booleanValue());
-        boolean iacl = (includeAcl == null ? false : includeAcl.booleanValue());
+        boolean iaa = FileShareUtils.getBooleanParameter(includeAllowableActions, false);
+        boolean iacl = FileShareUtils.getBooleanParameter(includeAcl, false);
 
         // split filter
-        Set<String> filterCollection = splitFilter(filter);
+        Set<String> filterCollection = FileShareUtils.splitFilter(filter);
 
         // gather properties
-        return compileObjectType(context, file, filterCollection, iaa, iacl, userReadOnly, objectInfos);
+        return compileObjectData(context, file, filterCollection, iaa, iacl, userReadOnly, objectInfos);
     }
 
     /**
@@ -939,10 +1117,6 @@ public class FileShareRepository {
         debug("getContentStream");
         checkUser(context, false);
 
-        if ((offset != null) || (length != null)) {
-            throw new CmisInvalidArgumentException("Offset and Length are not supported!");
-        }
-
         // get the file
         final File file = getFile(objectId);
         if (!file.isFile()) {
@@ -956,12 +1130,21 @@ public class FileShareRepository {
         InputStream stream = null;
         try {
             stream = new BufferedInputStream(new FileInputStream(file), 4 * 1024);
+            if (offset != null || length != null) {
+                stream = new ContentRangeInputStream(stream, offset, length);
+            }
         } catch (FileNotFoundException e) {
             throw new CmisObjectNotFoundException(e.getMessage(), e);
         }
 
         // compile data
-        ContentStreamImpl result = new ContentStreamImpl();
+        ContentStreamImpl result;
+        if ((offset != null && offset.longValue() > 0) || length != null) {
+            result = new PartialContentStreamImpl();
+        } else {
+            result = new ContentStreamImpl();
+        }
+
         result.setFileName(file.getName());
         result.setLength(BigInteger.valueOf(file.length()));
         result.setMimeType(MimeTypes.getMIMEType(file));
@@ -980,11 +1163,11 @@ public class FileShareRepository {
         boolean userReadOnly = checkUser(context, false);
 
         // split filter
-        Set<String> filterCollection = splitFilter(filter);
+        Set<String> filterCollection = FileShareUtils.splitFilter(filter);
 
         // set defaults if values not set
-        boolean iaa = (includeAllowableActions == null ? false : includeAllowableActions.booleanValue());
-        boolean ips = (includePathSegment == null ? false : includePathSegment.booleanValue());
+        boolean iaa = FileShareUtils.getBooleanParameter(includeAllowableActions, false);
+        boolean ips = FileShareUtils.getBooleanParameter(includePathSegment, false);
 
         // skip and max
         int skip = (skipCount == null ? 0 : skipCount.intValue());
@@ -1005,7 +1188,7 @@ public class FileShareRepository {
 
         // set object info of the the folder
         if (context.isObjectInfoRequired()) {
-            compileObjectType(context, folder, null, false, false, userReadOnly, objectInfos);
+            compileObjectData(context, folder, null, false, false, userReadOnly, objectInfos);
         }
 
         // prepare result
@@ -1035,7 +1218,7 @@ public class FileShareRepository {
 
             // build and add child object
             ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-            objectInFolder.setObject(compileObjectType(context, child, filterCollection, iaa, false, userReadOnly,
+            objectInFolder.setObject(compileObjectData(context, child, filterCollection, iaa, false, userReadOnly,
                     objectInfos));
             if (ips) {
                 objectInFolder.setPathSegment(child.getName());
@@ -1068,11 +1251,11 @@ public class FileShareRepository {
         }
 
         // split filter
-        Set<String> filterCollection = splitFilter(filter);
+        Set<String> filterCollection = FileShareUtils.splitFilter(filter);
 
         // set defaults if values not set
-        boolean iaa = (includeAllowableActions == null ? false : includeAllowableActions.booleanValue());
-        boolean ips = (includePathSegment == null ? false : includePathSegment.booleanValue());
+        boolean iaa = FileShareUtils.getBooleanParameter(includeAllowableActions, false);
+        boolean ips = FileShareUtils.getBooleanParameter(includePathSegment, false);
 
         // get the folder
         File folder = getFile(folderId);
@@ -1082,7 +1265,7 @@ public class FileShareRepository {
 
         // set object info of the the folder
         if (context.isObjectInfoRequired()) {
-            compileObjectType(context, folder, null, false, false, userReadOnly, objectInfos);
+            compileObjectData(context, folder, null, false, false, userReadOnly, objectInfos);
         }
 
         // get the tree
@@ -1091,6 +1274,49 @@ public class FileShareRepository {
                 objectInfos);
 
         return result;
+    }
+
+    /**
+     * Gather the children of a folder.
+     */
+    private void gatherDescendants(CallContext context, File folder, List<ObjectInFolderContainer> list,
+            boolean foldersOnly, int depth, Set<String> filter, boolean includeAllowableActions,
+            boolean includePathSegments, boolean userReadOnly, ObjectInfoHandler objectInfos) {
+        assert folder != null;
+        assert list != null;
+
+        // iterate through children
+        for (File child : folder.listFiles()) {
+            // skip hidden and shadow files
+            if (child.isHidden() || child.getName().equals(SHADOW_FOLDER) || child.getPath().endsWith(SHADOW_EXT)) {
+                continue;
+            }
+
+            // folders only?
+            if (foldersOnly && !child.isDirectory()) {
+                continue;
+            }
+
+            // add to list
+            ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
+            objectInFolder.setObject(compileObjectData(context, child, filter, includeAllowableActions, false,
+                    userReadOnly, objectInfos));
+            if (includePathSegments) {
+                objectInFolder.setPathSegment(child.getName());
+            }
+
+            ObjectInFolderContainerImpl container = new ObjectInFolderContainerImpl();
+            container.setObject(objectInFolder);
+
+            list.add(container);
+
+            // move to next level
+            if (depth != 1 && child.isDirectory()) {
+                container.setChildren(new ArrayList<ObjectInFolderContainer>());
+                gatherDescendants(context, child, container.getChildren(), foldersOnly, depth - 1, filter,
+                        includeAllowableActions, includePathSegments, userReadOnly, objectInfos);
+            }
+        }
     }
 
     /**
@@ -1115,11 +1341,11 @@ public class FileShareRepository {
         boolean userReadOnly = checkUser(context, false);
 
         // split filter
-        Set<String> filterCollection = splitFilter(filter);
+        Set<String> filterCollection = FileShareUtils.splitFilter(filter);
 
         // set defaults if values not set
-        boolean iaa = (includeAllowableActions == null ? false : includeAllowableActions.booleanValue());
-        boolean irps = (includeRelativePathSegment == null ? false : includeRelativePathSegment.booleanValue());
+        boolean iaa = FileShareUtils.getBooleanParameter(includeAllowableActions, false);
+        boolean irps = FileShareUtils.getBooleanParameter(includeRelativePathSegment, false);
 
         // get the file or folder
         File file = getFile(objectId);
@@ -1131,12 +1357,12 @@ public class FileShareRepository {
 
         // set object info of the the object
         if (context.isObjectInfoRequired()) {
-            compileObjectType(context, file, null, false, false, userReadOnly, objectInfos);
+            compileObjectData(context, file, null, false, false, userReadOnly, objectInfos);
         }
 
         // get parent folder
         File parent = file.getParentFile();
-        ObjectData object = compileObjectType(context, parent, filterCollection, iaa, false, userReadOnly, objectInfos);
+        ObjectData object = compileObjectData(context, parent, filterCollection, iaa, false, userReadOnly, objectInfos);
 
         ObjectParentDataImpl result = new ObjectParentDataImpl();
         result.setObject(object);
@@ -1144,7 +1370,7 @@ public class FileShareRepository {
             result.setRelativePathSegment(file.getName());
         }
 
-        return Collections.singletonList((ObjectParentData) result);
+        return Collections.<ObjectParentData> singletonList(result);
     }
 
     /**
@@ -1156,10 +1382,10 @@ public class FileShareRepository {
         boolean userReadOnly = checkUser(context, false);
 
         // split filter
-        Set<String> filterCollection = splitFilter(filter);
+        Set<String> filterCollection = FileShareUtils.splitFilter(filter);
 
         // check path
-        if ((folderPath == null) || (!folderPath.startsWith("/"))) {
+        if (folderPath == null || folderPath.length() == 0 || folderPath.charAt(0) != '/') {
             throw new CmisInvalidArgumentException("Invalid folder path!");
         }
 
@@ -1176,141 +1402,21 @@ public class FileShareRepository {
             throw new CmisObjectNotFoundException("Path doesn't exist.");
         }
 
-        return compileObjectType(context, file, filterCollection, includeAllowableActions, includeACL, userReadOnly,
+        return compileObjectData(context, file, filterCollection, includeAllowableActions, includeACL, userReadOnly,
                 objectInfos);
     }
 
-    // --- helper methods ---
-
-    /**
-     * Gather the children of a folder.
-     */
-    private void gatherDescendants(CallContext context, File folder, List<ObjectInFolderContainer> list,
-            boolean foldersOnly, int depth, Set<String> filter, boolean includeAllowableActions,
-            boolean includePathSegments, boolean userReadOnly, ObjectInfoHandler objectInfos) {
-        // iterate through children
-        for (File child : folder.listFiles()) {
-            // skip hidden and shadow files
-            if (child.isHidden() || child.getName().equals(SHADOW_FOLDER) || child.getPath().endsWith(SHADOW_EXT)) {
-                continue;
-            }
-
-            // folders only?
-            if (foldersOnly && !child.isDirectory()) {
-                continue;
-            }
-
-            // add to list
-            ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-            objectInFolder.setObject(compileObjectType(context, child, filter, includeAllowableActions, false,
-                    userReadOnly, objectInfos));
-            if (includePathSegments) {
-                objectInFolder.setPathSegment(child.getName());
-            }
-
-            ObjectInFolderContainerImpl container = new ObjectInFolderContainerImpl();
-            container.setObject(objectInFolder);
-
-            list.add(container);
-
-            // move to next level
-            if ((depth != 1) && child.isDirectory()) {
-                container.setChildren(new ArrayList<ObjectInFolderContainer>());
-                gatherDescendants(context, child, container.getChildren(), foldersOnly, depth - 1, filter,
-                        includeAllowableActions, includePathSegments, userReadOnly, objectInfos);
-            }
-        }
-    }
-
-    /**
-     * Removes a folder and its content.
-     * 
-     * @throws
-     */
-    private boolean deleteFolder(File folder, boolean continueOnFailure, FailedToDeleteDataImpl ftd) {
-        boolean success = true;
-
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                if (!deleteFolder(file, continueOnFailure, ftd)) {
-                    if (!continueOnFailure) {
-                        return false;
-                    }
-                    success = false;
-                }
-            } else {
-                if (!file.delete()) {
-                    ftd.getIds().add(getId(file));
-                    if (!continueOnFailure) {
-                        return false;
-                    }
-                    success = false;
-                }
-            }
-        }
-
-        if (!folder.delete()) {
-            ftd.getIds().add(getId(folder));
-            success = false;
-        }
-
-        return success;
-    }
-
-    /**
-     * Checks if the given name is valid for a file system.
-     * 
-     * @param name
-     *            the name to check
-     * 
-     * @return <code>true</code> if the name is valid, <code>false</code>
-     *         otherwise
-     */
-    private static boolean isValidName(String name) {
-        if ((name == null) || (name.length() == 0) || (name.indexOf(File.separatorChar) != -1)
-                || (name.indexOf(File.pathSeparatorChar) != -1)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks if a folder is empty. A folder is considered as empty if no files
-     * or only the shadow file reside in the folder.
-     * 
-     * @param folder
-     *            the folder
-     * 
-     * @return <code>true</code> if the folder is empty.
-     */
-    private static boolean isFolderEmpty(File folder) {
-        if (!folder.isDirectory()) {
-            return true;
-        }
-
-        String[] fileNames = folder.list();
-
-        if ((fileNames == null) || (fileNames.length == 0)) {
-            return true;
-        }
-
-        if ((fileNames.length == 1) && (fileNames[0].equals(SHADOW_FOLDER))) {
-            return true;
-        }
-
-        return false;
-    }
+    // --- helpers ---
 
     /**
      * Compiles an object type object from a file or folder.
      */
-    private ObjectData compileObjectType(CallContext context, File file, Set<String> filter,
+    private ObjectData compileObjectData(CallContext context, File file, Set<String> filter,
             boolean includeAllowableActions, boolean includeAcl, boolean userReadOnly, ObjectInfoHandler objectInfos) {
         ObjectDataImpl result = new ObjectDataImpl();
         ObjectInfoImpl objectInfo = new ObjectInfoImpl();
 
-        result.setProperties(compileProperties(file, filter, objectInfo));
+        result.setProperties(compileProperties(context, file, filter, objectInfo));
 
         if (includeAllowableActions) {
             result.setAllowableActions(compileAllowableActions(file, userReadOnly));
@@ -1332,12 +1438,13 @@ public class FileShareRepository {
     /**
      * Gathers all base properties of a file or folder.
      */
-    private Properties compileProperties(File file, Set<String> orgfilter, ObjectInfoImpl objectInfo) {
+    private Properties compileProperties(CallContext context, File file, Set<String> orgfilter,
+            ObjectInfoImpl objectInfo) {
         if (file == null) {
             throw new IllegalArgumentException("File must not be null!");
         }
 
-        // we can gather properties if the file or folder doesn't exist
+        // we can't gather properties if the file or folder doesn't exist
         if (!file.exists()) {
             throw new CmisObjectNotFoundException("Object not found!");
         }
@@ -1349,7 +1456,7 @@ public class FileShareRepository {
         String typeId = null;
 
         if (file.isDirectory()) {
-            typeId = TypeManager.FOLDER_TYPE_ID;
+            typeId = BaseTypeId.CMIS_FOLDER.value();
             objectInfo.setBaseType(BaseTypeId.CMIS_FOLDER);
             objectInfo.setTypeId(typeId);
             objectInfo.setContentType(null);
@@ -1368,7 +1475,7 @@ public class FileShareRepository {
             objectInfo.setWorkingCopyId(null);
             objectInfo.setWorkingCopyOriginalId(null);
         } else {
-            typeId = TypeManager.DOCUMENT_TYPE_ID;
+            typeId = BaseTypeId.CMIS_DOCUMENT.value();
             objectInfo.setBaseType(BaseTypeId.CMIS_DOCUMENT);
             objectInfo.setTypeId(typeId);
             objectInfo.setHasAcl(true);
@@ -1407,7 +1514,7 @@ public class FileShareRepository {
             objectInfo.setCreatedBy(USER_UNKNOWN);
 
             // creation and modification date
-            GregorianCalendar lastModified = millisToCalendar(file.lastModified());
+            GregorianCalendar lastModified = FileShareUtils.millisToCalendar(file.lastModified());
             addPropertyDateTime(result, typeId, filter, PropertyIds.CREATION_DATE, lastModified);
             addPropertyDateTime(result, typeId, filter, PropertyIds.LAST_MODIFICATION_DATE, lastModified);
             objectInfo.setCreationDate(lastModified);
@@ -1417,14 +1524,16 @@ public class FileShareRepository {
             addPropertyString(result, typeId, filter, PropertyIds.CHANGE_TOKEN, null);
 
             // CMIS 1.1 properties
-            addPropertyString(result, typeId, filter, PropertyIds.DESCRIPTION, null);
-            addPropertyIdList(result, typeId, filter, PropertyIds.SECONDARY_OBJECT_TYPE_IDS, null);
+            if (context.getCmisVersion() != CmisVersion.CMIS_1_0) {
+                addPropertyString(result, typeId, filter, PropertyIds.DESCRIPTION, null);
+                addPropertyIdList(result, typeId, filter, PropertyIds.SECONDARY_OBJECT_TYPE_IDS, null);
+            }
 
             // directory or file
             if (file.isDirectory()) {
                 // base type and type name
                 addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
-                addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID, TypeManager.FOLDER_TYPE_ID);
+                addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
                 String path = getRepositoryPath(file);
                 addPropertyString(result, typeId, filter, PropertyIds.PATH, (path.length() == 0 ? "/" : path));
 
@@ -1442,7 +1551,7 @@ public class FileShareRepository {
             } else {
                 // base type and type name
                 addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
-                addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID, TypeManager.DOCUMENT_TYPE_ID);
+                addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
 
                 // file properties
                 addPropertyBoolean(result, typeId, filter, PropertyIds.IS_IMMUTABLE, false);
@@ -1455,6 +1564,9 @@ public class FileShareRepository {
                 addPropertyString(result, typeId, filter, PropertyIds.VERSION_SERIES_CHECKED_OUT_BY, null);
                 addPropertyString(result, typeId, filter, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, null);
                 addPropertyString(result, typeId, filter, PropertyIds.CHECKIN_COMMENT, "");
+                if (context.getCmisVersion() != CmisVersion.CMIS_1_0) {
+                    addPropertyBoolean(result, typeId, filter, PropertyIds.IS_PRIVATE_WORKING_COPY, false);
+                }
 
                 if (file.length() == 0) {
                     addPropertyBigInteger(result, typeId, filter, PropertyIds.CONTENT_STREAM_LENGTH, null);
@@ -1483,15 +1595,14 @@ public class FileShareRepository {
 
             if (filter != null) {
                 if (!filter.isEmpty()) {
-                    debug("Unknown filter properties: " + filter.toString(), null);
+                    debug("Unknown filter properties: " + filter.toString());
                 }
             }
 
             return result;
+        } catch (CmisBaseException cbe) {
+            throw cbe;
         } catch (Exception e) {
-            if (e instanceof CmisBaseException) {
-                throw (CmisBaseException) e;
-            }
             throw new CmisRuntimeException(e.getMessage(), e);
         }
     }
@@ -1518,15 +1629,9 @@ public class FileShareRepository {
             obj = XMLConverter.convertObject(parser);
             parser.close();
         } catch (Exception e) {
-            warn("Unvalid CMIS properties: " + propFile.getAbsolutePath(), e);
+            LOG.warn("Unvalid CMIS properties: {}", propFile.getAbsolutePath(), e);
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ioe) {
-                    // ignore
-                }
-            }
+            IOUtils.closeQuietly(stream);
         }
 
         if ((obj == null) || (obj.getProperties() == null)) {
@@ -1562,10 +1667,10 @@ public class FileShareRepository {
 
             // check filter
             if (filter != null) {
-                if (!filter.contains(prop.getId())) {
+                if (!filter.contains(prop.getQueryName())) {
                     continue;
                 } else {
-                    filter.remove(prop.getId());
+                    filter.remove(prop.getQueryName());
                 }
             }
 
@@ -1587,17 +1692,16 @@ public class FileShareRepository {
     /**
      * Checks and compiles a property set that can be written to disc.
      */
-    private Properties compileProperties(String typeId, String creator, GregorianCalendar creationDate,
-            String modifier, Properties properties) {
+    private PropertiesImpl compileWriteProperties(String typeId, String creator, String modifier, Properties properties) {
         PropertiesImpl result = new PropertiesImpl();
         Set<String> addedProps = new HashSet<String>();
 
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             throw new CmisConstraintException("No properties!");
         }
 
         // get the property definitions
-        TypeDefinition type = types.getType(typeId);
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
@@ -1612,14 +1716,16 @@ public class FileShareRepository {
             }
 
             // can it be set?
-            if ((propType.getUpdatability() == Updatability.READONLY)) {
+            if (propType.getUpdatability() == Updatability.READONLY) {
                 throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");
             }
 
             // empty properties are invalid
-            if (isEmptyProperty(prop)) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' must not be empty!");
-            }
+            // TODO: check
+            // if (isEmptyProperty(prop)) {
+            // throw new CmisConstraintException("Property '" + prop.getId() +
+            // "' must not be empty!");
+            // }
 
             // add it
             result.addProperty(prop);
@@ -1628,7 +1734,7 @@ public class FileShareRepository {
 
         // check if required properties are missing
         for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
-            if (!addedProps.contains(propDef.getId()) && (propDef.getUpdatability() != Updatability.READONLY)) {
+            if (!addedProps.contains(propDef.getId()) && propDef.getUpdatability() != Updatability.READONLY) {
                 if (!addPropertyDefault(result, propDef) && propDef.isRequired()) {
                     throw new CmisConstraintException("Property '" + propDef.getId() + "' is required!");
                 }
@@ -1637,81 +1743,43 @@ public class FileShareRepository {
 
         addPropertyId(result, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
         addPropertyString(result, typeId, null, PropertyIds.CREATED_BY, creator);
-        addPropertyDateTime(result, typeId, null, PropertyIds.CREATION_DATE, creationDate);
         addPropertyString(result, typeId, null, PropertyIds.LAST_MODIFIED_BY, modifier);
 
         return result;
     }
 
     /**
-     * Checks and updates a property set that can be written to disc.
+     * Writes the properties for a document or folder.
      */
-    private Properties updateProperties(String typeId, String creator, GregorianCalendar creationDate, String modifier,
-            Properties oldProperties, Properties properties) {
-        PropertiesImpl result = new PropertiesImpl();
+    private void writePropertiesFile(File file, Properties properties) {
+        File propFile = getPropertiesFile(file);
 
-        if (properties == null) {
-            throw new CmisConstraintException("No properties!");
+        // if no properties set delete the properties file
+        if (properties == null || properties.getProperties() == null || properties.getProperties().size() == 0) {
+            propFile.delete();
+            return;
         }
 
-        // get the property definitions
-        TypeDefinition type = types.getType(typeId);
-        if (type == null) {
-            throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
+        // create object
+        ObjectDataImpl object = new ObjectDataImpl();
+        object.setProperties(properties);
+
+        OutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(propFile));
+            XMLStreamWriter writer = XMLUtils.createWriter(stream);
+            XMLUtils.startXmlDocument(writer);
+            XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, true, "object", XMLConstants.NAMESPACE_CMIS, object);
+            XMLUtils.endXmlDocument(writer);
+            writer.close();
+        } catch (Exception e) {
+            throw new CmisStorageException("Couldn't store properties!", e);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
-
-        // copy old properties
-        for (PropertyData<?> prop : oldProperties.getProperties().values()) {
-            PropertyDefinition<?> propType = type.getPropertyDefinitions().get(prop.getId());
-
-            // do we know that property?
-            if (propType == null) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
-            }
-
-            // only add read/write properties
-            if ((propType.getUpdatability() != Updatability.READWRITE)) {
-                continue;
-            }
-
-            result.addProperty(prop);
-        }
-
-        // update properties
-        for (PropertyData<?> prop : properties.getProperties().values()) {
-            PropertyDefinition<?> propType = type.getPropertyDefinitions().get(prop.getId());
-
-            // do we know that property?
-            if (propType == null) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' is unknown!");
-            }
-
-            // can it be set?
-            if ((propType.getUpdatability() == Updatability.READONLY)) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' is readonly!");
-            }
-
-            if ((propType.getUpdatability() == Updatability.ONCREATE)) {
-                throw new CmisConstraintException("Property '" + prop.getId() + "' can only be set on create!");
-            }
-
-            // default or value
-            if (isEmptyProperty(prop)) {
-                addPropertyDefault(result, propType);
-            } else {
-                result.addProperty(prop);
-            }
-        }
-
-        addPropertyId(result, typeId, null, PropertyIds.OBJECT_TYPE_ID, typeId);
-        addPropertyString(result, typeId, null, PropertyIds.CREATED_BY, creator);
-        addPropertyDateTime(result, typeId, null, PropertyIds.CREATION_DATE, creationDate);
-        addPropertyString(result, typeId, null, PropertyIds.LAST_MODIFIED_BY, modifier);
-
-        return result;
     }
 
-    private static boolean isEmptyProperty(PropertyData<?> prop) {
+    private boolean isEmptyProperty(PropertyData<?> prop) {
         if ((prop == null) || (prop.getValues() == null)) {
             return true;
         }
@@ -1783,7 +1851,7 @@ public class FileShareRepository {
             throw new IllegalArgumentException("Id must not be null!");
         }
 
-        TypeDefinition type = types.getType(typeId);
+        TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new IllegalArgumentException("Unknown type: " + typeId);
         }
@@ -1808,7 +1876,7 @@ public class FileShareRepository {
      * Adds the default value of property if defined.
      */
     @SuppressWarnings("unchecked")
-    private static boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
+    private boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
         if ((props == null) || (props.getProperties() == null)) {
             throw new IllegalArgumentException("Props must not be null!");
         }
@@ -1862,7 +1930,7 @@ public class FileShareRepository {
             throw new IllegalArgumentException("File must not be null!");
         }
 
-        // we can gather properties if the file or folder doesn't exist
+        // we can't gather allowable actions if the file or folder doesn't exist
         if (!file.exists()) {
             throw new CmisObjectNotFoundException("Object not found!");
         }
@@ -1901,7 +1969,7 @@ public class FileShareRepository {
         return result;
     }
 
-    private static void addAction(Set<Action> aas, Action action, boolean condition) {
+    private void addAction(Set<Action> aas, Action action, boolean condition) {
         if (condition) {
             aas.add(action);
         }
@@ -1914,7 +1982,7 @@ public class FileShareRepository {
         AccessControlListImpl result = new AccessControlListImpl();
         result.setAces(new ArrayList<Ace>());
 
-        for (Map.Entry<String, Boolean> ue : userMap.entrySet()) {
+        for (Map.Entry<String, Boolean> ue : readWriteUserMap.entrySet()) {
             // create principal
             AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl();
             principal.setPrincipalId(ue.getKey());
@@ -1939,138 +2007,48 @@ public class FileShareRepository {
     }
 
     /**
-     * Writes the properties for a document or folder.
+     * Checks if the given name is valid for a file system.
+     * 
+     * @param name
+     *            the name to check
+     * 
+     * @return <code>true</code> if the name is valid, <code>false</code>
+     *         otherwise
      */
-    private static void writePropertiesFile(File file, Properties properties) {
-        File propFile = getPropertiesFile(file);
-
-        // if no properties set delete the properties file
-        if ((properties == null) || (properties.getProperties() == null) || (properties.getProperties().size() == 0)) {
-            propFile.delete();
-            return;
+    private boolean isValidName(String name) {
+        if (name == null || name.length() == 0 || name.indexOf(File.separatorChar) != -1
+                || name.indexOf(File.pathSeparatorChar) != -1) {
+            return false;
         }
 
-        // create object
-        ObjectDataImpl object = new ObjectDataImpl();
-        object.setProperties(properties);
-
-        OutputStream stream = null;
-        try {
-            stream = new BufferedOutputStream(new FileOutputStream(propFile));
-            XMLStreamWriter writer = XMLUtils.createWriter(stream);
-            XMLUtils.startXmlDocument(writer);
-            XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, true, "object", XMLConstants.NAMESPACE_CMIS, object);
-            XMLUtils.endXmlDocument(writer);
-        } catch (Exception e) {
-            throw new CmisStorageException("Couldn't store properties!", e);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e2) {
-                    // ignore
-                }
-            }
-        }
-    }
-
-    // --- internal stuff ---
-
-    /**
-     * Converts milliseconds into a calendar object.
-     */
-    private static GregorianCalendar millisToCalendar(long millis) {
-        GregorianCalendar result = new GregorianCalendar();
-        result.setTimeZone(TimeZone.getTimeZone("GMT"));
-        result.setTimeInMillis((long) (Math.ceil((double) millis / 1000) * 1000));
-
-        return result;
+        return true;
     }
 
     /**
-     * Splits a filter statement into a collection of properties. If
-     * <code>filter</code> is <code>null</code>, empty or one of the properties
-     * is '*' , an empty collection will be returned.
+     * Checks if a folder is empty. A folder is considered as empty if no files
+     * or only the shadow file reside in the folder.
+     * 
+     * @param folder
+     *            the folder
+     * 
+     * @return <code>true</code> if the folder is empty.
      */
-    private static Set<String> splitFilter(String filter) {
-        if (filter == null) {
-            return null;
+    private boolean isFolderEmpty(File folder) {
+        if (!folder.isDirectory()) {
+            return true;
         }
 
-        if (filter.trim().length() == 0) {
-            return null;
+        String[] fileNames = folder.list();
+
+        if ((fileNames == null) || (fileNames.length == 0)) {
+            return true;
         }
 
-        Set<String> result = new HashSet<String>();
-        for (String s : filter.split(",")) {
-            s = s.trim();
-            if (s.equals("*")) {
-                return null;
-            } else if (s.length() > 0) {
-                result.add(s);
-            }
+        if (fileNames.length == 1 && fileNames[0].equals(SHADOW_FOLDER)) {
+            return true;
         }
 
-        // set a few base properties
-        // query name == id (for base type properties)
-        result.add(PropertyIds.OBJECT_ID);
-        result.add(PropertyIds.OBJECT_TYPE_ID);
-        result.add(PropertyIds.BASE_TYPE_ID);
-
-        return result;
-    }
-
-    /**
-     * Gets the type id from a set of properties.
-     */
-    private static String getTypeId(Properties properties) {
-        PropertyData<?> typeProperty = properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID);
-        if (!(typeProperty instanceof PropertyId)) {
-            throw new CmisInvalidArgumentException("Type Id must be set!");
-        }
-
-        String typeId = ((PropertyId) typeProperty).getFirstValue();
-        if (typeId == null) {
-            throw new CmisInvalidArgumentException("Type Id must be set!");
-        }
-
-        return typeId;
-    }
-
-    /**
-     * Returns the first value of an id property.
-     */
-    private static String getIdProperty(Properties properties, String name) {
-        PropertyData<?> property = properties.getProperties().get(name);
-        if (!(property instanceof PropertyId)) {
-            return null;
-        }
-
-        return ((PropertyId) property).getFirstValue();
-    }
-
-    /**
-     * Returns the first value of a string property.
-     */
-    private static String getStringProperty(Properties properties, String name) {
-        PropertyData<?> property = properties.getProperties().get(name);
-        if (!(property instanceof PropertyString)) {
-            return null;
-        }
-
-        return ((PropertyString) property).getFirstValue();
-    }
-
-    /**
-     * Returns the first value of a datetime property.
-     */
-    private static GregorianCalendar getDateTimeProperty(Properties properties, String name) {
-        PropertyData<?> property = properties.getProperties().get(name);
-        if (!(property instanceof PropertyDateTime)) {
-            return null;
-        }
-
-        return ((PropertyDateTime) property).getFirstValue();
+        return false;
     }
 
     /**
@@ -2082,7 +2060,7 @@ public class FileShareRepository {
             throw new CmisPermissionDeniedException("No user context!");
         }
 
-        Boolean readOnly = userMap.get(context.getUsername());
+        Boolean readOnly = readWriteUserMap.get(context.getUsername());
         if (readOnly == null) {
             throw new CmisPermissionDeniedException("Unknown user!");
         }
@@ -2097,7 +2075,7 @@ public class FileShareRepository {
     /**
      * Returns the properties file of the given file.
      */
-    private static File getPropertiesFile(File file) {
+    private File getPropertiesFile(File file) {
         if (file.isDirectory()) {
             return new File(file, SHADOW_FOLDER);
         }
@@ -2121,7 +2099,7 @@ public class FileShareRepository {
      * but good enough for now.
      */
     private File idToFile(String id) throws IOException {
-        if ((id == null) || (id.length() == 0)) {
+        if (id == null || id.length() == 0) {
             throw new CmisInvalidArgumentException("Id is not valid!");
         }
 
@@ -2166,19 +2144,9 @@ public class FileShareRepository {
         return file.getAbsolutePath().substring(root.getAbsolutePath().length()).replace(File.separatorChar, '/');
     }
 
-    private void warn(String msg, Throwable t) {
-        if (LOG.isWarnEnabled()) {
-            LOG.warn("<" + repositoryId + "> " + msg, t);
-        }
-    }
-
     private void debug(String msg) {
-        debug(msg, null);
-    }
-
-    private void debug(String msg, Throwable t) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("<" + repositoryId + "> " + msg, t);
+            LOG.debug("<{}> {}", repositoryId, msg);
         }
     }
 }

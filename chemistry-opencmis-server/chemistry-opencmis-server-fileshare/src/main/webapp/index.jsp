@@ -1,12 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import="org.apache.chemistry.opencmis.fileshare.*" %>
+<%@ page import="org.apache.chemistry.opencmis.commons.definitions.*" %>
+<%
+   FileShareCmisServiceFactory factory = (FileShareCmisServiceFactory) application.getAttribute("org.apache.chemistry.opencmis.servicesfactory");
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   <link rel="stylesheet" type="text/css" href="css/opencmis.css">
-  <title>${artifactId} Server</title>
+  <title>OpenCMIS FileShare Server</title>
   <style type="text/css">
   <!--
   body {
@@ -40,15 +44,19 @@
     color: 3c78b5;
     height: 1;
   }
+  
+  td {
+    border: 1px solid #dddddd; 
+    padding: 2px;
+  }
   -->
   </style>
 </head>
 <body>
 
-<h1>${artifactId} Server</h1>
+<h1>OpenCMIS FileShare Server</h1>
 
-<p style="font-weight: bold">Your server is up and running.</p>
-<p>The ${artifactId} server is a CMIS server based on Apache Chemistry OpenCMIS.</p>
+<p style="font-weight: bold">The OpenCMIS FileShare server is up and running.</p>
 <p>You need a CMIS client to access this server. Download the <a href="http://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html">CMIS Workbench</a>.</p>
 
 <h2>Access Information</h2>
@@ -64,19 +72,36 @@
 <p>Web Services Binding: <a href="services/cmis?wsdl">WSDL</a></p>
 <p>AtomPub Binding: <a href="atom">Service Document</a></p>
 
-<h3>Authentication</h3>
 
-<p>No authentication required.</p>
+<h2>Configured Repositories</h2>
+
+<table>
+<tr><th>Repository Id</th><th>Root Directory</th></tr>
+<% for (FileShareRepository fsr: factory.getRepositoryManager().getRepositories()) { %>
+<tr><td><%= fsr.getRepositoryId() %></td><td><%= fsr.getRootDirectory() %></td></tr>
+<% } %>
+</table>
 
 
-<h2>More Information</h2>
+<h2>Users</h2>
 
-<p><a href="http://chemistry.apache.org">Apache Chemistry web site</a></p>
-<p><a href="http://www.oasis-open.org/committees/cmis">CMIS Technical Committees at OASIS</a></p>
+<table>
+<tr><th>Login</th></tr>
+<% for (String login: factory.getUserManager().getLogins()) { %>
+<tr><td><%= login %></td></tr>
+<% } %>
+</table>
 
-<hr/>
-This software is powered by <a href="http://chemistry.apache.org/">Apache Chemistry</a>.
-<br/>
+
+<h2>Types</h2>
+
+<table>
+<tr><th>Type Id</th><th>Name</th><th>Base Type Id</th></tr>
+<% for (TypeDefinition type: factory.getTypeManager().getInternalTypeDefinitions()) { %>
+<tr><td><%= type.getId() %></td><td><%= type.getDisplayName() %></td><td><%= type.getBaseTypeId().value() %></td></tr>
+<% } %>
+</table>
+
 
 </body>
 </html>

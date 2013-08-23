@@ -23,27 +23,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
-import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 /**
- * Repository map.
+ * Manages all repositories.
  */
-public class RepositoryMap {
+public class FileShareRepositoryManager {
 
     private final Map<String, FileShareRepository> repositories;
-    private final Map<String, String> logins;
 
-    public RepositoryMap() {
+    public FileShareRepositoryManager() {
         repositories = new HashMap<String, FileShareRepository>();
-        logins = new HashMap<String, String>();
     }
 
     /**
      * Adds a repository object.
      */
     public void addRepository(FileShareRepository fsr) {
-        if ((fsr == null) || (fsr.getRepositoryId() == null)) {
+        if (fsr == null || fsr.getRepositoryId() == null) {
             return;
         }
 
@@ -54,7 +50,6 @@ public class RepositoryMap {
      * Gets a repository object by id.
      */
     public FileShareRepository getRepository(String repositoryId) {
-        // get repository object
         FileShareRepository result = repositories.get(repositoryId);
         if (result == null) {
             throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
@@ -64,42 +59,24 @@ public class RepositoryMap {
     }
 
     /**
-     * Takes user and password from the CallContext and checks them.
-     */
-    public void authenticate(CallContext context) {
-        // check user and password first
-        if (!authenticate(context.getUsername(), context.getPassword())) {
-            throw new CmisPermissionDeniedException();
-        }
-    }
-
-    /**
      * Returns all repository objects.
      */
     public Collection<FileShareRepository> getRepositories() {
         return repositories.values();
     }
 
-    /**
-     * Adds a login.
-     */
-    public void addLogin(String username, String password) {
-        if ((username == null) || (password == null)) {
-            return;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (FileShareRepository repository : repositories.values()) {
+            sb.append('[');
+            sb.append(repository.getRepositoryId());
+            sb.append(" -> ");
+            sb.append(repository.getRootDirectory().getAbsolutePath());
+            sb.append(']');
         }
 
-        logins.put(username.trim(), password);
-    }
-
-    /**
-     * Authenticates a user against the configured logins.
-     */
-    private boolean authenticate(String username, String password) {
-        String pwd = logins.get(username);
-        if (pwd == null) {
-            return false;
-        }
-
-        return pwd.equals(password);
+        return sb.toString();
     }
 }

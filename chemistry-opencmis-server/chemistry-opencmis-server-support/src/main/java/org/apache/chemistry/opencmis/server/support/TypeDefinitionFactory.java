@@ -122,7 +122,7 @@ public final class TypeDefinitionFactory {
         itemTypeDefinitionClass = ItemTypeDefinitionImpl.class;
         secondaryTypeDefinitionClass = SecondaryTypeDefinitionImpl.class;
 
-        defaultNamespace = "http://defaultNamespace";
+        defaultNamespace = null;
         defaultControllableAcl = false;
         defaultControllablePolicy = false;
         defaultQueryable = true;
@@ -627,6 +627,16 @@ public final class TypeDefinitionFactory {
      */
     public TypeDefinitionList createTypeDefinitionList(Map<String, TypeDefinition> allTypes, String typeId,
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount) {
+        return createTypeDefinitionList(allTypes, typeId, includePropertyDefinitions, maxItems, skipCount, null);
+    }
+
+    /**
+     * Creates a {@link TypeDefinitionList} for
+     * {@link RepositoryService#getTypeChildren(String, String, Boolean, BigInteger, BigInteger, ExtensionsData)}
+     * .
+     */
+    public TypeDefinitionList createTypeDefinitionList(Map<String, TypeDefinition> allTypes, String typeId,
+            Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, CmisVersion cmisVersion) {
         if (typeId != null && !allTypes.containsKey(typeId)) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' does not exist!");
         }
@@ -659,11 +669,7 @@ public final class TypeDefinitionFactory {
         for (TypeDefinition typeDef : allTypes.values()) {
             if ((typeId == null && typeDef.getParentTypeId() == null)
                     || (typeId != null && typeId.equals(typeDef.getParentTypeId()))) {
-                if (includePropertyDefinitionsBool) {
-                    targetList.add(typeDef);
-                } else {
-                    targetList.add(copy(typeDef, false));
-                }
+                targetList.add(copy(typeDef, includePropertyDefinitionsBool, cmisVersion));
             }
         }
 
@@ -706,6 +712,16 @@ public final class TypeDefinitionFactory {
      */
     public List<TypeDefinitionContainer> createTypeDescendants(Map<String, TypeDefinition> allTypes, String typeId,
             BigInteger depth, Boolean includePropertyDefinitions) {
+        return createTypeDescendants(allTypes, typeId, depth, includePropertyDefinitions, null);
+    }
+
+    /**
+     * Creates a list of {@link TypeDefinitionContainer} for
+     * {@link RepositoryService#getTypeDescendants(String, String, BigInteger, Boolean, ExtensionsData)}
+     * .
+     */
+    public List<TypeDefinitionContainer> createTypeDescendants(Map<String, TypeDefinition> allTypes, String typeId,
+            BigInteger depth, Boolean includePropertyDefinitions, CmisVersion cmisVersion) {
         int depthInt = (depth == null ? -1 : depth.intValue());
         if (depthInt == 0) {
             throw new CmisInvalidArgumentException("Depth must not be 0!");
@@ -722,6 +738,7 @@ public final class TypeDefinitionFactory {
         boolean includePropertyDefinitionsBool = (includePropertyDefinitions == null ? false
                 : includePropertyDefinitions.booleanValue());
 
+        // gather parent ids
         Map<String, Set<String>> typeDefChildren = new HashMap<String, Set<String>>();
 
         for (TypeDefinition typeDef : allTypes.values()) {
@@ -738,26 +755,29 @@ public final class TypeDefinitionFactory {
             return Collections.<TypeDefinitionContainer> emptyList();
         }
 
+        // build container tree
         List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
         for (String child : children) {
             result.add(createTypeDefinitionContainer(allTypes, typeDefChildren, child, depthInt - 1,
-                    includePropertyDefinitionsBool));
+                    includePropertyDefinitionsBool, cmisVersion));
         }
 
         return result;
     }
 
     private TypeDefinitionContainer createTypeDefinitionContainer(Map<String, TypeDefinition> allTypes,
-            Map<String, Set<String>> typeDefChildren, String typeId, int depth, boolean includePropertyDefinitions) {
+            Map<String, Set<String>> typeDefChildren, String typeId, int depth, boolean includePropertyDefinitions,
+            CmisVersion cmisVersion) {
         TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl();
-        result.setTypeDefinition(includePropertyDefinitions ? allTypes.get(typeId) : copy(allTypes.get(typeId), false));
+        result.setTypeDefinition(includePropertyDefinitions ? copy(allTypes.get(typeId), true, cmisVersion) : copy(
+                allTypes.get(typeId), false, cmisVersion));
 
         if (depth != 0) {
             if (typeDefChildren.containsKey(typeId)) {
                 for (String child : typeDefChildren.get(typeId)) {
                     result.getChildren().add(
                             createTypeDefinitionContainer(allTypes, typeDefChildren, child, depth < 0 ? -1 : depth - 1,
-                                    includePropertyDefinitions));
+                                    includePropertyDefinitions, cmisVersion));
                 }
             }
         }
@@ -978,11 +998,14 @@ public final class TypeDefinitionFactory {
      */
     protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target,
             CmisVersion cmisVersion, boolean markAsInherited) {
+        assert source != null;
+        assert target != null;
+
         if (source != null && source.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> propDef : source.getPropertyDefinitions().values()) {
                 if (cmisVersion == CmisVersion.CMIS_1_0) {
                     if (NEW_CMIS11_PROPERTIES.contains(propDef.getId())) {
-                        break;
+                        continue;
                     }
                 }
 
