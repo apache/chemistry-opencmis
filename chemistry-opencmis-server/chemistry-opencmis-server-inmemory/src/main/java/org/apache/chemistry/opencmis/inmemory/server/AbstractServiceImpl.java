@@ -33,9 +33,9 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 
 /**
  * Common functionality for all service implementations
- *
+ * 
  * @author Jens
- *
+ * 
  */
 public class AbstractServiceImpl {
 
@@ -49,7 +49,7 @@ public class AbstractServiceImpl {
      * check if repository is known and that object exists. To avoid later calls
      * to again retrieve the object from the id return the retrieved object for
      * later use.
-     *
+     * 
      * @param repositoryId
      *            repository id
      * @param objectId
@@ -111,7 +111,7 @@ public class AbstractServiceImpl {
      * We allow checkin, cancel, checkout operations on a single version as well
      * as on a version series This method returns the versioned document
      * (version series) in each case
-     *
+     * 
      * @param value
      *            version or version series id of a document
      * @return version series id

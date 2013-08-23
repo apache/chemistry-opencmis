@@ -23,10 +23,10 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 
 /**
  * Helper class to associate context information with each incoming call
- *
+ * 
  */
 public final class InMemoryServiceContext {
-    
+
     private static final class ContextHolder {
         private CmisServiceWrapper<InMemoryService> wrapper;
         private CallContext callContext;
@@ -38,29 +38,29 @@ public final class InMemoryServiceContext {
         public CmisServiceWrapper<InMemoryService> getServiceWrapper() {
             return wrapper;
         }
-        
+
         public void setCallContext(CallContext context) {
             this.callContext = context;
         }
-        
+
         public CallContext getCallContext() {
             return callContext;
         }
     }
-    
+
     private static ThreadLocal<ContextHolder> threadLocalService = new ThreadLocal<ContextHolder>();
-    
+
     private InMemoryServiceContext() {
     }
-    
+
     public static synchronized void setWrapperService(CmisServiceWrapper<InMemoryService> wrapperService) {
         threadLocalService.remove();
         if (null != wrapperService) {
             ContextHolder holder = new ContextHolder(wrapperService);
-            threadLocalService.set(holder);                    
+            threadLocalService.set(holder);
         }
     }
-    
+
     public static synchronized InMemoryService getCmisService() {
         ContextHolder holder = threadLocalService.get();
         if (null == holder) {
@@ -68,21 +68,21 @@ public final class InMemoryServiceContext {
         } else {
             CmisServiceWrapper<InMemoryService> wrapperService = holder.getServiceWrapper();
             return wrapperService == null ? null : wrapperService.getWrappedService();
-        }        
+        }
     }
-    
-    public static synchronized void  setCallContext(CallContext context) {
+
+    public static synchronized void setCallContext(CallContext context) {
         ContextHolder holder = threadLocalService.get();
         if (null == holder) {
             throw new IllegalStateException("Cannot store call context, no service wrapper set.");
         } else {
             holder.setCallContext(context);
-        }        
+        }
     }
-    
+
     public static CallContext getCallContext() {
         ContextHolder holder = threadLocalService.get();
-        return null == holder ? null : holder.getCallContext();        
+        return null == holder ? null : holder.getCallContext();
     }
-    
+
 }

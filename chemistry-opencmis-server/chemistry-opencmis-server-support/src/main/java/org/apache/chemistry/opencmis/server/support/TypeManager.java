@@ -48,6 +48,7 @@ public interface TypeManager {
      * return a list of all types known in this repository
      * 
      * @return
+     *      list of type definitions
      */
     Collection<TypeDefinitionContainer> getTypeDefinitionList();
 
@@ -56,6 +57,7 @@ public interface TypeManager {
      * document, folder, policy and relationship
      * 
      * @return
+     *      list of type definitions
      */
     List<TypeDefinitionContainer> getRootTypes();
 

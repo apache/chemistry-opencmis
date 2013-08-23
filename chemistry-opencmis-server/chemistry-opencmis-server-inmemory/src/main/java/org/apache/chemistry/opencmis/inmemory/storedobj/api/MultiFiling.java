@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-
 /**
  * Documents can have in the CMIS specification multiple parents. This interface
  * describes the behavior of objects with multiple parent objects.
@@ -32,7 +31,7 @@ public interface MultiFiling extends Filing {
      * Add parent folder to this document
      * 
      * @param parentId
-     *     id of parent folder to be added.
+     *            id of parent folder to be added.
      */
     void addParentId(String parentId);
 
@@ -40,7 +39,7 @@ public interface MultiFiling extends Filing {
      * Remove parent from this object
      * 
      * @param parentId
-     *     id of parent folder to be removed.
+     *            id of parent folder to be removed.
      */
     void removeParentId(String parentId);
 }

@@ -87,7 +87,6 @@ public class AbstractServiceTest {
     private String fTypeCreatorClassName;
     private CmisBinding binding;
 
-
     public AbstractServiceTest() {
         // The in-memory server unit tests can either be run directly against
         // the
@@ -118,7 +117,8 @@ public class AbstractServiceTest {
         parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
         parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
 
-        // give subclasses a chance to provide additional parameters for special tests
+        // give subclasses a chance to provide additional parameters for special
+        // tests
         addParameters(parameters);
 
         fTestCallContext = new DummyCallContext();
@@ -207,7 +207,7 @@ public class AbstractServiceTest {
             boolean withContent) {
         String id = null;
         try {
-            id = createDocumentNoCatch(name , folderId, typeId, versioningState, withContent);
+            id = createDocumentNoCatch(name, folderId, typeId, versioningState, withContent);
             if (null == id) {
                 fail("createDocument failed.");
             }
@@ -249,7 +249,7 @@ public class AbstractServiceTest {
     protected ContentStream createContent(int sizeInKB, long maxSizeInKB, String mimeType) {
         ContentStreamDataImpl content = new ContentStreamDataImpl(maxSizeInKB);
         content.setFileName("data.txt");
-        
+
         if (null == mimeType) {
             content.setMimeType("text/plain");
         } else {
@@ -296,7 +296,7 @@ public class AbstractServiceTest {
     protected void verifyContentResult(ContentStream sd) {
         verifyContentResult(sd, 32);
     }
-    
+
     protected void verifyContentResult(ContentStream sd, int sizeInK) {
         assertEquals("text/plain", sd.getMimeType());
         assertEquals("data.txt", sd.getFileName());
@@ -393,9 +393,9 @@ public class AbstractServiceTest {
         assertEquals(objectId, pd.getFirstValue());
     }
 
-     /**
+    /**
      * Instantiates the services by using the client provider interface.
-     *
+     * 
      * @param parameters
      *            configuration parameters for client provider interface and
      *            in-memory provider
@@ -427,13 +427,12 @@ public class AbstractServiceTest {
     }
 
     protected String getStringProperty(ObjectData objData, String propertyKey) {
-        PropertyData<? extends Object> pd = objData.getProperties().getProperties()
-                .get(PropertyIds.PATH);
+        PropertyData<? extends Object> pd = objData.getProperties().getProperties().get(PropertyIds.PATH);
         assertNotNull(pd.getFirstValue());
         assertTrue(pd.getFirstValue() instanceof String);
         return (String) pd.getFirstValue();
     }
-    
+
     protected void deleteDocument(String docId) {
         fObjSvc.deleteObject(fRepositoryId, docId, true, null);
     }

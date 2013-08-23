@@ -41,15 +41,15 @@ public class ImageThumbnailGenerator {
     private InputStream image;
     private int thumbWidth;
     private int thumbHeight;
-    
+
     public ImageThumbnailGenerator(InputStream imageContent) {
         this.image = imageContent;
     }
-    
+
     public int getWidth() {
         return thumbWidth;
     }
-    
+
     public int getHeight() {
         return thumbHeight;
     }
@@ -69,9 +69,8 @@ public class ImageThumbnailGenerator {
         }
     }
 
-    
     private byte[] scaleImage(InputStream stream, int width, int height) throws IOException {
-        
+
         BufferedImage resizedImage;
         BufferedImage originalImage = ImageIO.read(stream);
 
@@ -82,21 +81,21 @@ public class ImageThumbnailGenerator {
         } else {
             resizedImage = scaleImage(originalImage, width, height);
         }
-        
+
         thumbWidth = resizedImage.getWidth();
         thumbHeight = resizedImage.getHeight();
-        
+
         return storeImageinByteArray(resizedImage);
     }
-    
+
     private BufferedImage scaleLongerSideTo(BufferedImage bi, int longerSideLengthParam) throws IOException {
         int width, height;
         int longerSideLength = longerSideLengthParam;
-        
+
         if (longerSideLength <= 0) {
             longerSideLength = DEFAULT_LENGTH;
         }
-        
+
         if (bi.getWidth() > bi.getHeight()) {
             width = longerSideLength;
             height = bi.getHeight() * longerSideLength / bi.getWidth();
@@ -104,29 +103,29 @@ public class ImageThumbnailGenerator {
             height = longerSideLength;
             width = bi.getWidth() * longerSideLength / bi.getHeight();
         }
-                
+
         BufferedImage resizedImage = scaleImage(bi, width, height);
         return resizedImage;
     }
-    
+
     private BufferedImage scaleImage(BufferedImage originalImage, int width, int height) {
-        
-        BufferedImage resizedImage = new BufferedImage(width, height, originalImage.getType()); 
+
+        BufferedImage resizedImage = new BufferedImage(width, height, originalImage.getType());
         Graphics2D g = resizedImage.createGraphics();
 
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-     
+
         g.drawImage(originalImage, 0, 0, width, height, null);
-        g.dispose();    
+        g.dispose();
         g.setComposite(AlphaComposite.Src);
-     
+
         return resizedImage;
     }
-    
+
     private byte[] storeImageinByteArray(BufferedImage bi) throws IOException {
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         boolean ok = ImageIO.write(bi, "JPG", os);
         if (ok) {

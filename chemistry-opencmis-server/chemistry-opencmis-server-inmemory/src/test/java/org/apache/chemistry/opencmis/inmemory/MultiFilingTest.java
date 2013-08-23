@@ -84,7 +84,7 @@ public class MultiFilingTest extends AbstractServiceTest {
 
         assertNotNull(res);
         assertEquals(res.size(), 0);
-        
+
         // test with a different user than Admin:
         switchCallContext("Alice");
         docId = createDocument(UNFILED_DOC_NAME + "_2", null, DOCUMENT_TYPE_ID, true);
@@ -178,7 +178,6 @@ public class MultiFilingTest extends AbstractServiceTest {
         LOG.debug("End testRenameMultiFiledDocument()");
     }
 
-        
     @Test
     public void testRemoveDocumentFromAllFolders() {
         LOG.debug("Begin testRemoveDocumentFromAllFolders()");
@@ -187,7 +186,7 @@ public class MultiFilingTest extends AbstractServiceTest {
         removeDocumentFromAllFolders(docId);
         LOG.debug("End testRemoveDocumentFromAllFolders()");
     }
-    
+
     @Test
     public void testAddVersionedDocumentToFolder() {
         LOG.debug("Begin testAddVersionedDocumentToFolder()");
@@ -213,7 +212,7 @@ public class MultiFilingTest extends AbstractServiceTest {
         removeDocumentFromAllFolders(docId);
         LOG.debug("End testRemoveVersionedDocumentFromAllFolders()");
     }
-    
+
     private void createFolders() {
         fId1 = createFolder("folder1", fRootFolderId, FOLDER_TYPE_ID);
         fId2 = createFolder("folder2", fRootFolderId, FOLDER_TYPE_ID);
@@ -276,7 +275,7 @@ public class MultiFilingTest extends AbstractServiceTest {
                 IncludeRelationships.NONE, null, true, null);
         assertEquals(0, parents.size());
     }
-    
+
     private String createUnfiledDocument() {
         return createDocument(UNFILED_DOC_NAME, null, DOCUMENT_TYPE_ID, true);
     }
@@ -316,8 +315,8 @@ public class MultiFilingTest extends AbstractServiceTest {
 
     private String createVersionedDocument() {
 
-        return createDocument(UNFILED_DOC_NAME, null, UnitTestTypeSystemCreator.VERSIONED_TYPE,
-                VersioningState.MAJOR, true);
+        return createDocument(UNFILED_DOC_NAME, null, UnitTestTypeSystemCreator.VERSIONED_TYPE, VersioningState.MAJOR,
+                true);
 
     }
 

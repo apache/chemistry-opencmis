@@ -91,7 +91,7 @@ public final class DataObjectCreator {
 
         AllowableActionsImpl allowableActions = new AllowableActionsImpl();
         Set<Action> set = allowableActions.getAllowableActions();
-        
+
         if (!isRootFolder) {
             set.add(Action.CAN_DELETE_OBJECT);
             set.add(Action.CAN_UPDATE_PROPERTIES);
@@ -195,8 +195,8 @@ public final class DataObjectCreator {
         return changeEventInfo;
     }
 
-    public static List<ObjectData> getRelationships(TypeManager tm, ObjectStore objStore, IncludeRelationships includeRelationships,
-            StoredObject spo, String user) {
+    public static List<ObjectData> getRelationships(TypeManager tm, ObjectStore objStore,
+            IncludeRelationships includeRelationships, StoredObject spo, String user) {
         if (includeRelationships != IncludeRelationships.NONE) {
             RelationshipDirection relationshipDirection = RelationshipDirection.SOURCE;
             // source is default
@@ -205,8 +205,8 @@ public final class DataObjectCreator {
             } else if (includeRelationships == IncludeRelationships.BOTH) {
                 relationshipDirection = RelationshipDirection.EITHER;
             }
-            
-            List<StoredObject> relationships = objStore.getRelationships(spo.getId(), null, relationshipDirection); 
+
+            List<StoredObject> relationships = objStore.getRelationships(spo.getId(), null, relationshipDirection);
             List<ObjectData> res = new ArrayList<ObjectData>(relationships.size());
             for (StoredObject so : relationships) {
                 ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false,

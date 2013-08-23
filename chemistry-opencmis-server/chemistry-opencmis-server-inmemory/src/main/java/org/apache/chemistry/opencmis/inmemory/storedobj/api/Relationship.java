@@ -18,10 +18,9 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 
-
 public interface Relationship {
-    
+
     String getSourceObjectId();
-    
+
     String getTargetObjectId();
 }

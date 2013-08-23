@@ -31,7 +31,7 @@ public final class NameValidator {
     /**
      * check whether id contains only valid characters Allowed are 'a'..'z',
      * 'A'..'Z', '0'..'9', '.', '-', ' ', '_';
-     *
+     * 
      * @param s
      *            string to verify
      */
@@ -55,9 +55,9 @@ public final class NameValidator {
     }
 
     /**
-     * check whether id contains only valid characters. Not allowed are '/', 
+     * check whether id contains only valid characters. Not allowed are '/',
      * '\\', ':', '\"', '*'. '?', '<','>', '|'"
-     *
+     * 
      * @param s
      *            string to verify
      */
@@ -67,8 +67,8 @@ public final class NameValidator {
         }
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (c == '\\' || c == '/' || c == '\"' || c == ':' || c == '*' || 
-                    c == '?' || c == '<' || c == '>' && c == '|') {
+            if (c == '\\' || c == '/' || c == '\"' || c == ':' || c == '*' || c == '?' || c == '<' || c == '>'
+                    && c == '|') {
                 return false;
             }
         }

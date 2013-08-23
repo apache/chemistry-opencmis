@@ -146,10 +146,12 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         String repositoryId = getRepositoryId();
 
         // get types
-        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, BaseTypeId.CMIS_DOCUMENT.value(), BigInteger.valueOf(-1),
-                Boolean.FALSE, null);
-//        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, "MyDocType1", BigInteger.valueOf(-1),
-//                Boolean.FALSE, null);
+        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId,
+                BaseTypeId.CMIS_DOCUMENT.value(), BigInteger.valueOf(-1), Boolean.FALSE, null);
+        // List<TypeDefinitionContainer> types =
+        // fRepSvc.getTypeDescendants(repositoryId, "MyDocType1",
+        // BigInteger.valueOf(-1),
+        // Boolean.FALSE, null);
         assertNotNull(types);
 
         int totalSize = getRecursiveSize(types);
@@ -223,8 +225,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         // get types
         int depth = 2;
         String typeId = "MyDocType1";
-        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, typeId, BigInteger
-                .valueOf(depth), Boolean.TRUE, null);
+        List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, typeId,
+                BigInteger.valueOf(depth), Boolean.TRUE, null);
         assertNotNull(types);
         log.info("Found in repository " + repositoryId + " for type " + typeId + ", " + types.size()
                 + " type(s) with depth " + depth + ".");
@@ -326,8 +328,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         }
 
         try {
-            List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, "CMISDocument", BigInteger
-                    .valueOf(0), Boolean.TRUE, null);
+            List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, "CMISDocument",
+                    BigInteger.valueOf(0), Boolean.TRUE, null);
             log.debug("getTypeDescendants(): " + types);
             fail("getTypeDescendants() with depth 0 should throw InvalidArgumentException.");
         } catch (CmisInvalidArgumentException e) {
@@ -335,8 +337,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         }
 
         try {
-            List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, wrongTypeId, BigInteger
-                    .valueOf(depth), Boolean.TRUE, null);
+            List<TypeDefinitionContainer> types = fRepSvc.getTypeDescendants(repositoryId, wrongTypeId,
+                    BigInteger.valueOf(depth), Boolean.TRUE, null);
             log.debug("getTypeDescendants(): " + types);
             fail("getTypeDescendants() with unknown type should throw exception.");
         } catch (CmisInvalidArgumentException e) {
@@ -369,8 +371,8 @@ public class RepositoryServiceTest extends AbstractServiceTest {
         }
 
         try {
-            TypeDefinitionList types = fRepSvc.getTypeChildren(repositoryId, wrongTypeId, Boolean.TRUE, BigInteger
-                    .valueOf(100), BigInteger.ZERO, null);
+            TypeDefinitionList types = fRepSvc.getTypeChildren(repositoryId, wrongTypeId, Boolean.TRUE,
+                    BigInteger.valueOf(100), BigInteger.ZERO, null);
             log.debug("getTypeChildren(): " + types);
             fail("getTypeDescendants() with unknown type should throw exception.");
         } catch (CmisInvalidArgumentException e) {
@@ -425,7 +427,6 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
         log.info("... testInheritedProperties() finished.");
     }
-
 
     private String getRepositoryId() {
         List<RepositoryInfo> repositories = fRepSvc.getRepositoryInfos(null);
@@ -519,7 +520,7 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
     private List<TypeDefinition> getTypeDefsFlattened(List<TypeDefinitionContainer> types) {
         List<TypeDefinition> flattened = new ArrayList<TypeDefinition>();
-        
+
         for (TypeDefinitionContainer type : types) {
             flattened.add(type.getTypeDefinition());
             if (null != type.getChildren()) {
@@ -530,5 +531,5 @@ public class RepositoryServiceTest extends AbstractServiceTest {
 
         return flattened;
     }
-    
+
 }

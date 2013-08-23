@@ -33,18 +33,19 @@ public interface Folder extends Fileable {
 
     /**
      * get parent if of this folder
-     * @return
-     *      parent id of this folder
+     * 
+     * @return parent id of this folder
      */
     String getParentId();
-      
+
     /**
      * set the parent id of a folder
+     * 
      * @param parentId
-     *      parent id of this folder
+     *            parent id of this folder
      */
     void setParentId(String parentId);
-    
+
     /**
      * return a list of allowed types of children in this folder
      * 

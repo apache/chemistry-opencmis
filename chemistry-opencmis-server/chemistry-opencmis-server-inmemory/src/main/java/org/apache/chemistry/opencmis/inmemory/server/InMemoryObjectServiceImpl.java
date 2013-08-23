@@ -129,7 +129,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // build properties collection
         List<String> requestedIds = FilterParser.getRequestedIdsFromFilter("*");
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, objectStore, tm, requestedIds, true);
+        Properties existingProps = PropertyCreationHelper.getPropertiesFromObject(so, objectStore, tm, requestedIds,
+                true);
 
         PropertiesImpl newPD = new PropertiesImpl();
         // copy all existing properties
@@ -284,8 +285,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop deleteObject()");
     }
 
-    public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId,
-            Boolean allVers, UnfileObject unfile, Boolean continueOnFail, ExtensionsData extension) {
+    public FailedToDeleteData deleteTree(CallContext context, String repositoryId, String folderId, Boolean allVers,
+            UnfileObject unfile, Boolean continueOnFail, ExtensionsData extension) {
 
         LOG.debug("start deleteTree()");
         boolean allVersions = (null == allVers ? true : allVers);
@@ -294,7 +295,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         StoredObject so = validator.deleteTree(context, repositoryId, folderId, allVersions, unfileObjects, extension);
         List<String> failedToDeleteIds = new ArrayList<String>();
         FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
-        
+
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
 
         if (null == so) {
@@ -534,8 +535,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         LOG.debug("stop moveObject()");
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, objectStore, so, null, user, false, IncludeRelationships.NONE,
-                null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objectStore, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -548,8 +549,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return od;
     }
 
-    public void setContentStream(CallContext context, String repositoryId, Holder<String> objectId,
-            Boolean overwrite, Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
+    public void setContentStream(CallContext context, String repositoryId, Holder<String> objectId, Boolean overwrite,
+            Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
 
         LOG.debug("start setContentStream()");
         boolean overwriteFlag = (overwrite == null ? true : overwrite);
@@ -602,7 +603,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         LOG.debug("start updateProperties()");
         if (properties == null) {
-            throw new CmisRuntimeException("update properties: no properties given for object id: " + objectId.getValue());
+            throw new CmisRuntimeException("update properties: no properties given for object id: "
+                    + objectId.getValue());
         }
         StoredObject so = validator.updateProperties(context, repositoryId, objectId, extension);
         String user = context.getUsername();
@@ -663,15 +665,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             if (cmis11 && null == propDef) {
                 TypeDefinition typeDefSecondary = getSecondaryTypeDefinition(repositoryId, secondaryTypeIds, key);
                 if (null == typeDefSecondary) {
-                    throw new CmisInvalidArgumentException("Cannot update property " + key
-                            + ": not contained in type");
+                    throw new CmisInvalidArgumentException("Cannot update property " + key + ": not contained in type");
                 }
                 propDef = typeDefSecondary.getPropertyDefinitions().get(key);
             }
 
             if (null == propDef) {
                 throw new CmisInvalidArgumentException("Unknown property " + key
-                        + ": not contained in type (or any secondary type)");                        
+                        + ": not contained in type (or any secondary type)");
             }
 
             if (value.getValues() == null || value.getFirstValue() == null) {
@@ -716,8 +717,9 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             if (!NameValidator.isValidName(newName)) {
                 throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
             }
-            // Note: the test for duplicated name in folder is left to the object store
-            objStore.rename((Fileable)so, (String) pd.getFirstValue()); 
+            // Note: the test for duplicated name in folder is left to the
+            // object store
+            objStore.rename((Fileable) so, (String) pd.getFirstValue());
             hasUpdatedProp = true;
         }
 
@@ -745,8 +747,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
-        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false, IncludeRelationships.NONE,
-                null, false, false, extension);
+        ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false,
+                IncludeRelationships.NONE, null, false, false, extension);
 
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -798,7 +800,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         content.appendContent(contentStream);
-        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());    }
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
+    }
 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(CallContext context, String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
@@ -826,7 +829,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             String folderId, ContentStream contentStream, VersioningState versioningState, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
 
-        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addACEs);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                addACEs);
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeACEs);
 
@@ -938,11 +942,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                addAces);
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeAces);
         Properties propertiesNew = properties;
-        
+
         validator.createFolder(context, repositoryId, folderId, policies, extension);
         TypeValidator.validateRequiredSystemProperties(properties);
         String user = context.getUsername();
@@ -1013,7 +1018,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         Acl aclAdd = addAces;
         Acl aclRemove = removeAces;
-        
+
         validator.createPolicy(context, repositoryId, folderId, aclAdd, aclRemove, policies, extension);
 
         aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), aclAdd);
@@ -1041,7 +1046,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
 
-        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                addAces);
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeAces);
 
@@ -1099,8 +1105,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
 
-        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1], propMapNew,
-                user, aclAdd, aclRemove);
+        StoredObject storedObject = objStore.createRelationship(name, relationObjects[0], relationObjects[1],
+                propMapNew, user, aclAdd, aclRemove);
         return storedObject;
     }
 
@@ -1109,7 +1115,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         validator.createItem(context, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
 
-        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                addAces);
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeAces);
 
@@ -1183,14 +1190,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private boolean hasDescendant(String user, ObjectStore objStore, Folder sourceFolder, Folder targetFolder) {
         String sourceId = sourceFolder.getId();
         String targetId = targetFolder.getId();
-        
+
         Folder folder = targetFolder;
         while (targetId != null) {
             if (targetId.equals(sourceId)) {
                 return true;
             }
-            List<String>parentIds = objStore.getParentIds(folder, user);
-            targetId = parentIds == null || parentIds.isEmpty() ? null : parentIds.get(0);    
+            List<String> parentIds = objStore.getParentIds(folder, user);
+            targetId = parentIds == null || parentIds.isEmpty() ? null : parentIds.get(0);
             if (null != targetId) {
                 folder = (Folder) objStore.getObjectById(targetId);
             }
@@ -1212,7 +1219,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
      */
     private boolean deleteRecursive(ObjectStore objStore, Folder parentFolder, boolean continueOnFailure,
             boolean allVersions, List<String> failedToDeleteIds, String user) {
-        
+
         ObjectStore.ChildrenResult childrenResult = objStore.getChildren(parentFolder, -1, -1, "Admin", true);
         List<Fileable> children = childrenResult.getChildren();
 
@@ -1266,7 +1273,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             if (defaultVal != null && null == properties.get(propId)) {
                 if (!hasCopied) {
                     // copy because it is an unmodified collection
-                    propertiesReturn = new HashMap<String, PropertyData<?>>(properties); 
+                    propertiesReturn = new HashMap<String, PropertyData<?>>(properties);
                     hasCopied = true;
                 }
                 Object value = propDef.getCardinality() == Cardinality.SINGLE ? defaultVal.get(0) : defaultVal;

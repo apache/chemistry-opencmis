@@ -60,7 +60,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
 public final class DocumentTypeCreationHelper {
-    
+
     public static class InMemoryDocumentType extends DocumentTypeDefinitionImpl {
 
         private static final long serialVersionUID = 1L;
@@ -69,7 +69,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -87,7 +87,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -105,7 +105,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -114,7 +114,7 @@ public final class DocumentTypeCreationHelper {
             super.setQueryName(DocumentTypeCreationHelper.getQueryName(id));
         }
     }
-    
+
     public static class InMemoryPolicyType extends PolicyTypeDefinitionImpl {
 
         private static final long serialVersionUID = 1L;
@@ -123,7 +123,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -141,7 +141,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -159,7 +159,7 @@ public final class DocumentTypeCreationHelper {
         public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
             DocumentTypeCreationHelper.addPropertyDefinition(propertyDefinition);
             super.addPropertyDefinition(propertyDefinition);
-        }        
+        }
 
         @Override
         public void setId(String id) {
@@ -177,15 +177,15 @@ public final class DocumentTypeCreationHelper {
     private static MutablePolicyTypeDefinition cmisTypePolicy;
     private static MutableItemTypeDefinition cmisTypeItem;
     private static MutableSecondaryTypeDefinition cmisTypeSecondary;
-    
+
     public static DocumentTypeDefinition getCmisDocumentType() {
         return cmisTypeDoc;
     }
-    
+
     public static FolderTypeDefinition getCmisFolderType() {
         return cmisTypeFolder;
     }
-    
+
     public static RelationshipTypeDefinition getCmisRelationshipType() {
         return cmisTypeRel;
     }
@@ -193,15 +193,15 @@ public final class DocumentTypeCreationHelper {
     public static PolicyTypeDefinition getCmisPolicyType() {
         return cmisTypePolicy;
     }
-    
+
     public static ItemTypeDefinition getCmisItemType() {
         return cmisTypeItem;
     }
-    
+
     public static SecondaryTypeDefinition getCmisSecondaryType() {
         return cmisTypeSecondary;
     }
-    
+
     private static void initType(MutableTypeDefinition type, TypeDefinition parentTypeDefinition) {
         type.setBaseTypeId(parentTypeDefinition.getBaseTypeId());
         type.setParentTypeId(parentTypeDefinition.getId());
@@ -223,11 +223,11 @@ public final class DocumentTypeCreationHelper {
 
     /**
      * Creates a new mutable document type definition, which is a child of the
-     * provided type definition. Property definitions are not added which is useful
-     * for creating additional types at runtime
+     * provided type definition. Property definitions are not added which is
+     * useful for creating additional types at runtime
      */
-    public static MutableDocumentTypeDefinition createDocumentTypeDefinitionWithoutBaseProperties(DocumentTypeDefinition parentTypeDefinition)
-            throws InstantiationException, IllegalAccessException {
+    public static MutableDocumentTypeDefinition createDocumentTypeDefinitionWithoutBaseProperties(
+            DocumentTypeDefinition parentTypeDefinition) throws InstantiationException, IllegalAccessException {
         MutableDocumentTypeDefinition documentType = new InMemoryDocumentType();
         initType(documentType, parentTypeDefinition);
 
@@ -248,21 +248,21 @@ public final class DocumentTypeCreationHelper {
     public static final List<TypeDefinition> getDefaultTypes() {
         return DEFAULT_TYPES;
     }
-    
-    private static void addPropertyDefinition(PropertyDefinition<?> propertyDefinition)  {
+
+    private static void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition.getId().equals(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
             MutablePropertyDefinition<?> propDef = (MutablePropertyDefinition<?>) propertyDefinition;
             propDef.setUpdatability(Updatability.READWRITE);
-        }        
+        }
     }
 
     private static String getQueryName(String id) {
         if (null == id) {
             return null;
         }
-        
+
         StringBuffer sb = new StringBuffer(id);
-        for (int i=0; i<sb.length(); i++) {
+        for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
             if (c == '.' || c == ' ') {
                 sb.setCharAt(i, '_');
@@ -270,13 +270,13 @@ public final class DocumentTypeCreationHelper {
         }
         return sb.toString();
     }
-    
+
     public static void setDefaultTypeCapabilities(MutableTypeDefinition cmisType) {
         cmisType.setIsCreatable(true);
         cmisType.setIsFileable(true);
         cmisType.setIsFulltextIndexed(false);
     }
-    
+
     static TypeMutabilityImpl getBaseTypeMutability() {
         TypeMutabilityImpl typeMutability = new TypeMutabilityImpl();
         typeMutability.setCanCreate(true);
@@ -284,10 +284,10 @@ public final class DocumentTypeCreationHelper {
         typeMutability.setCanDelete(false);
         return typeMutability;
     }
-    
+
     private static List<TypeDefinition> createCmisDefaultTypes() {
         TypeDefinitionFactory typeFactoryLocal = getTypeDefinitionFactory();
-        
+
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         // create root types:
@@ -303,7 +303,7 @@ public final class DocumentTypeCreationHelper {
             setDefaultTypeCapabilities(cmisTypeFolder);
             cmisTypeFolder.setTypeMutability(getBaseTypeMutability());
             typesList.add(cmisTypeFolder);
-            
+
             cmisTypeRel = typeFactoryLocal.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeRel);
             cmisTypeRel.setTypeMutability(getBaseTypeMutability());
@@ -315,18 +315,18 @@ public final class DocumentTypeCreationHelper {
             cmisTypePolicy.setTypeMutability(getBaseTypeMutability());
             cmisTypePolicy.setIsFileable(false);
             typesList.add(cmisTypePolicy);
-            
+
             cmisTypeItem = typeFactoryLocal.createItemTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeItem);
             cmisTypeItem.setTypeMutability(getBaseTypeMutability());
             cmisTypeItem.setIsFileable(true);
             typesList.add(cmisTypeItem);
-            
+
             cmisTypeSecondary = typeFactoryLocal.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, null);
             setDefaultTypeCapabilities(cmisTypeSecondary);
             cmisTypeSecondary.setTypeMutability(getBaseTypeMutability());
             cmisTypeSecondary.setIsFileable(false);
-            typesList.add(cmisTypeSecondary);            
+            typesList.add(cmisTypeSecondary);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error when creating base types. ", e);
         }
@@ -359,7 +359,7 @@ public final class DocumentTypeCreationHelper {
 
     /**
      * create root types and a collection of sample types
-     *
+     * 
      * @return typesMap map filled with created types
      */
     public static List<TypeDefinition> createDefaultTypes() {
@@ -370,46 +370,51 @@ public final class DocumentTypeCreationHelper {
 
     public static void setBasicPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
 
-        PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.NAME,
-                "Name", Updatability.READWRITE);
+        PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.NAME, "Name",
+                Updatability.READWRITE);
         propS.setIsRequired(true);
         propertyDefinitions.put(propS.getId(), propS);
 
-        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_ID,
-                "Object Id", Updatability.READONLY);
+        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_ID, "Object Id",
+                Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.OBJECT_TYPE_ID, "Type-Id", Updatability.ONCREATE);
+        propId = PropertyCreationHelper
+                .createIdDefinition(PropertyIds.OBJECT_TYPE_ID, "Type-Id", Updatability.ONCREATE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.BASE_TYPE_ID, "Base-Type-Id", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.BASE_TYPE_ID, "Base-Type-Id",
+                Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CREATED_BY, "Created By", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CREATED_BY, "Created By",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         PropertyDateTimeDefinitionImpl propD = PropertyCreationHelper.createDateTimeDefinition(
                 PropertyIds.CREATION_DATE, "Creation Date", Updatability.READONLY);
         propertyDefinitions.put(propD.getId(), propD);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.LAST_MODIFIED_BY,
-                "Modified By", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.LAST_MODIFIED_BY, "Modified By",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         propD = PropertyCreationHelper.createDateTimeDefinition(PropertyIds.LAST_MODIFICATION_DATE,
                 "Modification Date", Updatability.READONLY);
         propertyDefinitions.put(propD.getId(), propD);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHANGE_TOKEN, "Change Token", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHANGE_TOKEN, "Change Token",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
         // CMIS 1.1:
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.DESCRIPTION, "Description", Updatability.READWRITE);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.DESCRIPTION, "Description",
+                Updatability.READWRITE);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
-                Updatability.READWRITE);
+        propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS,
+                "Secondary Type Ids", Updatability.READWRITE);
         propertyDefinitions.put(propId.getId(), propId);
     }
 
@@ -420,12 +425,12 @@ public final class DocumentTypeCreationHelper {
                 "Immutable", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
-        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_LATEST_VERSION,
-                "Is Latest Version", Updatability.READONLY);
+        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_LATEST_VERSION, "Is Latest Version",
+                Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
-        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_MAJOR_VERSION,
-                "Is Major Version", Updatability.READONLY);
+        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_MAJOR_VERSION, "Is Major Version",
+                Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_LATEST_MAJOR_VERSION,
@@ -449,12 +454,12 @@ public final class DocumentTypeCreationHelper {
                 "Checked Out By", Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
-                "Checked Out Id", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID, "Checked Out Id",
+                Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHECKIN_COMMENT,
-                "Checkin Comment", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CHECKIN_COMMENT, "Checkin Comment",
+                Updatability.READONLY);
         // read-only, because
         // not set as property
         propertyDefinitions.put(propS.getId(), propS);
@@ -463,20 +468,21 @@ public final class DocumentTypeCreationHelper {
                 PropertyIds.CONTENT_STREAM_LENGTH, "Content Length", Updatability.READONLY);
         propertyDefinitions.put(propI.getId(), propI);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_MIME_TYPE,
-                "Mime Type", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_MIME_TYPE, "Mime Type",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_FILE_NAME,
-                "File Name", Updatability.READONLY);
+        propS = PropertyCreationHelper.createStringDefinition(PropertyIds.CONTENT_STREAM_FILE_NAME, "File Name",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
 
-        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "Stream Id", Updatability.READONLY);
+        propId = PropertyCreationHelper.createIdDefinition(PropertyIds.CONTENT_STREAM_ID, "Stream Id",
+                Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
         // CMIS 1.1:
-        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_PRIVATE_WORKING_COPY, "Private Working Copy", 
-                Updatability.READONLY);
+        propB = PropertyCreationHelper.createBooleanDefinition(PropertyIds.IS_PRIVATE_WORKING_COPY,
+                "Private Working Copy", Updatability.READONLY);
         propertyDefinitions.put(propB.getId(), propB);
 
         propertyDefinitions.put(propS.getId(), propS);
@@ -485,16 +491,16 @@ public final class DocumentTypeCreationHelper {
     public static void setBasicFolderPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
 
         setBasicPropertyDefinitions(propertyDefinitions);
-        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.PARENT_ID,
-                "Parent Id", Updatability.READONLY);
+        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.PARENT_ID, "Parent Id",
+                Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
         propId = PropertyCreationHelper.createIdMultiDefinition(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
                 "Allowed Child Types", Updatability.READONLY);
         propertyDefinitions.put(propId.getId(), propId);
 
-        PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH,
-                "Path", Updatability.READONLY);
+        PropertyStringDefinitionImpl propS = PropertyCreationHelper.createStringDefinition(PropertyIds.PATH, "Path",
+                Updatability.READONLY);
         propertyDefinitions.put(propS.getId(), propS);
     }
 
@@ -510,8 +516,8 @@ public final class DocumentTypeCreationHelper {
     public static void setBasicRelationshipPropertyDefinitions(Map<String, PropertyDefinition<?>> propertyDefinitions) {
 
         setBasicPropertyDefinitions(propertyDefinitions);
-        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SOURCE_ID,
-                "Source Id", Updatability.READWRITE);
+        PropertyIdDefinitionImpl propId = PropertyCreationHelper.createIdDefinition(PropertyIds.SOURCE_ID, "Source Id",
+                Updatability.READWRITE);
         propId.setIsRequired(true);
         propertyDefinitions.put(propId.getId(), propId);
 

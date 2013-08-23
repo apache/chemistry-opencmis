@@ -42,16 +42,18 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 public class InMemoryRelationshipServiceImpl extends InMemoryAbstractServiceImpl {
 
     private InMemoryRepositoryServiceImpl repSvc;
+
     protected InMemoryRelationshipServiceImpl(StoreManager storeManager, InMemoryRepositoryServiceImpl repSvc) {
         super(storeManager);
         this.repSvc = repSvc;
     }
 
-    public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
-            RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
-            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension, ObjectInfoHandler objectInfos) {
+    public ObjectList getObjectRelationships(CallContext context, String repositoryId, String objectId,
+            Boolean includeSubRelationshipTypes, RelationshipDirection relationshipDirection, String typeId,
+            String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        int skip = null == skipCount ? 0: skipCount.intValue();
+        int skip = null == skipCount ? 0 : skipCount.intValue();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
 
         StoredObject so = validator.getObjectRelationships(context, repositoryId, objectId, relationshipDirection,
@@ -68,7 +70,8 @@ public class InMemoryRelationshipServiceImpl extends InMemoryAbstractServiceImpl
             typeIds = new ArrayList<String>();
             typeIds.add(typeId);
             if (includeSubRelationshipTypes) {
-                List<TypeDefinitionContainer> typeDescs = repSvc.getTypeDescendants(context, repositoryId, typeId, null, true, null);
+                List<TypeDefinitionContainer> typeDescs = repSvc.getTypeDescendants(context, repositoryId, typeId,
+                        null, true, null);
                 if (null != typeDescs) {
                     for (TypeDefinitionContainer t : typeDescs) {
                         typeIds.add(t.getTypeDefinition().getId());
@@ -81,8 +84,8 @@ public class InMemoryRelationshipServiceImpl extends InMemoryAbstractServiceImpl
         List<ObjectData> odList = new ArrayList<ObjectData>();
 
         for (StoredObject rel : rels) {
-            ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, rel, filter, user, includeAllowableActions,
-                    IncludeRelationships.NONE, null, false, false, extension);
+            ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, rel, filter, user,
+                    includeAllowableActions, IncludeRelationships.NONE, null, false, false, extension);
             odList.add(od);
         }
         if (context.isObjectInfoRequired()) {

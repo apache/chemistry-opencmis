@@ -66,35 +66,37 @@ public abstract class AbstractQueryTest {
         predicateWalker = pw;
     }
 
-    protected QueryUtilStrict traverseStatement(String statement) throws UnsupportedEncodingException, IOException, RecognitionException {
-        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+    protected QueryUtilStrict traverseStatement(String statement) throws UnsupportedEncodingException, IOException,
+            RecognitionException {
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, predicateWalker);
         queryUtil.processStatement();
         return queryUtil;
     }
 
     protected QueryUtilStrict traverseStatementAndCatchExc(String statement) {
-        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, predicateWalker);
         queryUtil.processStatementUsingCmisExceptions();
         return queryUtil;
     }
 
     protected CmisQueryWalker getWalker(String statement) throws RecognitionException {
-        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker);
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, predicateWalker);
         queryUtil.processStatementUsingCmisExceptions();
         queryObj = queryUtil.getQueryObject();
         return queryUtil.getWalker();
     }
-    
+
     // Helper to create some types for testing
 
-    protected  List<TypeDefinition> createTypes() {
-        TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
+    protected List<TypeDefinition> createTypes() {
+        TypeDefinitionFactory typeFactory = DocumentTypeCreationHelper.getTypeDefinitionFactory();
         List<TypeDefinition> typeDefs = new ArrayList<TypeDefinition>();
 
         try {
             // First test type
-            MutableTypeDefinition cmisType;        
-            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
+            MutableTypeDefinition cmisType;
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    MY_DOC_TYPE);
             cmisType.setId(MY_DOC_TYPE);
             cmisType.setDisplayName("Document Type for Validation");
 
@@ -116,7 +118,8 @@ public abstract class AbstractQueryTest {
             myType = cmisType;
 
             // add another type definition with exactly the same properties
-            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE_COPY);
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    MY_DOC_TYPE_COPY);
             cmisType.setDisplayName("Document Type for Duplicated");
 
             // add same properties
@@ -126,21 +129,20 @@ public abstract class AbstractQueryTest {
             typeDefs.add(cmisType);
             myTypeCopy = cmisType;
 
-
             // Second test type
 
-            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), BOOK_TYPE);
+            cmisType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    BOOK_TYPE);
             cmisType.setDisplayName("Book Document Type");
-
 
             prop2 = PropertyCreationHelper.createStringDefinition(TITLE_PROP, "Title of Book", Updatability.READWRITE);
             cmisType.addPropertyDefinition(prop2);
 
-            prop2 = PropertyCreationHelper.createStringDefinition(AUTHOR_PROP, "Author of Book", Updatability.READWRITE);
+            prop2 = PropertyCreationHelper
+                    .createStringDefinition(AUTHOR_PROP, "Author of Book", Updatability.READWRITE);
             cmisType.addPropertyDefinition(prop2);
 
-            prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP,
-                    "ISBN of Book", Updatability.READWRITE);
+            prop3 = PropertyCreationHelper.createIntegerDefinition(ISBN_PROP, "ISBN of Book", Updatability.READWRITE);
             cmisType.addPropertyDefinition(prop3);
 
             PropertyDateTimeDefinitionImpl prop4 = PropertyCreationHelper.createDateTimeDefinition(PUB_DATE_PROP,

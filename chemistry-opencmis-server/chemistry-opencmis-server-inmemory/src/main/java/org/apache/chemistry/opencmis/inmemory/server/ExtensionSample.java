@@ -20,25 +20,23 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "cmisExtensionType", propOrder = {
-    "s", "i", "f"
-})
+@XmlType(name = "cmisExtensionType", propOrder = { "s", "i", "f" })
 public class ExtensionSample {
     private static final int MAGIC_NUMBER = 42;
     private final String s;
     private final int i;
     private final double f;
-    
+
     public ExtensionSample() {
         s = "This is an example for a CMIS extension.";
         i = MAGIC_NUMBER;
-        f = Math.PI;            
+        f = Math.PI;
     }
-    
+
     public String getString() {
         return s;
     }
-    
+
     public int getInt() {
         return i;
     }

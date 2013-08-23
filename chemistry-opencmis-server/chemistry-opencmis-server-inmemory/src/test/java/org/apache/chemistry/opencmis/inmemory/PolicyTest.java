@@ -56,7 +56,7 @@ public class PolicyTest extends AbstractServiceTest {
     private String polId;
 
     @Override
-	@Before
+    @Before
     public void setUp() {
         super.setTypeCreatorClass(ObjectTestTypeSystemCreator.class.getName());
         super.setUp();
@@ -64,7 +64,7 @@ public class PolicyTest extends AbstractServiceTest {
     }
 
     @Override
-	@After
+    @After
     public void tearDown() {
         super.tearDown();
     }
@@ -229,7 +229,7 @@ public class PolicyTest extends AbstractServiceTest {
         } catch (Exception e) {
             fail("Removing a non-existing policy should raise a CmisObjectNotFoundException, but was a " + e);
         }
-        
+
         // try removing a non existing id
         try {
             fPolSvc.removePolicy(fRepositoryId, polId2, docId, null);
@@ -238,7 +238,7 @@ public class PolicyTest extends AbstractServiceTest {
         } catch (Exception e) {
             fail("Removing a non-existing policy should raise a CmisInvalidArgumentException, but was a " + e);
         }
-        
+
         // try removing a non policy id
         try {
             fPolSvc.removePolicy(fRepositoryId, docId2, docId, null);
@@ -247,7 +247,7 @@ public class PolicyTest extends AbstractServiceTest {
         } catch (Exception e) {
             fail("Removing a non-policy should raise a CmisInvalidArgumentException, but was a " + e);
         }
-        
+
     }
 
     private void createPolicy() {

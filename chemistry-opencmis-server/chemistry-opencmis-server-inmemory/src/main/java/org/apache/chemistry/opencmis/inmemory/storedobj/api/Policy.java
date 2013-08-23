@@ -21,5 +21,5 @@ package org.apache.chemistry.opencmis.inmemory.storedobj.api;
 public interface Policy {
 
     String getPolicyText();
-    
+
 }

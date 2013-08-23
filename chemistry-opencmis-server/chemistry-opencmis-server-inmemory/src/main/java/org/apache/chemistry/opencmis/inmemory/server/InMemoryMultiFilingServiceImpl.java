@@ -52,7 +52,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
                     "Cannot add object to folder, version specific filing is not supported.");
         }
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
-        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions, extension);
+        StoredObject[] sos = validator.addObjectToFolder(context, repositoryId, objectId, folderId, allVersions,
+                extension);
 
         StoredObject so = sos[0];
         StoredObject folder = sos[1];
@@ -70,8 +71,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         LOG.debug("End addObjectToFolder()");
     }
 
-    public void removeObjectFromFolder(CallContext context, String repositoryId, String objectId,
-            String folderId, ExtensionsData extension, ObjectInfoHandler objectInfos) {
+    public void removeObjectFromFolder(CallContext context, String repositoryId, String objectId, String folderId,
+            ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
         LOG.debug("Begin removeObjectFromFolder()");
 
@@ -95,8 +96,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             }
         } else {
             checkObjects(repositoryId, so, null);
-            List<String> parentIds = objStore.getParentIds(so,  context.getUsername());
-            for (String parentId: parentIds) {
+            List<String> parentIds = objStore.getParentIds(so, context.getUsername());
+            for (String parentId : parentIds) {
                 Folder parent = (Folder) objStore.getObjectById(parentId);
                 objStore.removeParent(so, parent);
             }
@@ -109,7 +110,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
                 objectInfos.addObjectInfo(objectInfo);
             }
         }
-        
+
         LOG.debug("End removeObjectFromFolder()");
     }
 
@@ -122,7 +123,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         if (folder != null && !(folder instanceof Folder)) {
             throw new CmisConstraintException("Cannot add object to folder, folder id " + folder.getId()
                     + " does not refer to a folder.");
-        }        
+        }
     }
 
 }

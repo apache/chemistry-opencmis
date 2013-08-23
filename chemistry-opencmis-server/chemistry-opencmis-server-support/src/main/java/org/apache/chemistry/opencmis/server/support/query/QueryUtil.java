@@ -40,8 +40,7 @@ import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_Cmi
  * methods. It does not follow its design and is only maintained for
  * backwards compatibility.
  * 
- * @deprecated 
- *
+ * @deprecated Use {@link QueryUtilBase} instead.
  */
 public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
     

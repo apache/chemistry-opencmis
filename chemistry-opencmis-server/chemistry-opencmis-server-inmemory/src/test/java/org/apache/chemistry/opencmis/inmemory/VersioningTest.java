@@ -87,7 +87,7 @@ public class VersioningTest extends AbstractServiceTest {
          * thread local context that can be accessed from everywhere
          * RuntimeContext.attachCfg(ctx);
          */
-    	((DummyCallContext) fTestCallContext).put(CallContext.USERNAME, user);
+        ((DummyCallContext) fTestCallContext).put(CallContext.USERNAME, user);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class VersioningTest extends AbstractServiceTest {
             assertTrue(e instanceof CmisUpdateConflictException);
         }
         // version and version series should be checked out now
-//        assertTrue(isCheckedOut(docId));
+        // assertTrue(isCheckedOut(docId));
         assertTrue(isCheckedOut(pwcId));
 
         // Set a new content and modify property
@@ -157,9 +157,9 @@ public class VersioningTest extends AbstractServiceTest {
         // Neither the version nor the version series should be checked out any
         // longer:
         assertFalse(isCheckedOut(idHolder.getValue()));
-//        assertFalse(isCheckedOut(docId));
-        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder.getValue(), null, BigInteger
-                .valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
+        // assertFalse(isCheckedOut(docId));
+        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder.getValue(), null,
+                BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
         assertTrue(fCreator.verifyContent(fCreator.createAlternateContent(), retrievedContent));
         assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID,
                 PROP_VALUE_NEW));
@@ -189,7 +189,7 @@ public class VersioningTest extends AbstractServiceTest {
         ContentStream altContent = fCreator.createAlternateContent();
         Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
         idHolder = new Holder<String>(pwcId);
-//        assertTrue(isCheckedOut(docId));
+        // assertTrue(isCheckedOut(docId));
         assertTrue(isCheckedOut(pwcId));
 
         // Test check-in and pass content and properties
@@ -198,9 +198,9 @@ public class VersioningTest extends AbstractServiceTest {
         // Neither the version nor the version series should be checked out any
         // longer:
         assertFalse(isCheckedOut(idHolder.getValue()));
-//        assertFalse(isCheckedOut(docId));
-        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder.getValue(), null, BigInteger
-                .valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
+        // assertFalse(isCheckedOut(docId));
+        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idHolder.getValue(), null,
+                BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
 
         // New content and property should be set
         assertTrue(fCreator.verifyContent(fCreator.createAlternateContent(), retrievedContent));
@@ -263,8 +263,8 @@ public class VersioningTest extends AbstractServiceTest {
 
         // Because nothing was changed we should have a new version with
         // identical content
-        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, pwcHolder.getValue(), null, BigInteger
-                .valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
+        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, pwcHolder.getValue(), null,
+                BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
         assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createContent()));
         assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE));
     }
@@ -307,8 +307,8 @@ public class VersioningTest extends AbstractServiceTest {
 
         // verify that the old content and properties are still valid
         assertTrue(fCreator.verifyProperty(idOfLastVersion, VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE));
-        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idOfLastVersion, null, BigInteger
-                .valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
+        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, idOfLastVersion, null,
+                BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
         assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createContent()));
     }
 
@@ -333,7 +333,7 @@ public class VersioningTest extends AbstractServiceTest {
         ContentStream altContent = fCreator.createAlternateContent();
         Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
         idHolder = new Holder<String>(pwcId);
-//        assertTrue(isCheckedOut(docId));
+        // assertTrue(isCheckedOut(docId));
         assertTrue(isCheckedOut(pwcId));
 
         // Test check-in and pass content and properties
@@ -367,7 +367,7 @@ public class VersioningTest extends AbstractServiceTest {
         ContentStream altContent = fCreator.createAlternateContent();
         Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
         idHolder = new Holder<String>(pwcId);
-//        assertTrue(isCheckedOut(docId));
+        // assertTrue(isCheckedOut(docId));
         assertTrue(isCheckedOut(pwcId));
 
         // Test check-in and pass content and properties
@@ -380,8 +380,8 @@ public class VersioningTest extends AbstractServiceTest {
         ObjectData objData = fVerSvc.getObjectOfLatestVersion(fRepositoryId, docId, docId, isMajor, "*", false,
                 IncludeRelationships.NONE, null, false, false, null);
         checkVersionProperties(verId, versioningState, objData.getProperties().getProperties(), checkinComment);
-        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(), null, BigInteger
-                .valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
+        ContentStream retrievedContent = fObjSvc.getContentStream(fRepositoryId, objData.getId(), null,
+                BigInteger.valueOf(-1) /* offset */, BigInteger.valueOf(-1) /* length */, null);
         assertTrue(fCreator.verifyContent(retrievedContent, fCreator.createAlternateContent()));
 
         // get latest non-major version, must be the same as before
@@ -525,11 +525,10 @@ public class VersioningTest extends AbstractServiceTest {
         PropertyId pdid = (PropertyId) props.get(PropertyIds.VERSION_SERIES_ID);
         assertNotNull(pdid);
         String sVal = pdid.getFirstValue();
-//        if (typeDef.isVersionable())  // need not be
-//            assertFalse(docId.equals(sVal));
-//        else
-//            assertEquals(docId, sVal);
-
+        // if (typeDef.isVersionable()) // need not be
+        // assertFalse(docId.equals(sVal));
+        // else
+        // assertEquals(docId, sVal);
 
         pdb = (PropertyBoolean) props.get(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
         assertNotNull(pdb);

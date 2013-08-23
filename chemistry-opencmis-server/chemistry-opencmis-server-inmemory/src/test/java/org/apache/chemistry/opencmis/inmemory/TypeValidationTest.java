@@ -76,8 +76,7 @@ public class TypeValidationTest extends TestCase {
     private static final String STRING_PROP_TYPE_SUPER = "StringPropSuper";
     private static final String STRING_PROP_TYPE_SUB = "StringPropSub";
     private static final BindingsObjectFactory FACTORY = new BindingsObjectFactoryImpl();
-    static TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
-
+    static TypeDefinitionFactory typeFactory = DocumentTypeCreationHelper.getTypeDefinitionFactory();
 
     private static List<PropertyData<?>> createPropertiesWithNameAndTypeId(String typeId) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
@@ -432,10 +431,11 @@ public class TypeValidationTest extends TestCase {
         TypeDefinition primaryType = buildTypeWithStringProp();
         TypeDefinition secondaryType1 = buildTypeWithIntegerProp();
         TypeDefinition secondaryType2 = buildTypeWithDecimalProp();
-        
+
         String unknownPropertyId = "UnknownProperty";
-        List<PropertyData<?>> properties = createPropertiesWithSecondaryTypes(MY_DOC_TYPE, Arrays.asList(INT_DOC_TYPE, DECIMAL_DOC_TYPE));
-        
+        List<PropertyData<?>> properties = createPropertiesWithSecondaryTypes(MY_DOC_TYPE,
+                Arrays.asList(INT_DOC_TYPE, DECIMAL_DOC_TYPE));
+
         // add unknown property
         properties.add(FACTORY.createPropertyStringData(unknownPropertyId, "SomeValue"));
         Properties props = FACTORY.createPropertiesData(properties);
@@ -450,17 +450,17 @@ public class TypeValidationTest extends TestCase {
         }
     }
 
-    private static List<PropertyData<?>> createPropertiesWithSecondaryTypes(String typeIdPrimary, List<String> secondaryTypeIds) {
+    private static List<PropertyData<?>> createPropertiesWithSecondaryTypes(String typeIdPrimary,
+            List<String> secondaryTypeIds) {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(FACTORY.createPropertyIdData(PropertyIds.NAME, "Document_1"));
         properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeIdPrimary));
         properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, secondaryTypeIds));
         properties.add(FACTORY.createPropertyBooleanData("BooleanProp", true));
         properties.add(FACTORY.createPropertyIntegerData(INT_PROP_TYPE, BigInteger.valueOf(0)));
-        properties.add(FACTORY.createPropertyDecimalData(DECIMAL_PROP_TYPE, BigDecimal.valueOf(0.5)));       
+        properties.add(FACTORY.createPropertyDecimalData(DECIMAL_PROP_TYPE, BigDecimal.valueOf(0.5)));
         return properties;
     }
-
 
     /**
      * create sample type
@@ -471,11 +471,12 @@ public class TypeValidationTest extends TestCase {
         // always add CMIS default types
 
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), MY_DOC_TYPE);
             cmisType.setDisplayName("Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + MY_DOC_TYPE);
- 
+
             // create a boolean property definition
 
             PropertyDefinition<Boolean> prop = PropertyCreationHelper.createBooleanDefinition("BooleanProp",
@@ -499,8 +500,8 @@ public class TypeValidationTest extends TestCase {
                     "Sample Decimal Property", Updatability.READONLY);
             cmisType.addPropertyDefinition(prop3);
 
-            prop3 = PropertyCreationHelper.createDecimalDefinition("DecimalPropMV", "Sample Decimal multi-value Property",
-                    Updatability.READONLY);
+            prop3 = PropertyCreationHelper.createDecimalDefinition("DecimalPropMV",
+                    "Sample Decimal multi-value Property", Updatability.READONLY);
             cmisType.addPropertyDefinition(prop3);
 
             PropertyHtmlDefinitionImpl prop4 = PropertyCreationHelper.createHtmlDefinition("HtmlProp",
@@ -531,8 +532,8 @@ public class TypeValidationTest extends TestCase {
                     "Sample String Property", Updatability.READONLY);
             cmisType.addPropertyDefinition(prop7);
 
-            PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition("UriProp", "Sample Uri Property",
-                    Updatability.READONLY);
+            PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition("UriProp",
+                    "Sample Uri Property", Updatability.READONLY);
             cmisType.addPropertyDefinition(prop8);
 
             prop8 = PropertyCreationHelper.createUriDefinition("UriPropMV", "Sample Uri multi-value Property",
@@ -557,8 +558,9 @@ public class TypeValidationTest extends TestCase {
 
     private static DocumentTypeDefinition buildTypeWithStringProp() {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), STRING_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), STRING_DOC_TYPE);
             cmisType.setDisplayName("String Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + STRING_DOC_TYPE);
 
@@ -576,8 +578,9 @@ public class TypeValidationTest extends TestCase {
 
     private static DocumentTypeDefinition buildTypeWithIntegerProp() {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), INT_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), INT_DOC_TYPE);
             cmisType.setDisplayName("Int Document Type for Validation");
             cmisType.setDescription("InMemory test type definition " + INT_DOC_TYPE);
 
@@ -597,8 +600,9 @@ public class TypeValidationTest extends TestCase {
 
     private static DocumentTypeDefinition buildTypeWithDecimalProp() {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), DECIMAL_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), DECIMAL_DOC_TYPE);
             cmisType.setDisplayName("Decimal Type for Validation");
             cmisType.setDescription("InMemory test type definition " + DECIMAL_DOC_TYPE);
 
@@ -618,8 +622,9 @@ public class TypeValidationTest extends TestCase {
 
     public static DocumentTypeDefinition buildTypeWithPickList(Cardinality cardinality) {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("PickList Type for Validation");
             cmisType.setDescription("InMemory test type definition " + PICK_LIST_DOC_TYPE);
 
@@ -656,8 +661,9 @@ public class TypeValidationTest extends TestCase {
 
     public static DocumentTypeDefinition buildTypeWithMultiPickList() {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("MDocument Type for Validation");
             cmisType.setDescription("PickList test type definition " + PICK_LIST_DOC_TYPE);
 
@@ -697,14 +703,16 @@ public class TypeValidationTest extends TestCase {
 
     public static DocumentTypeDefinition buildTypeWithHierachicalPickList(Cardinality cardinality) {
         try {
-            MutableDocumentTypeDefinition cmisType;        
-            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
+            MutableDocumentTypeDefinition cmisType;
+            cmisType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), PICK_LIST_DOC_TYPE);
             cmisType.setDisplayName("PickList Type for Validation");
             cmisType.setDescription("InMemory test type definition " + PICK_LIST_DOC_TYPE);
 
             // create a String property definition
 
-            // Create a two-level pick list with an outer property list state and an
+            // Create a two-level pick list with an outer property list state
+            // and an
             // inner
             // list of city
             PropertyStringDefinitionImpl propDef = PropertyCreationHelper.createStringDefinition(PICK_LIST_PROP_DEF,
@@ -764,28 +772,30 @@ public class TypeValidationTest extends TestCase {
             tm.initTypeSystem(null, true); // create CMIS default types
 
             // create super type
-            MutableDocumentTypeDefinition cmisSuperType;        
-            cmisSuperType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), DOC_TYPE_SUPER);
+            MutableDocumentTypeDefinition cmisSuperType;
+            cmisSuperType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), DOC_TYPE_SUPER);
             cmisSuperType.setDisplayName("Document Type With a child");
             cmisSuperType.setDescription("InMemory test type definition " + DOC_TYPE_SUPER);
 
             // create a String property definition
-            PropertyStringDefinitionImpl propDef = PropertyCreationHelper.createStringDefinition(STRING_PROP_TYPE_SUPER,
-                    "Sample String Property SuperType", Updatability.READONLY);
+            PropertyStringDefinitionImpl propDef = PropertyCreationHelper.createStringDefinition(
+                    STRING_PROP_TYPE_SUPER, "Sample String Property SuperType", Updatability.READONLY);
             propDef.setMaxLength(BigInteger.valueOf(10));
             cmisSuperType.addPropertyDefinition(propDef);
 
             tm.addTypeDefinition(cmisSuperType, false);
 
             // create sub type
-            MutableDocumentTypeDefinition cmisSubType;        
-            cmisSubType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(cmisSuperType, DOC_TYPE_SUB);
+            MutableDocumentTypeDefinition cmisSubType;
+            cmisSubType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(cmisSuperType,
+                    DOC_TYPE_SUB);
             cmisSubType.setDisplayName("Document Type With a parent");
             cmisSubType.setDescription("InMemory test type definition " + DOC_TYPE_SUB);
 
             // create a String property definition
-            propDef = PropertyCreationHelper.createStringDefinition(STRING_PROP_TYPE_SUB, "Sample String Property Subtype",
-                    Updatability.READONLY);
+            propDef = PropertyCreationHelper.createStringDefinition(STRING_PROP_TYPE_SUB,
+                    "Sample String Property Subtype", Updatability.READONLY);
             propDef.setMaxLength(BigInteger.valueOf(20));
             cmisSubType.addPropertyDefinition(propDef);
 

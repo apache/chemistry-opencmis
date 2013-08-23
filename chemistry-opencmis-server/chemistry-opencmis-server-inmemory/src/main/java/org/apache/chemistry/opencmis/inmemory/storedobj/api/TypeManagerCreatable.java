@@ -22,7 +22,6 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 public interface TypeManagerCreatable extends TypeManager {
-    
 
     /**
      * Add a type to the type system. Add all properties from inherited types,
@@ -34,18 +33,18 @@ public interface TypeManagerCreatable extends TypeManager {
      *            add properties from supertype to type definition
      */
     void addTypeDefinition(TypeDefinition typeDefinition, boolean addInheritedProperties);
-    
+
     /**
      * Modify an existing type definition
      * 
      * @param typeDefinition
-     *          type to be modified
-     */    
+     *            type to be modified
+     */
     void updateTypeDefinition(TypeDefinition typeDefinition);
 
-   /**
-     * Delete a type from the type system. Delete will succeed only if type is not in use.
-     * Otherwise an exception is thrown
+    /**
+     * Delete a type from the type system. Delete will succeed only if type is
+     * not in use. Otherwise an exception is thrown
      * 
      * @param cmisType
      *            type to delete

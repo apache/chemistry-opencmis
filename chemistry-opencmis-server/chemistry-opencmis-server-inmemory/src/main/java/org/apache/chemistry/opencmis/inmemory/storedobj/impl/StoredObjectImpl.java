@@ -264,7 +264,8 @@ public class StoredObjectImpl implements StoredObject {
             properties.put(PropertyIds.OBJECT_TYPE_ID,
                     objFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, getTypeId()));
         }
-        // set the base type id PropertyIds.CMIS_BASE_TYPE_ID outside because it requires the type definition
+        // set the base type id PropertyIds.CMIS_BASE_TYPE_ID outside because it
+        // requires the type definition
         if (FilterParser.isContainedInFilter(PropertyIds.CREATED_BY, requestedIds)) {
             properties.put(PropertyIds.CREATED_BY,
                     objFactory.createPropertyStringData(PropertyIds.CREATED_BY, getCreatedBy()));
@@ -313,7 +314,7 @@ public class StoredObjectImpl implements StoredObject {
 
     @Override
     public void setCustomProperties(Map<String, PropertyData<?>> properties) {
-        Map<String, PropertyData<?>> propertiesNew = new HashMap<String, PropertyData<?>>(properties); 
+        Map<String, PropertyData<?>> propertiesNew = new HashMap<String, PropertyData<?>>(properties);
         // get a writablecollection
         removeAllSystemProperties(propertiesNew);
         setProperties(propertiesNew);
@@ -339,17 +340,16 @@ public class StoredObjectImpl implements StoredObject {
         // constructor.
         setModifiedBy(user);
         if (null != properties) {
-           if (null != properties.get(PropertyIds.DESCRIPTION)) {
-            setDescription((String) properties.get(PropertyIds.DESCRIPTION)
-                       .getFirstValue());
-        }
+            if (null != properties.get(PropertyIds.DESCRIPTION)) {
+                setDescription((String) properties.get(PropertyIds.DESCRIPTION).getFirstValue());
+            }
 
-           if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
-               secondaryTypeIds.clear();
-               secondaryTypeIds.addAll((List<String>) properties.get(
-                       PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues());
-           }
-       }
+            if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+                secondaryTypeIds.clear();
+                secondaryTypeIds.addAll((List<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)
+                        .getValues());
+            }
+        }
         if (isCreated) {
             setCreatedBy(user);
             setName((String) properties.get(PropertyIds.NAME).getFirstValue());
@@ -533,7 +533,7 @@ public class StoredObjectImpl implements StoredObject {
             IOUtils.closeQuietly(ba);
             IOUtils.closeQuietly(imageStream);
         }
-        
+
         ContentStreamDataImpl content = new ContentStreamDataImpl(0);
         content.setFileName(name);
         content.setMimeType("image/png");

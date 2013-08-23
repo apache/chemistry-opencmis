@@ -61,7 +61,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
     public static final String FOLDER_TYPE = "FolderType";
     public static final String SECONDARY_TYPE = "MySecondaryType";
     public static final String SECONDARY_TYPE_2 = "MySecondaryType2";
-    
+
     public static final String PROP_ID_BOOLEAN = "BooleanProp";
     public static final String PROP_ID_DATETIME = "DateTimeProp";
     public static final String PROP_ID_DECIMAL = "DecimalProp";
@@ -86,7 +86,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
      * the required types for testing
      */
     @Override
-	public List<TypeDefinition> createTypesList() {
+    public List<TypeDefinition> createTypesList() {
         return singletonTypes;
     }
 
@@ -109,107 +109,111 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
      * @return typesMap map filled with created types
      */
     private static List<TypeDefinition> buildTypesList() {
-        TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
+        TypeDefinitionFactory typeFactory = DocumentTypeCreationHelper.getTypeDefinitionFactory();
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         try {
-            MutableTypeDefinition cmisType1;        
-            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), LEVEL1_TYPE);
+            MutableTypeDefinition cmisType1;
+            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    LEVEL1_TYPE);
             cmisType1.setDisplayName("Document type with inherited properties, Level 2");
             cmisType1.setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
 
-            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), "MyDocType1");
+            cmisType1 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    "MyDocType1");
             cmisType1.setDisplayName("My Type 1 Level 1");
             cmisType1.setDescription("Builtin InMemory type definition MyDocType1");
             typesList.add(cmisType1);
 
-            MutableTypeDefinition cmisType2;        
-            cmisType2 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), "MyDocType2");
+            MutableTypeDefinition cmisType2;
+            cmisType2 = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    "MyDocType2");
             cmisType2.setDisplayName("My Type 2 Level 1");
             cmisType2.setDescription("Builtin InMemory type definition MyDocType2");
             typesList.add(cmisType2);
 
-            MutableTypeDefinition cmisType11;        
+            MutableTypeDefinition cmisType11;
             cmisType11 = typeFactory.createChildTypeDefinition(cmisType1, "MyDocType1.1");
             cmisType11.setDisplayName("My Type 3 Level 2");
             cmisType11.setDescription("Builtin InMemory type definition MyDocType1.1");
             typesList.add(cmisType11);
 
-            MutableTypeDefinition cmisType111;        
+            MutableTypeDefinition cmisType111;
             cmisType111 = typeFactory.createChildTypeDefinition(cmisType11, "MyDocType1.1.1");
             cmisType111.setDisplayName("My Type 4 Level 3");
             cmisType111.setDescription("Builtin InMemory type definition MyDocType1.1.1");
             typesList.add(cmisType111);
 
-            MutableTypeDefinition cmisType112;        
+            MutableTypeDefinition cmisType112;
             cmisType112 = typeFactory.createChildTypeDefinition(cmisType11, "MyDocType1.1.2");
             cmisType112.setDisplayName("My Type 5 Level 3");
             cmisType112.setDescription("Builtin InMemory type definition MyDocType1.1.2");
             typesList.add(cmisType112);
 
-            MutableTypeDefinition cmisType12;        
+            MutableTypeDefinition cmisType12;
             cmisType12 = typeFactory.createChildTypeDefinition(cmisType1, "MyDocType1.2");
             cmisType12.setDisplayName("My Type 6 Level 2");
             cmisType12.setDescription("Builtin InMemory type definition MyDocType1.2");
             typesList.add(cmisType12);
 
-            MutableTypeDefinition cmisType21;        
+            MutableTypeDefinition cmisType21;
             cmisType21 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.1");
             cmisType21.setDisplayName("My Type 7 Level 2");
             cmisType21.setDescription("Builtin InMemory type definition MyDocType2.1");
             typesList.add(cmisType21);
 
-            MutableTypeDefinition cmisType22;        
+            MutableTypeDefinition cmisType22;
             cmisType22 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.2");
             cmisType22.setDisplayName("My Type 8 Level 2");
             cmisType22.setDescription("Builtin InMemory type definition MyDocType2.2");
             typesList.add(cmisType22);
 
-            MutableTypeDefinition cmisType23;        
+            MutableTypeDefinition cmisType23;
             cmisType23 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.3");
             cmisType23.setDisplayName("My Type 9 Level 2");
             cmisType23.setDescription("Builtin InMemory type definition MyDocType2.3");
             typesList.add(cmisType23);
 
-            MutableTypeDefinition cmisType24;        
+            MutableTypeDefinition cmisType24;
             cmisType24 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.4");
             cmisType24.setDisplayName("My Type 10 Level 2");
             cmisType24.setDescription("Builtin InMemory type definition MyDocType2.4");
             typesList.add(cmisType24);
 
-            MutableTypeDefinition cmisType25;        
+            MutableTypeDefinition cmisType25;
             cmisType25 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.5");
             cmisType25.setDisplayName("My Type 11 Level 2");
             cmisType25.setDescription("Builtin InMemory type definition MyDocType2.5");
             typesList.add(cmisType25);
 
-            MutableTypeDefinition cmisType26;        
+            MutableTypeDefinition cmisType26;
             cmisType26 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.6");
             cmisType26.setDisplayName("My Type 12 Level 2");
             cmisType26.setDescription("Builtin InMemory type definition MyDocType2.6");
             typesList.add(cmisType26);
 
-            MutableTypeDefinition cmisType27;        
+            MutableTypeDefinition cmisType27;
             cmisType27 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.7");
             cmisType27.setDisplayName("My Type 13 Level 2");
             cmisType27.setDescription("Builtin InMemory type definition MyDocType2.7");
             typesList.add(cmisType27);
 
-            MutableTypeDefinition cmisType28;        
+            MutableTypeDefinition cmisType28;
             cmisType28 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.8");
             cmisType28.setDisplayName("My Type 14 Level 2");
             cmisType28.setDescription("Builtin InMemory type definition MyDocType2.8");
             typesList.add(cmisType28);
 
-            MutableTypeDefinition cmisType29;        
+            MutableTypeDefinition cmisType29;
             cmisType29 = typeFactory.createChildTypeDefinition(cmisType2, "MyDocType2.9");
             cmisType29.setDisplayName("My Type 15 Level 2");
             cmisType29.setDescription("Builtin InMemory type definition MyDocType2.9");
             typesList.add(cmisType29);
 
             // create a complex type with properties
-            MutableDocumentTypeDefinition cmisComplexType;        
-            cmisComplexType = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisDocumentType().getId());
+            MutableDocumentTypeDefinition cmisComplexType;
+            cmisComplexType = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisDocumentType().getId());
             cmisComplexType.setId(COMPLEX_TYPE);
             cmisComplexType.setDisplayName("Complex type with properties, Level 1");
             cmisComplexType.setDescription("Builtin InMemory type definition ComplexType");
@@ -236,27 +240,32 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                     "Sample Decimal Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop3);
 
-            prop3 = PropertyCreationHelper.createDecimalMultiDefinition(PROP_ID_DECIMAL_MULTI_VALUE, "Sample Decimal multi-value Property", Updatability.READONLY);
+            prop3 = PropertyCreationHelper.createDecimalMultiDefinition(PROP_ID_DECIMAL_MULTI_VALUE,
+                    "Sample Decimal multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop3);
 
             PropertyHtmlDefinitionImpl prop4 = PropertyCreationHelper.createHtmlDefinition(PROP_ID_HTML,
                     "Sample Html Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop4);
 
-            prop4 = PropertyCreationHelper.createHtmlMultiDefinition(PROP_ID_HTML_MULTI_VALUE, "Sample Html multi-value Property", Updatability.READONLY);
+            prop4 = PropertyCreationHelper.createHtmlMultiDefinition(PROP_ID_HTML_MULTI_VALUE,
+                    "Sample Html multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop4);
 
-            PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition(PROP_ID_ID, "Sample Id Property", Updatability.READONLY);
+            PropertyIdDefinitionImpl prop5 = PropertyCreationHelper.createIdDefinition(PROP_ID_ID,
+                    "Sample Id Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop5);
 
-            prop5 = PropertyCreationHelper.createIdMultiDefinition(PROP_ID_ID_MULTI_VALUE, "Sample Id Html multi-value Property", Updatability.READONLY);
+            prop5 = PropertyCreationHelper.createIdMultiDefinition(PROP_ID_ID_MULTI_VALUE,
+                    "Sample Id Html multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop5);
 
             PropertyIntegerDefinitionImpl prop6 = PropertyCreationHelper.createIntegerDefinition(PROP_ID_INT,
                     "Sample Int Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop6);
 
-            prop6 = PropertyCreationHelper.createIntegerMultiDefinition(PROP_ID_INT_MULTI_VALUE, "Sample Int multi-value Property", Updatability.READONLY);
+            prop6 = PropertyCreationHelper.createIntegerMultiDefinition(PROP_ID_INT_MULTI_VALUE,
+                    "Sample Int multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop6);
 
             PropertyStringDefinitionImpl prop7 = PropertyCreationHelper.createStringDefinition(PROP_ID_STRING,
@@ -267,10 +276,12 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                     "Sample String multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop7);
 
-            PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition(PROP_ID_URI, "Sample Uri Property", Updatability.READONLY);
+            PropertyUriDefinitionImpl prop8 = PropertyCreationHelper.createUriDefinition(PROP_ID_URI,
+                    "Sample Uri Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop8);
 
-            prop8 = PropertyCreationHelper.createUriMultiDefinition(PROP_ID_URI_MULTI_VALUE, "Sample Uri multi-value Property", Updatability.READONLY);
+            prop8 = PropertyCreationHelper.createUriMultiDefinition(PROP_ID_URI_MULTI_VALUE,
+                    "Sample Uri multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop8);
 
             PropertyStringDefinitionImpl prop9 = PropertyCreationHelper.createStringDefinition("PickListProp",
@@ -296,18 +307,19 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
             typesList.add(cmisComplexType);
 
             // create a type hierarchy with inherited properties
-            MutableDocumentTypeDefinition cmisDocTypeTopLevel;        
-            cmisDocTypeTopLevel = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisDocumentType().getId());
+            MutableDocumentTypeDefinition cmisDocTypeTopLevel;
+            cmisDocTypeTopLevel = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1,
+                    DocumentTypeCreationHelper.getCmisDocumentType().getId());
             cmisDocTypeTopLevel.setId(TOPLEVEL_TYPE);
             cmisDocTypeTopLevel.setDisplayName("Document type with properties, Level 1");
             cmisDocTypeTopLevel.setDescription("Builtin InMemory type definition " + TOPLEVEL_TYPE);
 
-            MutableTypeDefinition cmisDocTypeLevel1;        
+            MutableTypeDefinition cmisDocTypeLevel1;
             cmisDocTypeLevel1 = typeFactory.createChildTypeDefinition(cmisDocTypeTopLevel, LEVEL1_TYPE);
             cmisDocTypeLevel1.setDisplayName("Document type with inherited properties, Level 2");
-            cmisDocTypeLevel1 .setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
+            cmisDocTypeLevel1.setDescription("Builtin InMemory type definition " + LEVEL1_TYPE);
 
-            MutableTypeDefinition cmisDocTypeLevel2;        
+            MutableTypeDefinition cmisDocTypeLevel2;
             cmisDocTypeLevel2 = typeFactory.createChildTypeDefinition(cmisDocTypeLevel1, LEVEL2_TYPE);
             cmisDocTypeLevel2.setDisplayName("Document type with inherited properties, Level 3");
             cmisDocTypeLevel2.setDescription("Builtin InMemory type definition " + LEVEL2_TYPE);
@@ -325,11 +337,13 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
             cmisDocTypeLevel2.addPropertyDefinition(propLevel2);
 
             // create a versioned type with properties
-            MutableDocumentTypeDefinition cmisVersionedType;        
-            cmisVersionedType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), VERSIONED_TYPE);
+            MutableDocumentTypeDefinition cmisVersionedType;
+            cmisVersionedType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), VERSIONED_TYPE);
             cmisVersionedType.setDisplayName("Versioned Type");
             cmisVersionedType.setDescription("Builtin InMemory type definition " + VERSIONED_TYPE);
-            cmisVersionedType.setIsVersionable(true); // make it a versionable type;
+            cmisVersionedType.setIsVersionable(true); // make it a versionable
+                                                      // type;
 
             // create a single String property definition
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(VERSION_PROPERTY_ID,
@@ -340,40 +354,44 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
 
             // create a folder type
             // create a complex type with properties
-            MutableFolderTypeDefinition cmisFolderType;        
-            cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisFolderType().getId());
+            MutableFolderTypeDefinition cmisFolderType;
+            cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisFolderType().getId());
             cmisFolderType.setId(FOLDER_TYPE);
             cmisFolderType.setDisplayName("Folder type with properties");
             cmisFolderType.setDescription("InMemory test type definition " + FOLDER_TYPE);
 
             // create a two property definitions for folder
-            prop6 = PropertyCreationHelper.createIntegerDefinition(PROP_ID_INT, "Sample Folder Int Property", Updatability.READONLY);
+            prop6 = PropertyCreationHelper.createIntegerDefinition(PROP_ID_INT, "Sample Folder Int Property",
+                    Updatability.READONLY);
             cmisFolderType.addPropertyDefinition(prop6);
 
-            prop7 = PropertyCreationHelper.createStringDefinition(PROP_ID_STRING,
-                    "Sample Folder String Property", Updatability.READONLY);
+            prop7 = PropertyCreationHelper.createStringDefinition(PROP_ID_STRING, "Sample Folder String Property",
+                    Updatability.READONLY);
             cmisFolderType.addPropertyDefinition(prop7);
 
             // CMIS 1.1 create a secondary type
-            MutableSecondaryTypeDefinition cmisSecondaryType;        
-            cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisSecondaryType().getId());
+            MutableSecondaryTypeDefinition cmisSecondaryType;
+            cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1,
+                    DocumentTypeCreationHelper.getCmisSecondaryType().getId());
             cmisSecondaryType.setId(SECONDARY_TYPE);
             cmisSecondaryType.setDisplayName("MySecondaryType");
             cmisSecondaryType.setDescription("Builtin InMemory type definition " + SECONDARY_TYPE);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
             cmisSecondaryType.setIsFileable(false);
-            
+
             // create a single String property definition
             PropertyStringDefinitionImpl propS1 = PropertyCreationHelper.createStringDefinition(SECONDARY_STRING_PROP,
                     "Secondary String Property", Updatability.READWRITE);
             cmisSecondaryType.addPropertyDefinition(propS1);
-            PropertyIntegerDefinitionImpl propS2 = PropertyCreationHelper.createIntegerDefinition(SECONDARY_INTEGER_PROP,
-                    "Secondary Integer Property", Updatability.READWRITE);
+            PropertyIntegerDefinitionImpl propS2 = PropertyCreationHelper.createIntegerDefinition(
+                    SECONDARY_INTEGER_PROP, "Secondary Integer Property", Updatability.READWRITE);
             propS2.setIsRequired(true);
             cmisSecondaryType.addPropertyDefinition(propS2);
- 
-            MutableSecondaryTypeDefinition cmisSecondaryType2;        
-            cmisSecondaryType2 = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisSecondaryType().getId());
+
+            MutableSecondaryTypeDefinition cmisSecondaryType2;
+            cmisSecondaryType2 = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1,
+                    DocumentTypeCreationHelper.getCmisSecondaryType().getId());
             cmisSecondaryType2.setId(SECONDARY_TYPE_2);
             cmisSecondaryType2.setDisplayName("MySecondaryType-2");
             cmisSecondaryType2.setDescription("Builtin InMemory type definition " + SECONDARY_TYPE_2);

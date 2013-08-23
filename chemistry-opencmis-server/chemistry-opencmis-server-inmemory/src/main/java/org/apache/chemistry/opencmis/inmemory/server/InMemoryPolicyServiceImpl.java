@@ -83,7 +83,7 @@ public class InMemoryPolicyServiceImpl extends InMemoryAbstractServiceImpl {
             ExtensionsData extension) {
         StoredObject[] sos = validator.applyPolicy(context, repositoryId, policyId, objectId, extension);
         StoredObject so = sos[1];
-        
+
         List<String> polIds = so.getAppliedPolicies();
         if (null != polIds && polIds.contains(policyId)) {
             throw new CmisInvalidArgumentException("Policy id " + policyId

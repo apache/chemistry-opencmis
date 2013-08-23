@@ -1003,7 +1003,8 @@ public class EvalQueryTest extends AbstractServiceTest {
     public void testNotSetProperties() {
         log.debug("Start testNotSetProperties...");
         // PROP_ID_ID is not set property
-        String statement = "SELECT cmis:name, " + PROP_ID_ID + " FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT + "= 100";
+        String statement = "SELECT cmis:name, " + PROP_ID_ID + " FROM " + COMPLEX_TYPE + " WHERE " + PROP_ID_INT
+                + "= 100";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("epsilon", res));
@@ -1016,7 +1017,7 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsNotSetPropertyValue(PROP_ID_ID, res.getObjects().get(0)));
         log.debug("...Stop testNotSetProperties.");
     }
-    
+
     @Test
     public void testSecondaryTypes() {
         log.debug("Start testSecondaryTypes...");
@@ -1057,7 +1058,8 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
 
-        // Test a query with secondary types matching only one document not having this secondary type
+        // Test a query with secondary types matching only one document not
+        // having this secondary type
         statement = "SELECT * FROM " + COMPLEX_TYPE + " LEFT JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
                 + ".cmis:objectId = " + SECONDARY_TYPE + ".cmis:objectId WHERE cmis:name = 'alpha'";
         res = doQuery(statement);
@@ -1068,7 +1070,7 @@ public class EvalQueryTest extends AbstractServiceTest {
         assertTrue(resultContainsProperty(PropertyIds.OBJECT_TYPE_ID, res));
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
         assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP, res));
-        
+
         log.debug("...Stop testSecondaryJoin.");
     }
 

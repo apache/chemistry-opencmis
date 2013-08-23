@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
@@ -71,6 +72,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
+import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
@@ -86,7 +88,7 @@ public class StoreManagerImpl implements StoreManager {
     private static final String CMIS_ALL = "cmis:all";
 
     private final BindingsObjectFactory fObjectFactory;
-
+    private final TypeDefinitionFactory typeFactory = TypeDefinitionFactory.newInstance();
     private static final String OPENCMIS_VERSION;
     private static final String OPENCMIS_SERVER;
 
@@ -261,8 +263,10 @@ public class StoreManagerImpl implements StoreManager {
             for (TypeDefinitionContainer c : rootTypes) {
                 AbstractTypeDefinition td = ((AbstractTypeDefinition) c.getTypeDefinition()).clone();
                 TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-                tdc.setChildren(c.getChildren());
                 td.setPropertyDefinitions(null);
+//                MutableTypeDefinition td = typeFactory.copy(c.getTypeDefinition(), includePropertyDefinitions);
+//                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+                tdc.setChildren(c.getChildren());
                 result.add(tdc);
             }
         }
@@ -528,6 +532,8 @@ public class StoreManagerImpl implements StoreManager {
     public static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
             TypeDefinitionContainer tdc, TypeDefinitionContainer parent) {
 
+//        final TypeDefinitionFactory typeFactory = TypeDefinitionFactory.newInstance();
+//        MutableTypeDefinition tdClone = typeFactory.copy(tdc.getTypeDefinition(), includePropertyDefinitions);
         AbstractTypeDefinition tdClone = ((AbstractTypeDefinition) tdc.getTypeDefinition()).clone();
         if (!includePropertyDefinitions) {
             tdClone.setPropertyDefinitions(null);

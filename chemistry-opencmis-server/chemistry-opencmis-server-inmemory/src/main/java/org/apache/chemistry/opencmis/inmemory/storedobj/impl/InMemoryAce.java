@@ -25,15 +25,14 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 
-
 public class InMemoryAce {
 
     private static final String ANONYMOUS = "anonymous";
     private static final String ANYONE = "anyone";
-    private final String principalId;    
+    private final String principalId;
     private Permission permission;
     private static final InMemoryAce DEFAULT_ACE = new InMemoryAce(InMemoryAce.getAnyoneUser(), Permission.ALL);
-    
+
     public static final String getAnyoneUser() {
         return ANYONE;
     }
@@ -41,11 +40,11 @@ public class InMemoryAce {
     public static final String getAnonymousUser() {
         return ANONYMOUS;
     }
-    
+
     public static final InMemoryAce getDefaultAce() {
         return DEFAULT_ACE;
     }
-    
+
     public InMemoryAce(Ace commonsAce) {
         if (null == commonsAce || null == commonsAce.getPrincipalId() || null == commonsAce.getPermissions()) {
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");
@@ -56,26 +55,26 @@ public class InMemoryAce {
         }
         String perm = perms.get(0);
         this.principalId = commonsAce.getPrincipalId();
-        this.permission = Permission.fromCmisString(perm);        
+        this.permission = Permission.fromCmisString(perm);
     }
 
     public InMemoryAce(String prinicpalId, Permission permission) {
         if (null == prinicpalId || null == permission) {
             throw new IllegalArgumentException("Cannot create InMemoryAce with null value");
         }
-        
+
         this.principalId = prinicpalId;
-        this.permission = permission;        
+        this.permission = permission;
     }
-    
+
     public String getPrincipalId() {
         return principalId;
     }
-    
+
     public Permission getPermission() {
         return permission;
     }
-    
+
     public void setPermission(Permission newPermission) {
         permission = newPermission;
     }
@@ -124,8 +123,8 @@ public class InMemoryAce {
     }
 
     public Ace toCommonsAce() {
-        return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId), 
-                Collections.singletonList(permission.toCmisString())); 
+        return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId),
+                Collections.singletonList(permission.toCmisString()));
     }
-    
+
 }

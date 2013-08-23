@@ -63,26 +63,25 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
 
     private final long sizeLimitKB;
 
-    private static synchronized long getTotalLength () {
+    private static synchronized long getTotalLength() {
         return totalLength;
     }
 
     private static synchronized void increaseTotalLength(int length) {
         totalLength += length;
     }
-    
+
     private static synchronized void decreaseTotalLength(int length) {
         totalLength -= length;
     }
-    
-    private static synchronized long getTotalCalls () {
+
+    private static synchronized long getTotalCalls() {
         return totalCalls;
     }
 
     private static synchronized void increaseTotalCalls() {
         totalCalls++;
     }
-
 
     public ContentStreamDataImpl(long maxAllowedContentSizeKB) {
         sizeLimitKB = maxAllowedContentSizeKB;

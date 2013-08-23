@@ -69,11 +69,10 @@ public interface StoreManager {
     /**
      * get a permission and parameter validating instance
      * 
-     * @return
-     *      validator and permission checker
+     * @return validator and permission checker
      */
     CmisServiceValidator getServiceValidator();
-    
+
     /**
      * create a new repository with the given id. Create the repository,
      * initiate the type system and initialize it so that it is ready for use
@@ -141,7 +140,7 @@ public interface StoreManager {
      * 
      * @param repositoryId
      *            id of repository
-     * @param inclPropDefs 
+     * @param inclPropDefs
      * @return list of root types
      */
     List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean inclPropDefs);
@@ -154,23 +153,23 @@ public interface StoreManager {
      * @return repository information
      */
     RepositoryInfo getRepositoryInfo(String repositoryId);
-    
+
     /**
      * retrieve the type manager for a given repository
+     * 
      * @param repositoryId
-     *      id of repository
-     * @return
-     *      type manager for this repository or null if repository is unknown
+     *            id of repository
+     * @return type manager for this repository or null if repository is unknown
      */
     TypeManagerCreatable getTypeManager(String repositoryId);
-    
+
     boolean supportsSingleFiling(String repositoryId);
-    
+
     boolean supportsMultiFilings(String repositoryId);
-    
+
     /**
-     * Execute a query against the repository (same parameter as the discovery service
-     * query method
+     * Execute a query against the repository (same parameter as the discovery
+     * service query method
      * 
      * @param user
      * @param repositoryId
@@ -186,7 +185,5 @@ public interface StoreManager {
     ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount);
-    
-    
-    
- }
+
+}

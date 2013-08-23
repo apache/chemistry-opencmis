@@ -104,11 +104,7 @@ public abstract class QueryUtilBase<T extends TreeParser> {
 
     /**
      * Same as traverseStatement but throws only CMIS Exceptions
-     * 
-     * @param statement
-     *            CMISQL statement to parse
-     * @return
-     */
+    */
     public void processStatementUsingCmisExceptions() {
         try {
             processStatement();

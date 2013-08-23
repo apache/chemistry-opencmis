@@ -53,9 +53,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Temporary test class until CMIS 1.1 bindings are completed. Until then
- * we use a special setup procedure to directly connect to the repository
- * service implementation of InMemory.
+ * Temporary test class until CMIS 1.1 bindings are completed. Until then we use
+ * a special setup procedure to directly connect to the repository service
+ * implementation of InMemory.
  * 
  * @author Jens
  */
@@ -72,13 +72,13 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     public void setUp() {
         super.setTypeCreatorClass(UnitTestTypeSystemCreator.class.getName());
         super.setUp();
-        
+
         Map<String, String> parameters = new HashMap<String, String>();
 
         // attach repository info to the session:
         parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, getTypeCreatorClass());
         parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
-        
+
         InMemoryServiceFactoryImpl factory = new InMemoryServiceFactoryImpl();
         factory.init(parameters);
     }
@@ -89,9 +89,11 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         super.tearDown();
     }
 
-    // This test is just added because this test class uses a different setup to connect to the
-    // server as long as the server bindings do not support the type mutability extension of 
-    // CMIS 1.1. If this test fails then the setUp() fails! 
+    // This test is just added because this test class uses a different setup to
+    // connect to the
+    // server as long as the server bindings do not support the type mutability
+    // extension of
+    // CMIS 1.1. If this test fails then the setUp() fails!
     @Test
     public void testRepositoryInfo() {
         log.info("starting testRepositoryInfo() ...");
@@ -110,7 +112,6 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
 
         log.info("... testRepositoryInfo() finished.");
     }
-    
 
     @Test
     public void testTypeMutabilityCreation() throws Exception {
@@ -129,7 +130,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         RepositoryServiceTest.containsAllBasePropertyDefinitions(type);
         log.info("... testTypeMutabilityCreation() finished.");
     }
-    
+
     @Test
     public void testTypeMutabilityCreateDuplicate() throws Exception {
         log.info("");
@@ -145,20 +146,19 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         assertEquals(typeDefRef.getId(), type.getId());
         log.info("... testTypeMutabilityCreateDuplicate() finished.");
     }
-    
-    
+
     @Test
     public void testTypeMutabilityTypeNameConstraints() throws Exception {
         log.info("starting testTypeMutabilityTypeNameConstraints() ...");
-        
+
         String repositoryId = getRepositoryId();
-        
+
         // test illegal type id
         MutableDocumentTypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setId(typeDefRef.getId() + "!!!");
         TypeDefinition typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
         assertEquals(TYPE_ID_MUTABILITY + "___", typeDefNew.getId());
-        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY+"___", null);
+        fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY + "___", null);
 
         // test illegal parent type id
         typeDefRef = createTypeForAddingAtRuntime();
@@ -171,7 +171,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
         assertTrue(null != typeDefNew.getId() && typeDefNew.getId().length() > 0);
         fRepSvc.deleteType(repositoryId, typeDefNew.getId(), null);
-        
+
         // test null query name
         typeDefRef = createTypeForAddingAtRuntime();
         typeDefRef.setQueryName(null);
@@ -200,21 +200,21 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         typeDefNew = fRepSvc.createType(repositoryId, typeDefRef, null);
         fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
 
-        log.info("... testTypeMutabilityTypeNameConstraints() finished.");              
+        log.info("... testTypeMutabilityTypeNameConstraints() finished.");
     }
-    
+
     @Test
     public void testTypeMutabilityPropertyNameConstraints() throws Exception {
         log.info("starting testTypeMutabilityPropertyNameConstraints() ...");
-        
+
         String repositoryId = getRepositoryId();
-        
+
         // test null property id
         DocumentTypeDefinition typeDef = createTypeForAddingAtRuntime();
         PropertyStringDefinitionImpl pd = getPropertyDefinitionImpl(typeDef);
         pd.setId(null);
         checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
-        
+
         // test illegal property id
         typeDef = createTypeForAddingAtRuntime();
         pd = getPropertyDefinitionImpl(typeDef);
@@ -245,19 +245,19 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         pd.setLocalName(typeDef.getLocalName() + "!!!");
         checkAddingType(repositoryId, typeDef, CmisInvalidArgumentException.class);
 
-        log.info("... testTypeMutabilityPropertyNameConstraints() finished.");              
+        log.info("... testTypeMutabilityPropertyNameConstraints() finished.");
     }
-    
+
     private void checkAddingType(String repositoryId, TypeDefinition typeDef, Class<? extends Exception> clazz) {
-        try { 
+        try {
             typeDef = fRepSvc.createType(repositoryId, typeDef, null);
             fail("Illegal type should throw a " + clazz.getName());
         } catch (RuntimeException e) {
             assertTrue("Illegal type name threw wrong exception type (should be a " + clazz.getName() + ")",
                     clazz.isInstance(e));
-        }        
+        }
     }
-    
+
     @Test
     public void testTypeMutabilityUpdate() throws Exception {
         log.info("");
@@ -270,11 +270,11 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
             fRepSvc.updateType(repositoryId, typeDefRef, null);
             fail("updating a type should throw exception.");
         } catch (Exception e) {
-            assert(e instanceof CmisNotSupportedException);
+            assert (e instanceof CmisNotSupportedException);
         }
         log.info("... testTypeMutabilityUpdate() finished.");
     }
-   
+
     @Test
     public void testTypeMutabilityDeletion() throws Exception {
         log.info("");
@@ -282,25 +282,25 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         TypeDefinition typeDefRef = createTypeForAddingAtRuntime();
         String repositoryId = getRepositoryId();
         fRepSvc.createType(repositoryId, typeDefRef, null);
-        
+
         String docId = createDoc("Book1", getRootFolderId(REPOSITORY_ID), TYPE_ID_MUTABILITY);
-        
+
         // try deleting type, should fail, because in use.
         try {
             fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
             fail("deleting a type which is in use should throw exception.");
         } catch (Exception e) {
-            assert(e instanceof CmisInvalidArgumentException);
+            assert (e instanceof CmisInvalidArgumentException);
         }
 
         fObjSvc.deleteObject(fRepositoryId, docId, true, null);
-        
+
         try {
             fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
         } catch (Exception e) {
             fail("deleting a type which is in not in use should not throw exception! Exception is: " + e);
         }
-        
+
         try {
             fRepSvc.getTypeDefinition(repositoryId, TYPE_ID_MUTABILITY, null);
             fail("getting a type after it was deleted should fail.");
@@ -311,13 +311,13 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
             fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_DOCUMENT.name(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
-            assert(e instanceof CmisInvalidArgumentException);
+            assert (e instanceof CmisInvalidArgumentException);
         }
         try {
             fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_FOLDER.name(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
-            assert(e instanceof CmisInvalidArgumentException);
+            assert (e instanceof CmisInvalidArgumentException);
         }
 
         log.info("... testTypeMutabilityDeletion() finished.");
@@ -337,18 +337,19 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
     }
 
     private PropertyStringDefinitionImpl getPropertyDefinitionImpl(TypeDefinition typeDef) {
-        PropertyStringDefinitionImpl pd = (PropertyStringDefinitionImpl) typeDef.getPropertyDefinitions().get(PROPERTY_ID_TITLE);
+        PropertyStringDefinitionImpl pd = (PropertyStringDefinitionImpl) typeDef.getPropertyDefinitions().get(
+                PROPERTY_ID_TITLE);
         return pd;
     }
-    
+
     private MutableDocumentTypeDefinition createTypeForAddingAtRuntime() {
         try {
             MutableDocumentTypeDefinition cmisLaterType;
-            cmisLaterType = DocumentTypeCreationHelper.createDocumentTypeDefinitionWithoutBaseProperties(DocumentTypeCreationHelper.getCmisDocumentType());
+            cmisLaterType = DocumentTypeCreationHelper
+                    .createDocumentTypeDefinitionWithoutBaseProperties(DocumentTypeCreationHelper.getCmisDocumentType());
             cmisLaterType.setId(TYPE_ID_MUTABILITY);
             cmisLaterType.setDisplayName("Type with two properties");
             cmisLaterType.setDescription("Builtin InMemory type definition " + TYPE_ID_MUTABILITY);
-
 
             PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition(PROPERTY_ID_NUMBER,
                     "Sample Int Property", Updatability.READWRITE);
@@ -364,7 +365,6 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         }
     }
 
-
     String createDoc(String name, String folderId, String typeId) {
         ContentStream contentStream = null;
         List<String> policies = null;
@@ -372,8 +372,8 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
 
         Properties props = createDocumentProperties(name, typeId);
 
-        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream,
-                VersioningState.NONE, policies, null, null, extension);
-        return id;        
+        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, VersioningState.NONE,
+                policies, null, null, extension);
+        return id;
     }
 }

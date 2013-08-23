@@ -548,10 +548,10 @@ public class RelationshipServiceTest extends AbstractServiceTest {
                 targetId, null);
 
         String statement = "SELECT * from cmis:document WHERE cmis:name = '" + MY_DOC_1 + "'";
-        ObjectList res = fDiscSvc.query(fRepositoryId, statement, false, false, IncludeRelationships.SOURCE, null, null,
-                null, null);
+        ObjectList res = fDiscSvc.query(fRepositoryId, statement, false, false, IncludeRelationships.SOURCE, null,
+                null, null, null);
         assertEquals(1, res.getNumItems().intValue());
-        
+
         List<ObjectData> rels = res.getObjects().get(0).getRelationships();
         assertEquals(1, rels.size());
         ArrayList<String> ids = new ArrayList<String>(Collections.singletonList(id1));
@@ -571,10 +571,12 @@ public class RelationshipServiceTest extends AbstractServiceTest {
         ObjectList res = fDiscSvc.query(fRepositoryId, statement, false, false, IncludeRelationships.NONE, null, null,
                 null, null);
         assertEquals(2, res.getNumItems().intValue());
-        ArrayList<String> ids = new ArrayList<String>() {{
-            add(id1);
-            add(id2);
-        }};
+        ArrayList<String> ids = new ArrayList<String>() {
+            {
+                add(id1);
+                add(id2);
+            }
+        };
         for (ObjectData od : res.getObjects()) {
             ids.remove(od.getId());
         }

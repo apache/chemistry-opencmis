@@ -27,20 +27,20 @@ import java.util.List;
  * @author Jens
  */
 public interface Children {
-    
+
     class ChildrenResult {
         private int noItems;
         private List<? extends StoredObject> children;
-                
+
         public ChildrenResult(List<? extends StoredObject> children, int noItems) {
             this.children = children;
             this.noItems = noItems;
         }
-        
+
         public int getNoItems() {
             return noItems;
         }
-        
+
         public List<? extends StoredObject> getChildren() {
             return children;
         }
@@ -54,15 +54,16 @@ public interface Children {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
-     * @param user 
-     *             user to determine visible children
-     * @param usePwc 
-     *             if true return private working copy otherwise return latest version; 
+     * @param user
+     *            user to determine visible children
+     * @param usePwc
+     *            if true return private working copy otherwise return latest
+     *            version;
      * 
      * @return list of children objects
      */
     ChildrenResult getChildren(int maxItems, int skipCount, String user, boolean usePwc);
-    
+
     /**
      * get all the children of this folder which are folders. To support paging
      * an initial offset and a maximum number of children to retrieve can be
@@ -72,7 +73,7 @@ public interface Children {
      *            max. number of items to return
      * @param skipCount
      *            initial offset where to start fetching
-     * @param user 
+     * @param user
      * @return list of children folders
      */
     ChildrenResult getFolderChildren(int maxItems, int skipCount, String user);

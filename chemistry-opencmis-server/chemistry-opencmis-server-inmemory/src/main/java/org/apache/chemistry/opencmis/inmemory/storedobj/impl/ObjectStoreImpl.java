@@ -157,9 +157,10 @@ public class ObjectStoreImpl implements ObjectStore {
                         + child.getName();
                 if (path.startsWith(foundPath)) {
                     Fileable found = findObjectWithPathInDescendents(path, user, foundPath, child);
-                    if (null != found)
-                     {
-                        return found;   // note that there can be multiple folders with the same prefix like folder1, folder10
+                    if (null != found) {
+                        return found; // note that there can be multiple folders
+                                      // with the same prefix like folder1,
+                                      // folder10
                     }
                 }
             }
@@ -179,7 +180,8 @@ public class ObjectStoreImpl implements ObjectStore {
         StoredObject obj = fStoredObjectMap.get(objectId);
 
         if (null == obj) {
-            throw new CmisObjectNotFoundException("Cannot delete object with id  " + objectId + ". Object does not exist.");
+            throw new CmisObjectNotFoundException("Cannot delete object with id  " + objectId
+                    + ". Object does not exist.");
         }
 
         if (obj instanceof FolderImpl) {
@@ -353,9 +355,10 @@ public class ObjectStoreImpl implements ObjectStore {
             List<String> policies, Acl addACEs, Acl removeACEs) {
 
         if (null == parent) {
-            throw new CmisInvalidArgumentException("Cannot create root folder.");            
+            throw new CmisInvalidArgumentException("Cannot create root folder.");
         } else if (hasChild(parent, name)) {
-            throw new CmisNameConstraintViolationException("Cannot create folder, this name already exists in parent folder.");
+            throw new CmisNameConstraintViolationException(
+                    "Cannot create folder, this name already exists in parent folder.");
         }
         FolderImpl folder = new FolderImpl(name, parent.getId());
         if (null != propMap) {
@@ -383,7 +386,8 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user, Acl addACEs, Acl removeACEs) {
+    public StoredObject createPolicy(String name, String policyText, Map<String, PropertyData<?>> propMap, String user,
+            Acl addACEs, Acl removeACEs) {
         PolicyImpl policy = new PolicyImpl();
         policy.createSystemBasePropertiesWhenCreated(propMap, user);
         policy.setCustomProperties(propMap);
@@ -422,7 +426,7 @@ public class ObjectStoreImpl implements ObjectStore {
         String id = storeObject(version);
         version.setId(id);
     }
-    
+
     @Override
     public void deleteVersion(DocumentVersion version) {
         StoredObject found = fStoredObjectMap.remove(version.getId());
@@ -485,9 +489,9 @@ public class ObjectStoreImpl implements ObjectStore {
     public String getFolderPath(String folderId) {
         StringBuffer sb = new StringBuffer();
         insertPathSegment(sb, folderId);
-        return sb.toString();     
+        return sb.toString();
     }
-    
+
     private void insertPathSegment(StringBuffer sb, String folderId) {
         Folder folder = (Folder) getObjectById(folderId);
         if (null == folder.getParentId()) {
@@ -501,7 +505,6 @@ public class ObjectStoreImpl implements ObjectStore {
         }
     }
 
-   
     @Override
     public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
         if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
@@ -530,7 +533,6 @@ public class ObjectStoreImpl implements ObjectStore {
         return acls;
     }
 
-   
     @Override
     public Acl getAcl(int aclId) {
         InMemoryAcl acl = getInMemoryAcl(aclId);
@@ -569,8 +571,7 @@ public class ObjectStoreImpl implements ObjectStore {
             }
         }
 
-        if (so != null && 0 == aclId && !removeDefaultAcl)
-         {
+        if (so != null && 0 == aclId && !removeDefaultAcl) {
             return 0; // if object grants full access to everyone and it will
                       // not be removed we do nothing
         }
@@ -579,11 +580,10 @@ public class ObjectStoreImpl implements ObjectStore {
         if (null != addACEs) {
             for (Ace ace : addACEs.getAces()) {
                 InMemoryAce inMemAce = new InMemoryAce(ace);
-                if (inMemAce.equals(InMemoryAce.getDefaultAce()))
-                 {
+                if (inMemAce.equals(InMemoryAce.getDefaultAce())) {
                     return 0; // if everyone has full access there is no need to
                 }
-                              // add additional ACLs.
+                // add additional ACLs.
                 newAcl.addAce(inMemAce);
             }
         }
@@ -630,7 +630,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
         int maxItems = maxItemsParam < 0 ? children.size() : maxItemsParam;
         int skipCount = skipCountParam < 0 ? 0 : skipCountParam;
-        
+
         int from = Math.min(skipCount, children.size());
         int to = Math.min(maxItems + from, children.size());
         int noItems = children.size();
@@ -651,7 +651,7 @@ public class ObjectStoreImpl implements ObjectStore {
                 Fileable pathObj = (Fileable) obj;
                 if ((null == user || hasReadAccess(user, obj)) && pathObj.getParentIds().contains(folder.getId())) {
                     if (pathObj instanceof VersionedDocument) {
-                         DocumentVersion ver;
+                        DocumentVersion ver;
                         if (usePwc) {
                             ver = ((VersionedDocument) pathObj).getPwc();
                             if (null == ver) {
@@ -660,12 +660,12 @@ public class ObjectStoreImpl implements ObjectStore {
                         } else {
                             ver = ((VersionedDocument) pathObj).getLatestVersion(false);
                         }
-                        children.add(ver);                        
+                        children.add(ver);
                     } else if (!(pathObj instanceof DocumentVersion)) { // ignore
                                                                         // DocumentVersion
                         children.add(pathObj);
                     }
-                    
+
                 }
             }
         }
@@ -679,7 +679,7 @@ public class ObjectStoreImpl implements ObjectStore {
             StoredObject obj = getObject(id);
             if (hasReadAccess(user, obj) && obj instanceof Folder) {
                 Folder childFolder = (Folder) obj;
-                if (childFolder.getParentIds().contains(folder.getId()) ) {
+                if (childFolder.getParentIds().contains(folder.getId())) {
                     folderChildren.add(childFolder);
                 }
             }
@@ -752,7 +752,7 @@ public class ObjectStoreImpl implements ObjectStore {
         }
         Filing fileable = (Fileable) so;
         List<String> parents = fileable.getParentIds();
-        for (String id: parents) {
+        for (String id : parents) {
             StoredObject parent = getObjectById(id);
             if (hasReadAccess(user, parent)) {
                 visibleParents.add(id);
@@ -956,7 +956,7 @@ public class ObjectStoreImpl implements ObjectStore {
             } else {
                 throw new IllegalArgumentException("Object " + so.getId() + "is not fileable");
             }
-                
+
             addParentIntern(mfi, parent);
         } finally {
             unlock();

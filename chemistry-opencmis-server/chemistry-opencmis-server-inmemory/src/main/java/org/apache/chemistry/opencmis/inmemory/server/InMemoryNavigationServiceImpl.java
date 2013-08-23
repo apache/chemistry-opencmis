@@ -285,9 +285,8 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
             return null; // it is a document and has no children
         }
 
-        ObjectStore.ChildrenResult children = folderOnly ? objStore.getFolderChildren((Folder) so,
-                maxItems, skipCount, user) : objStore.getChildren((Folder) so, maxItems, skipCount, user,
-                includePwc);
+        ObjectStore.ChildrenResult children = folderOnly ? objStore.getFolderChildren((Folder) so, maxItems, skipCount,
+                user) : objStore.getChildren((Folder) so, maxItems, skipCount, user, includePwc);
 
         for (Fileable child : children.getChildren()) {
 
@@ -374,7 +373,7 @@ public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
                         includeAllowableActions, includeRelationships, renditionFilter, false, true, null);
                 parentData.setObject(objData);
                 if (null != includeRelativePathSegment && includeRelativePathSegment && so instanceof Fileable) {
-                    parentData.setRelativePathSegment(((Fileable)so).getPathSegment());
+                    parentData.setRelativePathSegment(((Fileable) so).getPathSegment());
                 }
                 result.add(parentData);
                 if (objectInfos != null) {

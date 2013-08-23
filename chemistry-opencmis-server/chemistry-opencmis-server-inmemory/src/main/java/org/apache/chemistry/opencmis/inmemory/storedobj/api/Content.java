@@ -50,8 +50,8 @@ public interface Content {
     void setContent(ContentStream content, boolean mustPersist);
 
     /**
-     * Append content to an existing content stream. The
-     * document is persisted in the new state.
+     * Append content to an existing content stream. The document is persisted
+     * in the new state.
      * 
      * @param content
      *            content to be assigned to the document.

@@ -83,8 +83,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
             // spec says that base types must be returned in this case
             children = fStoreManager.getRootTypes(repositoryId, inclPropDefs);
         } else {
-            children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1),
-                    inclPropDefs, null);
+            children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1), inclPropDefs, null);
         }
         result.setNumItems(BigInteger.valueOf(children.size()));
         result.setHasMoreItems(children.size() > max - skip);
@@ -128,8 +127,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         List<TypeDefinitionContainer> result = null;
         if (typeId == null) {
             // spec says that depth must be ignored in this case
-            Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId,
-                    inclPropDefs);
+            Collection<TypeDefinitionContainer> tmp = fStoreManager.getTypeDefinitionList(repositoryId, inclPropDefs);
             result = new ArrayList<TypeDefinitionContainer>(tmp);
         } else {
             TypeDefinitionContainer tc = fStoreManager.getTypeById(repositoryId, typeId, inclPropDefs,
@@ -154,7 +152,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
-        
+
         AbstractTypeDefinition newType = TypeValidator.completeType(type);
         TypeValidator.adjustTypeNamesAndId(newType);
         TypeValidator.checkType(typeManager, newType);
@@ -168,7 +166,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
-        
+
         TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
         if (null == typeDefC) {
             throw new CmisInvalidArgumentException("Cannot update type unknown type id: " + typeId);
@@ -179,12 +177,12 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
-        
+
         TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
-        
+
         TypeDefinitionContainer typeDefC = typeManager.getTypeById(typeId);
         if (null == typeDefC) {
             throw new CmisInvalidArgumentException("Cannot delete type unknown type id: " + typeId);
@@ -192,12 +190,12 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
         if (objectStore.isTypeInUse(typeId)) {
-            throw new CmisInvalidArgumentException("type definition " + typeId + " cannot be deleted, type is in use.");            
+            throw new CmisInvalidArgumentException("type definition " + typeId + " cannot be deleted, type is in use.");
         }
-        
-        typeManager.deleteTypeDefinition(typeId);        
+
+        typeManager.deleteTypeDefinition(typeId);
     }
-    
+
     private RepositoryInfo getRepositoryInfoFromStoreManager(String repositoryId) {
         RepositoryInfo repoInfo = fStoreManager.getRepositoryInfo(repositoryId);
         if (null == repoInfo || !repoInfo.getId().equals(repositoryId)) {

@@ -49,7 +49,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
-    private InMemoryObjectServiceImpl fObjectService; 
+    private InMemoryObjectServiceImpl fObjectService;
     private AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryVersioningServiceImpl(StoreManager storeManager, InMemoryObjectServiceImpl objectService) {
@@ -78,7 +78,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
             Properties properties, ContentStream contentStreamParam, String checkinComment, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension, ObjectInfoHandler objectInfos) {
 
-        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(), addAces);
+        Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
+                addAces);
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeAces);
 
@@ -95,7 +96,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         boolean major = (null == majorParam ? true : majorParam);
-        
+
         verDoc.checkIn(major, properties, contentStream, checkinComment, policies, user);
         verDoc.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         // To be able to provide all Atom links in the response we need

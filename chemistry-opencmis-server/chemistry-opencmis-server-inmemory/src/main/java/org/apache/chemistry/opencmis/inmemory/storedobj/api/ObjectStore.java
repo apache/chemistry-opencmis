@@ -415,7 +415,6 @@ public interface ObjectStore {
      */
     Acl getAcl(int aclId);
 
-    
     // Multifiling methods:
     /**
      * get all parent ids of this object visible for a user

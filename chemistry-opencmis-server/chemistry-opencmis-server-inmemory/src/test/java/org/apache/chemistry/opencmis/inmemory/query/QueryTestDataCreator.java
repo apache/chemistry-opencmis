@@ -64,23 +64,23 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataIm
 /**
  * Utility class that fills the in-memory repository with some test objects that
  * can be used for query
- *
+ * 
  * @author Jens
- *
- * This class uses the following data for query testing. We have one document type
- * "ComplexType" and one folder type "FolderType" The document type has one property of
- * each of the types boolean, integer, decimal, string and datetime. id, uri and html are
- * treated like a string and do not make a difference.
- *
- * String   Int         Double      DateTime  Boolean
- * ------------------------------------------------
- * Alpha    -100        -1.6E-5     23.05.1618  true
- * Beta     -50         -4.0E24     08.05.1945  false
- * Gamma    0           3.141592    (now)       true
- * Delta    50          1.23456E-6  20.01.2038  true
- * Epsilon  100         1.2345E12   14.07.2345  false
- *
- * For folder and tree tests this series is put in each of the three test folders
+ * 
+ *         This class uses the following data for query testing. We have one
+ *         document type "ComplexType" and one folder type "FolderType" The
+ *         document type has one property of each of the types boolean, integer,
+ *         decimal, string and datetime. id, uri and html are treated like a
+ *         string and do not make a difference.
+ * 
+ *         String Int Double DateTime Boolean
+ *         ------------------------------------------------ Alpha -100 -1.6E-5
+ *         23.05.1618 true Beta -50 -4.0E24 08.05.1945 false Gamma 0 3.141592
+ *         (now) true Delta 50 1.23456E-6 20.01.2038 true Epsilon 100 1.2345E12
+ *         14.07.2345 false
+ * 
+ *         For folder and tree tests this series is put in each of the three
+ *         test folders
  */
 public class QueryTestDataCreator {
 
@@ -105,9 +105,11 @@ public class QueryTestDataCreator {
     public String getFolder1() {
         return folder1;
     }
+
     public String getFolder2() {
         return folder2;
     }
+
     public String getFolder11() {
         return folder11;
     }
@@ -124,15 +126,15 @@ public class QueryTestDataCreator {
         gc1.clear();
         gc1.set(1945, 4, 8);
 
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "Alpha");
                 put(PROP_ID_INT, Integer.valueOf(-100));
                 put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
                 put(PROP_ID_DATETIME, gc1);
                 put(PROP_ID_BOOLEAN, true);
-            }};
+            }
+        };
         ContentStream content1 = createContent("I have a cat.");
         doc1 = createDocument("alpha", rootFolderId, COMPLEX_TYPE, propertyMap1, content1);
         assertNotNull(doc1);
@@ -141,29 +143,29 @@ public class QueryTestDataCreator {
         gc2.clear();
         gc2.set(1618, 4, 23);
 
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "Beta");
                 put(PROP_ID_INT, Integer.valueOf(-50));
                 put(PROP_ID_DECIMAL, Double.valueOf(-1.6E-5d));
                 put(PROP_ID_DATETIME, gc2);
                 put(PROP_ID_BOOLEAN, false);
-            }};
+            }
+        };
         ContentStream content2 = createContent("I have a cat named Kitty Katty.");
         doc2 = createDocument("beta", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
         assertNotNull(doc2);
 
-        final Map<String, Object> propertyMap3 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap3 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "Gamma");
                 put(PROP_ID_INT, Integer.valueOf(0));
                 put(PROP_ID_DECIMAL, Double.valueOf(Math.PI));
                 put(PROP_ID_DATETIME, new GregorianCalendar(TZ));
                 put(PROP_ID_BOOLEAN, true);
-            }};
-        
+            }
+        };
+
         ContentStream content3 = createContent("I have a dog.");
         doc3 = createDocument("gamma", rootFolderId, COMPLEX_TYPE, propertyMap3, content3);
         assertNotNull(doc3);
@@ -172,15 +174,15 @@ public class QueryTestDataCreator {
         gc4.clear();
         gc4.set(2038, 0, 20);
 
-        final Map<String, Object> propertyMap4 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap4 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "Delta");
                 put(PROP_ID_INT, Integer.valueOf(50));
                 put(PROP_ID_DECIMAL, Double.valueOf(1.23456E-6));
                 put(PROP_ID_DATETIME, gc4);
                 put(PROP_ID_BOOLEAN, true);
-            }};
+            }
+        };
         ContentStream content4 = createContent("I have a cat and a dog.");
         doc4 = createDocument("delta", rootFolderId, COMPLEX_TYPE, propertyMap4, content4);
         assertNotNull(doc4);
@@ -189,15 +191,15 @@ public class QueryTestDataCreator {
         gc5.clear();
         gc5.set(2345, 6, 14);
 
-        final Map<String, Object> propertyMap5 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap5 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "Epsilon");
                 put(PROP_ID_INT, Integer.valueOf(100));
                 put(PROP_ID_DECIMAL, Double.valueOf(1.2345E12));
                 put(PROP_ID_DATETIME, gc5);
                 put(PROP_ID_BOOLEAN, false);
-            }};
+            }
+        };
         ContentStream content5 = createContent("I hate having pets.");
         doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5, content5);
         assertNotNull(doc5);
@@ -206,109 +208,109 @@ public class QueryTestDataCreator {
 
     @SuppressWarnings("serial")
     public void createMultiValueDocuments() {
-        final List<String> mvProps1 =
-            new ArrayList<String>() {
+        final List<String> mvProps1 = new ArrayList<String>() {
             {
                 add("red");
                 add("green");
                 add("blue");
-            }};
+            }
+        };
 
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps1);
                 put(PROP_ID_INT, Integer.valueOf(100));
-            }};
+            }
+        };
         createDocument("mv-alpha", rootFolderId, COMPLEX_TYPE, propertyMap1);
 
-        final List<String> mvProps2 =
-            new ArrayList<String>() {
+        final List<String> mvProps2 = new ArrayList<String>() {
             {
                 add("red");
                 add("pink");
                 add("violet");
-            }};
+            }
+        };
 
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING_MULTI_VALUE, mvProps2);
                 put(PROP_ID_INT, Integer.valueOf(200));
-            }};
+            }
+        };
         createDocument("mv-beta", rootFolderId, COMPLEX_TYPE, propertyMap2);
     }
 
     @SuppressWarnings("serial")
     public void createTestFolders() {
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_INT, Integer.valueOf(1234));
                 put(PROP_ID_STRING, "ABCD");
-            }};
+            }
+        };
         folder1 = createFolder("Folder 1", rootFolderId, FOLDER_TYPE, propertyMap1);
 
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_INT, Integer.valueOf(-2345));
                 put(PROP_ID_STRING, "defg");
-            }};
+            }
+        };
         folder2 = createFolder("Folder 2", rootFolderId, FOLDER_TYPE, propertyMap2);
 
-        final Map<String, Object> propertyMap3 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap3 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_INT, Integer.valueOf(123));
                 put(PROP_ID_STRING, "ZZZZ");
-            }};
+            }
+        };
         folder11 = createFolder("Folder 11", folder1, FOLDER_TYPE, propertyMap3);
     }
 
     @SuppressWarnings("serial")
     public void createNullTestDocument() {
 
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "DocumentWithNulls");
-            }};
+            }
+        };
         createDocument("nulldoc", rootFolderId, COMPLEX_TYPE, propertyMap1);
     }
 
     @SuppressWarnings("serial")
     public void createLikeTestDocuments(String folderId) {
 
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "ABCDEF");
-            }};
+            }
+        };
         createDocument("likedoc1", folderId, COMPLEX_TYPE, propertyMap1);
 
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "ABC123");
-            }};
+            }
+        };
         createDocument("likedoc2", folderId, COMPLEX_TYPE, propertyMap2);
 
-        final Map<String, Object> propertyMap3 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap3 = new HashMap<String, Object>() {
             {
                 put(PROP_ID_STRING, "123ABC");
-            }};
+            }
+        };
         createDocument("likedoc3", folderId, COMPLEX_TYPE, propertyMap3);
     }
 
     @SuppressWarnings("serial")
     public String createVersionedDocument() {
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
             {
                 put(VERSION_PROPERTY_ID, "ver123");
-            }};
+            }
+        };
 
         String verIdV1 = createDocument("verdoc1", rootFolderId, UnitTestTypeSystemCreator.VERSIONED_TYPE,
                 propertyMap1, VersioningState.MAJOR, null);
@@ -316,14 +318,15 @@ public class QueryTestDataCreator {
                 false, false, null);
 
         // get version series id
-        String verIdSer = (String) version.getProperties().getProperties().get(PropertyIds.VERSION_SERIES_ID).getFirstValue();
+        String verIdSer = (String) version.getProperties().getProperties().get(PropertyIds.VERSION_SERIES_ID)
+                .getFirstValue();
 
         // create second version
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
             {
                 put(VERSION_PROPERTY_ID, "ver456");
-            }};
+            }
+        };
         Properties propsV2 = createDocumentProperties(null, null, propertyMap2);
 
         Holder<String> idHolder = new Holder<String>(verIdV1);
@@ -350,37 +353,38 @@ public class QueryTestDataCreator {
         gc1.clear();
         gc1.set(1945, 4, 8);
 
-        final Map<String, Object> propertyMap1 =
-            new HashMap<String, Object>() {{
+        final Map<String, Object> propertyMap1 = new HashMap<String, Object>() {
+            {
                 put(PROP_ID_STRING, "Secondary");
                 put(PROP_ID_INT, Integer.valueOf(-100));
                 put(PROP_ID_DECIMAL, Double.valueOf(-4.0E24d));
                 put(PROP_ID_DATETIME, gc1);
                 put(PROP_ID_BOOLEAN, true);
                 put(SECONDARY_STRING_PROP, stringPropVal1);
-                put(SECONDARY_INTEGER_PROP,intPropVal1);
-                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
-            }};
+                put(SECONDARY_INTEGER_PROP, intPropVal1);
+                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);
+            }
+        };
         ContentStream content1 = createContent("Some more content.");
         doc1 = createDocument("docwithsecondary", rootFolderId, COMPLEX_TYPE, propertyMap1, content1);
         assertNotNull(doc1);
-        
-        final Map<String, Object> propertyMap2 =
-            new HashMap<String, Object>() {{
+
+        final Map<String, Object> propertyMap2 = new HashMap<String, Object>() {
+            {
                 put(PROP_ID_STRING, "Secondary 2");
                 put(PROP_ID_INT, Integer.valueOf(123));
                 put(PROP_ID_DECIMAL, Double.valueOf(1.23E24d));
                 put(PROP_ID_BOOLEAN, false);
                 put(SECONDARY_STRING_PROP, stringPropVal2);
-                put(SECONDARY_INTEGER_PROP,intPropVal2);
-                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);     
-            }};
+                put(SECONDARY_INTEGER_PROP, intPropVal2);
+                put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, SECONDARY_TYPE);
+            }
+        };
         ContentStream content2 = createContent("Even still some more content.");
         doc1 = createDocument("docwithsecondary2", rootFolderId, COMPLEX_TYPE, propertyMap2, content2);
         assertNotNull(doc1);
     }
-    
-    
+
     private String createFolder(String folderName, String parentFolderId, String typeId, Map<String, Object> properties) {
         Properties props = createFolderProperties(folderName, typeId, properties);
         String id = null;
@@ -435,9 +439,8 @@ public class QueryTestDataCreator {
         if (typeId != null) {
             properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
         }
-        for (Map.Entry<String,Object> propEntry :propertyMap.entrySet()) {
-            PropertyData<?> pd =
-            createPropertyData(propEntry.getKey(), propEntry.getValue());
+        for (Map.Entry<String, Object> propEntry : propertyMap.entrySet()) {
+            PropertyData<?> pd = createPropertyData(propEntry.getKey(), propEntry.getValue());
             properties.add(pd);
         }
         Properties props = fFactory.createPropertiesData(properties);
@@ -448,50 +451,49 @@ public class QueryTestDataCreator {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, folderName));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeId));
-        for (Map.Entry<String,Object> propEntry :propertyMap.entrySet()) {
-            PropertyData<?> pd =
-            createPropertyData(propEntry.getKey(), propEntry.getValue());
+        for (Map.Entry<String, Object> propEntry : propertyMap.entrySet()) {
+            PropertyData<?> pd = createPropertyData(propEntry.getKey(), propEntry.getValue());
             properties.add(pd);
         }
         Properties props = fFactory.createPropertiesData(properties);
         return props;
     }
 
-
     /**
-     * Simplified property creation method, create Property of Boolean, String, Integer,
-     * Decimal, or DataTime depending on class of value (Boolean, String, Integer, Double,
-     * or GregorianCalendar. Id, Html and URI are not supported
-     *
+     * Simplified property creation method, create Property of Boolean, String,
+     * Integer, Decimal, or DataTime depending on class of value (Boolean,
+     * String, Integer, Double, or GregorianCalendar. Id, Html and URI are not
+     * supported
+     * 
      * @param propId
      * @param value
      * @return
      */
     @SuppressWarnings("unchecked")
-    private PropertyData<?> createPropertyData (String propId, Object value) {
+    private PropertyData<?> createPropertyData(String propId, Object value) {
         Class<?> clazz = value.getClass();
         if (clazz.equals(Boolean.class)) {
-            return fFactory.createPropertyBooleanData(propId, (Boolean)value);
+            return fFactory.createPropertyBooleanData(propId, (Boolean) value);
         } else if (clazz.equals(Double.class)) {
-            return fFactory.createPropertyDecimalData(propId, BigDecimal.valueOf((Double)value));
+            return fFactory.createPropertyDecimalData(propId, BigDecimal.valueOf((Double) value));
         } else if (clazz.equals(Integer.class)) {
-            return fFactory.createPropertyIntegerData(propId, BigInteger.valueOf((Integer)value));
+            return fFactory.createPropertyIntegerData(propId, BigInteger.valueOf((Integer) value));
         } else if (clazz.equals(String.class)) {
-            return fFactory.createPropertyStringData(propId, (String)value);
+            return fFactory.createPropertyStringData(propId, (String) value);
         } else if (clazz.equals(GregorianCalendar.class)) {
-            return fFactory.createPropertyDateTimeData(propId, (GregorianCalendar)value);
+            return fFactory.createPropertyDateTimeData(propId, (GregorianCalendar) value);
         } else if (value instanceof List) {
-            clazz = ((List<?>)value).get(0).getClass();
+            clazz = ((List<?>) value).get(0).getClass();
             if (clazz.equals(Boolean.class)) {
-                return fFactory.createPropertyBooleanData(propId, (List<Boolean>)value);
+                return fFactory.createPropertyBooleanData(propId, (List<Boolean>) value);
             } else if (clazz.equals(Double.class)) {
-                return fFactory.createPropertyDecimalData(propId, (List<BigDecimal>)value);
+                return fFactory.createPropertyDecimalData(propId, (List<BigDecimal>) value);
             } else if (clazz.equals(Integer.class)) {
-                return fFactory.createPropertyIntegerData(propId, (List<BigInteger>)value);
+                return fFactory.createPropertyIntegerData(propId, (List<BigInteger>) value);
             } else if (clazz.equals(String.class)) {
-                return fFactory.createPropertyStringData(propId, (List<String>)value);
+                return fFactory.createPropertyStringData(propId, (List<String>) value);
             } else if (clazz.equals(GregorianCalendar.class)) {
-                return fFactory.createPropertyDateTimeData(propId, (List<GregorianCalendar>)value);
+                return fFactory.createPropertyDateTimeData(propId, (List<GregorianCalendar>) value);
             } else {
                 fail("unsupported type in propery value: " + clazz);
             }
@@ -500,7 +502,7 @@ public class QueryTestDataCreator {
         }
         return null;
     }
-    
+
     private ContentStream createContent(String text) {
         ContentStreamDataImpl content = new ContentStreamDataImpl(-1);
         content.setFileName("data.txt");
@@ -513,5 +515,5 @@ public class QueryTestDataCreator {
         }
         return content;
     }
-    
+
 }

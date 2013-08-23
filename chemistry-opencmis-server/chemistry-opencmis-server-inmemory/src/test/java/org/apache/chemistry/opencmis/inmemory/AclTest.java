@@ -48,7 +48,7 @@ public class AclTest {
     final static String BERTA = "berta";
     final static String CHRISTIAN = "christian";
     final static String DOROTHEE = "dorothee";
-    
+
     final InMemoryAce aceN = new InMemoryAce(ANDREAS, Permission.NONE);
     final InMemoryAce aceR = new InMemoryAce(BERTA, Permission.READ);
     final InMemoryAce aceW = new InMemoryAce(CHRISTIAN, Permission.WRITE);
@@ -59,43 +59,43 @@ public class AclTest {
         try {
             new InMemoryAce(null, Permission.NONE);
             fail("create an ACE with null principalId should fail.");
-        } catch (RuntimeException e) {            
+        } catch (RuntimeException e) {
         }
 
         try {
             new InMemoryAce("xxx", null);
             fail("create an ACE with null permission should fail.");
-        } catch (RuntimeException e) {            
+        } catch (RuntimeException e) {
         }
     }
-    
+
     @Test
     public void testCreate() {
-    
+
         InMemoryAcl acl = new InMemoryAcl();
         acl.addAce(aceA);
         assertEquals(1, acl.getAces().size());
         assertTrue(acl.getAces().get(0) == aceA);
-    
+
         acl = new InMemoryAcl(createAceList());
         LOG.debug(acl.toString());
-        
+
         assertEquals(2, acl.getAces().size());
         assertTrue(acl.getAces().get(0) == aceR);
         assertTrue(acl.getAces().get(1) == aceA);
-    
+
         acl = createDefaultAcl();
         checkDefaultAcl(acl);
-        
+
         try {
             List<InMemoryAce> aces = createAceList();
             aces.add(null);
             acl = new InMemoryAcl(aces);
             fail("create an ACL with a null ACE should fail.");
-        } catch (RuntimeException e) {            
+        } catch (RuntimeException e) {
         }
     }
-    
+
     @Test
     public void testAdd() {
         InMemoryAcl acl = new InMemoryAcl();
@@ -116,12 +116,12 @@ public class AclTest {
         assertTrue(acl.getAces().get(0) == aceN);
         assertTrue(acl.getAces().get(1) == aceR);
         assertTrue(acl.getAces().get(2) == aceW);
-        assertTrue(acl.getAces().get(3) == aceA);    
+        assertTrue(acl.getAces().get(3) == aceA);
 
         assertFalse("Adding an existing ACE to an ACL should fail.", acl.addAce(aceN));
         assertFalse("Adding null to an ACL should fail.", acl.addAce(null));
     }
-    
+
     @Test
     public void testRemove() {
         InMemoryAcl acl = createDefaultAcl();
@@ -141,7 +141,7 @@ public class AclTest {
         assertTrue(acl.getAces().get(0) == aceA);
         acl.removeAce(aceA);
         assertEquals(0, acl.getAces().size());
-        
+
         acl = createDefaultAcl();
         final InMemoryAce ace = new InMemoryAce("xyu", Permission.ALL);
         assertFalse("Removing an unknown ACE from an ACL should fail.", acl.removeAce(ace));
@@ -150,12 +150,22 @@ public class AclTest {
 
     @Test
     public void testMerge() {
-        final InMemoryAce aceNew = new InMemoryAce("Hugo", Permission.WRITE); // will be added
-        final InMemoryAce aceRCopy = new InMemoryAce(BERTA, Permission.READ); // is same
-        final InMemoryAce aceChange = new InMemoryAce(CHRISTIAN, Permission.ALL); // changes permission
+        final InMemoryAce aceNew = new InMemoryAce("Hugo", Permission.WRITE); // will
+                                                                              // be
+                                                                              // added
+        final InMemoryAce aceRCopy = new InMemoryAce(BERTA, Permission.READ); // is
+                                                                              // same
+        final InMemoryAce aceChange = new InMemoryAce(CHRISTIAN, Permission.ALL); // changes
+                                                                                  // permission
 
         InMemoryAcl acl1 = createDefaultAcl();
-        InMemoryAcl acl2 = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(aceNew); add(aceRCopy);  add(aceChange); }});
+        InMemoryAcl acl2 = new InMemoryAcl(new ArrayList<InMemoryAce>() {
+            {
+                add(aceNew);
+                add(aceRCopy);
+                add(aceChange);
+            }
+        });
         acl1.mergeAcl(acl2);
         assertEquals(5, acl1.getAces().size());
         assertEquals(Permission.NONE, acl1.getPermission(ANDREAS));
@@ -164,20 +174,33 @@ public class AclTest {
         assertEquals(Permission.ALL, acl1.getPermission(DOROTHEE));
         assertEquals(Permission.WRITE, acl1.getPermission("Hugo"));
     }
-    
+
     @Test
     public void testAclEquality() {
         final InMemoryAce aceNew = new InMemoryAce("Hugo", Permission.WRITE);
         final InMemoryAce aceRCopy = new InMemoryAce(BERTA, Permission.READ);
 
         InMemoryAcl acl1 = createDefaultAcl();
-        InMemoryAcl acl2 = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(aceRCopy); add(aceA);  add(aceW);  add(aceN); }});
-        InMemoryAcl acl3 = new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(aceR); add(aceNew);  add(aceW);  add(aceN); }});
+        InMemoryAcl acl2 = new InMemoryAcl(new ArrayList<InMemoryAce>() {
+            {
+                add(aceRCopy);
+                add(aceA);
+                add(aceW);
+                add(aceN);
+            }
+        });
+        InMemoryAcl acl3 = new InMemoryAcl(new ArrayList<InMemoryAce>() {
+            {
+                add(aceR);
+                add(aceNew);
+                add(aceW);
+                add(aceN);
+            }
+        });
         assertEquals(acl1, acl2);
-        assertFalse(acl1.equals(acl3));      
+        assertFalse(acl1.equals(acl3));
     }
-    
-    
+
     @Test
     public void testCheckPermissions() {
         InMemoryAcl acl = createDefaultAcl();
@@ -191,7 +214,7 @@ public class AclTest {
         assertTrue(acl.hasPermission(BERTA, Permission.READ));
         assertFalse(acl.hasPermission(BERTA, Permission.WRITE));
         assertFalse(acl.hasPermission(BERTA, Permission.ALL));
-    
+
         assertTrue(acl.hasPermission(CHRISTIAN, Permission.NONE));
         assertTrue(acl.hasPermission(CHRISTIAN, Permission.READ));
         assertTrue(acl.hasPermission(CHRISTIAN, Permission.WRITE));
@@ -205,26 +228,30 @@ public class AclTest {
 
     @Test
     public void testConvertFomCmisAcl() {
-        List<Ace> aces = Arrays.asList(new Ace[] { createAce(ANDREAS, EnumBasicPermissions.CMIS_READ.value()), createAce(DOROTHEE, EnumBasicPermissions.CMIS_WRITE.value()) });
+        List<Ace> aces = Arrays.asList(new Ace[] { createAce(ANDREAS, EnumBasicPermissions.CMIS_READ.value()),
+                createAce(DOROTHEE, EnumBasicPermissions.CMIS_WRITE.value()) });
         AccessControlListImpl cAcl = new AccessControlListImpl(aces);
-        InMemoryAcl acl = InMemoryAcl.createFromCommonsAcl(cAcl);        
+        InMemoryAcl acl = InMemoryAcl.createFromCommonsAcl(cAcl);
         assertEquals(2, acl.size());
         assertEquals(Permission.READ, acl.getPermission(ANDREAS));
         assertEquals(Permission.WRITE, acl.getPermission(DOROTHEE));
-        
+
         try {
-            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(null,  Arrays.asList(new String[] { EnumBasicPermissions.CMIS_READ.value()}))});
+            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(null, Arrays
+                    .asList(new String[] { EnumBasicPermissions.CMIS_READ.value() })) });
             acl = InMemoryAcl.createFromCommonsAcl(new AccessControlListImpl(aces2));
             fail("create Ace will null principal should raise exception.");
-        } catch (RuntimeException e) { }
+        } catch (RuntimeException e) {
+        }
         try {
-            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(ANDREAS),  null)});
+            List<Ace> aces2 = Arrays.asList(new Ace[] { new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(
+                    ANDREAS), null) });
             acl = InMemoryAcl.createFromCommonsAcl(new AccessControlListImpl(aces2));
             fail("create Ace will null permission should raise exception.");
-        } catch (RuntimeException e) { }
+        } catch (RuntimeException e) {
+        }
     }
-    
-    
+
     @Test
     public void testConvertToCmisAcl() {
         Ace ace = aceN.toCommonsAce();
@@ -246,7 +273,7 @@ public class AclTest {
         assertEquals(DOROTHEE, ace.getPrincipalId());
         assertEquals(1, ace.getPermissions().size());
         assertEquals(EnumBasicPermissions.CMIS_ALL.value(), ace.getPermissions().get(0));
-        
+
         InMemoryAcl acl = createDefaultAcl();
         Acl commonsAcl = acl.toCommonsAcl();
         assertEquals(4, commonsAcl.getAces().size());
@@ -258,7 +285,7 @@ public class AclTest {
         assertTrue(hasCommonsAce(commonsAcl, CHRISTIAN, EnumBasicPermissions.CMIS_WRITE.value()));
         assertTrue(hasCommonsAce(commonsAcl, DOROTHEE, EnumBasicPermissions.CMIS_ALL.value()));
     }
-    
+
     @Test
     public void testCloneAcl() {
         InMemoryAcl acl = createDefaultAcl();
@@ -271,23 +298,35 @@ public class AclTest {
         assertFalse(acl == acl2);
         assertEquals(acl, acl2);
     }
-    
+
     private InMemoryAcl createDefaultAcl() {
-        return  new InMemoryAcl(new ArrayList<InMemoryAce>() {{ add(aceA); add(aceR);  add(aceN);  add(aceW); }});
+        return new InMemoryAcl(new ArrayList<InMemoryAce>() {
+            {
+                add(aceA);
+                add(aceR);
+                add(aceN);
+                add(aceW);
+            }
+        });
     }
-    
+
     private void checkDefaultAcl(InMemoryAcl acl) {
         assertEquals(4, acl.getAces().size());
         assertTrue(acl.getAces().get(0) == aceN);
         assertTrue(acl.getAces().get(1) == aceR);
         assertTrue(acl.getAces().get(2) == aceW);
-        assertTrue(acl.getAces().get(3) == aceA);        
+        assertTrue(acl.getAces().get(3) == aceA);
     }
 
     private List<InMemoryAce> createAceList() {
-        return new ArrayList<InMemoryAce>() {{ add(aceA); add(aceR); }};
+        return new ArrayList<InMemoryAce>() {
+            {
+                add(aceA);
+                add(aceR);
+            }
+        };
     }
-    
+
     private Ace createAce(String principalId, String permission) {
         AccessControlEntryImpl ace = new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principalId),
                 Arrays.asList(new String[] { permission }));
@@ -301,6 +340,6 @@ public class AclTest {
             }
         }
         return false;
-        
+
     }
 }

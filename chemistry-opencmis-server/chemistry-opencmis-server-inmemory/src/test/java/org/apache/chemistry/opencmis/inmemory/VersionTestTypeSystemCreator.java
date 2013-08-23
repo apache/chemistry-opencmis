@@ -40,7 +40,7 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
      * the required types for testing
      */
     @Override
-	public List<TypeDefinition> createTypesList() {
+    public List<TypeDefinition> createTypesList() {
         return singletonTypes;
     }
 
@@ -59,21 +59,23 @@ public class VersionTestTypeSystemCreator implements TypeCreator {
 
     /**
      * create root types and a collection of sample types
-     *
+     * 
      * @return typesMap map filled with created types
      */
     private static List<TypeDefinition> buildTypesList() {
-        TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
+        TypeDefinitionFactory typeFactory = DocumentTypeCreationHelper.getTypeDefinitionFactory();
         // always add CMIS default types
         List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
 
         try {
             // create a complex type with properties
-            MutableDocumentTypeDefinition cmisComplexType;        
-            cmisComplexType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), VERSION_TEST_DOCUMENT_TYPE_ID);
+            MutableDocumentTypeDefinition cmisComplexType;
+            cmisComplexType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), VERSION_TEST_DOCUMENT_TYPE_ID);
             cmisComplexType.setDisplayName("VersionedType");
             cmisComplexType.setDescription("InMemory test type definition " + VERSION_TEST_DOCUMENT_TYPE_ID);
-            cmisComplexType.setIsVersionable(true); // make it a versionable type;
+            cmisComplexType.setIsVersionable(true); // make it a versionable
+                                                    // type;
 
             // create a boolean property definition
 

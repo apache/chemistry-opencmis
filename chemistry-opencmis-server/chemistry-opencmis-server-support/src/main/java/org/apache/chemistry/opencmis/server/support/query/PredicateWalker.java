@@ -29,7 +29,7 @@ import org.antlr.runtime.tree.Tree;
  * Can be used to build another datastructure, or for direct value evaluation
  * (thus the boolean return values for clauses, and Object for values).
  * <p>
- * The method {@link walkClause} is the entry point.
+ * The method {@link #walkExpr} is the entry point.
  */
 public interface PredicateWalker extends PredicateWalkerBase {
 

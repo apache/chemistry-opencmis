@@ -53,7 +53,8 @@ public class QueryParseTest extends AbstractQueryTest {
 
     @Before
     public void setUp() {
-        // initialize query object, we do not need a type manager for just testing parsing
+        // initialize query object, we do not need a type manager for just
+        // testing parsing
         super.setUp(null, null);
     }
 
@@ -81,7 +82,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(1 == selects.size());
         assertTrue(selects.get(0) instanceof FunctionReference);
 
-        FunctionReference funcRef = ((FunctionReference)selects.get(0));
+        FunctionReference funcRef = ((FunctionReference) selects.get(0));
         assertTrue(FunctionReference.CmisQlFunction.SCORE == funcRef.getFunction());
     }
 
@@ -99,7 +100,7 @@ public class QueryParseTest extends AbstractQueryTest {
         // nothing should be in where references
         assertTrue(0 == queryObj.getWhereReferences().size());
 
-        ColumnReference colRef = ((ColumnReference)selects.get(0));
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
         assertTrue(selects.get(0) instanceof ColumnReference);
         assertEquals("abc", colRef.getPropertyQueryName());
     }
@@ -119,7 +120,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
 
-        ColumnReference colRef = ((ColumnReference)selects.get(0));
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
         assertEquals("t1", colRef.getQualifier());
         assertEquals("abc", colRef.getPropertyQueryName());
     }
@@ -138,7 +139,7 @@ public class QueryParseTest extends AbstractQueryTest {
         // nothing should be in where references
         assertTrue(0 == queryObj.getWhereReferences().size());
 
-        ColumnReference colRef = ((ColumnReference)selects.get(0));
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
         assertTrue(selects.get(0) instanceof ColumnReference);
         assertEquals(null, colRef.getQualifier());
         assertEquals("*", colRef.getPropertyQueryName());
@@ -159,7 +160,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
 
-        ColumnReference colRef = ((ColumnReference)selects.get(0));
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
         assertEquals("t1", colRef.getQualifier());
         assertEquals("*", colRef.getPropertyQueryName());
     }
@@ -179,7 +180,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(0 == queryObj.getWhereReferences().size());
         assertTrue(selects.get(0) instanceof ColumnReference);
 
-        ColumnReference colRef = ((ColumnReference)selects.get(0));
+        ColumnReference colRef = ((ColumnReference) selects.get(0));
         assertEquals("t2", colRef.getQualifier());
         assertEquals("aaa", colRef.getPropertyQueryName());
     }
@@ -205,7 +206,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertNotNull(queryUtil.getQueryObject());
         QueryObject queryObj = queryUtil.getQueryObject();
 
-        Map<String,String> types = queryObj.getTypes();
+        Map<String, String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
 
         String key = types.keySet().iterator().next();
@@ -222,7 +223,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertNotNull(queryUtil.getQueryObject());
         QueryObject queryObj = queryUtil.getQueryObject();
 
-        Map<String,String> types = queryObj.getTypes();
+        Map<String, String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
 
         String key = types.keySet().iterator().next();
@@ -239,7 +240,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertNotNull(queryUtil.getQueryObject());
         QueryObject queryObj = queryUtil.getQueryObject();
 
-        Map<String,String> types = queryObj.getTypes();
+        Map<String, String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
 
         String key = types.keySet().iterator().next();
@@ -256,7 +257,7 @@ public class QueryParseTest extends AbstractQueryTest {
         assertNotNull(queryUtil.getQueryObject());
         QueryObject queryObj = queryUtil.getQueryObject();
 
-        Map<String,String> types = queryObj.getTypes();
+        Map<String, String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
 
         String key = types.keySet().iterator().next();
@@ -274,24 +275,25 @@ public class QueryParseTest extends AbstractQueryTest {
         assertNotNull(queryUtil.getQueryObject());
         QueryObject queryObj = queryUtil.getQueryObject();
         CmisQueryWalker walker = queryUtil.getWalker();
-            
+
         List<CmisSelector> whereRefs = queryObj.getWhereReferences();
         Map<Integer, CmisSelector> colRefs = queryObj.getColumnReferences();
         assertTrue(1 == whereRefs.size());
 
         CmisSelector value = whereRefs.iterator().next();
         assertTrue(value instanceof ColumnReference);
-        assertEquals("MyProp1", ((ColumnReference)value).getPropertyQueryName());
+        assertEquals("MyProp1", ((ColumnReference) value).getPropertyQueryName());
         // only "*" should be in select references
         assertTrue(1 == queryObj.getSelectReferences().size());
 
         CommonTree tree = (CommonTree) walker.getTreeNodeStream().getTreeSource();
 
-//        assertTrue(traverseTreeAndFindNodeInColumnMap(tree, colRefs));
+        // assertTrue(traverseTreeAndFindNodeInColumnMap(tree, colRefs));
         traverseTreeAndFindNodeInColumnMap2(tree, colRefs);
     }
 
-    // check if the map containing all column references in the where clause has an existing node as key
+    // check if the map containing all column references in the where clause has
+    // an existing node as key
     private boolean traverseTreeAndFindNodeInColumnMap(Tree node, Map<Object, CmisSelector> colRefs) {
         boolean found = false;
 
@@ -300,7 +302,7 @@ public class QueryParseTest extends AbstractQueryTest {
         }
 
         int count = node.getChildCount();
-        for (int i=0; i<count && !found; i++) {
+        for (int i = 0; i < count && !found; i++) {
             Tree child = node.getChild(i);
             found = traverseTreeAndFindNodeInColumnMap(child, colRefs);
         }
@@ -310,11 +312,11 @@ public class QueryParseTest extends AbstractQueryTest {
     private boolean traverseTreeAndFindNodeInColumnMap2(Tree node, Object colRef) {
         int count = node.getChildCount();
         LOG.debug("  checking with: " + node + " identity hash code: " + System.identityHashCode(node));
-        if (node==colRef) {
+        if (node == colRef) {
             return true;
         }
         boolean found = false;
-        for (int i=0; i<count && !found; i++) {
+        for (int i = 0; i < count && !found; i++) {
             Tree child = node.getChild(i);
             found = traverseTreeAndFindNodeInColumnMap2(child, colRef);
         }
@@ -338,9 +340,9 @@ public class QueryParseTest extends AbstractQueryTest {
         assertTrue(sp.isAscending());
 
         CmisSelector sortSpec = sp.getSelector();
-        assert(sortSpec instanceof ColumnReference);
-        assertEquals("abc", ((ColumnReference)sortSpec).getQualifier());
-        assertEquals("def", ((ColumnReference)sortSpec).getPropertyQueryName());
+        assert (sortSpec instanceof ColumnReference);
+        assertEquals("abc", ((ColumnReference) sortSpec).getQualifier());
+        assertEquals("def", ((ColumnReference) sortSpec).getPropertyQueryName());
     }
 
     @Test
@@ -359,9 +361,9 @@ public class QueryParseTest extends AbstractQueryTest {
         assertFalse(sp.isAscending());
 
         CmisSelector sortSpec = sp.getSelector();
-        assert(sortSpec instanceof ColumnReference);
-        assertNull(((ColumnReference)sortSpec).getQualifier());
-        assertEquals("def", ((ColumnReference)sortSpec).getPropertyQueryName());
+        assert (sortSpec instanceof ColumnReference);
+        assertNull(((ColumnReference) sortSpec).getQualifier());
+        assertEquals("def", ((ColumnReference) sortSpec).getPropertyQueryName());
     }
 
     @Test
@@ -369,7 +371,7 @@ public class QueryParseTest extends AbstractQueryTest {
         // System.out.println("printTreeTest():");
         String statement = "SELECT p1, p2, p3.t3 mycol FROM MyType AS MyAlias WHERE p1='abc' and p2=123 ORDER BY abc.def ASC";
         try {
-            
+
             CmisQueryWalker walker = getWalker(statement);
             Tree parserTree = (Tree) walker.getTreeNodeStream().getTreeSource();
             printTree(parserTree, statement);
@@ -475,7 +477,6 @@ public class QueryParseTest extends AbstractQueryTest {
         checkTreeWhere(statement);
     }
 
-
     @Test
     public void whereTestAnyIn() {
         String statement = "SELECT p1 FROM MyType WHERE ANY Colors IN ('Red', 'Green', 'Blue')";
@@ -490,14 +491,14 @@ public class QueryParseTest extends AbstractQueryTest {
 
     @Test
     public void whereTestTokensAfterStatement() {
-    	String statement = "SELECT p1 FROM MyType WHERE p1 LIKE 'abc*' IN_FOLDER('def')";
-    	try {
-            checkTreeWhere(statement);    		
-    	} catch (Exception e) {
-    		LOG.debug("Exception is: ", e);
-    		assertTrue(e instanceof CmisInvalidArgumentException);
-    		assertTrue(e.getMessage().contains("illegal tokens after end"));
-    	}
+        String statement = "SELECT p1 FROM MyType WHERE p1 LIKE 'abc*' IN_FOLDER('def')";
+        try {
+            checkTreeWhere(statement);
+        } catch (Exception e) {
+            LOG.debug("Exception is: ", e);
+            assertTrue(e instanceof CmisInvalidArgumentException);
+            assertTrue(e.getMessage().contains("illegal tokens after end"));
+        }
     }
 
     @Test
@@ -530,7 +531,7 @@ public class QueryParseTest extends AbstractQueryTest {
     @Test
     public void whereTestContainsNoFulltextParse() throws Exception {
         String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven')";
-        QueryUtilStrict queryUtil= new QueryUtilStrict(statement, typeManager, predicateWalker, false);
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, predicateWalker, false);
         queryUtil.parseStatement();
         assertNotNull(queryUtil);
         assertNotNull(queryUtil.getQueryObject());
@@ -567,7 +568,7 @@ public class QueryParseTest extends AbstractQueryTest {
         CmisQueryWalker walker = queryUtil.getWalker();
         assertNotNull(walker);
 
-        Map<String,String> types = queryUtil.getQueryObject().getTypes();
+        Map<String, String> types = queryUtil.getQueryObject().getTypes();
         assertTrue(2 == types.size());
     }
 
@@ -602,7 +603,7 @@ public class QueryParseTest extends AbstractQueryTest {
             fail("Parsing statement " + statement + " should fail with RecognitionException, but was: " + e.getClass());
         }
     }
-    
+
     @Test
     public void whereTestContains2() {
         String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven OR \\'Johann Sebastian\\' Mozart -Cage AND Orff')";
@@ -610,7 +611,7 @@ public class QueryParseTest extends AbstractQueryTest {
         Tree tree = findSearchExpression(statement);
         printSearchTree(tree, statement);
     }
-    
+
     @Test
     public void whereTestMultipleContains2() {
         String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven') AND CONTAINS('Bach')";
@@ -618,31 +619,31 @@ public class QueryParseTest extends AbstractQueryTest {
         int noContains = getNumberOfSearchExpression(statement);
         assertTrue(2 == noContains);
     }
-    
+
     private void checkTreeWhere(String statement) {
         LOG.info("\ncheckTreeWhere: " + statement);
         QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
         Tree whereTree = queryUtil.getWalker().getWherePredicateTree();
         evalWhereTree(whereTree);
     }
-    
+
     private Tree findSearchExpression(String statement) {
         QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
         Tree whereTree = queryUtil.getWalker().getWherePredicateTree();
         return findTextSearchNode(whereTree);
     }
-    
+
     private int getNumberOfSearchExpression(String statement) {
         QueryUtilStrict queryUtil = traverseStatementAndCatchExc(statement);
         return queryUtil.getWalker().getNumberOfContainsClauses();
     }
-    
+
     private Tree findTextSearchNode(Tree node) {
         int count = node.getChildCount();
         if (node.getType() == CmisQlStrictLexer.CONTAINS) {
             return node;
         } else {
-            for (int i=0; i<count; i++) {
+            for (int i = 0; i < count; i++) {
                 Tree child = node.getChild(i);
                 node = findTextSearchNode(child); // recursive descent
                 if (null != node) {
@@ -650,7 +651,7 @@ public class QueryParseTest extends AbstractQueryTest {
                 }
             }
             return null;
-        }        
+        }
     }
 
     private void evalWhereTree(Tree root) {
@@ -658,23 +659,23 @@ public class QueryParseTest extends AbstractQueryTest {
         if (root.getType() == CmisQlStrictLexer.CONTAINS) {
             evalSearchExprTree(root);
         } else {
-            for (int i=0; i<count; i++) {
+            for (int i = 0; i < count; i++) {
                 Tree child = root.getChild(i);
                 evaluateWhereNode(child);
                 evalWhereTree(child); // recursive descent
             }
         }
     }
-    
+
     private void evalSearchExprTree(Tree root) {
         int count = root.getChildCount();
-        for (int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             Tree child = root.getChild(i);
             evaluateSearchExprNode(child);
             evalSearchExprTree(child); // recursive descent
         }
     }
-    
+
     private void printTree(Tree tree, String statement) {
         LOG.info("Printing the abstract syntax tree for statement:");
         LOG.info("  " + statement);
@@ -695,7 +696,7 @@ public class QueryParseTest extends AbstractQueryTest {
         LOG.info(indentString() + printNode(node));
         ++indent;
         int count = node.getChildCount();
-        for (int i=0;i<count;i++) {
+        for (int i = 0; i < count; i++) {
             Tree child = node.getChild(i);
             printTree(child);
         }
@@ -794,7 +795,7 @@ public class QueryParseTest extends AbstractQueryTest {
         LOG.info(indentString() + printSearchNode(node));
         ++indent;
         int count = node.getChildCount();
-        for (int i=0;i<count;i++) {
+        for (int i = 0; i < count; i++) {
             Tree child = node.getChild(i);
             printSearchTree(child);
         }
@@ -806,15 +807,15 @@ public class QueryParseTest extends AbstractQueryTest {
         case TextSearchLexer.TEXT_AND:
         case TextSearchLexer.TEXT_OR:
         case TextSearchLexer.TEXT_SEARCH_PHRASE_STRING_LIT:
-        case TextSearchLexer.TEXT_SEARCH_WORD_LIT:            
+        case TextSearchLexer.TEXT_SEARCH_WORD_LIT:
             return node.toString();
         case TextSearchLexer.TEXT_MINUS:
             return "MINUS";
-         default:
-             return "Unknown token: " +  node.toString();
+        default:
+            return "Unknown token: " + node.toString();
         }
     }
-    
+
     // Ensure that we receive only valid tokens and nodes in the where clause:
     private void evaluateWhereNode(Tree node) {
         LOG.info("evaluating node: " + node.toString());
@@ -928,7 +929,7 @@ public class QueryParseTest extends AbstractQueryTest {
         switch (node.getType()) {
         case TextSearchLexer.TEXT_AND:
         case TextSearchLexer.TEXT_OR:
-            assertTrue(node.getChildCount() >= 2 );
+            assertTrue(node.getChildCount() >= 2);
             break;
         case TextSearchLexer.TEXT_MINUS:
             assertEquals(1, node.getChildCount());
@@ -938,10 +939,10 @@ public class QueryParseTest extends AbstractQueryTest {
             evalStringLiteral(node);
             break;
         default:
-            fail("[Unexpected node in text search expression: " + node.toString() + "]");         
+            fail("[Unexpected node in text search expression: " + node.toString() + "]");
         }
     }
-        
+
     private void evalInAny(Tree node) {
     }
 

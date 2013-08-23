@@ -27,7 +27,6 @@ import org.antlr.runtime.tree.Tree;
  * initiate a tree walk for evaluating the query. You can inherit from
  * this interface if you want to have your own walking mechanism
  * <p>
- * The method {@link walkClause} is the entry point.
  */
 public interface PredicateWalkerBase {
 

@@ -47,8 +47,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
-    
+public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
+
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDiscoveryServiceImpl.class);
 
     public InMemoryDiscoveryServiceImpl(StoreManager storeManager) {
@@ -85,7 +85,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
 
         objList.setObjects(lod);
         objList.setNumItems(BigInteger.valueOf(lod.size()));
-        
+
         String changeToken = Long.valueOf(new Date().getTime()).toString();
         changeLogToken.setValue(changeToken);
 
@@ -113,16 +113,16 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl{
         }
     }
 
-     public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
+    public ObjectList query(CallContext context, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
 
         LOG.debug("start query()");
         validator.query(context, repositoryId, extension);
-        
+
         String user = context.getUsername();
         ObjectList res;
-        
+
         res = fStoreManager.query(user, repositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount);
         LOG.debug("stop query()");

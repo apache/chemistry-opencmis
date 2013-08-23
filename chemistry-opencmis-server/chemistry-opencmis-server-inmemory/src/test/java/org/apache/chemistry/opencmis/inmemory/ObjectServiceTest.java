@@ -141,7 +141,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_POLICY_TYPE_ID = "AuditPolicy";
     public static final String TEST_POLICY_PROPERTY_ID = "AuditSettings";
 
-
     ObjectCreator fCreator;
 
     @Override
@@ -185,8 +184,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
         // test create a document with an illegal name, should fail:
         try {
             Properties props = createDocumentProperties("abc (:*)", DOCUMENT_TYPE_ID);
-            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
-                    null, null);
+            fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null, null,
+                    null);
             fail("Creating  document with an illegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -243,7 +242,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createFolderNoCatch("/(%#$���������������������������������������������������������������������������������", fRootFolderId, FOLDER_TYPE_ID);
+            createFolderNoCatch(
+                    "/(%#$���������������������������������������������������������������������������������",
+                    fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -340,23 +341,23 @@ public class ObjectServiceTest extends AbstractServiceTest {
         String changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
         Holder<String> tokenHolder = new Holder<String>(changeToken);
         fObjSvc.deleteContentStream(fRepositoryId, idHolder, tokenHolder, null);
-        
+
         try {
             props = fObjSvc.getProperties(fRepositoryId, id, PropertyIds.CHANGE_TOKEN, null);
             changeToken = (String) props.getProperties().get(PropertyIds.CHANGE_TOKEN).getFirstValue();
             tokenHolder = new Holder<String>(changeToken);
-            sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
-                    .valueOf(-1) /* length */, null);
+            sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
+                    BigInteger.valueOf(-1) /* length */, null);
             fail("getContentStream with non existing content should raise a CmisConstraintException");
         } catch (Exception e) {
             assertTrue(e instanceof CmisConstraintException);
         }
-        
+
         // create content again in a second call
         ContentStream contentStream = createContent();
         fObjSvc.setContentStream(fRepositoryId, idHolder, true, tokenHolder, contentStream, null);
-        sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */, BigInteger
-                .valueOf(-1) /* length */, null);
+        sd = fObjSvc.getContentStream(fRepositoryId, id, null, BigInteger.valueOf(-1) /* offset */,
+                BigInteger.valueOf(-1) /* length */, null);
         verifyContentResult(sd);
 
         // update content and do not set overwrite flag, expect failure
@@ -393,8 +394,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         String id = null;
         try {
-            id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE, policies,
-                    addACEs, removeACEs, extension);
+            id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, contentStream, VersioningState.NONE,
+                    policies, addACEs, removeACEs, extension);
             if (null == id) {
                 fail("createDocument failed.");
             }
@@ -665,7 +666,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
     @Test
     public void testUpdateProperties() {
-        // TODO add test rename root folder and non root folder (must be a folder)
+        // TODO add test rename root folder and non root folder (must be a
+        // folder)
         log.info("starting testUpdateProperties() ...");
         String oldChangeToken, newChangeToken;
         String id = createDocumentWithCustomType(MY_CUSTOM_NAME, fRootFolderId, false);
@@ -800,7 +802,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             } catch (Exception e) {
                 assertTrue(e instanceof CmisNameConstraintViolationException);
             }
-            
+
             // test an invalid name
             properties = new ArrayList<PropertyData<?>>();
             properties.add(fFactory.createPropertyIdData(PropertyIds.NAME, "Invalid/Name"));
@@ -853,20 +855,20 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
         ObjectData res = getDocumentObjectData(id);
         Map<String, PropertyData<?>> props = res.getProperties().getProperties();
-        PropertyData<?> pd =  props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
+        PropertyData<?> pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID);
         assertNotNull(pd);
         Object bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
 
-        pd =  props.get(TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID);
+        pd = props.get(TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID);
         assertNotNull(pd);
         List<String> valueList = (List<String>) pd.getValues();
         assertNotNull(valueList);
         assertTrue(valueList.contains("Apache"));
         assertTrue(valueList.contains("CMIS"));
 
-        pd =  props.get(TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT);
+        pd = props.get(TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT);
         assertNotNull(pd);
         bi = pd.getFirstValue();
         assertNotNull(bi);
@@ -884,20 +886,20 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
         ObjectData res = getDocumentObjectData(id);
         Map<String, PropertyData<?>> props = res.getProperties().getProperties();
-        PropertyData<?> pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID);
+        PropertyData<?> pd = props.get(TEST_FOLDER_MY_INT_PROP_ID);
         assertNotNull(pd);
         Object bi = pd.getFirstValue();
         assertNotNull(bi);
         assertEquals(BigInteger.valueOf(100), bi);
 
-        pd =  props.get(TEST_FOLDER_MY_MULTI_STRING_PROP_ID);
+        pd = props.get(TEST_FOLDER_MY_MULTI_STRING_PROP_ID);
         assertNotNull(pd);
         List<String> valueList = (List<String>) pd.getValues();
         assertNotNull(valueList);
         assertTrue(valueList.contains("Apache"));
         assertTrue(valueList.contains("CMIS"));
 
-        pd =  props.get(TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT);
+        pd = props.get(TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT);
         assertNotNull(pd);
         bi = pd.getFirstValue();
         assertNotNull(bi);
@@ -917,39 +919,41 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         log.info("  getting object");
         String filter = PropertyIds.NAME + "," + PropertyIds.CREATION_DATE + "," + PropertyIds.LAST_MODIFICATION_DATE;
-        ObjectData res = fObjSvc.getObject(fRepositoryId, id, filter, false, IncludeRelationships.NONE, null, false, false, null);
+        ObjectData res = fObjSvc.getObject(fRepositoryId, id, filter, false, IncludeRelationships.NONE, null, false,
+                false, null);
 
         String returnedId = res.getId();
         assertEquals(id, returnedId);
         log.info("... testGetObjectNoObjectIdInFilter() finished.");
     }
-    
+
     @Test
     public void testSpecialChars() {
 
-            log.info("starting testGetObjectByPath() with specal chars...");
-            log.info("  creating object");
+        log.info("starting testGetObjectByPath() with specal chars...");
+        log.info("  creating object");
 
-            String docID = createDocument("H��nschen", fRootFolderId, false);
-            log.info("  getting object by path with special chars");
-            try {
-                ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H��nschen", "*", false, IncludeRelationships.NONE, null, false,
-                        false, null);
-                assertNotNull(res);
-               assertNotNull(res.getId());
-             } catch (Exception e) {
-                fail("getObject() failed with exception: " + e);
-            }
+        String docID = createDocument("H��nschen", fRootFolderId, false);
+        log.info("  getting object by path with special chars");
+        try {
+            ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H��nschen", "*", false,
+                    IncludeRelationships.NONE, null, false, false, null);
+            assertNotNull(res);
+            assertNotNull(res.getId());
+        } catch (Exception e) {
+            fail("getObject() failed with exception: " + e);
+        }
     }
-    
+
     @Test
     public void testNoContentAllowed() {
         log.info("starting testNoContentAllowed() ...");
         String id = createDocument("NoContentAllowedDoc1", fRootFolderId, TEST_CUSTOM_NO_CONTENT_TYPE_ID, false);
-        assertNotNull (id);
+        assertNotNull(id);
 
         try {
-            id = createDocumentNoCatch("NoContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_NO_CONTENT_TYPE_ID, VersioningState.NONE, true);
+            id = createDocumentNoCatch("NoContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_NO_CONTENT_TYPE_ID,
+                    VersioningState.NONE, true);
             fail("Creating  document with content and type allows no content should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisConstraintException);
@@ -962,10 +966,11 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testMustHaveContent() {
         log.info("starting testMustHaveContent() ...");
         String id = createDocument("MustHaveContentAllowedDoc1", fRootFolderId, TEST_CUSTOM_MUST_CONTENT_TYPE_ID, true);
-        assertNotNull (id);
+        assertNotNull(id);
 
         try {
-            id = createDocumentNoCatch("MustHaveContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_MUST_CONTENT_TYPE_ID, VersioningState.NONE, false);
+            id = createDocumentNoCatch("MustHaveContentAllowedDoc2", fRootFolderId, TEST_CUSTOM_MUST_CONTENT_TYPE_ID,
+                    VersioningState.NONE, false);
             fail("Creating document without content and type requires content should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisConstraintException);
@@ -973,7 +978,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
         log.info("... testMustHaveContent finished.");
     }
-    
+
     @Test
     public void testMaxContentSize() {
         log.info("starting testMaxContentSize() ...");
@@ -1005,16 +1010,17 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public void testRenditionImage() {
         // upload an image as JPEG picture
         log.info("starting testRendition() ...");
-        
+
         try {
             InputStream imageStream = this.getClass().getResourceAsStream("/image.jpg");
-            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed", imageStream);
-            String id = createDocumentFromStream("TestJpegImage", fRootFolderId, DOCUMENT_TYPE_ID, imageStream,
-                    JPEG);            
+            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed",
+                    imageStream);
+            String id = createDocumentFromStream("TestJpegImage", fRootFolderId, DOCUMENT_TYPE_ID, imageStream, JPEG);
 
-            assertNotNull (id);
+            assertNotNull(id);
             String renditionFilter = "*";
-            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            List<RenditionData> renditions = fObjSvc
+                    .getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
             assertNotNull(renditions);
             assertEquals(1, renditions.size());
             RenditionData rd = renditions.get(0);
@@ -1026,30 +1032,33 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigHeight().longValue());
             assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
-            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
+                    null);
             assertEquals(rd.getMimeType(), renditionContent.getMimeType());
             readThumbnailStream(renditionContent.getStream());
         } catch (Exception e) {
             log.error("testRendition failed with exception ", e);
             fail("testRendition failed with exceetion " + e);
         }
-        log.info("... testRendition finished.");   
+        log.info("... testRendition finished.");
     }
-    
+
     @Test
     public void testRenditionIcon() {
         // fake an office document
         log.info("starting testRendition() ...");
-        
+
         try {
-            ContentStream content = createContent(4, 0, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); 
+            ContentStream content = createContent(4, 0,
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             Properties props = createDocumentProperties("TestJOffice", DOCUMENT_TYPE_ID);
             String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, content, VersioningState.NONE,
                     null, null, null, null);
 
-            assertNotNull (id);
+            assertNotNull(id);
             String renditionFilter = "*";
-            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            List<RenditionData> renditions = fObjSvc
+                    .getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
             assertNotNull(renditions);
             assertEquals(1, renditions.size());
             RenditionData rd = renditions.get(0);
@@ -1061,28 +1070,32 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigHeight().longValue());
             assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
-            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
+                    null);
             assertEquals(rd.getMimeType(), renditionContent.getMimeType());
             readThumbnailStream(renditionContent.getStream());
         } catch (Exception e) {
             log.error("testRendition failed with exception ", e);
             fail("testRendition failed with exceetion " + e);
         }
-        log.info("... testRendition finished.");   
+        log.info("... testRendition finished.");
     }
+
     @Test
     public void testFolderRendition() {
         // upload an image as JPEG picture
         log.info("starting testFolderRendition() ...");
-        
+
         try {
             InputStream imageStream = this.getClass().getResourceAsStream("/image.jpg");
-            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed", imageStream);
-            String id = createFolder();           
+            assertNotNull("Test setup failure no 'image.jpg' in test resources, getResourceAsStream failed",
+                    imageStream);
+            String id = createFolder();
 
-            assertNotNull (id);
+            assertNotNull(id);
             String renditionFilter = "*";
-            List<RenditionData> renditions = fObjSvc.getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
+            List<RenditionData> renditions = fObjSvc
+                    .getRenditions(fRepositoryId, id, renditionFilter, null, null, null);
             assertNotNull(renditions);
             assertEquals(1, renditions.size());
             RenditionData rd = renditions.get(0);
@@ -1094,7 +1107,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigHeight().longValue());
             assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
-            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null, null);
+            ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
+                    null);
             assertEquals(rd.getMimeType(), renditionContent.getMimeType());
             readThumbnailStream(renditionContent.getStream());
         } catch (Exception e) {
@@ -1102,9 +1116,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
             fail("testFolderRendition failed with exceetion " + e);
         }
         log.info("... testFolderRendition finished.");
-   
+
     }
-    
+
     @Test
     public void testAppendContent() {
         log.info("starting testAppendContent() ...");
@@ -1115,7 +1129,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         // append content again in a second call
         Holder<String> idHolder = new Holder<String>(id);
-        
+
         ContentStream contentStream = createContent();
         fObjSvc.appendContentStream(fRepositoryId, idHolder, null, contentStream, false, null);
         ContentStream sd = fObjSvc.getContentStream(fRepositoryId, id, null, null, null, null);
@@ -1141,8 +1155,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             Map<String, PropertyData<?>> props = res.getProperties().getProperties();
             changeToken1 = (String) props.get(PropertyIds.CHANGE_TOKEN).getFirstValue();
 
-            res = fObjSvc.getObject(fRepositoryId, id2, "*", false, IncludeRelationships.NONE, null, false,
-                    false, null);
+            res = fObjSvc
+                    .getObject(fRepositoryId, id2, "*", false, IncludeRelationships.NONE, null, false, false, null);
             assertNotNull(res);
             props = res.getProperties().getProperties();
             changeToken2 = (String) props.get(PropertyIds.CHANGE_TOKEN).getFirstValue();
@@ -1152,7 +1166,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 log.info("  return property id: " + pd.getId() + ", value: " + pd.getValues());
             }
 
-
             // update properties:
             log.info("updating property");
             List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
@@ -1160,7 +1173,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             properties.add(fFactory.createPropertyIntegerData(TEST_DOCUMENT_MY_INT_PROP_ID, NEW_INT_PROP_VAL));
             Properties newProps = fFactory.createPropertiesData(properties);
             // wait some time to get a newer change token
-            
+
             List<BulkUpdateObjectIdAndChangeToken> objs = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
             objs.add(new BulkUpdateObjectIdAndChangeTokenImpl(id1, changeToken1));
             objs.add(new BulkUpdateObjectIdAndChangeTokenImpl(id2, changeToken2));
@@ -1169,14 +1182,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
             newObjs = fObjSvc.bulkUpdateProperties(fRepositoryId, objs, newProps, null, null, null);
             assertNotNull(newObjs);
             assertEquals(objs.size(), newObjs.size());
-            for (int i=0; i<newObjs.size(); i++) {
+            for (int i = 0; i < newObjs.size(); i++) {
                 assertEquals(objs.get(i).getId(), newObjs.get(i).getId());
-                assertTrue(! objs.get(i).getChangeToken().equals(newObjs.get(i).getChangeToken()));
+                assertTrue(!objs.get(i).getChangeToken().equals(newObjs.get(i).getChangeToken()));
             }
             // check that new propertie are set
             verifyUpdatedProperties(id1, MY_CUSTOM_NAME);
             verifyUpdatedProperties(id2, MY_CUSTOM_NAME_2);
-
 
         } catch (Exception e) {
             fail("testBulkUpdateProperties() failed with exception: " + e);
@@ -1187,7 +1199,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     // CMIS 1.1: test item typpe
     @Test
     public void testItemCreation() {
- 
+
         log.info("starting testItemCreation() ...");
         String propVal = "abc123";
         String name = "CoolItem";
@@ -1196,7 +1208,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.info("testItemCreation succeeded with created id: " + id);
         }
         log.info("... testCreateObject() finished.");
-        
+
         // read document again and check properties
         ObjectData res = getDocumentObjectData(id);
         String returnedId = res.getId();
@@ -1204,17 +1216,18 @@ public class ObjectServiceTest extends AbstractServiceTest {
         testReturnedProperties(returnedId, name, TEST_ITEM_TYPE_ID, props);
         PropertyData<?> pd = props.get(ITEM_STRING_PROP);
         assertEquals(propVal, pd.getFirstValue());
-        assertEquals(12, props.size()); // should not contain all the document properties
+        assertEquals(12, props.size()); // should not contain all the document
+                                        // properties
         log.info("... finished testItemCreation()");
     }
-    
+
     @Test
     public void testSecondaryTypes() {
         log.info("starting testItemCreation() ...");
         final String strPropVal = "Secondary";
         final BigInteger intPropVal = BigInteger.valueOf(100);
         final String primaryPropVal = "Sample Doc String Property";
-        
+
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "ObjectWithSecondaryType"));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
@@ -1223,11 +1236,11 @@ public class ObjectServiceTest extends AbstractServiceTest {
         properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal));
         properties.add(fFactory.createPropertyIntegerData(SECONDARY_INTEGER_PROP, intPropVal));
         Properties props = fFactory.createPropertiesData(properties);
-        
-        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
-                null, null, null);
+
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
+                null, null);
         assertNotNull(id);
-        
+
         Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         assertNotNull(res.getProperties());
         Map<String, PropertyData<?>> returnedProps = res.getProperties();
@@ -1238,7 +1251,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertEquals(intPropVal, returnedValueInt);
         String returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
         assertEquals(primaryPropVal, returnedPrimaryPropVal);
-        
+
         // test updating properties
         final String strPropVal2 = "Secondary updated";
         final String primaryPropVal2 = "Sample Doc String Property updated";
@@ -1247,7 +1260,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal2));
         props = fFactory.createPropertiesData(properties);
         fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
-        
+
         res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         assertNotNull(res.getProperties());
         returnedProps = res.getProperties();
@@ -1258,26 +1271,27 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertEquals(intPropVal, returnedValueInt);
         returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
         assertEquals(primaryPropVal2, returnedPrimaryPropVal);
-      
-        log.info("... finished testSecondaryTypes()");        
+
+        log.info("... finished testSecondaryTypes()");
     }
+
     @Test
     public void testSecondaryTypePropertiesNotSet() {
         log.info("starting testSecondaryTypePropertiesNotSet() ...");
 
         final String primaryPropVal = "Sample Doc String Property";
-        
+
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "ObjectWithSecondaryType"));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
         properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, TEST_SECONDARY_TYPE_ID));
         Properties props = fFactory.createPropertiesData(properties);
-        
-        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
-                null, null, null);
+
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
+                null, null);
         assertNotNull(id);
-        
+
         Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         assertNotNull(res.getProperties());
         Map<String, PropertyData<?>> returnedProps = res.getProperties();
@@ -1292,27 +1306,27 @@ public class ObjectServiceTest extends AbstractServiceTest {
         returnedValue = returnedProps.get(SECONDARY_INTEGER_PROP);
         assertNotNull(returnedValue);
         assertTrue(returnedValue.getValues().isEmpty());
-        
-        log.info("... finished testSecondaryTypePropertiesNotSet()");        
-    } 
-    
+
+        log.info("... finished testSecondaryTypePropertiesNotSet()");
+    }
+
     @Test
-    public void testUpdatePropertiesWithTypeCreation () {
+    public void testUpdatePropertiesWithTypeCreation() {
         final String strPropVal = "Secondary";
         final BigInteger intPropVal = BigInteger.valueOf(100);
         final String primaryPropVal = "Sample Doc String Property";
         final String primaryPropVal2 = "Sample Doc String Property updated";
 
         log.info("starting testUpdatePropertiesWithTypeCreation() ...");
-        
+
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "SimpleDocument"));
         properties.add(fFactory.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, TEST_DOCUMENT_TYPE_ID));
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal));
         Properties props = fFactory.createPropertiesData(properties);
-        
-        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
-                null, null, null);
+
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
+                null, null);
         assertNotNull(id);
 
         properties = new ArrayList<PropertyData<?>>();
@@ -1322,7 +1336,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         properties.add(fFactory.createPropertyIntegerData(SECONDARY_INTEGER_PROP, intPropVal));
         props = fFactory.createPropertiesData(properties);
         fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
-        
+
         Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         assertNotNull(res.getProperties());
         Map<String, PropertyData<?>> returnedProps = res.getProperties();
@@ -1336,19 +1350,19 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertEquals(intPropVal, returnedValueInt);
         String returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
         assertEquals(primaryPropVal2, returnedPrimaryPropVal);
-      
-        log.info("... finished testUpdatePropertiesWithTypeCreation()");        
+
+        log.info("... finished testUpdatePropertiesWithTypeCreation()");
     }
-    
+
     @Test
-    public void testDeleteSecondaryType () {
+    public void testDeleteSecondaryType() {
         final String primaryPropVal = "Sample Doc String Property";
         final String primaryPropVal2 = "Sample Doc String Property updated";
         final String strPropVal = "Secondary";
         final BigInteger intPropVal = BigInteger.valueOf(100);
 
         log.info("starting testDeleteSecondaryType() ...");
-        
+
         // create a document with a secondary type
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, "ObjectWithSecondaryType"));
@@ -1358,18 +1372,21 @@ public class ObjectServiceTest extends AbstractServiceTest {
         properties.add(fFactory.createPropertyStringData(SECONDARY_STRING_PROP, strPropVal));
         properties.add(fFactory.createPropertyIntegerData(SECONDARY_INTEGER_PROP, intPropVal));
         Properties props = fFactory.createPropertiesData(properties);
-        
-        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null,
-                null, null, null);
+
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, null, VersioningState.NONE, null, null,
+                null, null);
         assertNotNull(id);
 
         // delete the secondary type
         properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(TEST_DOCUMENT_STRING_PROP_ID, primaryPropVal2));
-        properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, (String)null)); // set list to empty
+        properties.add(fFactory.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, (String) null)); // set
+                                                                                                             // list
+                                                                                                             // to
+                                                                                                             // empty
         props = fFactory.createPropertiesData(properties);
         fObjSvc.updateProperties(fRepositoryId, new Holder<String>(id), new Holder<String>(), props, null);
-        
+
         // test that properties are gone
         Properties res = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         assertNotNull(res.getProperties());
@@ -1378,33 +1395,36 @@ public class ObjectServiceTest extends AbstractServiceTest {
         assertEquals(0, returnedProps.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues().size());
         PropertyData<?> pd = returnedProps.get(SECONDARY_STRING_PROP);
         assertNull(pd); // property must not exist any longer
-        pd =  returnedProps.get(SECONDARY_INTEGER_PROP);
-        assertNull(pd); // property must not exist any longer        
+        pd = returnedProps.get(SECONDARY_INTEGER_PROP);
+        assertNull(pd); // property must not exist any longer
         String returnedPrimaryPropVal = (String) returnedProps.get(TEST_DOCUMENT_STRING_PROP_ID).getFirstValue();
-        assertEquals(primaryPropVal2, returnedPrimaryPropVal); // other properties should be updated
+        assertEquals(primaryPropVal2, returnedPrimaryPropVal); // other
+                                                               // properties
+                                                               // should be
+                                                               // updated
         // test that system properties are there
         pd = returnedProps.get(PropertyIds.NAME);
-        assertNotNull(pd); 
+        assertNotNull(pd);
         pd = returnedProps.get(PropertyIds.OBJECT_ID);
-        assertNotNull(pd); 
+        assertNotNull(pd);
         pd = returnedProps.get(PropertyIds.OBJECT_TYPE_ID);
-        assertNotNull(pd); 
-     
-        log.info("... finished testDeleteSecondaryType()");        
+        assertNotNull(pd);
+
+        log.info("... finished testDeleteSecondaryType()");
     }
-    
+
     // TODO: test constraints on secondary types
-    
-    
+
     private void verifyUpdatedProperties(String id, String name) {
-        
-        ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE, null, false, false, null);
+
+        ObjectData res = fObjSvc.getObject(fRepositoryId, id, "*", false, IncludeRelationships.NONE, null, false,
+                false, null);
         assertNotNull(res);
         Map<String, PropertyData<?>> props = res.getProperties().getProperties();
         for (PropertyData<?> pd2 : props.values()) {
             log.info("  return property id: " + pd2.getId() + ", value: " + pd2.getValues());
         }
-        
+
         PropertyData<?> pd;
         pd = props.get(PropertyIds.NAME);
         assertNotNull(pd);
@@ -1427,27 +1447,27 @@ public class ObjectServiceTest extends AbstractServiceTest {
         content.setMimeType(contentType);
 
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
-        byte[] buffer = new byte [65536];
+        byte[] buffer = new byte[65536];
         int noBytesRead = 0;
 
-        while ((noBytesRead = is.read(buffer)) >=0 ) {
+        while ((noBytesRead = is.read(buffer)) >= 0) {
             ba.write(buffer, 0, noBytesRead);
         }
-        
+
         content.setContent(new ByteArrayInputStream(ba.toByteArray()));
 
-        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, content, VersioningState.NONE, null,
-                null, null, null);
+        String id = fObjSvc.createDocument(fRepositoryId, props, folderId, content, VersioningState.NONE, null, null,
+                null, null);
         return id;
     }
 
     private void readThumbnailStream(InputStream stream) {
-        
-        byte[] buffer = new byte [65536];
+
+        byte[] buffer = new byte[65536];
         int noBytesRead = 0;
         int count = 0;
         try {
-            while ((noBytesRead = stream.read(buffer)) >=0 ) {
+            while ((noBytesRead = stream.read(buffer)) >= 0) {
                 count += noBytesRead;
             }
         } catch (IOException e) {
@@ -1513,7 +1533,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
 
     private void moveObjectTest(boolean isFolder) {
-        final String propertyFilter = PropertyIds.OBJECT_ID + "," + PropertyIds.NAME; 
+        final String propertyFilter = PropertyIds.OBJECT_ID + "," + PropertyIds.NAME;
         String rootFolderId = createFolder();
         ObjectGenerator gen = new ObjectGenerator(fFactory, fNavSvc, fObjSvc, fRepSvc, fRepositoryId,
                 ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT);
@@ -1571,7 +1591,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
 
     private String createItem(String name, String folderId, String itemPropVal) {
-        
+
         // create the properties:
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(fFactory.createPropertyStringData(PropertyIds.NAME, name));
@@ -1685,25 +1705,27 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
     public static class ObjectTestTypeSystemCreator implements TypeCreator {
 
-        static final TypeDefinitionFactory typeFactory =  DocumentTypeCreationHelper.getTypeDefinitionFactory();
+        static final TypeDefinitionFactory typeFactory = DocumentTypeCreationHelper.getTypeDefinitionFactory();
 
         /**
          * create root types and a sample type for folder and document
-         *
+         * 
          * @return typesMap map filled with created types
          */
         @Override
-		public List<TypeDefinition> createTypesList() {
+        public List<TypeDefinition> createTypesList() {
             List<TypeDefinition> typesList = new LinkedList<TypeDefinition>();
- 
+
             try {
-                MutableTypeDefinition cmisDocumentType;        
-                cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOCUMENT_TYPE_ID);
+                MutableTypeDefinition cmisDocumentType;
+                cmisDocumentType = typeFactory.createChildTypeDefinition(
+                        DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOCUMENT_TYPE_ID);
                 cmisDocumentType.setDisplayName("My Document Type");
                 cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOCUMENT_TYPE_ID);
-    
-                MutableFolderTypeDefinition cmisFolderType;        
-                cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisFolderType().getId());
+
+                MutableFolderTypeDefinition cmisFolderType;
+                cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1,
+                        DocumentTypeCreationHelper.getCmisFolderType().getId());
                 cmisFolderType.setId(TEST_FOLDER_TYPE_ID);
                 cmisFolderType.setDisplayName("My Folder Type");
                 cmisFolderType.setDescription("InMemory test type definition " + TEST_FOLDER_TYPE_ID);
@@ -1715,13 +1737,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
                         TEST_DOCUMENT_STRING_PROP_ID, "Sample Doc String Property", Updatability.READWRITE);
                 propertyDefinitions.put(prop.getId(), prop);
                 cmisDocumentType.addPropertyDefinition(prop);
-    
+
                 propertyDefinitions = new HashMap<String, PropertyDefinition<?>>();
                 prop = PropertyCreationHelper.createStringDefinition(TEST_FOLDER_STRING_PROP_ID,
                         "Sample Folder String Property", Updatability.READWRITE);
                 propertyDefinitions.put(prop.getId(), prop);
                 cmisFolderType.addPropertyDefinition(prop);
-    
+
                 DocumentTypeDefinition customDocType = createCustomTypeWithStringIntProperty();
                 TypeDefinition noContentType = createCustomTypeNoContent();
                 TypeDefinition mustHaveContentType = createCustomTypeMustHaveContent();
@@ -1729,7 +1751,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 TypeDefinition relTypeRestricted = createRelationshipTypeRestricted();
                 TypeDefinition verType = createVersionableType();
                 TypeDefinition polType = createPolicyType();
-                
+
                 // add type to types collection
                 typesList.add(cmisDocumentType);
                 typesList.add(cmisFolderType);
@@ -1751,12 +1773,14 @@ public class ObjectServiceTest extends AbstractServiceTest {
             }
         }
 
-        private static DocumentTypeDefinition createCustomTypeWithStringIntProperty() throws InstantiationException, IllegalAccessException {
-            MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_DOCUMENT_TYPE_ID);
+        private static DocumentTypeDefinition createCustomTypeWithStringIntProperty() throws InstantiationException,
+                IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_DOCUMENT_TYPE_ID);
             cmisDocumentType.setDisplayName("My Custom Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_DOCUMENT_TYPE_ID);
- 
+
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
                     TEST_DOCUMENT_MY_STRING_PROP_ID, "My String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
@@ -1772,12 +1796,13 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisDocumentType;
         }
 
-        private static TypeDefinition createCustomInheritedType(DocumentTypeDefinition baseType)  throws InstantiationException, IllegalAccessException {
-            MutableTypeDefinition cmisDocumentType;        
+        private static TypeDefinition createCustomInheritedType(DocumentTypeDefinition baseType)
+                throws InstantiationException, IllegalAccessException {
+            MutableTypeDefinition cmisDocumentType;
             cmisDocumentType = typeFactory.createChildTypeDefinition(baseType, TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
             cmisDocumentType.setDisplayName("My Custom Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_INHERITED_CUSTOM_DOCUMENT_TYPE_ID);
-           
+
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringDefinition(
                     TEST_DOCUMENT_MY_SUB_STRING_PROP_ID, "Subtype String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
@@ -1790,58 +1815,79 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisDocumentType;
         }
 
-        private static TypeDefinition createDocumentTypeWithDefault()  throws InstantiationException, IllegalAccessException {
-            MutableTypeDefinition cmisDocumentType;        
-            cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_DOC_TYPE_WITH_DEFAULTS_ID);
+        private static TypeDefinition createDocumentTypeWithDefault() throws InstantiationException,
+                IllegalAccessException {
+            MutableTypeDefinition cmisDocumentType;
+            cmisDocumentType = typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(),
+                    TEST_DOC_TYPE_WITH_DEFAULTS_ID);
             cmisDocumentType.setDisplayName("Document Type With default values");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_DOC_TYPE_WITH_DEFAULTS_ID);
 
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
                     TEST_DOCUMENT_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
-            List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
+            List<String> defValS = new ArrayList<String>() {
+                {
+                    add("Apache");
+                    add("CMIS");
+                }
+            };
             prop.setDefaultValue(defValS);
             cmisDocumentType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_DOCUMENT_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
-            List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            List<BigInteger> defVal = new ArrayList<BigInteger>() {
+                {
+                    add(BigInteger.valueOf(100));
+                }
+            };
             prop2.setDefaultValue(defVal);
             cmisDocumentType.addPropertyDefinition(prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
+                    TEST_DOCUMENT_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default",
+                    Updatability.READWRITE);
             prop3.setIsRequired(true);
-            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {
+                {
+                    add(BigInteger.valueOf(100));
+                }
+            };
             prop3.setDefaultValue(defVal2);
             cmisDocumentType.addPropertyDefinition(prop3);
 
             return cmisDocumentType;
         }
 
-        private static TypeDefinition createCustomTypeNoContent()  throws InstantiationException, IllegalAccessException {
-            MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_NO_CONTENT_TYPE_ID);
+        private static TypeDefinition createCustomTypeNoContent() throws InstantiationException, IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_NO_CONTENT_TYPE_ID);
             cmisDocumentType.setDisplayName("No Content Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_NO_CONTENT_TYPE_ID);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
             return cmisDocumentType;
         }
-        
-        private static TypeDefinition createCustomTypeMustHaveContent()  throws InstantiationException, IllegalAccessException {
-            MutableDocumentTypeDefinition cmisDocumentType;        
-            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
+
+        private static TypeDefinition createCustomTypeMustHaveContent() throws InstantiationException,
+                IllegalAccessException {
+            MutableDocumentTypeDefinition cmisDocumentType;
+            cmisDocumentType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
             cmisDocumentType.setDisplayName("Must Have Content Document Type");
             cmisDocumentType.setDescription("InMemory test type definition " + TEST_CUSTOM_MUST_CONTENT_TYPE_ID);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.NOTALLOWED);
             cmisDocumentType.setContentStreamAllowed(ContentStreamAllowed.REQUIRED);
             return cmisDocumentType;
         }
-        
-        private static TypeDefinition createFolderTypeWithDefault()  throws InstantiationException, IllegalAccessException {
-            MutableFolderTypeDefinition cmisFolderType;        
-            cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisFolderType().getId());
+
+        private static TypeDefinition createFolderTypeWithDefault() throws InstantiationException,
+                IllegalAccessException {
+            MutableFolderTypeDefinition cmisFolderType;
+            cmisFolderType = typeFactory.createFolderTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisFolderType().getId());
             cmisFolderType.setId(TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
             cmisFolderType.setDisplayName("Folder Type With default values");
             cmisFolderType.setDescription("InMemory test type definition " + TEST_FOLDER_TYPE_WITH_DEFAULTS_ID);
@@ -1849,30 +1895,45 @@ public class ObjectServiceTest extends AbstractServiceTest {
             PropertyStringDefinitionImpl prop = PropertyCreationHelper.createStringMultiDefinition(
                     TEST_FOLDER_MY_MULTI_STRING_PROP_ID, "Test Multi String Property", Updatability.READWRITE);
             prop.setIsRequired(false);
-            List<String> defValS = new ArrayList<String>() {{ add("Apache"); add("CMIS"); }};
+            List<String> defValS = new ArrayList<String>() {
+                {
+                    add("Apache");
+                    add("CMIS");
+                }
+            };
             prop.setDefaultValue(defValS);
             cmisFolderType.addPropertyDefinition(prop);
 
             PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
                     TEST_FOLDER_MY_INT_PROP_ID, "Test Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(false);
-            List<BigInteger> defVal = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            List<BigInteger> defVal = new ArrayList<BigInteger>() {
+                {
+                    add(BigInteger.valueOf(100));
+                }
+            };
             prop2.setDefaultValue(defVal);
             cmisFolderType.addPropertyDefinition(prop2);
 
             PropertyIntegerDefinitionImpl prop3 = PropertyCreationHelper.createIntegerDefinition(
-                    TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default", Updatability.READWRITE);
+                    TEST_FOLDER_MY_INT_PROP_ID_MANDATORY_DEFAULT, "Test Integer Property Mandatory default",
+                    Updatability.READWRITE);
             prop3.setIsRequired(true);
-            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {{ add(BigInteger.valueOf(100)); }};
+            List<BigInteger> defVal2 = new ArrayList<BigInteger>() {
+                {
+                    add(BigInteger.valueOf(100));
+                }
+            };
             prop3.setDefaultValue(defVal2);
             cmisFolderType.addPropertyDefinition(prop3);
 
             return cmisFolderType;
         }
-        
-        private TypeDefinition createRelationshipType()  throws InstantiationException, IllegalAccessException {
-            MutableRelationshipTypeDefinition cmisRelType;        
-            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisRelationshipType().getId());
+
+        private TypeDefinition createRelationshipType() throws InstantiationException, IllegalAccessException {
+            MutableRelationshipTypeDefinition cmisRelType;
+            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisRelationshipType().getId());
             cmisRelType.setId(TEST_RELATION_TYPE_ID);
             cmisRelType.setDisplayName("MyRelationshipType");
             cmisRelType.setDescription("InMemory test type definition " + TEST_RELATION_TYPE_ID);
@@ -1884,13 +1945,14 @@ public class ObjectServiceTest extends AbstractServiceTest {
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(REL_STRING_PROP,
                     "CrossReferenceType", Updatability.READWRITE);
             cmisRelType.addPropertyDefinition(prop1);
-            
-            return cmisRelType;            
+
+            return cmisRelType;
         }
 
-        private TypeDefinition createRelationshipTypeRestricted()  throws InstantiationException, IllegalAccessException {
-            MutableRelationshipTypeDefinition cmisRelType;        
-            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisRelationshipType().getId());
+        private TypeDefinition createRelationshipTypeRestricted() throws InstantiationException, IllegalAccessException {
+            MutableRelationshipTypeDefinition cmisRelType;
+            cmisRelType = typeFactory.createRelationshipTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisRelationshipType().getId());
             cmisRelType.setId(TEST_RESTRICTED_RELATION_TYPE_ID);
             cmisRelType.setDisplayName("RestrictedRelationshipType");
             cmisRelType.setDescription("InMemory test type definition " + TEST_RESTRICTED_RELATION_TYPE_ID);
@@ -1900,30 +1962,33 @@ public class ObjectServiceTest extends AbstractServiceTest {
             List<String> allowedTypeIds = Collections.singletonList(TEST_CUSTOM_DOCUMENT_TYPE_ID);
             cmisRelType.setAllowedSourceTypes(allowedTypeIds);
             cmisRelType.setAllowedTargetTypes(allowedTypeIds);
-            return cmisRelType;            
+            return cmisRelType;
         }
 
-       private static TypeDefinition createItemType()  throws InstantiationException, IllegalAccessException {
-            //CMIS 1.1 create an item item type
-           MutableItemTypeDefinition cmisItemType;        
-           cmisItemType = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisItemType().getId()); // ??? DocumentTypeCreationHelper.getCmisItemType());
-           cmisItemType.setId(TEST_ITEM_TYPE_ID);
-           cmisItemType.setDisplayName("MyItemType");
-           cmisItemType.setDescription("Builtin InMemory type definition " + TEST_ITEM_TYPE_ID);
-           DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisItemType);
+        private static TypeDefinition createItemType() throws InstantiationException, IllegalAccessException {
+            // CMIS 1.1 create an item item type
+            MutableItemTypeDefinition cmisItemType;
+            cmisItemType = typeFactory.createItemTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisItemType().getId()); // ???
+                                                 // DocumentTypeCreationHelper.getCmisItemType());
+            cmisItemType.setId(TEST_ITEM_TYPE_ID);
+            cmisItemType.setDisplayName("MyItemType");
+            cmisItemType.setDescription("Builtin InMemory type definition " + TEST_ITEM_TYPE_ID);
+            DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisItemType);
 
-           // create a single String property definition
-           PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(ITEM_STRING_PROP,
-                   "Item String Property", Updatability.READWRITE);
-           cmisItemType.addPropertyDefinition(prop1);
-           // add type to types collection
-           return cmisItemType;            
+            // create a single String property definition
+            PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(ITEM_STRING_PROP,
+                    "Item String Property", Updatability.READWRITE);
+            cmisItemType.addPropertyDefinition(prop1);
+            // add type to types collection
+            return cmisItemType;
         }
-        
-        private static TypeDefinition createSecondaryType()  throws InstantiationException, IllegalAccessException {
-            //CMIS 1.1 create an item item type
-            MutableSecondaryTypeDefinition cmisSecondaryType;        
-            cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisSecondaryType().getId());
+
+        private static TypeDefinition createSecondaryType() throws InstantiationException, IllegalAccessException {
+            // CMIS 1.1 create an item item type
+            MutableSecondaryTypeDefinition cmisSecondaryType;
+            cmisSecondaryType = typeFactory.createSecondaryTypeDefinition(CmisVersion.CMIS_1_1,
+                    DocumentTypeCreationHelper.getCmisSecondaryType().getId());
             cmisSecondaryType.setId(TEST_SECONDARY_TYPE_ID);
             cmisSecondaryType.setDisplayName("MySecondaryType");
             cmisSecondaryType.setDescription("InMemory test type definition " + TEST_SECONDARY_TYPE_ID);
@@ -1936,18 +2001,19 @@ public class ObjectServiceTest extends AbstractServiceTest {
                     "Secondary String Property", Updatability.READWRITE);
             cmisSecondaryType.addPropertyDefinition(prop1);
 
-            PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(SECONDARY_INTEGER_PROP,
-                    "Secondary Integer Property", Updatability.READWRITE);
+            PropertyIntegerDefinitionImpl prop2 = PropertyCreationHelper.createIntegerDefinition(
+                    SECONDARY_INTEGER_PROP, "Secondary Integer Property", Updatability.READWRITE);
             prop2.setIsRequired(true);
             cmisSecondaryType.addPropertyDefinition(prop2);
- 
-            return cmisSecondaryType;            
+
+            return cmisSecondaryType;
         }
-        
-        private static TypeDefinition createVersionableType()  throws InstantiationException, IllegalAccessException {
+
+        private static TypeDefinition createVersionableType() throws InstantiationException, IllegalAccessException {
             // create a complex type with properties
-            MutableDocumentTypeDefinition verType;        
-            verType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(DocumentTypeCreationHelper.getCmisDocumentType(), TEST_VERSION_DOCUMENT_TYPE_ID);
+            MutableDocumentTypeDefinition verType;
+            verType = (MutableDocumentTypeDefinition) typeFactory.createChildTypeDefinition(
+                    DocumentTypeCreationHelper.getCmisDocumentType(), TEST_VERSION_DOCUMENT_TYPE_ID);
             verType.setDisplayName("VersionedType");
             verType.setDescription("InMemory test type definition " + TEST_VERSION_DOCUMENT_TYPE_ID);
 
@@ -1959,21 +2025,22 @@ public class ObjectServiceTest extends AbstractServiceTest {
             verType.addPropertyDefinition(prop1);
             return verType;
         }
-        
-        private static TypeDefinition createPolicyType()  throws InstantiationException, IllegalAccessException {
-            MutablePolicyTypeDefinition polType;        
-            polType = typeFactory.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper.getCmisPolicyType().getId());
+
+        private static TypeDefinition createPolicyType() throws InstantiationException, IllegalAccessException {
+            MutablePolicyTypeDefinition polType;
+            polType = typeFactory.createPolicyTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisPolicyType().getId());
             polType.setId(TEST_POLICY_TYPE_ID);
             polType.setDisplayName("Audit Policy");
             polType.setDescription("InMemory type definition " + TEST_POLICY_TYPE_ID);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(polType);
             polType.setIsFileable(false);
-           
+
             // create a String property definition
             PropertyStringDefinitionImpl prop1 = PropertyCreationHelper.createStringDefinition(TEST_POLICY_PROPERTY_ID,
                     "Audit Kind Property", Updatability.READWRITE);
             polType.addPropertyDefinition(prop1);
-            return polType;            
+            return polType;
         }
     }
 
