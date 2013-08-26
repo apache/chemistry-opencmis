@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -318,6 +318,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             try {
                 response.sendError(statusCode, ex.getMessage());
             } catch (Exception en) {
+                // there is nothing else we can do
             }
         }
     }

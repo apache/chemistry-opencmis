@@ -50,8 +50,12 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityAcl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientSession {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ClientSession.class);
 
     public static final String WORKBENCH_PREFIX = "cmis.workbench.";
     public static final String OBJECT_PREFIX = WORKBENCH_PREFIX + "object.";
@@ -151,6 +155,7 @@ public class ClientSession {
                     CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
             break;
         default:
+            // no authentication
         }
 
         if (compression) {
@@ -338,6 +343,7 @@ public class ClientSession {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 }

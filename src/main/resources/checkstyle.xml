@@ -6,6 +6,10 @@
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="${checkstyle.suppressions.file}"/>
+    </module>
+
     <module name="JavadocPackage">
       <property name="allowLegacy" value="true"/>
       <property name="severity" value="warning"/>
@@ -37,12 +41,15 @@
         </module>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle"/>
+        <module name="MissingDeprecated"/>
+        <!--
         <module name="WriteTag">
             <property name="tag" value="@cmis"/>
             <property name="tagFormat" value="\d\.\d"/>
             <property name="severity" value="ignore"/>
             <property name="tagSeverity" value="info"/>
         </module>
+        -->
 
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>
@@ -75,7 +82,8 @@
         </module>    
 
         <module name="LineLength">
-            <property name="max" value="120"/>
+            <!-- the Eclipse formatter sometimes adds a few more characters: 120 -> 125 -->
+            <property name="max" value="125"/>
         </module>
         <module name="MethodLength">
             <property name="max" value="300"/>
@@ -85,8 +93,11 @@
         </module>
 
         <module name="EmptyForIteratorPad"/>
+        <module name="EmptyForInitializerPad"/>
         <module name="MethodParamPad"/>
-        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceAfter">
+           <property name="tokens" value="BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS"/>
+        </module>
         <module name="NoWhitespaceBefore"/>
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
@@ -98,7 +109,9 @@
         <module name="RedundantModifier"/>
 
         <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
+        <module name="EmptyBlock">
+            <property name="option" value="text"/>
+        </module>
         <module name="LeftCurly">
             <property name="option" value="eol"/>
         </module>
@@ -107,7 +120,6 @@
             <property name="option" value="same"/>
         </module>
 
-        <module name="AvoidInlineConditionals"/>
         <module name="EmptyStatement"/>
         <module name="IllegalThrows">
             <property name="severity" value="warning"/>
@@ -116,6 +128,7 @@
             <property name="severity" value="info"/>
         </module>
         <module name="EqualsHashCode"/>
+        <module name="CovariantEquals"/>
         <module name="HiddenField">
             <property name="ignoreConstructorParameter" value="true"/>
             <property name="ignoreSetter" value="true"/>

@@ -390,6 +390,8 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
         case URI:
             propertyData = new PropertyUriImpl(propDef.getId(), strValues);
             break;
+        default:
+            assert false;
         }
 
         return propertyData;

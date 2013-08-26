@@ -194,12 +194,16 @@ public class RepositoryService {
 
                     // - object by id
                     String url = compileUrl(baseUrl, RESOURCE_OBJECTBYID, null)
-                            + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
+                            + "?id={id}&filter={filter}&includeAllowableActions={includeAllowableActions}"
+                            + "&includeACL={includeACL}&includePolicyIds={includePolicyIds}"
+                            + "&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
                     serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_ID, Constants.MEDIATYPE_ENTRY);
 
                     // - object by path
                     url = compileUrl(baseUrl, RESOURCE_OBJECTBYPATH, null)
-                            + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}&includeACL={includeACL}&includePolicyIds={includePolicyIds}&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
+                            + "?path={path}&filter={filter}&includeAllowableActions={includeAllowableActions}"
+                            + "&includeACL={includeACL}&includePolicyIds={includePolicyIds}"
+                            + "&includeRelationships={includeRelationships}&renditionFilter={renditionFilter}";
                     serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_OBJECT_BY_PATH, Constants.MEDIATYPE_ENTRY);
 
                     // - type by id
@@ -209,7 +213,8 @@ public class RepositoryService {
                     // - query
                     if (supportsQuery) {
                         url = compileUrl(baseUrl, RESOURCE_QUERY, null)
-                                + "?q={q}&searchAllVersions={searchAllVersions}&includeAllowableActions={includeAllowableActions}&includeRelationships={includeRelationships}&maxItems={maxItems}&skipCount={skipCount}";
+                                + "?q={q}&searchAllVersions={searchAllVersions}&includeAllowableActions={includeAllowableActions}"
+                                + "&includeRelationships={includeRelationships}&maxItems={maxItems}&skipCount={skipCount}";
                         serviceDoc.writeUriTemplate(url, Constants.TEMPLATE_QUERY, Constants.MEDIATYPE_FEED);
                     }
 

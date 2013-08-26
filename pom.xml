@@ -392,7 +392,8 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.10</version>
                 <configuration>
-                    <configLocation>/src/main/resources/checkstyle.xml</configLocation>
+                    <configLocation>src/main/resources/checkstyle.xml</configLocation>
+                    <suppressionsLocation>src/main/resources/suppressions.xml</suppressionsLocation>
                 </configuration>
             </plugin>
             <plugin>

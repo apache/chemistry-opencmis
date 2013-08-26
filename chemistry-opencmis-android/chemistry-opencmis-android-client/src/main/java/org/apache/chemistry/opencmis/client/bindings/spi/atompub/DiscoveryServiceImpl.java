@@ -35,10 +35,10 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.QueryTypeImpl;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
@@ -146,7 +146,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         Response resp = post(url, Constants.MEDIATYPE_QUERY, new Output() {
             public void write(OutputStream out) throws Exception {
                 XmlSerializer writer = Xml.newSerializer();
-        		writer.setOutput(out, AtomEntryWriter.ENCODING);
+                writer.setOutput(out, AtomEntryWriter.ENCODING);
                 XMLUtils.startXmlDocument(writer);
                 XMLConverter.writeQuery(writer, cmisVersion, query);
                 XMLUtils.endXmlDocument(writer);

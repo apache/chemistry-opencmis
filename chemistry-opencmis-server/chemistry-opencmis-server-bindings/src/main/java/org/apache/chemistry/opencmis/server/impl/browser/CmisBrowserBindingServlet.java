@@ -116,7 +116,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingServlet.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CmisBrowserBindingServlet.class);
 
     private final Dispatcher repositoryDispatcher = new Dispatcher(false);
     private final Dispatcher rootDispatcher = new Dispatcher(false);

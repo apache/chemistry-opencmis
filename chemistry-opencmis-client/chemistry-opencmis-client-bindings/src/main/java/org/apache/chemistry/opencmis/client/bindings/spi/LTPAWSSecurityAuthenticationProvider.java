@@ -25,12 +25,12 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import javax.security.auth.Subject;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -63,7 +63,7 @@ public class LTPAWSSecurityAuthenticationProvider extends StandardAuthentication
 
         // Create the SOAP WSSecurity header
         try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Document document = XMLUtils.newDomDocument();
 
             Element wsseSecurityElement = document.createElementNS(WSSE_NAMESPACE, "Security");
 

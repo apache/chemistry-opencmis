@@ -80,6 +80,7 @@ public class SessionImpl implements BindingSession {
             try {
                 intValue = Integer.valueOf((String) value);
             } catch (NumberFormatException e) {
+                // invalid number -> return default value
             }
         }
 
