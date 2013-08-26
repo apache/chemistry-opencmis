@@ -12,7 +12,7 @@
         <opencmis.version>${opencmisVersion}</opencmis.version>
     </properties>
 
-   <name>Your OpenCMIS Server</name>
+    <name>Your OpenCMIS Server</name>
 
     <build>
         <plugins>

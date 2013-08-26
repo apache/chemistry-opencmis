@@ -373,7 +373,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    protected QueryStatementImpl clone() throws CloneNotSupportedException {
         QueryStatementImpl qs = new QueryStatementImpl(session, statement);
         qs.parametersMap.putAll(parametersMap);
 

@@ -1002,7 +1002,7 @@ public final class TypeDefinitionFactory {
         assert source != null;
         assert target != null;
 
-        if (source != null && source.getPropertyDefinitions() != null) {
+        if (source.getPropertyDefinitions() != null) {
             for (PropertyDefinition<?> propDef : source.getPropertyDefinitions().values()) {
                 if (cmisVersion == CmisVersion.CMIS_1_0) {
                     if (NEW_CMIS11_PROPERTIES.contains(propDef.getId())) {

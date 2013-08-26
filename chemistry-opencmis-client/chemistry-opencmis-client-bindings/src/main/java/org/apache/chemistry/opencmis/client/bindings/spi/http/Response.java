@@ -63,7 +63,7 @@ public class Response {
         }
 
         // determine charset
-        charset = "UTF-8";
+        charset = IOUtils.UTF8;
         String contentType = getContentTypeHeader();
         if (contentType != null) {
             String[] parts = contentType.split(";");

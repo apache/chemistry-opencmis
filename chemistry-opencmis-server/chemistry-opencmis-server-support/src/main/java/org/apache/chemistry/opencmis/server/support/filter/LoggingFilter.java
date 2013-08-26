@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -55,6 +56,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,7 +179,7 @@ public class LoggingFilter implements Filter {
         PrintWriter pw = null;
         OutputStreamWriter fw = null;
         try {
-            fw = new OutputStreamWriter(new FileOutputStream(filename), "UTF-8");
+            fw = new OutputStreamWriter(new FileOutputStream(filename), IOUtils.UTF8);
             pw = new PrintWriter(fw);
 
             Scanner scanner = new Scanner(content);
@@ -240,7 +242,8 @@ public class LoggingFilter implements Filter {
                 if (line.startsWith("<?xml") || line.startsWith("{")) {
                     inXmlOrJsonBody = true;
                     isXml = line.startsWith("<?xml");
-                    xmlBodyBuffer.write(line.getBytes(), 0, line.length());
+                    byte[] lienBytes = IOUtils.getUTF8Bytes(line);
+                    xmlBodyBuffer.write(lienBytes, 0, lienBytes.length);
                     while (inXmlOrJsonBody) {
                         line = in.readLine();
                         if (line == null) {
@@ -252,13 +255,13 @@ public class LoggingFilter implements Filter {
                             inXmlOrJsonBody = false;
                             inXmlOrJsonPart = false;
                             if (isXml) {
-                                out.append(prettyPrintXml(xmlBodyBuffer.toString(), indent));
+                                out.append(prettyPrintXml(xmlBodyBuffer.toString(IOUtils.UTF8), indent));
                             } else {
-                                out.append(prettyPrintJson(xmlBodyBuffer.toString(), indent));
+                                out.append(prettyPrintJson(xmlBodyBuffer.toString(IOUtils.UTF8), indent));
                             }
                             out.append(line).append('\n');
                         } else {
-                            xmlBodyBuffer.write(line.getBytes(), 0, line.length());
+                            xmlBodyBuffer.write(lienBytes, 0, lienBytes.length);
                         }
                     }
                 } else {
@@ -402,7 +405,11 @@ public class LoggingFilter implements Filter {
         }
 
         public String getPayload() {
-            return baous.toString();
+            try {
+                return baous.toString(IOUtils.UTF8);
+            } catch (UnsupportedEncodingException e) {
+                throw new CmisRuntimeException("Unsupported encoding 'UTF-8'!", e);
+            }
         }
     }
 
@@ -423,7 +430,7 @@ public class LoggingFilter implements Filter {
         public PrintWriter getWriter() {
             try {
                 if (null == writer) {
-                    writer = new PrintWriter(this.getOutputStream());
+                    writer = new PrintWriter(new OutputStreamWriter(this.getOutputStream(), IOUtils.UTF8));
                 }
                 return writer;
             } catch (IOException e) {

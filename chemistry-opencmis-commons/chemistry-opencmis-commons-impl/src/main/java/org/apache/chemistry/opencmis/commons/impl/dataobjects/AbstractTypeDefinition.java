@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 /**
  * Abstract type definition data implementation.
  */
-public abstract class AbstractTypeDefinition extends AbstractExtensionData implements MutableTypeDefinition, Cloneable {
+public abstract class AbstractTypeDefinition extends AbstractExtensionData implements MutableTypeDefinition {
 
     private static final long serialVersionUID = 2L;
 
@@ -238,15 +238,6 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
 
     public void setTypeMutability(TypeMutability typeMutability) {
         this.typeMutability = typeMutability;
-    }
-
-    public AbstractTypeDefinition clone() {
-        try {
-            return (AbstractTypeDefinition) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Clone not supported", e);
-        }
     }
 
     @Override

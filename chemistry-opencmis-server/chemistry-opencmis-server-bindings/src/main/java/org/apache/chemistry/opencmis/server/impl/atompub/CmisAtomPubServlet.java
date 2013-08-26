@@ -292,6 +292,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
         }
 
         try {
+            response.reset();
             PrintWriter pw = response.getWriter();
             response.setStatus(statusCode);
             response.setContentType("text/html");

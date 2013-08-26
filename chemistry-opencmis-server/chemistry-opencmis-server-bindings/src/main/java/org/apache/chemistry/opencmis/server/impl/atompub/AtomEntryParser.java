@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstraints;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -415,7 +416,7 @@ public class AtomEntryParser {
                 } else if (event == XMLStreamReader.CHARACTERS) {
                     String s = parser.getText();
                     if (s != null) {
-                        byte[] bytes = s.getBytes("UTF-8");
+                        byte[] bytes = IOUtils.getUTF8Bytes(s);
                         bufferStream.write(bytes);
                         cappedStream.deductBytes(bytes.length);
                     }

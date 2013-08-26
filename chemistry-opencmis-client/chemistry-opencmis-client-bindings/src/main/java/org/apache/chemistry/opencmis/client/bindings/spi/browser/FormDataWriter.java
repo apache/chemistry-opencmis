@@ -228,7 +228,7 @@ public class FormDataWriter {
                     out.write(amp);
                 }
 
-                out.write(IOUtils.getUTF8Bytes(param.getKey() + "=" + URLEncoder.encode(param.getValue(), "UTF-8")));
+                out.write(IOUtils.getUTF8Bytes(param.getKey() + "=" + URLEncoder.encode(param.getValue(), IOUtils.UTF8)));
             }
         } else {
             writeLine(out);

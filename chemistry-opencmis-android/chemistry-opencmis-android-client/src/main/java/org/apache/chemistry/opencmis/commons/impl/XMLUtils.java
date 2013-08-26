@@ -239,7 +239,7 @@ public class XMLUtils {
                     sb.append(parser.getText());
                 }
             } else if (event == XmlPullParser.START_TAG) {
-                throw new RuntimeException("Unexpected tag: " + parser.getName());
+                throw new XmlPullParserException("Unexpected tag: " + parser.getName());
             }
 
             if (!next(parser)) {

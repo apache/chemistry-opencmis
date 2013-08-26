@@ -500,6 +500,8 @@ public class FileShareRepository {
      */
     public String createDocumentFromSource(CallContext context, String sourceId, Properties properties,
             String folderId, VersioningState versioningState) {
+        debug("createDocumentFromSource");
+        checkUser(context, true);
 
         // check versioning state
         if (VersioningState.NONE != versioningState) {
@@ -570,7 +572,7 @@ public class FileShareRepository {
                 }
 
                 // can it be set?
-                if ((propType.getUpdatability() != Updatability.READWRITE)) {
+                if (propType.getUpdatability() != Updatability.READWRITE) {
                     throw new CmisConstraintException("Property '" + prop.getId() + "' cannot be updated!");
                 }
 
@@ -814,7 +816,7 @@ public class FileShareRepository {
         debug("deleteTree");
         checkUser(context, true);
 
-        boolean cof = (continueOnFailure == null ? false : continueOnFailure.booleanValue());
+        boolean cof = FileShareUtils.getBooleanParameter(continueOnFailure, false);
 
         // get the file or folder
         File file = getFile(folderId);
@@ -826,10 +828,7 @@ public class FileShareRepository {
         if (file.isDirectory()) {
             deleteFolder(file, cof, result);
         } else {
-            getPropertiesFile(file).delete();
-            if (!file.delete()) {
-                result.getIds().add(getId(file));
-            }
+            throw new CmisConstraintException("Object is not a folder!");
         }
 
         return result;
@@ -876,7 +875,7 @@ public class FileShareRepository {
         debug("updateProperties");
         boolean userReadOnly = checkUser(context, true);
 
-        if (objectId == null) {
+        if (objectId == null || objectId.getValue() == null) {
             throw new CmisInvalidArgumentException("Id is not valid!");
         }
 
@@ -1634,7 +1633,7 @@ public class FileShareRepository {
             IOUtils.closeQuietly(stream);
         }
 
-        if ((obj == null) || (obj.getProperties() == null)) {
+        if (obj == null || obj.getProperties() == null) {
             return;
         }
 
@@ -1780,7 +1779,7 @@ public class FileShareRepository {
     }
 
     private boolean isEmptyProperty(PropertyData<?> prop) {
-        if ((prop == null) || (prop.getValues() == null)) {
+        if (prop == null || prop.getValues() == null) {
             return true;
         }
 
@@ -1843,7 +1842,7 @@ public class FileShareRepository {
     }
 
     private boolean checkAddProperty(Properties properties, String typeId, Set<String> filter, String id) {
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             throw new IllegalArgumentException("Properties must not be null!");
         }
 
@@ -1861,7 +1860,7 @@ public class FileShareRepository {
 
         String queryName = type.getPropertyDefinitions().get(id).getQueryName();
 
-        if ((queryName != null) && (filter != null)) {
+        if (queryName != null && filter != null) {
             if (!filter.contains(queryName)) {
                 return false;
             } else {
@@ -1877,7 +1876,7 @@ public class FileShareRepository {
      */
     @SuppressWarnings("unchecked")
     private boolean addPropertyDefault(PropertiesImpl props, PropertyDefinition<?> propDef) {
-        if ((props == null) || (props.getProperties() == null)) {
+        if (props == null || props.getProperties() == null) {
             throw new IllegalArgumentException("Props must not be null!");
         }
 
@@ -1886,7 +1885,7 @@ public class FileShareRepository {
         }
 
         List<?> defaultValue = propDef.getDefaultValue();
-        if ((defaultValue != null) && (!defaultValue.isEmpty())) {
+        if (defaultValue != null && !defaultValue.isEmpty()) {
             switch (propDef.getPropertyType()) {
             case BOOLEAN:
                 props.addProperty(new PropertyBooleanImpl(propDef.getId(), (List<Boolean>) defaultValue));
@@ -1913,7 +1912,7 @@ public class FileShareRepository {
                 props.addProperty(new PropertyUriImpl(propDef.getId(), (List<String>) defaultValue));
                 break;
             default:
-                throw new RuntimeException("Unknown datatype! Spec change?");
+                assert false;
             }
 
             return true;
@@ -2040,7 +2039,7 @@ public class FileShareRepository {
 
         String[] fileNames = folder.list();
 
-        if ((fileNames == null) || (fileNames.length == 0)) {
+        if (fileNames == null || fileNames.length == 0) {
             return true;
         }
 
