@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
@@ -116,6 +117,10 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
     }
 
     public List<Choice<T>> getChoices() {
+        if (choiceList == null) {
+            choiceList = new ArrayList<Choice<T>>();
+        }
+
         return choiceList;
     }
 
@@ -124,6 +129,10 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
     }
 
     public List<T> getDefaultValue() {
+        if (defaultValue == null) {
+            defaultValue = new ArrayList<T>();
+        }
+
         return defaultValue;
     }
 

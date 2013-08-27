@@ -1269,7 +1269,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         for (PropertyDefinition<?> propDef : propDefs.values()) {
             String propId = propDef.getId();
             List<?> defaultVal = propDef.getDefaultValue();
-            if (defaultVal != null && null == properties.get(propId)) {
+            if (defaultVal != null && !defaultVal.isEmpty() && null == properties.get(propId)) {
                 if (!hasCopied) {
                     // copy because it is an unmodified collection
                     propertiesReturn = new HashMap<String, PropertyData<?>>(properties);

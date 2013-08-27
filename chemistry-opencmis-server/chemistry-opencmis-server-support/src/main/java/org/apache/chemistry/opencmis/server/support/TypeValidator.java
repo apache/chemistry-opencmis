@@ -167,10 +167,10 @@ public final class TypeValidator {
         private List<T> getAllowedValues(List<Choice<T>> choices) {
             List<T> allowedValues = new ArrayList<T>(choices.size());
             for (Choice<T> choice : choices) {
-                if (choice.getValue() != null) {
+                if (choice.getValue() != null && !choice.getValue().isEmpty()) {
                     allowedValues.add(choice.getValue().get(0));
                 }
-                if (choice.getChoice() != null) {
+                if (choice.getChoice() != null && !choice.getChoice().isEmpty()) {
                     List<Choice<T>> x = choice.getChoice();
                     allowedValues.addAll(getAllowedValues(x));
                 }

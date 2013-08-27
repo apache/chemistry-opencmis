@@ -20,8 +20,10 @@ package org.apache.chemistry.opencmis.commons.impl.xml;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +53,8 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AclCapabilitiesDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.CreatablePropertyTypesImpl;
@@ -60,6 +64,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionDefiniti
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryInfoType;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.junit.Test;
 
 public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
@@ -205,6 +211,11 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
     }
 
     protected void assertRepositoryInfo10(RepositoryInfo repInfo, boolean validate) throws Exception {
+        assertXmlRepositoryInfo10(repInfo, validate);
+        assertWsRepositoryInfo10(repInfo);
+    }
+
+    protected void assertXmlRepositoryInfo10(RepositoryInfo repInfo, boolean validate) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         XMLStreamWriter writer = createWriter(out);
@@ -226,7 +237,34 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
         assertNull(result.getExtensions());
     }
 
+    protected void assertWsRepositoryInfo10(RepositoryInfo repInfo) throws Exception {
+        CmisRepositoryInfoType ws = WSConverter.convert(repInfo, CmisVersion.CMIS_1_0);
+
+        RepositoryInfo result = WSConverter.convert(ws);
+
+        // remove CMIS 1.1 features
+        RepositoryInfoImpl repInfo2 = new RepositoryInfoImpl(repInfo);
+        repInfo2.setExtensionFeature(null);
+        if (repInfo.getCapabilities() != null) {
+            RepositoryCapabilitiesImpl capabilities = new RepositoryCapabilitiesImpl(repInfo.getCapabilities());
+            capabilities.setOrderByCapability(null);
+            capabilities.setCreatablePropertyTypes(null);
+            capabilities.setNewTypeSettableAttributes(null);
+            repInfo2.setCapabilities(capabilities);
+        }
+
+        assertNotNull(result);
+        assertDataObjectsEquals("RepositoryInfo", repInfo2, result, null);
+        assertNull(result.getExtensions());
+    }
+
     protected void assertRepositoryInfo11(RepositoryInfo repInfo, boolean validate) throws Exception {
+        assertXmlRepositoryInfo11(repInfo, validate);
+        assertWsRepositoryInfo11(repInfo);
+        assertJsonRepositoryInfo11(repInfo);
+    }
+
+    protected void assertXmlRepositoryInfo11(RepositoryInfo repInfo, boolean validate) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         XMLStreamWriter writer = createWriter(out);
@@ -242,6 +280,31 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
         XMLStreamReader parser = createParser(xml);
         RepositoryInfo result = XMLConverter.convertRepositoryInfo(parser);
         closeParser(parser);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("RepositoryInfo", repInfo, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertWsRepositoryInfo11(RepositoryInfo repInfo) throws Exception {
+        CmisRepositoryInfoType ws = WSConverter.convert(repInfo, CmisVersion.CMIS_1_1);
+
+        RepositoryInfo result = WSConverter.convert(ws);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("RepositoryInfo", repInfo, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertJsonRepositoryInfo11(RepositoryInfo repInfo) throws Exception {
+        StringWriter sw = new StringWriter();
+
+        JSONConverter.convert(repInfo, null, null).writeJSONString(sw);
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+        @SuppressWarnings("unchecked")
+        RepositoryInfo result = JSONConverter.convertRepositoryInfo((Map<String, Object>) json);
 
         assertNotNull(result);
         assertDataObjectsEquals("RepositoryInfo", repInfo, result, null);

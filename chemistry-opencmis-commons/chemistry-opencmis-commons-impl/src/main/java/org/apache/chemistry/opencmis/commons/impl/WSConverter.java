@@ -112,6 +112,7 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
+import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.SupportedPermissions;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -272,6 +273,9 @@ public final class WSConverter {
     private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final Logger LOG = LoggerFactory.getLogger(WSConverter.class);
+
+    private static final BigInteger BIG_INT_32 = BigInteger.valueOf(32);
+    private static final BigInteger BIG_INT_64 = BigInteger.valueOf(64);
 
     private static Class<?> streamDataHandlerClass1;
     private static Method streamDataHandlerReadMethod1;
@@ -844,6 +848,14 @@ public final class WSConverter {
             ((PropertyDecimalDefinitionImpl) result)
                     .setMaxValue(((CmisPropertyDecimalDefinitionType) propertyDefinition).getMaxValue());
 
+            BigInteger precision = ((CmisPropertyDecimalDefinitionType) propertyDefinition).getPrecision();
+            if (precision != null) {
+                if (BIG_INT_32.equals(precision)) {
+                    ((PropertyDecimalDefinitionImpl) result).setPrecision(DecimalPrecision.BITS32);
+                } else if (BIG_INT_64.equals(precision)) {
+                    ((PropertyDecimalDefinitionImpl) result).setPrecision(DecimalPrecision.BITS64);
+                }
+            }
         } else if (propertyDefinition instanceof CmisPropertyBooleanDefinitionType) {
             result = new PropertyBooleanDefinitionImpl();
 
@@ -2614,8 +2626,7 @@ public final class WSConverter {
                 if (streamDataHandlerClass1 != null && streamDataHandlerClass1.isInstance(streamDataHandler)) {
                     result.setStream((InputStream) streamDataHandlerReadMethod1.invoke(streamDataHandler,
                             (Object[]) null));
-                } else if (streamDataHandlerClass2 != null
-                        && streamDataHandlerClass2.isInstance(streamDataHandler)) {
+                } else if (streamDataHandlerClass2 != null && streamDataHandlerClass2.isInstance(streamDataHandler)) {
                     result.setStream((InputStream) streamDataHandlerReadMethod2.invoke(streamDataHandler,
                             (Object[]) null));
                 } else {

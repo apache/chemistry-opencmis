@@ -20,10 +20,13 @@ package org.apache.chemistry.opencmis.commons.impl.xml;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
@@ -38,6 +41,8 @@ import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
+import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
@@ -56,6 +61,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinit
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.junit.Test;
 
 public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
@@ -282,6 +289,11 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
     }
 
     protected void assertTypeDefinition10(TypeDefinition typeDef, boolean validate) throws Exception {
+        assertXmlTypeDefinition10(typeDef, validate);
+        assertWsTypeDefinition10(typeDef);
+    }
+
+    protected void assertXmlTypeDefinition10(TypeDefinition typeDef, boolean validate) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         XMLStreamWriter writer = createWriter(out);
@@ -303,7 +315,23 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         assertNull(result.getExtensions());
     }
 
+    protected void assertWsTypeDefinition10(TypeDefinition typeDef) throws Exception {
+        CmisTypeDefinitionType ws = WSConverter.convert(typeDef);
+
+        TypeDefinition result = WSConverter.convert(ws);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("TypeDefinition", typeDef, result, null);
+        assertNull(result.getExtensions());
+    }
+
     protected void assertTypeDefinition11(TypeDefinition typeDef, boolean validate) throws Exception {
+        assertXmlTypeDefinition11(typeDef, validate);
+        assertWsTypeDefinition11(typeDef);
+        assertJsonTypeDefinition11(typeDef);
+    }
+
+    protected void assertXmlTypeDefinition11(TypeDefinition typeDef, boolean validate) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         XMLStreamWriter writer = createWriter(out);
@@ -319,6 +347,31 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         XMLStreamReader parser = createParser(xml);
         TypeDefinition result = XMLConverter.convertTypeDefinition(parser);
         closeParser(parser);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("TypeDefinition", typeDef, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertWsTypeDefinition11(TypeDefinition typeDef) throws Exception {
+        CmisTypeDefinitionType ws = WSConverter.convert(typeDef);
+
+        TypeDefinition result = WSConverter.convert(ws);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("TypeDefinition", typeDef, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertJsonTypeDefinition11(TypeDefinition typeDef) throws Exception {
+        StringWriter sw = new StringWriter();
+
+        JSONConverter.convert(typeDef).writeJSONString(sw);
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+        @SuppressWarnings("unchecked")
+        TypeDefinition result = JSONConverter.convertTypeDefinition((Map<String, Object>) json);
 
         assertNotNull(result);
         assertDataObjectsEquals("TypeDefinition", typeDef, result, null);

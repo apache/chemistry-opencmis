@@ -60,6 +60,27 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
     public RepositoryCapabilitiesImpl() {
     }
 
+    public RepositoryCapabilitiesImpl(RepositoryCapabilities data) {
+        allVersionsSearchable = data.isAllVersionsSearchableSupported();
+        capabilityAcl = data.getAclCapability();
+        capabilityChanges = data.getChangesCapability();
+        capabilityContentStreamUpdates = data.getContentStreamUpdatesCapability();
+        capabilityJoin = data.getJoinCapability();
+        capabilityQuery = data.getQueryCapability();
+        capabilityRendition = data.getRenditionsCapability();
+        isPwcSearchable = data.isPwcSearchableSupported();
+        isPwcUpdatable = data.isPwcUpdatableSupported();
+        supportsGetDescendants = data.isGetDescendantsSupported();
+        supportsGetFolderTree = data.isGetFolderTreeSupported();
+        capabilityOrderBy = data.getOrderByCapability();
+        supportsMultifiling = data.isMultifilingSupported();
+        supportsUnfiling = data.isUnfilingSupported();
+        supportsVersionSpecificFiling = data.isVersionSpecificFilingSupported();
+        creatablePropertyTypes = data.getCreatablePropertyTypes();
+        newTypeSettableAttributes = data.getNewTypeSettableAttributes();
+        setExtensions(data.getExtensions());
+    }
+
     public Boolean isAllVersionsSearchableSupported() {
         return allVersionsSearchable;
     }

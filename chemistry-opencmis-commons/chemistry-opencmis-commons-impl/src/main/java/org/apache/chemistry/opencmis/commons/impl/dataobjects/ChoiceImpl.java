@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
@@ -42,6 +43,10 @@ public class ChoiceImpl<T> implements Choice<T> {
     }
 
     public List<T> getValue() {
+        if (value == null) {
+            value = new ArrayList<T>();
+        }
+
         return value;
     }
 
@@ -50,6 +55,10 @@ public class ChoiceImpl<T> implements Choice<T> {
     }
 
     public List<Choice<T>> getChoice() {
+        if (choice == null) {
+            choice = new ArrayList<Choice<T>>();
+        }
+        
         return choice;
     }
 
