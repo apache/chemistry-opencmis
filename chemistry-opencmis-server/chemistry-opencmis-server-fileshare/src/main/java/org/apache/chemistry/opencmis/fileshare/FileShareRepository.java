@@ -43,6 +43,7 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.BasicPermissions;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -146,10 +147,6 @@ public class FileShareRepository {
     private static final String SHADOW_FOLDER = "cmis.xml";
 
     private static final String USER_UNKNOWN = "<unknown>";
-
-    private static final String CMIS_READ = "cmis:read";
-    private static final String CMIS_WRITE = "cmis:write";
-    private static final String CMIS_ALL = "cmis:all";
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
@@ -264,31 +261,31 @@ public class FileShareRepository {
 
         // permissions
         List<PermissionDefinition> permissions = new ArrayList<PermissionDefinition>();
-        permissions.add(createPermission(CMIS_READ, "Read"));
-        permissions.add(createPermission(CMIS_WRITE, "Write"));
-        permissions.add(createPermission(CMIS_ALL, "All"));
+        permissions.add(createPermission(BasicPermissions.READ, "Read"));
+        permissions.add(createPermission(BasicPermissions.WRITE, "Write"));
+        permissions.add(createPermission(BasicPermissions.ALL, "All"));
         aclCapability.setPermissionDefinitionData(permissions);
 
         // mapping
         List<PermissionMapping> list = new ArrayList<PermissionMapping>();
-        list.add(createMapping(PermissionMapping.CAN_CREATE_DOCUMENT_FOLDER, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_CREATE_FOLDER_FOLDER, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, CMIS_ALL));
-        list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, CMIS_ALL));
-        list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_CHILDREN_FOLDER, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_FOLDER_PARENT_OBJECT, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_PARENTS_FOLDER, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_GET_PROPERTIES_OBJECT, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_MOVE_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, CMIS_READ));
-        list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_UPDATE_PROPERTIES_OBJECT, CMIS_WRITE));
-        list.add(createMapping(PermissionMapping.CAN_VIEW_CONTENT_OBJECT, CMIS_READ));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_DOCUMENT_FOLDER, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_CREATE_FOLDER_FOLDER, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_DELETE_CONTENT_DOCUMENT, BasicPermissions.WRITE));
+        list.add(createMapping(PermissionMapping.CAN_DELETE_OBJECT, BasicPermissions.ALL));
+        list.add(createMapping(PermissionMapping.CAN_DELETE_TREE_FOLDER, BasicPermissions.ALL));
+        list.add(createMapping(PermissionMapping.CAN_GET_ACL_OBJECT, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_ALL_VERSIONS_VERSION_SERIES, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_CHILDREN_FOLDER, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_DESCENDENTS_FOLDER, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_FOLDER_PARENT_OBJECT, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_PARENTS_FOLDER, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_GET_PROPERTIES_OBJECT, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_OBJECT, BasicPermissions.WRITE));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_SOURCE, BasicPermissions.READ));
+        list.add(createMapping(PermissionMapping.CAN_MOVE_TARGET, BasicPermissions.WRITE));
+        list.add(createMapping(PermissionMapping.CAN_SET_CONTENT_DOCUMENT, BasicPermissions.WRITE));
+        list.add(createMapping(PermissionMapping.CAN_UPDATE_PROPERTIES_OBJECT, BasicPermissions.WRITE));
+        list.add(createMapping(PermissionMapping.CAN_VIEW_CONTENT_OBJECT, BasicPermissions.READ));
         Map<String, PermissionMapping> map = new LinkedHashMap<String, PermissionMapping>();
         for (PermissionMapping pm : list) {
             map.put(pm.getKey(), pm);
@@ -1990,10 +1987,10 @@ public class FileShareRepository {
             AccessControlEntryImpl entry = new AccessControlEntryImpl();
             entry.setPrincipal(principal);
             entry.setPermissions(new ArrayList<String>());
-            entry.getPermissions().add(CMIS_READ);
+            entry.getPermissions().add(BasicPermissions.READ);
             if (!ue.getValue().booleanValue() && file.canWrite()) {
-                entry.getPermissions().add(CMIS_WRITE);
-                entry.getPermissions().add(CMIS_ALL);
+                entry.getPermissions().add(BasicPermissions.WRITE);
+                entry.getPermissions().add(BasicPermissions.ALL);
             }
 
             entry.setDirect(true);
