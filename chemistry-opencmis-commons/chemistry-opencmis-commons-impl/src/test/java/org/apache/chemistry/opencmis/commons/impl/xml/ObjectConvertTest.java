@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -56,12 +57,14 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderContainerType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectType;
@@ -123,6 +126,35 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
             assertObjectList(children1, children2);
         }
+    }
+
+    @Test
+    public void testDescendants() throws Exception {
+        // run the test a few times with different values
+        for (int i = 0; i < 5; i++) {
+            ObjectInFolderContainer container = createObjectInFolderContainer(randomInt(7) + 2);
+            assertObjectContainer(container);
+        }
+    }
+
+    private ObjectInFolderContainer createObjectInFolderContainer(int level) {
+        ObjectInFolderContainerImpl result = new ObjectInFolderContainerImpl();
+
+        ObjectInFolderDataImpl dataInFolder = new ObjectInFolderDataImpl(createObjectData(true, CmisVersion.CMIS_1_1,
+                false, false));
+        dataInFolder.setPathSegment(randomString());
+        result.setObject(dataInFolder);
+
+        if (level > 0) {
+            List<ObjectInFolderContainer> children = new ArrayList<ObjectInFolderContainer>();
+            for (int i = 0; i < randomInt(3); i++) {
+                children.add(createObjectInFolderContainer(level - 1));
+            }
+
+            result.setChildren(children);
+        }
+
+        return result;
     }
 
     protected ObjectDataImpl createObjectData(boolean addRelationships, CmisVersion cmisVersion, boolean withChanges,
@@ -396,5 +428,35 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         assertNotNull(result);
         assertDataObjectsEquals("ObjectInFolderList", children, result, null);
+    }
+
+    protected void assertObjectContainer(ObjectInFolderContainer container) throws Exception {
+        assertWsObjectContainer(container);
+        assertJsonObjectContainer(container);
+    }
+
+    protected void assertWsObjectContainer(ObjectInFolderContainer container) {
+        CmisObjectInFolderContainerType ws = WSConverter.convert(container, CmisVersion.CMIS_1_1);
+
+        ObjectInFolderContainer result = WSConverter.convert(ws);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("ObjectContainer", container, result, null);
+    }
+
+    protected void assertJsonObjectContainer(ObjectInFolderContainer container) throws Exception {
+        TypeCache typeCache = null;
+
+        StringWriter sw = new StringWriter();
+
+        JSONConverter.convert(container, typeCache, false).writeJSONString(sw);
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+        @SuppressWarnings("unchecked")
+        ObjectInFolderContainer result = JSONConverter.convertDescendant((Map<String, Object>) json, typeCache);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("ObjectContainer", container, result, null);
     }
 }

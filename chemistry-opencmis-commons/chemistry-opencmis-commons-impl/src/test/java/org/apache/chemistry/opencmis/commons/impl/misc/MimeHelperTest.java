@@ -24,6 +24,8 @@ package org.apache.chemistry.opencmis.commons.impl.misc;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeContentDisposition;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeContentDispositionFilename;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.encodeContentDisposition;
+import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.*;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,4 +84,19 @@ public class MimeHelperTest extends TestCase {
         assertEquals("caf\u00e9.pdf", decodeContentDispositionFilename("bar; filename*=ISO-8859-1''caf%E9.pdf"));
     }
 
+    @Test
+    public void testCharsetFromContentType() {
+        assertEquals("utf-8", getCharsetFromContentType("text/plain;charset=utf-8"));
+        assertEquals("utf-8", getCharsetFromContentType("text/plain;charset=\"utf-8\""));
+        assertEquals("utf-8", getCharsetFromContentType("text/plain  ;  charset    =    \"utf-8\"   "));
+    }
+
+    @Test
+    public void testBoundaryFromMultiPart() throws Exception {
+        byte boundary[] = "thisisaBoundary".getBytes("ISO-8859-1");
+
+        assertNull(getBoundaryFromMultiPart("multipart/form-data"));
+        assertArrayEquals(boundary, getBoundaryFromMultiPart("multipart/form-data;boundary="
+                + new String(boundary, "ISO-8859-1")));
+    }
 }

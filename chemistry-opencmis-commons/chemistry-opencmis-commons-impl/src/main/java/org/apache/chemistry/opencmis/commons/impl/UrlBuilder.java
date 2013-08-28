@@ -89,8 +89,15 @@ public class UrlBuilder {
         if (port > 0) {
             urlPart.append(':').append(port);
         }
-        if (path != null) {
-            urlPart.append(path);
+        if (path != null && path.length() > 0) {
+            if (urlPart.charAt(urlPart.length() - 1) != '/') {
+                urlPart.append('/');
+            }
+            if (path.charAt(0) == '/') {
+                path = path.substring(1);
+            }
+
+            urlPart.append(quoteURIPathComponent(path, true));
         }
     }
 
@@ -98,6 +105,10 @@ public class UrlBuilder {
      * Copy constructor.
      */
     public UrlBuilder(UrlBuilder urlBuilder) {
+        if (urlBuilder == null) {
+            throw new IllegalArgumentException("UrlBuilder must be set");
+        }
+
         urlPart = new StringBuilder(urlBuilder.urlPart);
         queryPart = new StringBuilder(urlBuilder.queryPart);
     }
