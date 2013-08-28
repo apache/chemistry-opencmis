@@ -1599,7 +1599,7 @@ public final class WSConverter {
 
         ObjectDataImpl result = new ObjectDataImpl();
 
-        result.setAcl(convert(object.getAcl(), object.isExactACL()));
+        result.setAcl(convert(object.getAcl(), null));
         result.setAllowableActions(convert(object.getAllowableActions()));
         if (object.getChangeEventInfo() != null) {
             ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
@@ -1838,7 +1838,7 @@ public final class WSConverter {
 
             result.setChangeEventInfo(changeEventInfo);
         }
-        result.setExactACL(object.getAcl() == null ? null : object.getAcl().isExact());
+        result.setExactACL(object.isExactAcl());
         result.setPolicyIds(convert(object.getPolicyIds()));
         result.setProperties(convert(object.getProperties()));
         if (object.getRelationships() != null) {

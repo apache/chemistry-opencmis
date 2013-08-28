@@ -337,7 +337,7 @@ public class RelationshipServiceTest extends AbstractServiceTest {
         // get document object, none
         objectData = fObjSvc.getObject(fRepositoryId, targetId, null, false, IncludeRelationships.NONE, null, false,
                 false, null);
-        assertNull(objectData.getRelationships());
+        assertTrue(objectData.getRelationships().isEmpty());
 
         // Folder
         String folderId = createFolder("folder1", fRootFolderId, BaseTypeId.CMIS_FOLDER.value());

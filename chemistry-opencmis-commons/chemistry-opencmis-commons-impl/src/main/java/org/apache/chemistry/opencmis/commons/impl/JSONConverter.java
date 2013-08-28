@@ -1110,8 +1110,8 @@ public final class JSONConverter {
         // ACL
         if ((object.getAcl() != null) && (object.getAcl().getAces() != null) && propertyMode != PropertyMode.QUERY) {
             result.put(JSON_OBJECT_ACL, convert(object.getAcl()));
-            result.put(JSON_OBJECT_EXACT_ACL, object.isExactAcl());
         }
+        setIfNotNull(JSON_OBJECT_EXACT_ACL, object.isExactAcl(), result);
 
         // policy ids
         if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)
@@ -1819,7 +1819,7 @@ public final class JSONConverter {
 
         ObjectDataImpl result = new ObjectDataImpl();
 
-        result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL)), getBoolean(json, JSON_OBJECT_EXACT_ACL)));
+        result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL)), null));
         result.setAllowableActions(convertAllowableActions(getMap(json.get(JSON_OBJECT_ALLOWABLE_ACTIONS))));
         Map<String, Object> jsonChangeEventInfo = getMap(json.get(JSON_OBJECT_CHANGE_EVENT_INFO));
         if (jsonChangeEventInfo != null) {

@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -86,6 +87,10 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
     }
 
     public List<ObjectData> getRelationships() {
+        if (relationships == null) {
+            relationships = new ArrayList<ObjectData>();
+        }
+
         return relationships;
     }
 
@@ -94,6 +99,10 @@ public class ObjectDataImpl extends AbstractExtensionData implements ObjectData 
     }
 
     public List<RenditionData> getRenditions() {
+        if (renditions == null) {
+            renditions = new ArrayList<RenditionData>();
+        }
+
         return renditions;
     }
 

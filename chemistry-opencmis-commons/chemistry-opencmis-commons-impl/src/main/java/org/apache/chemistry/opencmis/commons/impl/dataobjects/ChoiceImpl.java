@@ -58,11 +58,16 @@ public class ChoiceImpl<T> implements Choice<T> {
         if (choice == null) {
             choice = new ArrayList<Choice<T>>();
         }
-        
+
         return choice;
     }
 
     public void setChoice(List<Choice<T>> choice) {
         this.choice = choice;
+    }
+
+    @Override
+    public String toString() {
+        return "Choice [displayName=" + displayName + ", value=" + value + ", choice=" + choice + "]";
     }
 }

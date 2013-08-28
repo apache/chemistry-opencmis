@@ -18,21 +18,31 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.xml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.definitions.Choice;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -46,6 +56,7 @@ import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
@@ -60,7 +71,11 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeContainer;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionListType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.junit.Test;
@@ -200,6 +215,84 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         }
     }
 
+    @Test
+    public void testTypeDefinitionList() throws Exception {
+        // run the test a few times with different values
+        for (int i = 0; i < 5; i++) {
+            List<TypeDefinition> list = new ArrayList<TypeDefinition>();
+
+            for (int j = 0; j < randomInt(5); j++) {
+                DocumentTypeDefinitionImpl typeDef = new DocumentTypeDefinitionImpl();
+                fillTypeDefintion(typeDef, BaseTypeId.CMIS_DOCUMENT);
+                typeDef.setIsVersionable(randomBoolean());
+                typeDef.setContentStreamAllowed(randomEnum(ContentStreamAllowed.class));
+
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.BOOLEAN));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.DATETIME));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.DECIMAL));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.HTML));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.ID));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.INTEGER));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.STRING));
+                typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.URI));
+
+                list.add(typeDef);
+            }
+
+            // type definition list
+            TypeDefinitionListImpl typeDefList = new TypeDefinitionListImpl();
+            typeDefList.setList(list);
+            if (randomBoolean()) {
+                typeDefList.setNumItems(BigInteger.valueOf(list.size()));
+                typeDefList.setHasMoreItems(false);
+            } else {
+                typeDefList.setNumItems(BigInteger.valueOf(list.size() + 1 + randomInt(99)));
+                typeDefList.setHasMoreItems(true);
+            }
+
+            assertTypeDefinitionList(typeDefList);
+        }
+    }
+
+    @Test
+    public void testTypeDefinitionContainer() throws Exception {
+        // run the test a few times with different values
+        for (int i = 0; i < 5; i++) {
+            TypeDefinitionContainer typeDefContainter = createTypeDefinitionContainer(randomInt(7) + 2);
+            assertTypeDefinitionContainer(typeDefContainter);
+        }
+    }
+
+    private TypeDefinitionContainer createTypeDefinitionContainer(int level) {
+        DocumentTypeDefinitionImpl typeDef = new DocumentTypeDefinitionImpl();
+        fillTypeDefintion(typeDef, BaseTypeId.CMIS_DOCUMENT);
+        typeDef.setIsVersionable(randomBoolean());
+        typeDef.setContentStreamAllowed(randomEnum(ContentStreamAllowed.class));
+
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.BOOLEAN));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.DATETIME));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.DECIMAL));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.HTML));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.ID));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.INTEGER));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.STRING));
+        typeDef.addPropertyDefinition(createPropertyDefintion(PropertyType.URI));
+
+        TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl();
+        result.setTypeDefinition(typeDef);
+
+        if (level > 0) {
+            List<TypeDefinitionContainer> children = new ArrayList<TypeDefinitionContainer>();
+            for (int i = 0; i < randomInt(3); i++) {
+                children.add(createTypeDefinitionContainer(level - 1));
+            }
+
+            result.setChildren(children);
+        }
+
+        return result;
+    }
+
     protected void fillTypeDefintion(AbstractTypeDefinition typeDef, BaseTypeId baseTypeId) {
         typeDef.setBaseTypeId(baseTypeId);
         typeDef.setDescription(randomString());
@@ -226,20 +319,25 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
 
     protected AbstractPropertyDefinition<?> createPropertyDefintion(PropertyType propertyType) {
         AbstractPropertyDefinition<?> result = null;
+        Cardinality cardinality = randomEnum(Cardinality.class);
 
         switch (propertyType) {
         case BOOLEAN:
             result = new PropertyBooleanDefinitionImpl();
             ((PropertyBooleanDefinitionImpl) result).setDefaultValue(Arrays.asList(randomBoolean()));
+            ((PropertyBooleanDefinitionImpl) result).setChoices(createChoiceList(Boolean.class, cardinality));
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
             ((PropertyDateTimeDefinitionImpl) result).setDefaultValue(Arrays.asList(randomDateTime()));
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setChoices(createChoiceList(GregorianCalendar.class, cardinality));
             ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(randomEnum(DateTimeResolution.class));
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
             ((PropertyDecimalDefinitionImpl) result).setDefaultValue(Arrays.asList(randomDecimal()));
+            ((PropertyDecimalDefinitionImpl) result).setChoices(createChoiceList(BigDecimal.class, cardinality));
             ((PropertyDecimalDefinitionImpl) result).setMaxValue(randomDecimal());
             ((PropertyDecimalDefinitionImpl) result).setMinValue(randomDecimal());
             ((PropertyDecimalDefinitionImpl) result).setPrecision(randomEnum(DecimalPrecision.class));
@@ -247,25 +345,30 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         case HTML:
             result = new PropertyHtmlDefinitionImpl();
             ((PropertyHtmlDefinitionImpl) result).setDefaultValue(Arrays.asList(randomString()));
+            ((PropertyHtmlDefinitionImpl) result).setChoices(createChoiceList(String.class, cardinality));
             break;
         case ID:
             result = new PropertyIdDefinitionImpl();
             ((PropertyIdDefinitionImpl) result).setDefaultValue(Arrays.asList(randomString()));
+            ((PropertyIdDefinitionImpl) result).setChoices(createChoiceList(String.class, cardinality));
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
             ((PropertyIntegerDefinitionImpl) result).setDefaultValue(Arrays.asList(randomInteger()));
+            ((PropertyIntegerDefinitionImpl) result).setChoices(createChoiceList(BigInteger.class, cardinality));
             ((PropertyIntegerDefinitionImpl) result).setMaxValue(randomInteger());
             ((PropertyIntegerDefinitionImpl) result).setMinValue(randomInteger());
             break;
         case STRING:
             result = new PropertyStringDefinitionImpl();
             ((PropertyStringDefinitionImpl) result).setDefaultValue(Arrays.asList(randomString()));
+            ((PropertyStringDefinitionImpl) result).setChoices(createChoiceList(String.class, cardinality));
             ((PropertyStringDefinitionImpl) result).setMaxLength(randomInteger());
             break;
         case URI:
             result = new PropertyUriDefinitionImpl();
             ((PropertyUriDefinitionImpl) result).setDefaultValue(Arrays.asList(randomUri()));
+            ((PropertyUriDefinitionImpl) result).setChoices(createChoiceList(String.class, cardinality));
             break;
         default:
             return null;
@@ -277,7 +380,7 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         result.setPropertyType(propertyType);
         result.setLocalName(randomString());
         result.setLocalNamespace(randomUri());
-        result.setCardinality(randomEnum(Cardinality.class));
+        result.setCardinality(cardinality);
         result.setUpdatability(randomEnum(Updatability.class));
         result.setIsQueryable(randomBoolean());
         result.setQueryName(randomString());
@@ -287,6 +390,42 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
 
         return result;
     }
+
+    @SuppressWarnings("unchecked")
+    protected <T> List<Choice<T>> createChoiceList(Class<T> clazz, Cardinality cardinality) {
+        List<Choice<T>> result = new ArrayList<Choice<T>>();
+
+        for (int i = 0; i < randomInt(10); i++) {
+            ChoiceImpl<T> choice = new ChoiceImpl<T>();
+            choice.setDisplayName(randomString());
+
+            List<T> values = new ArrayList<T>();
+            choice.setValue(values);
+
+            int valueCount = (cardinality == Cardinality.SINGLE ? 1 : randomInt(5));
+            for (int j = 0; j < valueCount; j++) {
+                if (clazz == Boolean.class) {
+                    values.add((T) randomBoolean());
+                } else if (clazz == String.class) {
+                    values.add((T) randomUri());
+                } else if (clazz == BigInteger.class) {
+                    values.add((T) randomInteger());
+                } else if (clazz == BigDecimal.class) {
+                    values.add((T) randomDecimal());
+                } else if (clazz == GregorianCalendar.class) {
+                    values.add((T) randomDateTime());
+                } else {
+                    assert false;
+                }
+            }
+
+            result.add(choice);
+        }
+
+        return result;
+    }
+
+    // --- asserts ---
 
     protected void assertTypeDefinition10(TypeDefinition typeDef, boolean validate) throws Exception {
         assertXmlTypeDefinition10(typeDef, validate);
@@ -376,5 +515,68 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
         assertNotNull(result);
         assertDataObjectsEquals("TypeDefinition", typeDef, result, null);
         assertNull(result.getExtensions());
+    }
+
+    protected void assertTypeDefinitionList(TypeDefinitionList typeDefList) throws Exception {
+        assertWsTypeDefinitionList(typeDefList);
+        assertJsonTypeDefinitionList(typeDefList);
+    }
+
+    protected void assertWsTypeDefinitionList(TypeDefinitionList typeDefList) throws Exception {
+        CmisTypeDefinitionListType ws = WSConverter.convert(typeDefList);
+
+        TypeDefinitionList result = WSConverter.convert(ws);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("TypeDefinitionList", typeDefList, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertJsonTypeDefinitionList(TypeDefinitionList typeDefList) throws Exception {
+        StringWriter sw = new StringWriter();
+
+        JSONConverter.convert(typeDefList).writeJSONString(sw);
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+        @SuppressWarnings("unchecked")
+        TypeDefinitionList result = JSONConverter.convertTypeChildren((Map<String, Object>) json);
+
+        assertNotNull(result);
+        assertDataObjectsEquals("TypeDefinitionList", typeDefList, result, null);
+        assertNull(result.getExtensions());
+    }
+
+    protected void assertTypeDefinitionContainer(TypeDefinitionContainer typeDefContainer) throws Exception {
+        assertWsTypeDefinitionContainer(typeDefContainer);
+        assertJsonTypeDefinitionContainer(typeDefContainer);
+    }
+
+    protected void assertWsTypeDefinitionContainer(TypeDefinitionContainer typeDefContainer) throws Exception {
+        List<CmisTypeContainer> target = new ArrayList<CmisTypeContainer>();
+        WSConverter.convertTypeContainerList(Collections.singletonList(typeDefContainer), target);
+
+        assertEquals(1, target.size());
+
+        List<TypeDefinitionContainer> result = WSConverter.convertTypeContainerList(target);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertDataObjectsEquals("TypeDefinitionContainer", typeDefContainer, result.get(0), null);
+    }
+
+    protected void assertJsonTypeDefinitionContainer(TypeDefinitionContainer typeDefContainer) throws Exception {
+        StringWriter sw = new StringWriter();
+
+        JSONConverter.convert(typeDefContainer).writeJSONString(sw);
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+
+        List<TypeDefinitionContainer> result = JSONConverter.convertTypeDescendants(Collections.singletonList(json));
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertDataObjectsEquals("TypeDefinitionContainer", typeDefContainer, result.get(0), null);
     }
 }
