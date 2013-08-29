@@ -103,15 +103,6 @@ public class UpdateSmokeTest extends AbstractSessionTest {
         f = createResult(FAILURE, "Document name doesn't match updated value!");
         addResult(assertEquals(DOC_NAME2, doc2.getName(), null, f));
 
-        // update nothing
-        try {
-            properties = new HashMap<String, Object>();
-            doc2.updateProperties(properties, false);
-        } catch (Exception e) {
-            addResult(createResult(WARNING,
-                    "updateProperties without property changes returned an error: " + e.getMessage(), e, false));
-        }
-
         // delete
         if (!workDoc.getId().equals(doc2.getId())) {
             deleteObject(doc2);
