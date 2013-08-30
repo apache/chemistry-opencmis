@@ -83,7 +83,7 @@ public class MultipartParser {
 
     private Map<String, String[]> fields;
     private Map<String, byte[][]> rawFields;
-    private String charset = "ISO-8859-1";
+    private String charset = IOUtils.ISO_8859_1;
 
     public MultipartParser(HttpServletRequest request, ThresholdOutputStreamFactory streamFactory) throws IOException {
         this.request = request;
@@ -455,7 +455,7 @@ public class MultipartParser {
             byte[] rawValue = readBodyBytes();
 
             if (CHARSET_FIELD.equalsIgnoreCase(name)) {
-                charset = new String(rawValue, "ISO-8859-1");
+                charset = new String(rawValue, IOUtils.ISO_8859_1);
                 return;
             }
 

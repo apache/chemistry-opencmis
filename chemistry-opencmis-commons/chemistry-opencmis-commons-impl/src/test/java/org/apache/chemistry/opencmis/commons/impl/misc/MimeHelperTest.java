@@ -33,6 +33,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.junit.Test;
 
 public class MimeHelperTest extends TestCase {
@@ -93,10 +94,10 @@ public class MimeHelperTest extends TestCase {
 
     @Test
     public void testBoundaryFromMultiPart() throws Exception {
-        byte boundary[] = "thisisaBoundary".getBytes("ISO-8859-1");
+        byte boundary[] = "thisisaBoundary".getBytes(IOUtils.ISO_8859_1);
 
         assertNull(getBoundaryFromMultiPart("multipart/form-data"));
         assertArrayEquals(boundary, getBoundaryFromMultiPart("multipart/form-data;boundary="
-                + new String(boundary, "ISO-8859-1")));
+                + new String(boundary, IOUtils.ISO_8859_1)));
     }
 }
