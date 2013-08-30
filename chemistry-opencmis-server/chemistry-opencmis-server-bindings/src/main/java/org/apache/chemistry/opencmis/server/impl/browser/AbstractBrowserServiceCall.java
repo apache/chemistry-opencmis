@@ -128,7 +128,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             response.setContentLength(0);
         } else {
             response.setContentType(JSON_MIME_TYPE);
-            response.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding(IOUtils.UTF8);
 
             String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
             if (callback != null) {

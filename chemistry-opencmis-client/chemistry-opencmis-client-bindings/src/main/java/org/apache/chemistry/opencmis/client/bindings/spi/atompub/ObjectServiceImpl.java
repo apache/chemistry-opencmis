@@ -59,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -808,13 +809,8 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         // send content
         Response resp = put(url, contentStream.getMimeType(), headers, new Output() {
-            public void write(OutputStream out) throws Exception {
-                int b;
-                byte[] buffer = new byte[4096];
-
-                while ((b = stream.read(buffer)) > -1) {
-                    out.write(buffer, 0, b);
-                }
+            public void write(OutputStream out) throws IOException {
+                IOUtils.copy(stream, out);
             }
         });
 

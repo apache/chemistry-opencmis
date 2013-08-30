@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.junit.Test;
@@ -226,12 +227,7 @@ public class AtomEntryParserTest {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        byte[] buffer = new byte[4096];
-        int b;
-
-        while ((b = contentStream.getStream().read(buffer)) > -1) {
-            baos.write(buffer, 0, b);
-        }
+        IOUtils.copy(contentStream.getStream(), baos);
 
         return baos.toByteArray();
     }

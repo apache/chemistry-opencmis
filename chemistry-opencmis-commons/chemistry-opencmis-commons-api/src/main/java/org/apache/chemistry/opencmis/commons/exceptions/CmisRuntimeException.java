@@ -30,34 +30,97 @@ public class CmisRuntimeException extends CmisBaseException {
     private static final long serialVersionUID = 1L;
     public static final String EXCEPTION_NAME = "runtime";
 
+    /**
+     * Default constructor.
+     */
     public CmisRuntimeException() {
         super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param cause
+     *            the cause
+     */
     public CmisRuntimeException(String message, BigInteger code, Throwable cause) {
         super(message, code, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     */
     public CmisRuntimeException(String message, String errorContent) {
         super(message, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     */
     public CmisRuntimeException(String message, BigInteger code) {
         super(message, code);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     */
     public CmisRuntimeException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param cause
+     *            the cause
+     */
     public CmisRuntimeException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            the cause
+     */
     public CmisRuntimeException(String message, Throwable cause) {
         super(message, BigInteger.ZERO, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     */
     public CmisRuntimeException(String message) {
         super(message, BigInteger.ZERO);
     }

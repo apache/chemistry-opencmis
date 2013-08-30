@@ -168,7 +168,7 @@ public class ObjGenApp {
                     + BINDING_ATOM + " or " + BINDING_BROWSER);
             return;
         }
-        
+
         String kind = options.valueOf(fContentKindStr);
         if (null == kind) {
             if (options.valueOf(fContentSize) > 0) {
@@ -191,7 +191,7 @@ public class ObjGenApp {
         }
 
         initClientBindings();
-        
+
         if (null == options.valueOf(fCmd)) {
             System.out.println("No command given.");
             usage(parser);
@@ -246,8 +246,8 @@ public class ObjGenApp {
             String documentType, String folderType, int contentSizeInKB, String rootFolderId, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator.prepareForCreateTree(
-                binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType,
-                contentSizeInKB, rootFolderId, fContentKind, doCleanup);
+                binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType, contentSizeInKB,
+                rootFolderId, fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         runner.doCreateTree();
 
@@ -270,8 +270,8 @@ public class ObjGenApp {
 
         // Step 2: fill each root folder with an object tree
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateTreeMT(binding, repoId, docsPerFolder, foldersPerFolders, depth,
-                        documentType, folderType, contentSizeInKB, folderIds, fContentKind, doCleanup);
+                .prepareForCreateTreeMT(binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType,
+                        folderType, contentSizeInKB, folderIds, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Filling repository succeeded.");
@@ -356,8 +356,8 @@ public class ObjGenApp {
             int docCount, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
-                .prepareForCreateDocument(binding, repoId, documentType, contentSizeInKB, rootFolderId,
-                        docCount, fContentKind, doCleanup);
+                .prepareForCreateDocument(binding, repoId, documentType, contentSizeInKB, rootFolderId, docCount,
+                        fContentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         String[] ids = runner.doCreateDocument();
         System.out.println();
@@ -380,8 +380,8 @@ public class ObjGenApp {
             String rootFolderId, int docCount, boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateDocumentMT(noThreads, binding, repoId, documentType, contentSizeInKB,
-                        rootFolderId, docCount, fContentKind, doCleanup);
+                .prepareForCreateDocumentMT(noThreads, binding, repoId, documentType, contentSizeInKB, rootFolderId,
+                        docCount, fContentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Document creation succeeded. All threads terminated.");
@@ -412,8 +412,7 @@ public class ObjGenApp {
             boolean doCleanup) {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
-                .prepareForCreateFolderMT(noThreads, binding, repoId, folderType, rootFolderId, noFolders,
-                        doCleanup);
+                .prepareForCreateFolderMT(noThreads, binding, repoId, folderType, rootFolderId, noFolders, doCleanup);
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Folder creation succeeded.");
     }
@@ -479,11 +478,9 @@ public class ObjGenApp {
                 // write to a file:
                 is = contentStream.getStream();
                 os = new FileOutputStream(fileName);
-                byte[] b = new byte[BUFSIZE];
-                int read;
-                while ((read = is.read(b)) != -1) {
-                    os.write(b, 0, read);
-                }
+
+                IOUtils.copy(is, os, BUFSIZE);
+
                 is.close();
                 is = null;
                 os.close();

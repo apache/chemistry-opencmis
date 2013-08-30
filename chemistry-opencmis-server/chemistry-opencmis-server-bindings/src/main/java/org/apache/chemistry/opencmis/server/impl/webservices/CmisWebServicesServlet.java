@@ -18,10 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -109,21 +107,10 @@ public class CmisWebServicesServlet extends WSServlet {
             throw new ServletException("Cannot find file '" + path + "'!");
         }
 
-        StringBuilder result = new StringBuilder();
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.append(line);
-            }
-
-            return result.toString();
+            return IOUtils.readAllLines(stream);
         } catch (IOException e) {
             throw new ServletException("Cannot read file '" + path + "': " + e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
     }
 
@@ -171,7 +158,7 @@ public class CmisWebServicesServlet extends WSServlet {
             throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("text/xml");
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(IOUtils.UTF8);
 
         String respDoc = doc;
         respDoc = BASE_PATTERN.matcher(respDoc).replaceAll(baseUrl.toString());
@@ -189,7 +176,7 @@ public class CmisWebServicesServlet extends WSServlet {
             throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(IOUtils.UTF8);
 
         String urlEscaped = StringEscapeUtils.escapeHtml((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("wsdl")
                 .toString());
@@ -213,7 +200,7 @@ public class CmisWebServicesServlet extends WSServlet {
             throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.setContentType("text/xml");
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(IOUtils.UTF8);
 
         PrintWriter pw = response.getWriter();
 

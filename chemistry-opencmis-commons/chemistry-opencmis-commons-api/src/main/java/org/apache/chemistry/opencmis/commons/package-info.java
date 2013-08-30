@@ -16,24 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Contains interfaces, classes, exceptions, and constants shared by the client and server implementations.
+ */
 package org.apache.chemistry.opencmis.commons;
 
-/**
- * Secondary type ids that are defined in the CMIS specification.
- * 
- * @cmis 1.1
- */
-public final class SecondaryTypeIds {
-
-    private SecondaryTypeIds() {
-    }
-
-    /** Repository managed retention type. */
-    public static final String REPOSITORY_MANAGED_RETENTION = "cmis:rm_repMgtRetention";
-    /** Client managed retention type. */
-    public static final String CLIENT_MANAGED_RETENTION = "cmis:rm_clientMgtRetention";
-    /** Client managed retention type with destruction date. */
-    public static final String DESTRUCTION_CLIENT_MANAGED_RETENTION = "cmis:rm_destructionRetention";
-    /** Legal hold type. */
-    public static final String HOLD = "cmis:rm_hold";
-}

@@ -90,10 +90,7 @@ public class Response {
                         String encoding = getContentEncoding();
                         if (encoding != null) {
                             if (encoding.toLowerCase().trim().equals("gzip")) {
-                                try {
-                                    errorStream = new GZIPInputStream(errorStream, 4096);
-                                } catch (IOException e) {
-                                }
+                                errorStream = new GZIPInputStream(errorStream, 4096);
                             } else if (encoding.toLowerCase().trim().equals("deflate")) {
                                 errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
                             }

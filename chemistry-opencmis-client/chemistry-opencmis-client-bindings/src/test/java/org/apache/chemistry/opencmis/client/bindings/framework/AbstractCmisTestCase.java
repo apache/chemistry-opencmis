@@ -60,6 +60,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.slf4j.Logger;
@@ -456,8 +457,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
         assertNotNull(folderObject.getProperties().getProperties());
         assertTrue(folderObject.getProperties().getProperties().get(PropertyIds.PATH) instanceof PropertyString);
 
-        PropertyString pathProperty = (PropertyString) folderObject.getProperties().getProperties().get(
-                PropertyIds.PATH);
+        PropertyString pathProperty = (PropertyString) folderObject.getProperties().getProperties()
+                .get(PropertyIds.PATH);
 
         assertNotNull(pathProperty.getValues());
         assertEquals(1, pathProperty.getValues().size());
@@ -815,11 +816,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
         InputStream stream = contentStream.getStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        byte[] buffer = new byte[4096];
-        int b;
-        while ((b = stream.read(buffer)) > -1) {
-            baos.write(buffer, 0, b);
-        }
+        IOUtils.copy(stream, baos);
 
         return baos.toByteArray();
     }
@@ -920,16 +917,16 @@ public abstract class AbstractCmisTestCase extends TestCase {
 
         assertEquals("PropertyDefinition " + id + " id:", expected.getId(), actual.getId());
         assertEquals("PropertyDefinition " + id + " local name:", expected.getLocalName(), actual.getLocalName());
-        assertEquals("PropertyDefinition " + id + " local namespace:", expected.getLocalNamespace(), actual
-                .getLocalNamespace());
+        assertEquals("PropertyDefinition " + id + " local namespace:", expected.getLocalNamespace(),
+                actual.getLocalNamespace());
         assertEquals("PropertyDefinition " + id + " query name:", expected.getQueryName(), actual.getQueryName());
         assertEquals("PropertyDefinition " + id + " display name:", expected.getDisplayName(), actual.getDisplayName());
         assertEquals("PropertyDefinition " + id + " description:", expected.getDescription(), actual.getDescription());
-        assertEquals("PropertyDefinition " + id + " property type:", expected.getPropertyType(), actual
-                .getPropertyType());
+        assertEquals("PropertyDefinition " + id + " property type:", expected.getPropertyType(),
+                actual.getPropertyType());
         assertEquals("PropertyDefinition " + id + " cardinality:", expected.getCardinality(), actual.getCardinality());
-        assertEquals("PropertyDefinition " + id + " updatability:", expected.getUpdatability(), actual
-                .getUpdatability());
+        assertEquals("PropertyDefinition " + id + " updatability:", expected.getUpdatability(),
+                actual.getUpdatability());
     }
 
     protected void assertEquals(Properties expected, Properties actual) {
@@ -1083,8 +1080,8 @@ public abstract class AbstractCmisTestCase extends TestCase {
         assertNotNull(allowableActions.getAllowableActions());
         assertNotNull(action);
 
-        assertEquals("Allowable action \"" + action + "\":", expected, allowableActions.getAllowableActions().contains(
-                action));
+        assertEquals("Allowable action \"" + action + "\":", expected,
+                allowableActions.getAllowableActions().contains(action));
     }
 
     protected void assertEquals(Acl expected, Acl actual) {

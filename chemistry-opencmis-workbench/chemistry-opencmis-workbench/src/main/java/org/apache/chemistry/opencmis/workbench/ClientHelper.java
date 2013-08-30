@@ -34,7 +34,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -343,14 +342,8 @@ public final class ClientHelper {
     private static void storeStream(InputStream in, File file) throws IOException {
         OutputStream out = null;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int b;
-            while ((b = in.read(buffer)) > -1) {
-                out.write(buffer, 0, b);
-            }
-
+            out = new FileOutputStream(file);
+            IOUtils.copy(in, out, BUFFER_SIZE);
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -700,7 +693,7 @@ public final class ClientHelper {
             engine.put("session", model.getClientSession().getSession());
             engine.put("binding", model.getClientSession().getSession().getBinding());
             engine.put("out", new PrintWriter(out));
-            engine.eval(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            engine.eval(new InputStreamReader(new FileInputStream(file), IOUtils.UTF8));
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
         } finally {

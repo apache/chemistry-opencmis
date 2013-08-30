@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -101,7 +102,7 @@ public final class TypeUtils {
             throw new IllegalArgumentException("Output stream must be set!");
         }
 
-        Writer writer = new BufferedWriter(new OutputStreamWriter(stream, "UTF-8"));
+        Writer writer = new BufferedWriter(new OutputStreamWriter(stream, IOUtils.UTF8));
         JSONConverter.convert(type).writeJSONString(writer);
         writer.flush();
     }
@@ -140,7 +141,7 @@ public final class TypeUtils {
         }
 
         JSONParser parser = new JSONParser();
-        Object json = parser.parse(new InputStreamReader(stream, "UTF-8"));
+        Object json = parser.parse(new InputStreamReader(stream, IOUtils.UTF8));
 
         if (!(json instanceof Map)) {
             throw new CmisRuntimeException("Invalid stream! Not a type definition!");

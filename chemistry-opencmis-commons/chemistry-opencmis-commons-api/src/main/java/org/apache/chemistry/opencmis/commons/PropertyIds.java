@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.commons;
 
 /**
- * Collection of CMIS property ids.
+ * CMIS property id constants.
  */
 public final class PropertyIds {
 
@@ -27,87 +27,252 @@ public final class PropertyIds {
     }
 
     // ---- base ----
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:name}: name of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String NAME = "cmis:name";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:objectId}: id of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String OBJECT_ID = "cmis:objectId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:objectTypeId}: id of primary type of the
+     * object.
+     * 
+     * @cmis 1.0
+     */
     public static final String OBJECT_TYPE_ID = "cmis:objectTypeId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:baseTypeId}: id of the base type of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String BASE_TYPE_ID = "cmis:baseTypeId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:createdBy}: creator of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String CREATED_BY = "cmis:createdBy";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:creationDate}: creation date.
+     * 
+     * @cmis 1.0
+     */
     public static final String CREATION_DATE = "cmis:creationDate";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:lastModifiedBy}: last modifier of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String LAST_MODIFIED_BY = "cmis:lastModifiedBy";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:lastModificationDate}: last modification date.
+     * 
+     * @cmis 1.0
+     */
     public static final String LAST_MODIFICATION_DATE = "cmis:lastModificationDate";
-    /** @cmis 1.0 */
+    /**
+     * CMIS property {@code cmis:changeToken}: change token of the object.
+     * 
+     * @cmis 1.0
+     */
     public static final String CHANGE_TOKEN = "cmis:changeToken";
-    /** @cmis 1.1 */
+    /**
+     * CMIS property {@code cmis:description}: description of the object.
+     * 
+     * @cmis 1.1
+     */
     public static final String DESCRIPTION = "cmis:description";
-    /** @cmis 1.1 */
+    /**
+     * CMIS property {@code cmis:secondaryObjectTypeIds} (multivalue): list of
+     * ids of the secondary types of the object.
+     * 
+     * @cmis 1.1
+     */
     public static final String SECONDARY_OBJECT_TYPE_IDS = "cmis:secondaryObjectTypeIds";
 
     // ---- document ----
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:isImmutable}: flag the indicates if
+     * the document is immutable.
+     * 
+     * @cmis 1.0
+     */
     public static final String IS_IMMUTABLE = "cmis:isImmutable";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:isLatestVersion}: flag the indicates
+     * if the document is the latest version.
+     * 
+     * @cmis 1.0
+     */
     public static final String IS_LATEST_VERSION = "cmis:isLatestVersion";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:isMajorVersion}: flag the indicates if
+     * the document is a major version.
+     * 
+     * @cmis 1.0
+     */
     public static final String IS_MAJOR_VERSION = "cmis:isMajorVersion";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:isLatestMajorVersion}: flag the
+     * indicates if the document is the latest major version.
+     * 
+     * @cmis 1.0
+     */
     public static final String IS_LATEST_MAJOR_VERSION = "cmis:isLatestMajorVersion";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:versionLabel}: version label of the
+     * document.
+     * 
+     * @cmis 1.0
+     */
     public static final String VERSION_LABEL = "cmis:versionLabel";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:versionSeriesId}: id of the version
+     * series.
+     * 
+     * @cmis 1.0
+     */
     public static final String VERSION_SERIES_ID = "cmis:versionSeriesId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:isVersionSeriesCheckedOut}: flag the
+     * indicates if the document is checked out.
+     * 
+     * @cmis 1.0
+     */
     public static final String IS_VERSION_SERIES_CHECKED_OUT = "cmis:isVersionSeriesCheckedOut";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:versionSeriesCheckedOutBy}: user who
+     * checked out the document, if the document is checked out.
+     * 
+     * @cmis 1.0
+     */
     public static final String VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:versionSeriesCheckedOutId}: id of the
+     * PWC, if the document is checked out.
+     * 
+     * @cmis 1.0
+     */
     public static final String VERSION_SERIES_CHECKED_OUT_ID = "cmis:versionSeriesCheckedOutId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:checkinComment}: check-in comment for
+     * the document version.
+     * 
+     * @cmis 1.0
+     */
     public static final String CHECKIN_COMMENT = "cmis:checkinComment";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:contentStreamLength}: length of the
+     * content stream, if the document has content.
+     * 
+     * @cmis 1.0
+     */
     public static final String CONTENT_STREAM_LENGTH = "cmis:contentStreamLength";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:contentStreamMimeType}: MIME type of
+     * the content stream, if the document has content.
+     * 
+     * @cmis 1.0
+     */
     public static final String CONTENT_STREAM_MIME_TYPE = "cmis:contentStreamMimeType";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:contentStreamFileName}: file name, if
+     * the document has content.
+     * 
+     * @cmis 1.0
+     */
     public static final String CONTENT_STREAM_FILE_NAME = "cmis:contentStreamFileName";
-    /** @cmis 1.0 */
+    /**
+     * CMIS document property {@code cmis:contentStreamId}: content stream id.
+     * 
+     * @cmis 1.0
+     */
     public static final String CONTENT_STREAM_ID = "cmis:contentStreamId";
-    /** @cmis 1.1 */
+    /**
+     * CMIS document property {@code cmis:isPrivateWorkingCopy}: flag the
+     * indicates if the document is a PWC.
+     * 
+     * @cmis 1.1
+     */
     public static final String IS_PRIVATE_WORKING_COPY = "cmis:isPrivateWorkingCopy";
 
     // ---- folder ----
-    /** @cmis 1.0 */
+    /**
+     * CMIS folder property {@code cmis:parentId}: id of the parent folder.
+     * 
+     * @cmis 1.0
+     */
     public static final String PARENT_ID = "cmis:parentId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS folder property {@code cmis:allowedChildObjectTypeIds} (multivalue):
+     * ids of the types that can be filed in the folder.
+     * 
+     * @cmis 1.0
+     */
     public static final String ALLOWED_CHILD_OBJECT_TYPE_IDS = "cmis:allowedChildObjectTypeIds";
-    /** @cmis 1.0 */
+    /**
+     * CMIS folder property {@code cmis:path}: folder path.
+     * 
+     * @cmis 1.0
+     */
     public static final String PATH = "cmis:path";
 
     // ---- relationship ----
-    /** @cmis 1.0 */
+    /**
+     * CMIS relationship property {@code cmis:sourceId}: id of the source
+     * object.
+     * 
+     * @cmis 1.0
+     */
     public static final String SOURCE_ID = "cmis:sourceId";
-    /** @cmis 1.0 */
+    /**
+     * CMIS relationship property {@code cmis:targetId}: id of the target
+     * object.
+     * 
+     * @cmis 1.0
+     */
     public static final String TARGET_ID = "cmis:targetId";
 
     // ---- policy ----
-    /** @cmis 1.0 */
+    /**
+     * CMIS policy property {@code cmis:policyText}: policy text.
+     * 
+     * @cmis 1.0
+     */
     public static final String POLICY_TEXT = "cmis:policyText";
 
     // ---- retention ---
-    /** @cmis 1.1 */
+    /**
+     * CMIS retention property {@code cmis:rm_expirationDate}: expiration date.
+     * 
+     * @cmis 1.1
+     */
     public static final String EXPIRATION_DATE = "cmis:rm_expirationDate";
-    /** @cmis 1.1 */
+    /**
+     * CMIS retention property {@code cmis:rm_startOfRetention}: start date.
+     * 
+     * @cmis 1.1
+     */
     public static final String START_OF_RETENTION = "cmis:rm_startOfRetention";
-    /** @cmis 1.1 */
+    /**
+     * CMIS retention property {@code cmis:rm_destructionDate}: destruction
+     * date.
+     * 
+     * @cmis 1.1
+     */
     public static final String DESTRUCTION_DATE = "cmis:rm_destructionDate";
-    /** @cmis 1.1 */
+    /**
+     * CMIS retention property {@code cmis:rm_holdIds} (multivalue): ids of the
+     * holds that are applied.
+     * 
+     * @cmis 1.1
+     */
     public static final String HOLD_IDS = "cmis:rm_holdIds";
 
 }

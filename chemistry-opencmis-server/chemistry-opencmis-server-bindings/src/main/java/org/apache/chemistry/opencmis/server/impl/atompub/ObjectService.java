@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -48,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -537,17 +536,14 @@ public class ObjectService {
             }
 
             // send content
-            InputStream in = new BufferedInputStream(content.getStream(), BUFFER_SIZE);
-            OutputStream out = new BufferedOutputStream(response.getOutputStream());
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int b;
-            while ((b = in.read(buffer)) > -1) {
-                out.write(buffer, 0, b);
+            InputStream in = content.getStream();
+            OutputStream out = response.getOutputStream();
+            try {
+                IOUtils.copy(in, out, BUFFER_SIZE);
+                out.flush();
+            } finally {
+                in.close();
             }
-
-            in.close();
-            out.flush();
         }
     }
 

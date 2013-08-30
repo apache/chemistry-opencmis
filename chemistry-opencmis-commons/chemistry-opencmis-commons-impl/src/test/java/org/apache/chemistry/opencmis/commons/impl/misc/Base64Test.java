@@ -50,11 +50,7 @@ public class Base64Test {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        int b;
-        byte[] buffer = new byte[4096];
-        while ((b = base64stream.read(buffer)) > -1) {
-            output.write(buffer, 0, b);
-        }
+        IOUtils.copy(base64stream, output);
 
         base64stream.close();
 

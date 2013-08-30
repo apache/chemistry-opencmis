@@ -83,7 +83,7 @@ public final class XMLUtils {
     public static XMLStreamWriter createWriter(OutputStream out) throws XMLStreamException {
         assert out != null;
 
-        return XML_OUTPUT_FACTORY.createXMLStreamWriter(out, "UTF-8");
+        return XML_OUTPUT_FACTORY.createXMLStreamWriter(out, IOUtils.UTF8);
     }
 
     /**

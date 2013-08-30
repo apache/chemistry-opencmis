@@ -18,16 +18,26 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.misc;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.junit.Test;
 
@@ -48,6 +58,37 @@ public class IOUtilsTest {
 
         IOUtils.consumeAndClose(stream);
         assertEquals(0, stream.available());
+
+        ByteArrayInputStream stream2 = new ByteArrayInputStream(IOUtils.getUTF8Bytes("test"));
+        InputStreamReader reader = new InputStreamReader(stream2);
+
+        IOUtils.consumeAndClose(reader);
+        assertEquals(0, stream2.available());
+
+        try {
+            reader.read();
+            fail("Reader should be closed.");
+        } catch (IOException e) {
+            // expected
+        }
+
+        IOUtils.closeQuietly(reader);
+        IOUtils.closeQuietly((Closeable) null);
+        IOUtils.closeQuietly((ContentStream) null);
+    }
+
+    @Test
+    public void testCopy() throws Exception {
+        byte[] input = IOUtils.getUTF8Bytes("test");
+        ByteArrayInputStream in = new ByteArrayInputStream(input);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        IOUtils.copy(in, out);
+
+        assertArrayEquals(input, out.toByteArray());
+
+        IOUtils.closeQuietly(in);
+        IOUtils.closeQuietly(out);
     }
 
     @Test

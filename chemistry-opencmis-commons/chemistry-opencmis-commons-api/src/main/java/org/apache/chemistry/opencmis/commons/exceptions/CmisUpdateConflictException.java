@@ -31,34 +31,97 @@ public class CmisUpdateConflictException extends CmisBaseException {
     private static final long serialVersionUID = 1L;
     public static final String EXCEPTION_NAME = "updateConflict";
 
+    /**
+     * Default constructor.
+     */
     public CmisUpdateConflictException() {
         super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param cause
+     *            the cause
+     */
     public CmisUpdateConflictException(String message, BigInteger code, Throwable cause) {
         super(message, code, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     */
     public CmisUpdateConflictException(String message, String errorContent) {
         super(message, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     */
     public CmisUpdateConflictException(String message, BigInteger code) {
         super(message, code);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     */
     public CmisUpdateConflictException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param cause
+     *            the cause
+     */
     public CmisUpdateConflictException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            the cause
+     */
     public CmisUpdateConflictException(String message, Throwable cause) {
         super(message, BigInteger.ZERO, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     */
     public CmisUpdateConflictException(String message) {
         super(message, BigInteger.ZERO);
     }

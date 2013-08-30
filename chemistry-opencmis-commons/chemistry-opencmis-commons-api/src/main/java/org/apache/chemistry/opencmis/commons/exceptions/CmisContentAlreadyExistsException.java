@@ -32,34 +32,97 @@ public class CmisContentAlreadyExistsException extends CmisBaseException {
     private static final long serialVersionUID = 1L;
     public static final String EXCEPTION_NAME = "contentAlreadyExists";
 
+    /**
+     * Default constructor.
+     */
     public CmisContentAlreadyExistsException() {
         super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param cause
+     *            the cause
+     */
     public CmisContentAlreadyExistsException(String message, BigInteger code, Throwable cause) {
         super(message, code, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     */
     public CmisContentAlreadyExistsException(String message, String errorContent) {
         super(message, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     */
     public CmisContentAlreadyExistsException(String message, BigInteger code) {
         super(message, code);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     */
     public CmisContentAlreadyExistsException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param cause
+     *            the cause
+     */
     public CmisContentAlreadyExistsException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            the cause
+     */
     public CmisContentAlreadyExistsException(String message, Throwable cause) {
         super(message, BigInteger.ZERO, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     */
     public CmisContentAlreadyExistsException(String message) {
         super(message, BigInteger.ZERO);
     }

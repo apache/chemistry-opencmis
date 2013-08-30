@@ -23,6 +23,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -39,6 +40,8 @@ public final class IOUtils {
 
     /** UTF-8 character set name. */
     public static final String UTF8 = "UTF-8";
+    /** ISO-8859-1 character set name. */
+    public static final String ISO_8859_1 = "ISO-8859-1";
 
     private IOUtils() {
     }
@@ -46,6 +49,11 @@ public final class IOUtils {
     /**
      * Return UTF-8 bytes of the given string or throws a
      * {@link CmisRuntimeException} if the charset 'UTF-8' is not available.
+     * 
+     * @param s
+     *            the input string
+     * 
+     * @return the UTF-8 bytes
      */
     public static byte[] getUTF8Bytes(String s) {
         if (s == null) {
@@ -62,6 +70,11 @@ public final class IOUtils {
     /**
      * URL encodes the given string or throws a {@link CmisRuntimeException} if
      * the charset 'UTF-8' is not available.
+     * 
+     * @param s
+     *            the string to encode
+     * 
+     * @return the encoded
      */
     public static String encodeURL(String s) {
         if (s == null) {
@@ -76,8 +89,13 @@ public final class IOUtils {
     }
 
     /**
-     * URL dencodes the given string or throws a {@link CmisRuntimeException} if
+     * URL decodes the given string or throws a {@link CmisRuntimeException} if
      * the charset 'UTF-8' is not available.
+     * 
+     * @param s
+     *            the string to decode
+     * 
+     * @return the decoded string
      */
     public static String decodeURL(String s) {
         if (s == null) {
@@ -93,6 +111,9 @@ public final class IOUtils {
 
     /**
      * Closes a stream and ignores any exceptions.
+     * 
+     * @param closeable
+     *            the {@link Closeable} object
      */
     @SuppressWarnings("PMD.EmptyCatchBlock")
     public static void closeQuietly(final Closeable closeable) {
@@ -108,6 +129,9 @@ public final class IOUtils {
     /**
      * Closes the stream of a {@link ContentStream} object and ignores any
      * exceptions.
+     * 
+     * @param contentStream
+     *            the content stream
      */
     public static void closeQuietly(final ContentStream contentStream) {
         if (contentStream != null) {
@@ -117,6 +141,9 @@ public final class IOUtils {
 
     /**
      * Consumes and closes the provided stream.
+     * 
+     * @param stream
+     *            the stream
      */
     @SuppressWarnings({ "PMD.EmptyCatchBlock", "PMD.EmptyWhileStmt" })
     public static void consumeAndClose(final InputStream stream) {
@@ -125,7 +152,7 @@ public final class IOUtils {
         }
 
         try {
-            final byte[] buffer = new byte[4096];
+            final byte[] buffer = new byte[64 * 1024];
             while (stream.read(buffer) > -1) {
                 // just consume
             }
@@ -138,6 +165,9 @@ public final class IOUtils {
 
     /**
      * Consumes and closes the provided reader.
+     * 
+     * @param reader
+     *            the reader
      */
     @SuppressWarnings({ "PMD.EmptyCatchBlock", "PMD.EmptyWhileStmt" })
     public static void consumeAndClose(final Reader reader) {
@@ -146,7 +176,7 @@ public final class IOUtils {
         }
 
         try {
-            final char[] buffer = new char[4096];
+            final char[] buffer = new char[64 * 1024];
             while (reader.read(buffer) > -1) {
                 // just consume
             }
@@ -158,7 +188,48 @@ public final class IOUtils {
     }
 
     /**
-     * Reads lines from an UTF-8 encoded stream.
+     * Copies all bytes of an input stream to an output stream.
+     * 
+     * Neither the input stream nor the output stream will the closed after the
+     * copy.
+     * 
+     * @param in
+     *            the input stream, must not be {@code null}
+     * @param out
+     *            the output stream, must not be {@code null}
+     */
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        copy(in, out, 64 * 1024);
+    }
+
+    /**
+     * Copies all bytes of an input stream to an output stream.
+     * 
+     * Neither the input stream nor the output stream will the closed after the
+     * copy.
+     * 
+     * @param in
+     *            the input stream, must not be {@code null}
+     * @param out
+     *            the output stream, must not be {@code null}
+     * @param bufferSize
+     *            the size of the internal buffer, must be positive
+     */
+    public static void copy(InputStream in, OutputStream out, int bufferSize) throws IOException {
+        assert in != null;
+        assert out != null;
+        assert bufferSize > 0;
+
+        int b;
+        byte[] buffer = new byte[bufferSize];
+
+        while ((b = in.read(buffer)) > -1) {
+            out.write(buffer, 0, b);
+        }
+    }
+
+    /**
+     * Reads lines from an UTF-8 encoded stream and closes the stream.
      * 
      * @param stream
      *            the stream
@@ -186,7 +257,10 @@ public final class IOUtils {
     }
 
     /**
-     * Reads the first line from a stream.
+     * Reads the first line from a stream and closes the stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static String readFirstLine(InputStream stream) throws IOException {
         final StringBuilder result = new StringBuilder();
@@ -202,7 +276,10 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all lines from a stream.
+     * Reads all lines from a stream and closes the stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static String readAllLines(InputStream stream) throws IOException {
         final StringBuilder result = new StringBuilder();
@@ -219,7 +296,10 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all lines from a stream and removes the header.
+     * Reads all lines from a stream, removes the header, and closes the stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static String readAllLinesAndRemoveHeader(InputStream stream) throws IOException {
         final StringBuilder result = new StringBuilder();
@@ -238,7 +318,11 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all lines from a stream and ignore all comments.
+     * Reads all lines from a stream, ignores all comments, and closes the
+     * stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static String readAllLinesAndIgnoreComments(InputStream stream) throws IOException {
         final StringBuilder result = new StringBuilder();
@@ -257,7 +341,11 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all lines from a stream and ignore all comments.
+     * Reads all lines from a stream, ignores all comments, and closes the
+     * stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static List<String> readAllLinesAsList(InputStream stream) throws IOException {
         final List<String> result = new ArrayList<String>();
@@ -275,7 +363,11 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all lines from a stream and ignore all comments.
+     * Reads all lines from a stream, ignores all comments, and closes the
+     * stream.
+     * 
+     * @param stream
+     *            the input stream
      */
     public static Map<String, String> readAllLinesAsMap(InputStream stream) throws IOException {
         final Map<String, String> result = new HashMap<String, String>();

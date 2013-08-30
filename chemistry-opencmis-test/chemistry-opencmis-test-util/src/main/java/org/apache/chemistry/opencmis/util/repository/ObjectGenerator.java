@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.util.repository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
@@ -519,11 +519,8 @@ public class ObjectGenerator {
 
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsFullHtml(len, true);
-        try {
-            content.setStream(new ByteArrayInputStream(text.getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Unsupported Encoding Exception", e);
-        }
+
+        content.setStream(new ByteArrayInputStream(IOUtils.getUTF8Bytes(text)));
         return content;
     }
 

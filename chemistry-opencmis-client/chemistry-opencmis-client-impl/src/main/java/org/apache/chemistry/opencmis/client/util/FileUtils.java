@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.client.util;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -255,10 +253,12 @@ public final class FileUtils {
      * @throws CmisBaseException
      */
     public static void download(Document doc, String destinationPath) throws IOException {
-        FileOutputStream fileStream = new FileOutputStream(destinationPath);
-        BufferedOutputStream out = new BufferedOutputStream(fileStream);
-        copyStream(doc.getContentStream().getStream(), out);
-        out.close();
+        FileOutputStream out = new FileOutputStream(destinationPath);
+        try {
+            IOUtils.copy(doc.getContentStream().getStream(), out, 64 * 1024);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
     }
 
     /**
@@ -280,14 +280,6 @@ public final class FileUtils {
             download((Document) doc, destinationPath);
         } else {
             throw new IllegalArgumentException("Object is not a document!");
-        }
-    }
-
-    static void copyStream(InputStream inStream, OutputStream outStream) throws IOException {
-        byte[] buffer = new byte[48 * 1024];
-        int bytesRead = 0;
-        while ((bytesRead = inStream.read(buffer, 0, buffer.length)) > 0) {
-            outStream.write(buffer, 0, bytesRead);
         }
     }
 

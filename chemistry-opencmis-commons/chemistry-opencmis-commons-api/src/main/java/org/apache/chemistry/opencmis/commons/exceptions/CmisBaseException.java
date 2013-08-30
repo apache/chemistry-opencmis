@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.exceptions;
 import java.math.BigInteger;
 
 /**
- * Base exception class for all CMIS client exceptions.
+ * Base exception class for all CMIS exceptions.
  */
 public abstract class CmisBaseException extends RuntimeException {
 
@@ -138,8 +138,8 @@ public abstract class CmisBaseException extends RuntimeException {
      * Returns the error code sent by the CMIS repository (Web Services binding
      * only).
      * 
-     * @return error code or <code>null</code> if the CMIS repository didn't
-     *         send an error code or the binding doesn't support error codes.
+     * @return error code or {@code null} if the CMIS repository didn't send an
+     *         error code or the binding doesn't support error codes.
      */
     public BigInteger getCode() {
         return code;
@@ -148,7 +148,7 @@ public abstract class CmisBaseException extends RuntimeException {
     /**
      * Returns the content of the error page sent by the web server.
      * 
-     * @return the content of the error page or <code>null</code> if the server
+     * @return the content of the error page or {@code null} if the server
      *         didn't send text content.
      */
     public String getErrorContent() {

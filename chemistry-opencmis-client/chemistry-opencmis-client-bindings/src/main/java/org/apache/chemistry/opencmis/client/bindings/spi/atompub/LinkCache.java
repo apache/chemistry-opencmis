@@ -19,8 +19,6 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +31,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImp
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
 /**
@@ -150,8 +149,7 @@ public class LinkCache implements Serializable {
             String[] params = link.substring(i + 1).split("&");
             for (String param : params) {
                 String[] parts = param.split("=", 2);
-                if (parts[0].equals(Constants.PARAM_STREAM_ID)
-                        && parts.length == 2) {
+                if (parts[0].equals(Constants.PARAM_STREAM_ID) && parts.length == 2) {
                     return parts[1];
                 }
             }
@@ -282,11 +280,7 @@ public class LinkCache implements Serializable {
 
                     String paramValue = UrlBuilder.normalizeParameter(parameters.get(param.toString()));
                     if (paramValue != null) {
-                        try {
-                            result.append(URLEncoder.encode(paramValue, "UTF-8"));
-                        } catch (UnsupportedEncodingException e) {
-                            result.append(paramValue);
-                        }
+                        result.append(IOUtils.encodeURL(paramValue));
                     }
 
                     param = new StringBuilder();
@@ -332,7 +326,7 @@ public class LinkCache implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

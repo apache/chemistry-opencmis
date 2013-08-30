@@ -84,15 +84,14 @@ public final class MimeHelper {
      *         encoding was actually needed
      */
     protected static boolean encodeRFC2231value(String value, StringBuilder buf) {
-        String charset = "UTF-8";
+        assert value != null;
+        assert buf != null;
+
+        String charset = IOUtils.UTF8;
         buf.append(charset);
         buf.append("''"); // no language
-        byte[] bytes;
-        try {
-            bytes = value.getBytes(charset);
-        } catch (UnsupportedEncodingException e) {
-            return true;
-        }
+        byte[] bytes = IOUtils.getUTF8Bytes(value);
+
         boolean encoded = false;
         for (int i = 0; i < bytes.length; i++) {
             int ch = bytes[i] & 0xff;
@@ -274,7 +273,7 @@ public final class MimeHelper {
                 String boundaryStr = params.get("boundary");
                 if (boundaryStr != null && boundaryStr.length() > 0) {
                     try {
-                        return boundaryStr.getBytes("ISO-8859-1");
+                        return boundaryStr.getBytes(IOUtils.ISO_8859_1);
                     } catch (UnsupportedEncodingException e) {
                         // shouldn't happen...
                         throw new CmisRuntimeException("Unsupported encoding 'ISO-8859-1'", e);

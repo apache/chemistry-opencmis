@@ -18,10 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.GregorianCalendar;
@@ -263,19 +260,7 @@ public class FormDataWriter {
             writeLine(out, "Content-Transfer-Encoding: binary");
             writeLine(out);
 
-            InputStream stream = contentStream.getStream();
-            if (!(stream instanceof BufferedInputStream) && !(stream instanceof ByteArrayInputStream)) {
-                // avoid double buffering
-                stream = new BufferedInputStream(stream, BUFFER_SIZE);
-            }
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int b;
-            while ((b = stream.read(buffer)) > -1) {
-                if (b > 0) {
-                    out.write(buffer, 0, b);
-                }
-            }
+            IOUtils.copy(contentStream.getStream(), out, BUFFER_SIZE);
 
             writeLine(out);
             writeLine(out, "--" + boundary + "--");

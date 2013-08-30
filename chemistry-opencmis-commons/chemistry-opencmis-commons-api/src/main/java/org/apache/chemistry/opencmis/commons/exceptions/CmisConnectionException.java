@@ -28,34 +28,97 @@ public class CmisConnectionException extends CmisBaseException {
     private static final long serialVersionUID = 1L;
     public static final String EXCEPTION_NAME = "connection";
 
+    /**
+     * Default constructor.
+     */
     public CmisConnectionException() {
         super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param cause
+     *            the cause
+     */
     public CmisConnectionException(String message, BigInteger code, Throwable cause) {
         super(message, code, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     */
     public CmisConnectionException(String message, String errorContent) {
         super(message, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     */
     public CmisConnectionException(String message, BigInteger code) {
         super(message, code);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     */
     public CmisConnectionException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param cause
+     *            the cause
+     */
     public CmisConnectionException(String message, String errorContent, Throwable cause) {
         super(message, errorContent, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param cause
+     *            the cause
+     */
     public CmisConnectionException(String message, Throwable cause) {
         super(message, BigInteger.ZERO, cause);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     */
     public CmisConnectionException(String message) {
         super(message, BigInteger.ZERO);
     }

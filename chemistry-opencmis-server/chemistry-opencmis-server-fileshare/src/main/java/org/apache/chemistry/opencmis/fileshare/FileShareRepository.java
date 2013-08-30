@@ -619,23 +619,14 @@ public class FileShareRepository {
      */
     private void writeContent(File newFile, InputStream stream) {
         OutputStream out = null;
-        InputStream in = null;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(newFile), BUFFER_SIZE);
-            in = new BufferedInputStream(stream, BUFFER_SIZE);
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int b;
-            while ((b = in.read(buffer)) > -1) {
-                out.write(buffer, 0, b);
-            }
-
-            out.flush();
+            out = new FileOutputStream(newFile);
+            IOUtils.copy(stream, out, BUFFER_SIZE);
         } catch (IOException e) {
             throw new CmisStorageException("Could not write content: " + e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(stream);
         }
     }
 
@@ -758,20 +749,15 @@ public class FileShareRepository {
         OutputStream out = null;
         InputStream in = null;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(file, append), BUFFER_SIZE);
+            out = new FileOutputStream(file, append);
 
             if (contentStream == null || contentStream.getStream() == null) {
                 // delete content
                 out.write(new byte[0]);
             } else {
                 // set content
-                in = new BufferedInputStream(contentStream.getStream(), BUFFER_SIZE);
-
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int b;
-                while ((b = in.read(buffer)) > -1) {
-                    out.write(buffer, 0, b);
-                }
+                in = contentStream.getStream();
+                IOUtils.copy(in, out, BUFFER_SIZE);
             }
         } catch (Exception e) {
             throw new CmisStorageException("Could not write content: " + e.getMessage(), e);

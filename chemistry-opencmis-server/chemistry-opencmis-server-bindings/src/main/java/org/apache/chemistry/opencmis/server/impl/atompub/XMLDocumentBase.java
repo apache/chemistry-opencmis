@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
@@ -71,7 +72,7 @@ public abstract class XMLDocumentBase {
         writer = XMLUtils.createWriter(out);
 
         // start the document
-        writer.writeStartDocument("UTF-8", "1.0");
+        writer.writeStartDocument(IOUtils.UTF8, "1.0");
         setNamespaces(namespaces);
     }
 

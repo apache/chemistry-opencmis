@@ -335,7 +335,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
             // check if checked out
             Boolean isCheckedOut = getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
-            if ((isCheckedOut != null) && isCheckedOut.booleanValue()) {
+            if (Boolean.TRUE.equals(isCheckedOut)) {
                 updatebility.add(Updatability.WHENCHECKEDOUT);
             }
 

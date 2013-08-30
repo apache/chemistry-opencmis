@@ -75,6 +75,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
@@ -1443,12 +1444,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
         content.setMimeType(contentType);
 
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
-        byte[] buffer = new byte[65536];
-        int noBytesRead = 0;
 
-        while ((noBytesRead = is.read(buffer)) >= 0) {
-            ba.write(buffer, 0, noBytesRead);
-        }
+        IOUtils.copy(is, ba, 64 * 1024);
 
         content.setContent(new ByteArrayInputStream(ba.toByteArray()));
 

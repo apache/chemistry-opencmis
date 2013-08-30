@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
@@ -72,7 +73,7 @@ public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequest
             // form data processing
             StringBuilder sb = new StringBuilder();
 
-            InputStreamReader sr = new InputStreamReader(request.getInputStream(), "UTF-8");
+            InputStreamReader sr = new InputStreamReader(request.getInputStream(), IOUtils.UTF8);
             char[] buffer = new char[4096];
             int c = 0;
             while ((c = sr.read(buffer)) > -1) {

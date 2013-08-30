@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.http.Header;
@@ -309,7 +310,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
 
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setUserAgent(params, ClientVersion.OPENCMIS_CLIENT);
-        HttpProtocolParams.setContentCharset(params, "UTF-8");
+        HttpProtocolParams.setContentCharset(params, IOUtils.UTF8);
         HttpProtocolParams.setUseExpectContinue(params, true);
 
         HttpConnectionParams.setStaleCheckingEnabled(params, false);

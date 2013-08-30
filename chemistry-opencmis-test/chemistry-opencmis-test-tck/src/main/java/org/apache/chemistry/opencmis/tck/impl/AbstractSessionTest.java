@@ -235,7 +235,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         StringBuilder sb = new StringBuilder();
-        Reader reader = new InputStreamReader(contentStream.getStream(), "UTF-8");
+        Reader reader = new InputStreamReader(contentStream.getStream(), IOUtils.UTF8);
 
         try {
             final char[] buffer = new char[64 * 1024];
