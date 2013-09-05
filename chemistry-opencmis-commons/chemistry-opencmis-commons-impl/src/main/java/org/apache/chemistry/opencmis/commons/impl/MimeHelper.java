@@ -60,6 +60,7 @@ public final class MimeHelper {
     static {
         for (int i = 0; i < HEX_DIGITS.length; i++) {
             HEX_DECODE[HEX_DIGITS[i]] = (byte) i;
+            HEX_DECODE[Character.toLowerCase(HEX_DIGITS[i])] = (byte) i;
         }
     }
 

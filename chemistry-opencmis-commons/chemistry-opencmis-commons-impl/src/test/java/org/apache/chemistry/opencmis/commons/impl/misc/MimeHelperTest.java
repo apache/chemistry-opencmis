@@ -24,7 +24,8 @@ package org.apache.chemistry.opencmis.commons.impl.misc;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeContentDisposition;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeContentDispositionFilename;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.encodeContentDisposition;
-import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.getBoundaryFromMultiPart;
+import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.getCharsetFromContentType;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Collections;
@@ -83,6 +84,10 @@ public class MimeHelperTest extends TestCase {
                 decodeContentDispositionFilename(" guess ; filename = (this is rfc822 a comment) \"foo.bar\""));
         assertEquals("caf\u00e9.pdf", decodeContentDispositionFilename("foo; filename*=UTF-8''caf%C3%A9.pdf"));
         assertEquals("caf\u00e9.pdf", decodeContentDispositionFilename("bar; filename*=ISO-8859-1''caf%E9.pdf"));
+        assertEquals("flask-docs.pdf",
+                decodeContentDispositionFilename("attachment; filename*=UTF-8''%66%6c%61%73%6b%2d%64%6f%63%73.pdf;"
+                        + " size=893099; creation-date=Mon, 12 Aug 2013 22:02:54 -0700;"
+                        + " modification-date=Mon, 12 Aug 2013 22:02:55 -0700;"));
     }
 
     @Test
