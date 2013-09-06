@@ -105,7 +105,9 @@
 										<exclude name="**/TypeUtils.java" />
 										<exclude name="**/osgi/**" />
 									</fileset>
-								</copy>                                   
+								</copy>
+								
+								<replace dir="${gendir}" token="javax.xml.ws.handler.HandlerResolver" value="org.apache.chemistry.opencmis.client.bindings.spi.HandlerResolver"/>            
                              </target>
                          </configuration>
                          <goals>
