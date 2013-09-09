@@ -1939,7 +1939,7 @@ public class FileShareRepository {
             addAction(aas, Action.CAN_CREATE_FOLDER, !userReadOnly);
             addAction(aas, Action.CAN_DELETE_TREE, !userReadOnly && !isReadOnly);
         } else {
-            addAction(aas, Action.CAN_GET_CONTENT_STREAM, true);
+            addAction(aas, Action.CAN_GET_CONTENT_STREAM, file.length() > 0);
             addAction(aas, Action.CAN_SET_CONTENT_STREAM, !userReadOnly && !isReadOnly);
             addAction(aas, Action.CAN_DELETE_CONTENT_STREAM, !userReadOnly && !isReadOnly);
             addAction(aas, Action.CAN_GET_ALL_VERSIONS, true);

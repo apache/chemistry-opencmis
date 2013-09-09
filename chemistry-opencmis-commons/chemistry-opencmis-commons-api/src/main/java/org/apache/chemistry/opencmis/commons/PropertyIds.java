@@ -29,68 +29,101 @@ public final class PropertyIds {
     // ---- base ----
     /**
      * CMIS property {@code cmis:name}: name of the object.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String NAME = "cmis:name";
     /**
-     * CMIS property {@code cmis:objectId}: id of the object.
+     * CMIS property {@code cmis:objectId}: ID of the object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String OBJECT_ID = "cmis:objectId";
     /**
-     * CMIS property {@code cmis:objectTypeId}: id of primary type of the
+     * CMIS property {@code cmis:objectTypeId}: ID of primary type of the
      * object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String OBJECT_TYPE_ID = "cmis:objectTypeId";
     /**
-     * CMIS property {@code cmis:baseTypeId}: id of the base type of the object.
+     * CMIS property {@code cmis:baseTypeId}: ID of the base type of the object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String BASE_TYPE_ID = "cmis:baseTypeId";
     /**
      * CMIS property {@code cmis:createdBy}: creator of the object.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String CREATED_BY = "cmis:createdBy";
     /**
      * CMIS property {@code cmis:creationDate}: creation date.
+     * <p>
+     * CMIS data type: datetime<br>
+     * Java type: GregorianCalendar
      * 
      * @cmis 1.0
      */
     public static final String CREATION_DATE = "cmis:creationDate";
     /**
      * CMIS property {@code cmis:lastModifiedBy}: last modifier of the object.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String LAST_MODIFIED_BY = "cmis:lastModifiedBy";
     /**
      * CMIS property {@code cmis:lastModificationDate}: last modification date.
+     * <p>
+     * CMIS data type: datetime<br>
+     * Java type: GregorianCalendar
      * 
      * @cmis 1.0
      */
     public static final String LAST_MODIFICATION_DATE = "cmis:lastModificationDate";
     /**
      * CMIS property {@code cmis:changeToken}: change token of the object.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String CHANGE_TOKEN = "cmis:changeToken";
     /**
      * CMIS property {@code cmis:description}: description of the object.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.1
      */
     public static final String DESCRIPTION = "cmis:description";
     /**
      * CMIS property {@code cmis:secondaryObjectTypeIds} (multivalue): list of
-     * ids of the secondary types of the object.
+     * IDs of the secondary types of the object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.1
      */
@@ -100,6 +133,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isImmutable}: flag the indicates if
      * the document is immutable.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.0
      */
@@ -107,6 +143,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isLatestVersion}: flag the indicates
      * if the document is the latest version.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.0
      */
@@ -114,6 +153,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isMajorVersion}: flag the indicates if
      * the document is a major version.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.0
      */
@@ -121,6 +163,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isLatestMajorVersion}: flag the
      * indicates if the document is the latest major version.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.0
      */
@@ -128,13 +173,19 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:versionLabel}: version label of the
      * document.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String VERSION_LABEL = "cmis:versionLabel";
     /**
-     * CMIS document property {@code cmis:versionSeriesId}: id of the version
+     * CMIS document property {@code cmis:versionSeriesId}: ID of the version
      * series.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -142,6 +193,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isVersionSeriesCheckedOut}: flag the
      * indicates if the document is checked out.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.0
      */
@@ -149,13 +203,19 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:versionSeriesCheckedOutBy}: user who
      * checked out the document, if the document is checked out.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String VERSION_SERIES_CHECKED_OUT_BY = "cmis:versionSeriesCheckedOutBy";
     /**
-     * CMIS document property {@code cmis:versionSeriesCheckedOutId}: id of the
+     * CMIS document property {@code cmis:versionSeriesCheckedOutId}: ID of the
      * PWC, if the document is checked out.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -163,6 +223,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:checkinComment}: check-in comment for
      * the document version.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -170,6 +233,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:contentStreamLength}: length of the
      * content stream, if the document has content.
+     * <p>
+     * CMIS data type: integer<br>
+     * Java type: BigInteger
      * 
      * @cmis 1.0
      */
@@ -177,6 +243,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:contentStreamMimeType}: MIME type of
      * the content stream, if the document has content.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -184,12 +253,18 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:contentStreamFileName}: file name, if
      * the document has content.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String CONTENT_STREAM_FILE_NAME = "cmis:contentStreamFileName";
     /**
-     * CMIS document property {@code cmis:contentStreamId}: content stream id.
+     * CMIS document property {@code cmis:contentStreamId}: content stream ID.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -197,6 +272,9 @@ public final class PropertyIds {
     /**
      * CMIS document property {@code cmis:isPrivateWorkingCopy}: flag the
      * indicates if the document is a PWC.
+     * <p>
+     * CMIS data type: boolean<br>
+     * Java type: Boolean
      * 
      * @cmis 1.1
      */
@@ -204,20 +282,29 @@ public final class PropertyIds {
 
     // ---- folder ----
     /**
-     * CMIS folder property {@code cmis:parentId}: id of the parent folder.
+     * CMIS folder property {@code cmis:parentId}: ID of the parent folder.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String PARENT_ID = "cmis:parentId";
     /**
      * CMIS folder property {@code cmis:allowedChildObjectTypeIds} (multivalue):
-     * ids of the types that can be filed in the folder.
+     * IDs of the types that can be filed in the folder.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String ALLOWED_CHILD_OBJECT_TYPE_IDS = "cmis:allowedChildObjectTypeIds";
     /**
      * CMIS folder property {@code cmis:path}: folder path.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -225,15 +312,21 @@ public final class PropertyIds {
 
     // ---- relationship ----
     /**
-     * CMIS relationship property {@code cmis:sourceId}: id of the source
+     * CMIS relationship property {@code cmis:sourceId}: ID of the source
      * object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
     public static final String SOURCE_ID = "cmis:sourceId";
     /**
-     * CMIS relationship property {@code cmis:targetId}: id of the target
+     * CMIS relationship property {@code cmis:targetId}: ID of the target
      * object.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -242,6 +335,9 @@ public final class PropertyIds {
     // ---- policy ----
     /**
      * CMIS policy property {@code cmis:policyText}: policy text.
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
      * 
      * @cmis 1.0
      */
@@ -250,12 +346,18 @@ public final class PropertyIds {
     // ---- retention ---
     /**
      * CMIS retention property {@code cmis:rm_expirationDate}: expiration date.
+     * <p>
+     * CMIS data type: datetime<br>
+     * Java type: GregorianCalendar
      * 
      * @cmis 1.1
      */
     public static final String EXPIRATION_DATE = "cmis:rm_expirationDate";
     /**
      * CMIS retention property {@code cmis:rm_startOfRetention}: start date.
+     * <p>
+     * CMIS data type: datetime<br>
+     * Java type: GregorianCalendar
      * 
      * @cmis 1.1
      */
@@ -263,16 +365,21 @@ public final class PropertyIds {
     /**
      * CMIS retention property {@code cmis:rm_destructionDate}: destruction
      * date.
+     * <p>
+     * CMIS data type: datetime<br>
+     * Java type: GregorianCalendar
      * 
      * @cmis 1.1
      */
     public static final String DESTRUCTION_DATE = "cmis:rm_destructionDate";
     /**
-     * CMIS retention property {@code cmis:rm_holdIds} (multivalue): ids of the
+     * CMIS retention property {@code cmis:rm_holdIds} (multivalue): IDs of the
      * holds that are applied.
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
      * 
      * @cmis 1.1
      */
     public static final String HOLD_IDS = "cmis:rm_holdIds";
-
 }

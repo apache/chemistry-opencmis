@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.commons;
 
 /**
- * Secondary type ids that are defined in the CMIS specification.
+ * Secondary type IDs that are defined in the CMIS specification.
  * 
  * @cmis 1.1
  */
