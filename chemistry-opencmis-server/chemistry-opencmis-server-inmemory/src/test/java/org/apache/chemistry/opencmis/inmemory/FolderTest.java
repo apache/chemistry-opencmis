@@ -87,33 +87,33 @@ public class FolderTest extends TestCase {
         // rename top level folder
         String newName = "Folder B";
         String oldPath = getPath(f2);
-        fStore.rename(f2, newName);
+        fStore.rename(f2, newName, USER);
         assertEquals(f2.getName(), newName);
         assertEquals(getPath(f2), Filing.PATH_SEPARATOR + newName);
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f2, fStore.getObjectByPath(Filing.PATH_SEPARATOR + newName, USER));
         try {
-            fStore.rename(f2, "Folder 3");
+            fStore.rename(f2, "Folder 3", USER);
             fail("Should not allow to rename a folder to an existing name");
         } catch (Exception e) {
         }
 
         // rename sub folder
         oldPath = getPath(f11);
-        fStore.rename(f11, newName);
+        fStore.rename(f11, newName, USER);
         assertEquals(f11.getName(), newName);
         assertEquals(getPath(f11), "/Folder 1/Folder B");
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f11, fStore.getObjectByPath("/Folder 1/Folder B", USER));
         try {
-            fStore.rename(f2, newName);
+            fStore.rename(f2, newName, USER);
             fail("Should not allow to rename a folder to an existing name");
         } catch (Exception e) {
         }
 
         // rename root folder
         try {
-            fStore.rename(fRoot, "abc");
+            fStore.rename(fRoot, "abc", USER);
             fail("Should not be possible to rename root folder");
         } catch (Exception e) {
         }
@@ -123,15 +123,15 @@ public class FolderTest extends TestCase {
     public void testMoveFolder() {
         String oldPath = getPath(f1);
         Folder f1Parent = fRoot;
-        fStore.move(f1, f1Parent, f3);
+        fStore.move(f1, f1Parent, f3, USER);
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(getPath(f1), "/Folder 3/Folder 1");
         assertEquals(f1, fStore.getObjectByPath("/Folder 3/Folder 1", USER));
 
-        fStore.rename(f2, "Folder 1");
+        fStore.rename(f2, "Folder 1", USER);
         try {
             Folder f2Parent = fRoot;
-            fStore.move(f2, f2Parent, f3);
+            fStore.move(f2, f2Parent, f3, USER);
             fail("Should not be possible to move folder to a folder that has a child with same name");
         } catch (Exception e) {
         }

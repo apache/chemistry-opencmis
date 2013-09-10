@@ -260,8 +260,8 @@ public final class PropertyCreationHelper {
 
         List<PropertyData<?>> propertiesList = new ArrayList<PropertyData<?>>(properties.values());
 
-        if (fillOptionalPropertyData) { // add query name, local name, display
-                                        // name
+        // add query name, local name, display name
+        if (fillOptionalPropertyData) {
             fillOptionalPropertyData(td, propertiesList);
         }
 

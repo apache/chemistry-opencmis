@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -438,8 +439,24 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public void upateObject(StoredObject so) {
+    public void updateObject(StoredObject so, Map<String, PropertyData<?>> newProperties, String user) {
         // nothing to do
+        Map<String, PropertyData<?>> properties = so.getProperties();
+        for (String key : newProperties.keySet()) {
+            PropertyData<?> value = newProperties.get(key);
+
+            if (key.equals(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+                properties.put(key, value); // preserve it even if it is empty!
+            } else  if (null == value || value.getValues() == null || value.getFirstValue() == null) {
+                // delete property
+                properties.remove(key);
+            } else {
+                properties.put(key, value);
+            }
+        }
+        // update system properties and secondary object type ids
+        so.updateSystemBasePropertiesWhenModified(properties, user);
+        properties.remove(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
     }
 
     @Override
@@ -699,7 +716,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public void move(StoredObject so, Folder oldParent, Folder newParent) {
+    public void move(StoredObject so, Folder oldParent, Folder newParent, String user) {
         try {
             if (hasChild(newParent, so.getName())) {
                 throw new CmisInvalidArgumentException("Cannot move object " + so.getName() + " to folder "
@@ -719,17 +736,19 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public void rename(Fileable so, String newName) {
+    public void rename(StoredObject so, String newName, String user) {
         try {
             lock();
             if (so.getId().equals(fRootFolder.getId())) {
                 throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
             }
-            for (String folderId : so.getParentIds()) {
-                Folder folder = (Folder) getObjectById(folderId);
-                if (hasChild(folder, newName)) {
-                    throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
-                            + ". This path already exists in parent " + getFolderPath(folder.getId()) + ".");
+            if (so instanceof Fileable) {
+                for (String folderId : ((Fileable)so).getParentIds()) {
+                    Folder folder = (Folder) getObjectById(folderId);
+                    if (hasChild(folder, newName)) {
+                        throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
+                                + ". This path already exists in parent " + getFolderPath(folder.getId()) + ".");
+                    }
                 }
             }
             so.setName(newName);

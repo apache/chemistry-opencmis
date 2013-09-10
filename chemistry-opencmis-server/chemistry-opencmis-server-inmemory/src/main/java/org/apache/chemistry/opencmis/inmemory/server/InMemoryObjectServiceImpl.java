@@ -530,7 +530,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisNotSupportedException("Destination of a move cannot be a subfolder of the source");
         }
 
-        objectStore.move(so, sourceFolder, targetFolder);
+        objectStore.move(so, sourceFolder, targetFolder, user);
         objectId.setValue(so.getId());
 
         LOG.debug("stop moveObject()");
@@ -617,7 +617,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         isCheckedOut = isCheckedOut(so, user);
 
-        Map<String, PropertyData<?>> oldProperties = so.getProperties();
+        Map<String, PropertyData<?>> oldProperties = new HashMap<String, PropertyData<?>>();
 
         // check properties for validity
         boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
@@ -651,7 +651,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             List<String> propertiesIdToDelete = getListOfPropertiesToDeleteFromRemovedSecondaryTypes(repositoryId, so,
                     newSecondaryTypeIds);
             for (String propIdToRemove : propertiesIdToDelete) {
-                so.getProperties().remove(propIdToRemove);
+                oldProperties.put(propIdToRemove, null);
             }
         }
 
@@ -684,7 +684,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                             "updateProperties failed, following property can't be deleted, because it is required: "
                                     + key);
                 }
-                oldProperties.remove(key);
+                oldProperties.put(key, null);
                 hasUpdatedProp = true;
             } else {
                 if (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT) {
@@ -702,7 +702,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 hasUpdatedProp = true;
             }
         }
-
+        
         // get name from properties and perform special rename to check if
         // path already exists
         PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
@@ -720,18 +720,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             }
             // Note: the test for duplicated name in folder is left to the
             // object store
-            objStore.rename((Fileable) so, (String) pd.getFirstValue());
+            objStore.rename((Fileable) so, (String) pd.getFirstValue(), user);
             hasUpdatedProp = true;
         }
 
-        if (hasUpdatedProp) {
-            // set user, creation date, etc.
-            if (user == null) {
-                user = UNKNOWN_USER;
-            }
-            so.updateSystemBasePropertiesWhenModified(properties.getProperties(), user);
-            // set changeToken
-        }
+        objStore.updateObject(so, oldProperties, user);
 
         if (hasUpdatedProp) {
             objectId.setValue(so.getId()); // might have a new id

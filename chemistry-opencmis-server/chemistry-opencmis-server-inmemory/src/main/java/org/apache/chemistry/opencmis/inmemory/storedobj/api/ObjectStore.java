@@ -290,8 +290,10 @@ public interface ObjectStore {
      *            old parent folder for the object
      * @param newParent
      *            new parent folder for the object
+     * @param user
+     *            user performing the operation
      */
-    void move(StoredObject so, Folder oldParent, Folder newParent);
+    void move(StoredObject so, Folder oldParent, Folder newParent, String user);
 
     /**
      * Rename an object.
@@ -300,8 +302,10 @@ public interface ObjectStore {
      *            object to be renamed
      * @param newName
      *            new name to be assigned
+     * @param user
+     *            user performing the operation
      */
-    void rename(Fileable so, String newName);
+    void rename(StoredObject so, String newName, String user);
 
     /**
      * Persist a new version in the store (created from a check-out).
@@ -320,12 +324,14 @@ public interface ObjectStore {
     void deleteVersion(DocumentVersion version);
 
     /**
-     * Persist an object after modifying the properties.
+     * Modify and store the properties of an object.
      * 
      * @param so
-     *            object to be updated
+     *            object to update
+     * @param properties
+     *            map containing properties to be updated
      */
-    void upateObject(StoredObject so);
+    void updateObject(StoredObject so, Map<String, PropertyData<?>> properties, String user);
 
     /**
      * get the path of this folder (for folder in CMIS path is unique).

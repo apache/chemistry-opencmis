@@ -343,10 +343,12 @@ public class StoredObjectImpl implements StoredObject {
                 setDescription((String) properties.get(PropertyIds.DESCRIPTION).getFirstValue());
             }
 
-            if (null != properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            if (properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
                 secondaryTypeIds.clear();
-                secondaryTypeIds.addAll((List<String>) properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)
-                        .getValues());
+            }
+            PropertyData<?> secondaryTypeProp = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+            if (null != secondaryTypeProp) {
+                secondaryTypeIds.addAll((List<String>) secondaryTypeProp.getValues());
             }
         }
         if (isCreated) {
