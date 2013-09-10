@@ -27,7 +27,7 @@ import org.apache.chemistry.opencmis.jcr.JcrTypeManager;
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
-import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 
 /**
  * Abstract base class for translating a CMIS query statement to a JCR XPath
@@ -78,12 +78,11 @@ public abstract class QueryTranslator {
      * @return
      */
     public String translateToXPath(String statement) {
-        QueryUtil queryUtil = new QueryUtil();
-        queryObject = new QueryObject(typeManager);
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(evaluator);
-        CmisQueryWalker walker = queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
-        walker.setDoFullTextParse(false);
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, parseTreeWalker, true);
+        queryUtil.processStatementUsingCmisExceptions();
         XPathBuilder parseResult = parseTreeWalker.getResult();
+        queryObject = queryUtil.getQueryObject();
         TypeDefinition fromType = getFromName(queryObject);
 
         String pathExpression = buildPathExpression(fromType, getFolderPredicate(parseResult));

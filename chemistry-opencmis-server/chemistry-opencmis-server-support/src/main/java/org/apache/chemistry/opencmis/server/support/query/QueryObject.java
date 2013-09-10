@@ -252,21 +252,6 @@ public class QueryObject {
         return getRequestedProperties(true);
     }
 
-    /**
-     * return a map of all columns that have been requested in the SELECT part
-     * of the statement.
-     * 
-     * @return a map with a String as a key and value. key is the query name of
-     *         the property, value is the alias if an alias was given or the
-     *         query name otherwise.
-     * 
-     * @deprecated Use getRequestedPropertiesByAlias instead.
-     */
-    @Deprecated
-    public Map<String, String> getRequestedProperties() {
-        return getRequestedProperties(false);
-    }
-
     private Map<String, String> getRequestedProperties(boolean byAlias) {
 
         Map<String, String> res = new HashMap<String, String>();
@@ -287,21 +272,6 @@ public class QueryObject {
             }
         }
         return res;
-    }
-
-    /**
-     * return a map of all functions that have been requested in the SELECT part
-     * of the statement.
-     * 
-     * @return a map with a String as a key and value. key is the function name
-     *         of the property, value is the alias if an alias was given or the
-     *         function name otherwise.
-     * 
-     * @deprecated Use getRequestedPropertiesByAlias instead.
-     */
-    @Deprecated
-    public Map<String, String> getRequestedFuncs() {
-        return getRequestedFuncs(false);
     }
 
     /**

@@ -44,12 +44,6 @@ public class ColumnReference extends CmisSelector {
         return qualifier;
     }
 
-    /** @deprecated use {@link #getQualifier} instead. */
-    @Deprecated
-    public String getTypeQueryName() {
-        return getQualifier();
-    }
-
     public String getPropertyQueryName() {
         return propQueryName;
     }

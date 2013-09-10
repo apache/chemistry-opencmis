@@ -40,7 +40,7 @@ import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
 import org.apache.chemistry.opencmis.jcr.util.ISO8601;
 import org.apache.chemistry.opencmis.server.support.query.CalendarHelper;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject;
-import org.apache.chemistry.opencmis.server.support.query.QueryUtil;
+import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -265,10 +265,10 @@ public class XPathBuilderTest {
     }
 
     private XPathBuilder execute(String statement) {
-        QueryUtil queryUtil = new QueryUtil();
         QueryObject queryObject = new QueryObject(typeManager);
         ParseTreeWalker<XPathBuilder> parseTreeWalker = new ParseTreeWalker<XPathBuilder>(new EvaluatorXPath());
-        queryUtil.traverseStatementAndCatchExc(statement, queryObject, parseTreeWalker);
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, parseTreeWalker);
+        queryUtil.processStatementUsingCmisExceptions();
         return parseTreeWalker.getResult();
     }
 
