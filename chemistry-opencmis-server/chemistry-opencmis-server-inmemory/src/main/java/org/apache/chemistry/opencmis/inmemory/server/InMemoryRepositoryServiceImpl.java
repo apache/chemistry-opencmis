@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.TypeValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
@@ -148,7 +148,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisInvalidArgumentException("Repository id may not be null");
         }
 
-        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
@@ -162,7 +162,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         String typeId = type.getId();
-        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }
@@ -178,7 +178,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
 
-        TypeManagerCreatable typeManager = fStoreManager.getTypeManager(repositoryId);
+        TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException("Unknown repository " + repositoryId);
         }

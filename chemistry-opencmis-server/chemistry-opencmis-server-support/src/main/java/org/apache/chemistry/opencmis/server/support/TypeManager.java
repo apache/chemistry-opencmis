@@ -46,6 +46,7 @@ public interface TypeManager {
 
     /**
      * return a list of all types known in this repository
+     * Note: This method is not needed for the query parser.
      * 
      * @return
      *      list of type definitions
@@ -55,6 +56,7 @@ public interface TypeManager {
     /**
      * return a list of the root types as defined in the CMIS spec (for
      * document, folder, policy and relationship
+     * Note: This method is not needed for the query parser.
      * 
      * @return
      *      list of type definitions
@@ -73,4 +75,34 @@ public interface TypeManager {
      */
     String getPropertyIdForQueryName(TypeDefinition typeDefinition, String propQueryName);
 
+    /**
+     * Add a type to the type system. Add all properties from inherited types,
+     * add type to children of parent types.
+     * Note: This method is not needed for the query parser.
+     * 
+     * @param typeDefinition
+     *            new type to add
+     * @param addInheritedProperties
+     *            add properties from supertype to type definition
+     */
+    void addTypeDefinition(TypeDefinition typeDefinition, boolean addInheritedProperties);
+
+    /**
+     * Modify an existing type definition.
+     * Note: This method is not needed for the query parser.
+     * 
+     * @param typeDefinition
+     *            type to be modified
+     */
+    void updateTypeDefinition(TypeDefinition typeDefinition);
+
+    /**
+     * Delete a type from the type system. Delete will succeed only if type is
+     * not in use. Otherwise an exception is thrown.
+     * Note: This method is not needed for the query parser.
+     * 
+     * @param typeId
+     *            id of type to be deleted
+     */
+    void deleteTypeDefinition(String typeId);
 }

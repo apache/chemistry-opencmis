@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.WSConverter;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
@@ -464,6 +465,18 @@ public class JcrTypeManager implements TypeManager {
         }
 
         return result;
+    }
+
+    public void addTypeDefinition(TypeDefinition typeDefinition, boolean addInheritedProperties) {
+        throw new CmisNotSupportedException("Method not implemented.");
+    }
+
+    public void updateTypeDefinition(TypeDefinition typeDefinition) {
+        throw new CmisNotSupportedException("Method not implemented.");
+    }
+
+    public void deleteTypeDefinition(String typeId) {
+        throw new CmisNotSupportedException("Method not implemented.");
     }
 
 }

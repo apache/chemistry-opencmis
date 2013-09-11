@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
  * interface to a repository implementation. This interface is the entry point
@@ -159,7 +160,7 @@ public interface StoreManager {
      *            id of repository
      * @return type manager for this repository or null if repository is unknown
      */
-    TypeManagerCreatable getTypeManager(String repositoryId);
+    TypeManager getTypeManager(String repositoryId);
 
     /**
      * Get information if a repository supports single filing.

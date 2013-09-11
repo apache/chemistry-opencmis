@@ -32,9 +32,9 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractPropertyDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.TypeUtil;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Class that manages a type system for a repository types can be added, the
  * inheritance can be managed and type can be retrieved for a given type id.
  */
-public class TypeManagerImpl implements TypeManagerCreatable {
+public class TypeManagerImpl implements TypeManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeManagerImpl.class.getName());
     /**

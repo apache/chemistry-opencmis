@@ -58,10 +58,10 @@ import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
-import org.apache.chemistry.opencmis.inmemory.storedobj.api.TypeManagerCreatable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,14 +241,14 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (null == typeDefsFileName) {
             LOG.info("No file name for type definitions given, no types will be created.");
         } else {
-            TypeManagerCreatable typeManager = storeManager.getTypeManager(repositoryId);
-            TypeManagerCreatable tmc = (TypeManagerCreatable) typeManager;
+            TypeManager typeManager = storeManager.getTypeManager(repositoryId);
+            TypeManager tmc = typeManager;
             importTypesFromFile(tmc, typeDefsFileName);
         }
         return created;
     }
 
-    private void importTypesFromFile(TypeManagerCreatable tmc, String typeDefsFileName) {
+    private void importTypesFromFile(TypeManager tmc, String typeDefsFileName) {
 
         BufferedInputStream stream = null;
         TypeDefinition typeDef = null;
