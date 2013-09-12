@@ -22,7 +22,6 @@ import java.net.Authenticator;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,12 +32,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.chemistry.opencmis.client.SessionParameterMap;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -113,31 +112,20 @@ public class ClientSession {
         connect(sessionParameters, objectFactory, authenticationProvider, cache);
     }
 
-    public static Map<String, String> createSessionParameters(String url, BindingType binding, String username,
+    public static SessionParameterMap createSessionParameters(String url, BindingType binding, String username,
             String password, Authentication authentication, boolean compression, boolean clientCompression,
             boolean cookies) {
-        Map<String, String> parameters = new LinkedHashMap<String, String>();
+        SessionParameterMap parameters = new SessionParameterMap();
 
         switch (binding) {
         case WEBSERVICES:
-            parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
-            parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, url);
-            parameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE, url);
+            parameters.setWebServicesBindingUrl(url);
             break;
         case ATOMPUB:
-            parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-            parameters.put(SessionParameter.ATOMPUB_URL, url);
+            parameters.setAtomPubBindingUrl(url);
             break;
         case BROWSER:
-            parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
-            parameters.put(SessionParameter.BROWSER_URL, url);
+            parameters.setBrowserBindingUrl(url);
             break;
         default:
             parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
@@ -145,30 +133,19 @@ public class ClientSession {
 
         switch (authentication) {
         case STANDARD:
-            parameters.put(SessionParameter.USER, username);
-            parameters.put(SessionParameter.PASSWORD, password);
+            parameters.setUsernameTokenAuthentication(username, password, true);
             break;
         case NTLM:
-            parameters.put(SessionParameter.USER, username);
-            parameters.put(SessionParameter.PASSWORD, password);
-            parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-                    CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
+            parameters.setNtlmAuthentication(username, password);
             break;
         default:
-            // no authentication
+            parameters.setNoAuthentication();
         }
 
-        if (compression) {
-            parameters.put(SessionParameter.COMPRESSION, "true");
-        }
+        parameters.setCompression(compression);
+        parameters.setClientCompression(clientCompression);
 
-        if (clientCompression) {
-            parameters.put(SessionParameter.CLIENT_COMPRESSION, "true");
-        }
-
-        if (cookies) {
-            parameters.put(SessionParameter.COOKIES, "true");
-        }
+        parameters.setCookies(cookies);
 
         // get additional workbench properties from system properties
         Properties sysProps = System.getProperties();

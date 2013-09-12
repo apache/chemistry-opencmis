@@ -24,7 +24,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.chemistry.opencmis.client.SessionParameterMap;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 
@@ -119,21 +119,8 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
     @Override
     public Map<String, String> getSessionParameters() {
-        Map<String, String> result = new HashMap<String, String>();
-
-        for (String line : sessionParameterTextArea.getText().split("\n")) {
-            line = line.trim();
-            if (line.length() == 0 || line.charAt(0) == '#') {
-                continue;
-            }
-
-            int x = line.indexOf('=');
-            if (x < 0) {
-                result.put(line.trim(), "");
-            } else {
-                result.put(line.substring(0, x).trim(), line.substring(x + 1).trim());
-            }
-        }
+        SessionParameterMap result = new SessionParameterMap();
+        result.parse(sessionParameterTextArea.getText());
 
         return result;
     }
