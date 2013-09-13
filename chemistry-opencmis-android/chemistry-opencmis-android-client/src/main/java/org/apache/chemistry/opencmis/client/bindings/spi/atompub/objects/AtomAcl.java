@@ -35,7 +35,7 @@ public class AtomAcl extends AtomBase {
 
     public AtomAcl(Acl acl) {
         this();
-        setACL(acl);
+        this.acl = acl;
     }
 
     @Override

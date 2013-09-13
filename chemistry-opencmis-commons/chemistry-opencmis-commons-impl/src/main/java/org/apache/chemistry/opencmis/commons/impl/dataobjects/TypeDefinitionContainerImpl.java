@@ -38,7 +38,7 @@ public class TypeDefinitionContainerImpl extends AbstractExtensionData implement
     }
 
     public TypeDefinitionContainerImpl(TypeDefinition typeDef) {
-        setTypeDefinition(typeDef);
+        type = typeDef;
         children = new ArrayList<TypeDefinitionContainer>();
     }
 

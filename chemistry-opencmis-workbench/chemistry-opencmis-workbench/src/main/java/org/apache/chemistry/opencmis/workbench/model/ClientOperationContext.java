@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 
-public class ClientOperationContext extends OperationContextImpl {
+public final class ClientOperationContext extends OperationContextImpl {
 
     private static final long serialVersionUID = 1L;
 

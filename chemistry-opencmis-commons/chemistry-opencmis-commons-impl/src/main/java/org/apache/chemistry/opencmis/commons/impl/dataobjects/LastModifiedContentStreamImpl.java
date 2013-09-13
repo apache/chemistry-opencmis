@@ -45,7 +45,7 @@ public class LastModifiedContentStreamImpl extends ContentStreamImpl implements 
     public LastModifiedContentStreamImpl(String filename, BigInteger length, String mimetype, InputStream stream,
             GregorianCalendar lastModified) {
         super(filename, length, mimetype, stream);
-        setLastModified(lastModified);
+        this.lastModified = lastModified;
     }
 
     public GregorianCalendar getLastModified() {

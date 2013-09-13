@@ -1517,7 +1517,7 @@ public class FileShareRepository {
                 addPropertyId(result, typeId, filter, PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
                 addPropertyId(result, typeId, filter, PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
                 String path = getRepositoryPath(file);
-                addPropertyString(result, typeId, filter, PropertyIds.PATH, (path.length() == 0 ? "/" : path));
+                addPropertyString(result, typeId, filter, PropertyIds.PATH, path);
 
                 // folder properties
                 if (!root.equals(file)) {
@@ -2123,7 +2123,14 @@ public class FileShareRepository {
     }
 
     private String getRepositoryPath(File file) {
-        return file.getAbsolutePath().substring(root.getAbsolutePath().length()).replace(File.separatorChar, '/');
+        String path = file.getAbsolutePath().substring(root.getAbsolutePath().length())
+                .replace(File.separatorChar, '/');
+        if (path.length() == 0) {
+            path = "/";
+        } else if (path.charAt(0) != '/') {
+            path = "/" + path;
+        }
+        return path;
     }
 
     private void debug(String msg) {

@@ -43,14 +43,14 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
 
     public RenditionDataImpl(String streamId, String mimeType, BigInteger length, String kind, String title,
             BigInteger width, BigInteger height, String renditionDocumentId) {
-        setStreamId(streamId);
-        setMimeType(mimeType);
-        setBigLength(length);
-        setKind(kind);
-        setTitle(title);
-        setBigWidth(width);
-        setBigHeight(height);
-        setRenditionDocumentId(renditionDocumentId);
+        this.streamId = streamId;
+        this.mimeType = mimeType;
+        this.length = length;
+        this.kind = kind;
+        this.title = title;
+        this.width = width;
+        this.height = height;
+        this.renditionDocumentId = renditionDocumentId;
     }
 
     public String getStreamId() {

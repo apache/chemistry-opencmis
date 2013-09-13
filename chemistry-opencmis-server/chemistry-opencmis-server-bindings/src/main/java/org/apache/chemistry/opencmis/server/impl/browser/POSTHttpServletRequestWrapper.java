@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
-public class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
+public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
     private String filename;
     private String contentType;
     private BigInteger size;

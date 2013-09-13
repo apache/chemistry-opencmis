@@ -41,7 +41,7 @@ public class ObjectParentDataImpl extends AbstractExtensionData implements Objec
      * Constructor.
      */
     public ObjectParentDataImpl(ObjectData object) {
-        setObject(object);
+        this.object = object;
     }
 
     public ObjectData getObject() {

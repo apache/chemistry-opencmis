@@ -49,7 +49,7 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
     /**
      * Parses the query string.
      */
-    protected void parseFormData(String queryString) throws IOException {
+    protected final void parseFormData(String queryString) throws IOException {
         if (queryString == null || queryString.length() < 3) {
             return;
         }
@@ -72,7 +72,7 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
     /**
      * Adds a value to a parameter.
      */
-    protected void addParameter(String name, String value) {
+    protected final void addParameter(String name, String value) {
         String[] values = parameters.get(name);
 
         if (values == null) {
@@ -88,7 +88,7 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
     /**
      * Adds an array of values to a parameter.
      */
-    protected void addParameter(String name, String[] additionalValues) {
+    protected final void addParameter(String name, String[] additionalValues) {
         String[] values = parameters.get(name);
 
         if (values == null) {
@@ -102,7 +102,7 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
     }
 
     @Override
-    public String getParameter(String name) {
+    public final String getParameter(String name) {
         String[] values = parameters.get(name);
         if ((values == null) || (values.length == 0)) {
             return null;
@@ -112,17 +112,17 @@ public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrap
     }
 
     @Override
-    public Map<String, String[]> getParameterMap() {
+    public final Map<String, String[]> getParameterMap() {
         return parameters;
     }
 
     @Override
-    public Enumeration<String> getParameterNames() {
+    public final Enumeration<String> getParameterNames() {
         return Collections.enumeration(parameters.keySet());
     }
 
     @Override
-    public String[] getParameterValues(String name) {
+    public final String[] getParameterValues(String name) {
         return parameters.get(name);
     }
 }

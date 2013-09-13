@@ -38,14 +38,13 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
      * Constructor.
      */
     public ObjectInFolderContainerImpl() {
-
     }
 
     /**
      * Constructor.
      */
     public ObjectInFolderContainerImpl(ObjectInFolderData object) {
-        setObject(object);
+        this.object = object;
     }
 
     public ObjectInFolderData getObject() {

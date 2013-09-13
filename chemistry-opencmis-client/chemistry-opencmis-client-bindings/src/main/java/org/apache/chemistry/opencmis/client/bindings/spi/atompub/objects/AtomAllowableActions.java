@@ -35,7 +35,7 @@ public class AtomAllowableActions extends AtomBase {
 
     public AtomAllowableActions(AllowableActions allowableActions) {
         this();
-        setAllowableActions(allowableActions);
+        this.allowableActions = allowableActions;
     }
 
     @Override

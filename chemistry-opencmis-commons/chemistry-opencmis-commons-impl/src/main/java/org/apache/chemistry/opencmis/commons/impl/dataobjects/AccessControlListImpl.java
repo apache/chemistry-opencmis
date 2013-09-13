@@ -45,7 +45,7 @@ public class AccessControlListImpl extends AbstractExtensionData implements Acl,
      * Constructor.
      */
     public AccessControlListImpl(List<Ace> aces) {
-        setAces(aces);
+        this.aces = aces;
     }
 
     public List<Ace> getAces() {

@@ -66,7 +66,8 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setCacheEnabled(false);
         generateCacheKey();
 
-        setMaxItemsPerPage(100); // default
+        // default page size is 100
+        setMaxItemsPerPage(100);
     }
 
     /**
@@ -108,15 +109,15 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setMaxItemsPerPage(maxItemsPerPage);
     }
 
-    public Set<String> getFilter() {
-        if (this.filter == null) {
+    public final Set<String> getFilter() {
+        if (filter == null) {
             return null;
         }
 
-        return Collections.unmodifiableSet(this.filter);
+        return Collections.unmodifiableSet(filter);
     }
 
-    public void setFilter(Set<String> propertyFilter) {
+    public final void setFilter(Set<String> propertyFilter) {
         if (propertyFilter != null) {
             TreeSet<String> tempSet = new TreeSet<String>();
 
@@ -142,18 +143,18 @@ public class OperationContextImpl implements OperationContext, Serializable {
             }
 
             if (tempSet.size() == 0) {
-                this.filter = null;
+                filter = null;
             } else {
-                this.filter = tempSet;
+                filter = tempSet;
             }
         } else {
-            this.filter = null;
+            filter = null;
         }
 
         generateCacheKey();
     }
 
-    public void setFilterString(String propertyFilter) {
+    public final void setFilterString(String propertyFilter) {
         if ((propertyFilter == null) || (propertyFilter.trim().length() == 0)) {
             setFilter(null);
             return;
@@ -168,25 +169,25 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setFilter(tempSet);
     }
 
-    public String getFilterString() {
-        if (this.filter == null) {
+    public final String getFilterString() {
+        if (filter == null) {
             return null;
         }
 
-        if (this.filter.contains(PROPERTIES_STAR)) {
+        if (filter.contains(PROPERTIES_STAR)) {
             return PROPERTIES_STAR;
         }
 
-        this.filter.add(PropertyIds.OBJECT_ID);
-        this.filter.add(PropertyIds.BASE_TYPE_ID);
-        this.filter.add(PropertyIds.OBJECT_TYPE_ID);
+        filter.add(PropertyIds.OBJECT_ID);
+        filter.add(PropertyIds.BASE_TYPE_ID);
+        filter.add(PropertyIds.OBJECT_TYPE_ID);
         if (loadSecondaryTypeProperties) {
-            this.filter.add(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
+            filter.add(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for (String oid : this.filter) {
+        for (String oid : filter) {
             if (sb.length() > 0) {
                 sb.append(',');
             }
@@ -197,59 +198,59 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
-    public void setLoadSecondaryTypeProperties(boolean load) {
-        this.loadSecondaryTypeProperties = load;
+    public final void setLoadSecondaryTypeProperties(boolean load) {
+        loadSecondaryTypeProperties = load;
     }
 
-    public boolean loadSecondaryTypeProperties() {
+    public final boolean loadSecondaryTypeProperties() {
         return loadSecondaryTypeProperties;
     }
 
-    public boolean isIncludeAcls() {
+    public final boolean isIncludeAcls() {
         return includeAcls;
     }
 
-    public void setIncludeAcls(boolean include) {
-        this.includeAcls = include;
+    public final void setIncludeAcls(boolean include) {
+        includeAcls = include;
         generateCacheKey();
     }
 
-    public boolean isIncludeAllowableActions() {
-        return this.includeAllowableActions;
+    public final boolean isIncludeAllowableActions() {
+        return includeAllowableActions;
     }
 
-    public void setIncludeAllowableActions(boolean include) {
-        this.includeAllowableActions = include;
+    public final void setIncludeAllowableActions(boolean include) {
+        includeAllowableActions = include;
         generateCacheKey();
     }
 
-    public boolean isIncludePolicies() {
-        return this.includePolicies;
+    public final boolean isIncludePolicies() {
+        return includePolicies;
     }
 
-    public void setIncludePolicies(boolean include) {
-        this.includePolicies = include;
+    public final void setIncludePolicies(boolean include) {
+        includePolicies = include;
         generateCacheKey();
     }
 
-    public IncludeRelationships getIncludeRelationships() {
-        return this.includeRelationships;
+    public final IncludeRelationships getIncludeRelationships() {
+        return includeRelationships;
     }
 
-    public void setIncludeRelationships(IncludeRelationships include) {
-        this.includeRelationships = include;
+    public final void setIncludeRelationships(IncludeRelationships include) {
+        includeRelationships = include;
         generateCacheKey();
     }
 
-    public Set<String> getRenditionFilter() {
-        if (this.renditionFilter == null) {
+    public final Set<String> getRenditionFilter() {
+        if (renditionFilter == null) {
             return null;
         }
 
-        return Collections.unmodifiableSet(this.renditionFilter);
+        return Collections.unmodifiableSet(renditionFilter);
     }
 
-    public void setRenditionFilter(Set<String> renditionFilter) {
+    public final void setRenditionFilter(Set<String> renditionFilter) {
         TreeSet<String> tempSet = new TreeSet<String>();
 
         if (renditionFilter != null) {
@@ -280,8 +281,8 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
     }
 
-    public void setRenditionFilterString(String renditionFilter) {
-        if ((renditionFilter == null) || (renditionFilter.trim().length() == 0)) {
+    public final void setRenditionFilterString(String renditionFilter) {
+        if (renditionFilter == null || renditionFilter.trim().length() == 0) {
             setRenditionFilter(null);
             return;
         }
@@ -295,14 +296,14 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setRenditionFilter(tempSet);
     }
 
-    public String getRenditionFilterString() {
-        if (this.renditionFilter == null) {
+    public final String getRenditionFilterString() {
+        if (renditionFilter == null) {
             return null;
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for (String rf : this.renditionFilter) {
+        for (String rf : renditionFilter) {
             if (sb.length() > 0) {
                 sb.append(',');
             }
@@ -313,31 +314,31 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
-    public boolean isIncludePathSegments() {
+    public final boolean isIncludePathSegments() {
         return includePathSegments;
     }
 
-    public void setIncludePathSegments(boolean include) {
-        this.includePathSegments = include;
+    public final void setIncludePathSegments(boolean include) {
+        includePathSegments = include;
     }
 
-    public String getOrderBy() {
-        return this.orderBy;
+    public final String getOrderBy() {
+        return orderBy;
     }
 
-    public void setOrderBy(String orderBy) {
+    public final void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
     }
 
-    public boolean isCacheEnabled() {
+    public final boolean isCacheEnabled() {
         return cacheEnabled;
     }
 
-    public void setCacheEnabled(boolean cacheEnabled) {
+    public final void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
     }
 
-    public String getCacheKey() {
+    public final String getCacheKey() {
         return cacheKey;
     }
 
@@ -345,7 +346,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
      * Generates a new cache key from all parameters that are relevant for
      * caching.
      */
-    protected void generateCacheKey() {
+    protected final void generateCacheKey() {
         if (!cacheEnabled) {
             cacheKey = null;
         }
@@ -366,11 +367,11 @@ public class OperationContextImpl implements OperationContext, Serializable {
         cacheKey = sb.toString();
     }
 
-    public int getMaxItemsPerPage() {
-        return this.maxItemsPerPage;
+    public final int getMaxItemsPerPage() {
+        return maxItemsPerPage;
     }
 
-    public void setMaxItemsPerPage(int maxItemsPerPage) {
+    public final void setMaxItemsPerPage(int maxItemsPerPage) {
         if (maxItemsPerPage < 1) {
             throw new IllegalArgumentException("itemsPerPage must be > 0!");
         }

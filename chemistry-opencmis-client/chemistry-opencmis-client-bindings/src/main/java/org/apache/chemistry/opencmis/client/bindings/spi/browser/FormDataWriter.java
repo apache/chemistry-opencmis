@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 
-public class FormDataWriter {
+public final class FormDataWriter {
 
     private static final String CONTENT_TYPE_URLENCODED = "application/x-www-form-urlencoded;charset=utf-8";
     private static final String CONTENT_TYPE_FORMDATA = "multipart/form-data; boundary=";

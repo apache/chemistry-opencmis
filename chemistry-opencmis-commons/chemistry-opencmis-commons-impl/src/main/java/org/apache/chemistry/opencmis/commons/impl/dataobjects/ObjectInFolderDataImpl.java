@@ -41,7 +41,7 @@ public class ObjectInFolderDataImpl extends AbstractExtensionData implements Obj
      * Constructor.
      */
     public ObjectInFolderDataImpl(ObjectData object) {
-        setObject(object);
+        this.object = object;
     }
 
     public ObjectData getObject() {

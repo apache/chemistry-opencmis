@@ -35,10 +35,10 @@ public class ChangeEventsImpl implements ChangeEvents {
 
     public ChangeEventsImpl(String latestChangeLogToken, List<ChangeEvent> events, boolean hasMoreItems,
             long totalNumItems) {
-        setLatestChangeLogToken(latestChangeLogToken);
-        setChangeEvents(events);
-        setHasMoreItems(hasMoreItems);
-        setTotalNumItems(totalNumItems);
+        this.latestChangeLogToken = latestChangeLogToken;
+        this.events = events;
+        this.hasMoreItems = hasMoreItems;
+        this.totalNumItems = totalNumItems;
     }
 
     public String getLatestChangeLogToken() {

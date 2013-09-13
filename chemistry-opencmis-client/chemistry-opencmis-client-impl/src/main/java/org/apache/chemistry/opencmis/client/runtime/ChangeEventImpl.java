@@ -45,12 +45,11 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
 
     public ChangeEventImpl(ChangeType changeType, GregorianCalendar changeTime, String objectId,
             Map<String, List<?>> properties, List<String> policyIds, Acl acl) {
-        setChangeType(changeType);
-        setChangeTime(changeTime);
-        setObjectId(objectId);
-        setProperties(properties);
-        setPolicyIds(policyIds);
-        setAcl(acl);
+        super(changeType, changeTime);
+        this.objectId = objectId;
+        this.properties = properties;
+        this.policyIds = policyIds;
+        this.acl = acl;
     }
 
     public String getObjectId() {

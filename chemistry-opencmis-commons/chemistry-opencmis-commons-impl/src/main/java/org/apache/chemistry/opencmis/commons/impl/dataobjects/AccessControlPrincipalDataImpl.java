@@ -39,7 +39,7 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
      * Constructor with principal id.
      */
     public AccessControlPrincipalDataImpl(String principalId) {
-        setPrincipalId(principalId);
+        this.principalId = principalId;
     }
 
     public String getId() {

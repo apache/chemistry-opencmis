@@ -46,8 +46,8 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Ace
      * Constructor.
      */
     public AccessControlEntryImpl(Principal principal, List<String> permissions) {
-        setPrincipal(principal);
-        setPermissions(permissions);
+        this.principal = principal;
+        this.permissions = permissions;
     }
 
     public Principal getPrincipal() {

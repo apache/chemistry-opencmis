@@ -62,7 +62,7 @@ import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 /**
  * Parser for Atom Entries.
  */
-public class AtomEntryParser {
+public final class AtomEntryParser {
 
     private static final long MAX_STREAM_LENGTH = 10 * 1024 * 1024;
 

@@ -189,14 +189,14 @@ public class CallContextImpl implements CallContext {
     /**
      * Adds a parameter.
      */
-    public void put(String key, Object value) {
+    public final void put(String key, Object value) {
         parameter.put(key, value);
     }
 
     /**
      * Removes a parameter.
      */
-    public Object remove(String key) {
+    public final Object remove(String key) {
         return parameter.remove(key);
     }
 }

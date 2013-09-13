@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
@@ -84,7 +85,7 @@ public class SessionFactoryFinder {
                         reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
                         factoryClassName = reader.readLine();
                         reader.close();
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         factoryClassName = null;
                     }
                 }

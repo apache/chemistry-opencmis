@@ -1019,8 +1019,7 @@ public final class XMLConverter {
     // --- extension writers ---
     // -------------------------
 
-    public static void writeExtensions(XmlSerializer writer, ExtensionsData source) throws IllegalArgumentException,
-            IllegalStateException, IOException {
+    public static void writeExtensions(XmlSerializer writer, ExtensionsData source) throws IOException {
         if (source == null) {
             return;
         }

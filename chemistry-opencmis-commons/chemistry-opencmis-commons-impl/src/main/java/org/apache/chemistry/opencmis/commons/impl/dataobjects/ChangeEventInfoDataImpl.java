@@ -29,9 +29,17 @@ import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 public class ChangeEventInfoDataImpl extends AbstractExtensionData implements ChangeEventInfo {
 
     private static final long serialVersionUID = 1L;
-    
+
     private GregorianCalendar changeTime;
     private ChangeType changeType;
+
+    public ChangeEventInfoDataImpl() {
+    }
+
+    public ChangeEventInfoDataImpl(ChangeType changeType, GregorianCalendar changeTime) {
+        this.changeType = changeType;
+        this.changeTime = changeTime;
+    }
 
     public GregorianCalendar getChangeTime() {
         return changeTime;
