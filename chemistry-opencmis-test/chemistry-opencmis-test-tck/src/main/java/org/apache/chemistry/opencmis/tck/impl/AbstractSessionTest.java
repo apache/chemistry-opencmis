@@ -929,6 +929,18 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     }
                 }
 
+                // special case: path
+                if (PropertyIds.PATH.equals(propId) && prop.getFirstValue() != null) {
+                    Object path = prop.getFirstValue();
+                    if (path instanceof String) {
+                        f = createResult(FAILURE, "Path does not start with '/': " + path);
+                        addResult(results,
+                                assertIsTrue(((String) path).length() > 0 && ((String) path).charAt(0) == '/', null, f));
+                    } else {
+                        addResult(results, createResult(FAILURE, "Property " + PropertyIds.PATH + " is not a string!"));
+                    }
+                }
+
                 // check property
                 addResult(results, checkProperty(prop, "Property " + propId, propertyCheck));
 
@@ -1796,7 +1808,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             if (property.getDefinition().isRequired() == null) {
-                addResult(results, createResult(FAILURE, "Property definition doesn't contain the required flag!!"));
+                addResult(results, createResult(FAILURE, "Property definition doesn't contain the required flag!"));
             } else {
                 if (property.getDefinition().isRequired().booleanValue()) {
                     f = createResult(FAILURE, "Property is required but has no value!");
