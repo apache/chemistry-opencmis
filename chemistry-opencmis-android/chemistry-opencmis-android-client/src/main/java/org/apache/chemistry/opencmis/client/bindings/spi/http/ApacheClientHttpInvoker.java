@@ -23,6 +23,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocket;
@@ -32,6 +34,8 @@ import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
+import org.apache.http.Header;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnManagerPNames;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -40,9 +44,15 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.CookieSpecFactory;
+import org.apache.http.cookie.MalformedCookieException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.cookie.CookieSpecBase;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
@@ -51,9 +61,12 @@ import org.apache.http.params.HttpParams;
  */
 public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
 
+    private static final String IGNORE_COOKIES = "ignoreCookies";
+
     protected DefaultHttpClient createHttpClient(UrlBuilder url, BindingSession session) {
         // set params
         HttpParams params = createDefaultHttpParams(session);
+        params.setParameter(ClientPNames.COOKIE_POLICY, IGNORE_COOKIES);
 
         // set max connection
         String maxConnStr = System.getProperty("http.maxConnections", "5");
@@ -80,6 +93,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
         // set up client
         DefaultHttpClient httpclient = new DefaultHttpClient(connManager, params);
         httpclient.setRoutePlanner(routePlanner);
+        httpclient.getCookieSpecs().register(IGNORE_COOKIES, new IgnoreSpecFactory());
 
         return httpclient;
     }
@@ -151,5 +165,30 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
                 return sslSocket;
             }
         };
+    }
+
+    /**
+     * A cookies spec factory that ignores cookies.
+     */
+    private static class IgnoreSpecFactory implements CookieSpecFactory {
+        public CookieSpec newInstance(final HttpParams params) {
+            return new CookieSpecBase() {
+                public int getVersion() {
+                    return 0;
+                }
+
+                public List<Cookie> parse(Header header, CookieOrigin origin) throws MalformedCookieException {
+                    return Collections.emptyList();
+                }
+
+                public List<Header> formatCookies(List<Cookie> cookies) {
+                    return Collections.emptyList();
+                }
+
+                public Header getVersionHeader() {
+                    return null;
+                }
+            };
+        }
     }
 }
