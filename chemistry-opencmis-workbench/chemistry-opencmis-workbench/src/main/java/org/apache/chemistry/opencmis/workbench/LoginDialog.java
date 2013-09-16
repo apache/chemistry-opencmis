@@ -41,9 +41,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -198,7 +196,7 @@ public class LoginDialog extends JDialog {
         setLocationRelativeTo(null);
     }
 
-    protected void addLoginTabs(final JTabbedPane loginTabs) {
+    private void addLoginTabs(final JTabbedPane loginTabs) {
 
         for (AbstractLoginTab tab : TAB_SERVICE_LOADER) {
             loginTabs.add(tab.getTabTitle(), tab);
@@ -237,29 +235,7 @@ public class LoginDialog extends JDialog {
         });
     }
 
-    protected JTextField createTextField(Container pane, String label) {
-        JTextField textField = new JTextField(60);
-        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
-        textLabel.setLabelFor(textField);
-
-        pane.add(textLabel);
-        pane.add(textField);
-
-        return textField;
-    }
-
-    protected JPasswordField createPasswordField(Container pane, String label) {
-        JPasswordField textField = new JPasswordField(60);
-        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
-        textLabel.setLabelFor(textField);
-
-        pane.add(textLabel);
-        pane.add(textField);
-
-        return textField;
-    }
-
-    protected JButton createButton(String title) {
+    private JButton createButton(String title) {
         JButton button = new JButton(title);
         button.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
         button.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -268,7 +244,7 @@ public class LoginDialog extends JDialog {
         return button;
     }
 
-    protected void createRepositoryBox(Container pane) {
+    private void createRepositoryBox(Container pane) {
         repositoryBox = new JComboBox();
         repositoryBox.setEnabled(false);
         repositoryBox.setRenderer(new RepositoryRenderer());

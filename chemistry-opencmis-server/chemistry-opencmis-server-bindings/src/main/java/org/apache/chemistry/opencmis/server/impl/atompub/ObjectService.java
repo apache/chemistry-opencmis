@@ -271,6 +271,7 @@ public class ObjectService {
                 try {
                     contentStream.setLength(new BigInteger(lengthStr));
                 } catch (NumberFormatException e) {
+                    // invalid content length -> ignore
                 }
             }
             String contentDisposition = request.getHeader(MimeHelper.CONTENT_DISPOSITION);

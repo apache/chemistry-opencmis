@@ -83,6 +83,7 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
                                         "Change event indicates that an object has been deleted but it still exists. Id: "
                                                 + event.getObjectId()));
                             } catch (CmisObjectNotFoundException e) {
+                                // expected
                             }
                         } else {
                             try {

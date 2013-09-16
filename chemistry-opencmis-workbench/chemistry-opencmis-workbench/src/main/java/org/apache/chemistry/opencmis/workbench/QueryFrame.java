@@ -263,6 +263,7 @@ public class QueryFrame extends JFrame {
                 maxHitsField.commitEdit();
                 maxHits = ((Number) maxHitsField.getValue()).intValue();
             } catch (Exception e) {
+                ClientHelper.showError(this, e);
             }
 
             results = model.query(text, searchAllVersionsCheckBox.isSelected(), maxHits);

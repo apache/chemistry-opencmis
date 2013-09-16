@@ -431,7 +431,7 @@ public final class MimeHelper {
          * @return The processed string value.
          */
         private String getEscapedValue(int start, int end) throws ParseException {
-            StringBuffer value = new StringBuffer();
+            StringBuilder value = new StringBuilder();
             for (int i = start; i < end; i++) {
                 char ch = header.charAt(i);
                 // is this an escape character?

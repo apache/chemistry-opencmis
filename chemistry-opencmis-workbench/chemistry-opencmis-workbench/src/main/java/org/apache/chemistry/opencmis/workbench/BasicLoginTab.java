@@ -95,7 +95,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         makeCompactGrid(this, 8, 2, 5, 10, 5, 5);
     }
 
-    protected void createBindingButtons(Container pane) {
+    private void createBindingButtons(Container pane) {
         JPanel bindingContainer = new JPanel();
         bindingContainer.setLayout(new BoxLayout(bindingContainer, BoxLayout.LINE_AXIS));
         char bc = System.getProperty(SYSPROP_BINDING, "atom").toLowerCase(Locale.ENGLISH).charAt(0);
@@ -120,7 +120,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         pane.add(bindingContainer);
     }
 
-    protected void createAuthenticationButtons(Container pane) {
+    private void createAuthenticationButtons(Container pane) {
         JPanel authenticationContainer = new JPanel();
         authenticationContainer.setLayout(new BoxLayout(authenticationContainer, BoxLayout.LINE_AXIS));
         boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase(Locale.ENGLISH)
@@ -145,7 +145,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         pane.add(authenticationContainer);
     }
 
-    protected void createCompressionButtons(Container pane) {
+    private void createCompressionButtons(Container pane) {
         JPanel compressionContainer = new JPanel();
         compressionContainer.setLayout(new BoxLayout(compressionContainer, BoxLayout.LINE_AXIS));
         boolean compression = !(System.getProperty(SYSPROP_COMPRESSION, "on").equalsIgnoreCase("off"));
@@ -163,7 +163,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         pane.add(compressionContainer);
     }
 
-    protected void createClientCompressionButtons(Container pane) {
+    private void createClientCompressionButtons(Container pane) {
         JPanel clientCompressionContainer = new JPanel();
         clientCompressionContainer.setLayout(new BoxLayout(clientCompressionContainer, BoxLayout.LINE_AXIS));
         boolean clientCompression = (System.getProperty(SYSPROP_CLIENTCOMPRESSION, "off").equalsIgnoreCase("on"));
@@ -181,7 +181,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         pane.add(clientCompressionContainer);
     }
 
-    protected void createCookieButtons(Container pane) {
+    private void createCookieButtons(Container pane) {
         JPanel cookiesContainer = new JPanel();
         cookiesContainer.setLayout(new BoxLayout(cookiesContainer, BoxLayout.LINE_AXIS));
         boolean cookies = (System.getProperty(SYSPROP_COOKIES, "on").equalsIgnoreCase("on"));

@@ -276,7 +276,7 @@ public class SessionImpl implements Session {
         }
 
         final NavigationService navigationService = getBinding().getNavigationService();
-        final ObjectFactory objectFactory = getObjectFactory();
+        final ObjectFactory of = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
         return new CollectionIterable<Document>(new AbstractPageFetcher<Document>(ctxt.getMaxItemsPerPage()) {
@@ -294,7 +294,7 @@ public class SessionImpl implements Session {
                 List<Document> page = new ArrayList<Document>();
                 if (checkedOutDocs.getObjects() != null) {
                     for (ObjectData objectData : checkedOutDocs.getObjects()) {
-                        CmisObject doc = objectFactory.convertObject(objectData, ctxt);
+                        CmisObject doc = of.convertObject(objectData, ctxt);
                         if (!(doc instanceof Document)) {
                             // should not happen...
                             continue;

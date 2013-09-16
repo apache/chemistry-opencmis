@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityContentStreamUpdates;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -132,7 +133,7 @@ public class ChangeTokenTest extends AbstractSessionTest {
                 return;
             }
 
-            byte[] contentBytes = "New content".getBytes();
+            byte[] contentBytes = IOUtils.getUTF8Bytes("New content");
             ContentStream contentStream = new ContentStreamImpl("content2.txt",
                     BigInteger.valueOf(contentBytes.length), "text/plain", new ByteArrayInputStream(contentBytes));
 

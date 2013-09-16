@@ -39,13 +39,13 @@ public class ObjectComplianceCheck extends AbstractSessionTest {
     }
 
     @Override
-    public void init(Map<String, String> parameters) {
+    public final void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Object Compliance Check");
     }
 
     @Override
-    public void run(Session session) {
+    public final void run(Session session) {
         CmisObject object = session.getObject(objectId, SELECT_ALL_NO_CACHE_OC);
         String[] propertiesToCheck = getAllProperties(object);
 

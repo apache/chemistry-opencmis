@@ -76,7 +76,7 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
         }
     }
 
-    protected void createGUI(String title, String buttonLabel) {
+    private void createGUI(String title, String buttonLabel) {
         BorderLayout borderLayout = new BorderLayout();
         borderLayout.setVgap(3);
         setLayout(borderLayout);

@@ -32,7 +32,7 @@ public class ObjectComplianceTestGroup extends AbstractCmisTestGroup {
     }
 
     @Override
-    public void init(Map<String, String> parameters) throws Exception {
+    public final void init(Map<String, String> parameters) throws Exception {
         super.init(parameters);
 
         setName("Object Compliance Test Group");

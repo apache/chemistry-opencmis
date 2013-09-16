@@ -122,7 +122,7 @@ public class LoggingFilter implements Filter {
             String requestFileName = getRequestFileName(reqNo);
             String cType = logReq.getContentType();
             String xmlRequest = logReq.getPayload();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             if (logHeaders) {
                 logHeaders(logReq, sb);
@@ -144,7 +144,7 @@ public class LoggingFilter implements Filter {
             LOG.debug("Found request: " + requestFileName + ": " + xmlRequest);
             writeTextToFile(requestFileName, xmlRequest);
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             cType = logResponse.getContentType();
             String xmlResponse = logResponse.getPayload();
             String responseFileName = getResponseFileName(reqNo);
@@ -286,7 +286,7 @@ public class LoggingFilter implements Filter {
     }
 
     @SuppressWarnings("rawtypes")
-    private void logHeaders(LoggingRequestWrapper req, StringBuffer sb) {
+    private void logHeaders(LoggingRequestWrapper req, StringBuilder sb) {
         sb.append(req.getMethod());
         sb.append(' ');
         sb.append(req.getRequestURI());
@@ -310,7 +310,7 @@ public class LoggingFilter implements Filter {
         sb.append('\n');
     }
 
-    private void logHeaders(LoggingResponseWrapper resp, String protocol, StringBuffer sb) {
+    private void logHeaders(LoggingResponseWrapper resp, String protocol, StringBuilder sb) {
         sb.append(protocol);
         sb.append(' ');
         sb.append(String.valueOf(resp.getStatus()));

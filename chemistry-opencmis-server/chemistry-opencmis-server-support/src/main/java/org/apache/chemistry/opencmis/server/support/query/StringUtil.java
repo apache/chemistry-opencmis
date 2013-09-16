@@ -18,12 +18,15 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-public class StringUtil {
+public final class StringUtil {
+
+    private StringUtil() {
+    }
 
     /**
-     * remove all escape sequences in a string and return unescaped string
+     * Removes all escape sequences in a string and return unescaped string
      * escape character is backslash \, so \\ --> \, \' --> ' additional escaped
-     * characters can be allowed in escapedChars
+     * characters can be allowed in escapedChars.
      * 
      * @param literal
      *            String to unescape
@@ -36,7 +39,7 @@ public class StringUtil {
     public static String unescape(String literal, String escapedChars) {
         char c = '?';
         int i = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (null == escapedChars) {
             escapedChars = "\\'";

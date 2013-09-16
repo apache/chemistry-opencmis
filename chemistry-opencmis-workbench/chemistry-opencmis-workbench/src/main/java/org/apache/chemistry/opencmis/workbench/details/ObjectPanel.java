@@ -350,7 +350,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
     }
 
-    public String getDocumentURL(final CmisObject document, final Session session) {
+    private String getDocumentURL(final CmisObject document, final Session session) {
         if (!(document instanceof Document)) {
             return null;
         }

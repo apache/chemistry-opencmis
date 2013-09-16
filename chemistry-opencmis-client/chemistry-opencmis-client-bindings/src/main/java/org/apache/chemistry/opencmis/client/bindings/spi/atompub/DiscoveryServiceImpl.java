@@ -112,6 +112,11 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
             }
         }
 
+        if (changeLogToken != null) {
+            // the AtomPub binding cannot return a new change log token
+            changeLogToken.setValue(null);
+        }
+
         return result;
     }
 

@@ -54,7 +54,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
     private String[] columnNames;
 
     @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    public void init(ClientModel model, String[] columnNames, int[] colummnWidths) {
+    public void init(final ClientModel model, final String[] columnNames, final int[] colummnWidths) {
         this.model = model;
         model.addObjectListener(this);
 

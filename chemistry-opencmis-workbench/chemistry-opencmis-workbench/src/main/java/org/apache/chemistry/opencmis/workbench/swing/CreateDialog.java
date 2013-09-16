@@ -76,15 +76,15 @@ public abstract class CreateDialog extends JDialog {
         return model;
     }
 
-    protected void createRow(String label, JComponent comp, int row) {
+    protected final void createRow(String label, JComponent comp, int row) {
         createRow(panel, label, comp, row);
     }
 
-    protected void createActionRow(String label, JComponent comp, int row) {
+    protected final void createActionRow(String label, JComponent comp, int row) {
         createRow(actionPanel, label, comp, row);
     }
 
-    protected void createRow(JPanel panel, String label, JComponent comp, int row) {
+    protected final void createRow(JPanel panel, String label, JComponent comp, int row) {
         JLabel textLabel = new JLabel(label);
         textLabel.setLabelFor(comp);
 
@@ -98,7 +98,7 @@ public abstract class CreateDialog extends JDialog {
         panel.add(comp, c);
     }
 
-    protected void createRow(JComponent comp, int row) {
+    protected final void createRow(JComponent comp, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.LINE_START;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -108,7 +108,7 @@ public abstract class CreateDialog extends JDialog {
         panel.add(comp, c);
     }
 
-    public void showDialog() {
+    public final void showDialog() {
         panel.invalidate();
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
@@ -119,7 +119,7 @@ public abstract class CreateDialog extends JDialog {
         setVisible(true);
     }
 
-    protected Object[] getTypes(String rootTypeId) {
+    protected final Object[] getTypes(String rootTypeId) {
         List<ObjectType> types = model.getTypesAsList(rootTypeId, true);
 
         Object[] result = new Object[types.size()];
@@ -143,7 +143,7 @@ public abstract class CreateDialog extends JDialog {
         return result;
     }
 
-    protected void updateMandatoryFields(TypeDefinition type) {
+    protected final void updateMandatoryFields(TypeDefinition type) {
         mandatoryProperties.clear();
         mandatoryPropertiesPanel.removeAll();
 

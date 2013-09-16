@@ -18,15 +18,14 @@
  */
 package org.apache.chemistry.opencmis.server.support.filter;
 
-/* 
+/**
  * A super simple JSON pretty printer
  */
-
 public class JsonPrettyPrinter {
 
     private int indent = 0;
     private String indentStr;
-    private StringBuffer sb = new StringBuffer();
+    private StringBuilder sb = new StringBuilder();
 
     public JsonPrettyPrinter() {
         init(3);
@@ -36,15 +35,15 @@ public class JsonPrettyPrinter {
         init(indent);
     }
 
-    private void init(int indent) {
-        StringBuffer sb = new StringBuffer();
+    private void init(final int indent) {
+        StringBuilder indentBuilder = new StringBuilder(indent);
         for (int i = 0; i < indent; i++) {
-            sb.append(' ');
+            indentBuilder.append(' ');
         }
-        indentStr = sb.toString();
+        indentStr = indentBuilder.toString();
     }
 
-    public String prettyPrint(String jsonStr) {
+    public String prettyPrint(final String jsonStr) {
         for (int i = 0; i < jsonStr.length(); i++) {
             char c = jsonStr.charAt(i);
             writeChar(c);
@@ -70,7 +69,6 @@ public class JsonPrettyPrinter {
         } else {
             sb.append(c);
         }
-
     }
 
     private void addIndent() {

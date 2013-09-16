@@ -419,7 +419,7 @@ public final class ClientHelper {
         } else if (value instanceof String) {
             String s = value.toString();
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append('\"');
 
             for (int i = 0; i < s.length(); i++) {
@@ -434,7 +434,7 @@ public final class ClientHelper {
 
             return sb.toString();
         } else if (value instanceof Collection<?>) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append('[');
 
             for (Object v : (Collection<?>) value) {
@@ -636,7 +636,7 @@ public final class ClientHelper {
 
             return console;
         } catch (Exception ex) {
-            ClientHelper.showError(null, ex);
+            showError(null, ex);
             return null;
         } finally {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -654,7 +654,8 @@ public final class ClientHelper {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Desktop.getDesktop().browse(url);
-                } catch (IOException e1) {
+                } catch (IOException ex) {
+                    showError(null, ex);
                 }
             }
         });

@@ -507,7 +507,7 @@ public class AclEditorFrame extends JFrame {
             }
         }
 
-        public void updatePosition(int position) {
+        private void updatePosition(int position) {
             this.position = position;
             setBackground(position % 2 == 0 ? BACKGROUND1 : BACKGROUND2);
         }

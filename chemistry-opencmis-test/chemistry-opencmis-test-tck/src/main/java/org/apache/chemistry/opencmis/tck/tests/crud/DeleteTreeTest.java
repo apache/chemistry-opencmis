@@ -84,10 +84,7 @@ public class DeleteTreeTest extends AbstractSessionTest {
 
         if (exists(testFolder)) {
             // try to clean up
-            try {
-                deleteObject(testFolder);
-            } catch (Exception e) {
-            }
+            deleteObject(testFolder);
         }
     }
 }

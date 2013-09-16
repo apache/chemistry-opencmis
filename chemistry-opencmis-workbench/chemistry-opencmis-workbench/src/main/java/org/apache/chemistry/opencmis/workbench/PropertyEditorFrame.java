@@ -325,7 +325,7 @@ public class PropertyEditorFrame extends JFrame {
             setMaximumSize(new Dimension(Short.MAX_VALUE, getPreferredSize().height));
         }
 
-        protected JComponent createInputField(Object value) {
+        private JComponent createInputField(Object value) {
             switch (propDef.getPropertyType()) {
             case INTEGER:
                 return new IntegerPropertyInputField(value, this, bgColor);
@@ -762,7 +762,7 @@ public class PropertyEditorFrame extends JFrame {
             add(buttonPanel, BorderLayout.LINE_END);
         }
 
-        public void updatePosition(int position, boolean isLast) {
+        private void updatePosition(int position, boolean isLast) {
             this.position = position;
             upButton.setEnabled(position > 0);
             downButton.setEnabled(!isLast);
