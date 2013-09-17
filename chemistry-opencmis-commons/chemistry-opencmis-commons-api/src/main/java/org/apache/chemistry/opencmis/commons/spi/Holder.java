@@ -21,27 +21,44 @@ package org.apache.chemistry.opencmis.commons.spi;
 /**
  * Holder for IN/OUT parameters.
  */
-public final class Holder<T> {
+public class Holder<T> {
 
-    private T fValue;
+    private T value;
 
+    /**
+     * Constructs a holder with a {@code null} value.
+     */
     public Holder() {
     }
 
+    /**
+     * Constructs a holder with the given value.
+     */
     public Holder(T value) {
-        fValue = value;
+        this.value = value;
     }
 
+    /**
+     * Returns the value.
+     * 
+     * @return the value of the holder
+     */
     public T getValue() {
-        return fValue;
+        return value;
     }
 
+    /**
+     * Sets a new value of the holder.
+     * 
+     * @param value
+     *            the new value
+     */
     public void setValue(T value) {
-        fValue = value;
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return "Holder(" + fValue + ")";
+        return "Holder(" + value + ")";
     }
 }

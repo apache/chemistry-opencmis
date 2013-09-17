@@ -150,7 +150,7 @@ public class AtomFeed extends AtomDocumentBase {
         }
 
         // if has more -> add "next" link
-        if ((hasMoreItems != null) && hasMoreItems.booleanValue()) {
+        if (Boolean.TRUE.equals(hasMoreItems)) {
             // next link
             UrlBuilder nextLink = new UrlBuilder(pagingUrl);
             nextLink.addParameter(Constants.PARAM_SKIP_COUNT, skipCount.add(maxItems));

@@ -95,7 +95,7 @@ public interface Session extends Serializable {
      * 
      * @param context
      *            the <code>OperationContext</code> to be used for the session;
-     *            if <code>null</code>, a default context is used
+     *            if {@code null}, a default context is used
      */
     void setDefaultContext(OperationContext context);
 
@@ -387,7 +387,7 @@ public interface Session extends Serializable {
      * Returns the content changes.
      * 
      * @param changeLogToken
-     *            the change log token to start from or <code>null</code>
+     *            the change log token to start from or {@code null}
      * @param includeProperties
      *            indicates if changed properties should be included in the
      *            result
@@ -402,7 +402,7 @@ public interface Session extends Serializable {
      * Returns the content changes.
      * 
      * @param changeLogToken
-     *            the change log token to start from or <code>null</code>
+     *            the change log token to start from or {@code null}
      * @param includeProperties
      *            indicates if changed properties should be included in the
      *            result
@@ -414,6 +414,37 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
+            OperationContext context);
+
+    /**
+     * Returns an iterator of content changes, starting from the given change
+     * log token to the latest entry in the change log.
+     * 
+     * @param changeLogToken
+     *            the change log token to start from or {@code null}
+     * @param includeProperties
+     *            indicates if changed properties should be included in the
+     *            result
+     * 
+     * @cmis 1.0
+     */
+    public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken, boolean includeProperties);
+
+    /**
+     * Returns an iterator of content changes, starting from the given change
+     * log token to the latest entry in the change log.
+     * 
+     * @param changeLogToken
+     *            the change log token to start from or {@code null}
+     * @param includeProperties
+     *            indicates if changed properties should be included in the
+     *            result
+     * @param context
+     *            the OperationContext
+     * 
+     * @cmis 1.0
+     */
+    public ItemIterable<ChangeEvent> getContentChanges(final String changeLogToken, final boolean includeProperties,
             OperationContext context);
 
     // create
@@ -609,8 +640,8 @@ public interface Session extends Serializable {
      * 
      * @param docId
      *            the id of the document
-     * @return the content stream or <code>null</code> if the document has no
-     *         content stream
+     * @return the content stream or {@code null} if the document has no content
+     *         stream
      * 
      * @cmis 1.0
      */
@@ -624,14 +655,14 @@ public interface Session extends Serializable {
      * @param streamId
      *            the stream id
      * @param offset
-     *            the offset of the stream or <code>null</code> to read the
-     *            stream from the beginning
+     *            the offset of the stream or {@code null} to read the stream
+     *            from the beginning
      * @param length
-     *            the maximum length of the stream or <code>null</code> to read
-     *            to the end of the stream
+     *            the maximum length of the stream or {@code null} to read to
+     *            the end of the stream
      * 
-     * @return the content stream or <code>null</code> if the document has no
-     *         content stream
+     * @return the content stream or {@code null} if the document has no content
+     *         stream
      * 
      * @cmis 1.0
      */
@@ -662,14 +693,14 @@ public interface Session extends Serializable {
      * @param objectId
      *            the id the object
      * @param addAces
-     *            list of ACEs to be added or <code>null</code> if no ACEs
-     *            should be added
+     *            list of ACEs to be added or {@code null} if no ACEs should be
+     *            added
      * @param removeAces
-     *            list of ACEs to be removed or <code>null</code> if no ACEs
-     *            should be removed
+     *            list of ACEs to be removed or {@code null} if no ACEs should
+     *            be removed
      * @param aclPropagation
      *            value that defines the propagation of the ACE changes;
-     *            <code>null</code> is equal to
+     *            {@code null} is equal to
      *            {@link AclPropagation#REPOSITORYDETERMINED}
      * 
      * @return the new ACL of the object

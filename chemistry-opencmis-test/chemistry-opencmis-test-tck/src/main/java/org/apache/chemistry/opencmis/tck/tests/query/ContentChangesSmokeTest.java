@@ -52,6 +52,7 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
         CmisTestResult f;
 
         if (supportsContentChanges(session)) {
+            // get a page of 100 entries
             ChangeEvents events = session.getContentChanges(null, true, 1000, SELECT_ALL_NO_CACHE_OC);
 
             f = createResult(FAILURE, "Change events are null!");
@@ -63,39 +64,20 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
                     // the AtompPub binding does not return a change log token
                     f = createResult(FAILURE, "Change log token is null!");
                     addResult(assertNotNull(events.getLatestChangeLogToken(), null, f));
+                } else {
+                    // this would be an OpenCMIS bug, not a server issue
+                    f = createResult(FAILURE, "Change log is not null although the AtomPub binding cannot return one!");
+                    addResult(assertNull(events.getLatestChangeLogToken(), null, f));
                 }
 
                 for (ChangeEvent event : events.getChangeEvents()) {
-                    f = createResult(FAILURE, "Object Id is not set!");
-                    addResult(assertStringNotEmpty(event.getObjectId(), null, f));
-
-                    f = createResult(FAILURE, "Change Type is not set! Id: " + event.getObjectId());
-                    addResult(assertNotNull(event.getChangeType(), null, f));
-
-                    f = createResult(FAILURE, "Change Time is not set! Id: " + event.getObjectId());
-                    addResult(assertNotNull(event.getChangeTime(), null, f));
-
-                    if (event.getObjectId() != null) {
-                        if (event.getChangeType() == ChangeType.DELETED) {
-                            try {
-                                session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
-                                addResult(createResult(FAILURE,
-                                        "Change event indicates that an object has been deleted but it still exists. Id: "
-                                                + event.getObjectId()));
-                            } catch (CmisObjectNotFoundException e) {
-                                // expected
-                            }
-                        } else {
-                            try {
-                                CmisObject object = session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
-                                addResult(checkObject(session, object, getAllProperties(object), "Object check. Id: "
-                                        + event.getObjectId()));
-                            } catch (CmisObjectNotFoundException e) {
-                                // object might have been deleted later
-                            }
-                        }
-                    }
+                    checkChangeEvent(session, event);
                 }
+            }
+
+            // get all entries
+            for (ChangeEvent event : session.getContentChanges(null, true, SELECT_ALL_NO_CACHE_OC)) {
+                checkChangeEvent(session, event);
             }
         } else {
             addResult(createResult(SKIPPED, "Content Changes not supported. Test Skipped!"));
@@ -110,5 +92,40 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
         }
 
         return repository.getCapabilities().getChangesCapability() != CapabilityChanges.NONE;
+    }
+
+    protected void checkChangeEvent(Session session, ChangeEvent event) {
+        CmisTestResult f;
+
+        f = createResult(FAILURE, "Object Id is not set!");
+        addResult(assertStringNotEmpty(event.getObjectId(), null, f));
+
+        f = createResult(FAILURE, "Change Type is not set! Id: " + event.getObjectId());
+        addResult(assertNotNull(event.getChangeType(), null, f));
+
+        f = createResult(FAILURE, "Change Time is not set! Id: " + event.getObjectId());
+        addResult(assertNotNull(event.getChangeTime(), null, f));
+
+        if (event.getObjectId() != null) {
+            if (event.getChangeType() == ChangeType.DELETED) {
+                try {
+                    session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
+                    addResult(createResult(
+                            FAILURE,
+                            "Change event indicates that an object has been deleted but it still exists. Id: "
+                                    + event.getObjectId()));
+                } catch (CmisObjectNotFoundException e) {
+                    // expected
+                }
+            } else {
+                try {
+                    CmisObject object = session.getObject(event.getObjectId(), SELECT_ALL_NO_CACHE_OC);
+                    addResult(checkObject(session, object, getAllProperties(object),
+                            "Object check. Id: " + event.getObjectId()));
+                } catch (CmisObjectNotFoundException e) {
+                    // object might have been deleted later
+                }
+            }
+        }
     }
 }

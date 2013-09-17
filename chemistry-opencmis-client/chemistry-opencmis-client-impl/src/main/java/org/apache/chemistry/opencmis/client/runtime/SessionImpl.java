@@ -23,12 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.chemistry.opencmis.client.api.ChangeEvent;
 import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -74,12 +76,14 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectIdAndChangeTokenImpl;
 import org.apache.chemistry.opencmis.commons.spi.AclService;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedHolder;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
@@ -320,18 +324,84 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Operation context must be set!");
         }
 
+        Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
+        ObjectList objectList = null;
+
         lock.readLock().lock();
         try {
-            Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
-
-            ObjectList objectList = getBinding().getDiscoveryService().getContentChanges(getRepositoryInfo().getId(),
+            objectList = getBinding().getDiscoveryService().getContentChanges(getRepositoryInfo().getId(),
                     changeLogTokenHolder, includeProperties, context.getFilterString(), context.isIncludePolicies(),
                     context.isIncludeAcls(), BigInteger.valueOf(maxNumItems), null);
-
-            return objectFactory.convertChangeEvents(changeLogTokenHolder.getValue(), objectList);
         } finally {
             lock.readLock().unlock();
         }
+
+        return objectFactory.convertChangeEvents(changeLogTokenHolder.getValue(), objectList);
+    }
+
+    public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken, final boolean includeProperties) {
+        return getContentChanges(changeLogToken, includeProperties, getDefaultContext());
+    }
+
+    public ItemIterable<ChangeEvent> getContentChanges(final String changeLogToken, final boolean includeProperties,
+            OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
+
+        final DiscoveryService discoveryService = getBinding().getDiscoveryService();
+        final ObjectFactory of = this.getObjectFactory();
+        final OperationContext ctxt = new OperationContextImpl(context);
+
+        return new CollectionIterable<ChangeEvent>(new AbstractPageFetcher<ChangeEvent>(ctxt.getMaxItemsPerPage()) {
+
+            private String token = changeLogToken;
+            private String nextLink = null;
+            private boolean firstPage = true;
+
+            @Override
+            protected AbstractPageFetcher.Page<ChangeEvent> fetchPage(long skipCount) {
+                assert firstPage || token != null ? (nextLink == null) : true;
+
+                // fetch the data
+                ExtendedHolder<String> changeLogTokenHolder = new ExtendedHolder<String>(token);
+                if (nextLink != null) {
+                    changeLogTokenHolder.setExtraValue(Constants.REP_REL_CHANGES, nextLink);
+                }
+
+                ObjectList objectList = discoveryService.getContentChanges(getRepositoryInfo().getId(),
+                        changeLogTokenHolder, includeProperties, ctxt.getFilterString(), ctxt.isIncludePolicies(),
+                        ctxt.isIncludeAcls(), BigInteger.valueOf(this.maxNumItems), null);
+
+                // convert type definitions
+                LinkedList<ChangeEvent> page = new LinkedList<ChangeEvent>();
+                for (ObjectData objectData : objectList.getObjects()) {
+                    page.add(of.convertChangeEvent(objectData));
+                }
+
+                if (!firstPage && nextLink == null) {
+                    // the web services and the browser binding repeat the last
+                    // entry of the previous page -> remove the first entry
+                    page.removeFirst();
+                }
+                firstPage = false;
+
+                if (changeLogTokenHolder.getValue() != null) {
+                    // the web services and the browser binding
+                    // return a new token
+                    token = changeLogTokenHolder.getValue();
+                } else {
+                    // the atompub binding does not return a new token,
+                    // but might return a link to the next Atom feed
+                    token = null;
+                    nextLink = (String) changeLogTokenHolder.getExtraValue(Constants.REP_REL_CHANGES);
+                }
+
+                return new AbstractPageFetcher.Page<ChangeEvent>(page, objectList.getNumItems(),
+                        objectList.hasMoreItems()) {
+                };
+            }
+        });
     }
 
     public OperationContext getDefaultContext() {
@@ -460,7 +530,7 @@ public class SessionImpl implements Session {
     }
 
     public void removeObjectFromCache(ObjectId objectId) {
-        if ((objectId == null) || (objectId.getId() == null)) {
+        if (objectId == null || objectId.getId() == null) {
             return;
         }
 
@@ -474,7 +544,7 @@ public class SessionImpl implements Session {
     public RepositoryInfo getRepositoryInfo() {
         lock.readLock().lock();
         try {
-            return this.repositoryInfo;
+            return repositoryInfo;
         } finally {
             lock.readLock().unlock();
         }
@@ -719,7 +789,7 @@ public class SessionImpl implements Session {
     public CmisBinding getBinding() {
         lock.readLock().lock();
         try {
-            return this.binding;
+            return binding;
         } finally {
             lock.readLock().unlock();
         }
@@ -728,7 +798,7 @@ public class SessionImpl implements Session {
     public Cache getCache() {
         lock.readLock().lock();
         try {
-            return this.cache;
+            return cache;
         } finally {
             lock.readLock().unlock();
         }
