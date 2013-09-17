@@ -85,6 +85,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
 
         objList.setObjects(lod);
         objList.setNumItems(BigInteger.valueOf(lod.size()));
+        objList.setHasMoreItems(false);
 
         String changeToken = Long.valueOf(new Date().getTime()).toString();
         changeLogToken.setValue(changeToken);
