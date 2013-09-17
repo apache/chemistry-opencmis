@@ -35,7 +35,11 @@ import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
  * 
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
-public class JSONValue {
+public final class JSONValue {
+
+    private JSONValue() {
+    }
+
     /**
      * Parse JSON text into java object from the input source. Please use
      * parseWithException() if you don't want to ignore the exception.

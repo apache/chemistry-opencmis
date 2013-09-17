@@ -144,7 +144,7 @@ public class VersioningStateCreateTest extends AbstractSessionTest {
     }
 
     private ContentStream getContentStream() {
-        byte[] contentBytes = IOUtils.getUTF8Bytes("some content");
+        byte[] contentBytes = IOUtils.toUTF8Bytes("some content");
 
         return new ContentStreamImpl("content.txt", BigInteger.valueOf(contentBytes.length), "text/plain",
                 new ByteArrayInputStream(contentBytes));

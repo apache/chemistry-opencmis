@@ -219,7 +219,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         }
 
         return Collections
-                .singletonList("Basic " + Base64.encodeBytes(IOUtils.getUTF8Bytes(username + ":" + password)));
+                .singletonList("Basic " + Base64.encodeBytes(IOUtils.toUTF8Bytes(username + ":" + password)));
     }
 
     /**

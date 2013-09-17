@@ -47,7 +47,7 @@ public abstract class AtomDocumentBase extends XMLDocumentBase {
             return ID_DUMMY;
         }
 
-        return ID_PREFIX + Base64.encodeBytes(IOUtils.getUTF8Bytes(input));
+        return ID_PREFIX + Base64.encodeBytes(IOUtils.toUTF8Bytes(input));
     }
 
     /**

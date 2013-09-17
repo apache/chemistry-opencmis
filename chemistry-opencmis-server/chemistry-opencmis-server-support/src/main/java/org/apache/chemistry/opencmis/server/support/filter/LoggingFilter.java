@@ -242,7 +242,7 @@ public class LoggingFilter implements Filter {
                 if (line.startsWith("<?xml") || line.startsWith("{")) {
                     inXmlOrJsonBody = true;
                     isXml = line.startsWith("<?xml");
-                    byte[] lienBytes = IOUtils.getUTF8Bytes(line);
+                    byte[] lienBytes = IOUtils.toUTF8Bytes(line);
                     xmlBodyBuffer.write(lienBytes, 0, lienBytes.length);
                     while (inXmlOrJsonBody) {
                         line = in.readLine();
@@ -592,7 +592,7 @@ public class LoggingFilter implements Filter {
         }
 
         public String getPayload() {
-            return new String(baous.toByteArray());
+            return IOUtils.toUTF8String(baous.toByteArray());
         }
 
         @Override

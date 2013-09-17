@@ -418,7 +418,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         byte[] contentBytes = null;
         Document result = null;
         try {
-            contentBytes = IOUtils.getUTF8Bytes(content);
+            contentBytes = IOUtils.toUTF8Bytes(content);
             ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(contentBytes.length),
                     "text/plain", new ByteArrayInputStream(contentBytes));
 

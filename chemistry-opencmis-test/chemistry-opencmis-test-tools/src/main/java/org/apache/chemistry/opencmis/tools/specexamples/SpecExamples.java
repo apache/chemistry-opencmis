@@ -692,9 +692,9 @@ public class SpecExamples {
                             zout.write(buffer, 0, length);
                         }
                     } finally {
-                        IOUtils.closeQuietly(fin);;
+                        IOUtils.closeQuietly(fin);
                         zout.closeEntry();
-                    };
+                    }
                 }
             }
         }

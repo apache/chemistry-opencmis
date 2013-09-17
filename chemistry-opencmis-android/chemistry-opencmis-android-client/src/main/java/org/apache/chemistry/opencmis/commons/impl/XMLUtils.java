@@ -33,7 +33,10 @@ import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
 
-public class XMLUtils {
+public final class XMLUtils {
+
+    private XMLUtils() {
+    }
 
     /**
      * Starts a XML document.

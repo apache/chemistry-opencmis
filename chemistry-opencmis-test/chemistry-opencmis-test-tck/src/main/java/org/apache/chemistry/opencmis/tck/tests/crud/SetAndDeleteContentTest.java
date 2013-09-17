@@ -121,7 +121,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             }
 
             // set a new content stream
-            byte[] contentBytes = IOUtils.getUTF8Bytes(CONTENT2);
+            byte[] contentBytes = IOUtils.toUTF8Bytes(CONTENT2);
 
             try {
                 ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),
@@ -151,7 +151,7 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
 
             // test appendContentStream
             if (session.getRepositoryInfo().getCmisVersion() != CmisVersion.CMIS_1_0) {
-                contentBytes = IOUtils.getUTF8Bytes(CONTENT3);
+                contentBytes = IOUtils.toUTF8Bytes(CONTENT3);
 
                 try {
                     ContentStream contentStream = session.getObjectFactory().createContentStream(workDoc.getName(),

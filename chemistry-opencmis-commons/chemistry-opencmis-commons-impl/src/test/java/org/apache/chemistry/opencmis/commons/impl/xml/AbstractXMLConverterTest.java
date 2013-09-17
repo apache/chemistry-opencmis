@@ -114,14 +114,14 @@ public abstract class AbstractXMLConverterTest extends AbstractConverterTest {
         InputStream schema10stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis10/CMIS-core.xsd");
         if (schema10stream != null) {
             StreamSource core10 = new StreamSource(schema10stream);
-            StreamSource test10 = new StreamSource(new ByteArrayInputStream(IOUtils.getUTF8Bytes(TEST_SCHEMA10)));
+            StreamSource test10 = new StreamSource(new ByteArrayInputStream(IOUtils.toUTF8Bytes(TEST_SCHEMA10)));
             schema10 = sf.newSchema(new Source[] { core10, test10 });
         }
 
         InputStream schema11stream = AbstractXMLConverterTest.class.getResourceAsStream("/schema/cmis11/CMIS-core.xsd");
         if (schema11stream != null) {
             StreamSource core11 = new StreamSource(schema11stream);
-            StreamSource test11 = new StreamSource(new ByteArrayInputStream(IOUtils.getUTF8Bytes(TEST_SCHEMA11)));
+            StreamSource test11 = new StreamSource(new ByteArrayInputStream(IOUtils.toUTF8Bytes(TEST_SCHEMA11)));
             schema11 = sf.newSchema(new Source[] { core11, test11 });
         }
     }

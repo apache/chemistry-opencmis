@@ -79,7 +79,7 @@ public final class AtomEntryParser {
     private static final String ATTR_SRC = "src";
     private static final String ATTR_TYPE = "type";
 
-    protected boolean ignoreAtomContentSrc;
+    private boolean ignoreAtomContentSrc;
 
     private CappedInputStream cappedStream;
 
@@ -416,7 +416,7 @@ public final class AtomEntryParser {
                 } else if (event == XMLStreamReader.CHARACTERS) {
                     String s = parser.getText();
                     if (s != null) {
-                        byte[] bytes = IOUtils.getUTF8Bytes(s);
+                        byte[] bytes = IOUtils.toUTF8Bytes(s);
                         bufferStream.write(bytes);
                         cappedStream.deductBytes(bytes.length);
                     }

@@ -658,7 +658,7 @@ public class LoremIpsum {
      *         word. The second element is the delimiter used in the word.
      * @private
      */
-    static private WordInfo getWordInfo(String word) {
+    private static WordInfo getWordInfo(String word) {
         WordInfo ret = new WordInfo();
         for (String delim : DELIMITERS_WORDS) {
             if (word.endsWith(delim)) {
@@ -672,7 +672,7 @@ public class LoremIpsum {
         return ret;
     }
 
-    static private WordInfo[] generateWordInfo(String[] words) {
+    private static WordInfo[] generateWordInfo(String[] words) {
         WordInfo[] result = new WordInfo[words.length];
         int i = 0;
         for (String word : words) {

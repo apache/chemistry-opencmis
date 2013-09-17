@@ -91,7 +91,7 @@ public final class MimeHelper {
         String charset = IOUtils.UTF8;
         buf.append(charset);
         buf.append("''"); // no language
-        byte[] bytes = IOUtils.getUTF8Bytes(value);
+        byte[] bytes = IOUtils.toUTF8Bytes(value);
 
         boolean encoded = false;
         for (int i = 0; i < bytes.length; i++) {

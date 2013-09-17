@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple utility class for time logging Note: NOT thread safe!
+ * Simple utility class for time logging. Note: NOT thread safe!
  */
 public class TimeLogger {
     private static final Logger LOG = LoggerFactory.getLogger(TimeLogger.class);
@@ -36,7 +36,7 @@ public class TimeLogger {
 
     private final String fAction;
     private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();
-    private final int maxSize = 2500;
+    private static final int MAX_SIZE = 2500;
     TimeRecord fCurrentRec;
 
     public TimeLogger() {
@@ -101,7 +101,7 @@ public class TimeLogger {
     }
 
     private void createAndAddNewRecord() {
-        if (fTimeRecs.size() < maxSize) {
+        if (fTimeRecs.size() < MAX_SIZE) {
             fCurrentRec = new TimeRecord();
             fTimeRecs.add(fCurrentRec);
         }

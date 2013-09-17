@@ -179,7 +179,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             return "cmis%";
         }
 
-        return "cmis_" + Base64.encodeBytes(IOUtils.getUTF8Bytes(token)).replace('=', '%');
+        return "cmis_" + Base64.encodeBytes(IOUtils.toUTF8Bytes(token)).replace('=', '%');
     }
 
     /**

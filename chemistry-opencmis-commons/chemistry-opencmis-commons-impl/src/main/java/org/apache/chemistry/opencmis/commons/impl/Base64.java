@@ -610,8 +610,8 @@ public final class Base64 {
             return new String(baos.toByteArray(), PREFERRED_ENCODING);
         } // end try
         catch (java.io.UnsupportedEncodingException uue) {
-            // Fall back to some Java default
-            return new String(baos.toByteArray());
+            // Fall back to UTF-8
+            return IOUtils.toUTF8String(baos.toByteArray());
         } // end catch
 
     } // end encode
@@ -772,7 +772,7 @@ public final class Base64 {
             return new String(encoded, PREFERRED_ENCODING);
         } // end try
         catch (java.io.UnsupportedEncodingException uue) {
-            return new String(encoded);
+            return IOUtils.toUTF8String(encoded);
         } // end catch
 
     } // end encodeBytes
@@ -1192,7 +1192,7 @@ public final class Base64 {
             bytes = s.getBytes(PREFERRED_ENCODING);
         } // end try
         catch (java.io.UnsupportedEncodingException uee) {
-            bytes = s.getBytes();
+            bytes = IOUtils.toUTF8Bytes(s);
         } // end catch
           // </change>
 

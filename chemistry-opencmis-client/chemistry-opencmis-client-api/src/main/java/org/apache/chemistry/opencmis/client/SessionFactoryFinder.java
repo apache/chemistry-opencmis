@@ -113,7 +113,7 @@ public class SessionFactoryFinder {
             }
         } catch (NoSuchMethodException nsme) {
             if (!SessionFactory.class.isAssignableFrom(clazz)) {
-                throw new ClassNotFoundException("The class does not implemnt the SessionFactory interface!");
+                throw new ClassNotFoundException("The class does not implemnt the SessionFactory interface!", nsme);
             }
 
             try {

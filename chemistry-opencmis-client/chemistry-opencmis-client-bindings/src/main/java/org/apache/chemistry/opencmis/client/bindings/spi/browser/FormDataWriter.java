@@ -216,7 +216,7 @@ public final class FormDataWriter {
     public void write(OutputStream out) throws IOException {
         if (contentStream == null || contentStream.getStream() == null) {
             boolean first = true;
-            byte[] amp = IOUtils.getUTF8Bytes("&");
+            byte[] amp = IOUtils.toUTF8Bytes("&");
 
             for (Map.Entry<String, String> param : parameters.entrySet()) {
                 if (first) {
@@ -225,7 +225,7 @@ public final class FormDataWriter {
                     out.write(amp);
                 }
 
-                out.write(IOUtils.getUTF8Bytes(param.getKey() + "=" + URLEncoder.encode(param.getValue(), IOUtils.UTF8)));
+                out.write(IOUtils.toUTF8Bytes(param.getKey() + "=" + URLEncoder.encode(param.getValue(), IOUtils.UTF8)));
             }
         } else {
             writeLine(out);
@@ -273,6 +273,6 @@ public final class FormDataWriter {
 
     private void writeLine(OutputStream out, String s) throws IOException {
         s = (s == null ? CRLF : s + CRLF);
-        out.write(IOUtils.getUTF8Bytes(s));
+        out.write(IOUtils.toUTF8Bytes(s));
     }
 }

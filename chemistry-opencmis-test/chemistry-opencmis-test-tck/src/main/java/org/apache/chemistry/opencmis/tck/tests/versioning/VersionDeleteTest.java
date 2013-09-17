@@ -86,7 +86,7 @@ public class VersionDeleteTest extends AbstractSessionTest {
         addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC " + version + " compliance"));
 
         // check in
-        byte[] contentBytes = IOUtils.getUTF8Bytes(content);
+        byte[] contentBytes = IOUtils.toUTF8Bytes(content);
 
         ContentStream contentStream = new ContentStreamImpl(doc.getName(), BigInteger.valueOf(contentBytes.length),
                 "text/plain", new ByteArrayInputStream(contentBytes));

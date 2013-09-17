@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * SessionFactory = ctx.lookup(jndi_key);
  * </code>
  */
-public class SessionFactoryImpl implements SessionFactory {
+public class SessionFactoryImpl implements SessionFactory, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected SessionFactoryImpl() {
     }

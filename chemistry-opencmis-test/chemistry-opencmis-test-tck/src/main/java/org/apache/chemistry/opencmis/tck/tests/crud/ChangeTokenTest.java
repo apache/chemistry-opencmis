@@ -133,7 +133,7 @@ public class ChangeTokenTest extends AbstractSessionTest {
                 return;
             }
 
-            byte[] contentBytes = IOUtils.getUTF8Bytes("New content");
+            byte[] contentBytes = IOUtils.toUTF8Bytes("New content");
             ContentStream contentStream = new ContentStreamImpl("content2.txt",
                     BigInteger.valueOf(contentBytes.length), "text/plain", new ByteArrayInputStream(contentBytes));
 

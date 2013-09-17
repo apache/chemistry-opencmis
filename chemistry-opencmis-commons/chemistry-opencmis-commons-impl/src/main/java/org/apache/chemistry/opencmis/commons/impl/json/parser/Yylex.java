@@ -235,17 +235,6 @@ class Yylex {
     }
 
     /**
-     * Creates a new scanner. There is also java.io.Reader version of this
-     * constructor.
-     * 
-     * @param in
-     *            the java.io.Inputstream to read input from.
-     */
-    Yylex(java.io.InputStream in) {
-        this(new java.io.InputStreamReader(in));
-    }
-
-    /**
      * Unpacks the compressed character translation table.
      * 
      * @param packed
@@ -344,8 +333,10 @@ class Yylex {
     public final void yyreset(java.io.Reader reader) {
         zzReader = reader;
         zzAtEOF = false;
-        zzEndRead = zzStartRead = 0;
-        zzCurrentPos = zzMarkedPos = 0;
+        zzEndRead = 0;
+        zzStartRead = 0;
+        zzCurrentPos = 0;
+        zzMarkedPos = 0;
         yychar = 0;
         zzLexicalState = YYINITIAL;
     }
@@ -468,7 +459,9 @@ class Yylex {
 
             zzAction = -1;
 
-            zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
+            zzCurrentPosL = zzMarkedPosL;
+            zzCurrentPos = zzMarkedPosL;
+            zzStartRead = zzMarkedPosL;
 
             zzState = ZZ_LEXSTATE[zzLexicalState];
 

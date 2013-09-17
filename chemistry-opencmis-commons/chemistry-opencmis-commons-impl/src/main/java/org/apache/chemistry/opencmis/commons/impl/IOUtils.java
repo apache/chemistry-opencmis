@@ -47,7 +47,7 @@ public final class IOUtils {
     }
 
     /**
-     * Return UTF-8 bytes of the given string or throws a
+     * Returns UTF-8 bytes of the given string or throws a
      * {@link CmisRuntimeException} if the charset 'UTF-8' is not available.
      * 
      * @param s
@@ -55,13 +55,33 @@ public final class IOUtils {
      * 
      * @return the UTF-8 bytes
      */
-    public static byte[] getUTF8Bytes(String s) {
+    public static byte[] toUTF8Bytes(String s) {
         if (s == null) {
             return null;
         }
 
         try {
             return s.getBytes(UTF8);
+        } catch (UnsupportedEncodingException e) {
+            throw new CmisRuntimeException("Unsupported encoding 'UTF-8'!", e);
+        }
+    }
+
+    /**
+     * Converts a UTF-8 encoded byte array into a string or throws a
+     * {@link CmisRuntimeException} if the charset 'UTF-8' is not available.
+     * 
+     * @param bytes
+     *            the byte array
+     * @return the string
+     */
+    public static String toUTF8String(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+
+        try {
+            return new String(bytes, UTF8);
         } catch (UnsupportedEncodingException e) {
             throw new CmisRuntimeException("Unsupported encoding 'UTF-8'!", e);
         }

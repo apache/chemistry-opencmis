@@ -40,6 +40,18 @@ import org.junit.Test;
 public class IOUtilsTest {
 
     @Test
+    public void testUTF8() {
+        StringBuilder sb = new StringBuilder();
+        for (char c = ' '; c <= 0xfff; c++) {
+            sb.append(c);
+        }
+
+        assertEquals(sb.toString(), IOUtils.toUTF8String(IOUtils.toUTF8Bytes(sb.toString())));
+        assertNull(IOUtils.toUTF8Bytes(null));
+        assertNull(IOUtils.toUTF8String(null));
+    }
+
+    @Test
     public void testEncoding() {
         String url = "http://example.com/abc?key=äöü @!§$%&/";
 
@@ -50,12 +62,12 @@ public class IOUtilsTest {
 
     @Test
     public void testConsumeAndClose() {
-        ByteArrayInputStream stream = new ByteArrayInputStream(IOUtils.getUTF8Bytes("test"));
+        ByteArrayInputStream stream = new ByteArrayInputStream(IOUtils.toUTF8Bytes("test"));
 
         IOUtils.consumeAndClose(stream);
         assertEquals(0, stream.available());
 
-        ByteArrayInputStream stream2 = new ByteArrayInputStream(IOUtils.getUTF8Bytes("test"));
+        ByteArrayInputStream stream2 = new ByteArrayInputStream(IOUtils.toUTF8Bytes("test"));
         InputStreamReader reader = new InputStreamReader(stream2);
 
         IOUtils.consumeAndClose(reader);
@@ -75,7 +87,7 @@ public class IOUtilsTest {
 
     @Test
     public void testCopy() throws Exception {
-        byte[] input = IOUtils.getUTF8Bytes("test");
+        byte[] input = IOUtils.toUTF8Bytes("test");
         ByteArrayInputStream in = new ByteArrayInputStream(input);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -156,6 +168,6 @@ public class IOUtilsTest {
     }
 
     private InputStream createStream(String content) {
-        return new ByteArrayInputStream(IOUtils.getUTF8Bytes(content));
+        return new ByteArrayInputStream(IOUtils.toUTF8Bytes(content));
     }
 }

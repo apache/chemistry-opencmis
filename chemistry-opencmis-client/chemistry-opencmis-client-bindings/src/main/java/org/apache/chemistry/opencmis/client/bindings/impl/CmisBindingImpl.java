@@ -44,7 +44,7 @@ import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 /**
  * CMIS binding implementation.
  */
-public class CmisBindingImpl implements CmisBinding, Serializable {
+public final class CmisBindingImpl implements CmisBinding, Serializable {
 
     private static final long serialVersionUID = 1L;
 

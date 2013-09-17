@@ -179,7 +179,7 @@ public final class FileUtils {
 
         byte[] contentBytes = new byte[0];
         if (content != null) {
-            contentBytes = IOUtils.getUTF8Bytes(content);
+            contentBytes = IOUtils.toUTF8Bytes(content);
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(contentBytes);

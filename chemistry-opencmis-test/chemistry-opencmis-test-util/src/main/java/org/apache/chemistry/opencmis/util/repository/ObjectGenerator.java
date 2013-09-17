@@ -520,7 +520,7 @@ public class ObjectGenerator {
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsFullHtml(len, true);
 
-        content.setStream(new ByteArrayInputStream(IOUtils.getUTF8Bytes(text)));
+        content.setStream(new ByteArrayInputStream(IOUtils.toUTF8Bytes(text)));
         return content;
     }
 
@@ -532,7 +532,7 @@ public class ObjectGenerator {
 
         LoremIpsum ipsum = new LoremIpsum();
         String text = ipsum.generateParagraphsPlainText(len, 80, true);
-        content.setStream(new ByteArrayInputStream(text.getBytes()));
+        content.setStream(new ByteArrayInputStream(IOUtils.toUTF8Bytes(text)));
         return content;
     }
 

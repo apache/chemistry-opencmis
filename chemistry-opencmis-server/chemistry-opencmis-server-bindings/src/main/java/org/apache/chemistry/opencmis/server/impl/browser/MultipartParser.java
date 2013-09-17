@@ -310,8 +310,13 @@ public class MultipartParser {
     private void parseHeaders() throws IOException {
         headers = new HashMap<String, String>();
 
-        String line;
-        while ((line = readLine()).length() > 0) {
+        while (true) {
+            String line = readLine();
+            if (line.length() == 0) {
+                // empty line -> end of headers
+                break;
+            }
+
             int x = line.indexOf(':');
             if (x > 0) {
                 headers.put(line.substring(0, x).toLowerCase(Locale.ENGLISH).trim(), line.substring(x + 1).trim());
