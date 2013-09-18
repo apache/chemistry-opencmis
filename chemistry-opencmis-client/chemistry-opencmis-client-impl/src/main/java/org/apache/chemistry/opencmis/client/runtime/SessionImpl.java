@@ -401,7 +401,22 @@ public class SessionImpl implements Session {
                         objectList.hasMoreItems()) {
                 };
             }
-        });
+        }) {
+            @Override
+            public ItemIterable<ChangeEvent> skipTo(long position) {
+                throw new CmisNotSupportedException("Skipping not supported!");
+            }
+
+            @Override
+            public ItemIterable<ChangeEvent> getPage() {
+                throw new CmisNotSupportedException("Paging not supported!");
+            }
+
+            @Override
+            public ItemIterable<ChangeEvent> getPage(int maxNumItems) {
+                throw new CmisNotSupportedException("Paging not supported!");
+            }
+        };
     }
 
     public OperationContext getDefaultContext() {

@@ -419,6 +419,8 @@ public interface Session extends Serializable {
     /**
      * Returns an iterator of content changes, starting from the given change
      * log token to the latest entry in the change log.
+     * <p>
+     * Note: Paging and skiping are not supported.
      * 
      * @param changeLogToken
      *            the change log token to start from or {@code null}
@@ -433,6 +435,8 @@ public interface Session extends Serializable {
     /**
      * Returns an iterator of content changes, starting from the given change
      * log token to the latest entry in the change log.
+     * <p>
+     * Note: Paging and skiping are not supported.
      * 
      * @param changeLogToken
      *            the change log token to start from or {@code null}
