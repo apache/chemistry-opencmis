@@ -18,11 +18,13 @@
  */
 package org.apache.chemistry.opencmis.workbench.swing;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.apache.chemistry.opencmis.commons.definitions.Choice;
@@ -30,6 +32,18 @@ import org.apache.chemistry.opencmis.workbench.ClientHelper;
 
 public class CollectionRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
+
+    private static final String NOT_SET_COLOR;
+
+    static {
+        Color notSetColor = UIManager.getColor("Label.disabledText");
+        if (notSetColor != null) {
+            NOT_SET_COLOR = String.format("#%1$02x%2$02x%3$02x", notSetColor.getRed(), notSetColor.getGreen(),
+                    notSetColor.getBlue());
+        } else {
+            NOT_SET_COLOR = "#8e8f91";
+        }
+    }
 
     public CollectionRenderer() {
         super();
@@ -54,8 +68,8 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
     protected void setValue(Object value) {
         Collection<?> col = (Collection<?>) value;
 
-        if ((col == null) || (col.isEmpty())) {
-            super.setValue("");
+        if (col == null || col.isEmpty()) {
+            super.setValue("<html><span><font color=" + NOT_SET_COLOR + "><i>not set</i></font></span>");
             return;
         }
 
