@@ -817,7 +817,7 @@ public class InMemoryQueryProcessor {
         int start = 0;
         String wildcard = wildcardString;
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
 
         while (index >= 0) {
             index = wildcard.indexOf('%', start);
@@ -835,7 +835,7 @@ public class InMemoryQueryProcessor {
 
         index = 0;
         start = 0;
-        res = new StringBuffer();
+        res = new StringBuilder();
 
         while (index >= 0) {
             index = wildcard.indexOf('_', start);

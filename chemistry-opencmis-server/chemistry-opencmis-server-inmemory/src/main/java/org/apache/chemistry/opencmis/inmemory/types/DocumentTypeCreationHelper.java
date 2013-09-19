@@ -261,7 +261,7 @@ public final class DocumentTypeCreationHelper {
             return null;
         }
 
-        StringBuffer sb = new StringBuffer(id);
+        StringBuilder sb = new StringBuilder(id);
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
             if (c == '.' || c == ' ') {

@@ -239,7 +239,7 @@ public final class TypeValidator {
 
     private static String replaceInvalidCharacters(String id) {
         // if there are illegal characters adjust them
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < id.length(); i++) {
             if (NameValidator.isValidId(id.substring(i, i + 1))) {
                 sb.append(id.charAt(i));

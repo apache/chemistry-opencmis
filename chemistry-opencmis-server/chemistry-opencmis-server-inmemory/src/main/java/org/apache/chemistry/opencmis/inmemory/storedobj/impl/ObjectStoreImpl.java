@@ -506,12 +506,12 @@ public class ObjectStoreImpl implements ObjectStore {
 
     @Override
     public String getFolderPath(String folderId) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         insertPathSegment(sb, folderId);
         return sb.toString();
     }
 
-    private void insertPathSegment(StringBuffer sb, String folderId) {
+    private void insertPathSegment(StringBuilder sb, String folderId) {
         Folder folder = (Folder) getObjectById(folderId);
         if (null == folder.getParentId()) {
             if (sb.length() == 0) {

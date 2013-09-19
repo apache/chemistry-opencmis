@@ -183,7 +183,7 @@ public final class TypeUtil {
     }
 
     public static String getQueryNameFromId(String id) {
-        StringBuffer sb = new StringBuffer(id.length());
+        StringBuilder sb = new StringBuilder(id.length());
         for (int i = 0; i < id.length(); i++) {
             char c = id.charAt(i);
             if (c == '.' || c == ' ' || c == ',' || c == '\'' || c == '"' || c == '\\' || c == '(' || c == ')') {
