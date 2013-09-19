@@ -808,7 +808,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
                 fObjSvc.updateProperties(fRepositoryId, idHolder, changeTokenHolder, newProps, null);
                 fail("Update with an invalid name should fail.");
             } catch (Exception e) {
-                log.error("Wrong exception: "+ e);
                 assertTrue(e instanceof CmisInvalidArgumentException);
             }
 
