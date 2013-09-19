@@ -28,18 +28,18 @@ import java.util.List;
 public interface RelationshipTypeDefinition extends TypeDefinition {
 
     /**
-     * Returns the list of type ids that are allowed as source objects.
+     * Returns the list of type IDs that are allowed as source objects.
      * 
-     * @return list of type ids or <code>null</code> if all types are allowed
+     * @return list of type IDs or {@code null} if all types are allowed
      * 
      * @cmis 1.0
      */
     List<String> getAllowedSourceTypeIds();
 
     /**
-     * Returns the list of type ids that are allowed as target objects.
+     * Returns the list of type IDs that are allowed as target objects.
      * 
-     * @return list of type ids or <code>null</code> if all types are allowed
+     * @return list of type IDs or {@code null} if all types are allowed
      * 
      * @cmis 1.0
      */

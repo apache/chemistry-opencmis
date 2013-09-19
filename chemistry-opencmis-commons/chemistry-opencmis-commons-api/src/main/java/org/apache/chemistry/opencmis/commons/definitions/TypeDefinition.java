@@ -32,9 +32,9 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 public interface TypeDefinition extends Serializable, ExtensionsData {
 
     /**
-     * Returns the type id.
+     * Returns the type ID.
      * 
-     * @return the type id
+     * @return the type ID, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -86,19 +86,18 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     String getDescription();
 
     /**
-     * Returns the base object type id.
+     * Returns the base object type ID.
      * 
-     * @return the base object type id
+     * @return the base object type ID
      * 
      * @cmis 1.0
      */
     BaseTypeId getBaseTypeId();
 
     /**
-     * Returns the parent type id.
+     * Returns the parent type ID.
      * 
-     * @return the parent type id or <code>null</code> if the type is a base
-     *         type
+     * @return the parent type ID or {@code null} if the type is a base type
      * 
      * @cmis 1.0
      */
@@ -107,9 +106,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if an object of this type can be created.
      * 
-     * @return <code>true</code> if an object of this type can be created;
-     *         <code>false</code> if creation of objects of this type is not
-     *         possible; <code>null</code> - unknown (noncompliant repository)
+     * @return {@code true} if an object of this type can be created;
+     *         {@code false} if creation of objects of this type is not
+     *         possible; {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -118,9 +117,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if an object of this type can be filed.
      * 
-     * @return <code>true</code> if an object of this type can be filed;
-     *         <code>false</code> if an object of this type cannot be filed;
-     *         <code>null</code> - unknown (noncompliant repository)
+     * @return {@code true} if an object of this type can be filed;
+     *         {@code false} if an object of this type cannot be filed;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -129,9 +128,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if this type is queryable.
      * 
-     * @return <code>true</code> if this type is queryable; <code>false</code>
-     *         if this type is not queryable; <code>null</code> - unknown
-     *         (noncompliant repository)
+     * @return {@code true} if this type is queryable; {@code false} if this
+     *         type is not queryable; {@code null} - unknown (noncompliant
+     *         repository)
      * 
      * @cmis 1.0
      */
@@ -140,9 +139,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if this type is full text indexed.
      * 
-     * @return <code>true</code> if this type is full text indexed;
-     *         <code>false</code> if this type is not full text indexed;
-     *         <code>null</code> - unknown (noncompliant repository)
+     * @return {@code true} if this type is full text indexed; {@code false} if
+     *         this type is not full text indexed; {@code null} - unknown
+     *         (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -151,9 +150,8 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if this type is included in queries that query the super type.
      * 
-     * @return <code>true</code> if this type is included; <code>false</code> if
-     *         this type is not included; <code>null</code> - unknown
-     *         (noncompliant repository)
+     * @return {@code true} if this type is included; {@code false} if this type
+     *         is not included; {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -162,9 +160,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if objects of this type are controllable by policies.
      * 
-     * @return <code>true</code> if objects are controllable by policies;
-     *         <code>false</code> if objects are not controllable by policies;
-     *         <code>null</code> - unknown (noncompliant repository)
+     * @return {@code true} if objects are controllable by policies;
+     *         {@code false} if objects are not controllable by policies;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -173,9 +171,9 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns if objects of this type are controllable by ACLs.
      * 
-     * @return <code>true</code> if objects are controllable by ACLs;
-     *         <code>false</code> if objects are not controllable by ACLs;
-     *         <code>null</code> - unknown (noncompliant repository)
+     * @return {@code true} if objects are controllable by ACLs; {@code false}
+     *         if objects are not controllable by ACLs; {@code null} - unknown
+     *         (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -184,7 +182,7 @@ public interface TypeDefinition extends Serializable, ExtensionsData {
     /**
      * Returns the property definitions of this type.
      * 
-     * @return the property definitions or <code>null</code> if the property
+     * @return the property definitions or {@code null} if the property
      *         definitions were not requested
      * 
      * @cmis 1.0

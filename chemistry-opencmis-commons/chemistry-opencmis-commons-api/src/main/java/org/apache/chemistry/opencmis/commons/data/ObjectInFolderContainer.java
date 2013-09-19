@@ -20,9 +20,22 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.List;
 
+/**
+ * Container used for trees that represent objects in a folder hierarchy.
+ */
 public interface ObjectInFolderContainer extends ExtensionsData {
 
+    /**
+     * Returns the object at this level.
+     * 
+     * @return the object, not {@code null}
+     */
     ObjectInFolderData getObject();
 
+    /**
+     * Returns the object containers of the next level.
+     * 
+     * @return the child object, not {@code null}
+     */
     List<ObjectInFolderContainer> getChildren();
 }

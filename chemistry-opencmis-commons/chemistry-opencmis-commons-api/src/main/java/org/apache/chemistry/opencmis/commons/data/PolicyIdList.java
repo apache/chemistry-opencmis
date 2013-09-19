@@ -20,7 +20,15 @@ package org.apache.chemistry.opencmis.commons.data;
 
 import java.util.List;
 
+/**
+ * List of policy IDs.
+ */
 public interface PolicyIdList extends ExtensionsData {
 
+    /**
+     * Returns the list policy IDs.
+     * 
+     * @return the list policy IDs, not {@code null}
+     */
     List<String> getPolicyIds();
 }

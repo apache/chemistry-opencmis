@@ -29,7 +29,7 @@ public interface CacheHeaderContentStream extends ContentStream {
     /**
      * Returns the Cache-Control header.
      * 
-     * @return the value of the Cache-Control header or <code>null</code> if the
+     * @return the value of the Cache-Control header or {@code null} if the
      *         header should not be set
      */
     String getCacheControl();
@@ -37,7 +37,7 @@ public interface CacheHeaderContentStream extends ContentStream {
     /**
      * Returns the ETag header.
      * 
-     * @return the value of the ETag header or <code>null</code> if the header
+     * @return the value of the ETag header or {@code null} if the header
      *         should not be set
      */
     String getETag();
@@ -45,8 +45,8 @@ public interface CacheHeaderContentStream extends ContentStream {
     /**
      * Returns the Expires header.
      * 
-     * @return the value of the Expires header or <code>null</code> if the
-     *         header should not be set
+     * @return the value of the Expires header or {@code null} if the header
+     *         should not be set
      */
     GregorianCalendar getExpires();
 }

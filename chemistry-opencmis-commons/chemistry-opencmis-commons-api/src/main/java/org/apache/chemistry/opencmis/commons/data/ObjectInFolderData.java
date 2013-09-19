@@ -18,9 +18,23 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * Represents an object in a folder.
+ */
 public interface ObjectInFolderData extends ExtensionsData {
 
+    /**
+     * Returns the object.
+     * 
+     * @return the object, not {@code null}
+     */
     ObjectData getObject();
 
+    /**
+     * Returns the path segment of the object in the folder.
+     * 
+     * @return the path segment or {@code null} if the path segment has not been
+     *         requested
+     */
     String getPathSegment();
 }

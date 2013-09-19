@@ -25,7 +25,19 @@ import java.util.List;
  */
 public interface ExtensionsData {
 
+    /**
+     * Returns the list of top-level extension elements.
+     * 
+     * @return the list of extension elements or {@code null} if no extension
+     *         are set
+     */
     List<CmisExtensionElement> getExtensions();
 
+    /**
+     * Sets the list of top-level extension elements.
+     * 
+     * @param extensions
+     *            the list of extensions, may be {@code null}
+     */
     void setExtensions(List<CmisExtensionElement> extensions);
 }

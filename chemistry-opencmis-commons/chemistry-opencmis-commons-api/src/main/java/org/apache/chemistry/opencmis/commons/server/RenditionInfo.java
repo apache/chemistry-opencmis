@@ -21,33 +21,43 @@ package org.apache.chemistry.opencmis.commons.server;
 import java.math.BigInteger;
 
 /**
- * This class contains information about a rendition of an object. This data is
- * used to generate the appropriate links in AtomPub entries and feeds.
+ * Contains information about a rendition of an object. This data is used to
+ * generate the appropriate links in AtomPub entries and feeds.
  */
 public interface RenditionInfo {
 
     /**
-     * Return the id of the rendition.
+     * Return the ID of the rendition.
+     * 
+     * @return the rendition ID, not {@code null}
      */
     String getId();
 
     /**
      * Return the content type of the rendition.
+     * 
+     * @return the MIME type, should not be {@code null}
      */
     String getContenType();
 
     /**
      * Return the kind of the rendition.
+     * 
+     * @return the rendition kind, may be {@code null}
      */
     String getKind();
 
     /**
      * Return the title of the rendition.
+     * 
+     * @return the rendition title, may be {@code null}
      */
     String getTitle();
 
     /**
      * Return the size of the rendition in bytes.
+     * 
+     * @return the rendition size in bytes, may be {@code null} if unknown
      */
     BigInteger getLength();
 }

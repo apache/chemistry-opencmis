@@ -30,7 +30,9 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 public interface AllowableActions extends ExtensionsData {
 
     /**
-     * Returns the set of Allowable Actions.
+     * Returns the Allowable Actions that are set.
+     * 
+     * @return the Allowable Actions that are set, not {@code null}
      * 
      * @cmis 1.0
      */

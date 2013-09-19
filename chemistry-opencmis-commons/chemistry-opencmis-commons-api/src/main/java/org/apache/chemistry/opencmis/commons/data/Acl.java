@@ -27,17 +27,18 @@ public interface Acl extends ExtensionsData {
 
     /**
      * Returns the list of ACEs.
+     * 
+     * @return the list of ACEs, not {@code null}
      */
     List<Ace> getAces();
 
     /**
-     * Indicates if this ACL expresses all permissions.
+     * Indicates whether this ACL expresses all permissions of the object.
      * 
-     * @return if <code>true</code> then the ACL expresses the exact permission
-     *         set, if <code>false</code> then there are other permission rules
-     *         that cannot be expressed through ACEs, if <code>null</code> then
-     *         it this in unknown (the repository did not provide this
-     *         information)
+     * @return {@code true} if the ACL expresses the exact permission set,
+     *         {@code false} if there are other permission rules that cannot be
+     *         expressed through ACEs, and {@code null} if this in unknown (the
+     *         repository did not provide this information)
      */
     Boolean isExact();
 }

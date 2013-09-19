@@ -18,9 +18,24 @@
  */
 package org.apache.chemistry.opencmis.commons.data;
 
+/**
+ * Represents a parent of object of a child object.
+ */
 public interface ObjectParentData extends ExtensionsData {
 
+    /**
+     * Returns the parent object.
+     * 
+     * @return the parent object, not {@code null}
+     */
     ObjectData getObject();
 
+    /**
+     * Returns the relative path segment of the child object relative to the
+     * parent object.
+     * 
+     * @return the relative path segment or {@code null} if the relative path
+     *         segment has not been requested
+     */
     String getRelativePathSegment();
 }

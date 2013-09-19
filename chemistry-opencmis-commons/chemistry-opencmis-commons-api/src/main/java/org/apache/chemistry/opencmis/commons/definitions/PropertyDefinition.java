@@ -34,9 +34,9 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
 
     /**
-     * Returns the property definition id.
+     * Returns the property definition ID.
      * 
-     * @return the property definition id
+     * @return the property definition ID
      * 
      * @cmis 1.0
      */
@@ -117,9 +117,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns if the property is inherited by a parent type.
      * 
-     * @return <code>true</code> - is inherited;
-     *         <code>false</code> - is not inherited; <code>null</code> -
-     *         unknown (noncompliant repository)
+     * @return {@code true} - is inherited; {@code false} - is not inherited;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -128,9 +127,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns if the property is required.
      * 
-     * @return <code>true</code> - is required;
-     *         <code>false</code> - is not required; <code>null</code> -
-     *         unknown (noncompliant repository)
+     * @return {@code true} - is required; {@code false} - is not required;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -139,9 +137,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns if the property is queryable.
      * 
-     * @return <code>true</code> - is queryable;
-     *         <code>false</code> - is not queryable; <code>null</code> -
-     *         unknown (noncompliant repository)
+     * @return {@code true} - is queryable; {@code false} - is not queryable;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -150,9 +147,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns if the property is Orderable.
      * 
-     * @return <code>true</code> - is Orderable;
-     *         <code>false</code> - is not Orderable; <code>null</code> -
-     *         unknown (noncompliant repository)
+     * @return {@code true} - is Orderable; {@code false} - is not Orderable;
+     *         {@code null} - unknown (noncompliant repository)
      * 
      * @cmis 1.0
      */
@@ -161,9 +157,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns if the property supports open choice.
      * 
-     * @return <code>true</code> - supports open choice;
-     *         <code>false</code> - does not support open choice; <code>null</code>
-     *         - unknown or not applicable
+     * @return {@code true} - supports open choice; {@code false} - does not
+     *         support open choice; {@code null} - unknown or not applicable
      * 
      * @cmis 1.0
      */
@@ -172,8 +167,8 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns the default value.
      * 
-     * @return the default value (list) or <code>null</code> if no default value
-     *         is defined
+     * @return the default value (list) or {@code null} if no default value is
+     *         defined
      * 
      * @cmis 1.0
      */
@@ -182,7 +177,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns the choices for this property.
      * 
-     * @return the choices or <code>null</code> if no choices are defined
+     * @return the choices or {@code null} if no choices are defined
      * 
      * @cmis 1.0
      */

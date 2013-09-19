@@ -33,7 +33,7 @@ public interface CreatablePropertyTypes extends ExtensionsData {
      * Returns the set of property data types that can used to create or update
      * a type definition.
      * 
-     * @return the available set of property data types.
+     * @return the available set of property data types
      * 
      * @cmis 1.1
      */

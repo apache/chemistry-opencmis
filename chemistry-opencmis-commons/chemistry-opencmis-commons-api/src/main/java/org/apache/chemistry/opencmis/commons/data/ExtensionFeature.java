@@ -30,9 +30,9 @@ import java.util.Map;
 public interface ExtensionFeature extends Serializable, ExtensionsData {
 
     /**
-     * Returns the unique feature id.
+     * Returns the unique feature ID.
      * 
-     * @return feature id
+     * @return the feature ID, not {@code null}
      * 
      * @cmis 1.1
      */
@@ -41,7 +41,7 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
     /**
      * Returns a URL that provides more information about the feature.
      * 
-     * @return feature URL
+     * @return the feature URL, may be {@code null}
      * 
      * @cmis 1.1
      */
@@ -50,7 +50,7 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
     /**
      * Returns a human-readable name for the feature.
      * 
-     * @return feature name
+     * @return the feature name, may be {@code null}
      * 
      * @cmis 1.1
      */
@@ -59,7 +59,7 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
     /**
      * Returns a feature version label.
      * 
-     * @return feature version label
+     * @return the feature version label, may be {@code null}
      * 
      * @cmis 1.1
      */
@@ -68,7 +68,7 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
     /**
      * Returns a human-readable description of the feature.
      * 
-     * @return feature description
+     * @return the feature description, may be {@code null}
      * 
      * @cmis 1.1
      */
@@ -77,7 +77,7 @@ public interface ExtensionFeature extends Serializable, ExtensionsData {
     /**
      * Returns extra feature data.
      * 
-     * @return key-value pairs of extra data
+     * @return the key-value pairs of extra data, may be {@code null}
      * 
      * @cmis 1.1
      */

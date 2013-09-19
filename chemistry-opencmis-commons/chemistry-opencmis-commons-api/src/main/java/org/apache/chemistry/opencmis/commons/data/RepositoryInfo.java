@@ -32,7 +32,9 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 public interface RepositoryInfo extends Serializable, ExtensionsData {
 
     /**
-     * Returns the repository id.
+     * Returns the repository ID.
+     * 
+     * @return the repository ID, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -41,12 +43,16 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     /**
      * Returns the repository name.
      * 
+     * @return the repository name, may be {@code null}
+     * 
      * @cmis 1.0
      */
     String getName();
 
     /**
      * Returns the repository description.
+     * 
+     * @return the repository description, may be {@code null}
      * 
      * @cmis 1.0
      */
@@ -55,12 +61,16 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     /**
      * Returns the repository vendor name.
      * 
+     * @return the repository vendor name, may be {@code null}
+     * 
      * @cmis 1.0
      */
     String getVendorName();
 
     /**
      * Returns the repository product name.
+     * 
+     * @return the repository product name, may be {@code null}
      * 
      * @cmis 1.0
      */
@@ -69,12 +79,16 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     /**
      * Returns the repository product version.
      * 
+     * @return the repository product version, may be {@code null}
+     * 
      * @cmis 1.0
      */
     String getProductVersion();
 
     /**
-     * Returns the object id of the root folder.
+     * Returns the object ID of the root folder.
+     * 
+     * @return the root folder ID, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -83,6 +97,8 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     /**
      * Returns the repository capabilities.
      * 
+     * @return the repository capabilities, may be {@code null}
+     * 
      * @cmis 1.0
      */
     RepositoryCapabilities getCapabilities();
@@ -90,12 +106,16 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     /**
      * Returns the ACL capabilities.
      * 
+     * @return the ACL capabilities, may be {@code null}
+     * 
      * @cmis 1.0
      */
     AclCapabilities getAclCapabilities();
 
     /**
-     * Returns the latest changelog token.
+     * Returns the latest change log token.
+     * 
+     * @return the latest change log token, may be {@code null}
      * 
      * @cmis 1.0
      */
@@ -103,6 +123,8 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
 
     /**
      * Returns the CMIS version supported by this repository as a string.
+     * 
+     * @return the supported CMIS version, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -112,37 +134,47 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
      * Returns the CMIS version supported by this repository as a
      * {@link CmisVersion} enum.
      * 
+     * @return the supported CMIS version, not {@code null}
+     * 
      * @cmis 1.0
      */
     CmisVersion getCmisVersion();
 
     /**
-     * Returns the URL of a web interface for this repository if available.
+     * Returns the URL of a web interface for this repository, if available.
+     * 
+     * @return the thin client URL, not {@code null}
      * 
      * @cmis 1.0
      */
     String getThinClientUri();
 
     /**
-     * Indicates whether the entries in the changelog are incomplete or
+     * Indicates whether the entries in the change log are incomplete or
      * complete.
+     * 
+     * @return {@code true} if the changes are incomplete, {@code false} if the
+     *         changes are complete, or {@code null} if the repository didn't
+     *         provide this flag
      * 
      * @cmis 1.0
      */
     Boolean getChangesIncomplete();
 
     /**
-     * Returns which types of objects are considered in the changelog.
+     * Returns which types of objects are considered in the change log.
+     * 
+     * @return the list of type IDs, not {@code null}
      * 
      * @cmis 1.0
      */
     List<BaseTypeId> getChangesOnType();
 
     /**
-     * Returns principal id for an anonymous user (any authenticated user). This
-     * principal id is supposed to be used in an {@link Ace}.
+     * Returns principal ID for an anonymous user (any authenticated user). This
+     * principal ID is supposed to be used in an {@link Ace}.
      * 
-     * @return principal id for an anonymous user or <code>null</code> if the
+     * @return the principal ID for an anonymous user or {@code null} if the
      *         repository does not support anonymous users
      * 
      * @cmis 1.0
@@ -150,10 +182,10 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     String getPrincipalIdAnonymous();
 
     /**
-     * Returns principal id for unauthenticated user (guest user). This
-     * principal id is supposed to be used in an {@link Ace}.
+     * Returns principal ID for unauthenticated user (guest user). This
+     * principal ID is supposed to be used in an {@link Ace}.
      * 
-     * @return principal id for unauthenticated user or <code>null</code> if the
+     * @return the principal ID for unauthenticated user or {@code null} if the
      *         repository does not support unauthenticated users
      * 
      * @cmis 1.0
@@ -161,7 +193,9 @@ public interface RepositoryInfo extends Serializable, ExtensionsData {
     String getPrincipalIdAnyone();
 
     /**
-     * Returns the list of CMIS extensions supported by this repository.
+     * Returns the list of CMIS extension features supported by this repository.
+     * 
+     * @return the list of features, may be {@code null}
      * 
      * @cmis 1.1
      */

@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.data;
 /**
  * Content stream that should not be chunked. (AtomPub binding and Browser
  * binding server only.)
- **/
+ */
 public interface ContentLengthContentStream extends ContentStream {
 
 }

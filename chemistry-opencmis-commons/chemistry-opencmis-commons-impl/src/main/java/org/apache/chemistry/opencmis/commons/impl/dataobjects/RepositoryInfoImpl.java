@@ -105,6 +105,10 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
     }
 
     public String getCmisVersionSupported() {
+        if (versionSupported == null) {
+            return "1.0";
+        }
+
         return versionSupported;
     }
 
@@ -126,7 +130,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
 
     public void setCmisVersion(CmisVersion cmisVersion) {
         if (cmisVersion == null) {
-            versionSupported = null;
+            versionSupported = CmisVersion.CMIS_1_0.value();
         } else {
             versionSupported = cmisVersion.value();
         }

@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 public interface PermissionDefinition extends Serializable, ExtensionsData {
 
     /**
-     * Returns the permission id.
+     * Returns the permission ID.
      */
     String getId();
 

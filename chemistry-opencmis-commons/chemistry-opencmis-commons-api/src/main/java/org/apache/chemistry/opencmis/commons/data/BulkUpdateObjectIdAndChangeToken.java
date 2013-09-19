@@ -25,9 +25,27 @@ package org.apache.chemistry.opencmis.commons.data;
  */
 public interface BulkUpdateObjectIdAndChangeToken extends ExtensionsData {
 
+    /**
+     * Returns the object ID.
+     * 
+     * @return the object ID
+     */
     String getId();
 
+    /**
+     * Returns the new object ID if the repository created a new object during
+     * the update.
+     * 
+     * @return the new object ID or {@code null} if no new object has been
+     *         created
+     */
     String getNewId();
 
+    /**
+     * Returns the change token of the object.
+     * 
+     * @return the change token or {@code null} if the repository does not
+     *         support change tokens
+     */
     String getChangeToken();
 }

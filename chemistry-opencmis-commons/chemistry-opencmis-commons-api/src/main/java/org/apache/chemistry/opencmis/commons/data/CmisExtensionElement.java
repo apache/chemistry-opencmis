@@ -23,39 +23,54 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class represents one node in the extension tree.
+ * Represents one node in the extension tree.
+ * <p>
+ * An extension element can have a value or children, but not both.
  */
 public interface CmisExtensionElement extends Serializable {
 
     /**
-     * Returns the name of the extension. The name is never <code>null</code>.
+     * Returns the name of the extension.
+     * 
+     * @return the name, not {@code null}
      */
     String getName();
 
     /**
-     * Returns the namespace of the extension. If the binding doesn't support
-     * namespaces this method will return <code>null</code>.
+     * Returns the namespace of the extension.
+     * <p>
+     * The namespace must follow the XML rules for namespaces. Don't rely on
+     * namespaces because the Browser binding does not support namespaces!
      * 
-     * Don't rely on namespaces because they are binding specific!
+     * @return the extension namespace or {@code null} if the namespace is not
+     *         set or not supported by the binding
      */
     String getNamespace();
 
     /**
-     * Returns the value of the extension as a String. If this extension has
-     * children than this method returns <code>null</code>.
+     * Returns the value of the extension as a String.
+     * 
+     * @return the extension value as a String or {@code null} if the value is
+     *         {@code null} or the extension has children
      */
     String getValue();
 
     /**
-     * Returns the attributes of the extension. If the binding doesn't support
-     * attributes this method will return <code>null</code>.
+     * Returns the attributes of the extension.
+     * <p>
+     * The attributes must follow the XML rules for attributes. Don't rely on
+     * attributes because the Browser binding does not support attributes!
      * 
-     * Try to avoid attributes because they are binding specific!
+     * @return the extension attributes or {@code null} if the attributes are
+     *         not set or not supported by the binding
      */
     Map<String, String> getAttributes();
 
     /**
      * Returns the children of this extension.
+     * 
+     * @return the children of this extension or {@code null} if the extension
+     *         has a value
      */
     List<CmisExtensionElement> getChildren();
 }

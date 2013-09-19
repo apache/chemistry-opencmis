@@ -27,24 +27,33 @@ public interface Ace extends ExtensionsData {
 
     /**
      * Returns the ACE principal.
+     * 
+     * @return the principal
      */
     Principal getPrincipal();
 
     /**
-     * Returns the ACE principal id.
-     * 
+     * Returns the ACE principal ID.
+     * <p>
      * Shortcut for <code>getPrincipal().getId()</code>.
+     * 
+     * @return the principal ID or {@code null} if no principal is set
      */
     String getPrincipalId();
 
     /**
      * Returns the permissions granted to the principal.
+     * 
+     * @return the list of permissions, not {@code null}
      */
     List<String> getPermissions();
 
     /**
      * Indicates if the ACE was directly applied to the object or has been
      * inherited from another object (e.g. from the folder it resides in).
+     * 
+     * @return {@code true} if it is direct ACE, {@code false} if it is
+     *         non-direct ACE
      */
     boolean isDirect();
 }

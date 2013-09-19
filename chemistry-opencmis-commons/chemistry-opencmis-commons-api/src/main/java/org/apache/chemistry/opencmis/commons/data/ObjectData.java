@@ -28,17 +28,17 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 public interface ObjectData extends ExtensionsData {
 
     /**
-     * Returns the object id.
+     * Returns the object ID.
      * 
-     * @return the object id or <code>null</code> if the object id is unknown
+     * @return the object ID or {@code null} if the object ID is unknown
      */
     String getId();
 
     /**
      * Returns the base object type.
      * 
-     * @return the base object type or <code>null</code> if the base object type
-     *         is unknown
+     * @return the base object type or {@code null} if the base object type is
+     *         unknown
      */
     BaseTypeId getBaseTypeId();
 
@@ -46,39 +46,37 @@ public interface ObjectData extends ExtensionsData {
      * Returns the object properties. The properties can be incomplete if a
      * property filter was used.
      * 
-     * @return the properties or <code>null</code> if no properties are known
+     * @return the properties or {@code null} if no properties are known
      */
     Properties getProperties();
 
     /**
      * Returns the allowable actions.
      * 
-     * @return the allowable actions or <code>null</code> if the allowable
-     *         actions are unknown
+     * @return the allowable actions or {@code null} if the allowable actions
+     *         are unknown
      */
     AllowableActions getAllowableActions();
 
     /**
      * Returns the relationships from and to this object.
      * 
-     * @return the list of relationship objects or <code>null</code> if no
-     *         relationships exist or the relationships are unknown
+     * @return the list of relationship objects, not {@code null}
      */
     List<ObjectData> getRelationships();
 
     /**
      * Returns the change event infos.
      * 
-     * @return the change event infos or <code>null</code> if the infos are
-     *         unknown
+     * @return the change event infos or {@code null} if the infos are unknown
      */
     ChangeEventInfo getChangeEventInfo();
 
     /**
      * Returns the access control list.
      * 
-     * @return the access control list or <code>null</code> if the access
-     *         control list is unknown
+     * @return the access control list or {@code null} if the access control
+     *         list is unknown
      */
     Acl getAcl();
 
@@ -86,24 +84,23 @@ public interface ObjectData extends ExtensionsData {
      * Returns if the access control list reflects the exact permission set in
      * the repository.
      * 
-     * @return <code>true<code> - exact; <code>false</code> - not exact, other
-     *         permission constraints exist; <code>null</code> - unknown
+     * @return {@code true} - exact; {@code false} - not exact, other permission
+     *         constraints exist; {@code null} - unknown
      */
     Boolean isExactAcl();
 
     /**
-     * Returns the ids of the applied policies.
+     * Returns the IDs of the applied policies.
      * 
-     * @return the policy ids or <code>null</code> if no policies are applied or
-     *         the ids are unknown
+     * @return the policy IDs or {@code null} if no policies are applied or the
+     *         IDs are unknown
      */
     PolicyIdList getPolicyIds();
 
     /**
      * Returns the renditions of this object.
      * 
-     * @return the list of renditions (might be empty) or <code>null</code> if
-     *         no renditions exist or the renditions are unknown
+     * @return the list of renditions, not {@code null}
      */
     List<RenditionData> getRenditions();
 }

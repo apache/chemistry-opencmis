@@ -29,8 +29,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "id" attribute can be set.
      * 
-     * @return <code>true</code> if the "id" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "id" attribute can be set, {@code false}
+     *         otherwise
      * 
      * @cmis 1.1
      */
@@ -39,8 +39,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "localName" attribute can be set.
      * 
-     * @return <code>true</code> if the "localName" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "localName" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -49,8 +49,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "localNamespace" attribute can be set.
      * 
-     * @return <code>true</code> if the "localNamespace" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "localNamespace" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -59,8 +59,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "displayName" attribute can be set.
      * 
-     * @return <code>true</code> if the "displayName" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "displayName" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -69,8 +69,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "queryName" attribute can be set.
      * 
-     * @return <code>true</code> if the "queryName" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "queryName" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -79,8 +79,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "description" attribute can be set.
      * 
-     * @return <code>true</code> if the "description" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "description" attribute can be set,
+     *         {@code false} otherwise
      * @cmis 1.1
      */
     Boolean canSetDescription();
@@ -88,8 +88,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "creatable" attribute can be set.
      * 
-     * @return <code>true</code> if the "creatable" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "creatable" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -98,8 +98,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "fileable" attribute can be set.
      * 
-     * @return <code>true</code> if the "fileable" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "fileable" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -108,8 +108,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "queryable" attribute can be set.
      * 
-     * @return <code>true</code> if the "queryable" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "queryable" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -118,16 +118,16 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "fulltextIndexed" attribute can be set.
      * 
-     * @return <code>true</code> if the "fulltextIndexed" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "fulltextIndexed" attribute can be set,
+     *         {@code false} otherwise
      */
     Boolean canSetFulltextIndexed();
 
     /**
      * Indicates if the "includedInSupertypeQuery" attribute can be set.
      * 
-     * @return <code>true</code> if the "includedInSupertypeQuery" attribute can
-     *         be set, <code>false</code> otherwise
+     * @return {@code true} if the "includedInSupertypeQuery" attribute can be
+     *         set, {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -136,8 +136,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "controllablePolicy" attribute can be set.
      * 
-     * @return <code>true</code> if the "controllablePolicy" attribute can be
-     *         set, <code>false</code> otherwise
+     * @return {@code true} if the "controllablePolicy" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */
@@ -146,8 +146,8 @@ public interface NewTypeSettableAttributes extends ExtensionsData {
     /**
      * Indicates if the "controllableACL" attribute can be set.
      * 
-     * @return <code>true</code> if the "controllableACL" attribute can be set,
-     *         <code>false</code> otherwise
+     * @return {@code true} if the "controllableACL" attribute can be set,
+     *         {@code false} otherwise
      * 
      * @cmis 1.1
      */

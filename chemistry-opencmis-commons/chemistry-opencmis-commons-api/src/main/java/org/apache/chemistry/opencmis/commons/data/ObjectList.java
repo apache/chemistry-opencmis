@@ -21,11 +21,32 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * Represents a list of objects.
+ */
 public interface ObjectList extends ExtensionsData {
 
+    /**
+     * Returns the list of objects.
+     * 
+     * @return the list of objects, not {@code null}
+     */
     List<ObjectData> getObjects();
 
+    /**
+     * Indicates if there are more objects.
+     * 
+     * @return {@code true} if there are more objects, {@code false} if there
+     *         are not more objects, or {@code null} if the repository didn't
+     *         provide this flag
+     */
     Boolean hasMoreItems();
 
+    /**
+     * Returns the total number of the objects.
+     * 
+     * @return the total number of the objects or {@code null} if the repository
+     *         didn't provide the number
+     */
     BigInteger getNumItems();
 }

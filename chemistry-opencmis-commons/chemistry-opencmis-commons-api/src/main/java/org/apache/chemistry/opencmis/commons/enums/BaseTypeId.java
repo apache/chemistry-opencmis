@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.commons.enums;
 
 /**
- * Base Object Type Ids Enum.
+ * Base Object Type IDs Enum.
  */
 public enum BaseTypeId {
 

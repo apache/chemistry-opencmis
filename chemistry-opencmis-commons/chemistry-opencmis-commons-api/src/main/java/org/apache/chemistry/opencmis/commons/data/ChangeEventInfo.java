@@ -22,9 +22,22 @@ import java.util.GregorianCalendar;
 
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 
+/**
+ * Basic change event.
+ */
 public interface ChangeEventInfo extends ExtensionsData {
 
+    /**
+     * Returns the change event type.
+     * 
+     * @return the change event type
+     */
     ChangeType getChangeType();
 
+    /**
+     * Returns when the change took place.
+     * 
+     * @return the timespamp of the change
+     */
     GregorianCalendar getChangeTime();
 }

@@ -21,11 +21,32 @@ package org.apache.chemistry.opencmis.commons.data;
 import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * Represents the objects in a folder.
+ */
 public interface ObjectInFolderList extends ExtensionsData {
 
+    /**
+     * Returns the objects in the folder.
+     * 
+     * @return the objects in the folder, not {@code null}
+     */
     List<ObjectInFolderData> getObjects();
 
+    /**
+     * Indicates if there are more objects in the folder.
+     * 
+     * @return {@code true} if there are more objects, {@code false} if there
+     *         are not more objects, or {@code null} if the repository didn't
+     *         provide this flag
+     */
     Boolean hasMoreItems();
 
+    /**
+     * Returns the total number of the objects in the folder.
+     * 
+     * @return the total number of the objects in the folder or {@code null} if
+     *         the repository didn't provide the number
+     */
     BigInteger getNumItems();
 }

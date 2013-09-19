@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 
 /**
- * Holder for object ids of objects that could not be deleted.
+ * Holder for object IDs of objects that could not be deleted.
  * 
  * @see ObjectService#deleteTree(String, String, Boolean,
  *      org.apache.chemistry.opencmis.commons.enums.UnfileObject, Boolean,
@@ -32,7 +32,9 @@ import org.apache.chemistry.opencmis.commons.spi.ObjectService;
 public interface FailedToDeleteData extends ExtensionsData {
 
     /**
-     * Returns the list of object ids of the objects that haven't been deleted.
+     * Returns the list of object IDs of the objects that haven't been deleted.
+     * 
+     * @return the list of IDs, not {@code null}
      */
     List<String> getIds();
 }

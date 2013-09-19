@@ -22,21 +22,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Properties.
+ * Represents a set of properties.
  */
 public interface Properties extends ExtensionsData {
 
     /**
-     * Returns a map of properties (property id => property). Should not be used
-     * with queries because some repositories don't set property ids, and
-     * because when dealing with queries the proper key is usually the query
-     * name (when using JOINs, several properties with the same id may be
-     * returned).
+     * Returns a map of properties (property ID => property).
+     * <p>
+     * This method should not be used with queries because some repositories
+     * don't set property IDs, and because when dealing with queries the proper
+     * key is usually the query name (when using JOINs, several properties with
+     * the same ID may be returned).
+     * 
+     * @return the map of properties, not {@code null}
      */
     Map<String, PropertyData<?>> getProperties();
 
     /**
      * Returns the list of properties.
+     * 
+     * @return the list of properties, not {@code null}
      */
     List<PropertyData<?>> getPropertyList();
 }

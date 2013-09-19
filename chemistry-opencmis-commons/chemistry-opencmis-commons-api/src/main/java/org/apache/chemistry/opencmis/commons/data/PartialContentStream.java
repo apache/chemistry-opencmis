@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons.data;
 /**
  * Content stream that indicates that this stream may not represent the complete
  * document content. (Client only.)
- * 
+ * <p>
  * Note that if the client provides an offset and/or a length that cover the
  * whole document content, the server might report this as partial content.
  */

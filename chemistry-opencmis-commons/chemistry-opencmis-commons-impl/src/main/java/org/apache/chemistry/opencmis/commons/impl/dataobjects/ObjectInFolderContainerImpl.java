@@ -44,6 +44,10 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
      * Constructor.
      */
     public ObjectInFolderContainerImpl(ObjectInFolderData object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object must be set!");
+        }
+
         this.object = object;
     }
 
@@ -52,6 +56,10 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
     }
 
     public void setObject(ObjectInFolderData object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object must be set!");
+        }
+
         this.object = object;
     }
 
