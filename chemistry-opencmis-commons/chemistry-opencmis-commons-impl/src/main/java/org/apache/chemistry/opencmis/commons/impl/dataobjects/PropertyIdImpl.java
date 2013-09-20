@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyId;
 
 /**
  * Id property data implementation.
  */
-public class PropertyIdImpl extends AbstractPropertyData<String> implements PropertyId {
+public class PropertyIdImpl extends AbstractPropertyData<String> implements MutablePropertyId {
 
     private static final long serialVersionUID = 1L;
 

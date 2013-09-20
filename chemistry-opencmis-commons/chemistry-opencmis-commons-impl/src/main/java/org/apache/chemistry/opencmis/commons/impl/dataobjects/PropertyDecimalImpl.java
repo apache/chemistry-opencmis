@@ -21,12 +21,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyDecimal;
 
 /**
  * Decimal property data implementation.
  */
-public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements PropertyDecimal {
+public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implements MutablePropertyDecimal {
 
     private static final long serialVersionUID = 1L;
 

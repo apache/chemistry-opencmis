@@ -26,7 +26,7 @@ import java.util.List;
 public interface Acl extends ExtensionsData {
 
     /**
-     * Returns the list of ACEs.
+     * Returns the list of Access Control Entries (ACEs).
      * 
      * @return the list of ACEs, not {@code null}
      */

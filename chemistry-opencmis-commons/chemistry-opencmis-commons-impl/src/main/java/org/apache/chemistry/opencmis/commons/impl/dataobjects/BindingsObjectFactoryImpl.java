@@ -26,18 +26,20 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
-import org.apache.chemistry.opencmis.commons.data.Acl;
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.data.Properties;
-import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
+import org.apache.chemistry.opencmis.commons.data.MutableAce;
+import org.apache.chemistry.opencmis.commons.data.MutableAcl;
+import org.apache.chemistry.opencmis.commons.data.MutableContentStream;
+import org.apache.chemistry.opencmis.commons.data.MutableProperties;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyBoolean;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyData;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyDateTime;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyDecimal;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyHtml;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyId;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyString;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyUri;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
-import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
-import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
-import org.apache.chemistry.opencmis.commons.data.PropertyId;
-import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
-import org.apache.chemistry.opencmis.commons.data.PropertyString;
-import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyBooleanDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDateTimeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
@@ -61,139 +63,140 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
     public BindingsObjectFactoryImpl() {
     }
 
-    public Ace createAccessControlEntry(String principal, List<String> permissions) {
+    public MutableAce createAccessControlEntry(String principal, List<String> permissions) {
         return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
     }
 
-    public Acl createAccessControlList(List<Ace> aces) {
+    public MutableAcl createAccessControlList(List<Ace> aces) {
         return new AccessControlListImpl(aces);
     }
 
-    public ContentStream createContentStream(String filename, BigInteger length, String mimetype, InputStream stream) {
+    public MutableContentStream createContentStream(String filename, BigInteger length, String mimetype,
+            InputStream stream) {
         return new ContentStreamImpl(filename, length, mimetype, stream);
     }
 
-    public Properties createPropertiesData(List<PropertyData<?>> properties) {
+    public MutableProperties createPropertiesData(List<PropertyData<?>> properties) {
         return new PropertiesImpl(properties);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> AbstractPropertyData<T> createPropertyData(PropertyDefinition<T> pd, Object value) {
+    public <T> MutablePropertyData<T> createPropertyData(PropertyDefinition<T> pd, Object value) {
         String id = pd.getId();
         boolean single = pd.getCardinality() == Cardinality.SINGLE;
         if (pd instanceof PropertyBooleanDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyBooleanData(id, (Boolean) value);
+                return (MutablePropertyData<T>) createPropertyBooleanData(id, (Boolean) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyBooleanData(id, (List<Boolean>) value);
+                return (MutablePropertyData<T>) createPropertyBooleanData(id, (List<Boolean>) value);
             }
         } else if (pd instanceof PropertyDateTimeDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyDateTimeData(id, (GregorianCalendar) value);
+                return (MutablePropertyData<T>) createPropertyDateTimeData(id, (GregorianCalendar) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyDateTimeData(id, (List<GregorianCalendar>) value);
+                return (MutablePropertyData<T>) createPropertyDateTimeData(id, (List<GregorianCalendar>) value);
             }
         } else if (pd instanceof PropertyDecimalDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyDecimalData(id, (BigDecimal) value);
+                return (MutablePropertyData<T>) createPropertyDecimalData(id, (BigDecimal) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyDecimalData(id, (List<BigDecimal>) value);
+                return (MutablePropertyData<T>) createPropertyDecimalData(id, (List<BigDecimal>) value);
             }
         } else if (pd instanceof PropertyHtmlDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyHtmlData(id, (String) value);
+                return (MutablePropertyData<T>) createPropertyHtmlData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyHtmlData(id, (List<String>) value);
+                return (MutablePropertyData<T>) createPropertyHtmlData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyIdDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyIdData(id, (String) value);
+                return (MutablePropertyData<T>) createPropertyIdData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyIdData(id, (List<String>) value);
+                return (MutablePropertyData<T>) createPropertyIdData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyIntegerDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyIntegerData(id, (BigInteger) value);
+                return (MutablePropertyData<T>) createPropertyIntegerData(id, (BigInteger) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyIntegerData(id, (List<BigInteger>) value);
+                return (MutablePropertyData<T>) createPropertyIntegerData(id, (List<BigInteger>) value);
             }
         } else if (pd instanceof PropertyStringDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyStringData(id, (String) value);
+                return (MutablePropertyData<T>) createPropertyStringData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyStringData(id, (List<String>) value);
+                return (MutablePropertyData<T>) createPropertyStringData(id, (List<String>) value);
             }
         } else if (pd instanceof PropertyUriDefinition) {
             if (single) {
-                return (AbstractPropertyData<T>) createPropertyUriData(id, (String) value);
+                return (MutablePropertyData<T>) createPropertyUriData(id, (String) value);
             } else {
-                return (AbstractPropertyData<T>) createPropertyUriData(id, (List<String>) value);
+                return (MutablePropertyData<T>) createPropertyUriData(id, (List<String>) value);
             }
         }
         throw new CmisRuntimeException("Unknown property definition: " + pd);
     }
 
-    public PropertyBoolean createPropertyBooleanData(String id, List<Boolean> values) {
+    public MutablePropertyBoolean createPropertyBooleanData(String id, List<Boolean> values) {
         return new PropertyBooleanImpl(id, values);
     }
 
-    public PropertyBoolean createPropertyBooleanData(String id, Boolean value) {
+    public MutablePropertyBoolean createPropertyBooleanData(String id, Boolean value) {
         return new PropertyBooleanImpl(id, value);
     }
 
-    public PropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
+    public MutablePropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
         return new PropertyDateTimeImpl(id, values);
     }
 
-    public PropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value) {
+    public MutablePropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value) {
         return new PropertyDateTimeImpl(id, value);
     }
 
-    public PropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values) {
+    public MutablePropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values) {
         return new PropertyDecimalImpl(id, values);
     }
 
-    public PropertyDecimal createPropertyDecimalData(String id, BigDecimal value) {
+    public MutablePropertyDecimal createPropertyDecimalData(String id, BigDecimal value) {
         return new PropertyDecimalImpl(id, value);
     }
 
-    public PropertyHtml createPropertyHtmlData(String id, List<String> values) {
+    public MutablePropertyHtml createPropertyHtmlData(String id, List<String> values) {
         return new PropertyHtmlImpl(id, values);
     }
 
-    public PropertyHtml createPropertyHtmlData(String id, String value) {
+    public MutablePropertyHtml createPropertyHtmlData(String id, String value) {
         return new PropertyHtmlImpl(id, value);
     }
 
-    public PropertyId createPropertyIdData(String id, List<String> values) {
+    public MutablePropertyId createPropertyIdData(String id, List<String> values) {
         return new PropertyIdImpl(id, values);
     }
 
-    public PropertyId createPropertyIdData(String id, String value) {
+    public MutablePropertyId createPropertyIdData(String id, String value) {
         return new PropertyIdImpl(id, value);
     }
 
-    public PropertyInteger createPropertyIntegerData(String id, List<BigInteger> values) {
+    public MutablePropertyInteger createPropertyIntegerData(String id, List<BigInteger> values) {
         return new PropertyIntegerImpl(id, values);
     }
 
-    public PropertyInteger createPropertyIntegerData(String id, BigInteger value) {
+    public MutablePropertyInteger createPropertyIntegerData(String id, BigInteger value) {
         return new PropertyIntegerImpl(id, value);
     }
 
-    public PropertyString createPropertyStringData(String id, List<String> values) {
+    public MutablePropertyString createPropertyStringData(String id, List<String> values) {
         return new PropertyStringImpl(id, values);
     }
 
-    public PropertyString createPropertyStringData(String id, String value) {
+    public MutablePropertyString createPropertyStringData(String id, String value) {
         return new PropertyStringImpl(id, value);
     }
 
-    public PropertyUri createPropertyUriData(String id, List<String> values) {
+    public MutablePropertyUri createPropertyUriData(String id, List<String> values) {
         return new PropertyUriImpl(id, values);
     }
 
-    public PropertyUri createPropertyUriData(String id, String value) {
+    public MutablePropertyUri createPropertyUriData(String id, String value) {
         return new PropertyUriImpl(id, value);
     }
 }

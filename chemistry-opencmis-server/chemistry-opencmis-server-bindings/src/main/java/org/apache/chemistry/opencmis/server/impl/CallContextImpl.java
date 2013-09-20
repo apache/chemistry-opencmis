@@ -31,12 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.MutableCallContext;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 
 /**
  * Implementation of the {@link CallContext} interface.
  */
-public class CallContextImpl implements CallContext {
+public class CallContextImpl implements MutableCallContext {
 
     private final String binding;
     private final boolean objectInfoRequired;
@@ -186,16 +187,10 @@ public class CallContextImpl implements CallContext {
         return (Long) get(MAX_CONTENT_SIZE);
     }
 
-    /**
-     * Adds a parameter.
-     */
     public final void put(String key, Object value) {
         parameter.put(key, value);
     }
 
-    /**
-     * Removes a parameter.
-     */
     public final Object remove(String key) {
         return parameter.remove(key);
     }

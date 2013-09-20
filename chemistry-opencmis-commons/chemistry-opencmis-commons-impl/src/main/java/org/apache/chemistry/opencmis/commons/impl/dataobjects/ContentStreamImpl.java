@@ -23,13 +23,13 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.MutableContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Content stream data implementation.
  */
-public class ContentStreamImpl extends AbstractExtensionData implements ContentStream {
+public class ContentStreamImpl extends AbstractExtensionData implements MutableContentStream {
 
     private static final long serialVersionUID = 1L;
 

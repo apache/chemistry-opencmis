@@ -50,7 +50,8 @@ public interface Ace extends ExtensionsData {
 
     /**
      * Indicates if the ACE was directly applied to the object or has been
-     * inherited from another object (e.g. from the folder it resides in).
+     * inherited from another object (for example from the folder it resides
+     * in).
      * 
      * @return {@code true} if it is direct ACE, {@code false} if it is
      *         non-direct ACE

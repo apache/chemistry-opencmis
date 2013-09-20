@@ -588,10 +588,9 @@ public final class TypeDefinitionFactory {
 
     /**
      * Creates a new mutable type definition, which is a child of the provided
-     * type definition. If the parameter <code>includePropertyDefinitions</code>
-     * is set to
-     * <code>true</true> property definitions are copied from the parent
-     * and marked as inherited.
+     * type definition. If the parameter {@code includePropertyDefinitions} is
+     * set to {@code true} property definitions are copied from the parent and
+     * marked as inherited.
      */
     public MutableTypeDefinition createChildTypeDefinition(TypeDefinition parentTypeDefinition, String id,
             String localName, String queryName, String displayName, String description,
@@ -618,6 +617,182 @@ public final class TypeDefinitionFactory {
         }
 
         return childType;
+    }
+
+    /**
+     * Creates a property definition object.
+     * 
+     * @param id
+     *            the property ID, not {@code null}
+     * @param displayName
+     *            the display name, may be {@code null}
+     * @param description
+     *            the description, may be {@code null}
+     * @param datatype
+     *            the datatype, not {@code null}
+     * @param cardinality
+     *            the cardinality, not {@code null}
+     * @param updateability
+     *            the updateability, not {@code null}
+     * @param inherited
+     *            {@code true} if the property definition is inherited,
+     *            {@code false} otherwise
+     * @param required
+     *            {@code true} if a property value is required, {@code false}
+     *            otherwise
+     * @param queryable
+     *            {@code true} if the property can be used in the WHERE clause
+     *            of a query, {@code false} otherwise
+     * @param orderable
+     *            {@code true} if the property can be used in the ORDER BY
+     *            clause of a query, {@code false} otherwise
+     * 
+     * @return a mutable property definition object
+     */
+    public MutablePropertyDefinition<?> createPropertyDefinition(String id, String displayName, String description,
+            PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
+            boolean required, boolean queryable, boolean orderable) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID must be set!");
+        }
+        if (datatype == null) {
+            throw new IllegalArgumentException("Datatype must be set!");
+        }
+        if (cardinality == null) {
+            throw new IllegalArgumentException("Cardinality must be set!");
+        }
+        if (updateability == null) {
+            throw new IllegalArgumentException("Updateability must be set!");
+        }
+
+        MutablePropertyDefinition<?> result = null;
+
+        switch (datatype) {
+        case BOOLEAN:
+            result = new PropertyBooleanDefinitionImpl();
+            break;
+        case DATETIME:
+            result = new PropertyDateTimeDefinitionImpl();
+            break;
+        case DECIMAL:
+            result = new PropertyDecimalDefinitionImpl();
+            break;
+        case HTML:
+            result = new PropertyHtmlDefinitionImpl();
+            break;
+        case ID:
+            result = new PropertyIdDefinitionImpl();
+            break;
+        case INTEGER:
+            result = new PropertyIntegerDefinitionImpl();
+            break;
+        case STRING:
+            result = new PropertyStringDefinitionImpl();
+            break;
+        case URI:
+            result = new PropertyUriDefinitionImpl();
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown datatype! Spec change?");
+        }
+
+        result.setId(id);
+        result.setLocalName(id);
+        result.setDisplayName(displayName);
+        result.setDescription(description);
+        result.setPropertyType(datatype);
+        result.setCardinality(cardinality);
+        result.setUpdatability(updateability);
+        result.setIsInherited(inherited);
+        result.setIsRequired(required);
+        result.setIsQueryable(queryable);
+        result.setIsOrderable(orderable);
+        result.setQueryName(id);
+
+        return result;
+    }
+
+    /**
+     * Creates a single value Choice object.
+     * 
+     * @param displayName
+     *            the choice display name
+     * @param value
+     *            the value
+     * 
+     * @return the Choice object
+     */
+    public <T> Choice<T> createChoice(String displayName, T value) {
+        ChoiceImpl<T> result = new ChoiceImpl<T>();
+        result.setDisplayName(displayName);
+        result.setValue(value);
+
+        return result;
+    }
+
+    /**
+     * Creates a multi value Choice object.
+     * 
+     * @param displayName
+     *            the choice display name
+     * @param value
+     *            the value
+     * 
+     * @return the Choice object
+     */
+    public <T> Choice<T> createChoice(String displayName, List<T> value) {
+        ChoiceImpl<T> result = new ChoiceImpl<T>();
+        result.setDisplayName(displayName);
+        result.setValue(value);
+
+        return result;
+    }
+
+    /**
+     * Creates a Choice object with sub choices.
+     * 
+     * @param displayName
+     *            the choice display name
+     * @param subChoice
+     *            the sub choice list
+     * 
+     * @return the Choice object
+     */
+    public <T> Choice<T> createChoiceWithSubChoices(String displayName, List<Choice<T>> subChoice) {
+        ChoiceImpl<T> result = new ChoiceImpl<T>();
+        result.setDisplayName(displayName);
+        result.setChoice(subChoice);
+
+        return result;
+    }
+
+    /**
+     * Creates a type definition list.
+     * 
+     * @param list
+     *            the list of type definitions, not {@code null}
+     * @param hasMoreItems
+     *            {@code true} if there are more items, {@code false} otherwise
+     * @param numItems
+     *            the total (positive) number of types at this level or
+     *            {@code null} if the number is unknown
+     * 
+     * @return the TypeDefinitionList object
+     */
+    public TypeDefinitionList createTypeDefinitionList(List<TypeDefinition> list, boolean hasMoreItems,
+            BigInteger numItems) {
+        if (list == null) {
+            throw new IllegalArgumentException("List must be set!");
+        }
+        if (numItems != null && numItems.signum() < 0) {
+            throw new IllegalArgumentException("Number of items is negative!");
+        }
+
+        TypeDefinitionListImpl result = new TypeDefinitionListImpl(list);
+        result.setHasMoreItems(hasMoreItems);
+        result.setNumItems(numItems);
+
+        return result;
     }
 
     /**
@@ -701,6 +876,28 @@ public final class TypeDefinitionFactory {
         result.setList(targetList.subList(skipCountInt, Math.min(skipCountInt + maxItemsInt, targetList.size())));
         result.setNumItems(BigInteger.valueOf(targetList.size()));
         result.setHasMoreItems(targetList.size() > skipCountInt + maxItemsInt);
+
+        return result;
+    }
+
+    /**
+     * Creates a type definition container.
+     * 
+     * @param typeDef
+     *            the type definition, not {@code null}
+     * @param children
+     *            the child type definitions, may be {@code null}
+     * 
+     * @return the TypeDefinitionContainer object
+     */
+    public TypeDefinitionContainer createTypeDefinitionContainer(TypeDefinition typeDef,
+            List<TypeDefinitionContainer> children) {
+        if (typeDef == null) {
+            throw new IllegalArgumentException("Type definition must be set!");
+        }
+
+        TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl(typeDef);
+        result.setChildren(children);
 
         return result;
     }
@@ -1119,183 +1316,138 @@ public final class TypeDefinitionFactory {
      * Adds the base property definitions to a type definition.
      */
     protected void addBasePropertyDefinitions(MutableTypeDefinition type, CmisVersion cmisVersion, boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.NAME, "Name", "Name", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READWRITE, inherited, true, true, true));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
-            type.addPropertyDefinition(createPropDef(PropertyIds.DESCRIPTION, "Description", "Description",
+            type.addPropertyDefinition(createPropertyDefinition(PropertyIds.DESCRIPTION, "Description", "Description",
                     PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, false, false, false));
         }
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_ID, "Object Id", "Object Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.OBJECT_ID, "Object Id", "Object Id",
                 PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.OBJECT_TYPE_ID, "Object Type Id", "Object Type Id",
-                PropertyType.ID, Cardinality.SINGLE, Updatability.ONCREATE, inherited, true, true, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
+
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.OBJECT_TYPE_ID, "Object Type Id",
+                "Object Type Id", PropertyType.ID, Cardinality.SINGLE, Updatability.ONCREATE, inherited, true, true,
+                false));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
-            type.addPropertyDefinition(createPropDef(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, "Secondary Type Ids",
-                    "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI, Updatability.READONLY, inherited, false,
-                    true, false));
+            type.addPropertyDefinition(createPropertyDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS,
+                    "Secondary Type Ids", "Secondary Type Ids", PropertyType.ID, Cardinality.MULTI,
+                    Updatability.READONLY, inherited, false, true, false));
         }
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATED_BY, "Created By", "Created By",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CREATED_BY, "Created By", "Created By",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
-                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CREATION_DATE, "Creation Date",
+                "Creation Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                true, true));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.LAST_MODIFIED_BY, "Last Modified By",
+                "Last Modified By", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                true, true));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.LAST_MODIFICATION_DATE, "Last Modification Date",
-                "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited,
-                false, true, true));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.LAST_MODIFICATION_DATE,
+                "Last Modification Date", "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE,
+                Updatability.READONLY, inherited, false, true, true));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CHANGE_TOKEN, "Change Token", "Change Token",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
     }
 
     protected void addDocumentPropertyDefinitions(MutableDocumentTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_IMMUTABLE, "Is Immutable", "Is Immutable",
                 PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_VERSION, "Is Latest Version",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_LATEST_VERSION, "Is Latest Version",
                 "Is Latest Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
                 false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_MAJOR_VERSION, "Is Major Version", "Is Major Version",
-                PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_MAJOR_VERSION, "Is Major Version",
+                "Is Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_LATEST_MAJOR_VERSION, "Is Latest Major Version",
-                "Is Latest Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY, inherited,
-                false, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_LATEST_MAJOR_VERSION,
+                "Is Latest Major Version", "Is Latest Major Version", PropertyType.BOOLEAN, Cardinality.SINGLE,
+                Updatability.READONLY, inherited, false, false, false));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
-            type.addPropertyDefinition(createPropDef(PropertyIds.IS_PRIVATE_WORKING_COPY, "Is Private Working Copy",
-                    "Is Private Working Copy", PropertyType.BOOLEAN, Cardinality.SINGLE, Updatability.READONLY,
-                    inherited, false, true, false));
+            type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_PRIVATE_WORKING_COPY,
+                    "Is Private Working Copy", "Is Private Working Copy", PropertyType.BOOLEAN, Cardinality.SINGLE,
+                    Updatability.READONLY, inherited, false, true, false));
         }
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_LABEL, "Version Label", "Version Label",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_LABEL, "Version Label",
+                "Version Label", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_ID, "Version Series Id",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_SERIES_ID, "Version Series Id",
                 "Version Series Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
                 true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
                 "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
                 Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY,
                 "Version Series Checked Out By", "Version Series Checked Out By", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID,
                 "Version Series Checked Out Id", "Version Series Checked Out Id", PropertyType.ID, Cardinality.SINGLE,
                 Updatability.READONLY, inherited, false, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CHECKIN_COMMENT, "Checkin Comment", "Checkin Comment",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CHECKIN_COMMENT, "Checkin Comment",
+                "Checkin Comment", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
+                false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CONTENT_STREAM_LENGTH, "Content Stream Length",
                 "Content Stream Length", PropertyType.INTEGER, Cardinality.SINGLE, Updatability.READONLY, inherited,
                 false, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type", "MIME Type",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CONTENT_STREAM_MIME_TYPE, "MIME Type",
+                "MIME Type", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false,
+                false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_FILE_NAME, "Filename", "Filename",
-                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CONTENT_STREAM_FILE_NAME, "Filename",
+                "Filename", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false,
+                false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id",
                 "Content Stream Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
                 false, false));
     }
 
     protected void addFolderPropertyDefinitions(MutableFolderTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.PARENT_ID, "Parent Id", "Parent Id", PropertyType.ID,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.PARENT_ID, "Parent Id", "Parent Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
+
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.PATH, "Path", "Path", PropertyType.STRING,
                 Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.PATH, "Path", "Path", PropertyType.STRING,
-                Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
-
-        type.addPropertyDefinition(createPropDef(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.ALLOWED_CHILD_OBJECT_TYPE_IDS,
                 "Allowed Child Object Type Ids", "Allowed Child Object Type Ids", PropertyType.ID, Cardinality.MULTI,
                 Updatability.READONLY, inherited, false, false, false));
     }
 
     protected void addPolicyPropertyDefinitions(MutablePolicyTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.POLICY_TEXT, "Policy Text", "Policy Text",
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.POLICY_TEXT, "Policy Text", "Policy Text",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READWRITE, inherited, false, false, false));
     }
 
     protected void addRelationshipPropertyDefinitions(MutableRelationshipTypeDefinition type, CmisVersion cmisVersion,
             boolean inherited) {
-        type.addPropertyDefinition(createPropDef(PropertyIds.SOURCE_ID, "Source Id", "Source Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.SOURCE_ID, "Source Id", "Source Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
 
-        type.addPropertyDefinition(createPropDef(PropertyIds.TARGET_ID, "Target Id", "Target Id", PropertyType.ID,
-                Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
-    }
-
-    /**
-     * Creates a property definition object.
-     */
-    protected MutablePropertyDefinition<?> createPropDef(String id, String displayName, String description,
-            PropertyType datatype, Cardinality cardinality, Updatability updateability, boolean inherited,
-            boolean required, boolean queryable, boolean orderable) {
-        MutablePropertyDefinition<?> result = null;
-
-        switch (datatype) {
-        case BOOLEAN:
-            result = new PropertyBooleanDefinitionImpl();
-            break;
-        case DATETIME:
-            result = new PropertyDateTimeDefinitionImpl();
-            break;
-        case DECIMAL:
-            result = new PropertyDecimalDefinitionImpl();
-            break;
-        case HTML:
-            result = new PropertyHtmlDefinitionImpl();
-            break;
-        case ID:
-            result = new PropertyIdDefinitionImpl();
-            break;
-        case INTEGER:
-            result = new PropertyIntegerDefinitionImpl();
-            break;
-        case STRING:
-            result = new PropertyStringDefinitionImpl();
-            break;
-        case URI:
-            result = new PropertyUriDefinitionImpl();
-            break;
-        default:
-            throw new RuntimeException("Unknown datatype! Spec change?");
-        }
-
-        result.setId(id);
-        result.setLocalName(id);
-        result.setDisplayName(displayName);
-        result.setDescription(description);
-        result.setPropertyType(datatype);
-        result.setCardinality(cardinality);
-        result.setUpdatability(updateability);
-        result.setIsInherited(inherited);
-        result.setIsRequired(required);
-        result.setIsQueryable(queryable);
-        result.setIsOrderable(orderable);
-        result.setQueryName(id);
-
-        return result;
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.TARGET_ID, "Target Id", "Target Id",
+                PropertyType.ID, Cardinality.SINGLE, Updatability.READWRITE, inherited, true, false, false));
     }
 }

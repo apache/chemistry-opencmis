@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
-import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.MutableAcl;
 
 /**
  * Access control list data implementation.
  */
-public class AccessControlListImpl extends AbstractExtensionData implements Acl, Serializable {
+public class AccessControlListImpl extends AbstractExtensionData implements MutableAcl, Serializable {
 
     private static final long serialVersionUID = 1L;
 

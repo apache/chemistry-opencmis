@@ -54,6 +54,11 @@ public class ChoiceImpl<T> implements Choice<T> {
         this.value = value;
     }
 
+    public void setValue(T value) {
+        this.value = new ArrayList<T>();
+        this.value.add(value);
+    }
+
     public List<Choice<T>> getChoice() {
         if (choice == null) {
             choice = new ArrayList<Choice<T>>();

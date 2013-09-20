@@ -21,12 +21,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyDateTime;
 
 /**
  * DateTime property data implementation.
  */
-public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements PropertyDateTime {
+public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar> implements MutablePropertyDateTime {
 
     private static final long serialVersionUID = 1L;
 

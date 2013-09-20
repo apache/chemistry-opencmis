@@ -16,30 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.data;
 
-import java.math.BigInteger;
-import java.util.List;
+public interface MutablePropertyUri extends PropertyUri, MutablePropertyData<String> {
 
-import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
-
-/**
- * Integer property data implementation.
- */
-public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements MutablePropertyInteger {
-
-    private static final long serialVersionUID = 1L;
-
-    public PropertyIntegerImpl() {
-    }
-
-    public PropertyIntegerImpl(String id, List<BigInteger> values) {
-        setId(id);
-        setValues(values);
-    }
-
-    public PropertyIntegerImpl(String id, BigInteger value) {
-        setId(id);
-        setValue(value);
-    }
 }

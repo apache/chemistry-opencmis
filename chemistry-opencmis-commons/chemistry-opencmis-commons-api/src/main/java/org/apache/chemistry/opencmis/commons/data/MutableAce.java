@@ -16,30 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.data;
 
-import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
-
 /**
- * Integer property data implementation.
+ * Mutable Access Control Entry (ACE).
  */
-public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements MutablePropertyInteger {
+public interface MutableAce extends Ace {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * Sets the ACE principal.
+     * 
+     * @param principal
+     *            the principal
+     */
+    void setPrincipal(Principal principal);
 
-    public PropertyIntegerImpl() {
-    }
+    /**
+     * Sets the permissions granted to the principal.
+     * 
+     * @param permissions
+     *            the list of permission
+     */
+    void setPermissions(List<String> permissions);
 
-    public PropertyIntegerImpl(String id, List<BigInteger> values) {
-        setId(id);
-        setValues(values);
-    }
-
-    public PropertyIntegerImpl(String id, BigInteger value) {
-        setId(id);
-        setValue(value);
-    }
+    /**
+     * Sets whether this ACE is a direct ACE or not.
+     * 
+     * @param direct
+     *            {@code true} if the ACE is a direct ACE, {@code false}
+     *            otherwise
+     */
+    void setDirect(boolean direct);
 }

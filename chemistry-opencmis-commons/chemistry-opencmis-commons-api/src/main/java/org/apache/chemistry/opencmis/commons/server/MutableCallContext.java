@@ -16,30 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
-
-import java.math.BigInteger;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
+package org.apache.chemistry.opencmis.commons.server;
 
 /**
- * Integer property data implementation.
+ * Mutable CallContext.
  */
-public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements MutablePropertyInteger {
+public interface MutableCallContext extends CallContext {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * Adds or replaces an entry
+     * 
+     * @param key
+     *            the entry key
+     * @param value
+     *            the entry object
+     */
+    void put(String key, Object value);
 
-    public PropertyIntegerImpl() {
-    }
+    /**
+     * Removes a parameter.
+     * 
+     * @param key
+     *            the entry key
+     * 
+     * @return the entry object of the removed entry or {@code null} if the
+     *         entry didn't exist
+     */
+    Object remove(String key);
 
-    public PropertyIntegerImpl(String id, List<BigInteger> values) {
-        setId(id);
-        setValues(values);
-    }
-
-    public PropertyIntegerImpl(String id, BigInteger value) {
-        setId(id);
-        setValue(value);
-    }
 }

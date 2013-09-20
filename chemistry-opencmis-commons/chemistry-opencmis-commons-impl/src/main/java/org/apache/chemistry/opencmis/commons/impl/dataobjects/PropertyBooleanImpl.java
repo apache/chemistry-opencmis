@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyBoolean;
 
 /**
  * Boolean property data implementation.
  */
-public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements PropertyBoolean {
+public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implements MutablePropertyBoolean {
 
     private static final long serialVersionUID = 1L;
 

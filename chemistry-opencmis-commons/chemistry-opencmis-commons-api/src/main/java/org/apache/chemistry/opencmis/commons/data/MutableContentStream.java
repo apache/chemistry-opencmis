@@ -16,30 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.impl.dataobjects;
+package org.apache.chemistry.opencmis.commons.data;
 
+import java.io.InputStream;
 import java.math.BigInteger;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
 
 /**
- * Integer property data implementation.
+ * Mutable ContentStream.
  */
-public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implements MutablePropertyInteger {
+public interface MutableContentStream extends ContentStream {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * Sets the file name.
+     * 
+     * @param filename
+     *            the file name
+     */
+    void setFileName(String filename);
 
-    public PropertyIntegerImpl() {
-    }
+    /**
+     * Sets the length of the stream
+     * 
+     * @param length
+     *            the length of the stream in bytes or {@code null} if the
+     *            length is unknown
+     */
+    void setLength(BigInteger length);
 
-    public PropertyIntegerImpl(String id, List<BigInteger> values) {
-        setId(id);
-        setValues(values);
-    }
+    /**
+     * Sets the MIME type of the stream.
+     * 
+     * @param mimeType
+     *            the MIME type
+     */
+    void setMimeType(String mimeType);
 
-    public PropertyIntegerImpl(String id, BigInteger value) {
-        setId(id);
-        setValue(value);
-    }
+    /**
+     * Sets the stream
+     * 
+     * @param stream
+     *            the stream
+     */
+    void setStream(InputStream stream);
 }

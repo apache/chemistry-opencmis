@@ -22,13 +22,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.Ace;
+import org.apache.chemistry.opencmis.commons.data.MutableAce;
 import org.apache.chemistry.opencmis.commons.data.Principal;
 
 /**
  * Access Control Entry data implementation.
  */
-public class AccessControlEntryImpl extends AbstractExtensionData implements Ace, Serializable {
+public class AccessControlEntryImpl extends AbstractExtensionData implements MutableAce, Serializable {
 
     private static final long serialVersionUID = 1L;
 

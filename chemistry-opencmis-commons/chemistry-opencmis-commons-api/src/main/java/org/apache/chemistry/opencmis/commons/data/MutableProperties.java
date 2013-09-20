@@ -16,36 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.commons.definitions;
-
-import java.math.BigInteger;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+package org.apache.chemistry.opencmis.commons.data;
 
 /**
- * List of type definitions.
+ * Mutable Properties.
  */
-public interface TypeDefinitionList extends ExtensionsData {
+public interface MutableProperties extends Properties {
 
     /**
-     * Returns the list of type definitions.
-     */
-    List<TypeDefinition> getList();
-
-    /**
-     * Returns whether there more type definitions or not.
+     * Adds a property to the end of the property list.
      * 
-     * @return {@code true} if there are more type definitions, {@code false} if
-     *         there are no more type definitions, {@code null} if it's unknown
+     * @param property
+     *            the property, {@code null} values are ignored
      */
-    Boolean hasMoreItems();
+    void addProperty(PropertyData<?> property);
 
     /**
-     * Returns the total number of type definitions.
+     * Replaces a property.
+     * <p>
+     * Removes the property from the property list if it exists and adds the new
+     * version to the end of the property list.
      * 
-     * @return total number of type definitions or {@code null} if the total
-     *         number is unknown
+     * @param property
+     *            the property, {@code null} values are ignored
      */
-    BigInteger getNumItems();
+    void replaceProperty(PropertyData<?> property);
+
+    /**
+     * Removes a property.
+     * 
+     * @param id
+     *            the property ID, {@code null} values are ignored
+     */
+    void removeProperty(String id);
 }

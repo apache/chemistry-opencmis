@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyUri;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyUri;
 
 /**
  * Uri property data implementation.
  */
-public class PropertyUriImpl extends AbstractPropertyData<String> implements PropertyUri {
+public class PropertyUriImpl extends AbstractPropertyData<String> implements MutablePropertyUri {
 
     private static final long serialVersionUID = 1L;
 

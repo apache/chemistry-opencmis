@@ -20,12 +20,12 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyHtml;
 
 /**
  * HTML property data implementation.
  */
-public class PropertyHtmlImpl extends AbstractPropertyData<String> implements PropertyHtml {
+public class PropertyHtmlImpl extends AbstractPropertyData<String> implements MutablePropertyHtml {
 
     private static final long serialVersionUID = 1L;
 

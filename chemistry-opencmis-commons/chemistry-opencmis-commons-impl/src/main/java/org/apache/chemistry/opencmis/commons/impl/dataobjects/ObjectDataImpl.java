@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
+import org.apache.chemistry.opencmis.commons.data.MutableObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
@@ -35,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 /**
  * ObjectData implementation.
  */
-public class ObjectDataImpl extends AbstractExtensionData implements ObjectData {
+public class ObjectDataImpl extends AbstractExtensionData implements MutableObjectData {
 
     private static final long serialVersionUID = 1L;
 

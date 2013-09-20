@@ -26,13 +26,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.data.MutableProperties;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 
 /**
  * Properties data implementation.
  */
-public class PropertiesImpl extends AbstractExtensionData implements Properties {
+public class PropertiesImpl extends AbstractExtensionData implements MutableProperties {
 
     private static final long serialVersionUID = 1L;
 
@@ -86,12 +87,6 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
         }
     }
 
-    /**
-     * Adds a property.
-     * 
-     * @param property
-     *            the property
-     */
     public void addProperty(PropertyData<?> property) {
         if (property == null) {
             return;
@@ -101,14 +96,8 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
         properties.put(property.getId(), property);
     }
 
-    /**
-     * Replaces a property.
-     * 
-     * @param property
-     *            the property
-     */
     public void replaceProperty(PropertyData<?> property) {
-        if ((property == null) || (property.getId() == null)) {
+        if (property == null || property.getId() == null) {
             return;
         }
 
@@ -118,12 +107,6 @@ public class PropertiesImpl extends AbstractExtensionData implements Properties 
         properties.put(property.getId(), property);
     }
 
-    /**
-     * Removes a property.
-     * 
-     * @param id
-     *            the property id
-     */
     public void removeProperty(String id) {
         if (id == null) {
             return;

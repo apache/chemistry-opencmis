@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.MutablePropertyData;
 
 /**
  * Abstract property data implementation.
  */
-public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements PropertyData<T> {
+public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements MutablePropertyData<T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,7 +92,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
     }
 
     public T getFirstValue() {
-        if ((values != null) && (!values.isEmpty())) {
+        if (values != null && !values.isEmpty()) {
             return values.get(0);
         }
 

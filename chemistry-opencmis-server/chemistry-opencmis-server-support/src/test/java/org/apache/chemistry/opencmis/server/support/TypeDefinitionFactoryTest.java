@@ -24,8 +24,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,6 +175,27 @@ public class TypeDefinitionFactoryTest {
     }
 
     @Test
+    public void testCreateTypeDefinitionListObject() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+
+        assertNotNull(tdf.createTypeDefinitionList(Collections.<TypeDefinition> emptyList(), true, null));
+
+        try {
+            tdf.createTypeDefinitionList(null, true, null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+
+        try {
+            tdf.createTypeDefinitionList(Collections.<TypeDefinition> emptyList(), true, BigInteger.valueOf(-1));
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
     public void testCreateTypeDescendants() {
         TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
         CmisVersion cmisVersion = CmisVersion.CMIS_1_1;
@@ -216,6 +239,21 @@ public class TypeDefinitionFactoryTest {
         assertEquals(0, typeDefs.get(0).getChildren().size());
         assertEquals(0, typeDefs.get(1).getChildren().size());
 
+    }
+
+    @Test
+    public void testCreateTypeContainerObject() {
+        TypeDefinitionFactory tdf = TypeDefinitionFactory.newInstance();
+
+        assertNotNull(tdf.createTypeDefinitionContainer(tdf.createBaseDocumentTypeDefinition(CmisVersion.CMIS_1_1),
+                null));
+
+        try {
+            tdf.createTypeDefinitionContainer(null, null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     private void assertTypeDefinition(TypeDefinition typeDef) {
