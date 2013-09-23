@@ -16,9 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import java.io.File;
 
-import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.*
+import org.apache.chemistry.opencmis.commons.data.*
+import org.apache.chemistry.opencmis.commons.enums.*
+import org.apache.chemistry.opencmis.client.api.*
 
 cmis = new scripts.CMIS(session)
 
@@ -35,20 +37,19 @@ download(localFolder, sourceFolder)
 //--------------------------------------------------
 
 def download(File localFolder, Folder sourceFolder) {
+    println "\nDownloading ${sourceFolder.name} to ${localFolder.absolutePath}\n"
 
-    println "\nDownloading " + sourceFolder.name + " to " + localFolder.absolutePath + "\n"
-
-    for (CmisObject child: sourceFolder.getChildren()) {
+    sourceFolder.children.each { child ->
         File newFile = new File(localFolder, child.name)
 
         if (child instanceof Folder) {
-            println "[Folder] " + newFile.name
+            println "[Folder] ${newFile.name}"
             newFile.mkdir()
-            
+
             download(newFile, child)
         }
         else if (child instanceof Document) {
-            println "[File]   " + newFile.name
+            println "[File]   ${newFile.name}"
             cmis.download(child, newFile)
         }
     }

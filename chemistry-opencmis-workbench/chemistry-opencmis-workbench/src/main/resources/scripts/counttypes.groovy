@@ -16,13 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.client.api.Tree;
 
-println "'cmis:document' and subtypes:     " + countTypes("cmis:document")
-println "'cmis:item' and subtypes:         " + countTypes("cmis:item")
-println "'cmis:folder' and subtypes:       " + countTypes("cmis:folder")
-println "'cmis:relationship' and subtypes: " + countTypes("cmis:relationship")
-println "'cmis:policy' and subtypes:       " + countTypes("cmis:policy")
+import org.apache.chemistry.opencmis.commons.*
+import org.apache.chemistry.opencmis.commons.data.*
+import org.apache.chemistry.opencmis.commons.enums.*
+import org.apache.chemistry.opencmis.client.api.*
+
+println "'cmis:document' and subtypes:     ${countTypes('cmis:document')}"
+println "'cmis:item' and subtypes:         ${countTypes('cmis:item')}"
+println "'cmis:folder' and subtypes:       ${countTypes('cmis:folder')}"
+println "'cmis:relationship' and subtypes: ${countTypes('cmis:relationship')}"
+println "'cmis:policy' and subtypes:       ${countTypes('cmis:policy')}"
 
 
 
@@ -33,14 +37,15 @@ int countTypes(String typeId) {
         session.getTypeDescendants(typeId, -1, false).each { counter += 1 + count(it) }
         counter++
     }
-    catch(CmisBaseException e) { }
-    
-    return counter
+    catch (any) {
+    }
+
+    counter
 }
 
 int count(Tree tree) {
     def counter = 0
     tree.children.each { counter += 1 + count(it) }
-    
-    return counter
+
+    counter
 }

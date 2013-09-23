@@ -16,20 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.apache.chemistry.opencmis.client.api.Tree;
 
-session.rootFolder.getDescendants(-1).each {
-    printTree(it, 0)
-}
+import org.apache.chemistry.opencmis.client.api.*
+
+session.rootFolder.getDescendants(-1).each { printTree(it, 0) }
 
 def printTree(Tree tree, int depth) {
-    for(i in 0..depth) { print "  " }
+    depth.times { print "  " }
 
     println tree.item.name
-    
-    if(tree.children.size > 0) {
-        tree.children.each {
-            printTree(it, depth + 1)
-        }
-    }
+
+    tree.children.each { printTree(it, depth + 1) }
 }

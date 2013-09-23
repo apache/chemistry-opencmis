@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import java.io.File;
 
-import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.*
+import org.apache.chemistry.opencmis.commons.data.*
+import org.apache.chemistry.opencmis.commons.enums.*
+import org.apache.chemistry.opencmis.client.api.*
 
 cmis = new scripts.CMIS(session)
 
@@ -35,31 +36,30 @@ upload(destFolder, localPath)
 
 //--------------------------------------------------
 
-def upload(destination, String localPath, 
-String folderType = "cmis:folder",
-String documentType = "cmis:document",
-VersioningState versioningState = VersioningState.MAJOR) {
-    
-    println "Uploading...\n"   
+def upload(destination, String localPath,
+        String folderType = "cmis:folder",
+        String documentType = "cmis:document",
+        VersioningState versioningState = VersioningState.MAJOR) {
+
+    println "Uploading...\n"
     doUpload(destination, new File(localPath), folderType, documentType, versioningState)
     println "\n...done."
 }
 
 def doUpload(Folder parent, File folder, String folderType, String documentType, VersioningState versioningState) {
     folder.eachFile {
-        
-        if (it.getName().startsWith(".")) {
-            println "Skipping " + it.getName()
-            return;
+        if (it.name.startsWith(".")) {
+            println "Skipping ${it.name}"
+            return
         }
 
-        println it.getName()
-        
-        if(it.isFile()) {
+        println it.name
+
+        if (it.isFile()) {
             cmis.createDocumentFromFile(parent, it, documentType, versioningState)
         }
         else if(it.isDirectory()) {
-            Folder newFolder = cmis.createFolder(parent, it.getName(), folderType)
+            Folder newFolder = cmis.createFolder(parent, it.name, folderType)
             doUpload(newFolder, it, folderType, documentType, versioningState)
         }
     }
