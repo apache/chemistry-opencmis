@@ -56,11 +56,6 @@
                         <Export-Package>
                           org.apache.chemistry.opencmis.commons.*;version=${project.version}
                         </Export-Package>
-                        <Import-Package>
-                          org.apache.commons.codec.*;version="[1.4,2.0)",
-                          org.apache.commons.logging.*;version="[1.1,2.0)",
-                          *
-                        </Import-Package>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>
                     </instructions>
                 </configuration>
