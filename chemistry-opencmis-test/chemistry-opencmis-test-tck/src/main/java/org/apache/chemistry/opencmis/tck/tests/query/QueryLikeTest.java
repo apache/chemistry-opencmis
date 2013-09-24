@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 
 /**
- * Query LIKE test. 
+ * Query LIKE test.
  */
 public class QueryLikeTest extends AbstractQueryTest {
 
@@ -64,7 +64,7 @@ public class QueryLikeTest extends AbstractQueryTest {
                 for (CmisObject o : session
                         .queryObjects("cmis:document", "cmis:name LIKE '" + c + "%'", false, context).getPage(10)) {
 
-                    if (o.getName() == null) {
+                    if (o.getName() == null || o.getName().length() == 0) {
                         addResult(createResult(
                                 FAILURE,
                                 "Documents without name should not be returned by this query! Document id: "
@@ -72,7 +72,7 @@ public class QueryLikeTest extends AbstractQueryTest {
                     } else {
                         f = createResult(FAILURE,
                                 "Document name should start with '" + c + "' but the name is '" + o.getName() + "'");
-                        addResult(assertIsTrue(o.getName().startsWith("" + c), null, f));
+                        addResult(assertEquals(c, Character.toLowerCase(o.getName().charAt(0)), null, f));
                     }
 
                     if (o.getCreationDate() == null) {
