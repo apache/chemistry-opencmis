@@ -38,7 +38,7 @@ public class QueryLikeTest extends AbstractQueryTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Query LIKE Test");
-        setDescription("Performs a query that should return the root folder name and id.");
+        setDescription("Performs a LIKE query and checks if only matching objects are returned.");
     }
 
     @Override
