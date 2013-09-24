@@ -59,33 +59,38 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
             Boolean includeProperties, String filter, Boolean includePolicyIds, Boolean includeAcl,
             BigInteger maxItems, ExtensionsData extension, ObjectInfoHandler objectInfos) {
         // dummy implementation using hard coded values
-
+        final int ITEMS_AVAILABLE = 25;
+        
         ObjectListImpl objList = new ObjectListImpl();
-
+        GregorianCalendar timestamp = new GregorianCalendar();
+        timestamp.add(GregorianCalendar.MINUTE, -1);
         // convert ObjectInFolderContainerList to objectList
         List<ObjectData> lod = new ArrayList<ObjectData>();
-
-        // add a dummy delete event
-        ObjectDataImpl odImpl = new ObjectDataImpl();
-        PropertiesImpl props = new PropertiesImpl();
-        props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, UUID.randomUUID().toString()));
-        props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
-        props.addProperty(new PropertyIdImpl(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
-        odImpl.setProperties(props);
-        ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
-        changeEventInfo.setChangeType(ChangeType.DELETED);
-        changeEventInfo.setChangeTime(new GregorianCalendar());
-        odImpl.setChangeEventInfo(changeEventInfo);
-        if (includePolicyIds != null && includePolicyIds) {
-            PolicyIdList policies = new PolicyIdListImpl();
-            // TODO fill list
-            odImpl.setPolicyIds(policies);
+        int count = Math.min(ITEMS_AVAILABLE, maxItems.intValue());
+        
+        for (int i=0; i<count; i++) {
+            // add a dummy delete event
+            ObjectDataImpl odImpl = new ObjectDataImpl();
+            PropertiesImpl props = new PropertiesImpl();
+            props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, UUID.randomUUID().toString()));
+            props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
+            props.addProperty(new PropertyIdImpl(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
+            odImpl.setProperties(props);
+            ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
+            changeEventInfo.setChangeType(ChangeType.DELETED);
+            timestamp.add(GregorianCalendar.SECOND, 1);
+            changeEventInfo.setChangeTime(timestamp);
+            odImpl.setChangeEventInfo(changeEventInfo);
+            if (includePolicyIds != null && includePolicyIds) {
+                PolicyIdList policies = new PolicyIdListImpl();
+                odImpl.setPolicyIds(policies);
+            }
+            lod.add(odImpl);
         }
-        lod.add(odImpl);
 
         objList.setObjects(lod);
         objList.setNumItems(BigInteger.valueOf(lod.size()));
-        objList.setHasMoreItems(false);
+        objList.setHasMoreItems(ITEMS_AVAILABLE > lod.size());
 
         String changeToken = Long.valueOf(new Date().getTime()).toString();
         changeLogToken.setValue(changeToken);
