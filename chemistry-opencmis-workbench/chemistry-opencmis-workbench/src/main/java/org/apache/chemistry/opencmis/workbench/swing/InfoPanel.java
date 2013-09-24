@@ -35,14 +35,18 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Locale;
+import java.util.Map;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,6 +58,13 @@ import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 public abstract class InfoPanel extends JPanel {
 
@@ -223,16 +234,7 @@ public abstract class InfoPanel extends JPanel {
                 }
             });
 
-            addMouseListener(new MouseListener() {
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
-
+            addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (link != null) {
@@ -262,6 +264,10 @@ public abstract class InfoPanel extends JPanel {
                     }
                 }
             });
+        }
+
+        public JPopupMenu getPopupMenu() {
+            return popup;
         }
 
         public abstract boolean isLink(String link);
@@ -354,8 +360,38 @@ public abstract class InfoPanel extends JPanel {
     private class UrlTextField extends ClickableTextField {
         private static final long serialVersionUID = 1L;
 
+        private JMenuItem qrCodeItem;
+
         public UrlTextField() {
             super();
+
+            qrCodeItem = new JMenuItem();
+            qrCodeItem.setVerticalTextPosition(AbstractButton.BOTTOM);
+            qrCodeItem.setHorizontalTextPosition(AbstractButton.CENTER);
+
+            getPopupMenu().addSeparator();
+            getPopupMenu().add(qrCodeItem);
+        }
+
+        @Override
+        public void setText(String text) {
+            if (isLink(text)) {
+                try {
+                    Map<EncodeHintType, Object> hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+                    hints.put(EncodeHintType.MARGIN, 0);
+
+                    BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, 200, 200, hints);
+                    qrCodeItem.setIcon(new ImageIcon(MatrixToImageWriter.toBufferedImage(bitMatrix)));
+                    qrCodeItem.setVisible(true);
+                } catch (WriterException e) {
+                    qrCodeItem.setVisible(false);
+                }
+            } else {
+                qrCodeItem.setVisible(false);
+                getPopupMenu().setEnabled(false);
+            }
+
+            super.setText(text);
         }
 
         @Override
