@@ -419,6 +419,10 @@ public class SessionImpl implements Session {
         };
     }
 
+    public String getLatestChangeLogToken() {
+        return getBinding().getRepositoryService().getRepositoryInfo(getRepositoryId(), null).getLatestChangeLogToken();
+    }
+
     public OperationContext getDefaultContext() {
         lock.readLock().lock();
         try {
