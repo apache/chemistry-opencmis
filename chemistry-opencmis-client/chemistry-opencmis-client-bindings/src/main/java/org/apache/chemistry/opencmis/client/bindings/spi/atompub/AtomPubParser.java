@@ -244,6 +244,8 @@ public class AtomPubParser {
                     } else {
                         XMLUtils.skip(parser);
                     }
+                } else if (XMLConstants.NAMESPACE_APACHE_CHEMISTRY.equals(name.getNamespaceURI())) {
+                    result.addElement(parseText(parser));
                 } else {
                     XMLUtils.skip(parser);
                 }

@@ -98,6 +98,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         // read and parse
         Response resp = read(url);
         AtomFeed feed = parse(resp.getStream(), AtomFeed.class);
+        String lastChangeLogToken = null;
 
         // handle top level
         String nextLink = null;
@@ -109,6 +110,8 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
                 }
             } else if (isInt(NAME_NUM_ITEMS, element)) {
                 result.setNumItems((BigInteger) element.getObject());
+            } else if (isStr("changeLogToken", element)) {
+                lastChangeLogToken = (String) element.getObject();
             }
         }
 
@@ -133,8 +136,9 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         }
 
         if (changeLogToken != null) {
-            // the AtomPub binding cannot return a new change log token
-            changeLogToken.setValue(null);
+            // the AtomPub binding cannot return a new change log token,
+            // but an OpenCMIS server uses a proprietary tag
+            changeLogToken.setValue(lastChangeLogToken);
 
             // but we can provide the link to the next Atom feed
             if (changeLogToken instanceof ExtendedHolder && nextLink != null) {

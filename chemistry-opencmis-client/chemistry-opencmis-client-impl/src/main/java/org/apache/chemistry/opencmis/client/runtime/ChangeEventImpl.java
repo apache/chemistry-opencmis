@@ -83,4 +83,11 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
     public void setAcl(Acl acl) {
         this.acl = acl;
     }
+
+    @Override
+    public String toString() {
+        return "Change Event [change type=" + getChangeType() + ", change time=" + getChangeTime() + ", object id="
+                + objectId + ", properties=" + properties + ", policy ids=" + policyIds + ", ACL=" + acl + "]"
+                + super.toString();
+    }
 }

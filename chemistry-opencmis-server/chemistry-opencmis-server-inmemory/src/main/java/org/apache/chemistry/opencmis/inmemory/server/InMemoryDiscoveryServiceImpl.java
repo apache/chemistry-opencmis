@@ -20,10 +20,8 @@ package org.apache.chemistry.opencmis.inmemory.server;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -34,6 +32,7 @@ import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
@@ -60,26 +59,43 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
             BigInteger maxItems, ExtensionsData extension, ObjectInfoHandler objectInfos) {
         // dummy implementation using hard coded values
         final int ITEMS_AVAILABLE = 25;
-        
+
+        int token = 0;
+        if (changeLogToken != null && changeLogToken.getValue() != null) {
+            if (!changeLogToken.getValue().startsWith("token-")) {
+                throw new CmisInvalidArgumentException("Unknown change log token!");
+            }
+
+            try {
+                token = Integer.parseInt(changeLogToken.getValue().substring(6));
+            } catch (NumberFormatException nfe) {
+                throw new CmisInvalidArgumentException("Unknown change log token!", nfe);
+            }
+
+            if (token < 0 || token > ITEMS_AVAILABLE) {
+                throw new CmisInvalidArgumentException("Unknown change log token!");
+            }
+        }
+
         ObjectListImpl objList = new ObjectListImpl();
-        GregorianCalendar timestamp = new GregorianCalendar();
-        timestamp.add(GregorianCalendar.MINUTE, -1);
+        long timestamp = System.currentTimeMillis() - 60 * 1000;
         // convert ObjectInFolderContainerList to objectList
         List<ObjectData> lod = new ArrayList<ObjectData>();
-        int count = Math.min(ITEMS_AVAILABLE, maxItems.intValue());
-        
-        for (int i=0; i<count; i++) {
+        int last = Math.min(ITEMS_AVAILABLE, token + maxItems.intValue());
+
+        for (int i = token; i < last; i++) {
             // add a dummy delete event
             ObjectDataImpl odImpl = new ObjectDataImpl();
             PropertiesImpl props = new PropertiesImpl();
-            props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, UUID.randomUUID().toString()));
+            props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_ID, "cl-" + i));
             props.addProperty(new PropertyIdImpl(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
             props.addProperty(new PropertyIdImpl(PropertyIds.BASE_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value()));
             odImpl.setProperties(props);
             ChangeEventInfoDataImpl changeEventInfo = new ChangeEventInfoDataImpl();
             changeEventInfo.setChangeType(ChangeType.DELETED);
-            timestamp.add(GregorianCalendar.SECOND, 1);
-            changeEventInfo.setChangeTime(timestamp);
+            GregorianCalendar eventTimestamp = new GregorianCalendar();
+            eventTimestamp.setTimeInMillis(timestamp + i * 1000);
+            changeEventInfo.setChangeTime(eventTimestamp);
             odImpl.setChangeEventInfo(changeEventInfo);
             if (includePolicyIds != null && includePolicyIds) {
                 PolicyIdList policies = new PolicyIdListImpl();
@@ -89,10 +105,10 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         objList.setObjects(lod);
-        objList.setNumItems(BigInteger.valueOf(lod.size()));
-        objList.setHasMoreItems(ITEMS_AVAILABLE > lod.size());
+        objList.setNumItems(BigInteger.valueOf(ITEMS_AVAILABLE - token));
+        objList.setHasMoreItems(false);
 
-        String changeToken = Long.valueOf(new Date().getTime()).toString();
+        String changeToken = "token-" + (token + lod.size() - 1);
         changeLogToken.setValue(changeToken);
 
         // To be able to provide all Atom links in the response we need

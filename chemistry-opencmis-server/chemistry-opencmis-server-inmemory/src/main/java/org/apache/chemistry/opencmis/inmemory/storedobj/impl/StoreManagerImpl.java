@@ -351,7 +351,7 @@ public class StoreManagerImpl implements StoreManager {
         repoInfo.setPrincipalAnyone(InMemoryAce.getAnyoneUser());
         repoInfo.setThinClientUri("");
         repoInfo.setChangesIncomplete(Boolean.TRUE);
-        repoInfo.setLatestChangeLogToken(Long.valueOf(new Date(0).getTime()).toString());
+        repoInfo.setLatestChangeLogToken("token-24");
         repoInfo.setVendorName("Apache Chemistry");
         repoInfo.setProductName(OPENCMIS_SERVER);
         repoInfo.setProductVersion(OPENCMIS_VERSION);

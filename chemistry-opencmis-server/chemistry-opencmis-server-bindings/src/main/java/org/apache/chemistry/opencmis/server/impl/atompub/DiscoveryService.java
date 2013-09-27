@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -265,14 +266,25 @@ public class DiscoveryService {
             feed.writeSelfLink(selfLink.toString(), null);
 
             if (changeLogTokenHolder.getValue() != null) {
-                UrlBuilder nextLink = compileUrlBuilder(baseUrl, RESOURCE_CHANGES, null);
-                nextLink.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
-                nextLink.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
-                nextLink.addParameter(Constants.PARAM_FILTER, filter);
-                nextLink.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
-                nextLink.addParameter(Constants.PARAM_ACL, includeAcl);
-                nextLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
-                feed.writeNextLink(nextLink.toString());
+                if (Boolean.TRUE.equals(changes.hasMoreItems())) {
+                    UrlBuilder nextLink = compileUrlBuilder(baseUrl, RESOURCE_CHANGES, null);
+                    nextLink.addParameter(Constants.PARAM_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
+                    nextLink.addParameter(Constants.PARAM_PROPERTIES, includeProperties);
+                    nextLink.addParameter(Constants.PARAM_FILTER, filter);
+                    nextLink.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
+                    nextLink.addParameter(Constants.PARAM_ACL, includeAcl);
+                    nextLink.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
+                    feed.writeNextLink(nextLink.toString());
+                }
+
+                // The CMIS spec says that the AtomPub binding doesn't provide
+                // the change log token. We are doing it anyway.
+                XMLStreamWriter writer = feed.getWriter();
+                writer.writeStartElement(XMLConstants.PREFIX_APACHE_CHEMISTY, "changeLogToken",
+                        XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+                writer.writeNamespace(XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
+                writer.writeCharacters(changeLogTokenHolder.getValue());
+                writer.writeEndElement();
             }
 
             // write entries

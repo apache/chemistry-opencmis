@@ -353,7 +353,7 @@ public class SessionImpl implements Session {
         final ObjectFactory of = this.getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
-        return new CollectionIterable<ChangeEvent>(new AbstractPageFetcher<ChangeEvent>(ctxt.getMaxItemsPerPage()) {
+        return new CollectionIterable<ChangeEvent>(new AbstractPageFetcher<ChangeEvent>(Integer.MAX_VALUE) {
 
             private String token = changeLogToken;
             private String nextLink = null;
@@ -379,9 +379,9 @@ public class SessionImpl implements Session {
                     page.add(of.convertChangeEvent(objectData));
                 }
 
-                if (!firstPage && nextLink == null) {
-                    // the web services and the browser binding repeat the last
-                    // entry of the previous page -> remove the first entry
+                if (!firstPage) {
+                    // the last entry of the previous page is repeated
+                    // -> remove the first entry
                     page.removeFirst();
                 }
                 firstPage = false;
