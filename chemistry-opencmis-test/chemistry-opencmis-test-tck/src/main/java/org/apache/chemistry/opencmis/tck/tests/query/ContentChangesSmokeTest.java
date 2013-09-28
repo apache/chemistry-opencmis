@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.query;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.Map;
@@ -65,9 +66,13 @@ public class ContentChangesSmokeTest extends AbstractSessionTest {
                     f = createResult(FAILURE, "Change log token is null!");
                     addResult(assertNotNull(events.getLatestChangeLogToken(), null, f));
                 } else {
-                    // this would be an OpenCMIS bug, not a server issue
-                    f = createResult(FAILURE, "Change log is not null although the AtomPub binding cannot return one!");
-                    addResult(assertNull(events.getLatestChangeLogToken(), null, f));
+                    // an OpenCMIS based server transports the change log token
+                    // in proprietary way.
+                    CmisTestResult ocs = createResult(INFO,
+                            "Change log token is null. The AtomPub binding does not return it.");
+                    CmisTestResult nocs = createResult(INFO,
+                            "Change log token is not null. Probably an OpenCMIS based server.");
+                    addResult(assertNull(events.getLatestChangeLogToken(), ocs, nocs));
                 }
 
                 for (ChangeEvent event : events.getChangeEvents()) {
