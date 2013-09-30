@@ -151,9 +151,11 @@ public final class TypeUtils {
     }
 
     private static boolean checkQueryName(String queryName) {
-        return queryName != null && queryName.length() > 0 && queryName.indexOf(' ') < 0 && queryName.indexOf(',') < 0
-                && queryName.indexOf('"') < 0 && queryName.indexOf('\'') < 0 && queryName.indexOf('\\') < 0
-                && queryName.indexOf('.') < 0 && queryName.indexOf('(') < 0 && queryName.indexOf(')') < 0;
+        return queryName != null && queryName.length() > 0 && queryName.indexOf(' ') < 0 && queryName.indexOf('\t') < 0
+                && queryName.indexOf('\n') < 0 && queryName.indexOf('\r') < 0 && queryName.indexOf('\f') < 0
+                && queryName.indexOf(',') < 0 && queryName.indexOf('"') < 0 && queryName.indexOf('\'') < 0
+                && queryName.indexOf('\\') < 0 && queryName.indexOf('.') < 0 && queryName.indexOf('(') < 0
+                && queryName.indexOf(')') < 0;
     }
 
     /**
