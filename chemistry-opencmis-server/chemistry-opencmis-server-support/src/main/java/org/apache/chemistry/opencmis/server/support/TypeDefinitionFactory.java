@@ -1172,6 +1172,7 @@ public final class TypeDefinitionFactory {
 
         result.setId(sourcePropertyDefinition.getId());
         result.setLocalName(sourcePropertyDefinition.getLocalName());
+        result.setLocalNamespace(sourcePropertyDefinition.getLocalNamespace());
         result.setDisplayName(sourcePropertyDefinition.getDisplayName());
         result.setDescription(sourcePropertyDefinition.getDescription());
         result.setPropertyType(sourcePropertyDefinition.getPropertyType());
