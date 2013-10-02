@@ -22,6 +22,7 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenSource;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
@@ -57,9 +58,6 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
         query_return parsedStatement = parser.query();
         if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
-        } else if (tokens.index() != tokens.size()) {
-            throw new CmisInvalidArgumentException("Query String has illegal tokens after end of statement: "
-                    + tokens.get(tokens.index()));
         }
 
         parserTree = (CommonTree) parsedStatement.getTree();

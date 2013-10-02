@@ -74,4 +74,4 @@ package org.apache.chemistry.opencmis.server.support.query;
 }
 
   // Rules can't be empty so we have one dummy rule here
-root : query;
+root : query EOF;

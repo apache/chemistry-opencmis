@@ -28,6 +28,7 @@ import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.Lexer;
+import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.stringtemplate.StringTemplate;
@@ -63,7 +64,7 @@ public class AbstractParserTest {
     protected void testLexerOk(String rule, String statement) {
         // test input: "a"
         try {
-            Object retval = execLexer(rule, statement, false);
+            Object retval = execLexer(rule, statement);
             log.debug("testing rule " + rule + " parsed to: " + retval);
         } catch (Exception e) {
             fail("testing rule " + rule + ": " + e.toString());
@@ -73,7 +74,7 @@ public class AbstractParserTest {
     protected void testLexerFail(String rule, String statement) {
         // test input: "a"
         try {
-            Object retval = execLexer(rule, statement, false);
+            Object retval = execLexer(rule, statement);
             fail("testing rule should fail " + rule);
         } catch (Exception e) {
             log.debug("testing rule " + rule + " parsed with exception: " + e);
@@ -82,7 +83,7 @@ public class AbstractParserTest {
 
     protected void testParserOk(String rule, String statement) {
         try {
-            Object retval = execParser(rule, statement, false);
+            Object retval = execParser(rule, statement);
             log.debug("testing rule " + rule + " parsed to: " + retval);
         } catch (Exception e) {
             fail("testing rule " + rule + " failed: " + e.toString());
@@ -91,7 +92,7 @@ public class AbstractParserTest {
 
     protected void testParserFail(String rule, String statement) {
         try {
-            Object retval = execParser(rule, statement, false);
+            Object retval = execParser(rule, statement);
             fail("testing rule should fail " + rule);
         } catch (Exception e) {
             log.debug("testing rule " + rule + " failed: " + e.toString());
@@ -100,7 +101,7 @@ public class AbstractParserTest {
 
     protected void testParser(String rule, String statement, String expectedResult) {
         try {
-            Object actual = execParser(rule, statement, false);
+            Object actual = execParser(rule, statement);
             log.debug("testing rule " + rule + " parsed to: " + actual);
         } catch (Exception e) {
             fail("testing rule " + rule + " failed: " + e);
@@ -108,7 +109,7 @@ public class AbstractParserTest {
     }
 
     // Invoke target lexer.rule
-    public String execLexer(String testRuleName, String testInput, boolean isFile) throws Exception {
+    public String execLexer(String testRuleName, String testInput) throws Exception {
         String result = null;
         CharStream input;
         /** Set up ANTLR input stream based on input source, file or String */
@@ -152,35 +153,34 @@ public class AbstractParserTest {
     }
 
     // Invoke target parser.rule
-    public Object execParser(String testRuleName, String testInput, boolean isFile) throws Exception {
+    public Object execParser(String testRuleName, String testInput) throws Exception {
         String result = null;
         CharStream input;
         /** Set up ANTLR input stream based on input source, file or String */
         input = new ANTLRStringStream(testInput);
 
         /** Use Reflection to create instances of lexer and parser */
-        Class<?>[] lexArgTypes = new Class[] { CharStream.class }; // assign
-                                                                   // type to
-                                                                   // lexer's
-                                                                   // args
+        // assign type to lexer's args
+        Class<?>[] lexArgTypes = new Class[] { CharStream.class };
         Constructor<?> lexConstructor = lexer.getConstructor(lexArgTypes);
-        Object[] lexArgs = new Object[] { input }; // assign value to lexer's
-                                                   // args
-        Object lexObj = lexConstructor.newInstance(lexArgs); // makes new
-                                                             // instance of
-                                                             // lexer
+
+        // assign value to lexer's args
+        Object[] lexArgs = new Object[] { input };
+
+        // makes new instance of lexer
+        Object lexObj = lexConstructor.newInstance(lexArgs);
 
         CommonTokenStream tokens = new CommonTokenStream((Lexer) lexObj);
-        Class<?>[] parArgTypes = new Class[] { TokenStream.class }; // assign
-                                                                    // type to
-                                                                    // parser's
-                                                                    // args
+        
+        // assign type to parser's args
+        Class<?>[] parArgTypes = new Class[] { TokenStream.class };
         Constructor<?> parConstructor = parser.getConstructor(parArgTypes);
-        Object[] parArgs = new Object[] { tokens }; // assign value to parser's
-                                                    // args
-        Object parObj = parConstructor.newInstance(parArgs); // makes new
-                                                             // instance of
-                                                             // parser
+
+        // assign value to parser's args
+        Object[] parArgs = new Object[] { tokens };
+
+        // makes new instance of parser
+        Object parObj = parConstructor.newInstance(parArgs);
 
         Method ruleName = parser.getMethod(testRuleName);
 
@@ -209,14 +209,19 @@ public class AbstractParserTest {
                         }
                     }
                 } catch (Exception e) {
-                    throw (e); // Note: If any exception occurs, the test is
-                               // viewed as failed.
+                    // Note: If any exception occurs, the test is viewed as
+                    // failed.
+                    throw (e);
                 }
             }
         }
 
         /** Invalid input */
-        if (tokens.index() != tokens.size()) {
+        // Since AntLR 3.3 we have to skip EOF tokens at the end 
+        // This requires modification of the default code 
+        // if (tokens.index() != tokens.size()) {
+        // to
+        if (tokens.get(tokens.index()).getType() != Token.EOF) {
             throw new RuntimeException("Invalid input.");
         }
 
