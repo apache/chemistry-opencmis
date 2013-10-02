@@ -323,9 +323,9 @@ public final class TypeUtils {
             }
         }
 
-        if (propDef.isQueryable() == null) {
+        if (propDef.isOrderable() == null) {
             errors.add(new ValidationError("orderable", "Orderable flag must be set."));
-        } else if (propDef.isQueryable().booleanValue()) {
+        } else if (propDef.isOrderable().booleanValue()) {
             if (propDef.getCardinality() == Cardinality.MULTI) {
                 errors.add(new ValidationError("orderable", "Orderable flag is set to TRUE for a multi-value property."));
             }
