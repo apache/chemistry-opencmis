@@ -736,7 +736,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         if (null != acl) {
-            LOG.warn("Setting ACLs is currently not supported by this implementation, acl is ignored");
             objStore.applyAcl(so, acl, AclPropagation.OBJECTONLY, user);
         }
 
