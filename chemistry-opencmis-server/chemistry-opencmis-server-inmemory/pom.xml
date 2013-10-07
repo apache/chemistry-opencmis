@@ -1,119 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Licensed under the Apache License, Version 2.0 (the "License"); you 
-	may not use this file except in compliance with the License. You may obtain 
-	a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
-	required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
+    may not use this file except in compliance with the License. You may obtain 
+    a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
+    required by applicable law or agreed to in writing, software distributed 
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+    the specific language governing permissions and limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.apache.chemistry.opencmis</groupId>
-		<artifactId>chemistry-opencmis</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
+    <parent>
+        <groupId>org.apache.chemistry.opencmis</groupId>
+        <artifactId>chemistry-opencmis</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-	<artifactId>chemistry-opencmis-server-inmemory</artifactId>
-	<name>OpenCMIS InMemory Server WAR packaging</name>
-	<packaging>war</packaging>
+    <artifactId>chemistry-opencmis-server-inmemory</artifactId>
+    <name>OpenCMIS InMemory Server WAR packaging</name>
+    <packaging>war</packaging>
 
-	<properties>
-		<parentBasedir>../../</parentBasedir>
+    <properties>
+        <parentBasedir>../../</parentBasedir>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
-	</properties>
+    </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Bundle-Name>org.apache.chemistry.opencmis.server.inmemory</Bundle-Name>
-							<Bundle-SymbolicName>org.apache.chemistry.opencmis.server.inmemory</Bundle-SymbolicName>
-							<Bundle-Version>0.0.1</Bundle-Version>
-							<Import-Package>javax.servlet,javax.servlet.http,javax.servlet.resources</Import-Package>
-							<Bundle-Classpath>.</Bundle-Classpath>
-							<Web-ContextPath>inmemory</Web-ContextPath>
-						</manifestEntries>
-					</archive>
-					<overlays>
-						<overlay>
-						</overlay>
-						<overlay>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>chemistry-opencmis-server-bindings-war</artifactId>
-						</overlay>
-					</overlays>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Bundle-Name>org.apache.chemistry.opencmis.server.inmemory</Bundle-Name>
+                            <Bundle-SymbolicName>org.apache.chemistry.opencmis.server.inmemory</Bundle-SymbolicName>
+                            <Bundle-Version>0.0.1</Bundle-Version>
+                            <Import-Package>javax.servlet,javax.servlet.http,javax.servlet.resources</Import-Package>
+                            <Bundle-Classpath>.</Bundle-Classpath>
+                            <Web-ContextPath>inmemory</Web-ContextPath>
+                        </manifestEntries>
+                    </archive>
+                    <overlays>
+                        <overlay>
+                        </overlay>
+                        <overlay>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+                            <includes>
+                                <include>**</include>
+                                <include>META-INF/THIRD-PARTY-LICENSES</include>
+                            </includes>
+                        </overlay>
+                    </overlays>
                     <archiveClasses>true</archiveClasses>
                     <attachClasses>true</attachClasses>
                 </configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
                     <useProjectReferences>true</useProjectReferences>
-					<wtpversion>2.0</wtpversion>
-					<wtpContextName>inmemory</wtpContextName>
-					<linkedResources>
-						<linkedResource>
-							<name>src/main/webapp/WEB-INF/sun-jaxws.xml</name>
-							<type>1</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/sun-jaxws.xml</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/WEB-INF/web.xml</name>
-							<type>1</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/web.xml</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/WEB-INF/wsdl</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/wsdl</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/WEB-INF/cmis10</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis10</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/WEB-INF/cmis11</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis11</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/css</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/css</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/images</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/images</location>
-						</linkedResource>
-						<linkedResource>
-							<name>src/main/webapp/web</name>
-							<type>2</type>
-							<location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/web</location>
-						</linkedResource>
-					</linkedResources>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                    <wtpversion>2.0</wtpversion>
+                    <wtpContextName>inmemory</wtpContextName>
+                    <linkedResources>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/sun-jaxws.xml</name>
+                            <type>1</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/sun-jaxws.xml</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/web.xml</name>
+                            <type>1</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/web.xml</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/wsdl</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/wsdl</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/cmis10</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis10</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/WEB-INF/cmis11</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis11</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/css</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/css</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/images</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/images</location>
+                        </linkedResource>
+                        <linkedResource>
+                            <name>src/main/webapp/web</name>
+                            <type>2</type>
+                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/web</location>
+                        </linkedResource>
+                    </linkedResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-commons-api</artifactId>
@@ -161,8 +165,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>          
+            <version>${slf4j.version}</version>
         </dependency>
-	</dependencies>
+    </dependencies>
 
 </project>

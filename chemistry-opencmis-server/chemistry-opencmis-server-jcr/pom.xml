@@ -53,6 +53,10 @@
                         <overlay>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
+                            <includes>
+                                <include>**</include>
+                                <include>META-INF/THIRD-PARTY-LICENSES</include>
+                            </includes>
                         </overlay>
                     </overlays>
                 </configuration>

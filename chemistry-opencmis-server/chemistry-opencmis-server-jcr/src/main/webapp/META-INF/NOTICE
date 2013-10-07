@@ -1,7 +1,9 @@
-Chemistry OpenCMIS distribution package
 
-For a complete listing of License Notices for 3rd party libraries shipped by JARs/WARs contained in this package,
-please refer to the META-INF/NOTICE file contained in each OpenCMIS artifact.
+OpenCMIS JCR Bridge
+Copyright 2009-2013 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
 
 
 OpenCMIS contains code from the following Open Source projects:

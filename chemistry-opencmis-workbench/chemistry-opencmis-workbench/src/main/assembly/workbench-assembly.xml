@@ -25,15 +25,29 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    
+
     <fileSets>
-         <!-- license, readme, etc. calculated at build time -->
+        <!-- license, readme, etc. calculated at build time -->
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>LICENSE</exclude>
+                <exclude>NOTICE</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     <files>
+        <file>
+            <source>src/main/assembly/workbench-assembly-license.txt</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>LICENSE</destName>
+        </file>
+        <file>
+            <source>src/main/assembly/workbench-assembly-notice.txt</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>NOTICE</destName>
+        </file>
         <file>
             <source>target/start/workbench.sh</source>
             <outputDirectory></outputDirectory>

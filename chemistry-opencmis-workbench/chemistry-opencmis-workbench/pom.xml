@@ -162,15 +162,9 @@
                         <configuration>
                             <attach>true</attach>
                             <descriptors>
-                                <descriptor>
-                                  src/main/assembly/workbench-assembly.xml
-                                </descriptor>
-                                <descriptor>
-                                  src/main/assembly/workbench-cxf-assembly.xml
-                                </descriptor>
-                                <descriptor>
-                                  src/main/assembly/workbench-axis2-assembly.xml
-                                </descriptor>  
+                                <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/workbench-cxf-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/workbench-axis2-assembly.xml</descriptor>  
                             </descriptors>
                         </configuration>
                      </execution>

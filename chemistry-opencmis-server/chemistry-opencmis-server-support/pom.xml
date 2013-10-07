@@ -32,7 +32,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-	<packaging>jar</packaging>
+    <packaging>jar</packaging>
 
     <artifactId>chemistry-opencmis-server-support</artifactId>
     <name>OpenCMIS Server Support</name>
@@ -75,12 +75,12 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.5</version>    
+                <version>3.5</version>
                 <configuration>
-		           <excludes>
-			          <exclude>**/CmisBase*.g</exclude>
-			          <exclude>**/Java*.g</exclude>
-		           </excludes>
+                    <excludes>
+                        <exclude>**/CmisBase*.g</exclude>
+                        <exclude>**/Java*.g</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

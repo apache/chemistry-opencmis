@@ -5,33 +5,35 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
     specific language governing permissions and limitations under the License.
 -->
+<!--
+    This assembly is for development only and should not be released!
+-->
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>with-cxf-dependencies</id>
-  <formats>
-    <format>zip</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <dependencySets>
-    <dependencySet>
-      <useProjectArtifact></useProjectArtifact>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <useTransitiveFiltering>true</useTransitiveFiltering>
-      <excludes>
-        <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-        <exclude>org.apache.felix:org.osgi.core</exclude>
-      </excludes>
-    </dependencySet>
-    <dependencySet>
-      <useProjectArtifact></useProjectArtifact>
-      <unpack>false</unpack>
-      <scope>provided</scope>
-      <useTransitiveFiltering>true</useTransitiveFiltering>
-    </dependencySet>
-  </dependencySets>
-  <fileSets>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>with-cxf-dependencies</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact></useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <excludes>
+                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
+                <exclude>org.apache.felix:org.osgi.core</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <useProjectArtifact></useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>provided</scope>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
         <!-- license, readme, etc. calculated at build time -->
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>

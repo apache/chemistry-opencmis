@@ -62,6 +62,10 @@
                                 <exclude>WEB-INF/token/**</exclude>  <!-- sample Browser Binding token implementation -->
                                 <exclude>WEB-INF/websphere/**</exclude> <!-- WebSphere specfic files -->
                             </excludes>
+                            <includes>
+                                <include>**</include>
+                                <include>META-INF/THIRD-PARTY-LICENSES</include>
+                            </includes>
                         </overlay>
                     </overlays>
                 </configuration>

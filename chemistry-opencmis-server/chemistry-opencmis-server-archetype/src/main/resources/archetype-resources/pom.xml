@@ -43,9 +43,13 @@
                                 <exclude>images/**</exclude> <!-- images for the default index page -->
                                 <exclude>web/**</exclude> <!-- sample JavaScript application -->
                                 <exclude>WEB-INF/classes/sample-repository.properties</exclude> <!-- sample server properties file -->
-                                <exclude>WEB-INF/token/**</exclude>  <!-- sample Browser Binding token implementation -->
+                                <exclude>WEB-INF/token/**</exclude> <!-- sample Browser Binding token implementation -->
                                 <exclude>WEB-INF/websphere/**</exclude> <!-- WebSphere specfic files -->
                             </excludes>
+                            <includes>
+                                <include>**</include>
+                                <include>META-INF/THIRD-PARTY-LICENSES</include>
+                            </includes>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -79,7 +83,7 @@
                             <name>src/main/webapp/WEB-INF/cmis11</name>
                             <type>2</type>
                             <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/cmis11</location>
-                        </linkedResource>                        
+                        </linkedResource>
                     </linkedResources>
                 </configuration>
             </plugin>
