@@ -25,6 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -77,7 +78,8 @@ public class QueryRootFolderTest extends AbstractQueryTest {
         addResult(createInfoResult("Query: " + statement.toQueryString()));
 
         int count = 0;
-        for (QueryResult qr : statement.query(false)) {
+        ItemIterable<QueryResult> results = statement.query(false);
+        for (QueryResult qr : results) {
             count++;
 
             String folderName = qr.getPropertyValueByQueryName("folderName");
@@ -92,6 +94,12 @@ public class QueryRootFolderTest extends AbstractQueryTest {
 
         f = createResult(FAILURE, "The query should return exactly one result but returned " + count + "!");
         addResult(assertEquals(1, count, null, f));
+
+        if (results.getTotalNumItems() >= 0) {
+            f = createResult(FAILURE,
+                    "The query returned a total number of items != 1, but there can be only exactly one hit!");
+            addResult(assertEquals(1L, results.getTotalNumItems(), null, f));
+        }
     }
 
     protected void queryByDate(Session session) {
@@ -121,7 +129,8 @@ public class QueryRootFolderTest extends AbstractQueryTest {
         addResult(createInfoResult("Query: " + statement.toQueryString()));
 
         boolean found = false;
-        for (QueryResult qr : statement.query(false)) {
+        ItemIterable<QueryResult> results = statement.query(false);
+        for (QueryResult qr : results) {
             String folderId = qr.getPropertyValueByQueryName("folderId");
 
             if (rootFolder.getId().equals(folderId)) {
@@ -137,5 +146,11 @@ public class QueryRootFolderTest extends AbstractQueryTest {
 
         f = createResult(FAILURE, "The query should return the root folder but does not!");
         addResult(assertIsTrue(found, null, f));
+
+        if (results.getTotalNumItems() >= 0) {
+            f = createResult(FAILURE,
+                    "The query returned a total number of items < 1, but there must be at least one hit!");
+            addResult(assertIsTrue(results.getTotalNumItems() >= 1L, null, f));
+        }
     }
 }
