@@ -273,7 +273,8 @@ public class QueryFrame extends JFrame {
             long startTime = System.currentTimeMillis();
 
             int row = 0;
-            for (QueryResult qr : results.getPage(maxHits)) {
+            ItemIterable<QueryResult> page = results.getPage(maxHits);
+            for (QueryResult qr : page) {
                 rtm.setColumnCount(Math.max(rtm.getColumnCount(), qr.getProperties().size()));
 
                 for (PropertyData<?> prop : qr.getProperties()) {
@@ -290,7 +291,12 @@ public class QueryFrame extends JFrame {
 
             long stopTime = System.currentTimeMillis();
             float time = ((float) (stopTime - startTime)) / 1000f;
-            queryTimeLabel.setText(" " + row + " hits (" + time + " seconds)");
+            String total = "<unknown>";
+            if (page.getTotalNumItems() >= 0) {
+                total = String.valueOf(page.getTotalNumItems());
+            }
+
+            queryTimeLabel.setText(" " + row + " hits, " + total + " total (" + time + " sec)");
 
             resultsTable.setModel(rtm);
         } catch (Exception ex) {
