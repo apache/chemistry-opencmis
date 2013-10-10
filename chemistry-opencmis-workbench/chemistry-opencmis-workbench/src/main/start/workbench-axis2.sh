@@ -49,9 +49,14 @@ if [ -n "$http_proxy" ]; then
 fi
 
 if [ -n "$https_proxy" ]; then
-  HTTPS_PROXY_HOST=$(echo $https_proxy | sed 's/http:\/\/\(.*\):.*/\1/')
-  HTTPS_PROXY_PORT=$(echo $https_proxy | sed 's/http:\/\/.*:\(.*\)/\1/')
+  HTTPS_PROXY_HOST=$(echo $https_proxy | sed 's/https*:\/\/\(.*\):.*/\1/')
+  HTTPS_PROXY_PORT=$(echo $https_proxy | sed 's/https*:\/\/.*:\(.*\)/\1/')
   JAVA_OPTS="$JAVA_OPTS -Dhttps.proxyHost=$HTTPS_PROXY_HOST -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
+fi
+
+if [ -n "$no_proxy" ]; then
+  NON_PROXY_HOSTS=$(echo $no_proxy | sed 's/[[:space:]]//g; s/^\./\*\./g; s/,\./,\*\./g; s/\.$/\.\*/g; s/\.,/\.\*,/g; s/,/|/g;')
+  JAVA_OPTS="$JAVA_OPTS -Dhttp.nonProxyHosts=$NON_PROXY_HOSTS"
 fi
 
 
