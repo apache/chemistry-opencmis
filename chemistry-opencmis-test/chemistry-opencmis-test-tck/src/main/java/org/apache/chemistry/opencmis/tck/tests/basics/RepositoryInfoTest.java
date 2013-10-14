@@ -22,6 +22,8 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -112,10 +114,28 @@ public class RepositoryInfoTest extends AbstractSessionTest {
         failure = createResult(FAILURE, "Root folder id is not set!");
         addResult(assertStringNotEmpty(ri.getRootFolderId(), success, failure));
 
-        // thin client uri
+        // thin client URI
         success = createResult(OK, "Thin client URI: " + ri.getThinClientUri());
         failure = createResult(WARNING, "Thin client URI is not set!");
         addResult(assertStringNotEmpty(ri.getThinClientUri(), success, failure));
+
+        if (ri.getThinClientUri() != null && ri.getThinClientUri().length() > 0) {
+            try {
+                HttpURLConnection conn = (HttpURLConnection) (new URL(ri.getThinClientUri())).openConnection();
+
+                conn.connect();
+
+                int responseCode = conn.getResponseCode();
+                failure = createResult(WARNING, "Unable to connect to thin client '" + ri.getThinClientUri()
+                        + "'. HTTP status code: " + responseCode);
+                addResult(assertIsTrue(responseCode >= 200 && responseCode < 400, null, failure));
+
+                conn.disconnect();
+            } catch (Exception e) {
+                addResult(createResult(WARNING, "Unable to connect to thin client '" + ri.getThinClientUri() + "': "
+                        + e.getMessage(), e, false));
+            }
+        }
 
         // principal id anonymous
         success = createResult(OK, "Principal Id anonymous: " + ri.getPrincipalIdAnonymous());
