@@ -80,7 +80,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     public abstract void run() throws Exception;
 
     @Test
-    public void junit() {
+    public void junit() throws Exception {
         JUnitHelper.run(this);
     }
 

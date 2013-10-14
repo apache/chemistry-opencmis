@@ -134,7 +134,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
     }
 
     @Test
-    public void junit() {
+    public void junit() throws Exception {
         JUnitHelper.run(this);
     }
 

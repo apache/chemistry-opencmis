@@ -38,35 +38,27 @@ public final class JUnitHelper {
     private JUnitHelper() {
     }
 
-    public static void run(CmisTest test) {
-        try {
-            run(new WrapperCmisTestGroup(test));
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
+    public static void run(CmisTest test) throws Exception {
+        run(new WrapperCmisTestGroup(test));
     }
 
-    public static void run(CmisTestGroup group) {
-        try {
-            JUnitRunner runner = new JUnitRunner();
+    public static void run(CmisTestGroup group) throws Exception {
+        JUnitRunner runner = new JUnitRunner();
 
-            String parametersFile = System.getProperty(JUNIT_PARAMETERS);
-            if (parametersFile == null) {
-                runner.setParameters(null);
-            } else {
-                runner.loadParameters(new File(parametersFile));
-            }
-
-            runner.addGroup(group);
-            runner.run(new JUnitProgressMonitor());
-
-            CmisTestReport report = new TextReport();
-            report.createReport(runner.getParameters(), runner.getGroups(), new PrintWriter(System.out));
-
-            checkForFailures(runner);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
+        String parametersFile = System.getProperty(JUNIT_PARAMETERS);
+        if (parametersFile == null) {
+            runner.setParameters(null);
+        } else {
+            runner.loadParameters(new File(parametersFile));
         }
+
+        runner.addGroup(group);
+        runner.run(new JUnitProgressMonitor());
+
+        CmisTestReport report = new TextReport();
+        report.createReport(runner.getParameters(), runner.getGroups(), new PrintWriter(System.out));
+
+        checkForFailures(runner);
     }
 
     private static void checkForFailures(JUnitRunner runner) {
@@ -85,7 +77,7 @@ public final class JUnitHelper {
     }
 
     private static class JUnitProgressMonitor implements CmisTestProgressMonitor {
-        
+
         @SuppressWarnings("PMD.SystemPrintln")
         public void startGroup(CmisTestGroup group) {
             System.out.println(group.getName() + " (" + group.getTests().size() + " tests)");
