@@ -207,7 +207,6 @@
         <module>chemistry-opencmis-test/chemistry-opencmis-test-browser-app</module>
         <module>chemistry-opencmis-workbench/chemistry-opencmis-workbench</module>
         <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-client</module>
-        <module>chemistry-opencmis-osgi/chemistry-opencmis-osgi-server</module>
         <module>chemistry-opencmis-android/chemistry-opencmis-android-client</module>
         <module>chemistry-opencmis-dist</module>
   </modules>
