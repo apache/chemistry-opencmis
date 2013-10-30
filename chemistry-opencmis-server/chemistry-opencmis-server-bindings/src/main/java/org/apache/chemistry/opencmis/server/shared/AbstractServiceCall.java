@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.commons.data.CacheHeaderContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
+import org.apache.chemistry.opencmis.commons.data.RedirectingContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.CmisEnumHelper;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
@@ -113,9 +114,9 @@ public abstract class AbstractServiceCall implements ServiceCall {
     /**
      * Sets certain HTTP headers if the server implementation requested them.
      * 
-     * @return <code>true</code> if the request has been served by this method
-     *         (e.g. status code 304 was send), <code>false</code> if the
-     *         content should be served.
+     * @return {@code true} if the request has been served by this method (for
+     *         example status code 304 was send), {@code false} if the content
+     *         should be served.
      */
     public boolean sendContentStreamHeaders(ContentStream content, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
@@ -145,6 +146,28 @@ public abstract class AbstractServiceCall implements ServiceCall {
 
                 response.setHeader("Last-Modified", DateTimeHelper.formatHttpDateTime(lastModifiedSecs * 1000));
             }
+        }
+
+        // check if redirection is needed
+        if (content instanceof RedirectingContentStream) {
+            RedirectingContentStream rcs = (RedirectingContentStream) content;
+            // close stream
+            if (content.getStream() != null) {
+                content.getStream().close();
+            }
+
+            if (rcs.getLocation() != null) {
+                response.setHeader("Location", rcs.getLocation());
+            }
+
+            int status = rcs.getStatus();
+            if (status < 300 || status >= 400) {
+                status = HttpServletResponse.SC_TEMPORARY_REDIRECT;
+            }
+
+            response.setStatus(status);
+
+            return true;
         }
 
         // check if cache headers should be set
