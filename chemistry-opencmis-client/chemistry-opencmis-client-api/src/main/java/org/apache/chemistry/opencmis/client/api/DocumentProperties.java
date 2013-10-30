@@ -26,63 +26,95 @@ package org.apache.chemistry.opencmis.client.api;
 public interface DocumentProperties {
 
     /**
-     * Returns <code>true</code> if this CMIS object is immutable (CMIS property
-     * <code>cmis:isImmutable</code>).
+     * Returns {@code true} if this document is immutable (CMIS property
+     * {@code cmis:isImmutable}).
+     * 
+     * @return the immutable flag of the document or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     Boolean isImmutable();
 
     /**
-     * Returns if this CMIS object is the latest version (CMIS property
-     * <code>cmis:isLatestVersion</code>).
+     * Returns {@code true} if this document is the latest version (CMIS
+     * property {@code cmis:isLatestVersion}).
+     * 
+     * @return the latest version flag of the document or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     Boolean isLatestVersion();
 
     /**
-     * Returns <code>true</code> if this CMIS object is the latest version (CMIS
-     * property <code>cmis:isMajorVersion</code>).
+     * Returns {@code true} if this document is a major version (CMIS property
+     * {@code cmis:isMajorVersion}).
+     * 
+     * @return the major version flag of the document or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     Boolean isMajorVersion();
 
     /**
-     * Returns <code>true</code> if this CMIS object is the latest major version
-     * (CMIS property <code>cmis:isLatestMajorVersion</code>).
+     * Returns {@code true} if this document is the latest major version (CMIS
+     * property {@code cmis:isLatestMajorVersion}).
+     * 
+     * @return the latest major version flag of the document or {@code null} if
+     *         the property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     Boolean isLatestMajorVersion();
 
     /**
-     * Returns <code>true</code> if this CMIS object is the PWC (CMIS property
-     * <code>cmis:isPrivateWorkingCopy</code>).
+     * Returns {@code true} if this document is the PWC (CMIS property
+     * {@code cmis:isPrivateWorkingCopy}).
      * 
-     * @cmis 1.0
+     * @return the PWC flag of the document or {@code null} if the property
+     *         hasn't been requested, hasn't been provided by the repository, or
+     *         the property value isn't set
+     * 
+     * @cmis 1.1
      */
     Boolean isPrivateWorkingCopy();
 
     /**
-     * Returns the version label (CMIS property <code>cmis:versionLabel</code>).
+     * Returns the version label (CMIS property {@code cmis:versionLabel}).
+     * 
+     * @return the version label of the document or {@code null} if the property
+     *         hasn't been requested, hasn't been provided by the repository, or
+     *         the property value isn't set
      * 
      * @cmis 1.0
      */
     String getVersionLabel();
 
     /**
-     * Returns the version series id (CMIS property
-     * <code>cmis:versionSeriesId</code>).
+     * Returns the version series ID (CMIS property {@code cmis:versionSeriesId}
+     * ).
+     * 
+     * @return the version series ID of the document or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     String getVersionSeriesId();
 
     /**
-     * Returns <code>true</code> if this version series is checked out (CMIS
-     * property <code>cmis:isVersionSeriesCheckedOut</code>).
+     * Returns {@code true} if this version series is checked out (CMIS property
+     * {@code cmis:isVersionSeriesCheckedOut}).
+     * 
+     * @return the version series checked out flag of the document or
+     *         {@code null} if the property hasn't been requested, hasn't been
+     *         provided by the repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
@@ -90,21 +122,37 @@ public interface DocumentProperties {
 
     /**
      * Returns the user who checked out this version series (CMIS property
-     * <code>cmis:versionSeriesCheckedOutBy</code>).
+     * {@code cmis:versionSeriesCheckedOutBy}).
+     * 
+     * @return the user who checked out this version series or {@code null} if
+     *         the property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
     String getVersionSeriesCheckedOutBy();
 
     /**
-     * Returns the PWC id of this version series (CMIS property
-     * <code>cmis:versionSeriesCheckedOutId</code>).
+     * Returns the PWC ID of this version series (CMIS property
+     * {@code cmis:versionSeriesCheckedOutId}).
+     * <p>
+     * Some repositories provided this value only to the user who checked out
+     * the version series.
+     * 
+     * @return the PWC ID of this version series or {@code null} if the property
+     *         hasn't been requested, hasn't been provided by the repository, or
+     *         the property value isn't set
+     * 
+     * @cmis 1.0
      */
     String getVersionSeriesCheckedOutId();
 
     /**
-     * Returns the checkin comment (CMIS property
-     * <code>cmis:checkinComment</code>).
+     * Returns the checkin comment (CMIS property {@code cmis:checkinComment}).
+     * 
+     * @return the checkin comment of this version or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the property value isn't set
      * 
      * @cmis 1.0
      */
@@ -112,31 +160,46 @@ public interface DocumentProperties {
 
     /**
      * Returns the content stream length or -1 if the document has no content
-     * (CMIS property <code>cmis:contentStreamLength</code>).
+     * (CMIS property {@code cmis:contentStreamLength}).
+     * 
+     * @return the content stream length of this document or -1 if the property
+     *         hasn't been requested, hasn't been provided by the repository, or
+     *         the document has no content
      * 
      * @cmis 1.0
      */
     long getContentStreamLength();
 
     /**
-     * Returns the content stream MIME type or <code>null</code> if the document
-     * has no content (CMIS property <code>cmis:contentStreamMimeType</code>).
+     * Returns the content stream MIME type or {@code null} if the document has
+     * no content (CMIS property {@code cmis:contentStreamMimeType}).
+     * 
+     * @return the content stream MIME type of this document or {@code null} if
+     *         the property hasn't been requested, hasn't been provided by the
+     *         repository, or the document has no content
      * 
      * @cmis 1.0
      */
     String getContentStreamMimeType();
 
     /**
-     * Returns the content stream filename or <code>null</code> if the document
-     * has no content (CMIS property <code>cmis:contentStreamFileName</code>).
+     * Returns the content stream filename or {@code null} if the document has
+     * no content (CMIS property {@code cmis:contentStreamFileName}).
      * 
+     * @return the content stream filename of this document or {@code null} if
+     *         the property hasn't been requested, hasn't been provided by the
+     *         repository, or the document has no content
      * @cmis 1.0
      */
     String getContentStreamFileName();
 
     /**
-     * Returns the content stream id or <code>null</code> if the document has no
-     * content (CMIS property <code>cmis:contentStreamId</code>).
+     * Returns the content stream ID or {@code null} if the document has no
+     * content (CMIS property {@code cmis:contentStreamId}).
+     * 
+     * @return the content stream ID of this document or {@code null} if the
+     *         property hasn't been requested, hasn't been provided by the
+     *         repository, or the document has no content
      * 
      * @cmis 1.0
      */

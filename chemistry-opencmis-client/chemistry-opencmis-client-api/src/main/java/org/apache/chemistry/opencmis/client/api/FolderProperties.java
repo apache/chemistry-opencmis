@@ -28,8 +28,12 @@ import java.util.List;
 public interface FolderProperties {
 
     /**
-     * Returns the parent id or <code>null</code> if the folder is ther root
-     * folder (CMIS property <code>cmis:parentId</code>).
+     * Returns the parent id or {@code null} if the folder is the root folder
+     * (CMIS property {@code cmis:parentId}).
+     * 
+     * @return the property value or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the folder
+     *         is the root folder
      * 
      * @cmis 1.0
      */
@@ -37,8 +41,12 @@ public interface FolderProperties {
 
     /**
      * Returns the list of the allowed object types in this folder (CMIS
-     * property <code>cmis:allowedChildObjectTypeIds</code>). If the list is
-     * empty or <code>null</code> all object types are allowed.
+     * property {@code cmis:allowedChildObjectTypeIds}). If the list is empty or
+     * {@code null} all object types are allowed.
+     * 
+     * @return the property value or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the
+     *         property value isn't set
      * 
      * @cmis 1.0
      */

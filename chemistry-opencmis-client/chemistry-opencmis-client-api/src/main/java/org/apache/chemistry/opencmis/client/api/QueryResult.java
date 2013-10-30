@@ -29,26 +29,44 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 public interface QueryResult {
 
     /**
-     * Returns a list of all properties in this query result.
+     * Returns the list of all properties in this query result.
+     * 
+     * @return all properties, not {@code null}
      */
     List<PropertyData<?>> getProperties();
 
     /**
-     * Returns a property by id.
+     * Returns a property by ID.
      * <p>
-     * Since repositories are not obligated to add property ids to their query
+     * Because repositories are not obligated to add property IDs to their query
      * result properties, this method might not always work as expected with
      * some repositories. Use {@link #getPropertyByQueryName(String)} instead.
+     * 
+     * @param id
+     *            the property ID
+     * 
+     * @return the property or {@code null} if the property doesn't exist or
+     *         hasn't been requested
      */
     <T> PropertyData<T> getPropertyById(String id);
 
     /**
      * Returns a property by query name or alias.
+     * 
+     * @param queryName
+     *            the property query name or alias
+     * 
+     * @return the property or {@code null} if the property doesn't exist or
+     *         hasn't been requested
+     * 
      */
     <T> PropertyData<T> getPropertyByQueryName(String queryName);
 
     /**
-     * Returns a property (single) value by id.
+     * Returns a property (single) value by ID.
+     * 
+     * @param id
+     *            the property ID
      * 
      * @see #getPropertyById(String)
      */
@@ -57,12 +75,24 @@ public interface QueryResult {
     /**
      * Returns a property (single) value by query name or alias.
      * 
+     * @param queryName
+     *            the property query name or alias
+     * 
+     * @return the property value or {@code null} if the property doesn't exist,
+     *         hasn't been requested, or the property value isn't set
+     * 
      * @see #getPropertyByQueryName(String)
      */
     <T> T getPropertyValueByQueryName(String queryName);
 
     /**
-     * Returns a property multi-value by id.
+     * Returns a property multi-value by ID.
+     * 
+     * @param id
+     *            the property ID
+     * 
+     * @return the property value or {@code null} if the property doesn't exist,
+     *         hasn't been requested, or the property value isn't set
      * 
      * @see #getPropertyById(String)
      */
@@ -71,22 +101,36 @@ public interface QueryResult {
     /**
      * Returns a property multi-value by query name or alias.
      * 
+     * @param queryName
+     *            the property query name or alias
+     * 
+     * @return the property value or {@code null} if the property doesn't exist,
+     *         hasn't been requested, or the property value isn't set
+     * 
      * @see #getPropertyByQueryName(String)
      */
     <T> List<T> getPropertyMultivalueByQueryName(String queryName);
 
     /**
-     * Returns the allowable actions if they were requested.
+     * Returns the allowable actions if they have been requested.
+     * 
+     * @return the allowable actions if they have been requested, {@code null}
+     *         otherwise
      */
     AllowableActions getAllowableActions();
 
     /**
-     * Returns the relationships if they were requested.
+     * Returns the relationships if they have been requested.
+     * 
+     * @returns the relationships if they have been requested, {@code null}
+     *          otherwise
      */
     List<Relationship> getRelationships();
 
     /**
-     * Returns the renditions if they were requested.
+     * Returns the renditions if they have been requested.
+     * 
+     * @eturns the rendition if they have been requested, {@code null} otherwise
      */
     List<Rendition> getRenditions();
 }

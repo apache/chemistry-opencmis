@@ -27,7 +27,11 @@ public interface PolicyProperties {
 
     /**
      * Returns the policy text of this CMIS policy (CMIS property
-     * <code>cmis:policyText</code>).
+     * {@code cmis:policyText}).
+     * 
+     * @return the policy text or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the
+     *         property value isn't set
      * 
      * @cmis 1.0
      */

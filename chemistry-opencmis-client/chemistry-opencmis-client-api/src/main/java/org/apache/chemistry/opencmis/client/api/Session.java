@@ -41,32 +41,35 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
 /**
  * A session is a connection to a CMIS repository with a specific user.
- * 
  * <p>
- * Not all operations might be supported the connected repository. Either
- * OpenCMIS or the repository will throw an exception if an unsupported
- * operation is called. The capabilities of the repository can be discovered by
- * evaluating the repository info (see {@link #getRepositoryInfo()}).
- * </p>
- * 
+ * CMIS itself is stateless. OpenCMIS uses the concept of a session to cache
+ * data across calls and to deal with user authentication. The session object is
+ * also used as entry point to all CMIS operations and objects. Because a
+ * session is only a client side concept, the session object needs not to be
+ * closed or released when it's not needed anymore.
+ * <p>
+ * Not all operations provided by this API might be supported by the connected
+ * repository. Either OpenCMIS or the repository will throw an exception if an
+ * unsupported operation is called. The capabilities of the repository can be
+ * discovered by evaluating the repository info (see
+ * {@link #getRepositoryInfo()}).
  * <p>
  * Almost all methods might throw exceptions derived from
- * {@link CmisBaseException} which is a runtime exception.
- * </p>
- * 
+ * {@link CmisBaseException} which is a runtime exception. See the CMIS
+ * specification for a list of all operations and their exceptions. Note that
+ * some incompliant repositories might throw other exception than you expect.
  * <p>
- * (Please refer to the <a
- * href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS specification</a>
- * for details about the domain model, terms, concepts, base types, properties,
- * IDs and query names, query language, etc.)
+ * Refer to the <a href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.0
+ * specification</a> or the <a
+ * href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.1
+ * specification</a> for details about the domain model, terms, concepts, base
+ * types, properties, IDs and query names, query language, etc.
  * </p>
  */
 public interface Session extends Serializable {
 
     /**
-     * Clears all cached data. This implies that all data will be reloaded from
-     * the repository (depending on the implementation, reloading might be done
-     * immediately or be deferred).
+     * Clears all cached data.
      */
     void clear();
 
@@ -113,6 +116,33 @@ public interface Session extends Serializable {
 
     /**
      * Creates a new operation context object with the given properties.
+     * 
+     * @param filter
+     *            the property filter, a comma separated string of
+     *            <em>query names</em> or "*" for all properties or {@code null}
+     *            to let the repository determine a set of properties
+     * @param includeAcls
+     *            indicates whether ACLs should be included or not
+     * @param includeAllowableActions
+     *            indicates whether Allowable Actions should be included or not
+     * @param includePolicies
+     *            indicates whether policies should be included or not
+     * @param includeRelationships
+     *            enum that indicates if and which relationships should be
+     *            includes
+     * @param renditionFilter
+     *            the rendition filter or {@code null} for no renditions
+     * @param includePathSegments
+     *            indicates whether path segment or the relative path segment
+     *            should be included or not
+     * @param orderBy
+     *            the object order, a comma-separated list of
+     *            <em>query names</em> and the ascending modifier "ASC" or the
+     *            descending modifier "DESC" for each query name
+     * @param cacheEnabled
+     *            flag that indicates if the object cache should be used
+     * @param maxItemsPerPage
+     *            the max items per batch
      * 
      * @return the newly created operation context object
      * 
@@ -161,10 +191,11 @@ public interface Session extends Serializable {
     // types
 
     /**
-     * Returns the type definition of the given type ID.
+     * Gets the definition of a type.
      * 
      * @param typeId
-     *            the type ID
+     *            the ID of the type
+     * 
      * @return the type definition
      * 
      * @throws CmisObjectNotFoundException
@@ -175,12 +206,13 @@ public interface Session extends Serializable {
     ObjectType getTypeDefinition(String typeId);
 
     /**
-     * Returns the type children of the given type ID.
+     * Gets the type children of a type.
      * 
      * @param typeId
      *            the type ID or {@code null} to request the base types
      * @param includePropertyDefinitions
-     *            indicates if the property definitions should be included
+     *            indicates whether the property definitions should be included
+     *            or not
      * @return the type iterator, not {@code null}
      * 
      * @throws CmisObjectNotFoundException
@@ -191,14 +223,16 @@ public interface Session extends Serializable {
     ItemIterable<ObjectType> getTypeChildren(String typeId, boolean includePropertyDefinitions);
 
     /**
-     * Returns the type descendants of the given type ID.
+     * Gets the type descendants of a type.
      * 
      * @param typeId
      *            the type ID or {@code null} to request the base types
      * @param includePropertyDefinitions
-     *            indicates if the property definitions should be included
+     *            indicates whether the property definitions should be included
+     *            or not
      * @param depth
-     *            the tree depth, must be >0 or -1 for infinite depth
+     *            the tree depth, must be greater than 0 or -1 for infinite
+     *            depth
      * 
      * @throws CmisObjectNotFoundException
      *             if a type with the given type ID doesn't exist
@@ -212,6 +246,7 @@ public interface Session extends Serializable {
      * 
      * @param type
      *            the type definition
+     * 
      * @return the new type definition
      * 
      * @cmis 1.1
@@ -223,6 +258,7 @@ public interface Session extends Serializable {
      * 
      * @param type
      *            the type definition updates
+     * 
      * @return the updated type definition
      * 
      * @cmis 1.1
@@ -283,9 +319,19 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the cache is turned off per default {@link OperationContext}, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param objectId
      *            the object ID
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @see #getObject(String)
      * 
@@ -297,11 +343,21 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the given {@link OperationContext} has caching turned off, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param objectId
      *            the object ID
      * @param context
      *            the {@link OperationContext} to use
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @see #getObject(String, OperationContext)
      * 
@@ -313,9 +369,19 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the cache is turned off per default {@link OperationContext}, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param objectId
      *            the object ID
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @see #getObject(ObjectId)
      * 
@@ -327,11 +393,21 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the given {@link OperationContext} has caching turned off, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param objectId
      *            the object ID
      * @param context
      *            the {@link OperationContext} to use
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @see #getObject(ObjectId, OperationContext)
      * 
@@ -343,9 +419,19 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the cache is turned off per default {@link OperationContext}, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param path
      *            the object path
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @cmis 1.0
      */
@@ -355,11 +441,21 @@ public interface Session extends Serializable {
      * Returns a CMIS object from the session cache. If the object is not in the
      * cache or the given {@link OperationContext} has caching turned off, it
      * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
      * 
      * @param path
      *            the object path
      * @param context
      *            the {@link OperationContext} to use
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
      * 
      * @cmis 1.0
      */
@@ -370,6 +466,8 @@ public interface Session extends Serializable {
      * 
      * @param objectId
      *            object ID
+     * 
+     * @see #removeObjectFromCache(String)
      */
     void removeObjectFromCache(ObjectId objectId);
 
@@ -384,13 +482,15 @@ public interface Session extends Serializable {
     // discovery
 
     /**
-     * Sends a query to the repository. (See CMIS spec "2.1.10 Query".)
+     * Sends a query to the repository. Refer to the CMIS specification for the
+     * CMIS query language syntax.
      * 
      * @param statement
      *            the query statement (CMIS query language)
      * @param searchAllVersions
-     *            specifies if the latest and non-latest versions of document
-     *            objects should be included
+     *            specifies whether non-latest document versions should be
+     *            included or not, {@code true} searches all document versions,
+     *            {@false} only searches latest document versions
      * 
      * @cmis 1.0
      */
@@ -403,26 +503,30 @@ public interface Session extends Serializable {
      * @param statement
      *            the query statement (CMIS query language)
      * @param searchAllVersions
-     *            specifies if the latest and non-latest versions of document
-     *            objects should be included
+     *            specifies whether non-latest document versions should be
+     *            included or not, {@code true} searches all document versions,
+     *            {@false} only searches latest document versions
      * @param context
-     *            the OperationContext
+     *            the operation context to use
      * 
      * @cmis 1.0
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
 
     /**
+     * Builds a CMIS query and returns the query results as an iterator of
+     * {@link CmisObject} objects.
      * 
      * @param type
      *            the ID of the object type
      * @param where
      *            the WHERE part of the query
      * @param searchAllVersions
-     *            specifies if the latest and non-latest versions of document
-     *            objects should be included
+     *            specifies whether non-latest document versions should be
+     *            included or not, {@code true} searches all document versions,
+     *            {@false} only searches latest document versions
      * @param context
-     *            the OperationContext
+     *            the operation context to use
      * 
      * @cmis 1.0
      */
@@ -433,7 +537,10 @@ public interface Session extends Serializable {
      * Creates a query statement.
      * 
      * @param statement
-     *            the query statement with placeholders ('?').
+     *            the query statement with placeholders ('?'), see
+     *            {@link QueryStatement} for details
+     * 
+     * @return a new query statement object
      * 
      * @see QueryStatement
      * 
@@ -445,12 +552,14 @@ public interface Session extends Serializable {
      * Returns the content changes.
      * 
      * @param changeLogToken
-     *            the change log token to start from or {@code null}
+     *            the change log token to start from or {@code null} to start
+     *            from the first available event in the repository
      * @param includeProperties
-     *            indicates if changed properties should be included in the
-     *            result
+     *            indicates whether changed properties should be included in the
+     *            result or not
      * @param maxNumItems
      *            maximum numbers of events
+     * 
      * @return the change events
      * 
      * @cmis 1.0
@@ -461,14 +570,16 @@ public interface Session extends Serializable {
      * Returns the content changes.
      * 
      * @param changeLogToken
-     *            the change log token to start from or {@code null}
+     *            the change log token to start from or {@code null} to start
+     *            from the first available event in the repository
      * @param includeProperties
-     *            indicates if changed properties should be included in the
-     *            result
+     *            indicates whether changed properties should be included in the
+     *            result or not
      * @param maxNumItems
      *            maximum numbers of events
      * @param context
      *            the OperationContext
+     * 
      * @return the change events
      * 
      * @cmis 1.0
@@ -483,10 +594,11 @@ public interface Session extends Serializable {
      * Note: Paging and skipping are not supported.
      * 
      * @param changeLogToken
-     *            the change log token to start from or {@code null}
+     *            the change log token to start from or {@code null} to start
+     *            from the first available event in the repository
      * @param includeProperties
-     *            indicates if changed properties should be included in the
-     *            result
+     *            indicates whether changed properties should be included in the
+     *            result or not
      * 
      * @cmis 1.0
      */
@@ -499,10 +611,11 @@ public interface Session extends Serializable {
      * Note: Paging and skipping are not supported.
      * 
      * @param changeLogToken
-     *            the change log token to start from or {@code null}
+     *            the change log token to start from or {@code null} to start
+     *            from the first available event in the repository
      * @param includeProperties
-     *            indicates if changed properties should be included in the
-     *            result
+     *            indicates whether changed properties should be included in the
+     *            result or not
      * @param context
      *            the OperationContext
      * 
@@ -714,10 +827,11 @@ public interface Session extends Serializable {
     void delete(ObjectId objectId, boolean allVersions);
 
     /**
-     * Retrieves the main content stream of a document
+     * Retrieves the main content stream of a document.
      * 
      * @param docId
      *            the ID of the document
+     * 
      * @return the content stream or {@code null} if the document has no content
      *         stream
      * 
@@ -726,7 +840,7 @@ public interface Session extends Serializable {
     ContentStream getContentStream(ObjectId docId);
 
     /**
-     * Retrieves the content stream of a document
+     * Retrieves the content stream of a document.
      * 
      * @param docId
      *            the ID of the document
@@ -764,7 +878,7 @@ public interface Session extends Serializable {
     Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions);
 
     /**
-     * Applies ACL changes to an object and potentially dependent objects.
+     * Applies ACL changes to an object and dependent objects.
      * 
      * Only direct ACEs can be added and removed.
      * 

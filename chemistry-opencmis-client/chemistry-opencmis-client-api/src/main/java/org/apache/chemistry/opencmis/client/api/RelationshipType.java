@@ -30,7 +30,7 @@ public interface RelationshipType extends ObjectType {
      * Get the list of object types, allowed as source for relationships of this
      * type.
      * 
-     * @return the allowed source types for this relationship type.
+     * @return the allowed source types for this relationship type
      * 
      * @cmis 1.0
      */
@@ -40,7 +40,7 @@ public interface RelationshipType extends ObjectType {
      * Get the list of object types, allowed as target for relationships of this
      * type.
      * 
-     * @return the allowed target types for this relationship type.
+     * @return the allowed target types for this relationship type
      * 
      * @cmis 1.0
      */

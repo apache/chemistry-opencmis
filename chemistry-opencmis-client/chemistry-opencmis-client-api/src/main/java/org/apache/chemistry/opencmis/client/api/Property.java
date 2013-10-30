@@ -29,32 +29,48 @@ public interface Property<T> extends PropertyData<T> {
 
     /**
      * Returns if the property is a multi-value property.
+     * 
+     * @return {@code true} if the property is multi-value property,
+     *         {@code false} if the property is single-value property,
      */
     boolean isMultiValued();
 
     /**
      * Returns the property data type.
+     * 
+     * @return the data type of the property, not {@code null}
      */
     PropertyType getType();
 
     /**
      * Returns the property definition.
+     * 
+     * @return the property definition, not {@code null}
      */
     PropertyDefinition<T> getDefinition();
 
     /**
      * Returns the property value (single or multiple).
+     * 
+     * @return the property value or {@code null} if the property value isn't
+     *         set
      */
     <U> U getValue();
 
     /**
      * Returns a human readable representation of the property value. If the
      * property is multi-value property, only the first value will be returned.
+     * 
+     * @return the (first) property value as a string or {@code null} if the
+     *         property value isn't set
      */
     String getValueAsString();
 
     /**
      * Returns a human readable representation of the property values.
+     * 
+     * @return the property value as a string or {@code null} if the property
+     *         value isn't set
      */
     String getValuesAsString();
 }

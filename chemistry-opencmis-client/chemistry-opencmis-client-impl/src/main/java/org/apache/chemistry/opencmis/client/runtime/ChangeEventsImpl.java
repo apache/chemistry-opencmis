@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.api.ChangeEvent;
@@ -50,6 +51,10 @@ public class ChangeEventsImpl implements ChangeEvents {
     }
 
     public List<ChangeEvent> getChangeEvents() {
+        if (events == null) {
+            events = new ArrayList<ChangeEvent>();
+        }
+
         return events;
     }
 

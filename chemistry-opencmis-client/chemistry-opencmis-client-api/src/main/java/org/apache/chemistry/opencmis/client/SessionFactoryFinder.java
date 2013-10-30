@@ -27,12 +27,25 @@ import java.lang.reflect.Method;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 
 /**
- * Finds a {@link SessionFactory} implementation and creates an object.
+ * Finds a {@link SessionFactory} implementation and creates a factory object.
  */
-public class SessionFactoryFinder {
+public final class SessionFactoryFinder {
+
+    /**
+     * Private constructor.
+     */
+    private SessionFactoryFinder() {
+    }
 
     /**
      * Creates a default {@link SessionFactory} object.
+     * 
+     * @return the newly created {@link SessionFactory} object
+     * 
+     * @throws ClassNotFoundException
+     *             if the session factory class cannot be found
+     * @throws InstantiationException
+     *             if the session factory object cannot be instantiated
      */
     public static SessionFactory find() throws ClassNotFoundException, InstantiationException {
         return find("org.apache.chemistry.opencmis.client.SessionFactory", null);
@@ -42,7 +55,14 @@ public class SessionFactoryFinder {
      * Creates a {@link SessionFactory} object.
      * 
      * @param factoryId
-     *            the factory id of the {@link SessionFactory}
+     *            the factory ID of the {@link SessionFactory}
+     * 
+     * @return the newly created {@link SessionFactory} object
+     * 
+     * @throws ClassNotFoundException
+     *             if the session factory class cannot be found
+     * @throws InstantiationException
+     *             if the session factory object cannot be instantiated
      */
     public static SessionFactory find(String factoryId) throws ClassNotFoundException, InstantiationException {
         return find(factoryId, null);
@@ -52,15 +72,40 @@ public class SessionFactoryFinder {
      * Creates a {@link SessionFactory} object.
      * 
      * @param factoryId
-     *            the factory id of the {@link SessionFactory}
+     *            the factory ID of the {@link SessionFactory}
      * @param classLoader
      *            the class loader to use
+     * 
+     * @return the newly created {@link SessionFactory} object
+     * 
+     * @throws ClassNotFoundException
+     *             if the session factory class cannot be found
+     * @throws InstantiationException
+     *             if the session factory object cannot be instantiated
      */
     public static SessionFactory find(String factoryId, ClassLoader classLoader) throws ClassNotFoundException,
             InstantiationException {
         return find(factoryId, classLoader, "org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl");
     }
 
+    /**
+     * Creates a {@link SessionFactory} object.
+     * 
+     * @param factoryId
+     *            the factory ID of the {@link SessionFactory}
+     * @param classLoader
+     *            the class loader to use
+     * @param fallbackClassName
+     *            the name of the class to use if no other class name has been
+     *            provided
+     * 
+     * @return the newly created {@link SessionFactory} object
+     * 
+     * @throws ClassNotFoundException
+     *             if the session factory class cannot be found
+     * @throws InstantiationException
+     *             if the session factory object cannot be instantiated
+     */
     private static SessionFactory find(String factoryId, ClassLoader classLoader, String fallbackClassName)
             throws ClassNotFoundException, InstantiationException {
         ClassLoader cl = classLoader;

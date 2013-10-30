@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * Fileable CMIS object.
+ * 
+ * A fileable object is an object that can reside in a folder.
  */
 public interface FileableCmisObject extends CmisObject {
 
@@ -31,9 +33,9 @@ public interface FileableCmisObject extends CmisObject {
      * Moves this object.
      * 
      * @param sourceFolderId
-     *            the object id of the source folder
+     *            the object ID of the source folder
      * @param targetFolderId
-     *            the object id of the target folder
+     *            the object ID of the target folder
      * 
      * @return the moved object
      * 
@@ -45,9 +47,9 @@ public interface FileableCmisObject extends CmisObject {
      * Moves this object.
      * 
      * @param sourceFolderId
-     *            the object id of the source folder
+     *            the object ID of the source folder
      * @param targetFolderId
-     *            the object id of the target folder
+     *            the object ID of the target folder
      * @param context
      *            the {@link OperationContext} to use to fetch the moved object
      * 
@@ -99,13 +101,12 @@ public interface FileableCmisObject extends CmisObject {
      * Adds this object to a folder.
      * 
      * @param folderId
-     *            the object id of the folder to which this object should be
+     *            the object ID of the folder to which this object should be
      *            added
      * @param allVersions
-     *            if this parameter is <code>true</code> and this object is a
+     *            if this parameter is {@code true} and this object is a
      *            document, all versions of the version series are added to the
      *            folder
-     * 
      * 
      * @cmis 1.0
      */
@@ -115,7 +116,7 @@ public interface FileableCmisObject extends CmisObject {
      * Removes this object from a folder.
      * 
      * @param folderId
-     *            the object id of the folder from which this object should be
+     *            the object ID of the folder from which this object should be
      *            removed
      * 
      * @cmis 1.0

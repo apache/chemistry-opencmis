@@ -21,8 +21,6 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
-import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 
 /**
  * Object Type.
@@ -31,62 +29,55 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public interface ObjectType extends TypeDefinition {
 
-    String DOCUMENT_BASETYPE_ID = BaseTypeId.CMIS_DOCUMENT.value();
-    String FOLDER_BASETYPE_ID = BaseTypeId.CMIS_FOLDER.value();
-    String RELATIONSHIP_BASETYPE_ID = BaseTypeId.CMIS_RELATIONSHIP.value();
-    String POLICY_BASETYPE_ID = BaseTypeId.CMIS_POLICY.value();
-
     /**
-     * Indicates if this is base object type (i.e. if {@code getId()} returns
-     * ...{@code _BASETYPE_ID}.
+     * Indicates whether this is base object type or not.
      * 
      * @return {@code true} if this type is a base type, {@code false} if this
-     *         type is a derived type.
+     *         type is a derived type
      * 
      * @cmis 1.0
      */
     boolean isBaseType();
 
     /**
-     * Get the type's base type, if the type is a derived (non-base) type.
+     * Gets the types base type, if the type is a derived (non-base) type.
      * 
      * @return the base type this type is derived from, or {@code null} if it is
-     *         a base type ({@code isBase()==true}).
-     * @throws CmisRuntimeException
+     *         a base type
      * 
      * @cmis 1.0
      */
-    ObjectType getBaseType(); // null if isBase == true
+    ObjectType getBaseType();
 
     /**
-     * Get the type's parent type, if the type is a derived (non-base) type.
+     * Gets the types parent type, if the type is a derived (non-base) type.
      * 
      * @return the parent type from which this type is derived, or {@code null}
-     *         if it is a base type ( {@code isBase()==true}).
-     * @throws CmisRuntimeException
+     *         if it is a base type
      * 
      * @cmis 1.0
      */
     ObjectType getParentType();
 
     /**
-     * Get the list of types directly derived from this type (which will return
+     * Gets the list of types directly derived from this type (which will return
      * this type on {@code getParent()}).
      * 
-     * @return a {@code List} of types which are directly derived from this
-     *         type.
+     * @return list of types which are directly derived from this type
      * 
      * @cmis 1.0
      */
     ItemIterable<ObjectType> getChildren();
 
     /**
-     * Get the list of all types somehow derived from this type.
+     * Gets the list of all types somehow derived from this type.
      * 
      * @param depth
-     *            the depth to which the derived types should be resolved.
-     * @return a {@code Tree} of types which are derived from this type (direct
-     *         and via their parents).
+     *            the tree depth, must be greater than 0 or -1 for infinite
+     *            depth
+     * 
+     * @return a list of trees of types which are derived from this type (direct
+     *         and via their parents)
      * 
      * @cmis 1.0
      */

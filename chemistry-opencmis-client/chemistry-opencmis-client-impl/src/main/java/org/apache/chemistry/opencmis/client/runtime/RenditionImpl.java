@@ -79,7 +79,7 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
     }
 
     public ContentStream getContentStream() {
-        if ((objectId == null) || (getStreamId() == null)) {
+        if (objectId == null || getStreamId() == null) {
             return null;
         }
 

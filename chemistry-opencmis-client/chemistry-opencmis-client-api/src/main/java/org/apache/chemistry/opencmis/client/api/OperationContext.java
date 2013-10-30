@@ -48,7 +48,9 @@ public interface OperationContext extends Serializable {
      * Sets the current filter.
      * 
      * @param propertyFilter
-     *            a comma separated list of <em>query names</em>
+     *            a comma separated string of <em>query names</em> or "*" for
+     *            all properties or {@code null} to let the repository determine
+     *            a set of properties
      */
     void setFilterString(String propertyFilter);
 

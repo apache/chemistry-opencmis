@@ -28,22 +28,33 @@ import java.util.List;
 public interface ChangeEvents {
 
     /**
-     * Returns the changelog token if available.
+     * Returns the change log token if available.
+     * 
+     * @return the latest change log token or {@code null} if it is not
+     *         available.
      */
     String getLatestChangeLogToken();
 
     /**
      * Returns the change event list.
+     * 
+     * @return the list of change events, not {@code null}
      */
     List<ChangeEvent> getChangeEvents();
 
     /**
      * Indicates whether are more change events or not.
+     * 
+     * @return {@code true} is there are more change events, {@code false}
+     *         otherwise
      */
     boolean getHasMoreItems();
 
     /**
      * Returns the total number of change events if available.
+     * 
+     * @return the total number of change events or -1 if the total number is
+     *         not available
      */
     long getTotalNumItems();
 }

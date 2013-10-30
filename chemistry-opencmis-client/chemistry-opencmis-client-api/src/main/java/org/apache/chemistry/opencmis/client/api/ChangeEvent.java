@@ -32,22 +32,30 @@ import org.apache.chemistry.opencmis.commons.data.ChangeEventInfo;
 public interface ChangeEvent extends ChangeEventInfo {
 
     /**
-     * Gets the id of the object.
+     * Gets the ID of the object.
+     * 
+     * @return the object ID, not {@code null}
      */
     String getObjectId();
 
     /**
      * Returns the properties.
+     * 
+     * @return the properties
      */
     Map<String, List<?>> getProperties();
 
     /**
-     * Returns the policy ids.
+     * Returns the policy IDs.
+     * 
+     * @return the policy IDs
      */
     List<String> getPolicyIds();
 
     /**
      * Returns the ACL.
+     * 
+     * @return the ACL
      */
     Acl getAcl();
 }

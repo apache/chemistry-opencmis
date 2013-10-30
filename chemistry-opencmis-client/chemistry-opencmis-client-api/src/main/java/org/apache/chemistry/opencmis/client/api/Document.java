@@ -46,7 +46,7 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     /**
      * Retrieves the content stream of this document.
      * 
-     * @return the content stream, or <code>null</code> if the document has no
+     * @return the content stream, or {@code null} if the document has no
      *         content
      * 
      * @cmis 1.0
@@ -57,12 +57,13 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Retrieves the content stream of this document.
      * 
      * @param offset
-     *            the offset of the stream or <code>null</code> to read the
-     *            stream from the beginning
+     *            the offset of the stream or {@code null} to read the stream
+     *            from the beginning
      * @param length
-     *            the maximum length of the stream or <code>null</code> to read
-     *            to the end of the stream
-     * @return the content stream, or <code>null</code> if the document has no
+     *            the maximum length of the stream or {@code null} to read to
+     *            the end of the stream
+     * 
+     * @return the content stream, or {@code null} if the document has no
      *         content
      * 
      * @cmis 1.0
@@ -70,33 +71,34 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     ContentStream getContentStream(BigInteger offset, BigInteger length);
 
     /**
-     * Retrieves the content stream that is associated with the given stream id.
+     * Retrieves the content stream that is associated with the given stream ID.
      * This is usually a rendition of the document.
      * 
      * @param streamId
-     *            the stream id
+     *            the stream ID
      * 
-     * @return the content stream, or <code>null</code> if no content is
-     *         associated with this stream id
+     * @return the content stream, or {@code null} if no content is associated
+     *         with this stream ID
      * 
      * @cmis 1.0
      */
     ContentStream getContentStream(String streamId);
 
     /**
-     * Retrieves the content stream that is associated with the given stream id.
+     * Retrieves the content stream that is associated with the given stream ID.
      * This is usually a rendition of the document.
      * 
      * @param streamId
-     *            the stream id
+     *            the stream ID
      * @param offset
-     *            the offset of the stream or <code>null</code> to read the
-     *            stream from the beginning
+     *            the offset of the stream or {@code null} to read the stream
+     *            from the beginning
      * @param length
-     *            the maximum length of the stream or <code>null</code> to read
-     *            to the end of the stream
-     * @return the content stream, or <code>null</code> if no content is
-     *         associated with this stream id
+     *            the maximum length of the stream or {@code null} to read to
+     *            the end of the stream
+     * 
+     * @return the content stream, or {@code null} if no content is associated
+     *         with this stream ID
      * 
      * @cmis 1.0
      */
@@ -107,18 +109,18 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * afterwards. If the repository created a new version, this new document is
      * returned. Otherwise the current document is returned.
      * <p>
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
      * @param contentStream
      *            the content stream
      * @param overwrite
-     *            if this parameter is set to <code>false</code> and the
-     *            document already has content, the repository throws a
+     *            if this parameter is set to {@code false} and the document
+     *            already has content, the repository throws a
      *            {@link CmisContentAlreadyExistsException}
      * 
-     * @return the updated document, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated document, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @see ObjectFactory#createContentStream(String, long, String,
      *      java.io.InputStream)
@@ -129,24 +131,24 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Sets a new content stream for the document. If the repository created a
-     * new version, the object id of this new version is returned. Otherwise the
-     * object id of the current document is returned.
+     * new version, the object ID of this new version is returned. Otherwise the
+     * object ID of the current document is returned.
      * <p>
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
      * @param contentStream
      *            the content stream
      * @param overwrite
-     *            if this parameter is set to <code>false</code> and the
-     *            document already has content, the repository throws a
+     *            if this parameter is set to {@code false} and the document
+     *            already has content, the repository throws a
      *            {@link CmisContentAlreadyExistsException}
      * @param refresh
-     *            if this parameter is set to <code>true</code>, this object
-     *            will be refreshed after the new content has been set
+     *            if this parameter is set to {@code true}, this object will be
+     *            refreshed after the new content has been set
      * 
-     * @return the updated object id, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated object ID, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @see ObjectFactory#createContentStream(String, long, String,
      *      java.io.InputStream)
@@ -161,16 +163,16 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * version, this new document is returned. Otherwise the current document is
      * returned.
      * <p>
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
      * @param contentStream
      *            the content stream
      * @param isLastChunk
      *            indicates if this stream is the last chunk of the content
      * 
-     * @return the updated document, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated document, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @see ObjectFactory#createContentStream(String, long, String,
      *      java.io.InputStream)
@@ -181,22 +183,22 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Appends a content stream to the content stream of the document. If the
-     * repository created a new version, the object id of this new version is
-     * returned. Otherwise the object id of the current document is returned.
+     * repository created a new version, the object ID of this new version is
+     * returned. Otherwise the object ID of the current document is returned.
      * <p>
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
      * @param contentStream
      *            the content stream
      * @param isLastChunk
      *            indicates if this stream is the last chunk of the content
      * @param refresh
-     *            if this parameter is set to <code>true</code>, this object
-     *            will be refreshed after the content stream has been appended
+     *            if this parameter is set to {@code true}, this object will be
+     *            refreshed after the content stream has been appended
      * 
-     * @return the updated object id, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated object ID, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @cmis 1.1
      */
@@ -207,8 +209,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * object afterwards. If the repository created a new version, this new
      * document is returned. Otherwise the current document is returned.
      * 
-     * @return the updated document, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated document, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @cmis 1.0
      */
@@ -216,15 +218,15 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Removes the current content stream from the document. If the repository
-     * created a new version, the object id of this new version is returned.
-     * Otherwise the object id of the current document is returned.
+     * created a new version, the object ID of this new version is returned.
+     * Otherwise the object ID of the current document is returned.
      * 
      * @param refresh
-     *            if this parameter is set to <code>true</code>, this object
-     *            will be refreshed after the content stream has been deleted
+     *            if this parameter is set to {@code true}, this object will be
+     *            refreshed after the content stream has been deleted
      * 
-     * @return the updated document, or <code>null</code> if the repository did
-     *         not return an object id
+     * @return the updated document, or {@code null} if the repository did not
+     *         return an object ID
      * 
      * @cmis 1.0
      */
@@ -233,14 +235,14 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     // versioning service
 
     /**
-     * Checks out the document and returns the object id of the PWC (private
+     * Checks out the document and returns the object ID of the PWC (private
      * working copy).
      * 
-     * @return PWC object id
+     * @return PWC object ID
      * 
      * @cmis 1.0
      */
-    ObjectId checkOut(); // returns the PWC id
+    ObjectId checkOut();
 
     /**
      * If this is a PWC (private working copy) the check out will be reversed.
@@ -254,10 +256,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
      * 
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
-     * @return new document id
+     * @return new document ID
      * 
      * @cmis 1.0
      */
@@ -268,10 +270,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * If this is a PWC (private working copy) it performs a check in. If this
      * is not a PWC it an exception will be thrown.
      * 
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
-     * @return new document id
+     * @return new document ID
      * 
      * @cmis 1.0
      */
@@ -281,8 +283,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Fetches the latest major or minor version of this document.
      * 
      * @param major
-     *            if <code>true</code> the latest major version will be
-     *            returned, otherwise the very last version will be returned
+     *            if {@code true} the latest major version will be returned,
+     *            otherwise the very last version will be returned
      * 
      * @return the latest document object
      * 
@@ -295,8 +297,8 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * given {@link OperationContext}.
      * 
      * @param major
-     *            if <code>true</code> the latest major version will be
-     *            returned, otherwise the very last version will be returned
+     *            if {@code true} the latest major version will be returned,
+     *            otherwise the very last version will be returned
      * 
      * @return the latest document object
      * 
@@ -306,6 +308,13 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Fetches all versions of this document.
+     * <p>
+     * The behavior of this method is undefined if the document is not
+     * versionable and can be different for each repository.
+     * 
+     * @return all versions of the version series, sorted by
+     *         {@code cmis:creationDate} descending and preceded by the PWC, if
+     *         one exists, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -314,6 +323,13 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     /**
      * Fetches all versions of this document using the given
      * {@link OperationContext}.
+     * <p>
+     * The behavior of this method is undefined if the document is not
+     * versionable and can be different for each repository.
+     * 
+     * @return all versions of the version series, sorted by
+     *         {@code cmis:creationDate} descending and preceded by the PWC, if
+     *         one exists, not {@code null}
      * 
      * @cmis 1.0
      */
@@ -321,6 +337,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Creates a copy of this document, including content.
+     * 
+     * @param targetFolderId
+     *            the ID of the target folder, {@code null} to create an unfiled
+     *            document
      * 
      * @return the new document object
      * 
@@ -330,6 +350,10 @@ public interface Document extends FileableCmisObject, DocumentProperties {
 
     /**
      * Creates a copy of this document, including content.
+     * 
+     * @param targetFolderId
+     *            the ID of the target folder, {@code null} to create an unfiled
+     *            document
      * 
      * @return the new document object or {@code null} if the parameter
      *         {@code context} was set to {@code null}

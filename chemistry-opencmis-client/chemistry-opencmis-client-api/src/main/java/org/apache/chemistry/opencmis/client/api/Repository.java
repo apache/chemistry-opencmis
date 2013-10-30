@@ -27,6 +27,8 @@ public interface Repository extends RepositoryInfo {
 
     /**
      * Creates a session for this repository.
+     * 
+     * @return the created session object
      */
     <T extends Session> T createSession();
 }

@@ -25,6 +25,6 @@ public final class XMLConstraints {
 
     public static final int MAX_STRING_LENGTH = 100 * 1024;
 
-    public static final int MAX_EXTENSIONS_WIDTH = 100;
-    public static final int MAX_EXTENSIONS_DEPTH = 10;
+    public static final int MAX_EXTENSIONS_WIDTH = 500;
+    public static final int MAX_EXTENSIONS_DEPTH = 20;
 }

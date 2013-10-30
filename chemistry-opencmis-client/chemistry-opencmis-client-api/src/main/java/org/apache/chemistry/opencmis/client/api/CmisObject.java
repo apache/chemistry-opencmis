@@ -71,8 +71,10 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * Deletes this object.
      * 
      * @param allVersions
-     *            if this object is a document this parameter defines if only
-     *            this version or all versions should be deleted
+     *            if this object is a document this parameter defines whether
+     *            only this version ({@code false}) or all versions ({@code true}
+     *            ) should be deleted, the parameter is ignored for all other
+     *            object types
      * 
      * @cmis 1.0
      */
@@ -100,7 +102,8 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * @param properties
      *            the properties to update
      * @param refresh
-     *            indicates if this object should be refresh after the update
+     *            {@code true} if this object should be refresh after the
+     *            update, {@code false} if not
      * 
      * @return the object id of the updated object
      * 
@@ -122,12 +125,18 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     /**
      * Applies the provided policies and refreshes this object afterwards.
      * 
+     * @param policyIds
+     *            the IDs of the policies to be applied
+     * 
      * @cmis 1.0
      */
     void applyPolicy(ObjectId... policyIds);
 
     /**
-     * Remove the provided policies and refreshes this object afterwards.
+     * Removes the provided policies and refreshes this object afterwards.
+     * 
+     * @param policyIds
+     *            the IDs of the policies to be removed
      * 
      * @cmis 1.0
      */
@@ -184,6 +193,12 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     /**
      * Returns the extensions for the given level.
      * 
+     * @param level
+     *            the level
+     * 
+     * @return the extensions at that level or {@code null} if there no
+     *         extensions
+     * 
      * @cmis 1.0
      */
     List<CmisExtensionElement> getExtensions(ExtensionLevel level);
@@ -192,30 +207,36 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
 
     /**
      * Returns an adapter based on the given interface.
+     * 
+     * @return an adapter object or {@code null} if no adapter object could be
+     *         created
      */
     <T> T getAdapter(Class<T> adapterInterface);
 
     // session handling
 
     /**
-     * Returns the timestamp (in milliseconds) of the last refresh.
+     * Returns the timestamp of the last refresh.
+     * 
+     * @return the difference, measured in milliseconds, between the last
+     *         refresh time and midnight, January 1, 1970 UTC.
      */
     long getRefreshTimestamp();
 
     /**
      * Reloads this object from the repository.
-     * <p>
-     * If the object doesn't exist anymore in the repository, a
-     * {@link CmisObjectNotFoundException} is thrown.
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if the object doesn't exist anymore in the repository
      */
     void refresh();
 
     /**
      * Reloads the data from the repository if the last refresh did not occur
-     * within <code>durationInMillis</code>.
-     * <p>
-     * If the object doesn't exist anymore in the repository, a
-     * {@link CmisObjectNotFoundException} is thrown.
+     * within {@code durationInMillis}.
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if the object doesn't exist anymore in the repository
      */
     void refreshIfOld(long durationInMillis);
 }

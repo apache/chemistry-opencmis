@@ -52,15 +52,15 @@ public class QueryResultImpl implements QueryResult, Serializable {
      * Constructor.
      */
     public QueryResultImpl(Session session, ObjectData objectData) {
+        propertiesById = new LinkedHashMap<String, PropertyData<?>>();
+        propertiesByQueryName = new LinkedHashMap<String, PropertyData<?>>();
+
         if (objectData != null) {
 
             ObjectFactory of = session.getObjectFactory();
 
             // handle properties
             if (objectData.getProperties() != null) {
-                propertiesById = new LinkedHashMap<String, PropertyData<?>>();
-                propertiesByQueryName = new LinkedHashMap<String, PropertyData<?>>();
-
                 List<PropertyData<?>> queryProperties = of.convertQueryProperties(objectData.getProperties());
 
                 for (PropertyData<?> property : queryProperties) {
@@ -95,46 +95,20 @@ public class QueryResultImpl implements QueryResult, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.QueryResult#getProperties()
-     */
     public List<PropertyData<?>> getProperties() {
         return new ArrayList<PropertyData<?>>(propertiesByQueryName.values());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyById(java.lang.
-     * String)
-     */
     @SuppressWarnings("unchecked")
     public <T> PropertyData<T> getPropertyById(String id) {
         return (PropertyData<T>) propertiesById.get(id);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyByQueryName(java
-     * .lang.String)
-     */
     @SuppressWarnings("unchecked")
     public <T> PropertyData<T> getPropertyByQueryName(String queryName) {
         return (PropertyData<T>) propertiesByQueryName.get(queryName);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyValueById(java.
-     * lang.String)
-     */
     public <T> T getPropertyValueById(String id) {
         PropertyData<T> property = getPropertyById(id);
         if (property == null) {
@@ -144,13 +118,6 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getFirstValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyValueByQueryName
-     * (java.lang.String)
-     */
     public <T> T getPropertyValueByQueryName(String queryName) {
         PropertyData<T> property = getPropertyByQueryName(queryName);
         if (property == null) {
@@ -160,13 +127,6 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getFirstValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueById(
-     * java.lang.String)
-     */
     public <T> List<T> getPropertyMultivalueById(String id) {
         PropertyData<T> property = getPropertyById(id);
         if (property == null) {
@@ -176,13 +136,6 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getValues();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.api.QueryResult#getPropertyMultivalueByQueryName
-     * (java.lang.String)
-     */
     public <T> List<T> getPropertyMultivalueByQueryName(String queryName) {
         PropertyData<T> property = getPropertyByQueryName(queryName);
         if (property == null) {
@@ -192,29 +145,14 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getValues();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.QueryResult#getAllowableActions()
-     */
     public AllowableActions getAllowableActions() {
         return allowableActions;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.QueryResult#getRelationships()
-     */
     public List<Relationship> getRelationships() {
         return relationships;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.opencmis.client.api.QueryResult#getRenditions()
-     */
     public List<Rendition> getRenditions() {
         return renditions;
     }

@@ -26,16 +26,24 @@ package org.apache.chemistry.opencmis.client.api;
 public interface RelationshipProperties {
 
     /**
-     * Returns the source id of this CMIS relationship (CMIS property
-     * <code>cmis:sourceId</code>).
+     * Returns the source ID of this CMIS relationship (CMIS property
+     * {@code cmis:sourceId}).
+     * 
+     * @return the source ID or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the
+     *         property value isn't set
      * 
      * @cmis 1.0
      */
-    ObjectId getSourceId(); // cmis:sourceId
+    ObjectId getSourceId();
 
     /**
-     * Returns the target id of this CMIS relationship (CMIS property
-     * <code>cmis:targetId</code>).
+     * Returns the target ID of this CMIS relationship (CMIS property
+     * {@code cmis:targetId}).
+     * 
+     * @return the target ID or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the
+     *         property value isn't set
      * 
      * @cmis 1.0
      */

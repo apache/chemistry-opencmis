@@ -59,38 +59,59 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 public interface QueryStatement extends Cloneable {
 
     /**
-     * Sets the designated parameter to the query name of the given type id.
+     * Sets the designated parameter to the query name of the given type ID.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setType(int parameterIndex, String typeId);
 
     /**
      * Sets the designated parameter to the query name of the given type.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setType(int parameterIndex, ObjectType type);
 
     /**
      * Sets the designated parameter to the query name of the given property.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setProperty(int parameterIndex, String typeId, String propertyId);
 
     /**
      * Sets the designated parameter to the query name of the given property.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setProperty(int parameterIndex, PropertyDefinition<?> propertyDefinition);
 
     /**
      * Sets the designated parameter to the given number.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setNumber(int parameterIndex, Number... num);
 
     /**
      * Sets the designated parameter to the given string.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setString(int parameterIndex, String... str);
 
     /**
      * Sets the designated parameter to the given string. It does not escape
      * backslashes ('\') in front of '%' and '_'.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setStringLike(int parameterIndex, String str);
 
@@ -111,64 +132,99 @@ public interface QueryStatement extends Cloneable {
      * output): * --> * --> * ? --> ? --> ? - --> - --> - \ --> \\ --> \\\\ (for
      * any other character following other than * ? -) \* --> \* --> \\* \? -->
      * \? --> \\? \- --> \- --> \\- ' --> \' --> \\\' " --> \" --> \\\"
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setStringContains(int parameterIndex, String str);
 
     /**
-     * Sets the designated parameter to the given object id.
+     * Sets the designated parameter to the given object ID.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setId(int parameterIndex, ObjectId... id);
 
     /**
      * Sets the designated parameter to the given URI.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setUri(int parameterIndex, URI... uri);
 
     /**
      * Sets the designated parameter to the given URL.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setUrl(int parameterIndex, URL... url);
 
     /**
      * Sets the designated parameter to the given boolean.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setBoolean(int parameterIndex, boolean... bool);
 
     /**
      * Sets the designated parameter to the given DateTime value.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTime(int parameterIndex, Calendar... cal);
 
     /**
      * Sets the designated parameter to the given DateTime value.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTime(int parameterIndex, Date... date);
 
     /**
      * Sets the designated parameter to the given DateTime value.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTime(int parameterIndex, long... ms);
 
     /**
      * Sets the designated parameter to the given DateTime value with the prefix
      * 'TIMESTAMP '.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTimeTimestamp(int parameterIndex, Calendar... cal);
 
     /**
      * Sets the designated parameter to the given DateTime value with the prefix
      * 'TIMESTAMP '.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTimeTimestamp(int parameterIndex, Date... date);
 
     /**
      * Sets the designated parameter to the given DateTime value with the prefix
      * 'TIMESTAMP '.
+     * 
+     * @param parameterIndex
+     *            the parameter index (one-based)
      */
     void setDateTimeTimestamp(int parameterIndex, long... ms);
 
     /**
      * Returns the query statement.
+     * 
+     * @return the query statement, not {@code null}
      */
     String toQueryString();
 

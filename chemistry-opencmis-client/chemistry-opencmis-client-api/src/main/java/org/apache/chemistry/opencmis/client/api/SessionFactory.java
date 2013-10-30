@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 
 /**
  * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code>
@@ -60,19 +59,21 @@ public interface SessionFactory {
      * 
      * @param parameters
      *            a {@code Map} of name/value pairs with parameters for the
-     *            session
+     *            session, see {@link SessionParameter} for
+     * 
      * @return a {@link Session} connected to the CMIS repository
-     * @throws CmisBaseException
-     *             if the connection could not be established
      * 
      * @see SessionParameter
      */
     Session createSession(Map<String, String> parameters);
 
     /**
-     * Returns all repositories that are available at the endpoint. See
-     * {@link #createSession(Map)} for parameter details. The parameter
+     * Returns all repositories that are available at the endpoint.
+     * 
+     * See {@link #createSession(Map)} for parameter details. The parameter
      * {@code SessionParameter.REPOSITORY_ID} should not be set.
+     * 
+     * @return a list of all available repositories
      */
     List<Repository> getRepositories(Map<String, String> parameters);
 

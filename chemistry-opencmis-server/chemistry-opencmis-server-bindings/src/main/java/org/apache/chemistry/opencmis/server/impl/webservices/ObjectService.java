@@ -65,7 +65,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
  * CMIS Object Service.
  */
 @MTOM
-@StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
+@StreamingAttachment(parseEagerly = false, memoryThreshold = 4 * 1024 * 1204)
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort")
 public class ObjectService extends AbstractService implements ObjectServicePort {
     @Resource

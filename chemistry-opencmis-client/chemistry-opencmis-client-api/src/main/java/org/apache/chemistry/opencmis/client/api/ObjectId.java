@@ -19,12 +19,14 @@
 package org.apache.chemistry.opencmis.client.api;
 
 /**
- * Holds an object id.
+ * Holds an object ID.
  */
 public interface ObjectId {
 
     /**
-     * Returns the object id.
+     * Returns the object ID.
+     * 
+     * @return the object ID
      */
     String getId();
 }

@@ -38,11 +38,11 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new document in this folder.
      * 
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
-     * @return the new document object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     * @return the new document object or {@code null} if the parameter
+     *         {@code context} was set to {@code null}
      * 
      * @cmis 1.0
      */
@@ -52,8 +52,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new document in this folder.
      * 
-     * The stream in <code>contentStream</code> is consumed but not closed by
-     * this method.
+     * The stream in {@code contentStream} is consumed but not closed by this
+     * method.
      * 
      * @return the new document object
      * 
@@ -64,8 +64,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new document from a source document in this folder.
      * 
-     * @return the new document object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     * @return the new document object or {@code null} if the parameter
+     *         {@code context} was set to {@code null}
      * 
      * @cmis 1.0
      */
@@ -84,8 +84,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new subfolder in this folder.
      * 
-     * @return the new folder object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     * @return the new folder object or {@code null} if the parameter
+     *         {@code context} was set to {@code null}
      * 
      * @cmis 1.0
      */
@@ -104,8 +104,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new policy in this folder.
      * 
-     * @return the new policy object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     * @return the new policy object or {@code null} if the parameter
+     *         {@code context} was set to {@code null}
      * 
      * @cmis 1.0
      */
@@ -124,8 +124,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Creates a new item in this folder.
      * 
-     * @return the new item object or <code>null</code> if the parameter
-     *         <code>context</code> was set to <code>null</code>
+     * @return the new item object or {@code null} if the parameter
+     *         {@code context} was set to {@code null}
      * 
      * @cmis 1.1
      */
@@ -144,7 +144,7 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Deletes this folder and all subfolders.
      * 
-     * @return a list of object ids which failed to be deleted
+     * @return a list of object IDs which failed to be deleted
      * 
      * @cmis 1.0
      */
@@ -200,15 +200,18 @@ public interface Folder extends FileableCmisObject, FolderProperties {
     /**
      * Returns if the folder is the root folder.
      * 
+     * @return {@code true} if the folder is the root folder, {@code false}
+     *         otherwise
+     * 
      * @cmis 1.0
      */
     boolean isRootFolder();
 
     /**
-     * Gets the parent folder object
+     * Gets the parent folder object.
      * 
-     * @return the parent folder object or <code>null</code> if the folder is
-     *         the root folder.
+     * @return the parent folder object or {@code null} if the folder is the
+     *         root folder.
      * 
      * @cmis 1.0
      */
@@ -216,6 +219,8 @@ public interface Folder extends FileableCmisObject, FolderProperties {
 
     /**
      * Returns the path of the folder.
+     * 
+     * @return the absolute folder path
      * 
      * @cmis 1.0
      */

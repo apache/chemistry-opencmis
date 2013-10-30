@@ -30,14 +30,14 @@ public interface ChangeEventInfo extends ExtensionsData {
     /**
      * Returns the change event type.
      * 
-     * @return the change event type
+     * @return the change event type, not {@code null}
      */
     ChangeType getChangeType();
 
     /**
      * Returns when the change took place.
      * 
-     * @return the timespamp of the change
+     * @return the timespamp of the change, not {@code null}
      */
     GregorianCalendar getChangeTime();
 }

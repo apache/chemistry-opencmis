@@ -29,34 +29,52 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 public interface Rendition extends RenditionData {
 
     /**
-     * Returns the size of the rendition in byte if available.
+     * Returns the size of the rendition in bytes if available.
+     * 
+     * @return the size of the rendition in bytes or -1 if the size is not
+     *         available
      */
     long getLength();
 
     /**
      * Returns the height in pixels if the rendition is an image.
+     * 
+     * @return the height in pixels or -1 if the height is not available or the
+     *         rendition is not an image
      */
     long getHeight();
 
     /**
      * Returns the width in pixels if the rendition is an image.
+     * 
+     * @return the width in pixels or -1 if the width is not available or the
+     *         rendition is not an image
      */
     long getWidth();
 
     /**
      * Returns the rendition document if the rendition is a stand-alone
      * document.
+     * 
+     * @return the rendition document or {@code null} if there is no rendition
+     *         document
      */
     Document getRenditionDocument();
 
     /**
      * Returns the rendition document using the provides
      * {@link OperationContext} if the rendition is a stand-alone document.
+     * 
+     * @return the rendition document or {@code null} if there is no rendition
+     *         document
      */
     Document getRenditionDocument(OperationContext context);
 
     /**
      * Returns the content stream of the rendition.
+     * 
+     * @return the content stream of the rendition or {@code null} if the
+     *         rendition has no content
      */
     ContentStream getContentStream();
 }

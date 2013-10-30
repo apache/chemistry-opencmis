@@ -35,7 +35,7 @@ public interface MutableContentStream extends ContentStream {
     void setFileName(String filename);
 
     /**
-     * Sets the length of the stream
+     * Sets the length of the stream.
      * 
      * @param length
      *            the length of the stream in bytes or {@code null} if the
@@ -52,7 +52,7 @@ public interface MutableContentStream extends ContentStream {
     void setMimeType(String mimeType);
 
     /**
-     * Sets the stream
+     * Sets the stream.
      * 
      * @param stream
      *            the stream

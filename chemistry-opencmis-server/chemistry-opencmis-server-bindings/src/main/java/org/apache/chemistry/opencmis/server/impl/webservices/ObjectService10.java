@@ -27,7 +27,7 @@ import com.sun.xml.ws.developer.StreamingAttachment;
  * CMIS 1.0 Object Service. Excludes CMIS 1.1 operations.
  */
 @MTOM
-@StreamingAttachment(parseEagerly = true, memoryThreshold = 4 * 1024 * 1204)
+@StreamingAttachment(parseEagerly = false, memoryThreshold = 4 * 1024 * 1204)
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.server.impl.webservices.ObjectServicePort10")
 public class ObjectService10 extends ObjectService {
 

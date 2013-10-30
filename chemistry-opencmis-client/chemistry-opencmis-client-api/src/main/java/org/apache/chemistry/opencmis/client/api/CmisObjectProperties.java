@@ -30,37 +30,48 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
  * provide it or a property filter was used to retrieve this object.
  * <p>
  * The property values represent a snapshot of the object when it was loaded.
- * The objects and its properties can be out-of-date if the object has been
+ * The object and its properties may be out-of-date if the object has been
  * modified in the repository.
- * <p>
- * Implementations of this interface might alter property values without
- * updating the object in the repository. In this case, the values returned by
- * these accessors don't reflect the state of the object in the repository.
  */
 public interface CmisObjectProperties {
 
     /**
      * Returns a list of all available CMIS properties.
+     * 
+     * @return all available CMIS properties
      */
     List<Property<?>> getProperties();
 
     /**
-     * Returns the requested property. If the property is not available,
-     * <code>null</code> is returned.
+     * Returns a property.
+     * 
+     * @param id
+     *            the ID of the property
+     * 
+     * @return the property or {@code null} if the property hasn't been
+     *         requested or hasn't been provided by the repository
      */
     <T> Property<T> getProperty(String id);
 
     /**
-     * Returns the value of the requested property. If the property is not
-     * available, <code>null</code> is returned.
+     * Returns the value of a property.
+     * 
+     * @param id
+     *            the ID of the property
+     * 
+     * @return the property value or {@code null} if the property hasn't been
+     *         requested, hasn't been provided by the repository, or the
+     *         property value isn't set
      */
     <T> T getPropertyValue(String id);
 
     // convenience accessors
 
     /**
-     * Returns the name of this CMIS object (CMIS property
-     * <code>cmis:name</code>).
+     * Returns the name of this CMIS object (CMIS property {@code cmis:name}).
+     * 
+     * @return the name of the object or {@code null} if the property hasn't
+     *         been requested or hasn't been provided by the repository
      * 
      * @cmis 1.0
      */
@@ -68,7 +79,11 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the description of this CMIS object (CMIS property
-     * <code>cmis:description</code>).
+     * {@code cmis:description}).
+     * 
+     * @return the description of the object or {@code null} if the property
+     *         hasn't been requested, hasn't been provided by the repository, or
+     *         the property value isn't set
      * 
      * @cmis 1.1
      */
@@ -76,7 +91,10 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the user who created this CMIS object (CMIS property
-     * <code>cmis:createdBy</code>).
+     * {@code cmis:createdBy}).
+     * 
+     * @return the creator of the object or {@code null} if the property hasn't
+     *         been requested or hasn't been provided by the repository
      * 
      * @cmis 1.0
      */
@@ -84,7 +102,10 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the timestamp when this CMIS object has been created (CMIS
-     * property <code>cmis:creationDate</code>).
+     * property {@code cmis:creationDate}).
+     * 
+     * @return the creation time of the object or {@code null} if the property
+     *         hasn't been requested or hasn't been provided by the repository
      * 
      * @cmis 1.0
      */
@@ -92,7 +113,10 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the user who modified this CMIS object (CMIS property
-     * <code>cmis:lastModifiedBy</code>).
+     * {@code cmis:lastModifiedBy}).
+     * 
+     * @return the last modifier of the object or {@code null} if the property
+     *         hasn't been requested or hasn't been provided by the repository
      * 
      * @cmis 1.0
      */
@@ -100,7 +124,11 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the timestamp when this CMIS object has been modified (CMIS
-     * property <code>cmis:lastModificationDate</code>).
+     * property {@code cmis:lastModificationDate}).
+     * 
+     * @return the last modification date of the object or {@code null} if the
+     *         property hasn't been requested or hasn't been provided by the
+     *         repository
      * 
      * @cmis 1.0
      */
@@ -108,7 +136,10 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the id of the base type of this CMIS object (CMIS property
-     * <code>cmis:baseTypeId</code>).
+     * {@code cmis:baseTypeId}).
+     * 
+     * @return the base type id of the object or {@code null} if the property
+     *         hasn't been requested or hasn't been provided by the repository
      * 
      * @cmis 1.0
      */
@@ -116,7 +147,11 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the base type of this CMIS object (object type identified by
-     * <code>cmis:baseTypeId</code>).
+     * {@code cmis:baseTypeId}).
+     * 
+     * @return the base type of the object or {@code null} if the property
+     *         {@code cmis:baseTypeId} hasn't been requested or hasn't been
+     *         provided by the repository
      * 
      * @cmis 1.0
      */
@@ -124,7 +159,11 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the type of this CMIS object (object type identified by
-     * <code>cmis:objectTypeId</code>).
+     * {@code cmis:objectTypeId}).
+     * 
+     * @return the type of the object or {@code null} if the property
+     *         {@code cmis:objectTypeId} hasn't been requested or hasn't been
+     *         provided by the repository
      * 
      * @cmis 1.0
      */
@@ -132,21 +171,35 @@ public interface CmisObjectProperties {
 
     /**
      * Returns the secondary types of this CMIS object (object types identified
-     * by <code>cmis:secondaryObjectTypeIds</code>).
+     * by {@code cmis:secondaryObjectTypeIds}).
      * 
+     * @return the secondary types of the object or {@code null} if the property
+     *         {@code cmis:secondaryObjectTypeIds} hasn't been requested or
+     *         hasn't been provided by the repository
      * @cmis 1.1
      */
     List<SecondaryType> getSecondaryTypes();
 
     /**
      * Returns a list of primary and secondary object types that define the
-     * given property. If the property is not defined in any attached type,
-     * <code>null</code> is returned.
+     * given property.
+     * 
+     * @param id
+     *            the ID of the property
+     * 
+     * @return a list of object types that define the given property or
+     *         {@code null} if the property couldn't be found in the object
+     *         types that are attached to this object
+     * 
      */
     List<ObjectType> findObjectType(String id);
 
     /**
-     * Returns the change token (CMIS property <code>cmis:changeToken</code>).
+     * Returns the change token (CMIS property {@code cmis:changeToken}).
+     * 
+     * @return the change token of the object or {@code null} if the property
+     *         hasn't been requested or hasn't been provided or isn't supported
+     *         by the repository
      * 
      * @cmis 1.0
      */
