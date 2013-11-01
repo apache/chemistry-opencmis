@@ -448,6 +448,9 @@ public class FileShareRepository {
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
         }
+        if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
+            throw new CmisInvalidArgumentException("Type must be a document type!");
+        }
 
         // compile the properties
         PropertiesImpl props = compileWriteProperties(typeId, context.getUsername(), context.getUsername(), properties);
@@ -558,6 +561,9 @@ public class FileShareRepository {
             if (type == null) {
                 throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
             }
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_DOCUMENT) {
+                throw new CmisInvalidArgumentException("Type must be a document type!");
+            }
 
             // replace with new values
             for (PropertyData<?> prop : properties.getProperties().values()) {
@@ -647,6 +653,9 @@ public class FileShareRepository {
         TypeDefinition type = typeManager.getInternalTypeDefinition(typeId);
         if (type == null) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' is unknown!");
+        }
+        if (type.getBaseTypeId() != BaseTypeId.CMIS_FOLDER) {
+            throw new CmisInvalidArgumentException("Type must be a folder type!");
         }
 
         // compile the properties
