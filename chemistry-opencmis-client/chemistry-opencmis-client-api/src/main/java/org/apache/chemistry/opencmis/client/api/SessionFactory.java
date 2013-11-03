@@ -21,36 +21,45 @@ package org.apache.chemistry.opencmis.client.api;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.commons.SessionParameter;
-
 /**
- * Entry point into the OpenCMIS Client API. The <code>SessionFactory</code>
- * class implementation needs to be retrieved by any runtime lookup call. This
- * can for instance be a J2EE JNDI lookup or an OSGi service lookup.
+ * Entry point into the OpenCMIS Client API.
  * <p>
- * The entries of the parameter map are defined by {@link SessionParameter}
- * class which is part of the commons package. Parameters specify connection
- * settings (user name, authentication, connection URL, binding type, etc.).
+ * There might be different ways to get a {@code SessionFactory} instance. For
+ * example it could be retrieved via a J2EE JNDI lookup or an OSGi service
+ * lookup. Clients outside a container might use the
+ * {@link org.apache.chemistry.opencmis.client.SessionFactoryFinder} class.
  * <p>
- * The <code>Session</code> class which is constructed is either the
- * <code>session</code> base class which is the default implementation or it can
- * be derived from that implementing special behavior for the session.
+ * The entries of the parameter map are defined by
+ * {@link org.apache.chemistry.opencmis.commons.SessionParameter} class which is
+ * part of the commons package. Parameters specify connection settings (user
+ * name, authentication, connection URL, binding type, etc.).
+ * <p>
+ * The {@link Session} class which is constructed is either the {@code session}
+ * base class which is the default implementation or it can be derived from that
+ * implementing special behavior for the session.
  * <p>
  * Sample code:
  * <p>
- * <code>
- * SessionFactory factory = ... // use a runtime lookup service
- * <br>
- * <br>Map<String, String> parameter = ...
- * <br>parameter.put(SessionParameter.USER, "Otto");
- * <br>parameter.put(SessionParameter.PASSWORD, "****");
- * <br>
- * <br>parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
- * <br>parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
- * <br>parameter.put(SessionParameter.REPOSITORY_ID, "myRepository");
- * <br>...
- * <br>Session session = factory.createSession(parameter);
- * </code>
+ * 
+ * <pre>
+ * SessionFactory factory = ...
+ * 
+ * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * 
+ * parameter.put(SessionParameter.USER, "Otto");
+ * parameter.put(SessionParameter.PASSWORD, "****");
+ * 
+ * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
+ * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+ * parameter.put(SessionParameter.REPOSITORY_ID, "myRepository");
+ * ...
+ * Session session = factory.createSession(parameter);
+ * </pre>
+ * 
+ * @see org.apache.chemistry.opencmis.client.SessionFactoryFinder
+ * @see org.apache.chemistry.opencmis.commons.SessionParameter
+ * @see org.apache.chemistry.opencmis.client.SessionParameterMap
+ * @see Session
  */
 public interface SessionFactory {
 
@@ -58,23 +67,31 @@ public interface SessionFactory {
      * Creates a new session.
      * 
      * @param parameters
-     *            a {@code Map} of name/value pairs with parameters for the
-     *            session, see {@link SessionParameter} for
+     *            a map of name/value pairs with parameters for the session, see
+     *            {@link org.apache.chemistry.opencmis.commons.SessionParameter}
+     *            for parameters supported by OpenCMIS
+     * 
      * 
      * @return a {@link Session} connected to the CMIS repository
      * 
-     * @see SessionParameter
+     * @see org.apache.chemistry.opencmis.commons.SessionParameter
      */
     Session createSession(Map<String, String> parameters);
 
     /**
      * Returns all repositories that are available at the endpoint.
      * 
-     * See {@link #createSession(Map)} for parameter details. The parameter
-     * {@code SessionParameter.REPOSITORY_ID} should not be set.
+     * 
+     * @param parameters
+     *            a map of name/value pairs with parameters for the session, see
+     *            {@link org.apache.chemistry.opencmis.commons.SessionParameter}
+     *            for parameters supported by OpenCMIS, the parameter
+     *            {@link org.apache.chemistry.opencmis.commons.SessionParameter.REPOSITORY_ID}
+     *            should not be set
      * 
      * @return a list of all available repositories
+     * 
+     * @see org.apache.chemistry.opencmis.commons.SessionParameter
      */
     List<Repository> getRepositories(Map<String, String> parameters);
-
 }

@@ -27,9 +27,8 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Query Statement.
- * 
  * <p>
- * Example: <blockquote>
+ * Sample code:
  * 
  * <pre>
  * Calendar cal = ...
@@ -52,9 +51,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * 
  * String statement = qs.toQueryString();
  * </pre>
- * 
- * </blockquote>
- * </p>
  */
 public interface QueryStatement extends Cloneable {
 
@@ -63,6 +59,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param typeId
+     *            the type ID
      */
     void setType(int parameterIndex, String typeId);
 
@@ -71,6 +69,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param type
+     *            the object type
      */
     void setType(int parameterIndex, ObjectType type);
 
@@ -79,6 +79,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param propertyId
+     *            the property ID
      */
     void setProperty(int parameterIndex, String typeId, String propertyId);
 
@@ -87,6 +89,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param propertyDefinition
+     *            the property definition
      */
     void setProperty(int parameterIndex, PropertyDefinition<?> propertyDefinition);
 
@@ -95,6 +99,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param num
+     *            the number
      */
     void setNumber(int parameterIndex, Number... num);
 
@@ -103,6 +109,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param str
+     *            the string
      */
     void setString(int parameterIndex, String... str);
 
@@ -112,22 +120,26 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param str
+     *            the LIKE string
      */
     void setStringLike(int parameterIndex, String str);
 
     /**
      * Sets the designated parameter to the given string in a CMIS contains
-     * statement. Note that the CMIS specification requires two levels of
-     * escaping. The first level escapes ', ", \ characters to \', \" and \\.
-     * The characters *, ? and - are interpreted as text search operators and
-     * are not escaped on first level. If *, ?, - shall be used as literals,
-     * they must be passed escaped with \*, \? and \- to this method.
-     * 
+     * statement.
+     * <p>
+     * Note that the CMIS specification requires two levels of escaping. The
+     * first level escapes ', ", \ characters to \', \" and \\. The characters
+     * *, ? and - are interpreted as text search operators and are not escaped
+     * on first level. If *, ?, - shall be used as literals, they must be passed
+     * escaped with \*, \? and \- to this method.
+     * <p>
      * For all statements in a CONTAINS() clause it is required to isolate those
      * from a query statement. Therefore a second level escaping is performed.
      * On the second level grammar ", ', - and \ are escaped with a \. See the
      * spec for further details.
-     * 
+     * <p>
      * Summary (input --> first level escaping --> second level escaping and
      * output): * --> * --> * ? --> ? --> ? - --> - --> - \ --> \\ --> \\\\ (for
      * any other character following other than * ? -) \* --> \* --> \\* \? -->
@@ -135,6 +147,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param str
+     *            the CONTAINS string
      */
     void setStringContains(int parameterIndex, String str);
 
@@ -143,6 +157,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param id
+     *            the object ID
      */
     void setId(int parameterIndex, ObjectId... id);
 
@@ -151,6 +167,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param uri
+     *            the URI
      */
     void setUri(int parameterIndex, URI... uri);
 
@@ -159,6 +177,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param url
+     *            the URL
      */
     void setUrl(int parameterIndex, URL... url);
 
@@ -167,6 +187,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param bool
+     *            the boolean
      */
     void setBoolean(int parameterIndex, boolean... bool);
 
@@ -175,6 +197,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value as Calendar object
      */
     void setDateTime(int parameterIndex, Calendar... cal);
 
@@ -183,6 +207,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value as Date object
      */
     void setDateTime(int parameterIndex, Date... date);
 
@@ -191,6 +217,9 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value in milliseconds from midnight, January 1,
+     *            1970 UTC.
      */
     void setDateTime(int parameterIndex, long... ms);
 
@@ -200,6 +229,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value as Calendar object
      */
     void setDateTimeTimestamp(int parameterIndex, Calendar... cal);
 
@@ -209,6 +240,8 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value as Date object
      */
     void setDateTimeTimestamp(int parameterIndex, Date... date);
 
@@ -218,6 +251,9 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
+     * @param cal
+     *            the DateTime value in milliseconds from midnight, January 1,
+     *            1970 UTC.
      */
     void setDateTimeTimestamp(int parameterIndex, long... ms);
 
@@ -231,12 +267,25 @@ public interface QueryStatement extends Cloneable {
     /**
      * Executes the query.
      * 
+     * @param searchAllVersions
+     *            {@code true} if all document versions should be included in
+     *            the search results, {@code false} if only the latest document
+     *            versions should be included in the search results
+     * 
+     * 
      * @see Session#query(String, boolean)
      */
     ItemIterable<QueryResult> query(boolean searchAllVersions);
 
     /**
      * Executes the query.
+     * 
+     * @param searchAllVersions
+     *            {@code true} if all document versions should be included in
+     *            the search results, {@code false} if only the latest document
+     *            versions should be included in the search results
+     * @param context
+     *            the operation context to use
      * 
      * @see Session#query(String, boolean, OperationContext)
      */

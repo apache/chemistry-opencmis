@@ -534,7 +534,7 @@
                   <groups>
                       <group>
                           <title>OpenCMIS Client API</title>
-                          <packages>org.apache.chemistry.opencmis.client.api:org.apache.chemistry.opencmis.client.util</packages>
+                          <packages>org.apache.chemistry.opencmis.client:org.apache.chemistry.opencmis.client.api:org.apache.chemistry.opencmis.client.util</packages>
                       </group>
                       <group>
                           <title>OpenCMIS Commons API</title>

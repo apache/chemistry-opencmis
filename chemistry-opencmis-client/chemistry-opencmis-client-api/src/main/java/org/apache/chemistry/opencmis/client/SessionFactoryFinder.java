@@ -28,6 +28,25 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 
 /**
  * Finds a {@link SessionFactory} implementation and creates a factory object.
+ * <p>
+ * Sample code:
+ * <p>
+ * 
+ * <pre>
+ * SessionFactory factory = SessionFactoryFinder.find();
+ * 
+ * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * parameter.put(SessionParameter.USER, "Otto");
+ * parameter.put(SessionParameter.PASSWORD, "****");
+ * 
+ * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
+ * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+ * parameter.put(SessionParameter.REPOSITORY_ID, "myRepository");
+ * ...
+ * Session session = factory.createSession(parameter);
+ * </pre>
+ * 
+ * @see SessionFactory
  */
 public final class SessionFactoryFinder {
 

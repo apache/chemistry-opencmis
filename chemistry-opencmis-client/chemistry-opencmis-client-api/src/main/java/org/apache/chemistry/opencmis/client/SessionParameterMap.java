@@ -43,6 +43,21 @@ import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 /**
  * A map with convenience methods to set session parameters.
+ * <p>
+ * Sample code:
+ * <p>
+ * 
+ * <pre>
+ * SessionFactory factory = ...
+ * 
+ * SessionParameterMap parameter = new SessionParameterMap();
+ * 
+ * parameter.setBasicAuthentication("Otto", "****");
+ * parameter.setAtomPubBindingUrl("http://localhost/cmis/atom");
+ * parameter.setRepositoryId("myRepository");
+ * ...
+ * Session session = factory.createSession(parameter);
+ * </pre>
  * 
  * @see SessionParameter
  * @see SessionFactory
