@@ -21,10 +21,14 @@ package org.apache.chemistry.opencmis.tck.tests.query;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -34,6 +38,13 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 
 public class QueryInFolderTest extends AbstractQueryTest {
+
+    private static final String CONTENT = "TCK test content.";
+
+    private static final int LEVEL1_DOCS = 5;
+    private static final int LEVEL1_FOLDERS = 5;
+    private static final int LEVEL2_DOCS = 5;
+    private static final int LEVEL2_FOLDERS = 5;
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -45,30 +56,68 @@ public class QueryInFolderTest extends AbstractQueryTest {
     @Override
     public void run(Session session) {
         if (supportsQuery(session) && !isFulltextOnly(session)) {
-            doQuery(session, "cmis:document", false);
-            doQuery(session, "cmis:document", true);
-            doQuery(session, "cmis:folder", false);
-            doQuery(session, "cmis:folder", true);
+            // create a test folder
+            Folder testFolder = createTestFolder(session);
+
+            try {
+                Set<String> topLevelDocs = new HashSet<String>();
+                Set<String> topLevelFolders = new HashSet<String>();
+
+                // create documents
+                for (int i = 0; i < LEVEL1_DOCS; i++) {
+                    Document newDocument = createDocument(session, testFolder, "doc" + i, CONTENT);
+                    topLevelDocs.add(newDocument.getId());
+                }
+
+                // create folders
+                for (int i = 0; i < LEVEL1_FOLDERS; i++) {
+                    Folder newFolder = createFolder(session, testFolder, "folder" + i);
+                    topLevelFolders.add(newFolder.getId());
+
+                    for (int j = 0; j < LEVEL2_DOCS; j++) {
+                        createDocument(session, newFolder, "doc" + j, CONTENT);
+                    }
+
+                    for (int j = 0; j < LEVEL2_FOLDERS; j++) {
+                        createFolder(session, newFolder, "folder" + j);
+                    }
+                }
+
+                doQuery(session, testFolder, "cmis:document", false, topLevelDocs, topLevelFolders);
+                doQuery(session, testFolder, "cmis:document", true, topLevelDocs, topLevelFolders);
+                doQuery(session, testFolder, "cmis:folder", false, topLevelDocs, topLevelFolders);
+                doQuery(session, testFolder, "cmis:folder", true, topLevelDocs, topLevelFolders);
+            } finally {
+                // delete the test folder
+                deleteTestFolder();
+            }
         } else {
             addResult(createResult(SKIPPED, "Metadata query not supported. Test Skipped!"));
         }
     }
 
-    private void doQuery(Session session, String type, boolean deep) {
+    private void doQuery(Session session, ObjectId testFolder, String type, boolean deep, Set<String> topLevelDocs,
+            Set<String> topLevelFolders) {
+        CmisTestResult f;
+
         String inWhat = (deep ? "IN_TREE" : "IN_FOLDER");
 
         QueryStatement statement = session.createQueryStatement("SELECT ? FROM ? WHERE " + inWhat + "(?)");
         statement.setProperty(1, type, PropertyIds.OBJECT_ID);
         statement.setType(2, type);
-        statement.setString(3, session.getRepositoryInfo().getRootFolderId());
+        statement.setString(3, testFolder.getId());
 
         addResult(createInfoResult("Query: " + statement.toQueryString()));
 
         try {
-            for (QueryResult qr : statement.query(false).getPage(10)) {
+            int count = 0;
+
+            for (QueryResult qr : statement.query(false).getPage(100)) {
+                count++;
+
                 String objectId = qr.getPropertyValueByQueryName("cmis:objectId");
 
-                CmisTestResult f = createResult(FAILURE, inWhat + " query returned an invalid object ID!");
+                f = createResult(FAILURE, inWhat + " query returned an invalid object ID!");
                 addResult(assertStringNotEmpty(objectId, null, f));
 
                 FileableCmisObject object = null;
@@ -80,9 +129,13 @@ public class QueryInFolderTest extends AbstractQueryTest {
                 }
 
                 if (!deep && object != null) {
+                    f = createResult(FAILURE, inWhat + " query returned an object that should not be there!");
+                    addResult(assertIsTrue(
+                            topLevelDocs.contains(object.getId()) || topLevelFolders.contains(object.getId()), null, f));
+
                     boolean found = false;
                     for (Folder parent : object.getParents()) {
-                        if (session.getRepositoryInfo().getRootFolderId().equals(parent.getId())) {
+                        if (testFolder.getId().equals(parent.getId())) {
                             found = true;
                             break;
                         }
@@ -90,10 +143,12 @@ public class QueryInFolderTest extends AbstractQueryTest {
 
                     if (!found) {
                         addResult(createResult(FAILURE, inWhat
-                                + " query returned an object, which hasn't the root folder as a parent folder!"));
+                                + " query returned an object, which hasn't the test folder as a parent folder!"));
                     }
                 }
             }
+
+            addResult(createInfoResult("Hits: " + count));
         } catch (CmisBaseException e) {
             addResult(createResult(FAILURE,
                     inWhat + " query failed: " + e.getClass().getSimpleName() + ": " + e.getMessage(), e, false));
