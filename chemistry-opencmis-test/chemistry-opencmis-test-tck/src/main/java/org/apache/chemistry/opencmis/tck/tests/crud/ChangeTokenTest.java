@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tck.tests.crud;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
@@ -50,7 +51,7 @@ public class ChangeTokenTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Change Token Test");
-        setDescription("Creates a document and updates it with an outdated change token.");
+        setDescription("Creates a document and a folder and updates them with an outdated change token.");
     }
 
     @Override
@@ -67,6 +68,9 @@ public class ChangeTokenTest extends AbstractSessionTest {
 
             // update folder properties test
             runUpdateFolderTest(session, testFolder);
+
+            // add child and update folder properties test
+            runAddChildFolderTest(session, testFolder);
         } finally {
             // delete the test folder
             deleteTestFolder();
@@ -212,6 +216,36 @@ public class ChangeTokenTest extends AbstractSessionTest {
                         + "should result in an UpdateConflict exception!"));
             } catch (CmisUpdateConflictException e) {
                 // expected exception
+            }
+
+        } finally {
+            deleteObject(folder);
+        }
+    }
+
+    private void runAddChildFolderTest(Session session, Folder testFolder) {
+        Folder folder = createFolder(session, testFolder, "folder1");
+
+        try {
+            if (folder.getChangeToken() == null) {
+                addResult(createResult(SKIPPED, "Repository does not provide change tokens for folders. Test skipped!"));
+                return;
+            }
+
+            if (!folder.getAllowableActions().getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES)) {
+                addResult(createResult(SKIPPED, "Folder name can't be changed. Test skipped!"));
+                return;
+            }
+
+            createDocument(session, folder, "doc1", "content");
+
+            try {
+                Map<String, Object> properties2 = new HashMap<String, Object>();
+                properties2.put(PropertyIds.NAME, "folder2");
+                folder.updateProperties(properties2, false);
+            } catch (CmisUpdateConflictException e) {
+                addResult(createResult(WARNING, "Adding a child to a folder changes the change token of the folder. "
+                        + "CMIS clients might not expect that."));
             }
 
         } finally {
