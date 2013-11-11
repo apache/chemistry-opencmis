@@ -74,6 +74,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
     private Response invoke(UrlBuilder url, String method, String contentType, Map<String, String> headers,
             Output writer, BindingSession session, BigInteger offset, BigInteger length) {
+        int respCode = -1;
+
         try {
             // log before connect
             if (LOG.isDebugEnabled()) {
@@ -201,7 +203,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             conn.connect();
 
             // get stream, if present
-            int respCode = conn.getResponseCode();
+            respCode = conn.getResponseCode();
             InputStream inputStream = null;
             if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
                 inputStream = conn.getInputStream();
@@ -221,7 +223,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
             return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
                     conn.getErrorStream());
         } catch (Exception e) {
-            throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
+            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
+            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
         }
     }
 }

@@ -74,7 +74,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         setLayout(new SpringLayout());
 
         urlField = createTextField(this, "URL:");
-        urlField.setText(System.getProperty(SYSPROP_URL, ""));
+        urlField.setText(System.getProperty(SYSPROP_URL, "").trim());
 
         createBindingButtons(this);
 
@@ -206,7 +206,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
     @Override
     public Map<String, String> getSessionParameters() {
-        String url = urlField.getText();
+        String url = urlField.getText().trim();
 
         BindingType binding = BindingType.ATOMPUB;
         if (bindingWebServicesButton.isSelected()) {

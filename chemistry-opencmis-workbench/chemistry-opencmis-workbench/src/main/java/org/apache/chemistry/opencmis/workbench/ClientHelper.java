@@ -114,6 +114,10 @@ public final class ClientHelper {
                 if (cex.getErrorContent() != null) {
                     LOG.error("Error content: " + cex.getErrorContent());
                 }
+
+                if (LOG.isDebugEnabled() && cex.getCause() != null) {
+                    LOG.debug("Cause: " + cex.getCause().toString(), cex.getCause());
+                }
             }
         }
 

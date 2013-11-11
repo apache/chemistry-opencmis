@@ -97,6 +97,8 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
 
     protected Response invoke(UrlBuilder url, String method, String contentType, Map<String, String> headers,
             final Output writer, final BindingSession session, BigInteger offset, BigInteger length) {
+        int respCode = -1;
+
         try {
             // log before connect
             if (LOG.isDebugEnabled()) {
@@ -255,7 +257,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
             HttpEntity entity = response.getEntity();
 
             // get stream, if present
-            int respCode = response.getStatusLine().getStatusCode();
+            respCode = response.getStatusLine().getStatusCode();
             InputStream inputStream = null;
             InputStream errorStream = null;
 
@@ -298,7 +300,8 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
             return new Response(respCode, response.getStatusLine().getReasonPhrase(), responseHeaders, inputStream,
                     errorStream);
         } catch (IOException e) {
-            throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
+            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
+            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
         }
     }
 
