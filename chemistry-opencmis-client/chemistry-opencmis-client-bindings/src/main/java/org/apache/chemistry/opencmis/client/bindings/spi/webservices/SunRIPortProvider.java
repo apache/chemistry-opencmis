@@ -52,7 +52,8 @@ public class SunRIPortProvider extends AbstractPortProvider {
      */
     protected BindingProvider createPortObject(CmisServiceHolder serviceHolder) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating Web Service port object of " + serviceHolder.getServiceName() + "...");
+            LOG.debug("Session {}: Creating Web Service port object of {} ...", getSession().getSessionId(),
+                    serviceHolder.getServiceName());
         }
 
         try {

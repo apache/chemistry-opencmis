@@ -79,7 +79,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
         try {
             // log before connect
             if (LOG.isDebugEnabled()) {
-                LOG.debug(method + " " + url);
+                LOG.debug("Session {}: {} {}", session.getSessionId(), method, url);
             }
 
             // connect
@@ -211,7 +211,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // log after connect
             if (LOG.isTraceEnabled()) {
-                LOG.trace(method + " " + url + " > Headers: " + conn.getHeaderFields());
+                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url, conn
+                        .getHeaderFields().toString());
             }
 
             // forward response HTTP headers

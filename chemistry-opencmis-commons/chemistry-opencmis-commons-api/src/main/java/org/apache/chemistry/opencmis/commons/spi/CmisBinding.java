@@ -34,6 +34,11 @@ package org.apache.chemistry.opencmis.commons.spi;
 public interface CmisBinding {
 
     /**
+     * Returns the client session id.
+     */
+    String getSessionId();
+
+    /**
      * Gets a Repository Service interface object.
      */
     RepositoryService getRepositoryService();

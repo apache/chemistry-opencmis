@@ -1223,4 +1223,11 @@ public class SessionImpl implements Session {
             getBinding().getPolicyService().removePolicy(getRepositoryId(), id, objectId.getId(), null);
         }
     }
+
+    // ----
+
+    @Override
+    public String toString() {
+        return "Session " + getBinding().getSessionId();
+    }
 }

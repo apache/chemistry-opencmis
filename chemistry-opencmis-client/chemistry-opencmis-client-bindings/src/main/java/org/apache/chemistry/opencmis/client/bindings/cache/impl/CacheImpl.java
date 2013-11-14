@@ -198,7 +198,7 @@ public class CacheImpl implements Cache {
             cacheLevel.put(value, keys[keys.length - 1]);
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace(name + ": put [" + getFormattedKeys(keys) + "] = " + value);
+                LOG.trace("{}: put [{}] = {}", name, getFormattedKeys(keys), value);
             }
         } finally {
             lock.writeLock().unlock();
@@ -230,7 +230,7 @@ public class CacheImpl implements Cache {
             cacheLevel.remove(keys[keys.length - 1]);
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace(name + ": removed [" + getFormattedKeys(keys) + "]");
+                LOG.trace("{}: removed [{}]", name, getFormattedKeys(keys));
             }
         } finally {
             lock.writeLock().unlock();

@@ -27,6 +27,11 @@ import java.util.Collection;
 public interface BindingSession extends Serializable {
 
     /**
+     * Returns the ID of this session.
+     */
+    String getSessionId();
+
+    /**
      * Returns all keys.
      */
     Collection<String> getKeys();

@@ -53,7 +53,7 @@ public class CmisBrowserBindingSpi implements CmisSpi {
      */
     public CmisBrowserBindingSpi(BindingSession session) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing Browser Binding SPI...");
+            LOG.debug("Session {}: Initializing Browser Binding SPI...", session.getSessionId());
         }
 
         this.session = session;

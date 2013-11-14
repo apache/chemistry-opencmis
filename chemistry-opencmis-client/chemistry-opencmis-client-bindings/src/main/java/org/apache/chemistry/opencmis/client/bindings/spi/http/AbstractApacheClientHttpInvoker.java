@@ -102,7 +102,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
         try {
             // log before connect
             if (LOG.isDebugEnabled()) {
-                LOG.debug(method + " " + url);
+                LOG.debug("Session {}: {} {}", session.getSessionId(), method, url);
             }
 
             // get HTTP client object from session
@@ -288,7 +288,8 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
 
             // log after connect
             if (LOG.isTraceEnabled()) {
-                LOG.trace(method + " " + url + " > Headers: " + responseHeaders);
+                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url,
+                        responseHeaders.toString());
             }
 
             // forward response HTTP headers

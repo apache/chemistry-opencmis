@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -33,6 +34,7 @@ public class SessionImpl implements BindingSession {
 
     private static final long serialVersionUID = 1L;
 
+    private final String id;
     private final Map<String, Object> data;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -41,7 +43,12 @@ public class SessionImpl implements BindingSession {
      * Constructor.
      */
     public SessionImpl() {
+        id = UUID.randomUUID().toString();
         data = new HashMap<String, Object>();
+    }
+
+    public String getSessionId() {
+        return id;
     }
 
     public Collection<String> getKeys() {
@@ -137,6 +144,6 @@ public class SessionImpl implements BindingSession {
 
     @Override
     public String toString() {
-        return data.toString();
+        return "Session " + id + ": " + data.toString();
     }
 }

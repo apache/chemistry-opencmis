@@ -65,7 +65,7 @@ public class CmisLocalSpi implements CmisSpi {
      */
     public CmisLocalSpi(BindingSession session) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing local SPI...");
+            LOG.debug("Session {}: Initializing local SPI...", session.getSessionId());
         }
 
         // get the service factory class name

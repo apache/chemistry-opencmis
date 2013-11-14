@@ -63,7 +63,7 @@ public class CmisWebServicesSpi implements CmisSpi {
      */
     public CmisWebServicesSpi(BindingSession session) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing Web Services SPI...");
+            LOG.debug("Session {}: Initializing Web Services SPI...", session.getSessionId());
         }
 
         AbstractPortProvider portProvider = null;

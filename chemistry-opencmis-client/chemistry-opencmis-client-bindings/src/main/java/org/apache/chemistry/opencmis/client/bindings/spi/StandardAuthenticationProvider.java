@@ -57,7 +57,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         boolean sendBasicAuth = getSendBasicAuth();
 
         if (getHandleCookies()) {
-            cookieManager = new CmisCookieManager();
+            cookieManager = new CmisCookieManager(session.getSessionId());
         }
 
         // basic authentication
@@ -218,8 +218,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             password = "";
         }
 
-        return Collections
-                .singletonList("Basic " + Base64.encodeBytes(IOUtils.toUTF8Bytes(username + ":" + password)));
+        return Collections.singletonList("Basic " + Base64.encodeBytes(IOUtils.toUTF8Bytes(username + ":" + password)));
     }
 
     /**

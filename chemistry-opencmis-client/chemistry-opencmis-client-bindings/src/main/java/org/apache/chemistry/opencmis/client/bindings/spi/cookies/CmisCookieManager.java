@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ public class CmisCookieManager implements Serializable {
     private static final String VERSION_ZERO_HEADER = "Set-cookie";
     private static final String VERSION_ONE_HEADER = "Set-cookie2";
 
+    private final String sessionId;
     private final CmisCookieStoreImpl store;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -58,6 +60,14 @@ public class CmisCookieManager implements Serializable {
      * Constructs a new cookie manager.
      */
     public CmisCookieManager() {
+        this("<unknown>");
+    }
+
+    /**
+     * Constructs a new cookie manager.
+     */
+    public CmisCookieManager(String sessionId) {
+        this.sessionId = sessionId;
         store = new CmisCookieStoreImpl();
     }
 
@@ -86,9 +96,9 @@ public class CmisCookieManager implements Serializable {
         lock.writeLock().lock();
         try {
             List<CmisHttpCookie> cookies = store.get(uri);
+            String uriPath = uri.getPath();
             for (int i = 0; i < cookies.size(); i++) {
                 CmisHttpCookie cookie = cookies.get(i);
-                String uriPath = uri.getPath();
                 String cookiePath = cookie.getPath();
                 // if the uri's path does not path-match cookie's path, remove
                 // cookies from the list
@@ -101,7 +111,8 @@ public class CmisCookieManager implements Serializable {
 
             if (LOG.isDebugEnabled()) {
                 if (map != null && !map.isEmpty()) {
-                    LOG.debug("Setting cookies for URL " + url + ": " + map.get("Cookie"));
+                    LOG.debug("Session {}: Setting cookies for URL {}: {}", sessionId, url,
+                            map.get("Cookie") == null ? "" : map.get("Cookie").toString());
                 }
             }
 
@@ -177,7 +188,7 @@ public class CmisCookieManager implements Serializable {
 
             if (LOG.isDebugEnabled()) {
                 if (!cookies.isEmpty()) {
-                    LOG.debug("Retrieved cookies for URL " + url + ": " + cookies);
+                    LOG.debug("Session {}: Retrieved cookies for URL {}: {}", sessionId, url, cookies.toString());
                 }
             }
         } finally {

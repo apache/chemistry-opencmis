@@ -194,7 +194,7 @@ public abstract class AbstractPortProvider {
 
             URL wsdlUrl = service.getPortClass().getResource("/wsdl/cmis11/CMISWS-Service.wsdl");
             if (LOG.isDebugEnabled()) {
-                LOG.debug("WSDL URL: " + wsdlUrl.toExternalForm());
+                LOG.debug("Session {}: WSDL URL: {}", getSession().getSessionId(), wsdlUrl.toExternalForm());
             }
 
             Service newService = serviceConstructor.newInstance(new Object[] { wsdlUrl, service.getQName() });
@@ -488,7 +488,8 @@ public abstract class AbstractPortProvider {
      */
     protected CmisServiceHolder initServiceObject(final CmisWebSerivcesService service) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing Web Service " + service.getServiceName() + "...");
+            LOG.debug("Session {}: Initializing Web Service {} ...", getSession().getSessionId(),
+                    service.getServiceName());
         }
 
         try {

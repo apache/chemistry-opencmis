@@ -158,6 +158,10 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         }
     }
 
+    public String getSessionId() {
+        return session.getSessionId();
+    }
+
     public RepositoryService getRepositoryService() {
         checkSession();
         return repositoryServiceWrapper;
