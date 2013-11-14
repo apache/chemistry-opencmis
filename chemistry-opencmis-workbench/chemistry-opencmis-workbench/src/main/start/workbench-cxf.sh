@@ -40,24 +40,14 @@ done
 
 # use variable CUSTOM_JAVA_OPTS to set additional JAVA options
 
-JAVA_OPTS="-Djava.net.useSystemProxies=true -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=cxf"
+# uncomment the following lines to configure HTTP proxy
 
-if [ -n "$http_proxy" ]; then
-  HTTP_PROXY_HOST=$(echo $http_proxy | sed 's/http:\/\/\(.*\):.*/\1/')
-  HTTP_PROXY_PORT=$(echo $http_proxy | sed 's/http:\/\/.*:\(.*\)/\1/')
-  JAVA_OPTS="$JAVA_OPTS -Dhttp.proxyHost=$HTTP_PROXY_HOST -Dhttp.proxyPort=$HTTP_PROXY_PORT"
-fi
+# export http_proxy=http://<proxy>:<port>
+# export https_proxy=https://<proxy>:<port>
+# export no_proxy=localhost,127.0.0.0,.local
 
-if [ -n "$https_proxy" ]; then
-  HTTPS_PROXY_HOST=$(echo $https_proxy | sed 's/https*:\/\/\(.*\):.*/\1/')
-  HTTPS_PROXY_PORT=$(echo $https_proxy | sed 's/https*:\/\/.*:\(.*\)/\1/')
-  JAVA_OPTS="$JAVA_OPTS -Dhttps.proxyHost=$HTTPS_PROXY_HOST -Dhttps.proxyPort=$HTTPS_PROXY_PORT"
-fi
 
-if [ -n "$no_proxy" ]; then
-  NON_PROXY_HOSTS=$(echo $no_proxy | sed 's/[[:space:]]//g; s/^\./\*\./g; s/,\./,\*\./g; s/\.$/\.\*/g; s/\.,/\.\*,/g; s/,/|/g;')
-  JAVA_OPTS="$JAVA_OPTS -Dhttp.nonProxyHosts=$NON_PROXY_HOSTS"
-fi
-
+JAVA_PROXY_CONF=$($JAVA -classpath $WCP org.apache.chemistry.opencmis.workbench.ProxyDetector -j -s)
+JAVA_OPTS="$JAVA_PROXY_CONF -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=cxf"
 
 exec $JAVA $JAVA_OPTS $CUSTOM_JAVA_OPTS -classpath $WCP org.apache.chemistry.opencmis.workbench.Workbench &
