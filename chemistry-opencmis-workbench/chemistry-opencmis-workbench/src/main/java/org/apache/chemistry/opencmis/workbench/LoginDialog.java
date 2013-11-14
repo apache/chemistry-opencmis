@@ -155,7 +155,7 @@ public class LoginDialog extends JDialog {
                     loginButton.setEnabled(false);
                     getRootPane().setDefaultButton(loadRepositoryButton);
 
-                    ClientHelper.showError(getOwner(), ex);
+                    new ConnectionErrorDialog(LoginDialog.this, ex);
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
@@ -180,8 +180,7 @@ public class LoginDialog extends JDialog {
                     loginButton.setEnabled(false);
                     getRootPane().setDefaultButton(loadRepositoryButton);
 
-                    ClientHelper.showError(getOwner(), ex);
-
+                    new ConnectionErrorDialog(LoginDialog.this, ex);
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     getRootPane().setDefaultButton(loadRepositoryButton);

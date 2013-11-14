@@ -451,6 +451,12 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         message = extractErrorMessage(message, errorContent);
 
         switch (code) {
+        case 301:
+        case 302:
+        case 303:
+        case 307:
+            return new CmisConnectionException("Redirects are not supported (HTTP status code " + code + "): "
+                    + message, errorContent, t);
         case 400:
             if (CmisFilterNotValidException.EXCEPTION_NAME.equals(exception)) {
                 return new CmisFilterNotValidException(message, errorContent, t);

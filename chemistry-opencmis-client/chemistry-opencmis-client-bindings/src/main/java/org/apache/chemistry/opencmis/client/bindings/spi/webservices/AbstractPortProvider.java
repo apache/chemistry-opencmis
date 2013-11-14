@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -519,8 +520,14 @@ public abstract class AbstractPortProvider {
             String message = "Cannot connect to Web Services [" + service.getServiceName() + "]: " + he.getMessage();
             if (he.getStatusCode() == 401) {
                 throw new CmisUnauthorizedException(message, he);
+            } else if (he.getStatusCode() == 404) {
+                throw new CmisObjectNotFoundException(message, he);
             } else if (he.getStatusCode() == 407) {
                 throw new CmisProxyAuthenticationException(message, he);
+            } else if (he.getStatusCode() == 301 || he.getStatusCode() == 302 || he.getStatusCode() == 303
+                    || he.getStatusCode() == 307) {
+                throw new CmisConnectionException("Redirects are not supported (HTTP status code " + he.getStatusCode()
+                        + "): " + message, he);
             } else {
                 throw new CmisConnectionException(message, he);
             }

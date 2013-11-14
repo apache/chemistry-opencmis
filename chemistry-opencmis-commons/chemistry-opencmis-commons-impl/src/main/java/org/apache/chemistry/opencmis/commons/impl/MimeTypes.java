@@ -40,6 +40,7 @@ public final class MimeTypes {
         EXT2MIME.put("aif", "audio/x-aiff");
         EXT2MIME.put("aifc", "audio/x-aiff");
         EXT2MIME.put("aiff", "audio/x-aiff");
+        EXT2MIME.put("apk", "application/vnd.android.package-archive");
         EXT2MIME.put("asf", "video/x-ms-asf");
         EXT2MIME.put("asr", "video/x-ms-asf");
         EXT2MIME.put("asx", "video/x-ms-asf");
@@ -281,6 +282,7 @@ public final class MimeTypes {
         MIME2EXT.put("application/pkix-crl", "crl");
         MIME2EXT.put("application/postscript", "ps");
         MIME2EXT.put("application/rtf", "rtf");
+        MIME2EXT.put("application/vnd.android.package-archive", "apk");
         MIME2EXT.put("application/vnd.apple.keynote", "key");
         MIME2EXT.put("application/vnd.apple.numbers", "numbers");
         MIME2EXT.put("application/vnd.apple.pages", "pages");

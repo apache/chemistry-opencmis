@@ -100,7 +100,7 @@ public final class ClientHelper {
     private ClientHelper() {
     }
 
-    public static void showError(Component parent, Exception ex) {
+    public static void logError(Exception ex) {
         if (LOG.isErrorEnabled()) {
             LOG.error(ex.getClass().getSimpleName() + ": " + ex.getMessage(), ex);
 
@@ -120,6 +120,10 @@ public final class ClientHelper {
                 }
             }
         }
+    }
+
+    public static void showError(Component parent, Exception ex) {
+        logError(ex);
 
         String exceptionName = ex.getClass().getSimpleName();
         if (ex instanceof CmisBaseException) {
@@ -628,7 +632,8 @@ public final class ClientHelper {
                 public void actionPerformed(ActionEvent e) {
                     AttributeSet style = console.getOutputStyle();
                     console.clearOutput();
-                    console.appendOutputNl("Repository id:   " + groovySession.getRepositoryInfo().getId(), style);
+                    console.appendOutputNl("Session ID:      " + groovySession.getBinding().getSessionId(), style);
+                    console.appendOutputNl("Repository ID:   " + groovySession.getRepositoryInfo().getId(), style);
                     console.appendOutputNl("Repository name: " + groovySession.getRepositoryInfo().getName(), style);
                     console.appendOutputNl("Binding:         " + bindingType, style);
                     console.appendOutputNl("User:            " + user, style);

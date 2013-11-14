@@ -254,6 +254,12 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
         // fall back to status code
         switch (code) {
+        case 301:
+        case 302:
+        case 303:
+        case 307:
+            return new CmisConnectionException("Redirects are not supported (HTTP status code " + code + "): "
+                    + message, errorContent, t);
         case 400:
             return new CmisInvalidArgumentException(message, errorContent, t);
         case 401:
