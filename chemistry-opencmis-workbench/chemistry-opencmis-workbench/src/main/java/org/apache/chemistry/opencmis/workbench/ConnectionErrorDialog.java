@@ -120,7 +120,6 @@ public class ConnectionErrorDialog extends JDialog {
 
         getRootPane().setDefaultButton(closeButton);
 
-        ClientHelper.installKeyBindings();
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -146,7 +145,7 @@ public class ConnectionErrorDialog extends JDialog {
         } else if (exception instanceof CmisRuntimeException) {
             return "Something fatal happend on the client or server side."
                     + "<br>Check your URL, the binding, and your proxy settings."
-                    + "<br>Also see the CMIS Workbench log for more details." + getProxyConfig();
+                    + "<br><br>Also see the CMIS Workbench log for more details." + getProxyConfig();
         } else if (exception instanceof CmisConnectionException) {
             Throwable cause = exception.getCause();
             while (cause instanceof CmisConnectionException) {
@@ -167,13 +166,19 @@ public class ConnectionErrorDialog extends JDialog {
                         + "<br><b>WARNING:</b> It disables <em>all</em> SSL certificate checks!" + getProxyConfig();
             } else if (cause instanceof JSONParseException) {
                 return "The provided URL does not return a JSON response."
-                        + "<br>Check your URL, the binding, and your proxy settings." + getProxyConfig();
+                        + "<br>Check your URL, the binding, and your proxy settings."
+                        + "<br><br>Some servers return a HTML login page if the credentials are incorrect."
+                        + "<br>Check your credentials." + getProxyConfig();
             } else if (cause instanceof XMLStreamException) {
                 return "The provided URL does not return an AtomPub response."
-                        + "<br>Check your URL, the binding, and your proxy settings." + getProxyConfig();
+                        + "<br>Check your URL, the binding, and your proxy settings."
+                        + "<br><br>Some servers return a HTML login page if the credentials are incorrect."
+                        + "<br>Check your credentials." + getProxyConfig();
             } else if (cause instanceof SAXParseException) {
                 return "The provided URL does not return a WSDL."
-                        + "<br>Check your URL, the binding, and your proxy settings." + getProxyConfig();
+                        + "<br>Check your URL, the binding, and your proxy settings."
+                        + "<br><br>Some servers return a HTML login page if the credentials are incorrect."
+                        + "<br>Check your credentials." + getProxyConfig();
             } else if (cause instanceof IOException) {
                 return "A network problem occured.<br>Check your URL and your network and proxy settings."
                         + getProxyConfig();
@@ -181,7 +186,9 @@ public class ConnectionErrorDialog extends JDialog {
 
             if (exception.getMessage().toLowerCase(Locale.ENGLISH).startsWith("unexpected document")) {
                 return "The provided URL does not return a AtomPub response."
-                        + "<br>Check your URL, the binding, and your proxy settings." + getProxyConfig();
+                        + "<br>Check your URL, the binding, and your proxy settings."
+                        + "<br><br>Some servers return a HTML login page if the credentials are incorrect."
+                        + "<br>Check your credentials." + getProxyConfig();
             }
 
             return "Check the URL, the binding, and the credentials.";
