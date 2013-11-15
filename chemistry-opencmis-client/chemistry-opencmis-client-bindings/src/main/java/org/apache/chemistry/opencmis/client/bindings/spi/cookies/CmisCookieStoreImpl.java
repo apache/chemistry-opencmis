@@ -25,12 +25,10 @@ package org.apache.chemistry.opencmis.client.bindings.spi.cookies;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -42,106 +40,81 @@ public class CmisCookieStoreImpl implements Serializable {
     private static final String IP_ADDRESS_PATTERN_STR = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
     private static final Pattern IP_ADDRESS_PATTERN = Pattern.compile(IP_ADDRESS_PATTERN_STR);
 
-    private final Map<URI, ArrayList<CmisHttpCookie>> storeMap;
+    private final int maxUrls;
+    private final LinkedList<CmisHttpCookie> storeList;
 
     public CmisCookieStoreImpl() {
-        this(1000);
+        this(300);
     }
 
     public CmisCookieStoreImpl(final int maxUrls) {
-        storeMap = new LinkedHashMap<URI, ArrayList<CmisHttpCookie>>(maxUrls + 1, 0.70f, true) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean removeEldestEntry(Map.Entry<URI, ArrayList<CmisHttpCookie>> eldest) {
-                return size() > maxUrls;
-            }
-        };
+        this.maxUrls = maxUrls;
+        storeList = new LinkedList<CmisHttpCookie>();
     }
 
-    public void add(URI uri, CmisHttpCookie cookie) {
+    public void add(final URI uri, final CmisHttpCookie cookie) {
         if (uri == null || cookie == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("URI and cookie must be set!");
         }
 
-        ArrayList<CmisHttpCookie> cookies = null;
-        if (storeMap.containsKey(uri)) {
-            cookies = storeMap.get(uri);
-            cookies.remove(cookie);
-            cookies.add(cookie);
+        if (cookie.hasExpired()) {
+            storeList.remove(cookie);
+            return;
+        }
 
-            // eliminate expired cookies
-            if (cookies.size() > 1) {
-                cleanCookieList(cookies);
+        Iterator<CmisHttpCookie> iter = storeList.iterator();
+        while (iter.hasNext()) {
+            CmisHttpCookie storeCookie = iter.next();
+
+            if (storeCookie.equals(cookie) || storeCookie.hasExpired()) {
+                iter.remove();
             }
-        } else {
-            cookies = new ArrayList<CmisHttpCookie>();
-            cookies.add(cookie);
-            storeMap.put(uri, cookies);
+        }
+
+        storeList.addFirst(cookie);
+
+        if (storeList.size() > maxUrls) {
+            storeList.removeLast();
         }
     }
 
     public List<CmisHttpCookie> get(URI uri) {
         if (uri == null) {
-            throw new NullPointerException("URI is null!");
+            throw new IllegalArgumentException("URI is null!");
         }
 
-        // get cookies associated with given URI. If none, returns an empty list
-        List<CmisHttpCookie> cookies = storeMap.get(uri);
-        if (cookies == null) {
-            cookies = new ArrayList<CmisHttpCookie>();
-        } else {
-            // eliminate expired cookies
-            cleanCookieList(cookies);
+        final String uriHost = uri.getHost().toLowerCase();
+
+        boolean isSecure = false;
+        String scheme = uri.getScheme();
+        if (scheme != null) {
+            isSecure = scheme.toLowerCase(Locale.ENGLISH).startsWith("https");
         }
 
-        // get cookies whose domain matches the given URI
-        List<URI> uris = new ArrayList<URI>(storeMap.keySet());
-        for (URI u : uris) {
-            // exclude the given URI
-            if (!u.equals(uri)) {
-                boolean secure = false;
-                String scheme = u.getScheme();
-                if (scheme != null) {
-                    secure = scheme.toLowerCase().startsWith("https");
-                }
+        List<CmisHttpCookie> cookies = new ArrayList<CmisHttpCookie>();
 
-                String newHost = uri.getHost().toLowerCase();
+        Iterator<CmisHttpCookie> iter = storeList.iterator();
+        while (iter.hasNext()) {
+            CmisHttpCookie cookie = iter.next();
 
-                List<CmisHttpCookie> listCookie = storeMap.get(u);
-                Iterator<CmisHttpCookie> iter = listCookie.iterator();
-                while (iter.hasNext()) {
-                    CmisHttpCookie cookie = iter.next();
+            if (cookie.hasExpired()) {
+                iter.remove();
+            } else if ((!cookie.getSecure() || isSecure) && cookie.getDomain() != null) {
+                String cookieDomain = cookie.getDomain().toLowerCase();
 
-                    if (cookie.hasExpired()) {
-                        iter.remove();
-                        if (listCookie.isEmpty()) {
-                            storeMap.remove(u);
+                if (isIPAddress(uriHost) && uriHost.equals(cookieDomain)) {
+                    cookies.add(cookie);
+                } else {
+                    if (cookie.getVersion() == 0) {
+                        // Netscape, RFC 2109, RFC 6265
+                        if (uriHost.endsWith(cookieDomain)
+                                && (uriHost.length() == cookieDomain.length() || cookieDomain.charAt(0) == '.')) {
+                            cookies.add(cookie);
                         }
-                    } else if (!cookies.contains(cookie) && (!cookie.getSecure() || secure)
-                            && cookie.getDomain() != null) {
-                        String newDomain = cookie.getDomain().toLowerCase();
-
-                        if (isIPAddress(newHost)) {
-                            if (newHost.equals(newDomain)) {
-                                cookies.add(cookie);
-                            }
-                        } else {
-                            if (cookie.getVersion() == 0) {
-                                // Netscape, RFC 2109, RFC 6265
-                                if (newHost.endsWith(newDomain)) {
-                                    if (newHost.length() == newDomain.length()) {
-                                        cookies.add(cookie);
-                                    } else if (newDomain.charAt(0) == '.') {
-                                        cookies.add(cookie);
-                                    }
-                                }
-                            } else if (cookie.getVersion() == 1) {
-                                // RFC 2965
-                                if (CmisHttpCookie.domainMatches(cookie.getDomain(), newHost)) {
-                                    cookies.add(cookie);
-                                }
-                            }
+                    } else if (cookie.getVersion() == 1) {
+                        // RFC 2965
+                        if (CmisHttpCookie.domainMatches(cookieDomain, uriHost)) {
+                            cookies.add(cookie);
                         }
                     }
                 }
@@ -163,61 +136,5 @@ public class CmisCookieStoreImpl implements Serializable {
         }
 
         return false;
-    }
-
-    private void cleanCookieList(List<CmisHttpCookie> cookies) {
-        Iterator<CmisHttpCookie> iter = cookies.iterator();
-        while (iter.hasNext()) {
-            CmisHttpCookie cookie = iter.next();
-            if (cookie.hasExpired()) {
-                iter.remove();
-            }
-        }
-    }
-
-    public List<CmisHttpCookie> getCookies() {
-        List<CmisHttpCookie> cookies = new ArrayList<CmisHttpCookie>();
-        Collection<ArrayList<CmisHttpCookie>> values = storeMap.values();
-        for (ArrayList<CmisHttpCookie> list : values) {
-            Iterator<CmisHttpCookie> iter = list.iterator();
-            while (iter.hasNext()) {
-                CmisHttpCookie cookie = iter.next();
-                if (cookie.hasExpired()) {
-                    iter.remove(); // eliminate expired cookies
-                } else if (!cookies.contains(cookie)) {
-                    cookies.add(cookie);
-                }
-            }
-        }
-
-        return Collections.unmodifiableList(cookies);
-    }
-
-    public List<URI> getURIs() {
-        return new ArrayList<URI>(storeMap.keySet());
-    }
-
-    public boolean remove(URI uri, CmisHttpCookie cookie) {
-        if (cookie == null) {
-            throw new NullPointerException("Cookie is null!");
-        }
-
-        boolean success = false;
-        Collection<ArrayList<CmisHttpCookie>> values = storeMap.values();
-        for (ArrayList<CmisHttpCookie> list : values) {
-            if (list.remove(cookie)) {
-                success = true;
-            }
-        }
-
-        return success;
-    }
-
-    public boolean removeAll() {
-        if (!storeMap.isEmpty()) {
-            storeMap.clear();
-        }
-
-        return true;
     }
 }
