@@ -1325,9 +1325,12 @@ public final class JSONConverter {
             }
 
             JSONObject aceObject = new JSONObject();
-            JSONObject principalObjecy = new JSONObject();
-            principalObjecy.put(JSON_ACE_PRINCIPAL_ID, ace.getPrincipalId());
-            aceObject.put(JSON_ACE_PRINCIPAL, principalObjecy);
+
+            JSONObject principalObject = new JSONObject();
+            principalObject.put(JSON_ACE_PRINCIPAL_ID, ace.getPrincipalId());
+            convertExtension(ace.getPrincipal(), principalObject);
+            aceObject.put(JSON_ACE_PRINCIPAL, principalObject);
+            
             aceObject.put(JSON_ACE_PERMISSIONS, permissions);
             aceObject.put(JSON_ACE_IS_DIRECT, ace.isDirect());
 
