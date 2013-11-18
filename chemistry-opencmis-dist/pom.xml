@@ -33,77 +33,77 @@
     <artifactId>chemistry-opencmis-dist</artifactId>
     <name>OpenCMIS Assemblies Distribution</name>
     <packaging>pom</packaging>
-    
+
     <properties>
         <parentBasedir>../</parentBasedir>
     </properties>
 
     <!-- These dependencies are used to be added in the assambly -->
     <dependencies>
-    
+
         <!-- Used for client-assembly.xml -->
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-client-impl</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-client-api</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-client-bindings</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-commons-api</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-commons-impl</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- Used for server-assembly.xml -->
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-server-bindings-war</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-server-support</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- Used for server-webapps-assembly.xml -->
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-test-browser-app</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-server-fileshare</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <artifactId>chemistry-opencmis-server-inmemory</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
@@ -116,13 +116,7 @@
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
         </dependency>
-        
-         <dependency>
-            <artifactId>chemistry-opencmis-osgi-server</artifactId>
-            <groupId>org.apache.chemistry.opencmis</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        
+
     </dependencies>
 
     <profiles>
