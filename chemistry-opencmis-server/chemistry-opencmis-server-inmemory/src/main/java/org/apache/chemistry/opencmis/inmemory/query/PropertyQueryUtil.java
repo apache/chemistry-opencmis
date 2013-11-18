@@ -51,7 +51,7 @@ public final class PropertyQueryUtil {
         boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Content) {
-            content = ((Content) so).getContent(0, 0);
+            content = ((Content) so).getContent();
         }
         if (so instanceof DocumentVersion) {
             ver = (DocumentVersion) so;

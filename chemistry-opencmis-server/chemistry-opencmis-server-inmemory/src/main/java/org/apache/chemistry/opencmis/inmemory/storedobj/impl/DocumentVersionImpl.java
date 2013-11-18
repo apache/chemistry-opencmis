@@ -46,19 +46,17 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings
             .getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
-    private ContentStreamDataImpl fContent;
+    private ContentStream fContent;
     private final VersionedDocumentImpl fContainer; // the document this version
                                                     // belongs to
     private String fComment; // checkin comment
     private boolean fIsMajor;
     private boolean fIsPwc; // true if this is the PWC
 
-    public DocumentVersionImpl(String repositoryId, VersionedDocument container, ContentStream content,
-            VersioningState verState) {
+    public DocumentVersionImpl(String repositoryId, VersionedDocument container, VersioningState verState) {
         super();
         setRepositoryId(repositoryId);
         fContainer = (VersionedDocumentImpl) container;
-        setContentIntern(content);
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
         fProperties = new HashMap<String, PropertyData<?>>();
@@ -72,40 +70,12 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
 
     @Override
-    public void setContent(ContentStream content, boolean mustPersist) {
+    public void setContent(ContentStream content) {
         setContentIntern(content);
     }
 
     private void setContentIntern(ContentStream content) {
-        if (null == content) {
-            fContent = null;
-        } else {
-            fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
-            fContent.setFileName(content.getFileName());
-            fContent.setMimeType(content.getMimeType());
-            fContent.setLastModified(getModifiedAt());
-            try {
-                fContent.setContent(content.getStream());
-            } catch (IOException e) {
-                throw new CmisRuntimeException("Failed to get content from InputStream", e);
-            }
-        }
-    }
-
-    @Override
-    public void appendContent(ContentStream content) {
-        if (null == content) {
-            return;
-        }
-        if (null == fContent) {
-            setContent(content, true);
-        } else {
-            try {
-                fContent.appendContent(content.getStream());
-            } catch (IOException e) {
-                throw new CmisStorageException("Failed to append content: IO Exception", e);
-            }
-        }
+        fContent = content;
     }
 
     @Override
@@ -154,12 +124,8 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     }
 
     @Override
-    public ContentStream getContent(long offset, long length) {
-        if (offset <= 0 && length < 0) {
-            return fContent;
-        } else {
-            return fContent.getCloneWithLimits(offset, length);
-        }
+    public ContentStream getContent() {
+        return fContent;
     }
 
     @Override

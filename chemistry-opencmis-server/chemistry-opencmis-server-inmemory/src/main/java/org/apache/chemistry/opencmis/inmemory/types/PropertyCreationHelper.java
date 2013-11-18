@@ -424,7 +424,7 @@ public final class PropertyCreationHelper {
             od.setAllowableActions(allowableActions);
         }
 
-        List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
+        List<RenditionData> renditions = objectStore.getRenditions(so, renditionFilter, 0, 0);
         if (null != renditions && renditions.size() > 0) {
             od.setRenditions(renditions);
         }
@@ -486,7 +486,7 @@ public final class PropertyCreationHelper {
             od.setRelationships(DataObjectCreator.fillRelationships(tm, objectStore, includeRelationships, so, user));
         }
 
-        List<RenditionData> renditions = so.getRenditions(renditionFilter, 0, 0);
+        List<RenditionData> renditions = objectStore.getRenditions(so, renditionFilter, 0, 0);
         if (null != renditions && renditions.size() > 0) {
             od.setRenditions(renditions);
         }

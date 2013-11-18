@@ -47,13 +47,13 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-    public DocumentVersion addVersion(ContentStream content, VersioningState verState, String user) {
+    public DocumentVersion addVersion(VersioningState verState, String user) {
 
         if (isCheckedOut()) {
             throw new CmisConstraintException("Cannot add a version to document, document is checked out.");
         }
 
-        DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, content, verState);
+        DocumentVersionImpl ver = new DocumentVersionImpl(fRepositoryId, this, verState);
         ver.setSystemBasePropertiesWhenCreatedDirect(getName(), getTypeId(), user); // copy
         // name and type id from version series.
         fVersions.add(ver);
@@ -110,7 +110,7 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
         DocumentVersion pwc = getPwc();
 
         if (null != content) {
-            pwc.setContent(content, false);
+            pwc.setContent(content);
         }
 
         if (null != properties && null != properties.getProperties()) {
@@ -125,14 +125,14 @@ public class VersionedDocumentImpl extends FilingImpl implements VersionedDocume
     }
 
     @Override
-    public DocumentVersion checkOut(ContentStream content, String user) {
+    public DocumentVersion checkOut(String user) {
         if (fIsCheckedOut) {
             throw new CmisConstraintException("Error: Can't checkout, Document " + getId() 
                     + " is already checked out.");
         }
 
         // create PWC
-        DocumentVersion pwc = addVersion(content, VersioningState.CHECKEDOUT, user); // will
+        DocumentVersion pwc = addVersion(VersioningState.CHECKEDOUT, user); // will
         // set check-out flag
         return pwc;
     }

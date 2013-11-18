@@ -667,7 +667,7 @@ public class InMemoryQueryProcessor {
             }
 
             if (so instanceof Content && cont.hasContent()) {
-                ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent(0, -1);
+                ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent();
                 if (cdi.getMimeType().startsWith("text/")) {
                     byte[] ba = cdi.getBytes();
                     String text;

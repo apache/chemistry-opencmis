@@ -265,7 +265,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     + " does not refer to a document, but only documents can have content");
         }
 
-        ((Content) so).setContent(null, true);
+        ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
+        objectStore.setContent(so, null);
         LOG.debug("stop deleteContentStream()");
     }
 
@@ -360,7 +361,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                     + " does not refer to a document or version, but only those can have content");
         }
 
-        ContentStream csd = getContentStream(so, streamId, offset, length);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        ContentStream csd = getContentStream(objStore, so, streamId, offset, length);
 
         if (null == csd) {
             throw new CmisConstraintException("Object " + so.getId() + " does not have content.");
@@ -471,7 +473,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new CmisObjectNotFoundException(UNKNOWN_OBJECT_ID + objectId);
         }
 
-        List<RenditionData> renditions = so.getRenditions(renditionFilter, maxItems == null ? 0 : maxItems.longValue(),
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        List<RenditionData> renditions = objStore.getRenditions(so, renditionFilter, maxItems == null ? 0 : maxItems.longValue(),
                 skipCount == null ? 0 : skipCount.longValue());
         LOG.debug("stop getRenditions()");
         return renditions;
@@ -588,12 +591,13 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new IllegalArgumentException("Content cannot be set on this object (must be document or version)");
         }
 
-        if (!overwriteFlag && content.getContent(0, -1) != null) {
+        if (!overwriteFlag && content.hasContent()) {
             throw new CmisContentAlreadyExistsException(
                     "cannot overwrite existing content if overwrite flag is not set");
         }
 
-        content.setContent(contentStream, true);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        objStore.setContent(so, contentStream);
         so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         LOG.debug("stop setContentStream()");
     }
@@ -792,7 +796,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             throw new IllegalArgumentException("Content cannot be set on this object (must be document or version)");
         }
 
-        content.appendContent(contentStream);
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        objStore.appendContent(so, contentStream);
         so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
     }
 
@@ -925,8 +930,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             so = version; // return the version and not the version series to
                           // caller
         } else {
-            Document doc = objectStore.createDocument(name, propMap, user, folder, policies, aclAdd, aclRemove);
-            doc.setContent(contentStreamNew, false);
+            Document doc = objectStore.createDocument(propMap, user, folder, contentStreamNew, policies, aclAdd, aclRemove);
             so = doc;
         }
 
@@ -1236,17 +1240,16 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         return true;
     }
 
-    private static ContentStream getContentStream(StoredObject so, String streamId, BigInteger offset, 
+    private static ContentStream getContentStream(ObjectStore objStore, StoredObject so, String streamId, BigInteger offset, 
             BigInteger length) {
         ContentStream csd = null;
         long lOffset = offset == null ? 0 : offset.longValue();
         long lLength = length == null ? -1 : length.longValue();
 
         if (streamId == null) {
-            csd = ((Content) so).getContent(lOffset, lLength);
-            return csd;
+            csd =  objStore.getContent(so, lOffset, lLength);
         } else if (streamId.endsWith("-rendition")) {
-            csd = so.getRenditionContent(streamId, lOffset, lLength);
+            csd = objStore.getRenditionContent(so, streamId, lOffset, lLength);
         }
 
         return csd;

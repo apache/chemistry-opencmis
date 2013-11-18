@@ -30,7 +30,7 @@ public interface Content {
      * return true if this object has content or false if there is no content
      * attached.
      * 
-     * @return true if hast content otherwise false
+     * @return true if has content otherwise false
      */
     boolean hasContent();
 
@@ -44,7 +44,7 @@ public interface Content {
      * 
      * @return object containing mime-type, length and a stream with content
      */
-    ContentStream getContent(long offset, long length);
+    ContentStream getContent();
 
     /**
      * Assign content to a document. Existing content gets overwritten. The
@@ -52,18 +52,6 @@ public interface Content {
      * 
      * @param content
      *            content to be assigned to the document.
-     * @param mustPersist
-     *            persist document (set to false if content is set during
-     *            creation of a document)
      */
-    void setContent(ContentStream content, boolean mustPersist);
-
-    /**
-     * Append content to an existing content stream. The document is persisted
-     * in the new state.
-     * 
-     * @param content
-     *            content to be assigned to the document.
-     */
-    void appendContent(ContentStream content);
+    void setContent(ContentStream content);
 }

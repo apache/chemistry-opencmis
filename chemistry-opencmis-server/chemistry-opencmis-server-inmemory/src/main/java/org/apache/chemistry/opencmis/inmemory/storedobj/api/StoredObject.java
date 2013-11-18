@@ -295,33 +295,6 @@ public interface StoredObject {
     boolean hasRendition(String user);
 
     /**
-     * get the rendition this objects supports.
-     * 
-     * @param renditionFilter
-     *            filter of renditions to return
-     * @param maxItems
-     *            max nubmer of items to return
-     * @param skipCount
-     *            number of objects to skip in result
-     * @return List of renditions or null if no renditions are available for
-     *         this object
-     */
-    List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount);
-
-    /**
-     * get the rendition of this object.
-     * 
-     * @param streamId
-     *            stream if of rendition
-     * @param offset
-     *            offset in rendition content
-     * @param length
-     *            length of rendition content
-     * @return ContentStream containing the rendition
-     */
-    ContentStream getRenditionContent(String streamId, long offset, long length);
-
-    /**
      * get applied policies of this object.
      * 
      * @return list of ids of policies applied to this object

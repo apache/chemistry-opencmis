@@ -52,10 +52,6 @@ public class StoredObjectImpl implements StoredObject {
 
     private static final int BUFFER_SIZE = 65536;
     private static final String UNKNOWN_USER = "unknown";
-    public static final String RENDITION_MIME_TYPE_JPEG = "image/jpeg";
-    public static final String RENDITION_MIME_TYPE_PNG = "image/png";
-    public static final String RENDITION_SUFFIX = "-rendition";
-    public static final int ICON_SIZE = 32;
 
     protected String fId;
     protected String fName;
@@ -502,16 +498,6 @@ public class StoredObjectImpl implements StoredObject {
     public AllowableActions getAllowableActions(String user) {
         AllowableActions actions = DataObjectCreator.fillAllowableActions(this, user);
         return actions;
-    }
-
-    @Override
-    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
-        return null;
-    }
-
-    @Override
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {
-        return null;
     }
 
     @Override

@@ -82,6 +82,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.RenditionUtil;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoredObjectImpl;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
@@ -1026,8 +1027,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(id, rd.getRenditionDocumentId());
             assertNotNull(rd.getBigHeight());
             assertNotNull(rd.getBigWidth());
-            assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigHeight().longValue());
-            assertEquals(DocumentImpl.THUMBNAIL_SIZE, rd.getBigWidth().longValue());
+            assertEquals(RenditionUtil.THUMBNAIL_SIZE, rd.getBigHeight().longValue());
+            assertEquals(RenditionUtil.THUMBNAIL_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
             ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
                     null);
@@ -1064,8 +1065,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(id, rd.getRenditionDocumentId());
             assertNotNull(rd.getBigHeight());
             assertNotNull(rd.getBigWidth());
-            assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigHeight().longValue());
-            assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigWidth().longValue());
+            assertEquals(RenditionUtil.ICON_SIZE, rd.getBigHeight().longValue());
+            assertEquals(RenditionUtil.ICON_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
             ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
                     null);
@@ -1101,8 +1102,8 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(id, rd.getRenditionDocumentId());
             assertNotNull(rd.getBigHeight());
             assertNotNull(rd.getBigWidth());
-            assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigHeight().longValue());
-            assertEquals(StoredObjectImpl.ICON_SIZE, rd.getBigWidth().longValue());
+            assertEquals(RenditionUtil.ICON_SIZE, rd.getBigHeight().longValue());
+            assertEquals(RenditionUtil.ICON_SIZE, rd.getBigWidth().longValue());
             assertNotNull(rd.getStreamId());
             ContentStream renditionContent = fObjSvc.getContentStream(fRepositoryId, id, rd.getStreamId(), null, null,
                     null);

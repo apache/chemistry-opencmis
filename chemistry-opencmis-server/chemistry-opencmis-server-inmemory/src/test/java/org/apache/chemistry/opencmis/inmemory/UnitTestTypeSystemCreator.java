@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 
 public class UnitTestTypeSystemCreator implements TypeCreator {
+    private static final String PROP_ID_PICK_LIST = "PickListProp";
     public static final List<TypeDefinition> singletonTypes = buildTypesList();
     public static final String COMPLEX_TYPE = "ComplexType";
     public static final String TOPLEVEL_TYPE = "DocumentTopLevel";
@@ -279,7 +280,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
                     "Sample Uri multi-value Property", Updatability.READONLY);
             cmisComplexType.addPropertyDefinition(prop8);
 
-            PropertyStringDefinitionImpl prop9 = PropertyCreationHelper.createStringDefinition("PickListProp",
+            PropertyStringDefinitionImpl prop9 = PropertyCreationHelper.createStringDefinition(PROP_ID_PICK_LIST,
                     "Sample Pick List Property", Updatability.READONLY);
             List<Choice<String>> choiceList = new ArrayList<Choice<String>>();
             ChoiceImpl<String> elem = new ChoiceImpl<String>();

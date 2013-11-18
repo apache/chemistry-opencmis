@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -124,14 +125,14 @@ public interface ObjectStore {
      * call additional actions can take place (like assigning properties and a
      * type) before it is persisted.
      * 
-     * @param name
-     *            name of the document
      * @param propMap
      *            map of properties
      * @param user
      *            the user who creates the document
      * @param folder
      *            the parent folder
+     * @param contentStream
+     *            the content of the document
      * @param policies
      *            list of policies to apply
      * @param addACEs
@@ -140,8 +141,8 @@ public interface ObjectStore {
      *            aces that are removed
      * @return document object
      */
-    Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
-            List<String> policies, Acl addACEs, Acl removeACEs);
+    Document createDocument(Map<String, PropertyData<?>> propMap, String user, Folder folder,
+            ContentStream contentStream, List<String> policies, Acl addACEs, Acl removeACEs);
 
     /**
      * Create a folder as initial step. The folder is created but still
@@ -491,4 +492,73 @@ public interface ObjectStore {
      */
     void removeParent(StoredObject so, Folder parent);
 
+    /**
+     * Retrieve the content of a document.
+     * 
+     * @param so
+     *            object to get content from
+     * @param offset
+     *            offset in content stream
+     * @param length
+     *            length of content to return
+     * 
+     * @return object containing mime-type, length and a stream with content
+     */
+    ContentStream getContent(StoredObject so, long offset, long length);
+
+    /**
+     * Write content and attach it to a document. Existing content gets overwritten. 
+     * 
+     * @param so
+     *            object to set content to
+     * @param content
+     *            content to be assigned to the document. If null any existing 
+     *            content is deleted
+     * @return
+     *             the created content stream
+     */
+    ContentStream setContent(StoredObject so, ContentStream content);
+
+    /**
+     * Append content to an existing content stream.
+     * 
+     * @param so
+     *            object to append content to
+     * @param content
+     *            content to be assigned to the document.
+     */
+    void appendContent(StoredObject so, ContentStream content);
+
+    /**
+     * get the rendition this objects supports.
+     * 
+     * @param so
+     *            object to get renditions from
+     * @param renditionFilter
+     *            filter of renditions to return
+     * @param maxItems
+     *            max nubmer of items to return
+     * @param skipCount
+     *            number of objects to skip in result
+     * @return List of renditions or null if no renditions are available for
+     *         this object
+     */
+    List<RenditionData> getRenditions(StoredObject so, String renditionFilter, long maxItems, long skipCount);
+
+    /**
+     * get the rendition of this object.
+     * 
+     * @param so
+     *            object to get renditions from
+     * @param streamId
+     *            stream if of rendition
+     * @param offset
+     *            offset in rendition content
+     * @param length
+     *            length of rendition content
+     * @return ContentStream containing the rendition
+     */
+    ContentStream getRenditionContent(StoredObject so, String streamId, long offset, long length);
+
 }
+

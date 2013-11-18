@@ -18,22 +18,13 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.data.RenditionData;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
-import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
-import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.slf4j.Logger;
@@ -45,68 +36,22 @@ import org.slf4j.LoggerFactory;
  */
 
 public class DocumentImpl extends FilingImpl implements Document {
-    private ContentStreamDataImpl fContent;
+    private ContentStream fContent;
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentImpl.class.getName());
-    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings
-            .getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
-
-    public static final int THUMBNAIL_SIZE = 100;
 
     public DocumentImpl() { // visibility should be package
         super();
     }
 
     @Override
-    public ContentStream getContent(long offset, long length) {
-        if (null == fContent) {
-            return null;
-        } else if (offset <= 0 && length < 0) {
-            return fContent;
-        } else {
-            return fContent.getCloneWithLimits(offset, length);
-        }
+    public ContentStream getContent() {
+        return fContent;
     }
 
     @Override
-    public void setContent(ContentStream content, boolean mustPersist) {
-        if (null == content) {
-            fContent = null;
-        } else {
-            fContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
-            String fileName = content.getFileName();
-            if (null == fileName || fileName.length() <= 0) {
-                fileName = getName(); // use name of document as fallback
-            }
-            fContent.setFileName(fileName);
-            String mimeType = content.getMimeType();
-            if (null == mimeType || mimeType.length() <= 0) {
-                mimeType = "application/octet-stream"; // use as fallback
-            }
-            fContent.setMimeType(mimeType);
-            fContent.setLastModified(getModifiedAt());
-            try {
-                fContent.setContent(content.getStream());
-            } catch (IOException e) {
-                throw new CmisRuntimeException("Failed to get content from InputStream", e);
-            }
-        }
-    }
-
-    @Override
-    public void appendContent(ContentStream content) {
-        if (null == content) {
-            return;
-        }
-        if (null == fContent) {
-            setContent(content, true);
-        } else {
-            try {
-                fContent.appendContent(content.getStream());
-            } catch (IOException e) {
-                throw new CmisStorageException("Failed to append content: IO Exception", e);
-            }
-        }
+    public void setContent(ContentStream content) {
+        fContent = content;
     }
 
     @Override
@@ -195,129 +140,11 @@ public class DocumentImpl extends FilingImpl implements Document {
     public boolean hasContent() {
         return null != fContent;
     }
-
-    @Override
-    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
-
-        String tokenizer = "[\\s;]";
-        if (null == renditionFilter) {
-            return null;
-        }
-        String[] formats = renditionFilter.split(tokenizer);
-        boolean isImageRendition = testRenditionFilterForImage(formats);
-
-        if (isImageRendition && fContent != null && hasRendition(null)) {
-            List<RenditionData> renditions = new ArrayList<RenditionData>(1);
-            String mimeType = fContent.getMimeType();
-            RenditionDataImpl rendition = new RenditionDataImpl();
-            if (mimeType.equals("image/jpeg")) {
-                rendition.setBigHeight(BigInteger.valueOf(THUMBNAIL_SIZE));
-                rendition.setBigWidth(BigInteger.valueOf(THUMBNAIL_SIZE));
-                rendition.setMimeType(RENDITION_MIME_TYPE_JPEG);
-            } else {
-                rendition.setBigHeight(BigInteger.valueOf(ICON_SIZE));
-                rendition.setBigWidth(BigInteger.valueOf(ICON_SIZE));
-                rendition.setMimeType(RENDITION_MIME_TYPE_PNG);
-            }
-            rendition.setKind("cmis:thumbnail");
-            rendition.setRenditionDocumentId(getId());
-            rendition.setStreamId(getId() + RENDITION_SUFFIX);
-            rendition.setBigLength(BigInteger.valueOf(-1L));
-            rendition.setTitle(getName());
-            renditions.add(rendition);
-            return renditions;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {
-        if (null == fContent) {
-            return null;
-        }
-
-        String mimeType = fContent.getMimeType();
-
-        try {
-            if (isImage(mimeType)) {
-                ImageThumbnailGenerator generator = new ImageThumbnailGenerator(getContent(0L, -1L).getStream());
-                return generator.getRendition(THUMBNAIL_SIZE, 0);
-            } else if (isAudio(mimeType)) {
-                return getIconFromResourceDir("/audio-x-generic.png");
-            } else if (isVideo(mimeType)) {
-                return getIconFromResourceDir("/video-x-generic.png");
-            } else if (isPDF(mimeType)) {
-                return getIconFromResourceDir("/application-pdf.png");
-            } else if (isWord(mimeType)) {
-                return getIconFromResourceDir("/application-msword.png");
-            } else if (isPowerpoint(mimeType)) {
-                return getIconFromResourceDir("/application-vnd.ms-powerpoint.png");
-            } else if (isExcel(mimeType)) {
-                return getIconFromResourceDir("/application-vnd.ms-excel.png");
-            } else if (isHtml(mimeType)) {
-                return getIconFromResourceDir("/text-html.png");
-            } else if (isPlainText(mimeType)) {
-                return getIconFromResourceDir("/text-x-generic.png");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            LOG.error("Failed to generate rendition: ", e);
-            throw new CmisRuntimeException("Failed to generate rendition: " + e);
-        }
-    }
-
+    
     @Override
     public boolean hasRendition(String user) {
-        if (null == fContent) {
-            return false;
-        }
-
-        String mimeType = fContent.getMimeType();
-
-        return isImage(mimeType) || isAudio(mimeType) || isVideo(mimeType) || isPDF(mimeType) || isPowerpoint(mimeType)
-                || isExcel(mimeType) || isWord(mimeType) || isHtml(mimeType) || isPlainText(mimeType);
+        return RenditionUtil.hasRendition(this, user);
     }
 
-    private boolean isImage(String mimeType) {
-        return mimeType.startsWith("image/");
-    }
-
-    private boolean isWord(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                || mimeType.equals("application/ms-word");
-    }
-
-    private boolean isExcel(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                || mimeType.equals("application/vnd.ms-excel");
-    }
-
-    private boolean isPowerpoint(String mimeType) {
-        return mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.slideshow")
-                || mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")
-                || mimeType.equals("application/vnd.ms-powerpoint");
-    }
-
-    private boolean isPDF(String mimeType) {
-        return mimeType.equals("application/pdf");
-    }
-
-    private boolean isHtml(String mimeType) {
-        return mimeType.equals("text/html");
-    }
-
-    private boolean isAudio(String mimeType) {
-        return mimeType.startsWith("audio/");
-    }
-
-    private boolean isVideo(String mimeType) {
-        return mimeType.startsWith("video/");
-    }
-
-    private boolean isPlainText(String mimeType) {
-        return mimeType.equals("text/plain");
-    }
 
 }

@@ -18,9 +18,15 @@
  */
 package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +38,9 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -43,6 +51,13 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentExcep
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNameConstraintViolationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
+import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
+import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
@@ -53,6 +68,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The object store is the central core of the in-memory repository. It is based
@@ -86,7 +103,10 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
  */
 public class ObjectStoreImpl implements ObjectStore {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectStoreImpl.class.getName());
     private static final int FIRST_ID = 100;
+    private static final Long MAX_CONTENT_SIZE_KB = ConfigurationSettings
+            .getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     /**
      * User id for administrator always having all rights.
@@ -268,8 +288,9 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public Document createDocument(String name, Map<String, PropertyData<?>> propMap, String user, Folder folder,
-            List<String> policies, Acl addACEs, Acl removeACEs) {
+    public Document createDocument(Map<String, PropertyData<?>> propMap, String user, Folder folder,
+            ContentStream contentStream, List<String> policies, Acl addACEs, Acl removeACEs) {
+        String name = (String) propMap.get(PropertyIds.NAME).getFirstValue();
         DocumentImpl doc = new DocumentImpl();
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
@@ -282,6 +303,8 @@ public class ObjectStoreImpl implements ObjectStore {
             }
             doc.addParentId(folder.getId());
         }
+        ContentStream content = setContent(doc, contentStream);
+        doc.setContent(content);
         int aclId = getAclId(((FolderImpl) folder), addACEs, removeACEs);
         doc.setAclId(aclId);
         if (null != policies) {
@@ -330,7 +353,8 @@ public class ObjectStoreImpl implements ObjectStore {
         doc.setName(name);
         String id = storeObject(doc);
         doc.setId(id);
-        DocumentVersion version = doc.addVersion(contentStream, versioningState, user);
+        DocumentVersion version = doc.addVersion(versioningState, user);
+        setContent(version, contentStream);
         version.createSystemBasePropertiesWhenCreated(propMap, user);
         version.setCustomProperties(propMap);
         if (null != folder) {
@@ -1025,6 +1049,89 @@ public class ObjectStoreImpl implements ObjectStore {
         }
 
         Collections.sort(list, new FolderComparator());
+    }
+
+    @Override
+    public ContentStream getContent(StoredObject so, long offset, long length) {
+        if (so instanceof Content) {
+            Content content = (Content) so;
+            ContentStream contentStream = content.getContent();
+            if (null == contentStream) {
+                return null;
+            } else if (offset <= 0 && length < 0) {
+                return contentStream;
+            } else {
+                return ((ContentStreamDataImpl)contentStream).getCloneWithLimits(offset, length);
+            }
+        } else {
+            throw new CmisInvalidArgumentException("Cannot set content, object does not implement interface Content.");
+        }
+    }
+
+    @Override
+    public ContentStream setContent(StoredObject so, ContentStream contentStream) {
+        if (so instanceof Content) {
+            ContentStreamDataImpl newContent;
+            Content content = (Content) so;
+
+            if (null == contentStream) {
+                newContent = null;
+            } else {
+                newContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
+                String fileName = contentStream.getFileName();
+                if (null == fileName || fileName.length() <= 0) {
+                    fileName = so.getName(); // use name of document as fallback
+                }
+                newContent.setFileName(fileName);
+                String mimeType = contentStream.getMimeType();
+                if (null == mimeType || mimeType.length() <= 0) {
+                    mimeType = "application/octet-stream"; // use as fallback
+                }
+                newContent.setMimeType(mimeType);
+                newContent.setLastModified(new GregorianCalendar());
+                try {
+                    newContent.setContent(contentStream.getStream());
+                } catch (IOException e) {
+                    throw new CmisRuntimeException("Failed to get content from InputStream", e);
+                }
+            }
+            content.setContent(newContent);
+            return newContent;
+
+        } else {
+            throw new CmisInvalidArgumentException("Cannot set content, object does not implement interface Content.");
+        }
+    }
+
+    @Override
+    public void appendContent(StoredObject so, ContentStream contentStream) {
+        if (so instanceof Content) {
+            Content content = (Content) so;
+            ContentStreamDataImpl newContent = (ContentStreamDataImpl) content.getContent();
+
+            if (null == newContent) {
+                content.setContent(null);
+            } else {
+                try {
+                    newContent.appendContent(contentStream.getStream());
+                } catch (IOException e) {
+                    throw new CmisStorageException("Failed to append content: IO Exception", e);
+                }
+            }
+        } else {
+            throw new CmisInvalidArgumentException("Cannot set content, object does not implement interface Content.");
+        }
+    }
+    
+    @Override
+    public List<RenditionData> getRenditions(StoredObject so, String renditionFilter, long maxItems, long skipCount) {
+
+        return RenditionUtil.getRenditions(so, renditionFilter, maxItems, skipCount);
+    }
+
+    @Override
+    public ContentStream getRenditionContent(StoredObject so, String streamId, long offset, long length) {
+        return RenditionUtil.getRenditionContent(so, streamId, offset, length);
     }
 
 }

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -115,10 +116,10 @@ public class AtomLinkInfoProvider {
         }
 
         if (so instanceof Content) {
-            Content cont = ((Content) so);
-            objInfo.setHasContent(cont.getContent(0, -1) != null);
-            objInfo.setContentType(cont.getContent(0, -1) != null ? cont.getContent(0, -1).getMimeType() : null);
-            objInfo.setFileName(cont.getContent(0, -1) != null ? cont.getContent(0, -1).getFileName() : null);
+            ContentStream contentStream = ((Content) so).getContent();
+            objInfo.setHasContent(contentStream != null);
+            objInfo.setContentType(contentStream != null ? contentStream.getMimeType() : null);
+            objInfo.setFileName(contentStream != null ? contentStream.getFileName() : null);
         } else {
             objInfo.setHasContent(false);
             objInfo.setContentType(null);
@@ -133,7 +134,7 @@ public class AtomLinkInfoProvider {
             objInfo.setHasParent(false);
         }
 
-        List<RenditionData> renditions = so.getRenditions("*", 0, 0);
+        List<RenditionData> renditions = objStore.getRenditions(so, "*", 0, 0);
         if (renditions == null || renditions.size() == 0) {
             objInfo.setRenditionInfos(null);
         } else {

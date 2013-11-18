@@ -34,17 +34,15 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 public interface VersionedDocument extends Filing, StoredObject {
 
     /**
-     * Add a version to this document.
+     * Add a new version to this document.
      * 
-     * @param content
-     *            content stream of new version
      * @param verState
      *            versioning state of new version
      * @param user
      *            user adding the new vesion
      * @return document version added
      */
-    DocumentVersion addVersion(ContentStream content, VersioningState verState, String user);
+    DocumentVersion addVersion(VersioningState verState, String user);
 
     /**
      * Delete a version from this object, throw exception if document is checked
@@ -75,13 +73,11 @@ public interface VersionedDocument extends Filing, StoredObject {
     /**
      * Perform a check-out operation.
      * 
-     * @param content
-     *            content stream of object
      * @param user
      *            user who checks-out
      * @return document version beinf the new private working copy
      */
-    DocumentVersion checkOut(ContentStream content, String user);
+    DocumentVersion checkOut(String user);
 
     /**
      * Check in a private working copy.

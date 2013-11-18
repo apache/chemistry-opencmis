@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
@@ -90,14 +91,19 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         // check if the contentStream is a usable object or ignore it otherwise
         // Note Browser binding sets an empty object
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         ContentStream contentStream = contentStreamParam;
-        if (contentStream != null && contentStream.getStream() == null) {
-            contentStream = null;
+        if (contentStream != null) {
+            if (contentStream.getStream() == null) {
+                contentStream = null;
+            } else {
+                objStore.setContent(so, contentStream);
+            }
         }
 
         boolean major = (null == majorParam ? true : majorParam);
 
-        verDoc.checkIn(major, properties, contentStream, checkinComment, policies, user);
+        verDoc.checkIn(major, properties, ((Content)so).getContent(), checkinComment, policies, user);
         verDoc.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         // To be able to provide all Atom links in the response we need
         // additional information:
@@ -127,11 +133,12 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         ContentStream content = null;
 
+        ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         if (so instanceof DocumentVersion) {
-            // get document the version is contained in to c
-            content = ((DocumentVersion) so).getContent(0, -1);
+            content = objStore.getContent(so, 0, -1);
         } else {
-            content = ((VersionedDocument) so).getLatestVersion(false).getContent(0, -1);
+            DocumentVersion latestVer = ((VersionedDocument) so).getLatestVersion(false);
+            content = objStore.getContent(latestVer, 0, -1);
         }
 
         if (verDoc.isCheckedOut()) {
@@ -141,7 +148,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         String user = context.getUsername();
         checkHasUser(user);
 
-        DocumentVersion pwc = verDoc.checkOut(content, user);
+        DocumentVersion pwc = verDoc.checkOut(user);
+        objectStore.setContent(pwc, content);
         objectStore.storeVersion(pwc);
         objectId.setValue(pwc.getId()); // return the id of the created pwc
         if (null != contentCopied) {

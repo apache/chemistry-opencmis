@@ -82,44 +82,6 @@ public class FolderImpl extends StoredObjectImpl implements Folder {
     }
 
     @Override
-    public List<RenditionData> getRenditions(String renditionFilter, long maxItems, long skipCount) {
-        if (null == renditionFilter) {
-            return null;
-        }
-        String tokenizer = "[\\s;]";
-        String[] formats = renditionFilter.split(tokenizer);
-        boolean isImageRendition = testRenditionFilterForImage(formats);
-
-        if (isImageRendition) {
-            List<RenditionData> renditions = new ArrayList<RenditionData>(1);
-            RenditionDataImpl rendition = new RenditionDataImpl();
-            rendition.setBigHeight(BigInteger.valueOf(ICON_SIZE));
-            rendition.setBigWidth(BigInteger.valueOf(ICON_SIZE));
-            rendition.setKind("cmis:thumbnail");
-            rendition.setMimeType(RENDITION_MIME_TYPE_PNG);
-            rendition.setRenditionDocumentId(getId());
-            rendition.setStreamId(getId() + RENDITION_SUFFIX);
-            rendition.setBigLength(BigInteger.valueOf(-1L));
-            rendition.setTitle(getName());
-            rendition.setRenditionDocumentId(getId());
-            renditions.add(rendition);
-            return renditions;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public ContentStream getRenditionContent(String streamId, long offset, long length) {
-        try {
-            return getIconFromResourceDir("/folder.png");
-        } catch (IOException e) {
-            LOG.error("Failed to generate rendition: ", e);
-            throw new CmisRuntimeException("Failed to generate rendition: " + e);
-        }
-    }
-
-    @Override
     public boolean hasRendition(String user) {
         return true;
     }
