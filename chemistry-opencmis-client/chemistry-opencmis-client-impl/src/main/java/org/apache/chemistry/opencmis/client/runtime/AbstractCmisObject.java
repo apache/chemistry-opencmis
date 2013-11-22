@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -364,6 +365,28 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
 
         return getSession().createObjectId(newObjectId);
+    }
+
+    public CmisObject rename(String newName) {
+        if (newName == null || newName.length() == 0) {
+            throw new IllegalArgumentException("New name must not be empty!");
+        }
+
+        Map<String, Object> prop = new HashMap<String, Object>();
+        prop.put(PropertyIds.NAME, newName);
+
+        return updateProperties(prop);
+    }
+
+    public ObjectId rename(String newName, boolean refresh) {
+        if (newName == null || newName.length() == 0) {
+            throw new IllegalArgumentException("New name must not be empty!");
+        }
+
+        Map<String, Object> prop = new HashMap<String, Object>();
+        prop.put(PropertyIds.NAME, newName);
+
+        return updateProperties(prop, refresh);
     }
 
     // --- properties ---

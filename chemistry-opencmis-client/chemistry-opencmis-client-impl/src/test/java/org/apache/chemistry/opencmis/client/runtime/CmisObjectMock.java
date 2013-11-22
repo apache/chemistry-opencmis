@@ -197,6 +197,14 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
+    public CmisObject rename(String newName) {
+        return null;
+    }
+
+    public ObjectId rename(String newName, boolean refresh) {
+        return null;
+    }
+
     public void applyPolicy(ObjectId... policyIds) {
 
     }

@@ -105,11 +105,43 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      *            {@code true} if this object should be refresh after the
      *            update, {@code false} if not
      * 
-     * @return the object id of the updated object
+     * @return the object ID of the updated object
      * 
      * @cmis 1.0
      */
     ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
+
+    /**
+     * Renames this object (changes the value of {@code cmis:name}). If the
+     * repository created a new object, for example a new version, this new
+     * object is returned. Otherwise the current object is returned.
+     * 
+     * @param newName
+     *            the new name, not {@code null} or empty
+     * 
+     * @return the updated object
+     * 
+     * @cmis 1.0
+     */
+    CmisObject rename(String newName);
+
+    /**
+     * Renames this object (changes the value of {@code cmis:name}). If the
+     * repository created a new object, for example a new version, the object id
+     * of the new object is returned. Otherwise the object id of the current
+     * object is returned.
+     * 
+     * @param newName
+     *            the new name, not {@code null} or empty
+     * @param refresh
+     *            {@code true} if this object should be refresh after the
+     *            update, {@code false} if not
+     * 
+     * @return the object ID of the updated object
+     * 
+     * @cmis 1.0
+     */
+    ObjectId rename(String newName, boolean refresh);
 
     // renditions
 
