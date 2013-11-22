@@ -65,6 +65,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                          org.apache.chemistry.opencmis.client;version=${project.version},
                           org.apache.chemistry.opencmis.client.api.*;version=${project.version}
                         </Export-Package>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>
