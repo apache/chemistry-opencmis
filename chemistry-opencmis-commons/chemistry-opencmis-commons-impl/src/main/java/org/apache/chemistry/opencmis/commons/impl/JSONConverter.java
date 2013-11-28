@@ -1334,6 +1334,8 @@ public final class JSONConverter {
             aceObject.put(JSON_ACE_PERMISSIONS, permissions);
             aceObject.put(JSON_ACE_IS_DIRECT, ace.isDirect());
 
+            convertExtension(ace, aceObject);
+            
             aceObjects.add(aceObject);
         }
 
