@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -157,4 +158,10 @@ public interface CmisServiceValidator {
     StoredObject createItem(CallContext context, String repositoryId, Properties properties, String folderId,
             List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension);
 
+    void createType(CallContext callContext, String repositoryId, TypeDefinition type, ExtensionsData extension);
+    
+    TypeDefinition updateType(CallContext callContext, String repositoryId, TypeDefinition type, 
+            ExtensionsData extension);
+    
+    TypeDefinition deleteType(CallContext callContext, String repositoryId, String typeId, ExtensionsData extension);
 }

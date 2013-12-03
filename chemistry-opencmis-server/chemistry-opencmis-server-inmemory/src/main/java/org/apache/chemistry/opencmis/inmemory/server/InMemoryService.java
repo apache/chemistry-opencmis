@@ -119,17 +119,17 @@ public class InMemoryService extends AbstractCmisService {
 
     @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        return fRepSvc.createType(repositoryId, type, extension);
+        return fRepSvc.createType(getCallContext(), repositoryId, type, extension);
     }
 
     @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        return fRepSvc.updateType(repositoryId, type, extension);
+        return fRepSvc.updateType(getCallContext(), repositoryId, type, extension);
     }
 
     @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
-        fRepSvc.deleteType(repositoryId, typeId, extension);
+        fRepSvc.deleteType(getCallContext(), repositoryId, typeId, extension);
     }
 
     @Override
