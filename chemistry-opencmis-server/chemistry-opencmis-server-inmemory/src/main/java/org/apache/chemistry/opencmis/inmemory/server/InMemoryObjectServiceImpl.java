@@ -832,7 +832,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         Acl aclRemove = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 removeACEs);
 
-        validator.createDocument(context, repositoryId, folderId, policies, extension);
+        StoredObject so = validator.createDocument(context, repositoryId, folderId, policies, extension);
 
         // Validation stuff
         TypeValidator.validateRequiredSystemProperties(properties);
@@ -851,8 +851,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         Folder folder = null;
         if (null != folderId) {
-            StoredObject so = objectStore.getObjectById(folderId);
-
             if (null == so) {
                 throw new CmisInvalidArgumentException(" Cannot create document, folderId: " + folderId 
                         + " is invalid");
@@ -899,7 +897,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             user = UNKNOWN_USER;
         }
 
-        StoredObject so = null;
+        StoredObject createdDoc = null;
         ContentStream contentStreamNew = contentStream;
         // check if content stream parameters are set and if not set some
         // defaults
@@ -927,14 +925,14 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (((DocumentTypeDefinition) typeDef).isVersionable()) {
             DocumentVersion version = objectStore.createVersionedDocument(name, propMap, user, folder, policies,
                     aclAdd, aclRemove, contentStreamNew, versioningState);
-            so = version; // return the version and not the version series to
+            createdDoc = version; // return the version and not the version series to
                           // caller
         } else {
             Document doc = objectStore.createDocument(propMap, user, folder, contentStreamNew, policies, aclAdd, aclRemove);
-            so = doc;
+            createdDoc = doc;
         }
 
-        return so;
+        return createdDoc;
     }
 
     private Folder createFolderIntern(CallContext context, String repositoryId, Properties properties, String folderId,
@@ -1112,7 +1110,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
     private StoredObject createItemIntern(CallContext context, String repositoryId, Properties properties,
             String folderId, List<String> policies, Acl addAces, Acl removeAces, ExtensionsData extension) {
 
-        validator.createItem(context, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+        StoredObject so = validator.createItem(context, repositoryId, properties, folderId, policies, addAces, removeAces, extension);
 
         Acl aclAdd = org.apache.chemistry.opencmis.inmemory.TypeValidator.expandAclMakros(context.getUsername(),
                 addAces);
@@ -1138,8 +1136,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         Folder folder = null;
         if (null != folderId) {
-            StoredObject so = objectStore.getObjectById(folderId);
-
             if (null == so) {
                 throw new CmisInvalidArgumentException(" Cannot create item, folderId: " + folderId + " is invalid");
             }
@@ -1179,11 +1175,11 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
             user = UNKNOWN_USER;
         }
 
-        StoredObject so = null;
+        StoredObject item = null;
 
         // Now we are sure to have document type definition:
-        so = objectStore.createItem(name, propMapNew, user, folder, policies, aclAdd, aclRemove);
-        return so;
+        item = objectStore.createItem(name, propMapNew, user, folder, policies, aclAdd, aclRemove);
+        return item;
     }
 
     private boolean hasDescendant(String user, ObjectStore objStore, Folder sourceFolder, Folder targetFolder) {
