@@ -457,7 +457,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     protected void checkBasicType(TypeDefinition type)
     {
         if (type.getId() == type.getBaseTypeId().value())       
-            throw new CmisConstraintException("type " + type.getId() + " is a basic type, basic types are read-only");  
+            throw new CmisInvalidArgumentException("type " + type.getId() + " is a basic type, basic types are read-only");  
     }
     
     @Override
@@ -838,7 +838,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             throw new CmisInvalidArgumentException(UNKNOWN_TYPE_ID + parentTypeId);
         }
         TypeDefinition parentType = parentTypeContainer.getTypeDefinition();
-        // check type mutability
+        // check if type can be created
         if (!(parentType.getTypeMutability().canCreate())) {
             throw new CmisConstraintException("parent type: " + parentTypeId + " does not allow mutability create");
         }
@@ -853,7 +853,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         TypeDefinition updateType = checkExistingTypeId(repositoryId, type.getId());
         checkUpdateType(updateType, type);
         checkBasicType(type);
-        // check type mutability
+        // check if type can be updated
         if (!(updateType.getTypeMutability().canUpdate())) {
             throw new CmisConstraintException("type: " + type.getId() + " does not allow mutability update");
         }
@@ -869,7 +869,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         checkRepositoryId(repositoryId);
         
         TypeDefinition deleteType =  checkExistingTypeId(repositoryId, typeId);
-        // check type mutability
+        checkBasicType(deleteType);
+        // check if type can be deleted
         if (!(deleteType.getTypeMutability().canDelete())) {
             throw new CmisConstraintException("type: " + typeId + " does not allow mutability delete");
         }

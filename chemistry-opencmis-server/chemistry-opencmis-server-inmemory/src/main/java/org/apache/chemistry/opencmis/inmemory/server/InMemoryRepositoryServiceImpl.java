@@ -144,7 +144,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public TypeDefinition createType(CallContext context, String repositoryId, TypeDefinition type, ExtensionsData extension) {
 
-        validator.createType(context, repositoryId, type, extension);        
+//        validator.createType(context, repositoryId, type, extension);        
         TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         AbstractTypeDefinition newType = TypeValidator.completeType(type);
         TypeValidator.adjustTypeNamesAndId(newType);
@@ -154,7 +154,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
     }
 
     public TypeDefinition updateType(CallContext context, String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        validator.updateType(context, repositoryId, type, extension);        
+//        validator.updateType(context, repositoryId, type, extension);        
         String typeId = type.getId();
         TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
