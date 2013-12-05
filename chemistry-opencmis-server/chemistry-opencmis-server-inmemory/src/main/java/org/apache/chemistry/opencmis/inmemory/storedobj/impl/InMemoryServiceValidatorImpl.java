@@ -23,11 +23,13 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.server.BaseServiceValidatorImpl;
@@ -996,6 +998,23 @@ public class InMemoryServiceValidatorImpl extends BaseServiceValidatorImpl {
         StoredObject so = super.applyAcl(context, repositoryId, objectId);
         checkAllAccess(repositoryId, context.getUsername(), so);
         return so;
+    }
+
+    @Override
+    public void createType(CallContext callContext, String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        super.createType(callContext, repositoryId, type, extension);
+    }
+
+    @Override
+    public TypeDefinition updateType(CallContext callContext, String repositoryId, TypeDefinition type,
+            ExtensionsData extension) {
+        throw new CmisNotSupportedException("Updating a type definition is not supported.");
+    }
+
+    @Override
+    public TypeDefinition deleteType(CallContext callContext, String repositoryId, String typeId,
+            ExtensionsData extension) {
+        return super.deleteType(callContext, repositoryId, typeId, extension);
     }
 
     private ObjectStoreImpl getObjectStore(String repositoryId) {
