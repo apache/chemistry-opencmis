@@ -268,7 +268,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
             fRepSvc.updateType(repositoryId, typeDefRef, null);
             fail("updating a type should throw exception.");
         } catch (Exception e) {
-            assert (e instanceof CmisNotSupportedException);
+            assertTrue(e instanceof CmisNotSupportedException);
         }
         log.info("... testTypeMutabilityUpdate() finished.");
     }
@@ -288,7 +288,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
             fRepSvc.deleteType(repositoryId, TYPE_ID_MUTABILITY, null);
             fail("deleting a type which is in use should throw exception.");
         } catch (Exception e) {
-            assert (e instanceof CmisInvalidArgumentException);
+            assertTrue(e instanceof CmisInvalidArgumentException);
         }
 
         fObjSvc.deleteObject(fRepositoryId, docId, true, null);
@@ -306,16 +306,16 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
         }
 
         try {
-            fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_DOCUMENT.name(), null);
+            fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_DOCUMENT.value(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
-            assert (e instanceof CmisInvalidArgumentException);
+            assertTrue (e instanceof CmisInvalidArgumentException);
         }
         try {
-            fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_FOLDER.name(), null);
+            fRepSvc.deleteType(repositoryId, BaseTypeId.CMIS_FOLDER.value(), null);
             fail("deleting a CMIS base type throw exception.");
         } catch (Exception e) {
-            assert (e instanceof CmisInvalidArgumentException);
+            assertTrue (e instanceof CmisInvalidArgumentException);
         }
 
         log.info("... testTypeMutabilityDeletion() finished.");
@@ -348,6 +348,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
             cmisLaterType.setId(TYPE_ID_MUTABILITY);
             cmisLaterType.setDisplayName("Type with two properties");
             cmisLaterType.setDescription("Builtin InMemory type definition " + TYPE_ID_MUTABILITY);
+            cmisLaterType.setIsIncludedInSupertypeQuery(false);
 
             PropertyIntegerDefinitionImpl prop1 = PropertyCreationHelper.createIntegerDefinition(PROPERTY_ID_NUMBER,
                     "Sample Int Property", Updatability.READWRITE);
