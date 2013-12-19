@@ -445,7 +445,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                     : null);
 
             if (token == null) {
-                response.reset();
+                response.resetBuffer();
                 setStatus(request, response, statusCode);
                 response.setContentType(JSON_MIME_TYPE);
 
