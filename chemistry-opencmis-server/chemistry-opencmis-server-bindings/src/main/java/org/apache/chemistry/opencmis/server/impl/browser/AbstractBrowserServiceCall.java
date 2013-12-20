@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -130,22 +131,24 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             response.setContentType(JSON_MIME_TYPE);
             response.setCharacterEncoding(IOUtils.UTF8);
 
+            PrintWriter pw = response.getWriter();
+
             String callback = getStringParameter(request, Constants.PARAM_CALLBACK);
             if (callback != null) {
                 if (!callback.matches("[A-Za-z0-9._\\[\\]]*")) {
                     throw new CmisInvalidArgumentException("Invalid callback name!");
                 }
-                response.getWriter().print(callback + "(");
+                pw.print(callback + "(");
             }
 
-            json.writeJSONString(response.getWriter());
+            json.writeJSONString(pw);
 
             if (callback != null) {
-                response.getWriter().print(");");
+                pw.print(");");
             }
-        }
 
-        response.getWriter().flush();
+            pw.flush();
+        }
     }
 
     public void writeEmpty(HttpServletRequest request, HttpServletResponse response) throws IOException {

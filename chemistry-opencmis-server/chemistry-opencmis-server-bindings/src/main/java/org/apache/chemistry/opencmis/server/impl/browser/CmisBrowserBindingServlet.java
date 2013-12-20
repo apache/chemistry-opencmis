@@ -425,7 +425,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
         public void printError(CallContext context, Exception ex, HttpServletRequest request,
                 HttpServletResponse response) {
             int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            String exceptionName = "runtime";
+            String exceptionName = CmisRuntimeException.EXCEPTION_NAME;
 
             if (ex instanceof CmisRuntimeException) {
                 LOG.error(ex.getMessage(), ex);
@@ -447,8 +447,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             if (token == null) {
                 response.resetBuffer();
                 setStatus(request, response, statusCode);
-                response.setContentType(JSON_MIME_TYPE);
-
+  
                 JSONObject jsonResponse = new JSONObject();
                 jsonResponse.put(ERROR_EXCEPTION, exceptionName);
                 jsonResponse.put(ERROR_MESSAGE, ex.getMessage());

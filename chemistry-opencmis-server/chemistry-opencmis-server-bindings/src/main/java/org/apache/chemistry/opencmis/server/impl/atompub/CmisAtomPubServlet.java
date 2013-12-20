@@ -68,6 +68,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
@@ -293,10 +294,12 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
         try {
             response.resetBuffer();
-            PrintWriter pw = response.getWriter();
             response.setStatus(statusCode);
             response.setContentType("text/html");
-
+            response.setCharacterEncoding(IOUtils.UTF8);
+            
+            PrintWriter pw = response.getWriter();
+            
             pw.print("<html><head><title>Apache Chemistry OpenCMIS - "
                     + exceptionName
                     + " error</title>"
