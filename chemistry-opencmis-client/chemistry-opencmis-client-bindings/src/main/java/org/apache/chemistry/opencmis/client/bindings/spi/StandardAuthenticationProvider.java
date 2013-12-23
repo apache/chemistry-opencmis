@@ -72,6 +72,18 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             }
         }
 
+        boolean sendBearerToken = getSendBearerToken();
+
+        // send bearer token
+        if (sendBearerToken) {
+            String token = getBearerToken();
+
+            // if no token is set, don't set bearer header
+            if (token != null) {
+                fixedHeaders.put("Authorization", Collections.singletonList("Bearer " + token));
+            }
+        }
+
         // proxy authentication
         if (getProxyUser() != null) {
             // get proxy user and password
@@ -227,6 +239,13 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
      */
     protected boolean getSendBasicAuth() {
         return isTrue(SessionParameter.AUTH_HTTP_BASIC);
+    }
+
+    /**
+     * Returns if an OAuth Bearer token header should be sent. (All bindings.)
+     */
+    protected boolean getSendBearerToken() {
+        return isTrue(SessionParameter.AUTH_OAUTH_BEARER);
     }
 
     /**

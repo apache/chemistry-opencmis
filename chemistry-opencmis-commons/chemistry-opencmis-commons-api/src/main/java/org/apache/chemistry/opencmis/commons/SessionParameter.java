@@ -500,6 +500,7 @@ public final class SessionParameter {
     // ---- general parameter ----
     public static final String USER = "org.apache.chemistry.opencmis.user";
     public static final String PASSWORD = "org.apache.chemistry.opencmis.password";
+    public static final String BREARER_TOKEN = "org.apache.chemistry.opencmis.oauth.brearertoken";
 
     // --- binding parameter ----
     /** Predefined binding types (see {@code BindingType}). */
@@ -560,6 +561,12 @@ public final class SessionParameter {
      * authentication provider.
      */
     public static final String AUTH_HTTP_BASIC = "org.apache.chemistry.opencmis.binding.auth.http.basic";
+
+    /**
+     * Toggle for OAuth Bearer token authentication. Evaluated by the standard
+     * authentication provider.
+     */
+    public static final String AUTH_OAUTH_BEARER = "org.apache.chemistry.opencmis.binding.auth.http.oauth.bearer";
 
     /**
      * Toggle for WS-Security UsernameToken authentication. Evaluated by the

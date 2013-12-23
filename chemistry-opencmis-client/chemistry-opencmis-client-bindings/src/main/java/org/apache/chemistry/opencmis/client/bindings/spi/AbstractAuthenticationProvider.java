@@ -77,7 +77,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     /**
      * Gets the user name from the session.
      * 
-     * @return the user name or <code>null</code> if the user name is not set
+     * @return the user name or {@code null} if the user name is not set
      */
     protected String getUser() {
         Object userObject = getSession().get(SessionParameter.USER);
@@ -91,7 +91,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     /**
      * Gets the password from the session.
      * 
-     * @return the password or <code>null</code> if the password is not set
+     * @return the password or {@code null} if the password is not set
      */
     protected String getPassword() {
         Object passwordObject = getSession().get(SessionParameter.PASSWORD);
@@ -103,10 +103,23 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     }
 
     /**
+     * Gets the bearer token from the session.
+     * 
+     * @return the bearer token or {@code null} if the token is not set
+     */
+    protected String getBearerToken() {
+        Object tokenObject = getSession().get(SessionParameter.BREARER_TOKEN);
+        if (tokenObject instanceof String) {
+            return (String) tokenObject;
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the proxy user name from the session.
      * 
-     * @return the proxy user name or <code>null</code> if the user name is not
-     *         set
+     * @return the proxy user name or {@code null} if the user name is not set
      */
     protected String getProxyUser() {
         Object userObject = getSession().get(SessionParameter.PROXY_USER);
@@ -120,8 +133,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     /**
      * Gets the proxy password from the session.
      * 
-     * @return the proxy password or <code>null</code> if the password is not
-     *         set
+     * @return the proxy password or {@code null} if the password is not set
      */
     protected String getProxyPassword() {
         Object passwordObject = getSession().get(SessionParameter.PROXY_PASSWORD);
