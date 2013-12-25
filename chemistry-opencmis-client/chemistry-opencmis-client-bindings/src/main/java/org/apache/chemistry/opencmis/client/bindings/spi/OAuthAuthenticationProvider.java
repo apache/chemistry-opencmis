@@ -209,15 +209,26 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             throw new CmisConnectionException("Invalid OAuth refresh token!");
         }
 
+        // default expiration time: 1 hour
+        long expiresIn = 3600;
         Object jsonExpiresIn = jsonResponse.get("expires_in");
-        if (jsonExpiresIn != null && !(jsonExpiresIn instanceof Number)) {
-            throw new CmisConnectionException("Invalid OAuth expires in value!");
+        if (jsonExpiresIn != null) {
+            if (jsonExpiresIn instanceof Number) {
+                expiresIn = ((Number) jsonExpiresIn).longValue();
+            } else if (jsonExpiresIn instanceof String) {
+                try {
+                    expiresIn = Long.parseLong((String) jsonExpiresIn);
+                } catch (NumberFormatException nfe) {
+                    throw new CmisConnectionException("Invalid OAuth expires in value!");
+                }
+            } else {
+                throw new CmisConnectionException("Invalid OAuth expires in value!");
+            }
         }
 
         accessToken = jsonAccessToken.toString();
         refreshToken = (jsonRefreshToken == null ? null : jsonRefreshToken.toString());
-        expiresTimestamp = (jsonExpiresIn == null ? 3600 : ((Number) jsonExpiresIn).longValue()) * 1000
-                + System.currentTimeMillis();
+        expiresTimestamp = expiresIn * 1000 + System.currentTimeMillis();
     }
 
     private JSONObject parseResponse(HttpURLConnection conn) {
