@@ -500,7 +500,6 @@ public final class SessionParameter {
     // ---- general parameter ----
     public static final String USER = "org.apache.chemistry.opencmis.user";
     public static final String PASSWORD = "org.apache.chemistry.opencmis.password";
-    public static final String BREARER_TOKEN = "org.apache.chemistry.opencmis.oauth.brearertoken";
 
     // --- binding parameter ----
     /** Predefined binding types (see {@code BindingType}). */
@@ -553,6 +552,8 @@ public final class SessionParameter {
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
 
+    // --- authentication ---
+
     /** Class name of the authentication provider. */
     public static final String AUTHENTICATION_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.auth.classname";
 
@@ -573,6 +574,16 @@ public final class SessionParameter {
      * standard authentication provider.
      */
     public static final String AUTH_SOAP_USERNAMETOKEN = "org.apache.chemistry.opencmis.binding.auth.soap.usernametoken";
+
+    // --- OAuth ---
+
+    public static final String OAUTH_CLIENT_ID = "org.apache.chemistry.opencmis.oauth.clientId";
+    public static final String OAUTH_CLIENT_SECRET = "org.apache.chemistry.opencmis.oauth.clientSecret";
+    public static final String OAUTH_CODE = "org.apache.chemistry.opencmis.oauth.code";
+    public static final String OAUTH_TOKEN_ENDPOINT = "org.apache.chemistry.opencmis.oauth.tokenEndpoint";
+    public static final String OAUTH_REDIRECT_URI = "org.apache.chemistry.opencmis.oauth.redirectUri";
+
+    public static final String BREARER_ACCESS_TOKEN = "org.apache.chemistry.opencmis.oauth.accessToken";
 
     // --- connection ---
 

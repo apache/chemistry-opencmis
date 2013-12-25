@@ -247,6 +247,20 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     }
 
     /**
+     * Sets bearer token.
+     * 
+     * @param token
+     *            the bearer token
+     */
+    public void setBearerToken(String token) {
+        if (token == null) {
+            remove(SessionParameter.BREARER_ACCESS_TOKEN);
+        } else {
+            put(SessionParameter.BREARER_ACCESS_TOKEN, token);
+        }
+    }
+
+    /**
      * Turns all authentication off if the standard authentication provider is
      * used.
      */
@@ -322,6 +336,26 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
         put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                 "org.apache.chemistry.opencmis.client.bindings.spi.NTLMAuthenticationProvider");
+    }
+
+    /**
+     * Turns OAuth 2.0 bearer token authentication on and basic authentication
+     * and UsernameToken authentication off.
+     * 
+     * @param token
+     *            the bearer token
+     */
+    public void setOAuthBearerTokenAuthentication(String token) {
+        if (token == null) {
+            throw new IllegalArgumentException("Token must be set!");
+        }
+
+        setBearerToken(token);
+
+        put(SessionParameter.AUTH_HTTP_BASIC, false);
+        put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, true);
+        put(SessionParameter.BREARER_ACCESS_TOKEN, token);
     }
 
     /**

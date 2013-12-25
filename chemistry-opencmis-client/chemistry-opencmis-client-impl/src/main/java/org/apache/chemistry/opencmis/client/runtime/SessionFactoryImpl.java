@@ -113,7 +113,8 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
 
         List<Repository> result = new ArrayList<Repository>();
         for (RepositoryInfo data : repositoryInfos) {
-            result.add(new RepositoryImpl(data, parameters, this, objectFactory, authenticationProvider, cache));
+            result.add(new RepositoryImpl(data, parameters, this, objectFactory, binding.getAuthenticationProvider(),
+                    cache));
         }
 
         return result;
