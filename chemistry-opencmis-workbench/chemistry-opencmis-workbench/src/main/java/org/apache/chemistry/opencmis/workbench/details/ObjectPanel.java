@@ -104,120 +104,124 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     }
 
     public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = getClientModel().getCurrentObject();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                CmisObject object = getClientModel().getCurrentObject();
 
-        if (object == null) {
-            nameField.setText("");
-            idField.setText("");
-            typeField.setText("");
-            basetypeField.setText("");
-            secondaryTypesList.removeAll();
-            versionLabelField.setText("");
-            pwcField.setText("");
-            pathsList.removeAll();
-            contentUrlField.setText("");
-            allowableActionsList.removeAll();
-            refreshButton.setEnabled(false);
-            checkButton.setEnabled(false);
-            scriptPanel.setVisible(false);
-        } else {
-            try {
-                nameField.setText(object.getName());
-                idField.setText(object.getId());
-                typeField.setText(object.getType().getId());
-                basetypeField.setText(object.getBaseTypeId().toString());
-
-                if (object.getSecondaryTypes() != null) {
-                    List<String> secTypeIds = new ArrayList<String>();
-                    for (SecondaryType type : object.getSecondaryTypes()) {
-                        secTypeIds.add(type.getId());
-                    }
-                    secondaryTypesList.setList(secTypeIds);
-                } else {
+                if (object == null) {
+                    nameField.setText("");
+                    idField.setText("");
+                    typeField.setText("");
+                    basetypeField.setText("");
                     secondaryTypesList.removeAll();
-                }
-
-                if (object instanceof Document) {
-                    Document doc = (Document) object;
-
-                    try {
-                        versionLabelField.setText(doc.getVersionLabel());
-                    } catch (Exception e) {
-                        versionLabelField.setText("???");
-                    }
-
-                    if (doc.isVersionSeriesCheckedOut() == null) {
-                        pwcField.setText("");
-                    } else if (doc.isVersionSeriesCheckedOut().booleanValue()) {
-                        pwcField.setText(doc.getVersionSeriesCheckedOutId());
-                    } else {
-                        pwcField.setText("(not checked out)");
-                    }
-                } else {
-                    pwcField.setText("");
                     versionLabelField.setText("");
-                }
+                    pwcField.setText("");
+                    pathsList.removeAll();
+                    contentUrlField.setText("");
+                    allowableActionsList.removeAll();
+                    refreshButton.setEnabled(false);
+                    checkButton.setEnabled(false);
+                    scriptPanel.setVisible(false);
+                } else {
+                    try {
+                        nameField.setText(object.getName());
+                        idField.setText(object.getId());
+                        typeField.setText(object.getType().getId());
+                        basetypeField.setText(object.getBaseTypeId().toString());
 
-                if (object instanceof FileableCmisObject) {
-                    if (object instanceof Folder) {
-                        pathsList.setList(Collections.singletonList(((Folder) object).getPath()));
-                    } else {
-                        pathsList.setList(Collections.singletonList(""));
-                        final FileableCmisObject pathObject = (FileableCmisObject) object;
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    List<String> paths = pathObject.getPaths();
-                                    if ((paths == null) || (paths.size() == 0)) {
-                                        pathsList.setList(Collections.singletonList("(unfiled)"));
-                                    } else {
-                                        pathsList.setList(paths);
-                                    }
-                                } catch (Exception e) {
-                                    pathsList.setList(Collections.singletonList("(???)"));
-                                    // ClientHelper.showError(null, e);
-                                }
-                                ObjectPanel.this.revalidate();
+                        if (object.getSecondaryTypes() != null) {
+                            List<String> secTypeIds = new ArrayList<String>();
+                            for (SecondaryType type : object.getSecondaryTypes()) {
+                                secTypeIds.add(type.getId());
                             }
-                        });
+                            secondaryTypesList.setList(secTypeIds);
+                        } else {
+                            secondaryTypesList.removeAll();
+                        }
+
+                        if (object instanceof Document) {
+                            Document doc = (Document) object;
+
+                            try {
+                                versionLabelField.setText(doc.getVersionLabel());
+                            } catch (Exception e) {
+                                versionLabelField.setText("???");
+                            }
+
+                            if (doc.isVersionSeriesCheckedOut() == null) {
+                                pwcField.setText("");
+                            } else if (doc.isVersionSeriesCheckedOut().booleanValue()) {
+                                pwcField.setText(doc.getVersionSeriesCheckedOutId());
+                            } else {
+                                pwcField.setText("(not checked out)");
+                            }
+                        } else {
+                            pwcField.setText("");
+                            versionLabelField.setText("");
+                        }
+
+                        if (object instanceof FileableCmisObject) {
+                            if (object instanceof Folder) {
+                                pathsList.setList(Collections.singletonList(((Folder) object).getPath()));
+                            } else {
+                                pathsList.setList(Collections.singletonList(""));
+                                final FileableCmisObject pathObject = (FileableCmisObject) object;
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            List<String> paths = pathObject.getPaths();
+                                            if ((paths == null) || (paths.size() == 0)) {
+                                                pathsList.setList(Collections.singletonList("(unfiled)"));
+                                            } else {
+                                                pathsList.setList(paths);
+                                            }
+                                        } catch (Exception e) {
+                                            pathsList.setList(Collections.singletonList("(???)"));
+                                            // ClientHelper.showError(null, e);
+                                        }
+                                        ObjectPanel.this.revalidate();
+                                    }
+                                });
+                            }
+                        } else {
+                            pathsList.setList(Collections.singletonList("(not filable)"));
+                        }
+
+                        String docUrl = getDocumentURL(object, getClientModel().getClientSession().getSession());
+                        if (docUrl != null) {
+                            contentUrlField.setText(docUrl);
+                        } else {
+                            contentUrlField.setText("(not available)");
+                        }
+
+                        if (object.getAllowableActions() != null) {
+                            allowableActionsList.setList(object.getAllowableActions().getAllowableActions());
+                        } else {
+                            allowableActionsList.setList(Collections.singletonList("(missing)"));
+                        }
+
+                        refreshButton.setEnabled(true);
+                        checkButton.setEnabled(true);
+
+                        if (object instanceof Document) {
+                            String name = object.getName().toLowerCase(Locale.ENGLISH);
+                            int x = name.lastIndexOf('.');
+                            if ((x > -1) && (scriptExtensions.contains(name.substring(x + 1)))) {
+                                scriptPanel.setVisible(true);
+                                scriptOutput.setVisible(false);
+                            } else {
+                                scriptPanel.setVisible(false);
+                            }
+                        }
+                    } catch (Exception e) {
+                        ClientHelper.showError(ObjectPanel.this, e);
                     }
-                } else {
-                    pathsList.setList(Collections.singletonList("(not filable)"));
                 }
 
-                String docUrl = getDocumentURL(object, getClientModel().getClientSession().getSession());
-                if (docUrl != null) {
-                    contentUrlField.setText(docUrl);
-                } else {
-                    contentUrlField.setText("(not available)");
-                }
-
-                if (object.getAllowableActions() != null) {
-                    allowableActionsList.setList(object.getAllowableActions().getAllowableActions());
-                } else {
-                    allowableActionsList.setList(Collections.singletonList("(missing)"));
-                }
-
-                refreshButton.setEnabled(true);
-                checkButton.setEnabled(true);
-
-                if (object instanceof Document) {
-                    String name = object.getName().toLowerCase(Locale.ENGLISH);
-                    int x = name.lastIndexOf('.');
-                    if ((x > -1) && (scriptExtensions.contains(name.substring(x + 1)))) {
-                        scriptPanel.setVisible(true);
-                        scriptOutput.setVisible(false);
-                    } else {
-                        scriptPanel.setVisible(false);
-                    }
-                }
-            } catch (Exception e) {
-                ClientHelper.showError(this, e);
+                revalidate();
             }
-        }
-
-        revalidate();
+        });
     }
 
     private void createGUI() {

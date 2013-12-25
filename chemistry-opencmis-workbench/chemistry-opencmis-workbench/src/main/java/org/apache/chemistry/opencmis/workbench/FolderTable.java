@@ -43,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -178,10 +179,13 @@ public class FolderTable extends JTable implements FolderListener {
         pwcIcon = ClientHelper.getIcon("pwc.png");
     }
 
-    public void folderLoaded(ClientModelEvent event) {
-        event.getClientModel().getCurrentChildren();
-
-        ((FolderTableModel) getModel()).fireTableDataChanged();
+    public void folderLoaded(final ClientModelEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                event.getClientModel().getCurrentChildren();
+                ((FolderTableModel) getModel()).fireTableDataChanged();
+            }
+        });
     }
 
     private void doAction(boolean alternate) {

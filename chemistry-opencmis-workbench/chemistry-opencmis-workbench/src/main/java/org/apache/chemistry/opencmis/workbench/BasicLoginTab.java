@@ -58,6 +58,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private JRadioButton authenticationNoneButton;
     private JRadioButton authenticationStandardButton;
     private JRadioButton authenticationNTLMButton;
+    private JRadioButton authenticationOAuthButton;
     private JRadioButton compressionOnButton;
     private JRadioButton compressionOffButton;
     private JRadioButton clientCompressionOnButton;
@@ -126,19 +127,24 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         boolean standard = (System.getProperty(SYSPROP_AUTHENTICATION, "standard").toLowerCase(Locale.ENGLISH)
                 .equals("standard"));
         boolean ntlm = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("ntlm"));
+        boolean oauth = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("oauth"));
         boolean none = !standard && !ntlm;
         authenticationNoneButton = new JRadioButton("None", none);
         authenticationStandardButton = new JRadioButton("Standard", standard);
         authenticationNTLMButton = new JRadioButton("NTLM", ntlm);
+        authenticationOAuthButton = new JRadioButton("OAuth 2.0 (Bearer Token)", oauth);
         ButtonGroup authenticationGroup = new ButtonGroup();
         authenticationGroup.add(authenticationNoneButton);
         authenticationGroup.add(authenticationStandardButton);
         authenticationGroup.add(authenticationNTLMButton);
+        authenticationGroup.add(authenticationOAuthButton);
         authenticationContainer.add(authenticationNoneButton);
         authenticationContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         authenticationContainer.add(authenticationStandardButton);
         authenticationContainer.add(Box.createRigidArea(new Dimension(10, 0)));
         authenticationContainer.add(authenticationNTLMButton);
+        authenticationContainer.add(Box.createRigidArea(new Dimension(10, 0)));
+        authenticationContainer.add(authenticationOAuthButton);
         JLabel authenticatioLabel = new JLabel("Authentication:", JLabel.TRAILING);
 
         pane.add(authenticatioLabel);
@@ -223,8 +229,9 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
             authentication = ClientSession.Authentication.STANDARD;
         } else if (authenticationNTLMButton.isSelected()) {
             authentication = ClientSession.Authentication.NTLM;
+        } else if (authenticationOAuthButton.isSelected()) {
+            authentication = ClientSession.Authentication.OAUTH_BEARER;
         }
-
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
                 compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected());
     }

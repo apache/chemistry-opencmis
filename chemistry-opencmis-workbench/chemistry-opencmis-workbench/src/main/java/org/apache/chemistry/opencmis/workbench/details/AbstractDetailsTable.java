@@ -132,7 +132,11 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
     }
 
     public void objectLoaded(ClientModelEvent event) {
-        ((DetailsTableModel) getModel()).fireTableDataChanged();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                ((DetailsTableModel) getModel()).fireTableDataChanged();
+            }
+        });
     }
 
     public CmisObject getObject() {

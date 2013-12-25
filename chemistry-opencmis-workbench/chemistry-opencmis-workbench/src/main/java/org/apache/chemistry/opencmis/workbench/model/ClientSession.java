@@ -63,7 +63,7 @@ public class ClientSession {
     public static final String ACCEPT_SELF_SIGNED_CERTIFICATES = WORKBENCH_PREFIX + "acceptSelfSignedCertificates";
 
     public enum Authentication {
-        NONE, STANDARD, NTLM
+        NONE, STANDARD, NTLM, OAUTH_BEARER
     }
 
     private static final Set<String> FOLDER_PROPERTY_SET = new HashSet<String>();
@@ -137,6 +137,9 @@ public class ClientSession {
             break;
         case NTLM:
             parameters.setNtlmAuthentication(username, password);
+            break;
+        case OAUTH_BEARER:
+            parameters.setOAuthBearerTokenAuthentication(username);
             break;
         default:
             parameters.setNoAuthentication();

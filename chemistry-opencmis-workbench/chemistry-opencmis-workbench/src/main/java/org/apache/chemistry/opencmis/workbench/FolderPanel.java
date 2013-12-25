@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -61,26 +62,30 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         createGUI();
     }
 
-    public void folderLoaded(ClientModelEvent event) {
-        Folder currentFolder = event.getClientModel().getCurrentFolder();
+    public void folderLoaded(final ClientModelEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                Folder currentFolder = event.getClientModel().getCurrentFolder();
 
-        if (currentFolder != null) {
-            String path = currentFolder.getPath();
-            pathField.setText(path);
+                if (currentFolder != null) {
+                    String path = currentFolder.getPath();
+                    pathField.setText(path);
 
-            Folder parent = currentFolder.getFolderParent();
-            if (parent == null) {
-                parentId = null;
-                upButton.setEnabled(false);
-            } else {
-                parentId = parent.getId();
-                upButton.setEnabled(true);
+                    Folder parent = currentFolder.getFolderParent();
+                    if (parent == null) {
+                        parentId = null;
+                        upButton.setEnabled(false);
+                    } else {
+                        parentId = parent.getId();
+                        upButton.setEnabled(true);
+                    }
+                } else {
+                    pathField.setText("???");
+                    parentId = null;
+                    upButton.setEnabled(false);
+                }
             }
-        } else {
-            pathField.setText("???");
-            parentId = null;
-            upButton.setEnabled(false);
-        }
+        });
     }
 
     public void objectLoaded(ClientModelEvent event) {
@@ -153,19 +158,23 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
     }
 
     private void loadFolder() {
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            String id = pathField.getText().trim();
-            if (id.length() == 0) {
-                id = "/";
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    String id = pathField.getText().trim();
+                    if (id.length() == 0) {
+                        id = "/";
+                    }
+                    ObjectId objectId = model.loadFolder(id, id.charAt(0) == '/');
+                    model.loadObject(objectId.getId());
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                    return;
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
             }
-            ObjectId objectId = model.loadFolder(id, id.charAt(0) == '/');
-            model.loadObject(objectId.getId());
-        } catch (Exception ex) {
-            ClientHelper.showError(null, ex);
-            return;
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
+        });
     }
 }

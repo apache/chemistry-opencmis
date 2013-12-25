@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.workbench.details;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.workbench.actions.AclUpdatePanel;
@@ -76,55 +77,59 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     }
 
     public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = model.getCurrentObject();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                CmisObject object = model.getCurrentObject();
 
-        propertyUpdatePanel.setObject(object);
-        propertyUpdatePanel.setVisible(propertyUpdatePanel.isAllowed());
+                propertyUpdatePanel.setObject(object);
+                propertyUpdatePanel.setVisible(propertyUpdatePanel.isAllowed());
 
-        deletePanel.setObject(object);
-        deletePanel.setVisible(deletePanel.isAllowed());
+                deletePanel.setObject(object);
+                deletePanel.setVisible(deletePanel.isAllowed());
 
-        deleteTreePanel.setObject(object);
-        deleteTreePanel.setVisible(deleteTreePanel.isAllowed());
+                deleteTreePanel.setObject(object);
+                deleteTreePanel.setVisible(deleteTreePanel.isAllowed());
 
-        copyPanel.setObject(object);
-        copyPanel.setVisible(copyPanel.isAllowed());
+                copyPanel.setObject(object);
+                copyPanel.setVisible(copyPanel.isAllowed());
 
-        movePanel.setObject(object);
-        movePanel.setVisible(movePanel.isAllowed());
+                movePanel.setObject(object);
+                movePanel.setVisible(movePanel.isAllowed());
 
-        checkOutPanel.setObject(object);
-        checkOutPanel.setVisible(checkOutPanel.isAllowed());
+                checkOutPanel.setObject(object);
+                checkOutPanel.setVisible(checkOutPanel.isAllowed());
 
-        cancelCheckOutPanel.setObject(object);
-        cancelCheckOutPanel.setVisible(cancelCheckOutPanel.isAllowed());
+                cancelCheckOutPanel.setObject(object);
+                cancelCheckOutPanel.setVisible(cancelCheckOutPanel.isAllowed());
 
-        checkInPanel.setObject(object);
-        checkInPanel.setVisible(checkInPanel.isAllowed());
+                checkInPanel.setObject(object);
+                checkInPanel.setVisible(checkInPanel.isAllowed());
 
-        setContentStreamPanel.setObject(object);
-        setContentStreamPanel.setVisible(setContentStreamPanel.isAllowed());
+                setContentStreamPanel.setObject(object);
+                setContentStreamPanel.setVisible(setContentStreamPanel.isAllowed());
 
-        appendContentStreamPanel.setObject(object);
-        appendContentStreamPanel.setVisible(appendContentStreamPanel.isAllowed());
+                appendContentStreamPanel.setObject(object);
+                appendContentStreamPanel.setVisible(appendContentStreamPanel.isAllowed());
 
-        deleteContentStreamPanel.setObject(object);
-        deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
+                deleteContentStreamPanel.setObject(object);
+                deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
 
-        addObjectToFolderPanel.setObject(object);
-        addObjectToFolderPanel.setVisible(addObjectToFolderPanel.isAllowed());
+                addObjectToFolderPanel.setObject(object);
+                addObjectToFolderPanel.setVisible(addObjectToFolderPanel.isAllowed());
 
-        removeObjectFromFolderPanel.setObject(object);
-        removeObjectFromFolderPanel.setVisible(removeObjectFromFolderPanel.isAllowed());
+                removeObjectFromFolderPanel.setObject(object);
+                removeObjectFromFolderPanel.setVisible(removeObjectFromFolderPanel.isAllowed());
 
-        aclUpdatePanel.setObject(object);
-        aclUpdatePanel.setVisible(aclUpdatePanel.isAllowed());
+                aclUpdatePanel.setObject(object);
+                aclUpdatePanel.setVisible(aclUpdatePanel.isAllowed());
 
-        applyPolicyPanel.setObject(object);
-        applyPolicyPanel.setVisible(applyPolicyPanel.isAllowed());
+                applyPolicyPanel.setObject(object);
+                applyPolicyPanel.setVisible(applyPolicyPanel.isAllowed());
 
-        removePolicyPanel.setObject(object);
-        removePolicyPanel.setVisible(removePolicyPanel.isAllowed());
+                removePolicyPanel.setObject(object);
+                removePolicyPanel.setVisible(removePolicyPanel.isAllowed());
+            }
+        });
     }
 
     private void createGUI() {

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.workbench.TypeSplitPane;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -35,12 +37,16 @@ public class TypesPanel extends TypeSplitPane implements ObjectListener {
 
     @Override
     public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = getClientModel().getCurrentObject();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                CmisObject object = getClientModel().getCurrentObject();
 
-        if (object == null) {
-            setType(null);
-        } else {
-            setType(object.getType());
-        }
+                if (object == null) {
+                    setType(null);
+                } else {
+                    setType(object.getType());
+                }
+            }
+        });
     }
 }

@@ -26,6 +26,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -56,57 +57,62 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
     @Override
     public void objectLoaded(ClientModelEvent event) {
-        CmisObject object = model.getCurrentObject();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                CmisObject object = model.getCurrentObject();
 
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+                DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
-        if (object != null) {
-            List<CmisExtensionElement> extensions;
+                if (object != null) {
+                    List<CmisExtensionElement> extensions;
 
-            // object extensions
-            extensions = object.getExtensions(ExtensionLevel.OBJECT);
-            if ((extensions != null) && (!extensions.isEmpty())) {
-                DefaultMutableTreeNode objectRootNode = new DefaultMutableTreeNode("Object");
-                addExtension(objectRootNode, extensions);
-                rootNode.add(objectRootNode);
+                    // object extensions
+                    extensions = object.getExtensions(ExtensionLevel.OBJECT);
+                    if ((extensions != null) && (!extensions.isEmpty())) {
+                        DefaultMutableTreeNode objectRootNode = new DefaultMutableTreeNode("Object");
+                        addExtension(objectRootNode, extensions);
+                        rootNode.add(objectRootNode);
+                    }
+
+                    // property extensions
+                    extensions = object.getExtensions(ExtensionLevel.PROPERTIES);
+                    if ((extensions != null) && (!extensions.isEmpty())) {
+                        DefaultMutableTreeNode propertiesRootNode = new DefaultMutableTreeNode("Properties");
+                        addExtension(propertiesRootNode, extensions);
+                        rootNode.add(propertiesRootNode);
+                    }
+
+                    // allowable actions extensions
+                    extensions = object.getExtensions(ExtensionLevel.ALLOWABLE_ACTIONS);
+                    if ((extensions != null) && (!extensions.isEmpty())) {
+                        DefaultMutableTreeNode allowableActionsRootNode = new DefaultMutableTreeNode(
+                                "Allowable Actions");
+                        addExtension(allowableActionsRootNode, extensions);
+                        rootNode.add(allowableActionsRootNode);
+                    }
+
+                    // ACL extensions
+                    extensions = object.getExtensions(ExtensionLevel.ACL);
+                    if ((extensions != null) && (!extensions.isEmpty())) {
+                        DefaultMutableTreeNode aclRootNode = new DefaultMutableTreeNode("ACL");
+                        addExtension(aclRootNode, extensions);
+                        rootNode.add(aclRootNode);
+                    }
+
+                    // policies extensions
+                    extensions = object.getExtensions(ExtensionLevel.POLICIES);
+                    if ((extensions != null) && (!extensions.isEmpty())) {
+                        DefaultMutableTreeNode policiesRootNode = new DefaultMutableTreeNode("Policies");
+                        addExtension(policiesRootNode, extensions);
+                        rootNode.add(policiesRootNode);
+                    }
+                }
+
+                DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
+
+                extensionsTree.setModel(treeModel);
             }
-
-            // property extensions
-            extensions = object.getExtensions(ExtensionLevel.PROPERTIES);
-            if ((extensions != null) && (!extensions.isEmpty())) {
-                DefaultMutableTreeNode propertiesRootNode = new DefaultMutableTreeNode("Properties");
-                addExtension(propertiesRootNode, extensions);
-                rootNode.add(propertiesRootNode);
-            }
-
-            // allowable actions extensions
-            extensions = object.getExtensions(ExtensionLevel.ALLOWABLE_ACTIONS);
-            if ((extensions != null) && (!extensions.isEmpty())) {
-                DefaultMutableTreeNode allowableActionsRootNode = new DefaultMutableTreeNode("Allowable Actions");
-                addExtension(allowableActionsRootNode, extensions);
-                rootNode.add(allowableActionsRootNode);
-            }
-
-            // ACL extensions
-            extensions = object.getExtensions(ExtensionLevel.ACL);
-            if ((extensions != null) && (!extensions.isEmpty())) {
-                DefaultMutableTreeNode aclRootNode = new DefaultMutableTreeNode("ACL");
-                addExtension(aclRootNode, extensions);
-                rootNode.add(aclRootNode);
-            }
-
-            // policies extensions
-            extensions = object.getExtensions(ExtensionLevel.POLICIES);
-            if ((extensions != null) && (!extensions.isEmpty())) {
-                DefaultMutableTreeNode policiesRootNode = new DefaultMutableTreeNode("Policies");
-                addExtension(policiesRootNode, extensions);
-                rootNode.add(policiesRootNode);
-            }
-        }
-
-        DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-
-        extensionsTree.setModel(treeModel);
+        });
     }
 
     private void addExtension(DefaultMutableTreeNode parent, List<CmisExtensionElement> extensions) {
