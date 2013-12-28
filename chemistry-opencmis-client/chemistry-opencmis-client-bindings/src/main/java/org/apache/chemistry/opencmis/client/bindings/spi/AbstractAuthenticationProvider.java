@@ -108,7 +108,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
      * @return the bearer token or {@code null} if the token is not set
      */
     protected String getBearerToken() {
-        Object tokenObject = getSession().get(SessionParameter.BREARER_ACCESS_TOKEN);
+        Object tokenObject = getSession().get(SessionParameter.OAUTH_ACCESS_TOKEN);
         if (tokenObject instanceof String) {
             return (String) tokenObject;
         }

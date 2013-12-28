@@ -583,7 +583,10 @@ public final class SessionParameter {
     public static final String OAUTH_TOKEN_ENDPOINT = "org.apache.chemistry.opencmis.oauth.tokenEndpoint";
     public static final String OAUTH_REDIRECT_URI = "org.apache.chemistry.opencmis.oauth.redirectUri";
 
-    public static final String BREARER_ACCESS_TOKEN = "org.apache.chemistry.opencmis.oauth.accessToken";
+    public static final String OAUTH_ACCESS_TOKEN = "org.apache.chemistry.opencmis.oauth.accessToken";
+    public static final String OAUTH_REFRESH_TOKEN = "org.apache.chemistry.opencmis.oauth.refreshToken";
+    public static final String OAUTH_EXPIRATION_TIMESTAMP = "org.apache.chemistry.opencmis.oauth.expirationTimestamp";
+    public static final String OAUTH_DEFAULT_TOKEN_LIFETIME = "org.apache.chemistry.opencmis.oauth.defaultTokenLifetime";
 
     // --- connection ---
 

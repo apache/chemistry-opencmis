@@ -42,7 +42,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OAuth Authentication Provider.
+ * OAuth 2.0 Authentication Provider.
+ * <p>
+ * This authentication provider implements OAuth 2.0 (RFC 6749) Bearer Tokens
+ * (RFC 6750).
+ * <p>
+ * The provider can be either configured with an authorization code or with an
+ * existing bearer token. Token endpoint and client ID are always required. If a
+ * client secret is required depends on the authorization server.
+ * <p>
+ * Configuration with authorization code:
+ * 
+ * <pre>
+ * SessionFactory factory = ...
+ * 
+ * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * 
+ * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
+ * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+ * parameter.put(SessionParameter.REPOSITORY_ID, "myRepository");
+ * 
+ * parameter.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, "org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider");
+ * 
+ * parameter.put(SessionParameter.OAUTH_TOKEN_ENDPOINT, "https://example.com/auth/oauth/token");
+ * parameter.put(SessionParameter.OAUTH_CLIENT_ID, "s6BhdRkqt3");
+ * parameter.put(SessionParameter.OAUTH_CLIENT_SECRET, "7Fjfp0ZBr1KtDRbnfVdmIw");
+ * 
+ * parameter.put(SessionParameter.OAUTH_CODE, "abc");
+ * 
+ * ...
+ * Session session = factory.createSession(parameter);
+ * </pre>
+ * 
+ * <p>
+ * Configuration with existing bearer token:
+ * 
+ * <pre>
+ * SessionFactory factory = ...
+ * 
+ * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * 
+ * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
+ * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+ * parameter.put(SessionParameter.REPOSITORY_ID, "myRepository");
+ * 
+ * parameter.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, "org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider");
+ *  
+ * parameter.put(SessionParameter.OAUTH_TOKEN_ENDPOINT, "https://example.com/auth/oauth/token");
+ * parameter.put(SessionParameter.OAUTH_CLIENT_ID, "s6BhdRkqt3");
+ * parameter.put(SessionParameter.OAUTH_CLIENT_SECRET, "7Fjfp0ZBr1KtDRbnfVdmIw");
+ * 
+ * parameter.put(SessionParameter.OAUTH_ACCESS_TOKEN, "2YotnFZFEjr1zCsicMWpAA");
+ * parameter.put(SessionParameter.OAUTH_REFRESH_TOKEN, "tGzv3JOkF0XG5Qx2TlKWIA");
+ * parameter.put(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP, "1388237075127");
+ * 
+ * ...
+ * Session session = factory.createSession(parameter);
+ * </pre>
  */
 public class OAuthAuthenticationProvider extends StandardAuthenticationProvider {
 
@@ -50,11 +106,57 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
     private static final long serialVersionUID = 1L;
 
-    private String accessToken;
-    private String refreshToken;
-    private long expiresTimestamp;
-
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    private Token token = null;
+    private long defaultTokenLifetime = 3600;
+
+    @Override
+    public void setSession(BindingSession session) {
+        super.setSession(session);
+
+        if (token == null) {
+            // get predefined access token
+            String accessToken = null;
+            if (session.get(SessionParameter.OAUTH_ACCESS_TOKEN) instanceof String) {
+                accessToken = (String) session.get(SessionParameter.OAUTH_ACCESS_TOKEN);
+            }
+
+            // get predefined refresh token
+            String refreshToken = null;
+            if (session.get(SessionParameter.OAUTH_REFRESH_TOKEN) instanceof String) {
+                refreshToken = (String) session.get(SessionParameter.OAUTH_REFRESH_TOKEN);
+            }
+
+            // get predefined expiration timestamp
+            long expirationTimestamp = 0;
+            if (session.get(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP) instanceof String) {
+                try {
+                    expirationTimestamp = Long.parseLong((String) session
+                            .get(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP));
+                } catch (NumberFormatException nfe) {
+                    // ignore
+                }
+            } else if (session.get(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP) instanceof Number) {
+                expirationTimestamp = ((Number) session.get(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP)).longValue();
+            }
+
+            // get default token lifetime
+            if (session.get(SessionParameter.OAUTH_DEFAULT_TOKEN_LIFETIME) instanceof String) {
+                try {
+                    defaultTokenLifetime = Long.parseLong((String) session
+                            .get(SessionParameter.OAUTH_DEFAULT_TOKEN_LIFETIME));
+                } catch (NumberFormatException nfe) {
+                    // ignore
+                }
+            } else if (session.get(SessionParameter.OAUTH_DEFAULT_TOKEN_LIFETIME) instanceof Number) {
+                defaultTokenLifetime = ((Number) session.get(SessionParameter.OAUTH_DEFAULT_TOKEN_LIFETIME))
+                        .longValue();
+            }
+
+            token = new Token(accessToken, refreshToken, expirationTimestamp);
+        }
+    }
 
     @Override
     public Map<String, List<String>> getHTTPHeaders(String url) {
@@ -63,26 +165,51 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             headers = new HashMap<String, List<String>>();
         }
 
-        headers.put("Authorization", Collections.singletonList("Bearer " + getToken()));
+        headers.put("Authorization", Collections.singletonList("Bearer " + getAccessToken()));
 
         return headers;
     }
 
     /**
+     * Returns the current token.
+     * 
+     * @return the current token
+     */
+    public Token getToken() {
+        lock.readLock().lock();
+        try {
+            return token;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    protected boolean getSendBearerToken() {
+        // the super class should not handle bearer tokens
+        return false;
+    }
+
+    /**
      * Gets the access token. If no access token is present or the access token
-     * expired, a new token is requested.
+     * is expired, a new token is requested.
      * 
      * @return the access token
      */
-    protected String getToken() {
+    protected String getAccessToken() {
         lock.writeLock().lock();
         try {
-            if (accessToken == null) {
-                requestToken();
-            } else if (System.currentTimeMillis() >= expiresTimestamp) {
+            if (token.getAccessToken() == null) {
+                if (token.getRefreshToken() == null) {
+                    requestToken();
+                } else {
+                    refreshToken();
+                }
+            } else if (token.isExpired()) {
                 refreshToken();
             }
-            return accessToken;
+
+            return token.getAccessToken();
         } catch (CmisConnectionException ce) {
             throw ce;
         } catch (Exception e) {
@@ -94,25 +221,25 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
     private void requestToken() throws IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Request new OAuth access token.");
+            LOG.debug("Requesting new OAuth access token.");
         }
 
         makeRequest(false);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Access token: {} / Refresh token: {}", accessToken, refreshToken);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(token.toString());
         }
     }
 
     private void refreshToken() throws IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Refresh new OAuth access token.");
+            LOG.debug("Refreshing OAuth access token.");
         }
 
         makeRequest(true);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Access token: {} / Refresh token: {}", accessToken, refreshToken);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(token.toString());
         }
     }
 
@@ -122,7 +249,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             throw new CmisConnectionException("Token endpoint not set!");
         }
 
-        if (isRefresh && refreshToken == null) {
+        if (isRefresh && token.getRefreshToken() == null) {
             throw new CmisConnectionException("No refresh token!");
         }
 
@@ -143,7 +270,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             writer.write("grant_type=refresh_token");
 
             writer.write("&refresh_token=");
-            writer.write(IOUtils.encodeURL(refreshToken));
+            writer.write(IOUtils.encodeURL(token.getRefreshToken()));
         } else {
             writer.write("grant_type=authorization_code");
 
@@ -201,16 +328,15 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
         Object jsonAccessToken = jsonResponse.get("access_token");
         if (!(jsonAccessToken instanceof String)) {
-            throw new CmisConnectionException("Invalid OAuth access token!");
+            throw new CmisConnectionException("Invalid OAuth access_token!");
         }
 
         Object jsonRefreshToken = jsonResponse.get("refresh_token");
         if (jsonRefreshToken != null && !(jsonRefreshToken instanceof String)) {
-            throw new CmisConnectionException("Invalid OAuth refresh token!");
+            throw new CmisConnectionException("Invalid OAuth refresh_token!");
         }
 
-        // default expiration time: 1 hour
-        long expiresIn = 3600;
+        long expiresIn = defaultTokenLifetime;
         Object jsonExpiresIn = jsonResponse.get("expires_in");
         if (jsonExpiresIn != null) {
             if (jsonExpiresIn instanceof Number) {
@@ -219,16 +345,15 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
                 try {
                     expiresIn = Long.parseLong((String) jsonExpiresIn);
                 } catch (NumberFormatException nfe) {
-                    throw new CmisConnectionException("Invalid OAuth expires in value!");
+                    throw new CmisConnectionException("Invalid OAuth expires_in value!");
                 }
             } else {
-                throw new CmisConnectionException("Invalid OAuth expires in value!");
+                throw new CmisConnectionException("Invalid OAuth expires_in value!");
             }
         }
 
-        accessToken = jsonAccessToken.toString();
-        refreshToken = (jsonRefreshToken == null ? null : jsonRefreshToken.toString());
-        expiresTimestamp = expiresIn * 1000 + System.currentTimeMillis();
+        token = new Token(jsonAccessToken.toString(), (jsonRefreshToken == null ? null : jsonRefreshToken.toString()),
+                expiresIn * 1000 + System.currentTimeMillis());
     }
 
     private JSONObject parseResponse(HttpURLConnection conn) {
@@ -281,5 +406,64 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
         }
 
         return charset;
+    }
+
+    /**
+     * Token holder class.
+     */
+    public static class Token {
+        private String accessToken;
+        private String refreshToken;
+        private long expirationTimestamp;
+
+        public Token(String accessToken, String refreshToken, long expirationTimestamp) {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.expirationTimestamp = expirationTimestamp;
+        }
+
+        /**
+         * Returns the access token.
+         * 
+         * @return the access token
+         */
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        /**
+         * Returns the refresh token.
+         * 
+         * @return the refresh token
+         */
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        /**
+         * Returns the timestamp when the access expires.
+         * 
+         * @return the timestamp in milliseconds since midnight, January 1, 1970
+         *         UTC.
+         */
+        public long getExpirationTimestamp() {
+            return expirationTimestamp;
+        }
+
+        /**
+         * Returns whether the access token is expired or not.
+         * 
+         * @return {@code true} if the access token is expired, {@code false}
+         *         otherwise
+         */
+        public boolean isExpired() {
+            return System.currentTimeMillis() >= expirationTimestamp;
+        }
+
+        @Override
+        public String toString() {
+            return "Access token: " + accessToken + " / Refresh token: " + refreshToken + " / Expires : "
+                    + expirationTimestamp;
+        }
     }
 }
