@@ -512,12 +512,8 @@ public class ObjGenApp {
             name = dirName;
         }
 
-        if (null == repoId || repoId.length() == 0) {
-            System.out.println("Error: You have to provide a repository id");
-            return;
-        }
         System.out.println("Copying files to a repository: ");
-        System.out.println("Repository id is: " + repoId);
+        System.out.println("Repository id is: " + (repoId == null ? "not set!" : repoId));
         System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
 
         Map<String, String> parameters = getConnectionParameters(getBindingProperty(), repoId);
