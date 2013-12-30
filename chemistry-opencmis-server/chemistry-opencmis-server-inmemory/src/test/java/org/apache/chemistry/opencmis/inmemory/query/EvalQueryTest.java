@@ -946,7 +946,7 @@ public class EvalQueryTest extends AbstractServiceTest {
     @Test
     public void testContainsPhrase() {
         log.debug("Start testContainsPhrase...");
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('\\'Kitty Katty\\'')";
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " WHERE CONTAINS('\"Kitty Katty\"')";
         ObjectList res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
         assertTrue(resultContains("beta", res));

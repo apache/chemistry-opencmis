@@ -112,13 +112,16 @@ fragment
 QUOTE: '\'';
 
 fragment 
+DOUBLE_QUOTE: '\"';
+
+fragment 
 BACKSL: '\\';
 
 // An escape sequence is two backslashes for backslash, backslash single quote for single quote
 // single quote single quote for single quote
 fragment
 ESC 
-	: BACKSL (QUOTE | BACKSL | TEXT_MINUS)
+	: BACKSL (QUOTE | DOUBLE_QUOTE | BACKSL | TEXT_MINUS | '*' | '?')
 // add this line if you want to support double single quote as escaped quote for full text as in SQL-92	
 //	| { ((CharStream)input).LT(2)=='\'' }? => QUOTE QUOTE
 	;
@@ -129,12 +132,12 @@ fragment
 TEXT_SEARCH_PHRASE_STRING 
    : 
      ( ESC 
-       | ~(BACKSL | QUOTE)
+       | ~(BACKSL | DOUBLE_QUOTE | TEXT_MINUS | QUOTE)
      )+
    ;
    
 TEXT_SEARCH_PHRASE_STRING_LIT
-    : QUOTE TEXT_SEARCH_PHRASE_STRING QUOTE
+    : DOUBLE_QUOTE TEXT_SEARCH_PHRASE_STRING DOUBLE_QUOTE
 	;
 
 	// a literal for text search is a very generic rule and matches almost anything

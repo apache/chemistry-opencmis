@@ -606,7 +606,7 @@ public class QueryParseTest extends AbstractQueryTest {
 
     @Test
     public void whereTestContains2() {
-        String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven OR \\'Johann Sebastian\\' Mozart -Cage AND Orff')";
+        String statement = "SELECT p1 FROM MyType WHERE CONTAINS('Beethoven OR \"Johann Sebastian\" Mozart -Cage AND Orff')";
         checkTreeWhere(statement);
         Tree tree = findSearchExpression(statement);
         printSearchTree(tree, statement);

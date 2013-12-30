@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,29 +61,30 @@ public class TestParserTextSearch extends AbstractParserTest{
     
     //
     //    <<
-    //    "ab c"
+    //    ab c
     //    >> FAIL
     @Test
     public void testTEXT_SEARCH_WORD_LIT3() {
-        testLexerFail("TEXT_SEARCH_WORD_LIT", "\"ab c\"");
+        testLexerFail("TEXT_SEARCH_WORD_LIT", "ab c");
     }
     
     //
     //    <<
-    //    "'abc'" 
+    //    'abc' 
     //    >> FAIL
     @Test
     public void testTEXT_SEARCH_WORD_LIT4() {
-        testLexerFail("TEXT_SEARCH_WORD_LIT", "\"\'abc\'\"");
+        testLexerFail("TEXT_SEARCH_WORD_LIT", "\'abc\'");
     }
     
     //
     //    <<
-    //    "ab\'c"
+    //    ab\'c
     //    >> OK
     @Test
-    public void testTEXT_SEARCH_WORD_LIT5() {
-        testLexerOk("TEXT_SEARCH_WORD_LIT", "\"ab\\'c\"");
+    public void testWordLiteralWithSingleQuote() {
+        testLexerOk("TEXT_SEARCH_WORD_LIT", "ab\\'c");
+        testLexerFail("TEXT_SEARCH_WORD_LIT", "ab'c");
     }
     
     //
@@ -89,25 +92,9 @@ public class TestParserTextSearch extends AbstractParserTest{
     //    "ab\\c"
     //    >> OK
     @Test
-    public void testTEXT_SEARCH_WORD_LIT6() {
-      testLexerOk("TEXT_SEARCH_WORD_LIT", "\"ab\\\\c\"");
+    public void testPhraseWithBackslash() {
+      testLexerOk("TEXT_SEARCH_PHRASE_STRING_LIT", "\"ab\\\\c\"");
     }
-    
-    //
-    //    /*
-    //    <<
-    //    ab''c
-    //    >> OK
-    //    */
-    /*
-     * double quotes not supported in text search
-     */
-    /*
-    @Test
-    public void testTEXT_SEARCH_WORD_LIT7() {
-      testLexerOk("TEXT_SEARCH_WORD_LIT", "ab''c");
-    }
-    */
     
     //
     //    phrase:
@@ -123,109 +110,129 @@ public class TestParserTextSearch extends AbstractParserTest{
     //
     //    <<
     //    "abc"
-    //    >> FAIL
+    //    >> OK
     @Test
     public void testPhrase2() {
-        testParserFail("phrase", "\"abc\"");
+        testParserOk("phrase", "\"abc\"");
     }
     
     //
     //    <<
-    //    'abc'
+    //    "'abc'"
     //    >> OK
     @Test
     public void testPhrase3() {
-      testParserOk("phrase", "'abc'");
+      testParserFail("phrase", "'abc'");
+      testParserOk("phrase", "\"\\'abc\\'\"");
     }
     
     //
     //    <<
-    //    'abc def'
+    //    "abc def"
     //    >> OK
     @Test
     public void testPhrase4() {
-      testParserOk("phrase", "'abc def'");
+      testParserOk("phrase", "\"abc def\"");
     }
     
     //
     //    <<
-    //    'ab\-c'
-    //    >> OK
-    @Test
-    public void testPhrase5() {
-      testParserOk("phrase", "'ab\\-c'");
-    }
-    
-    //
-    //    <<
-    //    'ab\\c'
+    //    "ab\\c"
     //    >> OK
     @Test
     public void testPhrase6() {
-      testParserOk("phrase", "'ab\\\\c'");
+      testParserOk("phrase", "\"ab\\\\c\"");
     }
     
     //
     //    <<
-    //    'ab\c'
+    //    "ab\c"
     //    >> FAIL
     @Test
-    public void testPhrase7() {
-        testParserFail("phrase", "'ab\\c'");
+    public void testPhraseEscapedBackslash() {
+        testParserFail("phrase", "\"ab\\c\"");
+        testParserOk("phrase", "\"ab\\\\c\"");
     }
     
     //
     //    <<
-    //    'ab\\\c'
+    //    "ab\\\c"
     //    >> FAIL
     @Test
     public void testPhrase8() {
-        testParserFail("phrase", "'ab\\\\\\c'");
+        testParserFail("phrase", "\"ab\\\\\\c\"");
     }
     
     //
     //    <<
-    //    'ab\'c'
+    //    "ab\'c"
     //    >> OK
     @Test
-    public void testPhrase9() {
-      testParserOk("phrase", "'ab\\'c'");
+    public void testPhraseSingleQuote() {
+        assertEquals("ab'c", "ab\'c");
+        testParserOk("phrase", "\"ab\\'c\"");
+        testParserFail("phrase", "\"ab'c\""); //!!
     }
     
     //
     //    <<
-    //    'abc def'
+    //    "ab\-c"
     //    >> OK
     @Test
-    public void testPhrase10() {
-      testParserOk("phrase", "'abc def'");
-    }
-    
-    //
-    //    <<
-    //    '\'abc\''
-    //    >> OK
-    @Test
-    public void testPhrase11() {
-      testParserOk("phrase", "'\\'abc\\''");
-    }
-    
-    //
-    //    <<
-    //    'abc AND def'
-    //    >> OK
-    @Test
-    public void testPhrase12() {
-      testParserOk("phrase", "'abc AND def'");
+    public void testPhraseHyphen() {
+        testParserOk("phrase", "\"ab\\-c\"");
+        testParserFail("phrase", "\"ab-c\"");     // !!!
     }
     
     //
     //    << 
-    //    'AND'
+    //    "abc*"
+    //    "abc\*"
+    //    "abc?"
+    //    "abc\?"
+    //    >> OK
+    @Test
+    public void testPhraseWildcards() {
+      testParserOk("phrase", "\"abc*\"");
+      testParserOk("phrase", "\"abc\\*\"");
+      testParserOk("phrase", "\"abc?\"");
+      testParserOk("phrase", "\"abc\\?\"");
+    }
+
+    //
+    //    <<
+    //    "abc def"
+    //    >> OK
+    @Test
+    public void testPhrase10() {
+      testParserOk("phrase", "\"abc def\"");
+    }
+    
+    //
+    //    <<
+    //    "\'abc\'"
+    //    >> OK
+    @Test
+    public void testPhrase11() {
+      testParserOk("phrase", "\"\\'abc\\'\"");
+    }
+    
+    //
+    //    <<
+    //    "abc AND def"
+    //    >> OK
+    @Test
+    public void testPhrase12() {
+      testParserOk("phrase", "\"abc AND def\"");
+    }
+    
+    //
+    //    << 
+    //    "AND"
     //    >> OK
     @Test
     public void testPhrase13() {
-      testParserOk("phrase", "'AND'");
+      testParserOk("phrase", "\"AND\"");
     }
     
     //
@@ -338,7 +345,7 @@ public class TestParserTextSearch extends AbstractParserTest{
     //    >> OK
     @Test
     public void testWord13() {
-      testParserOk("term", "'abc def'");
+      testParserOk("term", "\"abc def\"");
     }
     
     //
@@ -347,7 +354,7 @@ public class TestParserTextSearch extends AbstractParserTest{
     //    >> OK
     @Test
     public void testWord14() {
-      testParserOk("term", "-'abc def'");
+      testParserOk("term", "-\"abc def\"");
     }
     
     //
@@ -428,38 +435,38 @@ public class TestParserTextSearch extends AbstractParserTest{
     
     //
     //    <<
-    //    'cat AND mouse'
+    //    "cat AND mouse"
     //    >> OK
     @Test
     public void testTextSearchExpression6() {
-      testParserOk("text_search_expression", "'cat AND mouse'");
+      testParserOk("text_search_expression", "\"cat AND mouse\"");
     }
     
     //
     //    <<
-    //    'text search expression'
+    //    "text search expression"
     //    >> OK
     @Test
     public void testTextSearchExpression7() {
-      testParserOk("text_search_expression", "'text search expression'");
+      testParserOk("text_search_expression", "\"text search expression\"");
     }
     
     //
     //    <<
-    //    'John\'s presentation'
+    //    "John\'s presentation"
     //    >> OK
     @Test
     public void testTextSearchExpression8() {
-      testParserOk("text_search_expression", "'John\\'s presentation'");
+      testParserOk("text_search_expression", "\"John\\'s presentation\"");
     }
     
     //
     //    <<
-    //    'John\\'s presentation'
+    //    "John\\'s presentation"
     //    >> FAIL
     @Test
     public void testTextSearchExpression9() {
-        testParserFail("text_search_expression", "'John\\\\'s presentation'");
+        testParserFail("text_search_expression", "\"John\\\\'s presentation\"");
     }
     
     //
@@ -473,29 +480,29 @@ public class TestParserTextSearch extends AbstractParserTest{
     
     //
     //    <<
-    //    'c:\\My Documents'
+    //    "c:\\My Documents"
     //    >> OK
     @Test
     public void testTextSearchExpression11() {
-      testParserOk("text_search_expression", "'c:\\\\My Documents'");
+      testParserOk("text_search_expression", "\"c:\\\\My Documents\"");
     }
     
     //
     //    <<
-    //    'c:\\\My Documents'
+    //    "c:\\\My Documents"
     //    >> FAIL
     @Test
     public void testTextSearchExpression13() {
-        testParserFail("text_search_expression", "'c:\\\\\\My Documents'");
+        testParserFail("text_search_expression", "\"c:\\\\\\My Documents\"");
     }
     
     //
     //    <<
-    //    'c:\My Documents'
+    //    "c:\My Documents"
     //    >> FAIL
     @Test
     public void testTextSearchExpression14() {
-      testParserFail("text_search_expression", "'c:\\My Documents'");
+      testParserFail("text_search_expression", "\"c:\\My Documents\"");
     }
     
     //

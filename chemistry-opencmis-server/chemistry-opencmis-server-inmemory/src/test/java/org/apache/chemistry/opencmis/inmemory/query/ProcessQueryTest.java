@@ -599,7 +599,7 @@ public class ProcessQueryTest extends AbstractQueryTest {
 
     @Test
     public void testOnTextPhraseLiteral() {
-        String statement = "SELECT * FROM BookType WHERE CONTAINS('\\'abc\\'')";
+        String statement = "SELECT * FROM BookType WHERE CONTAINS('\"abc\"')";
         testStatementMultiRule(statement, TestQueryProcessor.ON_TEXT_PHRASE);
     }
 
