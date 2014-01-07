@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.MutableCallContext;
 
 /**
  * Base class for all local clients.
@@ -93,7 +94,7 @@ public abstract class AbstractLocalService {
     /**
      * Simple {@link CallContext} implementation.
      */
-    static class LocalCallContext implements CallContext {
+    static class LocalCallContext implements MutableCallContext {
 
         private final Map<String, Object> contextMap = new HashMap<String, Object>();
 
@@ -158,5 +159,13 @@ public abstract class AbstractLocalService {
         public long getMaxContentSize() {
             return -1;
         }
+
+		public void put(String key, Object value) {
+			contextMap.put(key, value);
+		}
+
+		public Object remove(String key) {
+			return contextMap.remove(key);
+		}
     }
 }
