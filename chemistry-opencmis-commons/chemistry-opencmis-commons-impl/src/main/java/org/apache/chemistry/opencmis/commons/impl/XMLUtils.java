@@ -155,7 +155,7 @@ public final class XMLUtils {
             return;
         }
 
-        write(writer, prefix, namespace, tag, value.toString());
+        write(writer, prefix, namespace, tag, value.toPlainString());
     }
 
     /**
