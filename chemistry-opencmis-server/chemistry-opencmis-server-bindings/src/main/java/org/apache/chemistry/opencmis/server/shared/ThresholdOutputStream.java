@@ -78,8 +78,7 @@ public class ThresholdOutputStream extends OutputStream {
      * Constructor.
      * 
      * @param tempDir
-     *            temp directory or <code>null</code> for the default temp
-     *            directory
+     *            temp directory or {@code null} for the default temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -93,8 +92,7 @@ public class ThresholdOutputStream extends OutputStream {
      * Constructor.
      * 
      * @param tempDir
-     *            temp directory or <code>null</code> for the default temp
-     *            directory
+     *            temp directory or {@code null} for the default temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -110,8 +108,7 @@ public class ThresholdOutputStream extends OutputStream {
      * @param initSize
      *            initial internal buffer size
      * @param tempDir
-     *            temp directory or <code>null</code> for the default temp
-     *            directory
+     *            temp directory or {@code null} for the default temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -139,27 +136,7 @@ public class ThresholdOutputStream extends OutputStream {
 
         if (bufSize + nextBufferSize > memoryThreshold) {
             if (tmpStream == null) {
-                tempFile = File.createTempFile("opencmis", null, tempDir);
-                if (encrypt) {
-
-                    Cipher cipher;
-                    try {
-                        KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
-                        keyGenerator.init(KEY_SIZE);
-                        key = keyGenerator.generateKey();
-
-                        cipher = Cipher.getInstance(TRANSFORMATION);
-                        cipher.init(Cipher.ENCRYPT_MODE, key);
-
-                        iv = cipher.getIV();
-                    } catch (Exception e) {
-                        throw new IOException("Cannot initialize encryption cipher!", e);
-                    }
-
-                    tmpStream = new BufferedOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), cipher));
-                } else {
-                    tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
-                }
+                openTempFile();
             }
             tmpStream.write(buf, 0, bufSize);
 
@@ -176,6 +153,30 @@ public class ThresholdOutputStream extends OutputStream {
         byte[] newbuf = new byte[newSize];
         System.arraycopy(buf, 0, newbuf, 0, bufSize);
         buf = newbuf;
+    }
+
+    private void openTempFile() throws IOException {
+        tempFile = File.createTempFile("opencmis", null, tempDir);
+
+        if (encrypt) {
+            Cipher cipher;
+            try {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
+                keyGenerator.init(KEY_SIZE);
+                key = keyGenerator.generateKey();
+
+                cipher = Cipher.getInstance(TRANSFORMATION);
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+
+                iv = cipher.getIV();
+            } catch (Exception e) {
+                throw new IOException("Cannot initialize encryption cipher!", e);
+            }
+
+            tmpStream = new BufferedOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), cipher));
+        } else {
+            tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+        }
     }
 
     public long getSize() {
@@ -212,7 +213,7 @@ public class ThresholdOutputStream extends OutputStream {
     @Override
     public void write(int oneByte) throws IOException {
         try {
-            if ((maxContentSize > -1) && (size + 1 > maxContentSize)) {
+            if (maxContentSize > -1 && size + 1 > maxContentSize) {
                 destroy();
                 throw new CmisConstraintException("Content too big!");
             }
@@ -231,6 +232,10 @@ public class ThresholdOutputStream extends OutputStream {
 
     @Override
     public void flush() throws IOException {
+        if (tmpStream == null && memoryThreshold < bufSize) {
+            openTempFile();
+        }
+
         if (tmpStream != null) {
             try {
                 if (bufSize > 0) {
@@ -299,16 +304,16 @@ public class ThresholdOutputStream extends OutputStream {
         /**
          * Returns if the data is stored in memory.
          * 
-         * @return <code>true</code> if the data is in memory and
-         *         <code>false</code> if the data resides in a temporary file
+         * @return {@code true} if the data is in memory and {@code false} if
+         *         the data resides in a temporary file
          */
         public abstract boolean isInMemory();
 
         /**
          * Gets the temporary file.
          * 
-         * @return the temporary file or <code>null</code> if the data is stored
-         *         in memory
+         * @return the temporary file or {@code null} if the data is stored in
+         *         memory
          */
         public File getTemporaryFile() {
             return null;
@@ -317,8 +322,11 @@ public class ThresholdOutputStream extends OutputStream {
         /**
          * Gets the byte buffer.
          * 
-         * @return the content in a byte array or <code>null</code> if the data
-         *         is stored in a file
+         * This the underlying byte buffer and might be bigger than then the
+         * total length of the stream.
+         * 
+         * @return the content in a byte array or {@code null} if the data is
+         *         stored in a file
          */
         public byte[] getBytes() {
             return null;
@@ -347,11 +355,17 @@ public class ThresholdOutputStream extends OutputStream {
         private int pos = 0;
         private int mark = -1;
 
+        @Override
         public boolean isInMemory() {
             return true;
         }
 
+        @Override
         public byte[] getBytes() {
+            if (buf == null) {
+                throw new IllegalStateException("Stream is already closed!");
+            }
+
             return buf;
         }
 
@@ -452,7 +466,9 @@ public class ThresholdOutputStream extends OutputStream {
     }
 
     /**
-     * InputStream for file data.
+     * InputStream for temp file data.
+     * 
+     * Call {@link #close()} to delete the temp file.
      */
     private class InternalTempFileInputStream extends ThresholdInputStream {
 
@@ -478,20 +494,31 @@ public class ThresholdOutputStream extends OutputStream {
             openStream();
         }
 
+        /**
+         * Opens the temp file stream.
+         */
         protected void openStream() throws FileNotFoundException {
+            int bufferSize = (memoryThreshold < 4 * 1024 ? 4 * 1024 : memoryThreshold);
+
             if (encrypt) {
                 stream = new BufferedInputStream(new CipherInputStream(new FileInputStream(tempFile), cipher),
-                        memoryThreshold);
+                        bufferSize);
             } else {
-                stream = new BufferedInputStream(new FileInputStream(tempFile), memoryThreshold);
+                stream = new BufferedInputStream(new FileInputStream(tempFile), bufferSize);
             }
         }
 
+        @Override
         public boolean isInMemory() {
             return false;
         }
 
+        @Override
         public File getTemporaryFile() {
+            if (isDeleted) {
+                throw new IllegalStateException("Temporary file is already deleted!");
+            }
+
             return tempFile;
         }
 
@@ -553,10 +580,6 @@ public class ThresholdOutputStream extends OutputStream {
 
             int b = stream.read();
 
-            if (b == -1) {
-                delete();
-            }
-
             return b;
         }
 
@@ -573,10 +596,6 @@ public class ThresholdOutputStream extends OutputStream {
 
             int n = super.read(b, off, len);
 
-            if (n == -1) {
-                delete();
-            }
-
             return n;
         }
 
@@ -585,6 +604,9 @@ public class ThresholdOutputStream extends OutputStream {
             delete();
         }
 
+        /**
+         * Closes the temp file stream and then deletes the temp file.
+         */
         protected void delete() {
             if (!isClosed) {
                 try {
@@ -598,7 +620,7 @@ public class ThresholdOutputStream extends OutputStream {
             if (!isDeleted) {
                 isDeleted = tempFile.delete();
                 if (!isDeleted) {
-                    LOG.warn("Temp file " + tempFile.getAbsolutePath() + " could not be deleted!");
+                    LOG.warn("Temp file {} could not be deleted!", tempFile.getAbsolutePath());
                 }
             }
         }
