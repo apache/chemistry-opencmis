@@ -2514,7 +2514,7 @@ public final class JSONConverter {
         result.setObjects(objects);
 
         if (isQueryResult) {
-            result.setHasMoreItems(getBoolean(json, JSON_QUERYRESULTLIST_NUM_ITEMS));
+            result.setHasMoreItems(getBoolean(json, JSON_QUERYRESULTLIST_HAS_MORE_ITEMS));
             result.setNumItems(getInteger(json, JSON_QUERYRESULTLIST_NUM_ITEMS));
             convertExtension(json, result, QUERYRESULTLIST_KEYS);
         } else {
