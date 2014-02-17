@@ -103,7 +103,7 @@ public final class Constants {
     public static final String SELECTOR_DESCENDANTS = "descendants";
     public static final String SELECTOR_PARENTS = "parents";
     public static final String SELECTOR_PARENT = "parent";
-    public static final String SELECTOR_FOLDER_TREE = "folder";
+    public static final String SELECTOR_FOLDER_TREE = "folderTree";
     public static final String SELECTOR_QUERY = "query";
     public static final String SELECTOR_VERSIONS = "versions";
     public static final String SELECTOR_RELATIONSHIPS = "relationships";
