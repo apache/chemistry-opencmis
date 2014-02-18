@@ -80,26 +80,26 @@ public class ObjGenApp {
     private static final String BINDING_WS = "webservices";
     private static final String BINDING_BROWSER = "browser";
 
-    private BindingType fBindingType;
-    private ContentKind fContentKind;
+    private BindingType bindingType;
+    private ContentKind contentKind;
     private CmisBinding binding;
 
-    private OptionSpec<String> fCmd;
-    private OptionSpec<Integer> fDepth;
-    private OptionSpec<Integer> fContentSize;
-    private OptionSpec<Integer> fFolderPerFolder;
-    private OptionSpec<Integer> fDocsPerFolder;
-    private OptionSpec<String> fFolderType;
-    private OptionSpec<String> fDocType;
-    private OptionSpec<String> fRepoId;
-    private OptionSpec<Integer> fCount;
-    private OptionSpec<Boolean> fCleanup;
-    private OptionSpec<String> fRootFolder;
-    private OptionSpec<Integer> fThreads;
-    private OptionSpec<String> fContentKindStr;
-    private OptionSpec<String> fFileNamePattern;
-    private OptionSpec<String> fLocalDir;
-    private OptionSpec<String> fLocalFile;
+    private String cmd;
+    private Integer depth;
+    private Integer contentSize;
+    private Integer folderPerFolder;
+    private Integer docsPerFolder;
+    private String folderType;
+    private String docType;
+    private String repositoryId;
+    private Integer count;
+    private Boolean cleanup;
+    private String rootFolder;
+    private Integer threads;
+    private String contentKindStr;
+    private String fileNamePattern;
+    private String localDir;
+    private String localFile;   
 
     public static void main(String[] args) {
 
@@ -118,99 +118,133 @@ public class ObjGenApp {
 
     private void processCmdLine(String[] args) {
 
+        OptionSpec<String> optCmd;
+        OptionSpec<Integer> optDepth;
+        OptionSpec<Integer> optContentSize;
+        OptionSpec<Integer> optFolderPerFolder;
+        OptionSpec<Integer> optDocsPerFolder;
+        OptionSpec<String> optFolderType;
+        OptionSpec<String> optDocType;
+        OptionSpec<String> optRepoId;
+        OptionSpec<Integer> optCount;
+        OptionSpec<Boolean> optCleanup;
+        OptionSpec<String> optRootFolder;
+        OptionSpec<Integer> optThreads;
+        OptionSpec<String> optContentKindStr;
+        OptionSpec<String> optFileNamePattern;
+        OptionSpec<String> optLocalDir;
+        OptionSpec<String> optLocalFile;
+
         OptionParser parser = new OptionParser();
-        fCmd = parser.accepts(CMD).withRequiredArg().describedAs("Command to perform (see below)");
-        fRepoId = parser.accepts(REPOSITORY_ID).withOptionalArg().describedAs("Repository used");
-        fDocType = parser.accepts(FILLER_DOCUMENT_TYPE_ID).withOptionalArg()
+        optCmd = parser.accepts(CMD).withRequiredArg().describedAs("Command to perform (see below)");
+        optRepoId = parser.accepts(REPOSITORY_ID).withOptionalArg().describedAs("Repository used");
+        optDocType = parser.accepts(FILLER_DOCUMENT_TYPE_ID).withOptionalArg()
                 .defaultsTo(BaseTypeId.CMIS_DOCUMENT.value()).describedAs("Document type created");
-        fFolderType = parser.accepts(FILLER_FOLDER_TYPE_ID).withOptionalArg()
+        optFolderType = parser.accepts(FILLER_FOLDER_TYPE_ID).withOptionalArg()
                 .defaultsTo(BaseTypeId.CMIS_FOLDER.value()).describedAs("Folder type created");
-        fDocsPerFolder = parser.accepts(FILLER_DOCS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
+        optDocsPerFolder = parser.accepts(FILLER_DOCS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
                 .describedAs("Documents on each level").defaultsTo(1);
-        fFolderPerFolder = parser.accepts(FILLER_FOLDERS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
+        optFolderPerFolder = parser.accepts(FILLER_FOLDERS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
                 .describedAs(" Folders on each level").defaultsTo(0);
-        fDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class).describedAs("Levels of folders")
+        optDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class).describedAs("Levels of folders")
                 .defaultsTo(1);
-        fContentSize = parser.accepts(FILLER_CONTENT_SIZE).withOptionalArg().ofType(Integer.class)
+        optContentSize = parser.accepts(FILLER_CONTENT_SIZE).withOptionalArg().ofType(Integer.class)
                 .describedAs("Content size of each doc").defaultsTo(0);
-        fCount = parser.accepts(COUNT).withOptionalArg().ofType(Integer.class).defaultsTo(1)
+        optCount = parser.accepts(COUNT).withOptionalArg().ofType(Integer.class).defaultsTo(1)
                 .describedAs("Repeat a command n times (partially implemented)");
-        fCleanup = parser.accepts(CLEANUP).withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+        optCleanup = parser.accepts(CLEANUP).withOptionalArg().ofType(Boolean.class).defaultsTo(false)
                 .describedAs("Clean all created objects at the end");
-        fRootFolder = parser.accepts(ROOTFOLDER).withOptionalArg().ofType(String.class)
+        optRootFolder = parser.accepts(ROOTFOLDER).withOptionalArg().ofType(String.class)
                 .describedAs("folder id used as root to create objects (default repository root folder)");
-        fThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1)
+        optThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1)
                 .describedAs("Number of threads to start in parallel");
-        fContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
+        optContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
                 .describedAs("kind of content: static/text, lorem/text, lorem/html, fractal/jpeg");
-        fFileNamePattern = parser.accepts(FILE_NAME_PATTERN).withOptionalArg().ofType(String.class)
+        optFileNamePattern = parser.accepts(FILE_NAME_PATTERN).withOptionalArg().ofType(String.class)
                 .defaultsTo("ContentData-%03d.bin").describedAs("file name pattern to be used with CreateFiles action");
-        fLocalDir = parser.accepts(LOCAL_DIR).withOptionalArg().ofType(String.class).defaultsTo(".")
+        optLocalDir = parser.accepts(LOCAL_DIR).withOptionalArg().ofType(String.class).defaultsTo(".")
                 .describedAs("name of a directory to be recursively copied to the repository");
-        fLocalFile = parser.accepts(LOCAL_FILE).withOptionalArg().ofType(String.class)
+        optLocalFile = parser.accepts(LOCAL_FILE).withOptionalArg().ofType(String.class)
                 .describedAs("file name of a file to be copied to the repository");
         OptionSet options = parser.parse(args);
 
-        if (options.valueOf(fCmd) == null || options.has("?")) {
+        if (cmd == null || options.has("?")) {
             usage(parser);
         }
 
         String bindingStr = getBindingProperty();
 
         if (bindingStr.equals(BINDING_WS)) {
-            fBindingType = BindingType.WEBSERVICES;
+            bindingType = BindingType.WEBSERVICES;
         } else if (bindingStr.equals(BINDING_ATOM)) {
-            fBindingType = BindingType.ATOMPUB;
+            bindingType = BindingType.ATOMPUB;
         } else if (bindingStr.equals(BINDING_BROWSER)) {
-            fBindingType = BindingType.BROWSER;
+            bindingType = BindingType.BROWSER;
         } else {
             System.out.println("Error: Unknown binding: " + bindingStr + " allowed values: " + BINDING_WS + " or "
                     + BINDING_ATOM + " or " + BINDING_BROWSER);
             return;
         }
 
-        String kind = options.valueOf(fContentKindStr);
+        String kind = options.valueOf(optContentKindStr);
         if (null == kind) {
-            if (options.valueOf(fContentSize) > 0) {
-                fContentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
+            if (options.valueOf(optContentSize) > 0) {
+                contentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
             } else {
-                fContentKind = null;
+                contentKind = null;
             }
         } else if (kind.equals("static/text")) {
-            fContentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
+            contentKind = ObjectGenerator.ContentKind.STATIC_TEXT;
         } else if (kind.equals("lorem/text")) {
-            fContentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT;
+            contentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_TEXT;
         } else if (kind.equals("lorem/html")) {
-            fContentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_HTML;
+            contentKind = ObjectGenerator.ContentKind.LOREM_IPSUM_HTML;
         } else if (kind.equals("fractal/jpeg")) {
-            fContentKind = ObjectGenerator.ContentKind.IMAGE_FRACTAL_JPEG;
+            contentKind = ObjectGenerator.ContentKind.IMAGE_FRACTAL_JPEG;
         } else {
-            System.out.println("Unknown content kind: " + options.valueOf(fContentKindStr));
+            System.out.println("Unknown content kind: " + options.valueOf(optContentKindStr));
             System.out.println("  must be one of static/text, lorem/text, lorem/html, fractal/jpeg");
             usage(parser);
         }
 
+        repositoryId = options.valueOf(optRepoId);
+        cmd = options.valueOf(optCmd);
+        depth = options.valueOf(optDepth);
+        contentSize = options.valueOf(optContentSize);
+        folderPerFolder = options.valueOf(optFolderPerFolder);
+        docsPerFolder = options.valueOf(optDocsPerFolder);
+        folderType = options.valueOf(optFolderType);
+        docType = options.valueOf(optDocType);
+        count = options.valueOf(optCount);
+        cleanup = options.valueOf(optCleanup);
+        rootFolder = options.valueOf(optRootFolder);
+        threads = options.valueOf(optThreads);
+        contentKindStr = options.valueOf(optContentKindStr);
+        fileNamePattern = options.valueOf(optFileNamePattern);
+        localDir = options.valueOf(optLocalDir);
+        localFile = options.valueOf(optLocalFile);
+
         initClientBindings();
 
-        if (null == options.valueOf(fCmd)) {
+        if (null == cmd) {
             System.out.println("No command given.");
             usage(parser);
-        } else if (options.valueOf(fCmd).equals("FillRepository")) {
+        } else if (cmd.equals("FillRepository")) {
             fillRepository(options);
-        } else if (options.valueOf(fCmd).equals("CreateDocument")) {
+        } else if (cmd.equals("CreateDocument")) {
             createSingleDocument(options);
-        } else if (options.valueOf(fCmd).equals("CreateFolder")) {
+        } else if (cmd.equals("CreateFolder")) {
             createFolders(options);
-        } else if (options.valueOf(fCmd).equals("RepositoryInfo")) {
+        } else if (cmd.equals("RepositoryInfo")) {
             repositoryInfo(options);
-        } else if (options.valueOf(fCmd).equals("CreateFiles")) {
+        } else if (cmd.equals("CreateFiles")) {
             createFiles(options);
-        } else if (options.valueOf(fCmd).equals("CopyFiles")) {
+        } else if (cmd.equals("CopyFiles")) {
             transferFiles(options);
-        } else if (options.valueOf(fCmd).equals("CopyFilesTest")) { // undocumented
+        } else if (cmd.equals("CopyFilesTest")) { // undocumented
             transferFilesTest(options);
         } else {
-            System.out.println("Unknown cmd: " + options.valueOf(fCmd));
+            System.out.println("Unknown cmd: " + cmd);
             usage(parser);
         }
     }
@@ -247,7 +281,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator.prepareForCreateTree(
                 binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType, folderType, contentSizeInKB,
-                rootFolderId, fContentKind, doCleanup);
+                rootFolderId, contentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         runner.doCreateTree();
 
@@ -271,45 +305,45 @@ public class ObjGenApp {
         // Step 2: fill each root folder with an object tree
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
                 .prepareForCreateTreeMT(binding, repoId, docsPerFolder, foldersPerFolders, depth, documentType,
-                        folderType, contentSizeInKB, folderIds, fContentKind, doCleanup);
+                        folderType, contentSizeInKB, folderIds, contentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Filling repository succeeded.");
     }
 
     private void printParameters(OptionSet options) {
-        if (fBindingType == BindingType.ATOMPUB) {
+        if (bindingType == BindingType.ATOMPUB) {
             System.out.println("Using AtomPub, connecting to  " + getAtomPubUrl());
-        } else if (fBindingType == BindingType.WEBSERVICES) {
+        } else if (bindingType == BindingType.WEBSERVICES) {
             System.out.println("Using WebService, connecting to  " + getWsUrl());
-        } else if (fBindingType == BindingType.BROWSER) {
+        } else if (bindingType == BindingType.BROWSER) {
             System.out.println("Using Browser binding, connecting to  " + getBrowserUrl());
         } else {
             System.out.println("Unknown binding type.");
         }
 
-        System.out.println("Repository id is: " + options.valueOf(fRepoId));
-        System.out.println("Content size: " + options.valueOf(fContentSize));
-        System.out.println("Document Type: " + options.valueOf(fDocType));
-        System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
-        System.out.println("Delete all objects after creation: " + options.valueOf(fCleanup));
-        System.out.println("Number of actions to perform: " + options.valueOf(fCount));
-        System.out.println("Number of threads to start: " + options.valueOf(fThreads));
-        System.out.println("Kind of created content: " + options.valueOf(fContentKindStr));
+        System.out.println("Repository id is: " + repositoryId);
+        System.out.println("Content size: " + contentSize);
+        System.out.println("Document Type: " + docType);
+        System.out.println("Folder id used as root: " + rootFolder);
+        System.out.println("Delete all objects after creation: " + cleanup);
+        System.out.println("Number of actions to perform: " + count);
+        System.out.println("Number of threads to start: " + threads);
+        System.out.println("Kind of created content: " + contentKindStr);
     }
 
     private void createSingleDocument(OptionSet options) {
         System.out.println();
         System.out.println("Creating document with parameters:");
         printParameters(options);
-        int noThreads = options.valueOf(fThreads);
+        int noThreads = threads;
         if (noThreads <= 1) {
-            createSingleDocument(options.valueOf(fRepoId), options.valueOf(fDocType), options.valueOf(fContentSize),
-                    options.valueOf(fRootFolder), options.valueOf(fCount), options.valueOf(fCleanup));
+            createSingleDocument(repositoryId, docType, contentSize,
+                    rootFolder, count, cleanup);
         } else {
-            createSingleDocumentMT(noThreads, options.valueOf(fRepoId), options.valueOf(fDocType),
-                    options.valueOf(fContentSize), options.valueOf(fRootFolder), options.valueOf(fCount),
-                    options.valueOf(fCleanup));
+            createSingleDocumentMT(noThreads, repositoryId, docType,
+                    contentSize, rootFolder, count,
+                    cleanup);
         }
     }
 
@@ -317,22 +351,22 @@ public class ObjGenApp {
         System.out.println();
         printParameters(options);
         System.out.println("Creating object tree with folowing parameters: ");
-        System.out.println("Documents per folder: " + options.valueOf(fDocsPerFolder));
-        System.out.println("Folder per folder: " + options.valueOf(fFolderPerFolder));
-        System.out.println("Depth: " + options.valueOf(fDepth));
-        System.out.println("Folder Type: " + options.valueOf(fFolderType));
+        System.out.println("Documents per folder: " + docsPerFolder);
+        System.out.println("Folder per folder: " + folderPerFolder);
+        System.out.println("Depth: " + depth);
+        System.out.println("Folder Type: " + folderType);
 
-        int noThreads = options.valueOf(fThreads);
+        int noThreads = threads;
         if (noThreads <= 1) {
-            fillRepository(options.valueOf(fRepoId), options.valueOf(fDocsPerFolder),
-                    options.valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType),
-                    options.valueOf(fFolderType), options.valueOf(fContentSize), options.valueOf(fRootFolder),
-                    options.valueOf(fCleanup));
+            fillRepository(repositoryId, docsPerFolder,
+                    folderPerFolder, depth, docType,
+                    folderType, contentSize, rootFolder,
+                    cleanup);
         } else {
-            fillRepositoryMT(noThreads, options.valueOf(fRepoId), options.valueOf(fDocsPerFolder),
-                    options.valueOf(fFolderPerFolder), options.valueOf(fDepth), options.valueOf(fDocType),
-                    options.valueOf(fFolderType), options.valueOf(fContentSize), options.valueOf(fRootFolder),
-                    options.valueOf(fCleanup));
+            fillRepositoryMT(noThreads, repositoryId, docsPerFolder,
+                    folderPerFolder, depth, docType,
+                    folderType, contentSize, rootFolder,
+                    cleanup);
         }
 
     }
@@ -341,14 +375,14 @@ public class ObjGenApp {
         System.out.println();
         System.out.println("Creating folder with parameters:");
         printParameters(options);
-        System.out.println("Folder Type: " + options.valueOf(fFolderType));
-        int noThreads = options.valueOf(fThreads);
+        System.out.println("Folder Type: " + folderType);
+        int noThreads = threads;
         if (noThreads <= 1) {
-            createFolders(options.valueOf(fRepoId), options.valueOf(fFolderType), options.valueOf(fRootFolder),
-                    options.valueOf(fCount), options.valueOf(fCleanup));
+            createFolders(repositoryId, folderType, rootFolder,
+                    count, cleanup);
         } else {
-            createFoldersMT(noThreads, options.valueOf(fRepoId), options.valueOf(fFolderType),
-                    options.valueOf(fRootFolder), options.valueOf(fCount), options.valueOf(fCleanup));
+            createFoldersMT(noThreads, repositoryId, folderType,
+                    rootFolder, count, cleanup);
         }
     }
 
@@ -357,7 +391,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner runner = MultiThreadedObjectGenerator
                 .prepareForCreateDocument(binding, repoId, documentType, contentSizeInKB, rootFolderId, docCount,
-                        fContentKind, doCleanup);
+                        contentKind, doCleanup);
         ObjectGenerator gen = runner.getObjectGenerator();
         String[] ids = runner.doCreateDocument();
         System.out.println();
@@ -381,7 +415,7 @@ public class ObjGenApp {
 
         MultiThreadedObjectGenerator.ObjectGeneratorRunner[] runners = MultiThreadedObjectGenerator
                 .prepareForCreateDocumentMT(noThreads, binding, repoId, documentType, contentSizeInKB, rootFolderId,
-                        docCount, fContentKind, doCleanup);
+                        docCount, contentKind, doCleanup);
 
         MultiThreadedObjectGenerator.runMultiThreaded(runners);
         System.out.println("Document creation succeeded. All threads terminated.");
@@ -432,23 +466,20 @@ public class ObjGenApp {
     }
 
     private void repositoryInfo(OptionSet options) {
-        callRepoInfo(options.valueOf(fRepoId), options.valueOf(fCount));
+        callRepoInfo(repositoryId, count);
     }
 
     private void createFiles(OptionSet options) {
         ContentStream contentStream = null;
-        String fileNamePattern = options.valueOf(fFileNamePattern);
-        int count = options.valueOf(fCount);
-        int contentSize = options.valueOf(fContentSize);
 
         System.out.println("Creating local files with content: ");
-        System.out.println("Kind: " + options.valueOf(fDocsPerFolder));
+        System.out.println("Kind: " + docsPerFolder);
         System.out.println("Number of files: " + count);
         System.out.println("File name pattern: " + fileNamePattern);
-        System.out.println("Kind of content: " + options.valueOf(fContentKindStr));
+        System.out.println("Kind of content: " + contentKindStr);
         System.out.println("Size of content (text only): " + contentSize);
 
-        ObjectGenerator objGen = new ObjectGenerator(null, null, null, null, null, fContentKind);
+        ObjectGenerator objGen = new ObjectGenerator(null, null, null, null, null, contentKind);
         objGen.setContentSizeInKB(contentSize);
 
         InputStream is = null;
@@ -459,7 +490,7 @@ public class ObjGenApp {
                 String fileName = String.format(fileNamePattern, i);
                 System.out.println("Generating file: " + fileName);
                 if (contentSize > 0) {
-                    switch (fContentKind) {
+                    switch (contentKind) {
                     case STATIC_TEXT:
                         contentStream = objGen.createContentStaticText();
                         break;
@@ -496,10 +527,9 @@ public class ObjGenApp {
     }
 
     private void transferFiles(OptionSet options) {
-        String fileName = options.valueOf(fLocalFile);
-        String dirName = options.valueOf(fLocalDir);
-        String repoId = options.valueOf(fRepoId);
-        String folderId = options.valueOf(fRootFolder);
+        String fileName = localFile;
+        String dirName = localDir;
+        String folderId = rootFolder;
         String name = fileName;
 
         if ((null == fileName || fileName.length() == 0) && (null == dirName || dirName.length() == 0)) {
@@ -513,17 +543,17 @@ public class ObjGenApp {
         }
 
         System.out.println("Copying files to a repository: ");
-        System.out.println("Repository id is: " + (repoId == null ? "not set!" : repoId));
-        System.out.println("Folder id used as root: " + options.valueOf(fRootFolder));
+        System.out.println("Repository id is: " + (repositoryId == null ? "not set!" : repositoryId));
+        System.out.println("Folder id used as root: " + rootFolder);
 
-        Map<String, String> parameters = getConnectionParameters(getBindingProperty(), repoId);
+        Map<String, String> parameters = getConnectionParameters(getBindingProperty(), repositoryId);
         FileCopier fc = new FileCopier();
         fc.connect(parameters);
         fc.copyRecursive(name, folderId);
     }
 
     private void transferFilesTest(OptionSet options) {
-        String fileName = options.valueOf(fLocalFile);
+        String fileName = localFile;
 
         if ((null == fileName || fileName.length() == 0)) {
             System.out.println("Error: You have to provide a --file option to test metadata extraction.");
@@ -559,14 +589,19 @@ public class ObjGenApp {
 
     private void initClientBindings() {
         if (binding == null) {
-            if (fBindingType == BindingType.ATOMPUB) {
+            if (bindingType == BindingType.ATOMPUB) {
                 binding = createAtomBinding(getAtomPubUrl(), getUser(), getPassword());
             }
-            if (fBindingType == BindingType.WEBSERVICES) {
+            if (bindingType == BindingType.WEBSERVICES) {
                 String url = getWsUrl();
                 binding = createWSBinding(url, isPrefix(url), getUser(), getPassword());
-            } else if (fBindingType == BindingType.BROWSER) {
+            } else if (bindingType == BindingType.BROWSER) {
                 binding = createBrowserBinding(getBrowserUrl(), getUser(), getPassword());
+            }
+            
+            RepositoryInfo repoInfo = binding.getRepositoryService().getRepositoryInfo(null, null);
+            if (null == repositoryId) {
+                repositoryId = repoInfo.getId();
             }
         }
     }
