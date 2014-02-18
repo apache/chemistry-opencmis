@@ -73,6 +73,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>com.sun.xml.ws:jaxws-rt</exclude>
+                <exclude>org.jvnet.mimepull:mimepull</exclude>
                 <exclude>junit:junit</exclude>
             </excludes>
         </dependencySet>
