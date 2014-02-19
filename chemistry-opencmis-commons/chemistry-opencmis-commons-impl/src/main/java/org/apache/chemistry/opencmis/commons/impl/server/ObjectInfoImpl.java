@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.server.LinkInfo;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 
@@ -55,6 +56,7 @@ public class ObjectInfoImpl implements ObjectInfo {
     private boolean supportsFolderTree = false;
     private List<String> relationshipSourceIds = null;
     private List<String> relationshipTargetIds = null;
+    private List<LinkInfo> additionalLinks = null;
     private ObjectData object = null;
 
     public ObjectInfoImpl() {
@@ -255,6 +257,14 @@ public class ObjectInfoImpl implements ObjectInfo {
 
     public void setRelationshipTargetIds(List<String> relationshipTargetIds) {
         this.relationshipTargetIds = relationshipTargetIds;
+    }
+
+    public List<LinkInfo> getAdditionalLinks() {
+        return additionalLinks;
+    }
+
+    public void setAdditionalLinks(List<LinkInfo> additionalLinks) {
+        this.additionalLinks = additionalLinks;
     }
 
     public ObjectData getObject() {

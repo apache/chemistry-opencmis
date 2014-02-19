@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.LinkInfo;
 import org.apache.chemistry.opencmis.commons.server.NamespaceDefinitions;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
@@ -255,6 +256,12 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
         if (info.getRelationshipTargetIds() != null) {
             for (String id : info.getRelationshipTargetIds()) {
                 entry.writeRelationshipTargetLink(compileUrl(baseUrl, RESOURCE_ENTRY, id));
+            }
+        }
+
+        if (info.getAdditionalLinks() != null) {
+            for (LinkInfo linkInfo : info.getAdditionalLinks()) {
+                entry.writeLink(linkInfo.getRel(), linkInfo.getHref(), linkInfo.getType(), linkInfo.getId());
             }
         }
 

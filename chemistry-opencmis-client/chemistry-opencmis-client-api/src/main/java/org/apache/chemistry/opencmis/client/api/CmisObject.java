@@ -96,8 +96,8 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
 
     /**
      * Updates the provided properties. If the repository created a new object,
-     * for example a new version, the object id of the new object is returned.
-     * Otherwise the object id of the current object is returned.
+     * for example a new version, the object ID of the new object is returned.
+     * Otherwise the object ID of the current object is returned.
      * 
      * @param properties
      *            the properties to update

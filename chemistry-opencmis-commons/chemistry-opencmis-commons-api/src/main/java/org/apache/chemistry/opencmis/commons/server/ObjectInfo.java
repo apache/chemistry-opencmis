@@ -31,14 +31,14 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 public interface ObjectInfo {
 
     /**
-     * Returns the object id.
+     * Returns the object ID.
      */
     String getId();
 
     /**
-     * Returns an id for the atom:id tag. This id must comply with the Atom
-     * specification. If this method returns <code>null</code>, OpenCMIS
-     * generates a valid id.
+     * Returns an ID for the atom:id tag. This ID must comply with the Atom
+     * specification. If this method returns {@code null}, OpenCMIS generates a
+     * valid ID.
      */
     String getAtomId();
 
@@ -63,7 +63,7 @@ public interface ObjectInfo {
     GregorianCalendar getLastModificationDate();
 
     /**
-     * Returns the type id.
+     * Returns the type ID.
      */
     String getTypeId();
 
@@ -73,98 +73,97 @@ public interface ObjectInfo {
     BaseTypeId getBaseType();
 
     /**
-     * Returns <code>true</code> if the object is a document and if it is the
-     * current version or it is not versionable, <code>false</code> otherwise.
+     * Returns {@code true} if the object is a document and if it is the current
+     * version or it is not versionable, {@code false} otherwise.
      */
     boolean isCurrentVersion();
 
     /**
-     * Returns the version series id if the object is a document and it is
-     * versionable, <code>null</code> otherwise.
+     * Returns the version series ID if the object is a document and it is
+     * versionable, {@code null} otherwise.
      */
     String getVersionSeriesId();
 
     /**
-     * Returns the working copy id if the object is a document and a working
-     * copy exists, <code>null</code> otherwise.
+     * Returns the working copy ID if the object is a document and a working
+     * copy exists, {@code null} otherwise.
      */
     String getWorkingCopyId();
 
     /**
-     * Returns the original id of the working copy if the object is a document
-     * and a working copy, <code>null</code> otherwise.
+     * Returns the original ID of the working copy if the object is a document
+     * and a working copy, {@code null} otherwise.
      */
     String getWorkingCopyOriginalId();
 
     /**
-     * Returns <code>true</code> if the object is a document and has content,
-     * <code>false</code> otherwise.
+     * Returns {@code true} if the object is a document and has content,
+     * {@code false} otherwise.
      */
     boolean hasContent();
 
     /**
      * Returns the content type of the content if the object is a document and
-     * has content, <code>null</code> otherwise.
+     * has content, {@code null} otherwise.
      */
     String getContentType();
 
     /**
      * Returns the file name of the content if the object is a document and has
-     * content, <code>null</code> otherwise.
+     * content, {@code null} otherwise.
      */
     String getFileName();
 
     /**
-     * Returns rendition information if the object has renditions,
-     * <code>null</code> otherwise.
+     * Returns rendition information if the object has renditions, {@code null}
+     * otherwise.
      */
     List<RenditionInfo> getRenditionInfos();
 
     /**
-     * Returns <code>true</code> if the object supports relationships even if no
-     * relationships exist, <code>false</code> otherwise.
+     * Returns {@code true} if the object supports relationships even if no
+     * relationships exist, {@code false} otherwise.
      */
     boolean supportsRelationships();
 
     /**
-     * Returns <code>true</code> if the object supports policies even if no
-     * policies are applied, <code>false</code> otherwise.
+     * Returns {@code true} if the object supports policies even if no policies
+     * are applied, {@code false} otherwise.
      */
     boolean supportsPolicies();
 
     /**
-     * Returns <code>true</code> if the object has an ACL, <code>false</code>
-     * otherwise.
+     * Returns {@code true} if the object has an ACL, {@code false} otherwise.
      */
     boolean hasAcl();
 
     /**
-     * Returns <code>true</code> if the object has at least one parent,
-     * <code>false</code> otherwise.
+     * Returns {@code true} if the object has at least one parent, {@code false}
+     * otherwise.
      */
     boolean hasParent();
 
     /**
-     * Returns <code>true</code> if the object is a folder and supports
-     * <code>getDescendants</code>, <code>false</code> otherwise.
+     * Returns {@code true} if the object is a folder and supports
+     * {@code getDescendants}, {@code false} otherwise.
      */
     boolean supportsDescendants();
 
     /**
-     * Returns <code>true</code> if the object is a folder and supports
-     * <code>getFolderTree</code>, <code>false</code> otherwise.
+     * Returns {@code true} if the object is a folder and supports
+     * {@code getFolderTree}, {@code false} otherwise.
      */
     boolean supportsFolderTree();
 
     /**
-     * Returns the list of ids of the relationships that originate from this
-     * object, <code>null</code> is no such relationships exist.
+     * Returns the list of IDs of the relationships that originate from this
+     * object, {@code null} is no such relationships exist.
      */
     List<String> getRelationshipSourceIds();
 
     /**
-     * Returns the list of ids of the relationships that point to this object,
-     * <code>null</code> is no such relationships exist.
+     * Returns the list of IDs of the relationships that point to this object,
+     * {@code null} is no such relationships exist.
      */
     List<String> getRelationshipTargetIds();
 
@@ -172,4 +171,10 @@ public interface ObjectInfo {
      * Returns the full object.
      */
     ObjectData getObject();
+
+    /**
+     * Returns the list of additional links related to this object, {@code null}
+     * is no such links exist.
+     */
+    List<LinkInfo> getAdditionalLinks();
 }
