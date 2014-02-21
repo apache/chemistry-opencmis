@@ -363,7 +363,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
             return null;
         }
 
-        List<Folder> parents = getParents();
+        List<Folder> parents = getParents(getSession().getDefaultContext());
         if ((parents == null) || (parents.isEmpty())) {
             return null;
         }
