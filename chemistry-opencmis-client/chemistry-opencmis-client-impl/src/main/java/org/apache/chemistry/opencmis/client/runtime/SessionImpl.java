@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -112,6 +114,7 @@ public class SessionImpl implements Session {
     // private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private transient IdentityHashMap<TypeDefinition, ObjectType> objectTypeCache;
 
     /*
      * default session context (serializable)
@@ -264,6 +267,9 @@ public class SessionImpl implements Session {
         try {
             // create new object cache
             this.cache = createCache();
+
+            // clear object type cache
+            objectTypeCache = new IdentityHashMap<TypeDefinition, ObjectType>();
 
             // clear provider cache
             getBinding().clearAllCaches();
@@ -593,7 +599,6 @@ public class SessionImpl implements Session {
 
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
-        final ObjectFactory of = this.getObjectFactory();
 
         return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(this.getDefaultContext()
                 .getMaxItemsPerPage()) {
@@ -609,7 +614,7 @@ public class SessionImpl implements Session {
                 // convert type definitions
                 List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
                 for (TypeDefinition typeDefinition : tdl.getList()) {
-                    page.add(of.convertTypeDefinition(typeDefinition));
+                    page.add(convertTypeDefinition(typeDefinition));
                 }
 
                 return new AbstractPageFetcher.Page<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
@@ -621,7 +626,8 @@ public class SessionImpl implements Session {
     public ObjectType getTypeDefinition(String typeId) {
         TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
                 typeId, null);
-        return objectFactory.convertTypeDefinition(typeDefinition);
+
+        return convertTypeDefinition(typeDefinition);
     }
 
     public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions) {
@@ -639,7 +645,7 @@ public class SessionImpl implements Session {
         List<Tree<ObjectType>> result = new ArrayList<Tree<ObjectType>>();
 
         for (TypeDefinitionContainer container : descendantsList) {
-            ObjectType objectType = objectFactory.convertTypeDefinition(container.getTypeDefinition());
+            ObjectType objectType = convertTypeDefinition(container.getTypeDefinition());
             List<Tree<ObjectType>> children = convertTypeDescendants(container.getChildren());
 
             result.add(new TreeImpl<ObjectType>(objectType, children));
@@ -648,13 +654,39 @@ public class SessionImpl implements Session {
         return result;
     }
 
+    /**
+     * Converts a type definition into an object type. If the object type is
+     * cached, it returns the cached object. Otherwise it creates an object type
+     * object and puts it into the cache.
+     */
+    private ObjectType convertTypeDefinition(TypeDefinition typeDefinition) {
+        lock.writeLock().lock();
+        try {
+            ObjectType result = null;
+            if (objectTypeCache == null) {
+                objectTypeCache = new IdentityHashMap<TypeDefinition, ObjectType>();
+            } else {
+                result = objectTypeCache.get(typeDefinition);
+            }
+
+            if (result == null) {
+                result = objectFactory.convertTypeDefinition(typeDefinition);
+                objectTypeCache.put(typeDefinition, result);
+            }
+
+            return result;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     public ObjectType createType(TypeDefinition type) {
         if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }
 
-        return objectFactory.convertTypeDefinition(getBinding().getRepositoryService().createType(getRepositoryId(),
-                type, null));
+        TypeDefinition newType = getBinding().getRepositoryService().createType(getRepositoryId(), type, null);
+        return convertTypeDefinition(newType);
     }
 
     public ObjectType updateType(TypeDefinition type) {
@@ -662,8 +694,11 @@ public class SessionImpl implements Session {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }
 
-        return objectFactory.convertTypeDefinition(getBinding().getRepositoryService().updateType(getRepositoryId(),
-                type, null));
+        TypeDefinition updatedType = getBinding().getRepositoryService().updateType(getRepositoryId(), type, null);
+
+        removeFromObjectTypeCache(updatedType.getId());
+
+        return convertTypeDefinition(updatedType);
     }
 
     public void deleteType(String typeId) {
@@ -672,6 +707,30 @@ public class SessionImpl implements Session {
         }
 
         getBinding().getRepositoryService().deleteType(getRepositoryId(), typeId, null);
+        removeFromObjectTypeCache(typeId);
+    }
+
+    /**
+     * Removes the object type object with the given type ID from the cache.
+     */
+    private void removeFromObjectTypeCache(String typeId) {
+        lock.writeLock().lock();
+        try {
+            if (objectTypeCache == null) {
+                return;
+            }
+
+            Iterator<TypeDefinition> iter = objectTypeCache.keySet().iterator();
+            while (iter.hasNext()) {
+                TypeDefinition typeDef = iter.next();
+                if (typeDef.getId().equals(typeId)) {
+                    iter.remove();
+                    break;
+                }
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
