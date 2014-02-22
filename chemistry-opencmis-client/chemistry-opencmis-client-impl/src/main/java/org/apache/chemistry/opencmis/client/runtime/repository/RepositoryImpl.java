@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -40,12 +41,14 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
     private final ObjectFactory objectFactory;
     private final AuthenticationProvider authenticationProvider;
     private final Cache cache;
+    private final TypeDefinitionCache typeDefCache;
 
     /**
      * Constructor.
      */
     public RepositoryImpl(RepositoryInfo data, Map<String, String> parameters, SessionFactoryImpl sessionFactory,
-            ObjectFactory objectFactory, AuthenticationProvider authenticationProvider, Cache cache) {
+            ObjectFactory objectFactory, AuthenticationProvider authenticationProvider, Cache cache,
+            TypeDefinitionCache typeDefCache) {
         super(data);
 
         assert sessionFactory != null;
@@ -57,10 +60,11 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
         this.objectFactory = objectFactory;
         this.authenticationProvider = authenticationProvider;
         this.cache = cache;
+        this.typeDefCache = typeDefCache;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Session> T createSession() {
-        return (T) sessionFactory.createSession(parameters, objectFactory, authenticationProvider, cache);
+        return (T) sessionFactory.createSession(parameters, objectFactory, authenticationProvider, cache, typeDefCache);
     }
 }

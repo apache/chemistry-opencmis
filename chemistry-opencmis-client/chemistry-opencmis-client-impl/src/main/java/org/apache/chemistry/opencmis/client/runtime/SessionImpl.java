@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.client.api.Relationship;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl;
 import org.apache.chemistry.opencmis.client.runtime.repository.ObjectFactoryImpl;
@@ -149,6 +150,11 @@ public class SessionImpl implements Session {
     private final boolean cachePathOmit;
 
     /*
+     * Type cache.
+     */
+    private TypeDefinitionCache typeDefCache;
+
+    /*
      * Repository info (serializable)
      */
     private RepositoryInfo repositoryInfo;
@@ -162,7 +168,7 @@ public class SessionImpl implements Session {
      * Constructor.
      */
     public SessionImpl(Map<String, String> parameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
         if (parameters == null) {
             throw new IllegalArgumentException("No parameters provided!");
         }
@@ -173,6 +179,7 @@ public class SessionImpl implements Session {
         this.objectFactory = (objectFactory == null ? createObjectFactory() : objectFactory);
         this.authenticationProvider = authenticationProvider;
         this.cache = (cache == null ? createCache() : cache);
+        this.typeDefCache = typeDefCache;
 
         cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
     }
@@ -790,7 +797,7 @@ public class SessionImpl implements Session {
     public void connect() {
         lock.writeLock().lock();
         try {
-            this.binding = CmisBindingHelper.createBinding(parameters, authenticationProvider);
+            this.binding = CmisBindingHelper.createBinding(parameters, authenticationProvider, typeDefCache);
 
             /* get initial repository id from session parameter */
             String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);

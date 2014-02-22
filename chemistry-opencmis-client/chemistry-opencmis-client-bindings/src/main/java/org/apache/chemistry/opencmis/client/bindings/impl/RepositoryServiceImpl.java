@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;

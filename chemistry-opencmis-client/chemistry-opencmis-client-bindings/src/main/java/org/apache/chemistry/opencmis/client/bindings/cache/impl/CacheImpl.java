@@ -237,6 +237,19 @@ public class CacheImpl implements Cache {
         }
     }
 
+    public void removeAll() {
+        lock.writeLock().lock();
+        try {
+            root = createCacheLevel(0);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("{}: removed all", name);
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     public int check(String... keys) {
         if (keys == null) {
             return -1;

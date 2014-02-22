@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.impl;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.SessionAwareAuthenticationProvider;
@@ -59,7 +60,7 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
      *            the session parameters
      */
     public CmisBindingImpl(Map<String, String> sessionParameters) {
-        this(sessionParameters, null);
+        this(sessionParameters, null, null);
     }
 
     /**
@@ -70,7 +71,8 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
      * @param authenticationProvider
      *            an authentication provider instance
      */
-    public CmisBindingImpl(final Map<String, String> sessionParameters, AuthenticationProvider authenticationProvider) {
+    public CmisBindingImpl(final Map<String, String> sessionParameters, AuthenticationProvider authenticationProvider,
+            TypeDefinitionCache typeDefCache) {
         // some checks first
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Session parameters must be set!");
@@ -135,6 +137,12 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid CMIS version value: " + forceCmisVersion, e);
             }
+        }
+
+        // add type definition cache to session
+        if (typeDefCache != null) {
+            session.put(CmisBindingsHelper.TYPE_DEFINTION_CACHE, typeDefCache);
+            typeDefCache.initialize(session);
         }
 
         // set up caches
@@ -229,7 +237,8 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         session.writeLock();
         try {
             session.put(CmisBindingsHelper.REPOSITORY_INFO_CACHE, new RepositoryInfoCache(session));
-            session.put(CmisBindingsHelper.TYPE_DEFINTION_CACHE, new TypeDefinitionCache(session));
+            TypeDefinitionCache typeDefCache = CmisBindingsHelper.getTypeDefinitionCache(session);
+            typeDefCache.removeAll();
 
             CmisSpi spi = CmisBindingsHelper.getSPI(session);
             spi.clearAllCaches();
@@ -251,8 +260,7 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
                     .get(CmisBindingsHelper.REPOSITORY_INFO_CACHE);
             repInfoCache.remove(repositoryId);
 
-            TypeDefinitionCache typeDefCache = (TypeDefinitionCache) session
-                    .get(CmisBindingsHelper.TYPE_DEFINTION_CACHE);
+            TypeDefinitionCache typeDefCache = CmisBindingsHelper.getTypeDefinitionCache(session);
             typeDefCache.remove(repositoryId);
 
             CmisSpi spi = CmisBindingsHelper.getSPI(session);

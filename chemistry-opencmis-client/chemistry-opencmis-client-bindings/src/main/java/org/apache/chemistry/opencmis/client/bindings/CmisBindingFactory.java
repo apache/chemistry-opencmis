@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
@@ -41,7 +42,9 @@ public class CmisBindingFactory {
     /** Default CMIS local binding SPI implementation. */
     public static final String BINDING_SPI_LOCAL = "org.apache.chemistry.opencmis.client.bindings.spi.local.CmisLocalSpi";
 
-    /** Default HTTP invoker clas.s */
+    /** Default type definition cache class */
+    public static final String DEFAULT_TYPE_DEFINITION_CACHE_CLASS = "org.apache.chemistry.opencmis.client.bindings.impl.TypeDefinitionCacheImpl";
+    /** Default HTTP invoker class */
     public static final String DEFAULT_HTTP_INVOKER = "org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker";
     /** Standard authentication provider class. */
     public static final String STANDARD_AUTHENTICATION_PROVIDER = "org.apache.chemistry.opencmis.client.bindings.spi.StandardAuthenticationProvider";
@@ -87,7 +90,7 @@ public class CmisBindingFactory {
      * the session parameters.
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters) {
-        return createCmisBinding(sessionParameters, null);
+        return createCmisBinding(sessionParameters, null, null);
     }
 
     /**
@@ -95,19 +98,19 @@ public class CmisBindingFactory {
      * the session parameters.
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, true);
 
         addDefaultParameters(sessionParameters);
 
-        return new CmisBindingImpl(sessionParameters, authenticationProvider);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider, typeDefCache);
     }
 
     /**
      * Creates a default CMIS AtomPub binding instance.
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters) {
-        return createCmisAtomPubBinding(sessionParameters, null);
+        return createCmisAtomPubBinding(sessionParameters, null, null);
     }
 
     /**
@@ -115,7 +118,7 @@ public class CmisBindingFactory {
      * authentication provider.
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_ATOMPUB);
@@ -127,6 +130,11 @@ public class CmisBindingFactory {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
             }
         }
+        if (typeDefCache == null) {
+            if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
+                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+            }
+        }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
             sessionParameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
         }
@@ -135,14 +143,14 @@ public class CmisBindingFactory {
 
         check(sessionParameters, SessionParameter.ATOMPUB_URL);
 
-        return new CmisBindingImpl(sessionParameters, authenticationProvider);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider, typeDefCache);
     }
 
     /**
      * Creates a default CMIS Web Services binding instance.
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters) {
-        return createCmisWebServicesBinding(sessionParameters, null);
+        return createCmisWebServicesBinding(sessionParameters, null, null);
     }
 
     /**
@@ -150,7 +158,7 @@ public class CmisBindingFactory {
      * authentication provider.
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_WEBSERVICES);
@@ -160,6 +168,11 @@ public class CmisBindingFactory {
         if (authenticationProvider == null) {
             if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+            }
+        }
+        if (typeDefCache == null) {
+            if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
+                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_SOAP_USERNAMETOKEN)) {
@@ -189,14 +202,14 @@ public class CmisBindingFactory {
         check(sessionParameters, SessionParameter.WEBSERVICES_VERSIONING_SERVICE,
                 SessionParameter.WEBSERVICES_VERSIONING_SERVICE_ENDPOINT);
 
-        return new CmisBindingImpl(sessionParameters, authenticationProvider);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider, typeDefCache);
     }
 
     /**
      * Creates a default CMIS Browser binding instance.
      */
     public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters) {
-        return createCmisBrowserBinding(sessionParameters, null);
+        return createCmisBrowserBinding(sessionParameters, null, null);
     }
 
     /**
@@ -204,7 +217,7 @@ public class CmisBindingFactory {
      * authentication provider.
      */
     public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_BROWSER);
@@ -214,6 +227,11 @@ public class CmisBindingFactory {
         if (authenticationProvider == null) {
             if (!sessionParameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
                 sessionParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, STANDARD_AUTHENTICATION_PROVIDER);
+            }
+        }
+        if (typeDefCache == null) {
+            if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
+                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         if (!sessionParameters.containsKey(SessionParameter.BROWSER_SUCCINCT)) {
@@ -227,16 +245,28 @@ public class CmisBindingFactory {
 
         check(sessionParameters, SessionParameter.BROWSER_URL);
 
-        return new CmisBindingImpl(sessionParameters, authenticationProvider);
+        return new CmisBindingImpl(sessionParameters, authenticationProvider, typeDefCache);
     }
 
     /**
      * Creates a default CMIS local binding instance.
      */
     public CmisBinding createCmisLocalBinding(Map<String, String> sessionParameters) {
+        return createCmisLocalBinding(sessionParameters, null);
+    }
+
+    /**
+     * Creates a default CMIS local binding instance.
+     */
+    public CmisBinding createCmisLocalBinding(Map<String, String> sessionParameters, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, false);
 
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_LOCAL);
+        if (typeDefCache == null) {
+            if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
+                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+            }
+        }
         addDefaultParameters(sessionParameters);
 
         check(sessionParameters, SessionParameter.LOCAL_FACTORY);

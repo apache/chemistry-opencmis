@@ -27,6 +27,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.client.runtime.repository.RepositoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -64,7 +65,16 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
     }
 
     public Session createSession(Map<String, String> parameters) {
-        return createSession(parameters, null, null, null);
+        return createSession(parameters, null, null, null, null);
+    }
+
+    /**
+     * @deprecated Use
+     *             {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache)}
+     */
+    public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
+            AuthenticationProvider authenticationProvider, Cache cache) {
+        return createSession(parameters, objectFactory, authenticationProvider, cache, null);
     }
 
     /**
@@ -81,6 +91,8 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
      *            an authentication provider instance
      * @param cache
      *            a cache instance
+     * @param typeDefCache
+     *            a type definition cache instance
      * @return a {@link Session} connected to the CMIS repository
      * @throws CmisBaseException
      *             if the connection could not be established
@@ -88,15 +100,24 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
      * @see SessionParameter
      */
     public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
-        SessionImpl session = new SessionImpl(parameters, objectFactory, authenticationProvider, cache);
+            AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
+        SessionImpl session = new SessionImpl(parameters, objectFactory, authenticationProvider, cache, typeDefCache);
         session.connect();
 
         return session;
     }
 
     public List<Repository> getRepositories(Map<String, String> parameters) {
-        return getRepositories(parameters, null, null, null);
+        return getRepositories(parameters, null, null, null, null);
+    }
+
+    /**
+     * @deprecated Use
+     *             {@link #getRepositories(Map, ObjectFactory, AuthenticationProvider, Cache, TypeDefinitionCache)}
+     */
+    public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
+            AuthenticationProvider authenticationProvider, Cache cache) {
+        return getRepositories(parameters, objectFactory, authenticationProvider, cache, null);
     }
 
     /**
@@ -106,15 +127,15 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
      * {@code SessionParameter.REPOSITORY_ID} should not be set.
      */
     public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
-        CmisBinding binding = CmisBindingHelper.createBinding(parameters, authenticationProvider);
+            AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
+        CmisBinding binding = CmisBindingHelper.createBinding(parameters, authenticationProvider, typeDefCache);
 
         List<RepositoryInfo> repositoryInfos = binding.getRepositoryService().getRepositoryInfos(null);
 
         List<Repository> result = new ArrayList<Repository>();
         for (RepositoryInfo data : repositoryInfos) {
             result.add(new RepositoryImpl(data, parameters, this, objectFactory, binding.getAuthenticationProvider(),
-                    cache));
+                    cache, typeDefCache));
         }
 
         return result;

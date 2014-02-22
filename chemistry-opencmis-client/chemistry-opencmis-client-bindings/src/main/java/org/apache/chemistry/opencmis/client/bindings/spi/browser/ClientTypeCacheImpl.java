@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
-import org.apache.chemistry.opencmis.client.bindings.impl.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;

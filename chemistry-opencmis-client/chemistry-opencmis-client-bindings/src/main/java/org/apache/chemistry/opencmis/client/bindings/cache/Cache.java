@@ -76,6 +76,11 @@ public interface Cache extends Serializable {
     void remove(String... keys);
 
     /**
+     * Removes all entries from the cache.
+     */
+    void removeAll();
+    
+    /**
      * Checks if a given key is in the cache.
      * 
      * @param keys

@@ -18,9 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
-import java.io.Serializable;
-
 import org.apache.chemistry.opencmis.client.bindings.cache.Cache;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
@@ -31,22 +30,23 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 /**
  * A cache for type definition objects.
  */
-public class TypeDefinitionCache implements Serializable {
+public class TypeDefinitionCacheImpl implements TypeDefinitionCache {
 
     private static final long serialVersionUID = 1L;
 
     private static final int CACHE_SIZE_REPOSITORIES = 10;
     private static final int CACHE_SIZE_TYPES = 100;
 
-    private final Cache cache;
+    private Cache cache;
 
     /**
      * Constructor.
-     * 
-     * @param session
-     *            the session object
      */
-    public TypeDefinitionCache(BindingSession session) {
+    public TypeDefinitionCacheImpl() {
+
+    }
+
+    public void initialize(BindingSession session) {
         assert session != null;
 
         int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
@@ -66,14 +66,6 @@ public class TypeDefinitionCache implements Serializable {
         });
     }
 
-    /**
-     * Adds a type definition object to the cache.
-     * 
-     * @param repositoryId
-     *            the repository id
-     * @param typeDefinition
-     *            the type definition object
-     */
     public void put(String repositoryId, TypeDefinition typeDefinition) {
         if ((typeDefinition == null) || (typeDefinition.getId() == null)) {
             return;
@@ -82,44 +74,25 @@ public class TypeDefinitionCache implements Serializable {
         cache.put(typeDefinition, repositoryId, typeDefinition.getId());
     }
 
-    /**
-     * Retrieves a type definition object from the cache.
-     * 
-     * @param repositoryId
-     *            the repository id
-     * @param typeId
-     *            the type id
-     * @return the type definition object or <code>null</code> if the object is
-     *         not in the cache
-     */
     public TypeDefinition get(String repositoryId, String typeId) {
         return (TypeDefinition) cache.get(repositoryId, typeId);
     }
 
-    /**
-     * Removes a type definition object from the cache.
-     * 
-     * @param repositoryId
-     *            the repository id
-     * @param typeId
-     *            the type id
-     */
     public void remove(String repositoryId, String typeId) {
         cache.remove(repositoryId, typeId);
     }
 
-    /**
-     * Removes all type definition objects of a repository from the cache.
-     * 
-     * @param repositoryId
-     *            the repository id
-     */
     public void remove(String repositoryId) {
         cache.remove(repositoryId);
+    }
+
+    public void removeAll() {
+        cache.removeAll();
     }
 
     @Override
     public String toString() {
         return cache.toString();
     }
+
 }

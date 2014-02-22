@@ -217,6 +217,15 @@ package org.apache.chemistry.opencmis.commons;
  * <td>org.apache.chemistry.opencmis.client.runtime.cache.CacheImpl</td>
  * </tr>
  * <tr>
+ * <td>{@link #TYPE_DEFINITION_CACHE_CLASS}</td>
+ * <td>Type definition cache implementation class</td>
+ * <td>all</td>
+ * <td>class name</td>
+ * <td>no</td>
+ * <td>
+ * org.apache.chemistry.opencmis.client.bindings.impl.TypeDefinitionCacheImpl</td>
+ * </tr>
+ * <tr>
  * <td>{@link #CACHE_SIZE_OBJECTS}</td>
  * <td>Object cache size</td>
  * <td>all</td>
@@ -625,6 +634,7 @@ public final class SessionParameter {
 
     public static final String OBJECT_FACTORY_CLASS = "org.apache.chemistry.opencmis.objectfactory.classname";
     public static final String CACHE_CLASS = "org.apache.chemistry.opencmis.cache.classname";
+    public static final String TYPE_DEFINITION_CACHE_CLASS = "org.apache.chemistry.opencmis.cache.types.classname";
 
     public static final String REPOSITORY_ID = "org.apache.chemistry.opencmis.session.repository.id";
 }

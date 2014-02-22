@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -39,7 +40,7 @@ public final class CmisBindingHelper {
      * Creates a {@link CmisBinding} object.
      */
     public static CmisBinding createBinding(Map<String, String> parameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         if (parameters == null || parameters.isEmpty()) {
             throw new CmisRuntimeException("Session parameter not set!");
         }
@@ -52,15 +53,15 @@ public final class CmisBindingHelper {
 
         switch (bt) {
         case ATOMPUB:
-            return createAtomPubBinding(parameters, authenticationProvider);
+            return createAtomPubBinding(parameters, authenticationProvider, typeDefCache);
         case WEBSERVICES:
-            return createWebServiceBinding(parameters, authenticationProvider);
+            return createWebServiceBinding(parameters, authenticationProvider, typeDefCache);
         case BROWSER:
-            return createCmisBrowserBinding(parameters, authenticationProvider);
+            return createCmisBrowserBinding(parameters, authenticationProvider, typeDefCache);
         case LOCAL:
-            return createLocalBinding(parameters);
+            return createLocalBinding(parameters, typeDefCache);
         case CUSTOM:
-            return createCustomBinding(parameters, authenticationProvider);
+            return createCustomBinding(parameters, authenticationProvider, typeDefCache);
         default:
             throw new CmisRuntimeException("Ambiguous session parameter: " + parameters);
         }
@@ -70,9 +71,9 @@ public final class CmisBindingHelper {
      * Creates a binding with custom parameters.
      */
     private static CmisBinding createCustomBinding(Map<String, String> parameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisBinding(parameters, authenticationProvider);
+        CmisBinding binding = factory.createCmisBinding(parameters, authenticationProvider, typeDefCache);
 
         return binding;
     }
@@ -81,9 +82,9 @@ public final class CmisBindingHelper {
      * Creates a Web Services binding.
      */
     private static CmisBinding createWebServiceBinding(Map<String, String> parameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisWebServicesBinding(parameters, authenticationProvider);
+        CmisBinding binding = factory.createCmisWebServicesBinding(parameters, authenticationProvider, typeDefCache);
 
         return binding;
     }
@@ -92,9 +93,9 @@ public final class CmisBindingHelper {
      * Creates an AtomPub binding.
      */
     private static CmisBinding createAtomPubBinding(Map<String, String> parameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisAtomPubBinding(parameters, authenticationProvider);
+        CmisBinding binding = factory.createCmisAtomPubBinding(parameters, authenticationProvider, typeDefCache);
 
         return binding;
     }
@@ -103,9 +104,9 @@ public final class CmisBindingHelper {
      * Creates an Browser binding.
      */
     private static CmisBinding createCmisBrowserBinding(Map<String, String> parameters,
-            AuthenticationProvider authenticationProvider) {
+            AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisBrowserBinding(parameters, authenticationProvider);
+        CmisBinding binding = factory.createCmisBrowserBinding(parameters, authenticationProvider, typeDefCache);
 
         return binding;
     }
@@ -113,9 +114,9 @@ public final class CmisBindingHelper {
     /**
      * Creates a local binding.
      */
-    private static CmisBinding createLocalBinding(Map<String, String> parameters) {
+    private static CmisBinding createLocalBinding(Map<String, String> parameters, TypeDefinitionCache typeDefCache) {
         CmisBindingFactory factory = CmisBindingFactory.newInstance();
-        CmisBinding binding = factory.createCmisLocalBinding(parameters);
+        CmisBinding binding = factory.createCmisLocalBinding(parameters, typeDefCache);
 
         return binding;
     }

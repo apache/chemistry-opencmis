@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.bindings.impl;
 
 import java.lang.reflect.Constructor;
 
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
@@ -174,6 +175,39 @@ public final class CmisBindingsHelper {
     public static TypeDefinitionCache getTypeDefinitionCache(BindingSession session) {
         assert session != null;
 
-        return (TypeDefinitionCache) session.get(TYPE_DEFINTION_CACHE);
+        TypeDefinitionCache cache = (TypeDefinitionCache) session.get(TYPE_DEFINTION_CACHE);
+
+        if (cache != null) {
+            return cache;
+        }
+
+        session.writeLock();
+        try {
+            // try again
+            cache = (TypeDefinitionCache) session.get(TYPE_DEFINTION_CACHE);
+            if (cache != null) {
+                return cache;
+            }
+
+            // ok, we have to create it...
+            try {
+                String cacheName = (String) session.get(SessionParameter.TYPE_DEFINITION_CACHE_CLASS);
+                cache = (TypeDefinitionCache) ClassLoaderUtil.loadClass(cacheName).newInstance();
+                cache.initialize(session);
+            } catch (CmisBaseException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new CmisRuntimeException("Type definition cache cannot be initialized: " + e.getMessage(), e);
+            }
+
+            // we have a cache object -> put it into the session
+            session.put(TYPE_DEFINTION_CACHE, cache);
+        } finally {
+            session.writeUnlock();
+        }
+
+        assert cache != null;
+
+        return cache;
     }
 }
