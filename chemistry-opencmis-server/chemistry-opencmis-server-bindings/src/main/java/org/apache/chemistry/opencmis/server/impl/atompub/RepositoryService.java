@@ -317,6 +317,9 @@ public class RepositoryService {
                 }
             }
 
+            // write extensions
+            feed.writeExtensions(typeList);
+
             // we are done
             feed.endFeed();
             feed.endDocument();

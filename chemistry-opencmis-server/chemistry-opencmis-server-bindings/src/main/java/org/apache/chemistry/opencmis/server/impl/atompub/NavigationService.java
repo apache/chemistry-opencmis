@@ -177,6 +177,9 @@ public class NavigationService {
                 }
             }
 
+            // write extensions
+            feed.writeExtensions(children);
+
             // we are done
             feed.endFeed();
             feed.endDocument();
@@ -542,6 +545,9 @@ public class NavigationService {
                             context.getCmisVersion());
                 }
             }
+
+            // write extensions
+            feed.writeExtensions(checkedOut);
 
             // we are done
             feed.endFeed();

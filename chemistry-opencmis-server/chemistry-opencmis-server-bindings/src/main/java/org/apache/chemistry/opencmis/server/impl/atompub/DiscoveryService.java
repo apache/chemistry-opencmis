@@ -179,6 +179,9 @@ public class DiscoveryService {
                 }
             }
 
+            // write extensions
+            feed.writeExtensions(results);
+
             // we are done
             feed.endFeed();
             feed.endDocument();
@@ -298,6 +301,9 @@ public class DiscoveryService {
                             false, context.getCmisVersion());
                 }
             }
+
+            // write extensions
+            feed.writeExtensions(changes);
 
             // we are done
             feed.endFeed();

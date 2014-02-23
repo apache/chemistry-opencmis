@@ -432,6 +432,9 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
             }
         }
 
+        // write extensions
+        feed.writeExtensions(type);
+
         // we are done
         feed.endFeed();
         feed.endChildren();

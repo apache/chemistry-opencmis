@@ -123,6 +123,9 @@ public class RelationshipService {
                         context.getCmisVersion());
             }
 
+            // write extensions
+            feed.writeExtensions(relationships);
+
             // we are done
             feed.endFeed();
             feed.endDocument();

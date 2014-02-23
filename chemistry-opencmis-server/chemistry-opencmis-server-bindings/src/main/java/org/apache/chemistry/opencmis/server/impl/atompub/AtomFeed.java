@@ -24,9 +24,11 @@ import java.util.GregorianCalendar;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 
 /**
@@ -169,5 +171,12 @@ public class AtomFeed extends AtomDocumentBase {
                 writeLastLink(lastLink.toString());
             }
         }
+    }
+
+    /**
+     * Writes extensions.
+     */
+    public void writeExtensions(ExtensionsData extensions) throws XMLStreamException {
+        XMLConverter.writeExtensions(getWriter(), extensions);
     }
 }
