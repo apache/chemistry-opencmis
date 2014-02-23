@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.client.bindings.spi.SessionAwareAuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -168,6 +169,19 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
 
     public String getSessionId() {
         return session.getSessionId();
+    }
+
+    public BindingType getBindingType() {
+        Object bindingType = session.get(SessionParameter.BINDING_TYPE);
+        if (!(bindingType instanceof String)) {
+            return BindingType.CUSTOM;
+        }
+
+        try {
+            return BindingType.fromValue((String) bindingType);
+        } catch (IllegalArgumentException e) {
+            return BindingType.CUSTOM;
+        }
     }
 
     public RepositoryService getRepositoryService() {

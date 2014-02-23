@@ -462,6 +462,58 @@ public interface Session extends Serializable {
     CmisObject getObjectByPath(String path, OperationContext context);
 
     /**
+     * Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(ObjectId objectId);
+
+    /**
+     * Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(ObjectId objectId, OperationContext context);
+
+    /**
+     * Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(String objectId);
+
+    /**
+     * Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(String objectId, OperationContext context);
+
+    /**
      * Removes the given object from the cache.
      * 
      * @param objectId

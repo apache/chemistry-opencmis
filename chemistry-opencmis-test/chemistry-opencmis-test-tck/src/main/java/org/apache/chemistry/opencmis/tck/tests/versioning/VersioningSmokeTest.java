@@ -213,6 +213,19 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             f = createResult(FAILURE,
                     "The version that is flagged as latest version is not returned by getObjectOfLatestVersion()!");
             addResult(results, assertEquals(latestId, latestVersion.getId(), null, f));
+
+            // check with session.getLatestDocumentVersion()
+            Document latestVersion2 = session.getLatestDocumentVersion(versions.get(versions.size() - 1).getId(),
+                    SELECT_ALL_NO_CACHE_OC);
+
+            addResult(
+                    results,
+                    checkObject(session, latestVersion2, properties, "Latest version object check (2): "
+                            + latestVersion2.getId()));
+
+            f = createResult(FAILURE,
+                    "The version that is flagged as latest version is not returned by getObjectOfLatestVersion()!");
+            addResult(results, assertEquals(latestId, latestVersion2.getId(), null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);

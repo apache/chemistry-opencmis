@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.client.util.OperationContextUtils;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -64,12 +65,14 @@ import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeTok
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -266,7 +269,7 @@ public class SessionImpl implements Session {
         lock.writeLock().lock();
         try {
             // create new object cache
-            this.cache = createCache();
+            cache = createCache();
 
             // clear object type cache
             objectTypeCache = new IdentityHashMap<TypeDefinition, ObjectType>();
@@ -363,7 +366,7 @@ public class SessionImpl implements Session {
         }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-        final ObjectFactory of = this.getObjectFactory();
+        final ObjectFactory of = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
         return new CollectionIterable<ChangeEvent>(new AbstractPageFetcher<ChangeEvent>(Integer.MAX_VALUE) {
@@ -439,7 +442,7 @@ public class SessionImpl implements Session {
     public OperationContext getDefaultContext() {
         lock.readLock().lock();
         try {
-            return this.context;
+            return context;
         } finally {
             lock.readLock().unlock();
         }
@@ -448,7 +451,7 @@ public class SessionImpl implements Session {
     public void setDefaultContext(OperationContext context) {
         lock.writeLock().lock();
         try {
-            this.context = (context == null ? DEFAULT_CONTEXT : context);
+            context = (context == null ? DEFAULT_CONTEXT : context);
         } finally {
             lock.writeLock().unlock();
         }
@@ -472,7 +475,7 @@ public class SessionImpl implements Session {
     }
 
     public Locale getLocale() {
-        return this.locale;
+        return locale;
     }
 
     public CmisObject getObject(ObjectId objectId) {
@@ -480,8 +483,8 @@ public class SessionImpl implements Session {
     }
 
     public CmisObject getObject(ObjectId objectId, OperationContext context) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Object Id must be set!");
+        if (objectId == null || objectId.getId() == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
         }
 
         return getObject(objectId.getId(), context);
@@ -493,7 +496,7 @@ public class SessionImpl implements Session {
 
     public CmisObject getObject(String objectId, OperationContext context) {
         if (objectId == null) {
-            throw new IllegalArgumentException("Object Id must be set!");
+            throw new IllegalArgumentException("Object ID must be set!");
         }
         if (context == null) {
             throw new IllegalArgumentException("Operation context must be set!");
@@ -503,14 +506,14 @@ public class SessionImpl implements Session {
 
         // ask the cache first
         if (context.isCacheEnabled()) {
-            result = this.cache.getById(objectId, context.getCacheKey());
+            result = cache.getById(objectId, context.getCacheKey());
             if (result != null) {
                 return result;
             }
         }
 
         // get the object
-        ObjectData objectData = this.binding.getObjectService().getObject(getRepositoryId(), objectId,
+        ObjectData objectData = binding.getObjectService().getObject(getRepositoryId(), objectId,
                 context.getFilterString(), context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
 
@@ -518,7 +521,7 @@ public class SessionImpl implements Session {
 
         // put into cache
         if (context.isCacheEnabled()) {
-            this.cache.put(result, context.getCacheKey());
+            cache.put(result, context.getCacheKey());
         }
 
         return result;
@@ -540,14 +543,14 @@ public class SessionImpl implements Session {
 
         // ask the cache first
         if (context.isCacheEnabled() && !cachePathOmit) {
-            result = this.cache.getByPath(path, context.getCacheKey());
+            result = cache.getByPath(path, context.getCacheKey());
             if (result != null) {
                 return result;
             }
         }
 
         // get the object
-        ObjectData objectData = this.binding.getObjectService().getObjectByPath(getRepositoryId(), path,
+        ObjectData objectData = binding.getObjectService().getObjectByPath(getRepositoryId(), path,
                 context.getFilterString(), context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
 
@@ -555,10 +558,100 @@ public class SessionImpl implements Session {
 
         // put into cache
         if (context.isCacheEnabled()) {
-            this.cache.putPath(path, result, context.getCacheKey());
+            cache.putPath(path, result, context.getCacheKey());
         }
 
         return result;
+    }
+
+    public Document getLatestDocumentVersion(ObjectId objectId) {
+        return getLatestDocumentVersion(objectId, getDefaultContext());
+    }
+
+    public Document getLatestDocumentVersion(String objectId, OperationContext context) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
+        }
+
+        return getLatestDocumentVersion(createObjectId(objectId), context);
+    }
+
+    public Document getLatestDocumentVersion(String objectId) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
+        }
+
+        return getLatestDocumentVersion(createObjectId(objectId), getDefaultContext());
+    }
+
+    public Document getLatestDocumentVersion(ObjectId objectId, OperationContext context) {
+        if (objectId == null || objectId.getId() == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
+        }
+
+        if (context == null) {
+            throw new IllegalArgumentException("Operation context must be set!");
+        }
+
+        CmisObject result = null;
+
+        String versionSeriesId = null;
+        BindingType bindingType = getBinding().getBindingType();
+        if (bindingType == BindingType.WEBSERVICES || bindingType == BindingType.CUSTOM) {
+            if (objectId instanceof Document) {
+                versionSeriesId = ((Document) objectId).getVersionSeriesId();
+            }
+
+            if (versionSeriesId == null) {
+                // ask the cache
+                if (context.isCacheEnabled()) {
+                    CmisObject sourceDoc = cache.getById(objectId.getId(), context.getCacheKey());
+                    if (sourceDoc instanceof Document) {
+                        versionSeriesId = ((Document) sourceDoc).getVersionSeriesId();
+                    }
+                }
+            }
+
+            if (versionSeriesId == null) {
+                // get the document to find the version series ID
+                ObjectData sourceObjectData = binding.getObjectService().getObject(getRepositoryId(),
+                        objectId.getId(), PropertyIds.OBJECT_ID + "," + PropertyIds.VERSION_SERIES_ID, false,
+                        IncludeRelationships.NONE, "cmis:none", false, false, null);
+
+                if (sourceObjectData.getProperties() != null
+                        && sourceObjectData.getProperties().getProperties() != null) {
+                    PropertyData<?> verionsSeriesIdProp = sourceObjectData.getProperties().getProperties()
+                            .get(PropertyIds.VERSION_SERIES_ID);
+                    if (verionsSeriesIdProp != null && verionsSeriesIdProp.getFirstValue() instanceof String) {
+                        versionSeriesId = (String) verionsSeriesIdProp.getFirstValue();
+                    }
+                }
+            }
+
+            if (versionSeriesId == null) {
+                throw new IllegalArgumentException("Object is not a document or not versionable!");
+            }
+        }
+
+        // get the object
+        ObjectData objectData = binding.getVersioningService().getObjectOfLatestVersion(getRepositoryId(),
+                objectId.getId(), versionSeriesId, false, context.getFilterString(),
+                context.isIncludeAllowableActions(), context.getIncludeRelationships(),
+                context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
+
+        result = getObjectFactory().convertObject(objectData, context);
+
+        // put into cache
+        if (context.isCacheEnabled()) {
+            cache.put(result, context.getCacheKey());
+        }
+
+        // check result
+        if (!(result instanceof Document)) {
+            throw new IllegalArgumentException("Object is not a document!");
+        }
+
+        return (Document) result;
     }
 
     public void removeObjectFromCache(ObjectId objectId) {
@@ -600,7 +693,7 @@ public class SessionImpl implements Session {
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
 
-        return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(this.getDefaultContext()
+        return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(getDefaultContext()
                 .getMaxItemsPerPage()) {
 
             @Override
@@ -744,7 +837,7 @@ public class SessionImpl implements Session {
         }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-        final ObjectFactory of = this.getObjectFactory();
+        final ObjectFactory of = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
 
         return new CollectionIterable<QueryResult>(new AbstractPageFetcher<QueryResult>(ctxt.getMaxItemsPerPage()) {
@@ -787,7 +880,7 @@ public class SessionImpl implements Session {
         }
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
-        final ObjectFactory of = this.getObjectFactory();
+        final ObjectFactory of = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
         final StringBuilder statement = new StringBuilder("SELECT ");
 
@@ -856,12 +949,12 @@ public class SessionImpl implements Session {
     public void connect() {
         lock.writeLock().lock();
         try {
-            this.binding = CmisBindingHelper.createBinding(parameters, authenticationProvider, typeDefCache);
+            binding = CmisBindingHelper.createBinding(parameters, authenticationProvider, typeDefCache);
 
             /* get initial repository id from session parameter */
             String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);
             if (repositoryId == null) {
-                throw new IllegalStateException("Repository Id is not set!");
+                throw new IllegalStateException("Repository ID is not set!");
             }
 
             repositoryInfo = objectFactory.convertRepositoryInfo(getBinding().getRepositoryService().getRepositoryInfo(
@@ -961,7 +1054,7 @@ public class SessionImpl implements Session {
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
         if ((folderId == null) || (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder Id must be set!");
+            throw new IllegalArgumentException("Folder ID must be set!");
         }
         if ((properties == null) || (properties.isEmpty())) {
             throw new IllegalArgumentException("Properties must not be empty!");
@@ -1035,30 +1128,30 @@ public class SessionImpl implements Session {
 
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState) {
-        return this.createDocument(properties, folderId, contentStream, versioningState, null, null, null);
+        return createDocument(properties, folderId, contentStream, versioningState, null, null, null);
     }
 
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState) {
-        return this.createDocumentFromSource(source, properties, folderId, versioningState, null, null, null);
+        return createDocumentFromSource(source, properties, folderId, versioningState, null, null, null);
     }
 
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId) {
-        return this.createFolder(properties, folderId, null, null, null);
+        return createFolder(properties, folderId, null, null, null);
     }
 
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId) {
-        return this.createPolicy(properties, folderId, null, null, null);
+        return createPolicy(properties, folderId, null, null, null);
     }
 
     public ObjectId createItem(Map<String, ?> properties, ObjectId folderId) {
-        return this.createItem(properties, folderId, null, null, null);
+        return createItem(properties, folderId, null, null, null);
     }
 
     // --- relationships ---
 
     public ObjectId createRelationship(Map<String, ?> properties) {
-        return this.createRelationship(properties, null, null, null);
+        return createRelationship(properties, null, null, null);
     }
 
     public ItemIterable<Relationship> getRelationships(ObjectId objectId, final boolean includeSubRelationshipTypes,
@@ -1256,7 +1349,7 @@ public class SessionImpl implements Session {
         String[] ids = new String[policyIds.length];
         for (int i = 0; i < policyIds.length; i++) {
             if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
-                throw new IllegalArgumentException("A Policy Id is not set!");
+                throw new IllegalArgumentException("A Policy ID is not set!");
             }
 
             ids[i] = policyIds[i].getId();
@@ -1279,7 +1372,7 @@ public class SessionImpl implements Session {
         String[] ids = new String[policyIds.length];
         for (int i = 0; i < policyIds.length; i++) {
             if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
-                throw new IllegalArgumentException("A Policy Id is not set!");
+                throw new IllegalArgumentException("A Policy ID is not set!");
             }
 
             ids[i] = policyIds[i].getId();

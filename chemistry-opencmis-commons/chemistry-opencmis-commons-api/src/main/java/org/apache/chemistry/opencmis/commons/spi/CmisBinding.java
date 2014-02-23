@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.spi;
 
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
+
 /**
  * Entry point for all CMIS binding related operations. It provides access to
  * the service interface objects which are very similar to the CMIS 1.0 domain
@@ -37,6 +39,11 @@ public interface CmisBinding {
      * Returns the client session id.
      */
     String getSessionId();
+
+    /**
+     * Returns the binding type.
+     */
+    BindingType getBindingType();
 
     /**
      * Gets a Repository Service interface object.
