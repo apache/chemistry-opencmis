@@ -114,6 +114,23 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
                     f = createResult(FAILURE, "Document still has content after deleteContentStream() has been called!");
                     addResult(assertNull(contentDoc.getContentStream(), null, f));
 
+                    f = createResult(
+                            FAILURE,
+                            "Document still has a MIME type after deleteContentStream() has been called: "
+                                    + contentDoc.getContentStreamMimeType());
+                    addResult(assertNull(contentDoc.getContentStreamMimeType(), null, f));
+
+                    f = createResult(FAILURE,
+                            "Document still has a content length after deleteContentStream() has been called: "
+                                    + contentDoc.getContentStreamLength());
+                    addResult(assertEquals(-1L, contentDoc.getContentStreamLength(), null, f));
+
+                    f = createResult(
+                            FAILURE,
+                            "Document still has a file name after deleteContentStream() has been called: "
+                                    + contentDoc.getContentStreamFileName());
+                    addResult(assertNull(contentDoc.getContentStreamFileName(), null, f));
+
                     workDoc = contentDoc;
                 } catch (CmisNotSupportedException e) {
                     addResult(createResult(WARNING, "deleteContentStream() is not supported!"));
