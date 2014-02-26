@@ -565,7 +565,7 @@ public class SessionImpl implements Session {
     }
 
     public Document getLatestDocumentVersion(ObjectId objectId) {
-        return getLatestDocumentVersion(objectId, getDefaultContext());
+        return getLatestDocumentVersion(objectId, false, getDefaultContext());
     }
 
     public Document getLatestDocumentVersion(String objectId, OperationContext context) {
@@ -573,7 +573,15 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Object ID must be set!");
         }
 
-        return getLatestDocumentVersion(createObjectId(objectId), context);
+        return getLatestDocumentVersion(createObjectId(objectId), false, context);
+    }
+
+    public Document getLatestDocumentVersion(String objectId, boolean major, OperationContext context) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
+        }
+
+        return getLatestDocumentVersion(createObjectId(objectId), major, context);
     }
 
     public Document getLatestDocumentVersion(String objectId) {
@@ -581,10 +589,14 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Object ID must be set!");
         }
 
-        return getLatestDocumentVersion(createObjectId(objectId), getDefaultContext());
+        return getLatestDocumentVersion(createObjectId(objectId), false, getDefaultContext());
     }
 
     public Document getLatestDocumentVersion(ObjectId objectId, OperationContext context) {
+        return getLatestDocumentVersion(objectId, false, context);
+    }
+
+    public Document getLatestDocumentVersion(ObjectId objectId, boolean major, OperationContext context) {
         if (objectId == null || objectId.getId() == null) {
             throw new IllegalArgumentException("Object ID must be set!");
         }
@@ -596,27 +608,36 @@ public class SessionImpl implements Session {
         CmisObject result = null;
 
         String versionSeriesId = null;
-        BindingType bindingType = getBinding().getBindingType();
-        if (bindingType == BindingType.WEBSERVICES || bindingType == BindingType.CUSTOM) {
-            if (objectId instanceof Document) {
-                versionSeriesId = ((Document) objectId).getVersionSeriesId();
-            }
 
-            if (versionSeriesId == null) {
-                // ask the cache
-                if (context.isCacheEnabled()) {
-                    CmisObject sourceDoc = cache.getById(objectId.getId(), context.getCacheKey());
-                    if (sourceDoc instanceof Document) {
-                        versionSeriesId = ((Document) sourceDoc).getVersionSeriesId();
-                    }
+        // first attempt: if we got a Document object, try getting the version
+        // series ID from it
+        if (objectId instanceof Document) {
+            versionSeriesId = ((Document) objectId).getVersionSeriesId();
+        }
+
+        // second attempt: if we have a Document object in the cache, retrieve
+        // the version series ID form there
+        if (versionSeriesId == null) {
+            if (context.isCacheEnabled()) {
+                CmisObject sourceDoc = cache.getById(objectId.getId(), context.getCacheKey());
+                if (sourceDoc instanceof Document) {
+                    versionSeriesId = ((Document) sourceDoc).getVersionSeriesId();
                 }
             }
+        }
 
-            if (versionSeriesId == null) {
+        // third attempt (Web Services only): get the version series ID from the
+        // repository
+        // (the AtomPub and Browser binding don't need the version series ID ->
+        // avoid roundtrip)
+        if (versionSeriesId == null) {
+            BindingType bindingType = getBinding().getBindingType();
+            if (bindingType == BindingType.WEBSERVICES || bindingType == BindingType.CUSTOM) {
+
                 // get the document to find the version series ID
-                ObjectData sourceObjectData = binding.getObjectService().getObject(getRepositoryId(),
-                        objectId.getId(), PropertyIds.OBJECT_ID + "," + PropertyIds.VERSION_SERIES_ID, false,
-                        IncludeRelationships.NONE, "cmis:none", false, false, null);
+                ObjectData sourceObjectData = binding.getObjectService().getObject(getRepositoryId(), objectId.getId(),
+                        PropertyIds.OBJECT_ID + "," + PropertyIds.VERSION_SERIES_ID, false, IncludeRelationships.NONE,
+                        "cmis:none", false, false, null);
 
                 if (sourceObjectData.getProperties() != null
                         && sourceObjectData.getProperties().getProperties() != null) {
@@ -626,16 +647,17 @@ public class SessionImpl implements Session {
                         versionSeriesId = (String) verionsSeriesIdProp.getFirstValue();
                     }
                 }
-            }
 
-            if (versionSeriesId == null) {
-                throw new IllegalArgumentException("Object is not a document or not versionable!");
+                // the Web Services binding needs the version series ID -> fail
+                if (versionSeriesId == null) {
+                    throw new IllegalArgumentException("Object is not a document or not versionable!");
+                }
             }
         }
 
         // get the object
         ObjectData objectData = binding.getVersioningService().getObjectOfLatestVersion(getRepositoryId(),
-                objectId.getId(), versionSeriesId, false, context.getFilterString(),
+                objectId.getId(), versionSeriesId, major, context.getFilterString(),
                 context.isIncludeAllowableActions(), context.getIncludeRelationships(),
                 context.getRenditionFilterString(), context.isIncludePolicies(), context.isIncludeAcls(), null);
 
@@ -648,7 +670,7 @@ public class SessionImpl implements Session {
 
         // check result
         if (!(result instanceof Document)) {
-            throw new IllegalArgumentException("Object is not a document!");
+            throw new IllegalArgumentException("Latest version is not a document!");
         }
 
         return (Document) result;

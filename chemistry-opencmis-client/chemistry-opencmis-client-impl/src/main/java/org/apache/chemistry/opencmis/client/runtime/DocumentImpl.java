@@ -314,34 +314,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     }
 
     public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
-        String objectId;
-        String versionSeriesId;
-
-        readLock();
-        try {
-            objectId = getObjectId();
-            versionSeriesId = getVersionSeriesId();
-        } finally {
-            readUnlock();
-        }
-
-        if (versionSeriesId == null) {
-            throw new CmisRuntimeException("Version series id is unknown!");
-        }
-
-        ObjectData objectData = getBinding().getVersioningService().getObjectOfLatestVersion(getRepositoryId(),
-                objectId, versionSeriesId, major, context.getFilterString(), context.isIncludeAllowableActions(),
-                context.getIncludeRelationships(), context.getRenditionFilterString(), context.isIncludePolicies(),
-                context.isIncludeAcls(), null);
-
-        ObjectFactory objectFactory = getSession().getObjectFactory();
-
-        CmisObject result = objectFactory.convertObject(objectData, context);
-        if (!(result instanceof Document)) {
-            throw new CmisRuntimeException("Latest version is not a document!");
-        }
-
-        return (Document) result;
+        return getSession().getLatestDocumentVersion(this, major, context);
     }
 
     // content operations

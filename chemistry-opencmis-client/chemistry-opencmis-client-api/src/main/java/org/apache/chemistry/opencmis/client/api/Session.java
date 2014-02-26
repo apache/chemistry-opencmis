@@ -492,6 +492,23 @@ public interface Session extends Serializable {
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
+     * @param major
+     *            if {@code true} the latest major version will be returned,
+     *            otherwise the very last version will be returned
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(ObjectId objectId, boolean major, OperationContext context);
+
+    /**
+     * /** Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
      * 
      * @return the latest document version
      * 
@@ -512,6 +529,23 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     Document getLatestDocumentVersion(String objectId, OperationContext context);
+
+    /**
+     * Returns the latest version in a version series.
+     * 
+     * @param objectId
+     *            the document ID of an arbitrary version in the version series
+     * @param major
+     *            if {@code true} the latest major version will be returned,
+     *            otherwise the very last version will be returned
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @return the latest document version
+     * 
+     * @cmis 1.0
+     */
+    Document getLatestDocumentVersion(String objectId, boolean major, OperationContext context);
 
     /**
      * Removes the given object from the cache.
