@@ -72,6 +72,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         setIsControllablePolicy(typeDefinition.isControllablePolicy());
         setPropertyDefinitions(typeDefinition.getPropertyDefinitions());
         setTypeMutability(typeDefinition.getTypeMutability());
+        setExtensions(typeDefinition.getExtensions());
     }
 
     public String getId() {
