@@ -109,7 +109,8 @@ public class DiscoveryService {
                 includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
                 includeRelationships = getEnumParameter(request, Constants.PARAM_RELATIONSHIPS,
                         IncludeRelationships.class);
-                renditionFilter = null;
+                // since CMIS 1.1
+                renditionFilter = getStringParameter(request, Constants.PARAM_RENDITION_FILTER);
                 maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
                 skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
