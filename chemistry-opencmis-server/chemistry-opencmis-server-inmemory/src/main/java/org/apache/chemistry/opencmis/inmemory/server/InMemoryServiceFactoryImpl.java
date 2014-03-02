@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -253,14 +254,26 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         BufferedInputStream stream = null;
         TypeDefinition typeDef = null;
         File f = new File(typeDefsFileName);
+        InputStream typesStream = null;
 
-        if (!f.canRead()) {
+        if (!f.isFile()) {
+            typesStream = this.getClass().getResourceAsStream("/" + typeDefsFileName);
+        } else if (f.canRead()) {
+            try {
+                typesStream = new FileInputStream(f);
+            } catch (Exception e) {
+                LOG.error("Could not load type definitions from file '" + typeDefsFileName + "': " + e);
+            }
+        }
+
+        if (typesStream == null) {
             LOG.warn("Resource file with type definitions " + typeDefsFileName
                     + " could not be found, no types will be created.");
             return;
         }
+
         try {
-            stream = new BufferedInputStream(new FileInputStream(f));
+            stream = new BufferedInputStream(typesStream);
             XMLStreamReader parser = XMLUtils.createParser(stream);
             XMLUtils.findNextStartElemenet(parser);
 
