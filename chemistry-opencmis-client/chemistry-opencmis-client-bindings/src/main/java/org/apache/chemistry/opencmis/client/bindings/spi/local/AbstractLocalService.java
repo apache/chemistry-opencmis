@@ -20,18 +20,11 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.local;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
-import org.apache.chemistry.opencmis.commons.server.MutableCallContext;
 
 /**
  * Base class for all local clients.
@@ -87,85 +80,5 @@ public abstract class AbstractLocalService {
 
     protected CmisService getService(String repositoryId) {
         return factory.getService(createCallContext(repositoryId));
-    }
-
-    // ------------------------------------------------------------------
-
-    /**
-     * Simple {@link CallContext} implementation.
-     */
-    static class LocalCallContext implements MutableCallContext {
-
-        private final Map<String, Object> contextMap = new HashMap<String, Object>();
-
-        public LocalCallContext(String repositoryId, String user, String password) {
-            contextMap.put(REPOSITORY_ID, repositoryId);
-            contextMap.put(USERNAME, user);
-            contextMap.put(PASSWORD, password);
-        }
-
-        public String getBinding() {
-            return BINDING_LOCAL;
-        }
-
-        public Object get(String key) {
-            return contextMap.get(key);
-        }
-
-        public CmisVersion getCmisVersion() {
-            return CmisVersion.CMIS_1_1;
-        }
-
-        public String getRepositoryId() {
-            return (String) get(REPOSITORY_ID);
-        }
-
-        public String getUsername() {
-            return (String) get(USERNAME);
-        }
-
-        public String getPassword() {
-            return (String) get(PASSWORD);
-        }
-
-        public String getLocale() {
-            return null;
-        }
-
-        public BigInteger getOffset() {
-            return (BigInteger) get(OFFSET);
-        }
-
-        public BigInteger getLength() {
-            return (BigInteger) get(LENGTH);
-        }
-
-        public boolean isObjectInfoRequired() {
-            return false;
-        }
-
-        public File getTempDirectory() {
-            return null;
-        }
-
-        public boolean encryptTempFiles() {
-            return false;
-        }
-
-        public int getMemoryThreshold() {
-            return 0;
-        }
-
-        public long getMaxContentSize() {
-            return -1;
-        }
-
-		public void put(String key, Object value) {
-			contextMap.put(key, value);
-		}
-
-		public Object remove(String key) {
-			return contextMap.remove(key);
-		}
     }
 }
