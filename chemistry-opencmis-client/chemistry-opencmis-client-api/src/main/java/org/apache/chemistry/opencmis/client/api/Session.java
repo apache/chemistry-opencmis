@@ -576,7 +576,7 @@ public interface Session extends Serializable {
      * @param searchAllVersions
      *            specifies whether non-latest document versions should be
      *            included or not, {@code true} searches all document versions,
-     *            {@false} only searches latest document versions
+     *            {@code false} only searches latest document versions
      * 
      * @cmis 1.0
      */
@@ -591,7 +591,7 @@ public interface Session extends Serializable {
      * @param searchAllVersions
      *            specifies whether non-latest document versions should be
      *            included or not, {@code true} searches all document versions,
-     *            {@false} only searches latest document versions
+     *            {@code false} only searches latest document versions
      * @param context
      *            the operation context to use
      * 
@@ -610,7 +610,7 @@ public interface Session extends Serializable {
      * @param searchAllVersions
      *            specifies whether non-latest document versions should be
      *            included or not, {@code true} searches all document versions,
-     *            {@false} only searches latest document versions
+     *            {@code false} only searches latest document versions
      * @param context
      *            the operation context to use
      * 
