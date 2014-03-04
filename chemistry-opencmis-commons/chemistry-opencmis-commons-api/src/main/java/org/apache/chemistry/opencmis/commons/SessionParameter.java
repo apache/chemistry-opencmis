@@ -122,6 +122,14 @@ package org.apache.chemistry.opencmis.commons;
  * <td>depends on {@link #BINDING_TYPE}</td>
  * </tr>
  * <tr>
+ * <td>{@link #AUTH_HTTP_BASIC_CHARSET}</td>
+ * <td>Charset to encode HTTP basic authentication username and password</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>character set name</td>
+ * <td>no</td>
+ * <td>UTF-8</td>
+ * </tr>
+ * <tr>
  * <td>{@link #AUTH_SOAP_USERNAMETOKEN}</td>
  * <td>Switch to turn UsernameTokens on or off</td>
  * <td>Web Services</td>
@@ -571,6 +579,7 @@ public final class SessionParameter {
      * authentication provider.
      */
     public static final String AUTH_HTTP_BASIC = "org.apache.chemistry.opencmis.binding.auth.http.basic";
+    public static final String AUTH_HTTP_BASIC_CHARSET = "org.apache.chemistry.opencmis.binding.auth.http.basic.charset";
 
     /**
      * Toggle for OAuth Bearer token authentication. Evaluated by the standard

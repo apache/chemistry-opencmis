@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -230,7 +231,21 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             password = "";
         }
 
-        return Collections.singletonList("Basic " + Base64.encodeBytes(IOUtils.toUTF8Bytes(username + ":" + password)));
+        Object charset = getSession().get(SessionParameter.AUTH_HTTP_BASIC_CHARSET);
+        if (charset instanceof String) {
+            charset = ((String) charset).trim();
+        } else {
+            charset = IOUtils.UTF8;
+        }
+
+        byte[] usernamePassword;
+        try {
+            usernamePassword = (username + ":" + password).getBytes((String) charset);
+        } catch (UnsupportedEncodingException e) {
+            throw new CmisRuntimeException("Unsupported encoding '" + charset + "'!", e);
+        }
+
+        return Collections.singletonList("Basic " + Base64.encodeBytes(usernamePassword));
     }
 
     /**
