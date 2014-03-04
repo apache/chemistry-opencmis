@@ -289,7 +289,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                             ((AbstractTypeDefinition) typeDef)
                                     .setPropertyDefinitions(new LinkedHashMap<String, PropertyDefinition<?>>());
                         }
-                        tmc.addTypeDefinition(typeDef, false);
+                        tmc.addTypeDefinition(typeDef, true);
                     }
                     XMLUtils.next(parser);
                 } else if (event == XMLStreamConstants.END_ELEMENT) {
