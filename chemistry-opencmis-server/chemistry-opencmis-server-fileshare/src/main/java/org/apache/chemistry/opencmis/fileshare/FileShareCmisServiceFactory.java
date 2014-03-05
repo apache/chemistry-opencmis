@@ -27,7 +27,9 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
-import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.wrapper.CallContextAwareCmisService;
+import org.apache.chemistry.opencmis.server.support.wrapper.CmisServiceWrapperManager;
+import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +62,12 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
     private static final BigInteger DEFAULT_DEPTH_OBJECTS = BigInteger.valueOf(10);
 
     /** Each thread gets its own {@link FileShareCmisService} instance. */
-    private ThreadLocal<CmisServiceWrapper<FileShareCmisService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FileShareCmisService>>();
+    private ThreadLocal<CallContextAwareCmisService> threadLocalService = new ThreadLocal<CallContextAwareCmisService>();
 
     private FileShareRepositoryManager repositoryManager;
     private FileShareUserManager userManager;
     private FileShareTypeManager typeManager;
+    private CmisServiceWrapperManager wrapperManager;
 
     public FileShareRepositoryManager getRepositoryManager() {
         return repositoryManager;
@@ -84,6 +87,11 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
         userManager = new FileShareUserManager();
         typeManager = new FileShareTypeManager();
 
+        wrapperManager = new CmisServiceWrapperManager();
+        wrapperManager.addWrappersFromServiceFactoryParameters(parameters);
+        wrapperManager.addOuterWrapper(ConformanceCmisServiceWrapper.class, DEFAULT_MAX_ITEMS_TYPES,
+                DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+
         readConfiguration(parameters);
     }
 
@@ -100,19 +108,20 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
         userManager.authenticate(context);
 
         // get service object for this thread
-        CmisServiceWrapper<FileShareCmisService> wrapperService = threadLocalService.get();
-        if (wrapperService == null) {
+        CallContextAwareCmisService service = threadLocalService.get();
+        if (service == null) {
             // there is no service object for this thread -> create one
             FileShareCmisService fileShareService = new FileShareCmisService(repositoryManager);
-            wrapperService = new CmisServiceWrapper<FileShareCmisService>(fileShareService, DEFAULT_MAX_ITEMS_TYPES,
-                    DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
-            threadLocalService.set(wrapperService);
+
+            service = (CallContextAwareCmisService) wrapperManager.wrap(fileShareService);
+
+            threadLocalService.set(service);
         }
 
         // hand over the call context to the service object
-        wrapperService.getWrappedService().setCallContext(context);
+        service.setCallContext(context);
 
-        return wrapperService;
+        return service;
     }
 
     // ---- helpers ----

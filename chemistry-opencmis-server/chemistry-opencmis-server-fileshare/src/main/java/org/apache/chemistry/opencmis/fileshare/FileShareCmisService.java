@@ -48,11 +48,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.server.support.wrapper.CallContextAwareCmisService;
 
 /**
  * FileShare Service implementation.
  */
-public class FileShareCmisService extends AbstractCmisService {
+public class FileShareCmisService extends AbstractCmisService implements CallContextAwareCmisService {
 
     private final FileShareRepositoryManager repositoryManager;
     private CallContext context;

@@ -55,7 +55,13 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         }
 
         // create services factory
-        CmisServiceFactory factory = createServiceFactory(configFilename);
+        CmisServiceFactory factory = null;
+        try {
+            factory = createServiceFactory(configFilename);
+        } catch (Exception e) {
+            LOG.error("Service factory couldn't be created: " + e.toString(), e);
+            return;
+        }
 
         // set the services factory into the servlet context
         sce.getServletContext().setAttribute(SERVICES_FACTORY, factory);
@@ -65,7 +71,12 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         // destroy services factory
         CmisServiceFactory factory = (CmisServiceFactory) sce.getServletContext().getAttribute(SERVICES_FACTORY);
         if (factory != null) {
-            factory.destroy();
+            try {
+                factory.destroy();
+            } catch (Exception e) {
+                LOG.error("Service factory couldn't be destroyed: " + e.toString(), e);
+                return;
+            }
         }
     }
 
