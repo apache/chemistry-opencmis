@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.jcr.impl.DefaultDocumentTypeHandler;
 import org.apache.chemistry.opencmis.jcr.impl.DefaultFolderTypeHandler;
 import org.apache.chemistry.opencmis.jcr.impl.DefaultUnversionedDocumentTypeHandler;
 import org.apache.chemistry.opencmis.jcr.type.JcrTypeHandlerManager;
-import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,11 +82,12 @@ public class JcrServiceFactory extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        CmisServiceWrapper<JcrService> serviceWrapper = new CmisServiceWrapper<JcrService>(createJcrService(
-                jcrRepository, context), DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS,
-                DEFAULT_DEPTH_OBJECTS);
+        JcrService service = createJcrService(jcrRepository, context);
+        service.setCallContext(context);
+        
+        ConformanceCmisServiceWrapper serviceWrapper = new ConformanceCmisServiceWrapper(service, 
+                DEFAULT_MAX_ITEMS_TYPES, DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
 
-        serviceWrapper.getWrappedService().setCallContext(context);
         return serviceWrapper;
     }
 

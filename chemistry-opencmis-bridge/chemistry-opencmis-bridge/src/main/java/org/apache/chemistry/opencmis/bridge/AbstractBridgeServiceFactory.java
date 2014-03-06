@@ -27,6 +27,8 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.wrapper.CallContextAwareCmisService;
+import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 
 public abstract class AbstractBridgeServiceFactory extends AbstractServiceFactory {
 
@@ -45,7 +47,7 @@ public abstract class AbstractBridgeServiceFactory extends AbstractServiceFactor
     private static final BigInteger DEFAULT_MAX_ITEMS_TYPES = BigInteger.valueOf(1000);
     private static final BigInteger DEFAULT_DEPTH_TYPES = BigInteger.valueOf(10);
 
-    private ThreadLocal<CmisServiceWrapper<FilterCmisService>> threadLocalService = new ThreadLocal<CmisServiceWrapper<FilterCmisService>>();
+    private ThreadLocal<CallContextAwareCmisService> threadLocalService = new ThreadLocal<CallContextAwareCmisService>();
 
     private Map<String, String> parameters;
 
@@ -110,16 +112,16 @@ public abstract class AbstractBridgeServiceFactory extends AbstractServiceFactor
 
     @Override
     public CmisService getService(CallContext context) {
-        CmisServiceWrapper<FilterCmisService> wrapperService = threadLocalService.get();
-        if (wrapperService == null) {
-            wrapperService = new CmisServiceWrapper<FilterCmisService>(createService(context), defaultTypesMaxItems,
+        CallContextAwareCmisService service = threadLocalService.get();
+        if (service == null) {
+            service = new ConformanceCmisServiceWrapper(createService(context), defaultTypesMaxItems,
                     defaultTypesDepth, defaultMaxItems, defaultDepth);
-            threadLocalService.set(wrapperService);
+            threadLocalService.set(service);
         }
 
-        wrapperService.getWrappedService().setCallContext(context);
+        service.setCallContext(context);
 
-        return wrapperService;
+        return service;
     }
 
     /**

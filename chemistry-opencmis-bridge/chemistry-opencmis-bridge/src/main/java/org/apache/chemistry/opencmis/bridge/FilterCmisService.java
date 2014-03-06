@@ -60,11 +60,13 @@ import org.apache.chemistry.opencmis.commons.spi.PolicyService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
+import org.apache.chemistry.opencmis.server.support.wrapper.CallContextAwareCmisService;
 
 /**
  * Forwards incoming calls to a CMIS repository.
  */
-public abstract class FilterCmisService extends AbstractCmisService implements Serializable {
+public abstract class FilterCmisService extends AbstractCmisService implements CallContextAwareCmisService,
+        Serializable {
 
     private static final long serialVersionUID = 1L;
 
