@@ -100,7 +100,7 @@ public class CmisServiceWrapperManager {
      * <pre>
      * servicewrapper.1=com.example.my.SimpleWrapper
      * servicewrapper.2=com.example.my.AdvancedWrapper,1,cmis:documents
-     * servicewrapper.2=com.example.my.DebuggingWrapper,testRepositoryId
+     * servicewrapper.3=com.example.my.DebuggingWrapper,testRepositoryId
      * </pre>
      * 
      * Syntax:
