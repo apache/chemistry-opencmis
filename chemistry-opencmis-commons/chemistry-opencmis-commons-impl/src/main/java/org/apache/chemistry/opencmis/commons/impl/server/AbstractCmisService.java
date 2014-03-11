@@ -67,8 +67,12 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCmisService implements CmisService, ObjectInfoHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCmisService.class);
 
     private Map<String, ObjectInfo> objectInfoMap;
     private boolean addObjectInfos = true;
@@ -1061,6 +1065,11 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 addObjectInfo(info);
             } catch (Exception e) {
                 info = null;
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Getting the object info for object " + objectId + " in repository " + repositoryId
+                            + "  failed: " + e.toString(), e);
+                }
             } finally {
                 addObjectInfos = true;
             }
