@@ -255,6 +255,9 @@ public final class TypeValidator {
         if (properties != null) {
             for (PropertyData<?> prop : properties.getProperties().values()) {
                 String propertyId = prop.getId();
+                if (null == propertyId) {
+                    throw new CmisInvalidArgumentException("Property id cannot be null");
+                }                
                 BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
                 // check that all mandatory attributes are present
@@ -300,6 +303,9 @@ public final class TypeValidator {
 
             for (PropertyData<?> prop : properties.getProperties().values()) {
                 String propertyId = prop.getId();
+                if (null == propertyId) {
+                    throw new CmisInvalidArgumentException("Property id cannot be null");
+                }
                 BaseTypeId baseTypeId = typeDef.getBaseTypeId();
 
                 // check that all mandatory attributes are present
