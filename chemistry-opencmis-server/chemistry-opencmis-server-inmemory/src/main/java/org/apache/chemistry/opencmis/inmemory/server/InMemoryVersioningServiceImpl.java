@@ -21,15 +21,18 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
@@ -38,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
+import org.apache.chemistry.opencmis.inmemory.NameValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -45,6 +49,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentVersionImpl;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
@@ -104,7 +109,23 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         boolean major = (null == majorParam ? true : majorParam);
 
         verDoc.checkIn(major, properties, ((Content)so).getContent(), checkinComment, policies, user);
-        verDoc.updateSystemBasePropertiesWhenModified(null, context.getUsername());
+        if (null != properties && null != properties.getProperties()) {
+            // rename:
+            PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+            if (pd != null) {
+                String newName = (String) pd.getFirstValue();
+                if (newName == null || newName.equals("")) {
+                    throw new CmisConstraintException("updateProperties failed, name must not be empty.");
+                }
+                if (!NameValidator.isValidName(newName)) {
+                    throw new CmisInvalidArgumentException(NameValidator.ERROR_ILLEGAL_NAME);
+                }
+                // Note: the test for duplicated name in folder is left to the
+                // object store
+                objStore.rename(so, (String) pd.getFirstValue(), user);
+            }
+        }
+        so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (context.isObjectInfoRequired()) {

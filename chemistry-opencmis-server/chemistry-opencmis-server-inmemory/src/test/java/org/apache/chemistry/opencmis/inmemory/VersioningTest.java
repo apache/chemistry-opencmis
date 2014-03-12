@@ -59,6 +59,7 @@ public class VersioningTest extends AbstractServiceTest {
     private static final String PROP_VALUE = "Mickey Mouse";
     private static final String PROP_VALUE_NEW = "Donald Duck";
     private static final String PROP_NAME = "My Versioned Document";
+    private static final String PROP_NEW_NAME = "My Renamed Versioned Document";
     private static final String TEST_USER = "TestUser";
     private static final String TEST_USER_2 = "OtherUser";
 
@@ -187,7 +188,12 @@ public class VersioningTest extends AbstractServiceTest {
         String pwcId = idHolder.getValue();
 
         ContentStream altContent = fCreator.createAlternateContent();
-        Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
+
+        // update two properties custom and name:
+        List<PropertyData<?>> newProperties = fCreator.getUpdatePropertyDataList(VersionTestTypeSystemCreator.PROPERTY_ID, PROP_VALUE_NEW);
+        newProperties.add(fFactory.createPropertyStringData(PropertyIds.NAME, PROP_NEW_NAME));
+        Properties newProps = fFactory.createPropertiesData(newProperties);
+
         idHolder = new Holder<String>(pwcId);
         // assertTrue(isCheckedOut(docId));
         assertTrue(isCheckedOut(pwcId));
@@ -206,6 +212,8 @@ public class VersioningTest extends AbstractServiceTest {
         assertTrue(fCreator.verifyContent(fCreator.createAlternateContent(), retrievedContent));
         assertTrue(fCreator.verifyProperty(idHolder.getValue(), VersionTestTypeSystemCreator.PROPERTY_ID,
                 PROP_VALUE_NEW));
+        assertTrue(fCreator.verifyProperty(idHolder.getValue(), PropertyIds.NAME,
+                PROP_NEW_NAME));
     }
 
     @Test

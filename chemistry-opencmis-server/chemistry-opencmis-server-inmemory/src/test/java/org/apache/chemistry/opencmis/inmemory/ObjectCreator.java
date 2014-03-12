@@ -178,6 +178,12 @@ public class ObjectCreator {
         return newProps;
     }
 
+    public List<PropertyData<?>> getUpdatePropertyDataList(String propertyId, String propertyValue) {
+        List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
+        properties.add(fFactory.createPropertyStringData(propertyId, propertyValue));
+        return properties;
+    }
+    
     public boolean verifyProperty(String id, String propertyId, String propertyValue) {
         Properties props = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         Map<String, PropertyData<?>> propsMap = props.getProperties();
