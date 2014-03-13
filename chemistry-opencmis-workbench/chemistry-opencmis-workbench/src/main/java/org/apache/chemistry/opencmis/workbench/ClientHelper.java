@@ -591,8 +591,6 @@ public final class ClientHelper {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             final Session groovySession = model.getClientSession().getSession();
-            final BindingType bindingType = BindingType.fromValue(model.getClientSession().getSessionParameters()
-                    .get(SessionParameter.BINDING_TYPE));
             final String user = model.getClientSession().getSessionParameters().get(SessionParameter.USER);
             final String title = "GroovyConsole - Repsository: " + groovySession.getRepositoryInfo().getId();
 
@@ -635,7 +633,7 @@ public final class ClientHelper {
                     console.appendOutputNl("Session ID:      " + groovySession.getBinding().getSessionId(), style);
                     console.appendOutputNl("Repository ID:   " + groovySession.getRepositoryInfo().getId(), style);
                     console.appendOutputNl("Repository name: " + groovySession.getRepositoryInfo().getName(), style);
-                    console.appendOutputNl("Binding:         " + bindingType, style);
+                    console.appendOutputNl("Binding:         " + groovySession.getBinding().getBindingType(), style);
                     console.appendOutputNl("User:            " + user, style);
                 }
             });
