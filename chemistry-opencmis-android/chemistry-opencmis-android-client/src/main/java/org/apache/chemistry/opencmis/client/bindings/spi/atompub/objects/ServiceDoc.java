@@ -22,42 +22,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Service Doc.
  */
 public class ServiceDoc extends AtomBase {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<RepositoryWorkspace> fWorkspaces = new ArrayList<RepositoryWorkspace>();
+    private final List<RepositoryWorkspace> workspaces = new ArrayList<RepositoryWorkspace>();
 
     public ServiceDoc() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.opencmis.client.provider.spi.atompub.objects.AtomBase#getType
-     * ()
-     */
     @Override
     public String getType() {
         return "Service Document";
     }
 
     public List<RepositoryWorkspace> getWorkspaces() {
-        return fWorkspaces;
+        return workspaces;
     }
 
     public void addWorkspace(RepositoryWorkspace ws) {
         if (ws != null) {
-            fWorkspaces.add(ws);
+            workspaces.add(ws);
         }
     }
 
     @Override
     public String toString() {
-        return "Service Doc: " + fWorkspaces;
+        return "Service Doc: " + workspaces;
     }
 }

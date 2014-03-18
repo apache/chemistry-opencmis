@@ -101,7 +101,7 @@ public abstract class XMLWalker<T> {
 
     private CmisExtensionElement handleExtensionLevel(final XmlPullParser parser, final int level)
             throws XmlPullParserException {
-        QName name = new QName(parser.getNamespace(), parser.getName());
+        final QName name = new QName(parser.getNamespace(), parser.getName());
         Map<String, String> attributes = null;
         StringBuilder sb = new StringBuilder();
         List<CmisExtensionElement> children = null;
@@ -221,18 +221,8 @@ public abstract class XMLWalker<T> {
     @SuppressWarnings("unchecked")
     public <E extends Enum<E>> E readEnum(final XmlPullParser parser, final Class<E> clazz)
             throws XmlPullParserException {
-        String value = readText(parser);
 
-        try {
-            Method m = clazz.getMethod("fromValue", String.class);
-            return (E) m.invoke(null, value);
-        } catch (Exception e) {
-            if (e instanceof IllegalArgumentException) {
-                return null;
-            } else {
-                throw new CmisInvalidArgumentException("Invalid enum value!", e);
-            }
-        }
+        return CmisEnumHelper.fromValue(readText(parser), clazz);
     }
 
     protected abstract T prepareTarget(XmlPullParser parser, QName name) throws XmlPullParserException;

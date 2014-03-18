@@ -21,46 +21,45 @@ package org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
+ * Atom Link.
  */
 public class AtomLink implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String fRel;
-    private String fType;
-    private String fHref;
+    private String rel;
+    private String type;
+    private String href;
 
     public AtomLink() {
     }
 
     public String getRel() {
-        return fRel;
+        return rel;
     }
 
     public void setRel(String rel) {
-        fRel = rel;
+        this.rel = rel;
     }
 
     public String getType() {
-        return fType;
+        return type;
     }
 
     public void setType(String type) {
-        fType = type;
+        this.type = type;
     }
 
     public String getHref() {
-        return fHref;
+        return href;
     }
 
     public void setHref(String href) {
-        fHref = href;
+        this.href = href;
     }
 
     @Override
     public String toString() {
-        return "Link: rel=\"" + fRel + "\" type=\"" + fType + "\" href=\"" + fHref + "\"";
+        return "Link: rel=\"" + rel + "\" type=\"" + type + "\" href=\"" + href + "\"";
     }
 }

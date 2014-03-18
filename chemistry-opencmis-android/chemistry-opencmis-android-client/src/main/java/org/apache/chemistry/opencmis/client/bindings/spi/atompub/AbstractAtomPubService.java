@@ -71,11 +71,11 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedEx
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
-import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
-import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
@@ -83,6 +83,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
@@ -141,6 +142,10 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Return the CMIS version of the given repository.
      */
     protected CmisVersion getCmisVersion(String repositoryId) {
+        if (CmisBindingsHelper.getForcedCmisVersion(session) != null) {
+            return CmisBindingsHelper.getForcedCmisVersion(session);
+        }
+
         RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
         RepositoryInfo info = cache.get(repositoryId);
 
@@ -447,6 +452,12 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         message = extractErrorMessage(message, errorContent);
 
         switch (code) {
+        case 301:
+        case 302:
+        case 303:
+        case 307:
+            return new CmisConnectionException("Redirects are not supported (HTTP status code " + code + "): "
+                    + message, errorContent, t);
         case 400:
             if (CmisFilterNotValidException.EXCEPTION_NAME.equals(exception)) {
                 return new CmisFilterNotValidException(message, errorContent, t);
@@ -535,11 +546,18 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     /**
      * Creates a CMIS object with properties and policy ids.
      */
-    protected ObjectDataImpl createObject(Properties properties, List<String> policies) {
+    protected ObjectDataImpl createObject(Properties properties, String changeToken, List<String> policies) {
         ObjectDataImpl object = new ObjectDataImpl();
 
         if (properties == null) {
             properties = new PropertiesImpl();
+            if (changeToken != null) {
+                ((PropertiesImpl) properties)
+                        .addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, changeToken));
+            }
+        } else if (changeToken != null && !properties.getProperties().containsKey(PropertyIds.CHANGE_TOKEN)) {
+            properties = new PropertiesImpl(properties);
+            ((PropertiesImpl) properties).addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, changeToken));
         }
         object.setProperties(properties);
 
@@ -941,8 +959,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         // update
         Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new Output() {
             public void write(OutputStream out) throws Exception {
-                XmlSerializer writer = Xml.newSerializer();
-                writer.setOutput(out, AtomEntryWriter.ENCODING);
+                XmlSerializer writer = XMLUtils.createWriter(out);
                 XMLUtils.startXmlDocument(writer);
                 XMLConverter.writeAcl(writer, cmisVersion, true, acl);
                 XMLUtils.endXmlDocument(writer);

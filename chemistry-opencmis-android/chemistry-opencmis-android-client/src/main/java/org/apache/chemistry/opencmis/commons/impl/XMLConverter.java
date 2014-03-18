@@ -1341,9 +1341,7 @@ public final class XMLConverter {
                 throws XmlPullParserException {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE)) {
-                    Set<PropertyType> ptSet = target.canCreate();
-
-                    ptSet.add(readEnum(parser, PropertyType.class));
+                    target.canCreate().add(readEnum(parser, PropertyType.class));
                     return true;
                 }
             }
@@ -1459,9 +1457,9 @@ public final class XMLConverter {
                 }
 
                 if (isTag(name, TAG_ACLCAP_PERMISSION_MAPPING)) {
-                    Map<String, PermissionMapping> mapping = target.getPermissionMapping();
-
                     PermissionMapping pm = PERMISSION_MAPPING_PARSER.walk(parser);
+
+                    Map<String, PermissionMapping> mapping = target.getPermissionMapping();
                     mapping.put(pm.getKey(), pm);
 
                     return true;
@@ -1560,9 +1558,9 @@ public final class XMLConverter {
                 }
 
                 if (isTag(name, TAG_FEATURE_DATA)) {
-                    Map<String, String> featureData = target.getFeatureData();
-
                     String[] data = FEATURE_DATA_PARSER.walk(parser);
+
+                    Map<String, String> featureData = target.getFeatureData();
                     featureData.put(data[0], data[1]);
 
                     return true;

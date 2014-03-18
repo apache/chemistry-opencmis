@@ -59,9 +59,7 @@ import android.util.Xml;
  */
 public class AtomEntryWriter {
 
-    public static final String ENCODING = IOUtils.UTF8;
-
-    private static final int BUFFER_SIZE = 64 * 1024;
+    private static final int BUFFER_SIZE = 8 * 1024;
 
     private final CmisVersion cmisVersion;
     private final ObjectData object;
@@ -148,8 +146,7 @@ public class AtomEntryWriter {
      * @throws IllegalArgumentException
      */
     public void write(OutputStream out) throws IOException {
-        XmlSerializer writer = Xml.newSerializer();
-        writer.setOutput(out, ENCODING);
+        XmlSerializer  writer = XMLUtils.createWriter(out);
 
         // start doc
         XMLUtils.startXmlDocument(writer);
@@ -160,11 +157,11 @@ public class AtomEntryWriter {
         writer.attribute("", XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.attribute("", XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.attribute("", XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-        /*
-         * if (contentStream != null && contentStream.getFileName() != null) {
-         * writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY,
-         * XMLConstants.NAMESPACE_APACHE_CHEMISTRY); }
-         */
+        
+        if (contentStream != null && contentStream.getFileName() != null) {
+          writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY,XMLConstants.NAMESPACE_APACHE_CHEMISTRY); 
+        }
+        
 
         // atom:id
         writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");

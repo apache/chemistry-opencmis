@@ -30,6 +30,7 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_CONTENT;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_ENTRY;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_FEED;
+import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_HTML;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_LINK;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_NUM_ITEMS;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_OBJECT;
@@ -42,8 +43,6 @@ import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtom
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_TYPE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_URI_TEMPLATE;
 import static org.apache.chemistry.opencmis.client.bindings.spi.atompub.CmisAtomPubConstants.TAG_WORKSPACE;
-import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
-import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.skip;
 
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -59,6 +58,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEle
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomEntry;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFeed;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
+import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.HtmlDoc;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.RepositoryWorkspace;
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.ServiceDoc;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -124,6 +124,9 @@ public class AtomPubParser {
                             parseResult = parseServiceDoc(parser);
                             break;
                         }
+                    } else if (TAG_HTML.equalsIgnoreCase(name.getLocalPart())) {
+                        parseResult = new HtmlDoc();
+                        break;
                     }
                 }
 
@@ -150,7 +153,7 @@ public class AtomPubParser {
     private static ServiceDoc parseServiceDoc(XmlPullParser parser) throws XmlPullParserException {
         ServiceDoc result = new ServiceDoc();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -161,10 +164,10 @@ public class AtomPubParser {
                     if (TAG_WORKSPACE.equals(name.getLocalPart())) {
                         result.addWorkspace(parseWorkspace(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 break;
@@ -184,7 +187,7 @@ public class AtomPubParser {
     private static RepositoryWorkspace parseWorkspace(XmlPullParser parser) throws XmlPullParserException {
         RepositoryWorkspace workspace = new RepositoryWorkspace();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -201,13 +204,13 @@ public class AtomPubParser {
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return workspace;
     }
@@ -218,7 +221,7 @@ public class AtomPubParser {
     private AtomFeed parseFeed(XmlPullParser parser) throws XmlPullParserException {
         AtomFeed result = new AtomFeed();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -231,27 +234,27 @@ public class AtomPubParser {
                     } else if (TAG_ENTRY.equals(name.getLocalPart())) {
                         result.addEntry(parseEntry(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
                     if (TAG_NUM_ITEMS.equals(name.getLocalPart())) {
                         result.addElement(parseBigInteger(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -264,7 +267,7 @@ public class AtomPubParser {
     private AtomEntry parseEntry(XmlPullParser parser) throws XmlPullParserException {
         AtomEntry result = new AtomEntry();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         // walk through all tags in entry
         while (true) {
@@ -285,13 +288,13 @@ public class AtomPubParser {
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -338,7 +341,7 @@ public class AtomPubParser {
         }
 
         // we don't know it - skip it
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return null;
     }
@@ -350,7 +353,7 @@ public class AtomPubParser {
         AtomElement result = null;
         QName childName = new QName(parser.getNamespace(), parser.getName());
 
-        next(parser);
+        XMLUtils.next(parser);
 
         // walk through the children tag
         while (true) {
@@ -362,21 +365,21 @@ public class AtomPubParser {
                     if (TAG_FEED.equals(name.getLocalPart())) {
                         result = new AtomElement(childName, parseFeed(parser));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return result;
     }
@@ -404,7 +407,7 @@ public class AtomPubParser {
         }
 
         // we don't know it - skip it
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return null;
     }
@@ -418,7 +421,7 @@ public class AtomPubParser {
 
         result.put("href", parser.getAttributeValue(null, "href"));
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -428,18 +431,18 @@ public class AtomPubParser {
                         && TAG_COLLECTION_TYPE.equals(tagName.getLocalPart())) {
                     result.put("collectionType", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return new AtomElement(name, result);
     }
@@ -451,7 +454,7 @@ public class AtomPubParser {
         QName name = new QName(parser.getNamespace(), parser.getName());
         Map<String, String> result = new HashMap<String, String>();
 
-        next(parser);
+        XMLUtils.next(parser);
 
         while (true) {
             int event = parser.getEventType();
@@ -463,21 +466,21 @@ public class AtomPubParser {
                     } else if (TAG_TEMPLATE_TYPE.equals(tagName.getLocalPart())) {
                         result.put("type", XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else {
-                        skip(parser);
+                        XMLUtils.skip(parser);
                     }
                 } else {
-                    skip(parser);
+                    XMLUtils.skip(parser);
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 break;
             } else {
-                if (!next(parser)) {
+                if (!XMLUtils.next(parser)) {
                     break;
                 }
             }
         }
 
-        next(parser);
+        XMLUtils.next(parser);
 
         return new AtomElement(name, result);
     }
@@ -501,7 +504,7 @@ public class AtomPubParser {
         }
 
         // skip enclosed tags, if any
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return new AtomElement(name, result);
     }
@@ -522,7 +525,7 @@ public class AtomPubParser {
         }
 
         // skip enclosed tags, if any
-        skip(parser);
+        XMLUtils.skip(parser);
 
         return new AtomElement(name, result);
     }

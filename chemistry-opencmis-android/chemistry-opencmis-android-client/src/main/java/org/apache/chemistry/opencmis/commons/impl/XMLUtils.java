@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.commons.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
@@ -38,10 +39,28 @@ public final class XMLUtils {
     private XMLUtils() {
     }
 
+    // --------------
+    // --- writer ---
+    // --------------
+
+    /**
+     * Creates a new XML writer.
+     */
+    public static XmlSerializer createWriter(OutputStream out) throws IOException {
+        assert out != null;
+
+        XmlSerializer writer = Xml.newSerializer();
+        writer.setOutput(out, IOUtils.UTF8);
+        
+        return writer;
+    }
+
     /**
      * Starts a XML document.
      */
     public static void startXmlDocument(XmlSerializer writer) throws IOException {
+        assert writer != null;
+        
         writer.setPrefix(XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.setPrefix(XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.setPrefix(XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
@@ -54,6 +73,8 @@ public final class XMLUtils {
      * Ends a XML document.
      */
     public static void endXmlDocument(XmlSerializer writer) throws IOException {
+        assert writer != null;
+        
         // end document
         writer.endDocument();
         writer.flush();
@@ -65,6 +86,8 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, String value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
@@ -83,9 +106,12 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, BigInteger value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
+
         write(writer, prefix, namespace, tag, value.toString());
     }
 
@@ -94,6 +120,8 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, BigDecimal value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
@@ -106,6 +134,8 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, GregorianCalendar value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
@@ -118,6 +148,8 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, Boolean value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
@@ -130,6 +162,8 @@ public final class XMLUtils {
      */
     public static void write(XmlSerializer writer, String prefix, String namespace, String tag, Enum<?> value)
             throws IOException {
+        assert writer != null;
+
         if (value == null) {
             return;
         }
@@ -153,7 +187,7 @@ public final class XMLUtils {
      */
     public static XmlPullParser createParser(InputStream stream) throws XmlPullParserException {
         XmlPullParser parser = Xml.newPullParser();
-        parser.setInput(stream, "UTF-8");
+        parser.setInput(stream, IOUtils.UTF8);
         return parser;
     }
 
@@ -161,6 +195,8 @@ public final class XMLUtils {
      * Moves the parser to the next element.
      */
     public static boolean next(XmlPullParser parser) {
+        assert parser != null;
+
         try {
             if (hasNext(parser)) {
                 parser.next();
@@ -168,11 +204,14 @@ public final class XMLUtils {
             }
             return false;
         } catch (Exception e) {
+            // EOF exceptions
             return false;
         }
     }
 
     public static boolean hasNext(XmlPullParser parser) throws XmlPullParserException {
+        assert parser != null;
+
         return parser.getEventType() != XmlPullParser.END_DOCUMENT;
     }
 
@@ -180,6 +219,8 @@ public final class XMLUtils {
      * Skips a tag or subtree.
      */
     public static void skip(XmlPullParser parser) throws XmlPullParserException {
+        assert parser != null;
+
         int level = 1;
         while (next(parser)) {
             int event = parser.getEventType();
@@ -203,6 +244,8 @@ public final class XMLUtils {
      *         <code>false</code> otherwise
      */
     public static boolean findNextStartElemenet(XmlPullParser parser) throws XmlPullParserException, IOException {
+        assert parser != null;
+
         while (true) {
             int event = parser.getEventType();
 
@@ -222,6 +265,9 @@ public final class XMLUtils {
      * Parses a tag that contains text.
      */
     public static String readText(XmlPullParser parser, int maxLength) throws XmlPullParserException {
+        assert parser != null;
+        assert maxLength >= 0;
+
         StringBuilder sb = new StringBuilder();
 
         next(parser);
@@ -255,6 +301,10 @@ public final class XMLUtils {
         return sb.toString();
     }
 
+    // ------------------
+    // ---- DOM stuff ---
+    // ------------------
+    
     public static Document newDomDocument() {
         throw new CmisRuntimeException("This method should never be used on Android!");
     }

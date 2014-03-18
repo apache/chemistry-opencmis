@@ -56,7 +56,7 @@ public class CmisAtomPubSpi implements CmisSpi {
      */
     public CmisAtomPubSpi(BindingSession session) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Initializing AtomPub SPI...");
+            LOG.debug("Session {}: Initializing AtomPub SPI...", session.getSessionId());
         }
 
         this.session = session;

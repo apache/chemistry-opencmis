@@ -74,10 +74,12 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
     private Response invoke(UrlBuilder url, String method, String contentType, Map<String, String> headers,
             Output writer, BindingSession session, BigInteger offset, BigInteger length) {
+        int respCode = -1;
+
         try {
             // log before connect
             if (LOG.isDebugEnabled()) {
-                LOG.debug(method + " " + url);
+                LOG.debug("Session {}: {} {}", session.getSessionId(), method, url);
             }
 
             // connect
@@ -117,9 +119,16 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
                 if (httpHeaders != null) {
                     for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
-                        if (header.getValue() != null) {
-                            for (String value : header.getValue()) {
-                                conn.addRequestProperty(header.getKey(), value);
+                        if (header.getKey() != null && header.getValue() != null && !header.getValue().isEmpty()) {
+                            String key = header.getKey();
+                            if (key.equalsIgnoreCase("user-agent")) {
+                                conn.setRequestProperty("User-Agent", header.getValue().get(0));
+                            } else {
+                                for (String value : header.getValue()) {
+                                    if (value != null) {
+                                        conn.addRequestProperty(key, value);
+                                    }
+                                }
                             }
                         }
                     }
@@ -186,13 +195,17 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 OutputStream out = new BufferedOutputStream(connOut, BUFFER_SIZE);
                 writer.write(out);
                 out.flush();
+
+                if (connOut instanceof GZIPOutputStream) {
+                    ((GZIPOutputStream) connOut).finish();
+                }
             }
 
             // connect
             conn.connect();
 
             // get stream, if present
-            int respCode = conn.getResponseCode();
+            respCode = conn.getResponseCode();
             InputStream inputStream = null;
             if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
                 inputStream = conn.getInputStream();
@@ -200,7 +213,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // log after connect
             if (LOG.isTraceEnabled()) {
-                LOG.trace(method + " " + url + " > Headers: " + conn.getHeaderFields());
+                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url, conn
+                        .getHeaderFields().toString());
             }
 
             // forward response HTTP headers
@@ -212,7 +226,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
             return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
                     conn.getErrorStream());
         } catch (Exception e) {
-            throw new CmisConnectionException("Cannot access " + url + ": " + e.getMessage(), e);
+            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
+            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
         }
     }
 }
