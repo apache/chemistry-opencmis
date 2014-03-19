@@ -61,12 +61,22 @@ public class ProxyDetector {
         String nonProxyHosts = System.getProperty(HTTP_NON_PROXY_HOSTS);
         if (nonProxyHosts != null) {
             List<String> noHosts = new ArrayList<String>();
-            for (String noHost : nonProxyHosts.split("|")) {
-                noHost = noHost.trim();
-                if (noHost.length() == 0) {
-                    continue;
+
+            String nph = nonProxyHosts;
+            int pp = nph.indexOf('|');
+            while (pp > -1) {
+                String noHost = nph.substring(0, pp).trim();
+                if (noHost.length() > 0) {
+                    noHosts.add(noHost);
                 }
-                noHosts.add(noHost);
+
+                nph = nph.substring(pp + 1);
+                pp = nph.indexOf('|');
+            }
+
+            nph = nph.trim();
+            if (nph.length() > 0) {
+                noHosts.add(nph);
             }
 
             settings.setNonProxyHosts(noHosts);
