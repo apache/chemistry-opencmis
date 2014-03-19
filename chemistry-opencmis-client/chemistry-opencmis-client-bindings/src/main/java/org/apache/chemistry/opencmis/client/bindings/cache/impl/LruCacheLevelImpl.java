@@ -42,4 +42,9 @@ public class LruCacheLevelImpl extends AbstractMapCacheLevel {
             }
         });
     }
+
+    @Override
+    public synchronized Object get(String key) {
+        return super.get(key);
+    }
 }
