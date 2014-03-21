@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -621,6 +622,13 @@ public interface Session extends Serializable {
 
     /**
      * Creates a query statement.
+     * <p>
+     * Sample code:
+     * 
+     * <pre>
+     * QueryStatement stmt = session
+     *         .createQueryStatement(&quot;SELECT ?, ? FROM ? WHERE ? &gt; TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)&quot;);
+     * </pre>
      * 
      * @param statement
      *            the query statement with placeholders ('?'), see
@@ -633,6 +641,58 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     QueryStatement createQueryStatement(String statement);
+
+    /**
+     * Creates a query statement for a query of one primary type joined by zero
+     * or more secondary types.
+     * <p>
+     * Sample code:
+     * 
+     * <pre>
+     * List&lt;String&gt; select = new ArrayList&lt;String&gt;();
+     * select.add(&quot;cmis:name&quot;);
+     * select.add(&quot;SecondaryStringProp&quot;);
+     * 
+     * Map&lt;String, String&gt; from = new HashMap&lt;String, String&gt;();
+     * from.put(&quot;d&quot;, &quot;cmis:document&quot;);
+     * from.put(&quot;s&quot;, &quot;MySecondaryType&quot;);
+     * 
+     * String where = &quot;d.cmis:name LIKE ?&quot;;
+     * 
+     * List&lt;String&gt; orderBy = new ArrayList&lt;String&gt;();
+     * orderBy.add(&quot;cmis:name&quot;);
+     * orderBy.add(&quot;SecondaryIntegerProp&quot;);
+     * 
+     * QueryStatement stmt = session.createQueryStatement(select, from, where, orderBy);
+     * </pre>
+     * 
+     * Generates something like this:
+     * 
+     * <pre>
+     * SELECT d.cmis:name,s.SecondaryStringProp FROM cmis:document AS d JOIN MySecondaryType AS s ON d.cmis:objectId=s.cmis:objectId WHERE d.cmis:name LIKE ? ORDER BY d.cmis:name,s.SecondaryIntegerProp
+     * </pre>
+     * 
+     * @param selectPropertyIds
+     *            the property IDs in the SELECT statement, if {@code null} all
+     *            properties are selected
+     * @param fromTypes
+     *            a Map of type aliases (keys) and type IDs (values), the Map
+     *            must contain exactly one primary type and zero or more
+     *            secondary types
+     * @param whereClause
+     *            an optional WHERE clause with placeholders ('?'), see
+     *            {@link QueryStatement} for details
+     * @param orderByPropertyIds
+     *            an optional list of properties IDs for the ORDER BY clause
+     * 
+     * @return a new query statement object
+     * 
+     * @see QueryStatement
+     * 
+     * @cmis 1.0
+     */
+    QueryStatement createQueryStatement(Collection<String> selectPropertyIds, Map<String, String> fromTypes,
+            String whereClause, List<String> orderByPropertyIds);
 
     /**
      * Returns the content changes.

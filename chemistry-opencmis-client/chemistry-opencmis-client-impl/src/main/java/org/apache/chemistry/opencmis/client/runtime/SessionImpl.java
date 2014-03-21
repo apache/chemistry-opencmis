@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -959,6 +960,11 @@ public class SessionImpl implements Session {
 
     public QueryStatement createQueryStatement(final String statement) {
         return new QueryStatementImpl(this, statement);
+    }
+
+    public QueryStatement createQueryStatement(final Collection<String> selectPropertyIds,
+            final Map<String, String> fromTypes, final String whereClause, final List<String> orderByPropertyIds) {
+        return new QueryStatementImpl(this, selectPropertyIds, fromTypes, whereClause, orderByPropertyIds);
     }
 
     /**

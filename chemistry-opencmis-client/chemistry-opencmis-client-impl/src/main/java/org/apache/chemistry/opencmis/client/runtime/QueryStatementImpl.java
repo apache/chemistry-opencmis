@@ -21,8 +21,11 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -34,6 +37,8 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.impl.StringListBuilder;
 
 /**
  * QueryStatement implementation.
@@ -42,8 +47,17 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
 
     private final Session session;
     private final String statement;
-    private final Map<Integer, String> parametersMap;
+    private final Map<Integer, String> parametersMap = new HashMap<Integer, String>();
 
+    /**
+     * Creates a QueryStatement object with a given statement.
+     * 
+     * @param session
+     *            the Session object, must not be {@code null}
+     * @param statement
+     *            the query statement with placeholders ('?'), see
+     *            {@link QueryStatement} for details
+     */
     public QueryStatementImpl(Session session, String statement) {
         if (session == null) {
             throw new IllegalArgumentException("Session must be set!");
@@ -55,8 +69,219 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
 
         this.session = session;
         this.statement = statement.trim();
+    }
 
-        parametersMap = new HashMap<Integer, String>();
+    /**
+     * Creates a QueryStatement object for a query of one primary type joined by
+     * zero or more secondary types.
+     * 
+     * @param session
+     *            the Session object, must not be {@code null}
+     * @param selectPropertyIds
+     *            the property IDs in the SELECT statement, if {@code null} all
+     *            properties are selected
+     * @param fromTypes
+     *            a Map of type aliases (keys) and type IDs (values), the Map
+     *            must contain exactly one primary type and zero or more
+     *            secondary types
+     * @param whereClause
+     *            an optional WHERE clause with placeholders ('?'), see
+     *            {@link QueryStatement} for details
+     * @param orderByPropertyIds
+     *            an optional list of properties IDs for the ORDER BY clause
+     */
+    public QueryStatementImpl(Session session, Collection<String> selectPropertyIds, Map<String, String> fromTypes,
+            String whereClause, List<String> orderByPropertyIds) {
+        if (session == null) {
+            throw new IllegalArgumentException("Session must be set!");
+        }
+
+        if (fromTypes == null || fromTypes.size() == 0) {
+            throw new IllegalArgumentException("Types must be set!");
+        }
+
+        this.session = session;
+
+        StringBuilder stmt = new StringBuilder();
+
+        // find the primary type and check if all types are queryable
+        ObjectType primaryType = null;
+        String primaryAlias = null;
+
+        Map<String, ObjectType> types = new HashMap<String, ObjectType>();
+        for (Map.Entry<String, String> fte : fromTypes.entrySet()) {
+            ObjectType type = session.getTypeDefinition(fte.getValue());
+
+            if (Boolean.FALSE.equals(type.isQueryable())) {
+                throw new IllegalArgumentException("Type '" + fte.getValue() + "' is not queryable!");
+            }
+
+            String alias = fte.getKey().trim();
+            if (alias.length() < 1) {
+                throw new IllegalArgumentException("Invalid alias for type '" + fte.getValue() + "'!");
+            }
+
+            if (type.getBaseTypeId() != BaseTypeId.CMIS_SECONDARY) {
+                if (primaryType == null) {
+                    primaryType = type;
+                    primaryAlias = alias;
+                } else {
+                    throw new IllegalArgumentException("Two primary types found: " + primaryType.getId() + " and "
+                            + type.getId());
+                }
+            }
+
+            // exclude secondary types without properties
+            if (type.getPropertyDefinitions() != null && type.getPropertyDefinitions().size() > 0) {
+                types.put(alias, type);
+            }
+        }
+
+        if (primaryType == null) {
+            throw new IllegalArgumentException("No primary type found!");
+        }
+
+        // SELECT
+        stmt.append("SELECT ");
+
+        StringListBuilder selectList = new StringListBuilder(",", stmt);
+
+        if (selectPropertyIds == null || selectPropertyIds.size() == 0) {
+            // select all properties
+            for (String alias : types.keySet()) {
+                selectList.add(alias + ".*");
+            }
+        } else {
+            // select provided properties
+            for (String propertyId : selectPropertyIds) {
+
+                propertyId = propertyId.trim();
+
+                if (propertyId.equals("*")) {
+                    // found property "*" -> select all properties
+                    for (String alias : types.keySet()) {
+                        selectList.add(alias + ".*");
+                    }
+                    continue;
+                }
+
+                if (propertyId.endsWith(".*")) {
+                    // found property "x.*"
+                    // -> select all properties of the type with alias "x"
+                    String starAlias = propertyId.substring(0, propertyId.length() - 2);
+                    if (types.containsKey(starAlias)) {
+                        selectList.add(starAlias + ".*");
+                        continue;
+                    } else {
+                        throw new IllegalArgumentException("Alias '" + starAlias + "' is not defined!");
+                    }
+                }
+
+                PropertyDefinition<?> propertyDef = null;
+                String alias = null;
+
+                for (Map.Entry<String, ObjectType> te : types.entrySet()) {
+                    propertyDef = te.getValue().getPropertyDefinitions().get(propertyId);
+                    if (propertyDef != null) {
+                        alias = te.getKey();
+                        break;
+                    }
+                }
+
+                if (propertyDef == null) {
+                    throw new IllegalArgumentException("Property '" + propertyId
+                            + "' is not defined in the provided object types!");
+                }
+
+                if (propertyDef.getQueryName() == null) {
+                    throw new IllegalArgumentException("Property '" + propertyId + "' has no query name!");
+                }
+
+                selectList.add(alias + "." + propertyDef.getQueryName());
+            }
+        }
+
+        // FROM
+        stmt.append(" FROM ");
+
+        stmt.append(primaryType.getQueryName());
+        stmt.append(" AS ");
+        stmt.append(primaryAlias);
+
+        for (Map.Entry<String, ObjectType> te : types.entrySet()) {
+            if (te.getKey().equals(primaryAlias)) {
+                continue;
+            }
+
+            stmt.append(" JOIN ");
+            stmt.append(te.getValue().getQueryName());
+            stmt.append(" AS ");
+            stmt.append(te.getKey());
+            stmt.append(" ON ");
+            stmt.append(primaryAlias);
+            stmt.append(".cmis:objectId=");
+            stmt.append(te.getKey());
+            stmt.append(".cmis:objectId");
+        }
+
+        // WHERE
+        if (whereClause != null && whereClause.trim().length() > 0) {
+            stmt.append(" WHERE ");
+            stmt.append(whereClause.trim());
+        }
+
+        // ORDER BY
+        if (orderByPropertyIds != null && orderByPropertyIds.size() > 0) {
+            stmt.append(" ORDER BY ");
+
+            StringListBuilder orderByList = new StringListBuilder(",", stmt);
+
+            for (String propertyId : orderByPropertyIds) {
+                String realPropertyId = propertyId.trim();
+                String realPropertyIdLower = realPropertyId.toLowerCase(Locale.ENGLISH);
+                boolean desc = false;
+
+                if (realPropertyIdLower.endsWith(" asc")) {
+                    // property ends with " asc" -> remove it
+                    realPropertyId = realPropertyId.substring(0, realPropertyId.length() - 4);
+                }
+
+                if (realPropertyIdLower.endsWith(" desc")) {
+                    // property ends with " desc" -> remove it and mark it as
+                    // descending
+                    realPropertyId = realPropertyId.substring(0, realPropertyId.length() - 5);
+                    desc = true;
+                }
+
+                PropertyDefinition<?> propertyDef = null;
+                String alias = null;
+
+                for (Map.Entry<String, ObjectType> te : types.entrySet()) {
+                    propertyDef = te.getValue().getPropertyDefinitions().get(realPropertyId);
+                    if (propertyDef != null) {
+                        alias = te.getKey();
+                        break;
+                    }
+                }
+
+                if (propertyDef == null) {
+                    throw new IllegalArgumentException("Property '" + realPropertyId
+                            + "' is not defined in the provided object types!");
+                }
+
+                if (propertyDef.getQueryName() == null) {
+                    throw new IllegalArgumentException("Property '" + realPropertyId + "' has no query name!");
+                }
+
+                if (Boolean.FALSE.equals(propertyDef.isOrderable())) {
+                    throw new IllegalArgumentException("Property '" + realPropertyId + "' is not orderable!");
+                }
+
+                orderByList.add(alias + "." + propertyDef.getQueryName() + (desc ? " DESC" : ""));
+            }
+        }
+
+        this.statement = stmt.toString();
     }
 
     public void setType(int parameterIndex, String typeId) {
@@ -105,20 +330,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Number must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (Number n : num) {
             if (n == null) {
                 throw new IllegalArgumentException("Number is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(n.toString());
+            slb.add(n.toString());
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setString(int parameterIndex, String... str) {
@@ -126,20 +347,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("String must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (String s : str) {
             if (s == null) {
                 throw new IllegalArgumentException("String is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(escape(s));
+            slb.add(escape(s));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setStringContains(int parameterIndex, String str) {
@@ -163,20 +380,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Id must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (ObjectId oid : id) {
             if (oid == null || oid.getId() == null) {
                 throw new IllegalArgumentException("Id is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(escape(oid.getId()));
+            slb.add(escape(oid.getId()));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setUri(int parameterIndex, URI... uri) {
@@ -184,20 +397,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("URI must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (URI u : uri) {
             if (u == null) {
                 throw new IllegalArgumentException("URI is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(escape(u.toString()));
+            slb.add(escape(u.toString()));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setUrl(int parameterIndex, URL... url) {
@@ -205,20 +414,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("URL must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (URL u : url) {
             if (u == null) {
                 throw new IllegalArgumentException("URI is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(escape(u.toString()));
+            slb.add(escape(u.toString()));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setBoolean(int parameterIndex, boolean... bool) {
@@ -226,16 +431,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Boolean must not be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (boolean b : bool) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            sb.append(b ? "TRUE" : "FALSE");
+            slb.add(b ? "TRUE" : "FALSE");
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setDateTime(int parameterIndex, Calendar... cal) {
@@ -284,24 +485,16 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Date must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (Date d : date) {
             if (d == null) {
                 throw new IllegalArgumentException("DateTime is null!");
             }
 
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            if (prefix) {
-                sb.append("TIMESTAMP ");
-            }
-
-            sb.append(convert(d));
+            slb.add((prefix ? "TIMESTAMP " : "") + convert(d));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public void setDateTime(int parameterIndex, long... ms) {
@@ -317,20 +510,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Timestamp must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringListBuilder slb = new StringListBuilder(",");
         for (long l : ms) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-            if (prefix) {
-                sb.append("TIMESTAMP ");
-            }
-
-            sb.append(convert(new Date(l)));
+            slb.add((prefix ? "TIMESTAMP " : "") + convert(new Date(l)));
         }
 
-        parametersMap.put(parameterIndex, sb.toString());
+        parametersMap.put(parameterIndex, slb.toString());
     }
 
     public String toQueryString() {
