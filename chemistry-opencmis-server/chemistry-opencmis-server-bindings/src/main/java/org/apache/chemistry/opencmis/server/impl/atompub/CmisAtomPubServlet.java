@@ -283,6 +283,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
         } else if (ex instanceof CmisBaseException) {
             statusCode = getErrorCode((CmisBaseException) ex);
             exceptionName = ((CmisBaseException) ex).getExceptionName();
+        } else if (ex instanceof IOException) {
+            LOG.warn(ex.getMessage(), ex);
         } else {
             LOG.error(ex.getMessage(), ex);
         }
@@ -297,9 +299,9 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             response.setStatus(statusCode);
             response.setContentType("text/html");
             response.setCharacterEncoding(IOUtils.UTF8);
-            
+
             PrintWriter pw = response.getWriter();
-            
+
             pw.print("<html><head><title>Apache Chemistry OpenCMIS - "
                     + exceptionName
                     + " error</title>"

@@ -432,6 +432,8 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             } else if (ex instanceof CmisBaseException) {
                 statusCode = getErrorCode((CmisBaseException) ex);
                 exceptionName = ((CmisBaseException) ex).getExceptionName();
+            } else if (ex instanceof IOException) {
+                LOG.warn(ex.getMessage(), ex);
             } else {
                 LOG.error(ex.getMessage(), ex);
             }
@@ -447,7 +449,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             if (token == null) {
                 response.resetBuffer();
                 setStatus(request, response, statusCode);
-  
+
                 JSONObject jsonResponse = new JSONObject();
                 jsonResponse.put(ERROR_EXCEPTION, exceptionName);
                 jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
