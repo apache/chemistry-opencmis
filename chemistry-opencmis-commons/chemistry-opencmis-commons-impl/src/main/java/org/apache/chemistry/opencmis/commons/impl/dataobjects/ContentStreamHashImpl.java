@@ -45,12 +45,6 @@ public class ContentStreamHashImpl implements ContentStreamHash {
     private String hash = null;
 
     /**
-     * Constructs an object without values.
-     */
-    public ContentStreamHashImpl() {
-    }
-
-    /**
      * Constructs an object from the {@code cmis:contentStreamHash} property
      * value.
      * 
@@ -119,7 +113,7 @@ public class ContentStreamHashImpl implements ContentStreamHash {
      *            the algorithms
      * @return the list of content hashes
      */
-    public static List<ContentStreamHash> createContentHashes(InputStream stream, String... algorithm)
+    public static List<ContentStreamHash> createContentStreamHashes(InputStream stream, String... algorithm)
             throws IOException, NoSuchAlgorithmException {
         if (stream == null) {
             throw new IllegalArgumentException("Stream must be set!");

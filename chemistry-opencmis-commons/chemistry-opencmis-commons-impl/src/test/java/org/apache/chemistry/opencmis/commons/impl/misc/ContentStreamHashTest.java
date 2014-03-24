@@ -61,8 +61,8 @@ public class ContentStreamHashTest {
         byte[] content = IOUtils.toUTF8Bytes("Hello World!");
         ByteArrayInputStream stream = new ByteArrayInputStream(content);
 
-        ContentStreamHash hash = ContentStreamHashImpl.createContentHashes(stream, ContentStreamHashImpl.ALGORITHM_MD5)
-                .get(0);
+        ContentStreamHash hash = ContentStreamHashImpl.createContentStreamHashes(stream,
+                ContentStreamHashImpl.ALGORITHM_MD5).get(0);
 
         assertEquals(ContentStreamHashImpl.ALGORITHM_MD5, hash.getAlgorithm());
         assertEquals("ed076287532e86365e841e92bfc50d8c", hash.getHash());
@@ -76,8 +76,8 @@ public class ContentStreamHashTest {
         byte[] content = IOUtils.toUTF8Bytes("Hello World!");
         ByteArrayInputStream stream = new ByteArrayInputStream(content);
 
-        ContentStreamHash hash = ContentStreamHashImpl
-                .createContentHashes(stream, ContentStreamHashImpl.ALGORITHM_SHA1).get(0);
+        ContentStreamHash hash = ContentStreamHashImpl.createContentStreamHashes(stream,
+                ContentStreamHashImpl.ALGORITHM_SHA1).get(0);
 
         assertEquals(ContentStreamHashImpl.ALGORITHM_SHA1, hash.getAlgorithm());
         assertEquals("2ef7bde608ce5404e97d5f042f95f89f1c232871", hash.getHash());
@@ -91,7 +91,7 @@ public class ContentStreamHashTest {
         byte[] content = IOUtils.toUTF8Bytes("Hello World!");
         ByteArrayInputStream stream = new ByteArrayInputStream(content);
 
-        ContentStreamHash hash = ContentStreamHashImpl.createContentHashes(stream,
+        ContentStreamHash hash = ContentStreamHashImpl.createContentStreamHashes(stream,
                 ContentStreamHashImpl.ALGORITHM_SHA256).get(0);
 
         assertEquals(ContentStreamHashImpl.ALGORITHM_SHA256, hash.getAlgorithm());
@@ -107,7 +107,7 @@ public class ContentStreamHashTest {
         byte[] content = IOUtils.toUTF8Bytes("Hello World!");
         ByteArrayInputStream stream = new ByteArrayInputStream(content);
 
-        ContentStreamHash hash = ContentStreamHashImpl.createContentHashes(stream,
+        ContentStreamHash hash = ContentStreamHashImpl.createContentStreamHashes(stream,
                 ContentStreamHashImpl.ALGORITHM_SHA512).get(0);
 
         assertEquals(ContentStreamHashImpl.ALGORITHM_SHA512, hash.getAlgorithm());
@@ -127,7 +127,7 @@ public class ContentStreamHashTest {
         byte[] content = IOUtils.toUTF8Bytes("Hello World!");
         ByteArrayInputStream stream = new ByteArrayInputStream(content);
 
-        List<ContentStreamHash> hashes = ContentStreamHashImpl.createContentHashes(stream,
+        List<ContentStreamHash> hashes = ContentStreamHashImpl.createContentStreamHashes(stream,
                 ContentStreamHashImpl.ALGORITHM_SHA1, ContentStreamHashImpl.ALGORITHM_SHA256,
                 ContentStreamHashImpl.ALGORITHM_SHA512);
 
