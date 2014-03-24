@@ -343,7 +343,7 @@ public final class PropertyIds {
      */
     public static final String POLICY_TEXT = "cmis:policyText";
 
-    // ---- retention ---
+    // ---- retention ----
     /**
      * CMIS retention property {@code cmis:rm_expirationDate}: expiration date.
      * <p>
@@ -382,4 +382,16 @@ public final class PropertyIds {
      * @cmis 1.1
      */
     public static final String HOLD_IDS = "cmis:rm_holdIds";
+
+    // ---- extensions ----
+    /**
+     * Content Hash property {@code cmis:contentStreamHash} (multivalue): hashes
+     * of the content stream
+     * <p>
+     * CMIS data type: string<br>
+     * Java type: String
+     * 
+     * @cmis Extension
+     */
+    public static final String CONTENT_STREAM_HASH = "cmis:contentStreamHash";
 }

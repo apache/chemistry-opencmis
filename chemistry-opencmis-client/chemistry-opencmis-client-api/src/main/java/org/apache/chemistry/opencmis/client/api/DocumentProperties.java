@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.util.List;
+
+import org.apache.chemistry.opencmis.commons.data.ContentStreamHash;
+
 /**
  * Accessors to CMIS document properties.
  * 
@@ -204,4 +208,16 @@ public interface DocumentProperties {
      * @cmis 1.0
      */
     String getContentStreamId();
+
+    /**
+     * Returns the content hashes or {@code null} if the document has no content
+     * (CMIS property {@code cmis:contentStreamHash}).
+     * 
+     * @return the list of content hashes or {@code null} if the property hasn't
+     *         been requested, hasn't been provided by the repository, or the
+     *         document has no content
+     * 
+     * @cmis Extension
+     */
+    List<ContentStreamHash> getContentStreamHashes();
 }

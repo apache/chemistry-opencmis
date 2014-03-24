@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.ContentStreamHash;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.PartialContentStream;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -46,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamHashImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 public class DocumentImpl extends AbstractFilableCmisObject implements Document {
@@ -120,6 +122,20 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     public String getContentStreamId() {
         return getPropertyValue(PropertyIds.CONTENT_STREAM_ID);
+    }
+
+    public List<ContentStreamHash> getContentStreamHashes() {
+        List<String> hashes = getPropertyValue(PropertyIds.CONTENT_STREAM_HASH);
+        if (hashes == null || hashes.size() == 0) {
+            return null;
+        }
+
+        List<ContentStreamHash> result = new ArrayList<ContentStreamHash>(hashes.size());
+        for (String hash : hashes) {
+            result.add(new ContentStreamHashImpl(hash));
+        }
+
+        return result;
     }
 
     // operations
