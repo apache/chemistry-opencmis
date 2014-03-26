@@ -39,6 +39,8 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
  * HTTP Response.
  */
 public class Response {
+    private static final int MAX_ERROR_LENGTH = 128 * 1024;
+
     private final int responseCode;
     private final String responseMessage;
     private final Map<String, List<String>> headers;
@@ -54,6 +56,7 @@ public class Response {
         this.responseMessage = responseMessage;
         this.stream = responseStream;
         this.hasResponseStream = (stream != null);
+        boolean isGZIP = (responseStream instanceof GZIPInputStream);
 
         this.headers = new HashMap<String, List<String>>();
         if (headers != null) {
@@ -84,12 +87,13 @@ public class Response {
                 if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")
                         || contentTypeLower.startsWith("application/xml")
                         || contentTypeLower.startsWith("application/json")) {
+                    errorStream = new BufferedInputStream(errorStream, 64 * 1024);
                     StringBuilder sb = new StringBuilder();
 
                     try {
                         String encoding = getContentEncoding();
                         if (encoding != null) {
-                            if (encoding.toLowerCase().trim().equals("gzip")) {
+                            if (encoding.toLowerCase().trim().equals("gzip") && !isGZIP) {
                                 errorStream = new GZIPInputStream(errorStream, 4096);
                             } else if (encoding.toLowerCase().trim().equals("deflate")) {
                                 errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
@@ -101,6 +105,9 @@ public class Response {
                         int b;
                         while ((b = reader.read(buffer)) > -1) {
                             sb.append(buffer, 0, b);
+                            if (sb.length() >= MAX_ERROR_LENGTH) {
+                                break;
+                            }
                         }
                         reader.close();
 
@@ -119,8 +126,9 @@ public class Response {
         }
 
         // get the stream length
+        length = null;
         String lengthStr = getHeader("Content-Length");
-        if (lengthStr != null) {
+        if (lengthStr != null && !isGZIP) {
             try {
                 length = new BigInteger(lengthStr);
             } catch (NumberFormatException e) {
@@ -147,7 +155,7 @@ public class Response {
             if (hasResponseStream) {
                 String encoding = getContentEncoding();
                 if (encoding != null) {
-                    if (encoding.toLowerCase().trim().equals("gzip")) {
+                    if (encoding.toLowerCase().trim().equals("gzip") && !isGZIP) {
                         // if the stream is gzip encoded, decode it
                         length = null;
                         try {
@@ -165,8 +173,7 @@ public class Response {
                 }
 
                 String transferEncoding = getContentTransferEncoding();
-                if ((stream != null) && (transferEncoding != null)
-                        && (transferEncoding.toLowerCase().trim().equals("base64"))) {
+                if (transferEncoding != null && transferEncoding.toLowerCase().trim().equals("base64")) {
                     // if the stream is base64 encoded, decode it
                     length = null;
                     stream = new Base64.InputStream(stream);
