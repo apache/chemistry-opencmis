@@ -24,9 +24,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.slf4j.Logger;
@@ -88,6 +91,10 @@ public class Dispatcher implements Serializable {
             serviceCall.serve(context, service, repositoryId, request, response);
         } catch (CmisBaseException ce) {
             throw ce;
+        } catch (XMLStreamException xse) {
+            throw new CmisInvalidArgumentException("Invalid XML!", xse);
+        } catch (JSONParseException jpe) {
+            throw new CmisInvalidArgumentException("Invalid JSON!", jpe);
         } catch (Exception e) {
             throw new CmisRuntimeException(e.getMessage(), e);
         }

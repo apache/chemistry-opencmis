@@ -205,26 +205,28 @@ public final class AtomEntryParser {
         cappedStream = new CappedInputStream(stream, MAX_STREAM_LENGTH);
         XMLStreamReader parser = XMLUtils.createParser(cappedStream);
 
-        while (true) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
-                QName name = parser.getName();
+        try {
+            while (true) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    QName name = parser.getName();
 
-                if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())
-                        && (TAG_ENTRY.equals(name.getLocalPart()))) {
-                    parseEntry(parser);
+                    if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())
+                            && (TAG_ENTRY.equals(name.getLocalPart()))) {
+                        parseEntry(parser);
+                        break;
+                    } else {
+                        throw new CmisInvalidArgumentException("XML is not an Atom entry!");
+                    }
+                }
+
+                if (!XMLUtils.next(parser)) {
                     break;
-                } else {
-                    throw new CmisInvalidArgumentException("XML is not an Atom entry!");
                 }
             }
-
-            if (!XMLUtils.next(parser)) {
-                break;
-            }
+        } finally {
+            parser.close();
         }
-
-        parser.close();
     }
 
     /**

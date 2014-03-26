@@ -225,12 +225,7 @@ public final class XMLUtils {
         assert parser != null;
 
         if (parser.hasNext()) {
-            try {
-                parser.next();
-            } catch (XMLStreamException e) {
-                // EOF exceptions
-                return false;
-            }
+            parser.next();
             return true;
         }
 

@@ -135,8 +135,13 @@ public class AtomPubParser {
                 }
             }
 
-            parser.close();
         } finally {
+            try {
+                parser.close();
+            } catch (XMLStreamException xse) {
+                // there is nothing we can do
+            }
+
             // make sure the stream is read and closed in all cases
             IOUtils.consumeAndClose(stream);
         }

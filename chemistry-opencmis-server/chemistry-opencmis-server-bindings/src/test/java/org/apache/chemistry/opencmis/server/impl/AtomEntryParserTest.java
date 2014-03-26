@@ -26,6 +26,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyString;
@@ -203,17 +205,11 @@ public class AtomEntryParserTest {
         assertNull(aep.getProperties());
     }
 
-    @Test
+    @Test(expected = XMLStreamException.class)
     public void testEmptyStream() throws Exception {
         ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
-        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(new byte[0]), streamFactory);
-
-        assertNotNull(aep);
-        assertNull(aep.getId());
-        assertNull(aep.getObject());
-        assertNull(aep.getContentStream());
-        assertNull(aep.getProperties());
+        new AtomEntryParser(new ByteArrayInputStream(new byte[0]), streamFactory);
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
