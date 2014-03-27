@@ -123,15 +123,6 @@
             </roles>
         </developer>
         <developer>
-            <name>Stephan Klevenz</name>
-            <id>klevenzs</id>
-            <roles>
-                <role>committer</role>
-            </roles>
-            <email>sklevenz@apache.org</email>
-            <timezone>CET</timezone>
-        </developer>
-        <developer>
             <name>Martin Hermes</name>
             <id>hermesm</id>
             <roles>
@@ -411,8 +402,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.4</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.14.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -512,7 +508,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
