@@ -141,13 +141,7 @@ public class Response {
         } else {
             stream = new BufferedInputStream(stream, 64 * 1024);
             try {
-                stream.mark(2);
-                if (stream.read() == -1) {
-                    hasResponseStream = false;
-                } else {
-                    stream.reset();
-                    hasResponseStream = true;
-                }
+                hasResponseStream = IOUtils.checkForBytes(stream);
             } catch (IOException ioe) {
                 throw new CmisConnectionException("IO exception!", ioe);
             }

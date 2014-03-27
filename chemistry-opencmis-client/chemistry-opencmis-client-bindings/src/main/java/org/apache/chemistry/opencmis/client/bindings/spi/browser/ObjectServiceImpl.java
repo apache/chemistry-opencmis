@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
@@ -40,8 +41,10 @@ import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
@@ -503,8 +506,15 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         });
 
         if (resp.hasResponseStream()) {
-            Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
-            return JSONConverter.convertFailedToDelete(json);
+            try {
+                InputStream responseStream = IOUtils.checkForBytes(resp.getStream(), 4096);
+                if (responseStream != null) {
+                    Map<String, Object> json = parseObject(responseStream, resp.getCharset());
+                    return JSONConverter.convertFailedToDelete(json);
+                }
+            } catch (IOException e) {
+                throw new CmisConnectionException("Cannot read response!", e);
+            }
         }
 
         return new FailedToDeleteDataImpl();

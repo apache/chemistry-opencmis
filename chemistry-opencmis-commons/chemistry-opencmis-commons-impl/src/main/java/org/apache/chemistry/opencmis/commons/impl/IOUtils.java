@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -127,6 +128,68 @@ public final class IOUtils {
         } catch (UnsupportedEncodingException e) {
             throw new CmisRuntimeException("Unsupported encoding 'UTF-8'!", e);
         }
+    }
+
+    /**
+     * Checks if a stream has more bytes. If the provided stream is not
+     * markable, it wrappes a {@link BufferedInputStream} around the stream and
+     * returns it.
+     * 
+     * @param stream
+     *            the stream
+     * @param bufferSize
+     *            the size of the buffer in bytes if a
+     *            {@link BufferedInputStream} has to be created
+     * @return {@code null} if the stream doesn't have more bytes, the provided
+     *         stream if the provided stream is markable and has more bytes, or
+     *         a {@link BufferedInputStream} if the provided stream is not
+     *         markable and has more bytes
+     * 
+     * @throws IOException
+     */
+    public static InputStream checkForBytes(InputStream stream, int bufferSize) throws IOException {
+        if (stream == null) {
+            return null;
+        }
+
+        InputStream checkStream = stream;
+
+        if (!stream.markSupported()) {
+            checkStream = new BufferedInputStream(stream, bufferSize);
+        }
+
+        if (checkForBytes(checkStream)) {
+            return checkStream;
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if a stream has more bytes.
+     * 
+     * @param stream
+     *            a markable stream
+     * @return {@code true} if the stream has more bytes, {@code false}
+     *         otherwise
+     */
+    public static boolean checkForBytes(InputStream stream) throws IOException {
+        if (stream == null) {
+            return false;
+        }
+
+        if (!stream.markSupported()) {
+            throw new IllegalArgumentException("Stream must support marks!");
+        }
+
+        stream.mark(2);
+
+        if (stream.read() != -1) {
+            stream.reset();
+            return true;
+        }
+
+        return false;
     }
 
     /**

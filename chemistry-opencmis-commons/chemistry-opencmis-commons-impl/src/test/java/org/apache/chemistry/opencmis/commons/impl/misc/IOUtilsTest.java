@@ -20,10 +20,13 @@ package org.apache.chemistry.opencmis.commons.impl.misc;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -58,6 +61,29 @@ public class IOUtilsTest {
         assertEquals(url, IOUtils.decodeURL(IOUtils.encodeURL(url)));
         assertNull(IOUtils.encodeURL(null));
         assertNull(IOUtils.decodeURL(null));
+    }
+
+    @Test
+    public void testCheckForBytes() throws Exception {
+        assertFalse(IOUtils.checkForBytes(new ByteArrayInputStream(new byte[0])));
+        assertTrue(IOUtils.checkForBytes(new ByteArrayInputStream(IOUtils.toUTF8Bytes("Hello World!"))));
+
+        assertNull(IOUtils.checkForBytes(new ByteArrayInputStream(new byte[0]), 1024));
+        assertTrue(IOUtils.checkForBytes(new ByteArrayInputStream(IOUtils.toUTF8Bytes("Hello World!")), 1024) instanceof ByteArrayInputStream);
+
+        assertNull(IOUtils.checkForBytes(new ByteArrayInputStream(new byte[0]) {
+            @Override
+            public boolean markSupported() {
+
+                return false;
+            }
+        }, 1024));
+        assertTrue(IOUtils.checkForBytes(new ByteArrayInputStream(IOUtils.toUTF8Bytes("Hello World!")) {
+            @Override
+            public boolean markSupported() {
+                return false;
+            }
+        }, 1024) instanceof BufferedInputStream);
     }
 
     @Test
