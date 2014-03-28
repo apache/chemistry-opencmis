@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.server;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -30,7 +31,9 @@ import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 /**
  * Implementation of the {@link ObjectInfo} interface.
  */
-public class ObjectInfoImpl implements ObjectInfo {
+public class ObjectInfoImpl implements ObjectInfo, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private String atomId;
