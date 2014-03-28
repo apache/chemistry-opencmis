@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -210,6 +211,33 @@ public class AtomEntryParserTest {
         ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         new AtomEntryParser(new ByteArrayInputStream(new byte[0]), streamFactory);
+    }
+
+    @Test
+    public void testBigStream() throws Exception {
+        byte[] begin = IOUtils
+                .toUTF8Bytes("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+                        + "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:app=\"http://www.w3.org/2007/app\" xmlns:cmisra=\"http://docs.oasis-open.org/ns/cmis/restatom/200908/\">"
+                        + "<cmisra:content><cmisra:mediatype>video/raw</cmisra:mediatype><cmisra:base64>");
+        byte[] end = IOUtils
+                .toUTF8Bytes("</cmisra:base64></cmisra:content><cmisra:object xmlns:cmis=\"http://docs.oasis-open.org/ns/cmis/core/200908/\">"
+                        + "<cmis:properties></cmis:properties></cmisra:object><title>some.file</title></entry>");
+
+        int contenSize = 50 * 1024 * 1024;
+
+        byte[] entry = new byte[begin.length + contenSize + end.length];
+
+        System.arraycopy(begin, 0, entry, 0, begin.length);
+        System.arraycopy(end, 0, entry, entry.length - end.length, end.length);
+        Arrays.fill(entry, begin.length, entry.length - end.length, (byte) 'a');
+
+        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+                MAX_SIZE, false);
+        AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), streamFactory);
+        ContentStream contentStream = aep.getContentStream();
+
+        assertNotNull(contentStream);
+        assertNotNull(contentStream.getStream());
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
