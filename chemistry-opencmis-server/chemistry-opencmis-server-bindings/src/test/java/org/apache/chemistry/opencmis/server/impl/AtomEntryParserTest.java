@@ -224,8 +224,9 @@ public class AtomEntryParserTest {
                         + "<cmis:properties></cmis:properties></cmisra:object><title>some.file</title></entry>");
 
         int contenSize = 50 * 1024 * 1024;
+        int base64Size = 4 * (contenSize + 2 - ((contenSize + 2) % 3)) / 3;
 
-        byte[] entry = new byte[begin.length + contenSize + end.length];
+        byte[] entry = new byte[begin.length + base64Size + end.length];
 
         System.arraycopy(begin, 0, entry, 0, begin.length);
         System.arraycopy(end, 0, entry, entry.length - end.length, end.length);
@@ -238,6 +239,8 @@ public class AtomEntryParserTest {
 
         assertNotNull(contentStream);
         assertNotNull(contentStream.getStream());
+
+        contentStream.getStream().close();
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
@@ -252,6 +255,8 @@ public class AtomEntryParserTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         IOUtils.copy(contentStream.getStream(), baos);
+
+        contentStream.getStream().close();
 
         return baos.toByteArray();
     }
