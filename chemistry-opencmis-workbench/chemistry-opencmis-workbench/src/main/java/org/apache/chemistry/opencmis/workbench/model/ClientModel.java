@@ -55,6 +55,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
+import org.apache.chemistry.opencmis.workbench.LoggingInputStream;
 import org.apache.chemistry.opencmis.workbench.RandomInputStream;
 
 public class ClientModel {
@@ -254,7 +255,8 @@ public class ClientModel {
         ContentStream content = null;
         if ((filename != null) && (filename.length() > 0)) {
             File file = new File(filename);
-            InputStream stream = new BufferedInputStream(new FileInputStream(file));
+            InputStream stream = new LoggingInputStream(new BufferedInputStream(new FileInputStream(file)),
+                    file.getName());
 
             content = clientSession.getSession().getObjectFactory()
                     .createContentStream(file.getName(), file.length(), MimeTypes.getMIMEType(file), stream);
@@ -285,8 +287,11 @@ public class ClientModel {
     }
 
     public ContentStream createContentStream(String name, long length, long seed) {
-        return clientSession.getSession().getObjectFactory()
-                .createContentStream(name, length, "application/octet-stream", new RandomInputStream(length, seed));
+        return clientSession
+                .getSession()
+                .getObjectFactory()
+                .createContentStream(name, length, "application/octet-stream",
+                        new LoggingInputStream(new RandomInputStream(length, seed), name + " (random)"));
     }
 
     public synchronized ObjectId createDocument(String name, String type, Map<String, Object> additionalProperties,

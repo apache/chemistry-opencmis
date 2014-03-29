@@ -350,7 +350,7 @@ public final class ClientHelper {
         OutputStream out = null;
         try {
             out = new FileOutputStream(file);
-            IOUtils.copy(in, out, BUFFER_SIZE);
+            IOUtils.copy(new LoggingInputStream(in, file.getName()), out, BUFFER_SIZE);
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
