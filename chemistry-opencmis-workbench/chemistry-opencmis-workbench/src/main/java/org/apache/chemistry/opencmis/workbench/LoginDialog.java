@@ -259,7 +259,7 @@ public class LoginDialog extends JDialog {
 
     public void createClientSession() {
         setClientSession(new ClientSession(currentTab.getSessionParameters(), currentTab.getObjectFactory(),
-                currentTab.getAuthenticationProvider(), currentTab.getCache()));
+                currentTab.getAuthenticationProvider(), currentTab.getCache(), currentTab.getTypeDefinitionCache()));
     }
 
     public void showDialog() {

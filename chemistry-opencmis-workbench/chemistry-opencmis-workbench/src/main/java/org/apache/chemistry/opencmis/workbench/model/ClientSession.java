@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -104,12 +105,12 @@ public class ClientSession {
     private OperationContext versionOperationContext;
 
     public ClientSession(Map<String, String> sessionParameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
         if (sessionParameters == null) {
             throw new IllegalArgumentException("Parameters must not be null!");
         }
 
-        connect(sessionParameters, objectFactory, authenticationProvider, cache);
+        connect(sessionParameters, objectFactory, authenticationProvider, cache, typeDefCache);
     }
 
     public static SessionParameterMap createSessionParameters(String url, BindingType binding, String username,
@@ -162,7 +163,7 @@ public class ClientSession {
     }
 
     private void connect(Map<String, String> sessionParameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
+            AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
         this.sessionParameters = sessionParameters;
 
         // set a new dummy authenticator
@@ -175,7 +176,7 @@ public class ClientSession {
         }
 
         repositories = SessionFactoryImpl.newInstance().getRepositories(sessionParameters, objectFactory,
-                authenticationProvider, cache);
+                authenticationProvider, cache, typeDefCache);
     }
 
     public List<Repository> getRepositories() {

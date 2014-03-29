@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
@@ -33,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
  * Abstract Login Tab.
  * 
  * To add a new login tab, derive a class from this class, create a file
- * <code>META-INF/services/org.apache.chemistry.opencmis.workbench.AbstractLoginTab</code>
+ * {@code META-INF/services/org.apache.chemistry.opencmis.workbench.AbstractLoginTab}
  * , and put the name of the fully qualified name of your class into this file.
  */
 public abstract class AbstractLoginTab extends JPanel {
@@ -52,33 +53,40 @@ public abstract class AbstractLoginTab extends JPanel {
     public abstract Map<String, String> getSessionParameters();
 
     /**
-     * Returns an <code>ObjectFactory</code> instance or <code>null</code> for
-     * the default object factory.
+     * Returns an {@code ObjectFactory} instance or {@code null} for the default
+     * object factory.
      */
     public ObjectFactory getObjectFactory() {
         return null;
     }
 
     /**
-     * Returns an <code>AuthenticationProvider</code> instance or
-     * <code>null</code> for the default authentication provider.
+     * Returns an {@code AuthenticationProvider} instance or {@code null} for
+     * the default authentication provider.
      */
     public AuthenticationProvider getAuthenticationProvider() {
         return null;
     }
 
     /**
-     * Returns a <code>Cache</code> instance or <code>null</code> for the
-     * default cache.
+     * Returns a {@code Cache} instance or {@code null} for the default cache.
      */
     public Cache getCache() {
         return null;
     }
 
     /**
-     * Defines if the session parameters should be transfered to the expert tab
-     * when the user switches from the this tab to the expert tab. The default
-     * is <code>false</code>.
+     * Returns an {@code TypeDefinitionCache} instance or {@code null} for the
+     * default authentication provider.
+     */
+    public TypeDefinitionCache getTypeDefinitionCache() {
+        return null;
+    }
+
+    /**
+     * Defines whether the session parameters should be transfered to the expert
+     * tab when the user switches from the this tab to the expert tab or not.
+     * The default is {@code false}.
      */
     public boolean transferSessionParametersToExpertTab() {
         return false;
