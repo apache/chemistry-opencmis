@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.server;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
@@ -25,7 +26,9 @@ import org.apache.chemistry.opencmis.commons.server.RenditionInfo;
 /**
  * Implementation of the {@link RenditionInfo} interface.
  */
-public class RenditionInfoImpl implements RenditionInfo {
+public class RenditionInfoImpl implements RenditionInfo, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private String contentType;
