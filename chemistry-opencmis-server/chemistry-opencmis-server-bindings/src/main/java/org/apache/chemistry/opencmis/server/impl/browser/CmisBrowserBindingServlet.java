@@ -198,6 +198,9 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
         addRootResource(CMISACTION_APPLY_POLICY, METHOD_POST, new PolicyService.ApplyPolicy());
         addRootResource(CMISACTION_REMOVE_POLICY, METHOD_POST, new PolicyService.RemovePolicy());
         addRootResource(CMISACTION_APPLY_ACL, METHOD_POST, new AclService.ApplyACL());
+
+        // old OpenCMIS client send invalid selector, support them anyway
+        addRootResource("folder", METHOD_GET, new NavigationService.GetFolderTree());
     }
 
     @Override
