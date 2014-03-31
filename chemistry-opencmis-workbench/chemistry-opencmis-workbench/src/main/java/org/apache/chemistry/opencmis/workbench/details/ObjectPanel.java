@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.checks.ObjectComplianceTestGroup;
@@ -289,6 +290,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                     Map<String, String> parameters = new HashMap<String, String>(getClientModel().getClientSession()
                             .getSessionParameters());
+                    parameters.put(SessionParameter.REPOSITORY_ID, getClientModel().getRepositoryInfo().getId());
                     String objectId = getClientModel().getCurrentObject().getId();
 
                     ObjectComplianceTestGroup octg = new ObjectComplianceTestGroup(parameters, objectId);
