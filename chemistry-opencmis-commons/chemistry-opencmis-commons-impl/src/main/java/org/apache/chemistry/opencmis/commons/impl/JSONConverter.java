@@ -1330,12 +1330,12 @@ public final class JSONConverter {
             principalObject.put(JSON_ACE_PRINCIPAL_ID, ace.getPrincipalId());
             convertExtension(ace.getPrincipal(), principalObject);
             aceObject.put(JSON_ACE_PRINCIPAL, principalObject);
-            
+
             aceObject.put(JSON_ACE_PERMISSIONS, permissions);
             aceObject.put(JSON_ACE_IS_DIRECT, ace.isDirect());
 
             convertExtension(ace, aceObject);
-            
+
             aceObjects.add(aceObject);
         }
 
@@ -2648,15 +2648,7 @@ public final class JSONConverter {
         }
 
         for (CmisExtensionElement ext : source.getExtensions()) {
-            if (ext == null) {
-                continue;
-            }
-
-            if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
-                target.put(ext.getName(), convertExtensionList(ext.getChildren()));
-            } else {
-                target.put(ext.getName(), ext.getValue());
-            }
+            addExtensionToTarget(ext, target);
         }
     }
 
@@ -2668,18 +2660,42 @@ public final class JSONConverter {
         JSONObject result = new JSONObject();
 
         for (CmisExtensionElement ext : extensionList) {
-            if (ext == null) {
-                continue;
-            }
-
-            if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
-                result.put(ext.getName(), convertExtensionList(ext.getChildren()));
-            } else {
-                result.put(ext.getName(), ext.getValue());
-            }
+            addExtensionToTarget(ext, result);
         }
 
         return result;
+    }
+
+    private static void addExtensionToTarget(final CmisExtensionElement ext, final JSONObject target) {
+        if (ext == null) {
+            return;
+        }
+
+        Object value = null;
+
+        if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
+            value = convertExtensionList(ext.getChildren());
+        } else {
+            value = ext.getValue();
+        }
+
+        if (!target.containsKey(ext.getName())) {
+            target.put(ext.getName(), value);
+        } else {
+            Object extValue = target.get(ext.getName());
+
+            JSONArray array;
+            if (extValue instanceof JSONArray) {
+                array = (JSONArray) extValue;
+            } else {
+                array = new JSONArray();
+                array.add(extValue);
+            }
+
+            array.add(value);
+
+            target.put(ext.getName(), array);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -2704,8 +2720,7 @@ public final class JSONConverter {
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
                         convertExtension((Map<String, Object>) element.getValue())));
             } else if (element.getValue() instanceof List) {
-                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
-                        convertExtension((List<Object>) element.getValue())));
+                extensions.addAll(convertExtension(element.getKey(), (List<Object>) element.getValue()));
             } else {
                 String value = (element.getValue() == null ? null : element.getValue().toString());
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
@@ -2728,8 +2743,7 @@ public final class JSONConverter {
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
                         convertExtension((Map<String, Object>) element.getValue())));
             } else if (element.getValue() instanceof List) {
-                extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null,
-                        convertExtension((List<Object>) element.getValue())));
+                extensions.addAll(convertExtension(element.getKey(), (List<Object>) element.getValue()));
             } else {
                 String value = (element.getValue() == null ? null : element.getValue().toString());
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
@@ -2740,27 +2754,23 @@ public final class JSONConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<CmisExtensionElement> convertExtension(final List<Object> list) {
+    public static List<CmisExtensionElement> convertExtension(final String name, final List<Object> list) {
         if (list == null) {
             return null;
         }
 
         List<CmisExtensionElement> extensions = new ArrayList<CmisExtensionElement>();
 
-        int i = 0;
         for (Object element : list) {
             if (element instanceof Map) {
-                extensions.add(new CmisExtensionElementImpl(null, "" + i, null,
+                extensions.add(new CmisExtensionElementImpl(null, name, null,
                         convertExtension((Map<String, Object>) element)));
             } else if (element instanceof List) {
-                extensions.add(new CmisExtensionElementImpl(null, "" + i, null,
-                        convertExtension((List<Object>) element)));
+                extensions.addAll(convertExtension(name, (List<Object>) element));
             } else {
                 String value = (element == null ? null : element.toString());
-                extensions.add(new CmisExtensionElementImpl(null, "" + i, null, value));
+                extensions.add(new CmisExtensionElementImpl(null, name, null, value));
             }
-
-            i++;
         }
 
         return extensions;
