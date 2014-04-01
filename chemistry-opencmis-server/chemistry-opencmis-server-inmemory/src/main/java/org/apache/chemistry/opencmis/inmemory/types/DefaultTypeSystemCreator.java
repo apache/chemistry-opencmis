@@ -56,6 +56,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     public static final String LEVEL1_TYPE = "DocumentLevel1";
     public static final String LEVEL2_TYPE = "DocumentLevel2";
     public static final String SECONDARY_TYPE_ID = "MySecondaryType";
+    public static final String BIG_CONTENT_FAKE_TYPE = "BigContentFakeType";
 
     /*
      * In the public interface of this class we return the singleton containing
@@ -400,6 +401,17 @@ public class DefaultTypeSystemCreator implements TypeCreator {
                     Updatability.READWRITE);
             polType.addPropertyDefinition(prop1);
             typesList.add(polType);
+
+            MutableTypeDefinition cmisTypeFake;
+            cmisTypeFake = typeFactory.createDocumentTypeDefinition(CmisVersion.CMIS_1_1, DocumentTypeCreationHelper
+                    .getCmisDocumentType().getId());
+            cmisTypeFake.setId(BIG_CONTENT_FAKE_TYPE);
+            cmisTypeFake.setDisplayName("BigContentFakeType");
+            cmisTypeFake.setDescription("Builtin InMemory type definition for big content streams. Content is "
+                    + "ignored and replaced by random bytes");
+            typesList.add(cmisTypeFake);
+
+            
 
             return typesList;
         } catch (Exception e) {

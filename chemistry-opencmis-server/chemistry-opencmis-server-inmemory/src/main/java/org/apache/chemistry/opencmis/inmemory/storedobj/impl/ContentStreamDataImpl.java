@@ -47,7 +47,7 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     private static long totalLength = 0L;
     private static long totalCalls = 0L;
 
-    private int fLength;
+    private long fLength;
 
     private String fMimeType;
 
@@ -62,16 +62,18 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     private long fStreamLimitLength;
 
     private final long sizeLimitKB;
+    
+    private final boolean doNotStoreContent;
 
     private static synchronized long getTotalLength() {
         return totalLength;
     }
 
-    private static synchronized void increaseTotalLength(int length) {
+    private static synchronized void increaseTotalLength(long length) {
         totalLength += length;
     }
 
-    private static synchronized void decreaseTotalLength(int length) {
+    private static synchronized void decreaseTotalLength(long length) {
         totalLength -= length;
     }
 
@@ -86,6 +88,13 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     public ContentStreamDataImpl(long maxAllowedContentSizeKB) {
         sizeLimitKB = maxAllowedContentSizeKB;
         fLength = 0;
+        doNotStoreContent = false;
+    }
+
+    public ContentStreamDataImpl(long maxAllowedContentSizeKB, boolean doNotStore) {
+        sizeLimitKB = maxAllowedContentSizeKB;
+        fLength = 0;
+        doNotStoreContent = doNotStore;
     }
 
     public void setContent(InputStream in) throws IOException {
@@ -99,7 +108,9 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
             ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
             int len = in.read(buffer);
             while (len != -1) {
-                contentStream.write(buffer, 0, len);
+                if (!doNotStoreContent) {
+                    contentStream.write(buffer, 0, len);
+                }
                 fLength += len;
                 if (sizeLimitKB > 0 && fLength > sizeLimitKB * SIZE_KB) {
                     throw new CmisInvalidArgumentException("Content size exceeds max. allowed size of " + sizeLimitKB
@@ -107,8 +118,10 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
                 }
                 len = in.read(buffer);
             }
-            fContent = contentStream.toByteArray();
-            fLength = contentStream.size();
+            if (!doNotStoreContent) {
+                fContent = contentStream.toByteArray();
+                fLength = contentStream.size();
+            }
             contentStream.close();
             in.close();
         }
@@ -127,7 +140,9 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
             ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
 
             // first read existing stream
-            contentStream.write(fContent);
+            if (!doNotStoreContent) {
+                contentStream.write(fContent);
+            }
             decreaseTotalLength(fLength);
 
             // then append new content
@@ -141,7 +156,9 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
                 }
                 len = is.read(buffer);
             }
-            fContent = contentStream.toByteArray();
+            if (!doNotStoreContent) {
+                fContent = contentStream.toByteArray();
+            }
             fLength = contentStream.size();
             contentStream.close();
             is.close();
@@ -186,11 +203,15 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
 
     @Override
     public InputStream getStream() {
+        if (doNotStoreContent) {
+            return new RandomInputStream(fLength);
+        }
+        
         if (null == fContent) {
             return null;
         } else if (fStreamLimitOffset <= 0 && fStreamLimitLength < 0) {
-            return new ByteArrayInputStream(fContent);
-        } else {
+                return new ByteArrayInputStream(fContent);
+        } else {            
             return new ByteArrayInputStream(fContent, (int) (fStreamLimitOffset < 0 ? 0 : fStreamLimitOffset),
                     (int) (fStreamLimitLength < 0 ? fLength : fStreamLimitLength));
         }
@@ -206,7 +227,7 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     }
 
     public ContentStream getCloneWithLimits(long offset, long length) {
-        ContentStreamDataImpl clone = new ContentStreamDataImpl(0);
+        ContentStreamDataImpl clone = new ContentStreamDataImpl(0, doNotStoreContent);
         clone.fFileName = fFileName;
         clone.fLength = fLength;
         clone.fContent = fContent;

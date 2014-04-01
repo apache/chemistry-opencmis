@@ -68,6 +68,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Relationship;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.types.DefaultTypeSystemCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1077,7 +1078,8 @@ public class ObjectStoreImpl implements ObjectStore {
             if (null == contentStream) {
                 newContent = null;
             } else {
-                newContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB);
+                boolean useFakeContentStore = so.getTypeId().equals(DefaultTypeSystemCreator.BIG_CONTENT_FAKE_TYPE);
+                newContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB, useFakeContentStore);
                 String fileName = contentStream.getFileName();
                 if (null == fileName || fileName.length() <= 0) {
                     fileName = so.getName(); // use name of document as fallback
