@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>org.apache.chemistry.opencmis</groupId>
 		<artifactId>chemistry-opencmis</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>0.11.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -107,7 +107,7 @@
 									</fileset>
 								</copy>
 								
-								<replace dir="${gendir}" token="javax.xml.ws.handler.HandlerResolver" value="org.apache.chemistry.opencmis.client.bindings.spi.HandlerResolver"/>            
+								<replace dir="${gendir}" token="javax.xml.ws.handler.HandlerResolver" value="org.apache.chemistry.opencmis.client.bindings.spi.HandlerResolver" />            
                              </target>
                          </configuration>
                          <goals>
