@@ -45,11 +45,6 @@ STAGING_REPO=https://repository.apache.org/content/repositories
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-client/${VERSION}/chemistry-opencmis-osgi-client-${VERSION}.jar.md5
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-client/${VERSION}/chemistry-opencmis-osgi-client-${VERSION}.jar.sha1
 
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-server/${VERSION}/chemistry-opencmis-osgi-server-${VERSION}.jar
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-server/${VERSION}/chemistry-opencmis-osgi-server-${VERSION}.jar.asc
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-server/${VERSION}/chemistry-opencmis-osgi-server-${VERSION}.jar.md5
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-osgi-server/${VERSION}/chemistry-opencmis-osgi-server-${VERSION}.jar.sha1
-
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-bindings-war/${VERSION}/chemistry-opencmis-server-bindings-war-${VERSION}.war
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-bindings-war/${VERSION}/chemistry-opencmis-server-bindings-war-${VERSION}.war.asc
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-bindings-war/${VERSION}/chemistry-opencmis-server-bindings-war-${VERSION}.war.md5

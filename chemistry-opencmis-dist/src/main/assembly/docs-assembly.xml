@@ -46,7 +46,7 @@
             <outputDirectory>/</outputDirectory>
             <excludes>
                 <exclude>DEPENDENCIES</exclude>
-		<exclude>NOTICE</exclude>
+		        <exclude>NOTICE</exclude>
             </excludes>
         </fileSet>
         <fileSet>

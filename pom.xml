@@ -462,7 +462,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <deployAtEnd>true</deployAtEnd>
+                    <deployAtEnd>false</deployAtEnd>
                 </configuration>
             </plugin>
         </plugins>
