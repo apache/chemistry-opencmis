@@ -54,6 +54,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+/*
+ *
+ */
 public class HttpRequestMethodsTest {
     private static final String CONTEXT_PATH = "/context";
     private static final String ATOMPUB_SERVLET_PATH = "/cmisatom";
