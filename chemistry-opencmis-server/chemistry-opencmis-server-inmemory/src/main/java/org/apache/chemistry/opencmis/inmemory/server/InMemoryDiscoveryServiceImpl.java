@@ -81,6 +81,9 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
         long timestamp = System.currentTimeMillis() - 60 * 1000;
         // convert ObjectInFolderContainerList to objectList
         List<ObjectData> lod = new ArrayList<ObjectData>();
+        if (null == maxItems) {
+            maxItems = BigInteger.valueOf(ITEMS_AVAILABLE);
+        }
         int last = Math.min(ITEMS_AVAILABLE, token + maxItems.intValue());
 
         for (int i = token; i < last; i++) {
