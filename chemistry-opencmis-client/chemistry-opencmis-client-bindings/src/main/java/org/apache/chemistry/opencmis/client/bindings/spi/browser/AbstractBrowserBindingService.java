@@ -176,12 +176,12 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         return result;
     }
 
-    protected UrlBuilder getPathUrl(String repositoryId, String objectId, String selector) {
-        UrlBuilder result = getRepositoryUrlCache().getPathUrl(repositoryId, objectId, selector);
+    protected UrlBuilder getPathUrl(String repositoryId, String path, String selector) {
+        UrlBuilder result = getRepositoryUrlCache().getPathUrl(repositoryId, path, selector);
 
         if (result == null) {
             getRepositoriesInternal(repositoryId);
-            result = getRepositoryUrlCache().getPathUrl(repositoryId, objectId, selector);
+            result = getRepositoryUrlCache().getPathUrl(repositoryId, path, selector);
         }
 
         if (result == null) {
