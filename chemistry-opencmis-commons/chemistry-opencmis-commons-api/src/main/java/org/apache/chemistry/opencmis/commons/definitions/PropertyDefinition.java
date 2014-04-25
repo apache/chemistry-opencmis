@@ -167,7 +167,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns the default value.
      * 
-     * @return the default value (list) or {@code null} if no default value is
+     * @return the default value (list) or an empty list if no default value is
      *         defined
      * 
      * @cmis 1.0
@@ -177,7 +177,7 @@ public interface PropertyDefinition<T> extends Serializable, ExtensionsData {
     /**
      * Returns the choices for this property.
      * 
-     * @return the choices or {@code null} if no choices are defined
+     * @return the choices or an empty list if no choices are defined
      * 
      * @cmis 1.0
      */
