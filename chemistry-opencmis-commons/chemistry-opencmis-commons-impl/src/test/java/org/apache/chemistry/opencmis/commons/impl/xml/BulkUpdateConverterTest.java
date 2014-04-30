@@ -44,7 +44,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectIdAndChangeToke
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.junit.Test;
 
-public class BukUpdateConverterTest extends AbstractXMLConverterTest {
+public class BulkUpdateConverterTest extends AbstractXMLConverterTest {
 
     @Test
     public void testBulkUpdate() throws Exception {
