@@ -25,11 +25,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabili
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.server.support.wrapper.CallContextAwareCmisService;
 
 /**
  * CMIS Service Implementation.
  */
-public class ${projectPrefix}CmisService extends AbstractCmisService {
+public class ${projectPrefix}CmisService extends AbstractCmisService implements CallContextAwareCmisService {
 
     private CallContext context;
 
