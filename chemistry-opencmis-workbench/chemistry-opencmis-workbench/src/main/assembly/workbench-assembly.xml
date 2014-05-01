@@ -72,8 +72,6 @@
             <scope>runtime</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>org.jvnet.mimepull:mimepull</exclude>
                 <exclude>junit:junit</exclude>
             </excludes>
         </dependencySet>
@@ -84,6 +82,7 @@
             <scope>provided</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
                 <exclude>org.apache.cxf:*</exclude>
                 <exclude>org.apache.axis2:*</exclude>
                 <exclude>wsdl4j:*</exclude>

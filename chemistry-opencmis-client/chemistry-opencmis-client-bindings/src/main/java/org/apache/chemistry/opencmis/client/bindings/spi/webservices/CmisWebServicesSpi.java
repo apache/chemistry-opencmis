@@ -76,10 +76,10 @@ public class CmisWebServicesSpi implements CmisSpi {
                 jaxwsImpl = System.getProperty("org.apache.chemistry.opencmis.binding.webservices.jaxws.impl");
             }
 
-            if (jaxwsImpl == null || JAXWS_IMPL_RI.equals(jaxwsImpl)) {
-                portProvider = new SunRIPortProvider();
-            } else if (JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
+            if (jaxwsImpl == null || JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
                 portProvider = new SunJREPortProvider();
+            } else if (JAXWS_IMPL_RI.equals(jaxwsImpl)) {
+                portProvider = new SunRIPortProvider();
             } else if (JAXWS_IMPL_CXF.equals(jaxwsImpl)) {
                 portProvider = new CXFPortProvider();
             } else if (JAXWS_IMPL_WEBSPHERE.equals(jaxwsImpl)) {

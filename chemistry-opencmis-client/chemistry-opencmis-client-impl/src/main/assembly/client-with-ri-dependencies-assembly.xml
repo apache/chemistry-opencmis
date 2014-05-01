@@ -25,7 +25,7 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>with-cxf-dependencies</id>
+    <id>with-ri-dependencies</id>
     <formats>
         <format>zip</format>
     </formats>
@@ -42,7 +42,7 @@
             <scope>provided</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
+                <exclude>org.apache.cxf</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -47,35 +47,13 @@
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
-            <version>4.2.0</version>
+            <version>${woodstox.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jvnet.mimepull</groupId>
-            <artifactId>mimepull</artifactId>
-            <version>1.9.4</version>
-        </dependency>    
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
-            <version>2.1.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>wstx-asl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jvnet</groupId>
-                    <artifactId>mimepull</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${jaxws-rt.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -119,7 +97,7 @@
                             <destdir />
                             <sourceDestDir>${project.basedir}/target/generated</sourceDestDir>
                             <extension>true</extension>
-                            <target>2.1</target>
+                            <target>2.2</target>
                         </configuration>
                     </execution>
                 </executions>
@@ -153,7 +131,7 @@
                         </Export-Package>
                         <Import-Package>
                           org.apache.chemistry.opencmis.commons.*,
-                          com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional,
+                          com.sun.xml.ws.*;version="[2.2,3.0)";resolution:=optional,
                           *
                         </Import-Package>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>

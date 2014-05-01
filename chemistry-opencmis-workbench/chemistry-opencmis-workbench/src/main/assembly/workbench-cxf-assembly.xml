@@ -60,8 +60,6 @@
             <scope>runtime</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>org.jvnet.mimepull:mimepull</exclude>
                 <exclude>junit:junit</exclude>
             </excludes>
         </dependencySet>
@@ -70,7 +68,7 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <scope>provided</scope>
-            <useTransitiveFiltering>false</useTransitiveFiltering>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>org.apache.cxf:*</include>
             </includes>
@@ -80,14 +78,11 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <scope>provided</scope>
-            <useTransitiveFiltering>false</useTransitiveFiltering>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
+                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
                 <exclude>org.apache.axis2:*</exclude>
-                <exclude>org.apache.ws.commons.axiom:*</exclude>
-                <exclude>org.apache.woden:*</exclude>
-                <exclude>javax.servlet:*</exclude>
-                <exclude>commons-fileupload:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

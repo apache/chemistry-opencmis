@@ -49,6 +49,11 @@
             <artifactId>chemistry-opencmis-commons-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>${jaxws-rt.version}</version>
+        </dependency>
         <!-- server-support is not a *runtime* dependency but it's added for commodity in the WAR -->
         <dependency>
             <groupId>${project.groupId}</groupId>

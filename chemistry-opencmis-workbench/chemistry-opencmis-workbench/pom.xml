@@ -165,6 +165,7 @@
                             <attach>true</attach>
                             <descriptors>
                                 <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/workbench-ri-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/workbench-cxf-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/workbench-axis2-assembly.xml</descriptor>  
                             </descriptors>
@@ -262,6 +263,12 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>2.2</version>
+        </dependency>
+         <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>${jaxws-rt.version}</version>
+            <scope>provided</scope>
         </dependency>
          <dependency>
             <groupId>org.apache.cxf</groupId>

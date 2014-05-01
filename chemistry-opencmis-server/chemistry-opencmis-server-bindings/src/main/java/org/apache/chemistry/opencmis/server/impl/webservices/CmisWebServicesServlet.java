@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.server.impl.webservices;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -272,18 +271,6 @@ public class CmisWebServicesServlet extends WSServlet {
     }
 
     private void setMemoryThreshold(CmisServiceFactory factory, StreamingAttachmentFeature ft) {
-        try {
-            // JAX-WS RI 2.1
-            ft.setMemoryThreshold(factory.getMemoryThreshold());
-        } catch (NoSuchMethodError e) {
-            // JAX-WS RI 2.2
-            // see CMIS-626
-            try {
-                Method m = ft.getClass().getMethod("setMemoryThreshold", long.class);
-                m.invoke(ft, (long) factory.getMemoryThreshold());
-            } catch (Exception e2) {
-                LOG.warn("Could not set memory threshold for streaming");
-            }
-        }
+        ft.setMemoryThreshold(factory.getMemoryThreshold());
     }
 }

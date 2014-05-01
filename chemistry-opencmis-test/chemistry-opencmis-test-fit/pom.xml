@@ -28,7 +28,7 @@
 		<parentBasedir>../../</parentBasedir>
 		<modeshape.version>3.2.0.Final</modeshape.version>
         <jackrabbit-core.version>2.6.1</jackrabbit-core.version>
-        <maven-failsafe-plugin.version>2.14.1</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>2.17</maven-failsafe-plugin.version>
         <maven-jetty-plugin.version>6.1.22</maven-jetty-plugin.version>
         <jcr.version>2.0</jcr.version>
         <overlay.groupId />

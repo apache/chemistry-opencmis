@@ -24,7 +24,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
     <!-- To build this, run "mvn package assembly:assembly" -->
-    <id>mac</id>
+    <id>ri</id>
     <formats>
         <format>zip</format>
     </formats>
@@ -39,30 +39,22 @@
     </fileSets>
     <files>
         <file>
-            <source>target/start/workbench.sh</source>
-            <outputDirectory>/Contents/Resources</outputDirectory>
+            <source>target/start/workbench-ri.sh</source>
+            <destName>workbench.sh</destName>
+            <outputDirectory></outputDirectory>
             <lineEnding>unix</lineEnding>
             <fileMode>0755</fileMode>
         </file>
         <file>
-            <source>target/start/run.sh</source>
-            <outputDirectory>/Contents/MacOS</outputDirectory>
-            <lineEnding>unix</lineEnding>
-            <fileMode>0755</fileMode>
+            <source>target/start/workbench-ri.bat</source>
+            <destName>workbench.bat</destName>
+            <outputDirectory></outputDirectory>
+            <lineEnding>dos</lineEnding>
         </file>
-        <file>
-            <source>target/start/info.plist</source>
-            <outputDirectory>/Contents</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </file>
-        <file>
-            <source>src/main/resources/images/icon.icns</source>
-            <outputDirectory>/Contents/Resources</outputDirectory>
-        </file> 
     </files>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>/Contents/Resources/lib</outputDirectory>
+            <outputDirectory>/lib</outputDirectory>
             <useProjectArtifact></useProjectArtifact>
             <unpack>false</unpack>
             <scope>runtime</scope>
@@ -72,16 +64,25 @@
             </excludes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>/Contents/Resources/lib</outputDirectory>
-            <useProjectArtifact></useProjectArtifact>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>provided</scope>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <includes>
+                <include>com.sun.xml.ws:jaxws-rt</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <scope>provided</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
+                <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
                 <exclude>org.apache.cxf:*</exclude>
                 <exclude>org.apache.axis2:*</exclude>
-                <exclude>wsdl4j:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>
