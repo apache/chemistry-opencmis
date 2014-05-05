@@ -173,8 +173,15 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         return capabilityOrderBy;
     }
 
-    public void setOrderByCapability(CapabilityOrderBy capabilityOrderBy) {
+    public void setCapabilityOrderBy(CapabilityOrderBy capabilityOrderBy) {
         this.capabilityOrderBy = capabilityOrderBy;
+    }
+
+    /**
+     * @deprecated use {@link #setCapabilityOrderBy(CapabilityOrderBy)}
+     */
+    public void setOrderByCapability(CapabilityOrderBy capabilityOrderBy) {
+        setCapabilityOrderBy(capabilityOrderBy);
     }
 
     public Boolean isMultifilingSupported() {

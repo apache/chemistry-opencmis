@@ -471,7 +471,7 @@ public class StoreManagerImpl implements StoreManager {
             CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
             creatablePropertyTypes.setCanCreate(propertyTypeSet);
             caps.setCreatablePropertyTypes(creatablePropertyTypes);
-            caps.setOrderByCapability(CapabilityOrderBy.COMMON);
+            caps.setCapabilityOrderBy(CapabilityOrderBy.COMMON);
         } else {
             repoInfo.setCmisVersionSupported(CmisVersion.CMIS_1_0.value());
             repoInfo.setCmisVersion(CmisVersion.CMIS_1_0);

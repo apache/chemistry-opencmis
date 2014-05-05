@@ -495,7 +495,7 @@ public final class JSONConverter {
         result.setIsPwcSearchable(getBoolean(json, JSON_CAP_PWC_SEARCHABLE));
         result.setIsPwcUpdatable(getBoolean(json, JSON_CAP_PWC_UPDATABLE));
         result.setAllVersionsSearchable(getBoolean(json, JSON_CAP_ALL_VERSIONS_SEARCHABLE));
-        result.setOrderByCapability(getEnum(json, JSON_CAP_ORDER_BY, CapabilityOrderBy.class));
+        result.setCapabilityOrderBy(getEnum(json, JSON_CAP_ORDER_BY, CapabilityOrderBy.class));
         result.setCapabilityQuery(getEnum(json, JSON_CAP_QUERY, CapabilityQuery.class));
         result.setCapabilityJoin(getEnum(json, JSON_CAP_JOIN, CapabilityJoin.class));
         result.setCapabilityAcl(getEnum(json, JSON_CAP_ACL, CapabilityAcl.class));

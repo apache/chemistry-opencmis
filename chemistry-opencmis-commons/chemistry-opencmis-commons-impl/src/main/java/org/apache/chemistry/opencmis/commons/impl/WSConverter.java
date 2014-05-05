@@ -397,7 +397,7 @@ public final class WSConverter {
         result.setIsPwcUpdatable(capabilities.isCapabilityPWCUpdatable());
         result.setSupportsGetDescendants(capabilities.isCapabilityGetDescendants());
         result.setSupportsGetFolderTree(capabilities.isCapabilityGetFolderTree());
-        result.setOrderByCapability(convert(CapabilityOrderBy.class, capabilities.getCapabilityOrderBy()));
+        result.setCapabilityOrderBy(convert(CapabilityOrderBy.class, capabilities.getCapabilityOrderBy()));
         result.setSupportsMultifiling(capabilities.isCapabilityMultifiling());
         result.setSupportsUnfiling(capabilities.isCapabilityUnfiling());
         result.setSupportsVersionSpecificFiling(capabilities.isCapabilityVersionSpecificFiling());

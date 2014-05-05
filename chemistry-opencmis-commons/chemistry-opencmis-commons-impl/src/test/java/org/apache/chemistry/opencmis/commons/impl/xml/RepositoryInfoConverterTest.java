@@ -117,7 +117,7 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
             cap1.setSupportsGetDescendants(randomBoolean());
             cap1.setSupportsGetFolderTree(randomBoolean());
             cap1.setSupportsMultifiling(randomBoolean());
-            cap1.setOrderByCapability(randomEnum(CapabilityOrderBy.class));
+            cap1.setCapabilityOrderBy(randomEnum(CapabilityOrderBy.class));
             cap1.setSupportsUnfiling(randomBoolean());
             cap1.setSupportsVersionSpecificFiling(randomBoolean());
 
@@ -247,7 +247,7 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
         repInfo2.setExtensionFeature(null);
         if (repInfo.getCapabilities() != null) {
             RepositoryCapabilitiesImpl capabilities = new RepositoryCapabilitiesImpl(repInfo.getCapabilities());
-            capabilities.setOrderByCapability(null);
+            capabilities.setCapabilityOrderBy(null);
             capabilities.setCreatablePropertyTypes(null);
             capabilities.setNewTypeSettableAttributes(null);
             repInfo2.setCapabilities(capabilities);

@@ -1266,7 +1266,7 @@ public final class XMLConverter {
                 }
 
                 if (isTag(name, TAG_CAP_ORDER_BY)) {
-                    target.setOrderByCapability(readEnum(parser, CapabilityOrderBy.class));
+                    target.setCapabilityOrderBy(readEnum(parser, CapabilityOrderBy.class));
                     return true;
                 }
 
