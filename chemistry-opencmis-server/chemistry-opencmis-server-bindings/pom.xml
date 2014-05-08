@@ -50,9 +50,32 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jvnet.mimepull</groupId>
+            <artifactId>mimepull</artifactId>
+            <version>1.9.4</version>
+        </dependency> 
+        <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <version>${jaxws-rt.version}</version>
+            <exclusions>
+                <exclusion>	 
+                    <groupId>stax</groupId>	 
+                    <artifactId>stax-api</artifactId>	 
+                </exclusion>	 
+                <exclusion>	 
+                    <groupId>org.codehaus.woodstox</groupId>	 
+                    <artifactId>wstx-asl</artifactId>	 
+                </exclusion>	 
+                <exclusion>	 
+                    <groupId>junit</groupId>	 
+                    <artifactId>junit</artifactId>	 
+                </exclusion>	 
+                <exclusion>	 
+                    <groupId>org.jvnet</groupId>	 
+                    <artifactId>mimepull</artifactId>	 
+                </exclusion>	 
+            </exclusions>
         </dependency>
         <!-- server-support is not a *runtime* dependency but it's added for commodity in the WAR -->
         <dependency>

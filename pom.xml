@@ -235,7 +235,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <jaxws-rt.version>2.2.8</jaxws-rt.version>
+        <jaxws-rt.version>2.1.7</jaxws-rt.version>
         <cxf.version>2.7.11</cxf.version>
         <axis2.version>1.6.2</axis2.version>
     </properties>
@@ -476,6 +476,31 @@
              </extension>
         </extensions>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jboss.public</id>
+            <name>JBoss repository (for JAX-WS 2.1.7)</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven 2</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <url>http://download.java.net/maven/2/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jboss-public</id>
+            <name>Jboss Repository for Maven 2</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
