@@ -28,6 +28,6 @@ rem set no_proxy=localhost,127.0.0.0,.local
 
 
 for /F "delims=/" %%x in ('"java -classpath .;* org.apache.chemistry.opencmis.workbench.ProxyDetector -j -s"') do set "JAVA_PROXY_CONF=%%x"
-set JAVA_OPTS=%JAVA_PROXY_CONF% -Dorg.apache.chemistry.opencmis.binding.webservices.jaxws.impl=sunjre
+set JAVA_OPTS=%JAVA_PROXY_CONF%
 
 start /B javaw %JAVA_OPTS% %CUSTOM_JAVA_OPTS% -classpath ".;*" org.apache.chemistry.opencmis.workbench.Workbench

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
+import javax.xml.ws.spi.Provider;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.CmisSpi;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -76,7 +78,27 @@ public class CmisWebServicesSpi implements CmisSpi {
                 jaxwsImpl = System.getProperty("org.apache.chemistry.opencmis.binding.webservices.jaxws.impl");
             }
 
-            if (jaxwsImpl == null || JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
+            if (jaxwsImpl == null) {
+                Provider provider = Provider.provider();
+                if (provider == null) {
+                    throw new CmisRuntimeException("No JAX-WS implementation found!");
+                }
+
+                String providerPackage = provider.getClass().getPackage().getName();
+
+                if (providerPackage.startsWith("com.sun.xml.internal.ws.spi")) {
+                    portProvider = new SunJREPortProvider();
+                } else if (providerPackage.startsWith("com.sun.xml.ws.spi")) {
+                    portProvider = new SunRIPortProvider();
+                } else if (providerPackage.startsWith("org.apache.cxf.jaxws")) {
+                    portProvider = new CXFPortProvider();
+                } else if (providerPackage.startsWith("org.apache.axis2.jaxws.spi")) {
+                    portProvider = new Axis2PortProvider();
+                } else {
+                    throw new CmisRuntimeException("Could not detect JAX-WS implementation! Use session parameter "
+                            + SessionParameter.WEBSERVICES_JAXWS_IMPL + " to specify one.");
+                }
+            } else if (JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
                 portProvider = new SunJREPortProvider();
             } else if (JAXWS_IMPL_RI.equals(jaxwsImpl)) {
                 portProvider = new SunRIPortProvider();
@@ -102,6 +124,10 @@ public class CmisWebServicesSpi implements CmisSpi {
                 throw new IllegalArgumentException("Port provider does not implement AbstractPortProvider!");
             }
             portProvider = (AbstractPortProvider) portProviderObj;
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Session {}: Port provider class: {}", session.getSessionId(), portProvider.getClass().getName());
         }
 
         portProvider.setSession(session);
