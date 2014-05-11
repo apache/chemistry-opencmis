@@ -264,13 +264,15 @@
             <artifactId>javase</artifactId>
             <version>2.2</version>
         </dependency>
-         <dependency>
+        <!-- Sun RI -->
+        <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <version>${jaxws-rt.version}</version>
             <scope>provided</scope>
         </dependency>
-         <dependency>
+        <!-- CXF -->
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
             <version>${cxf.version}</version>
@@ -282,6 +284,13 @@
             <version>${cxf.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-policy</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Axis2 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
@@ -297,6 +306,12 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
+            <version>${axis2.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-mtompolicy</artifactId>
             <version>${axis2.version}</version>
             <scope>provided</scope>
         </dependency>

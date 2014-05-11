@@ -71,6 +71,9 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>org.apache.axis2:*</include>
+                <include>org.apache.neethi:*</include>
+                <include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:*</include>
+                <include>xml-resolver:*</include>
             </includes>
         </dependencySet>
         <dependencySet>
