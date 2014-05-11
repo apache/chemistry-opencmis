@@ -201,23 +201,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-=======================================================================
-- XML Resolver library
-  License: Apache 2  (http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
 
 =======================================================================
 - Woodstox (http://woodstox.codehaus.org)
@@ -275,27 +258,6 @@ POSSIBILITY OF SUCH DAMAGE.
 =======================================================================
 - Streaming API for XML (http://stax.codehaus.org)
   License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- StAX-Ex Project (https://stax-ex.dev.java.net/stax-ex)
-  License: Common Development And Distribution License (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
-- Sun JAXB Reference Implementation Runtime (https://jaxb.dev.java.net/)
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- Sun SAAJ Standard Implementation (https://saaj.dev.java.net/)
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- XML Stream Buffer Project (https://xmlstreambuffer.dev.java.net/)
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- JAX-WS (JSR-224) Reference Implementation (https://jax-ws.dev.java.net//) 
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- JavaBeans(TM) Activation Framework Specification (http://www.oracle.com/technetwork/java/jaf11-139815.html)
-  License: Common Development And Distribution License (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
-- Java Architecture for XML Binding (https://jaxb.dev.java.net/)
-  License: Common Development And Distribution License (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
-- SAAJ API (https://saaj.dev.java.net/)
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- JAX-WS (JSR-224) API (https://jax-ws.dev.java.net/) 
-  License: Dual license consisting of the CDDL v1.0 and GPL v2  (https://glassfish.dev.java.net/public/CDDL+GPL.html)
-- mimepull (https://mimepull.dev.java.net)
-  License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.opensource.org/licenses/cddl1.php)
-  License: GPLv2 with classpath exception  (http://www.gnu.org/software/classpath/license.html)
 
 
       COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)
@@ -576,7 +538,7 @@ POSSIBILITY OF SUCH DAMAGE.
       8. U.S. GOVERNMENT END USERS.
       The Covered Software is a "commercial item," as that term is
       defined in 48 C.F.R. 2.101 (Oct. 1995), consisting of "commercial
-      computer software" (as that term is defined at 48 C.F.R. ¤
+      computer software" (as that term is defined at 48 C.F.R. ��
       252.227-7014(a)(1)) and "commercial computer software
       documentation" as such terms are used in 48 C.F.R. 12.212 (Sept.
       1995). Consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202-1
