@@ -10,6 +10,7 @@
 
     <properties>
         <opencmis.version>${opencmisVersion}</opencmis.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <name>Your OpenCMIS Server</name>
