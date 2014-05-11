@@ -44,7 +44,6 @@
                                 <exclude>web/**</exclude> <!-- sample JavaScript application -->
                                 <exclude>WEB-INF/classes/sample-repository.properties</exclude> <!-- sample server properties file -->
                                 <exclude>WEB-INF/token/**</exclude> <!-- sample Browser Binding token implementation -->
-                                <exclude>WEB-INF/websphere/**</exclude> <!-- WebSphere specfic files -->
                             </excludes>
                             <includes>
                                 <include>**</include>
@@ -52,6 +51,11 @@
                             </includes>
                         </overlay>
                     </overlays>
+                    <archive>
+                        <manifestEntries>
+                            <DisableIBMJAXWSEngine>true</DisableIBMJAXWSEngine>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
