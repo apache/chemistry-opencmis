@@ -812,6 +812,10 @@ public final class TypeDefinitionFactory {
      */
     public TypeDefinitionList createTypeDefinitionList(Map<String, TypeDefinition> allTypes, String typeId,
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, CmisVersion cmisVersion) {
+        if (allTypes == null) {
+            throw new IllegalArgumentException("Types map must be set!");
+        }
+
         if (typeId != null && !allTypes.containsKey(typeId)) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' does not exist!");
         }
@@ -820,7 +824,7 @@ public final class TypeDefinitionFactory {
         result.setHasMoreItems(false);
         result.setNumItems(BigInteger.ZERO);
 
-        if (allTypes == null || allTypes.isEmpty()) {
+        if (allTypes.isEmpty()) {
             return result;
         }
 
@@ -919,16 +923,20 @@ public final class TypeDefinitionFactory {
      */
     public List<TypeDefinitionContainer> createTypeDescendants(Map<String, TypeDefinition> allTypes, String typeId,
             BigInteger depth, Boolean includePropertyDefinitions, CmisVersion cmisVersion) {
+        if (allTypes == null) {
+            throw new IllegalArgumentException("Types map must be set!");
+        }
+
         int depthInt = (depth == null ? -1 : depth.intValue());
         if (depthInt == 0) {
-            throw new CmisInvalidArgumentException("Depth must not be 0!");
+            throw new IllegalArgumentException("Depth must not be 0!");
         }
 
         if (typeId != null && !allTypes.containsKey(typeId)) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' does not exist!");
         }
 
-        if (allTypes == null || allTypes.isEmpty()) {
+        if (allTypes.isEmpty()) {
             return Collections.<TypeDefinitionContainer> emptyList();
         }
 

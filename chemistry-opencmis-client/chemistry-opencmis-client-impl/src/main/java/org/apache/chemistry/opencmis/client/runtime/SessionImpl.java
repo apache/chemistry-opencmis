@@ -453,7 +453,7 @@ public class SessionImpl implements Session {
     public void setDefaultContext(OperationContext context) {
         lock.writeLock().lock();
         try {
-            context = (context == null ? DEFAULT_CONTEXT : context);
+            this.context = (context == null ? DEFAULT_CONTEXT : context);
         } finally {
             lock.writeLock().unlock();
         }

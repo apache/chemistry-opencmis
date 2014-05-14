@@ -403,7 +403,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj.getProperties() != null) {
+        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
             Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
             changeToken.setValue(ct == null ? null : ct.toString());
         }
@@ -551,7 +551,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj.getProperties() != null) {
+        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
             Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
             changeToken.setValue(ct == null ? null : ct.toString());
         }
@@ -588,7 +588,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj.getProperties() != null) {
+        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
             Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
             changeToken.setValue(ct == null ? null : ct.toString());
         }
@@ -624,7 +624,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj.getProperties() != null) {
+        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
             Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
             changeToken.setValue(ct == null ? null : ct.toString());
         }

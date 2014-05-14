@@ -41,12 +41,15 @@ public final class HttpUtils {
 
         @SuppressWarnings("unchecked")
         Map<String, String[]> parameters = request.getParameterMap();
-        for (Map.Entry<String, String[]> parameter : parameters.entrySet()) {
-            if (name.equalsIgnoreCase(parameter.getKey())) {
-                if (parameter.getValue() == null) {
-                    return null;
+
+        if (parameters != null) {
+            for (Map.Entry<String, String[]> parameter : parameters.entrySet()) {
+                if (name.equalsIgnoreCase(parameter.getKey())) {
+                    if (parameter.getValue() == null) {
+                        return null;
+                    }
+                    return parameter.getValue()[0];
                 }
-                return parameter.getValue()[0];
             }
         }
 

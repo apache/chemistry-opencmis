@@ -53,7 +53,7 @@ body {
 			</tr>
 			<tr>
 				<td>Password:</td>
-				<td><input type="password" name="password" size="20"></td>
+				<td><input type="password" name="password" size="20" autocomplete="off"/></td>
 			</tr>
 			<tr>
 				<td></td>

@@ -77,15 +77,15 @@ public class JsonPrettyPrinter {
         }
     }
 
-    public static void main(String[] args) {
-        args = new String[2];
-        args[0] = "[0,{\"1\":{\"2\":{\"3\":{\"4\":[5,{\"6\":7}]}}}}]";
-        args[1] = "{\"abc\":{\"def\":{\"ghi\":{\"jkl\":[5,{\"mno\":7}]}}}}";
-        for (String s : args) {
-            JsonPrettyPrinter pp = new JsonPrettyPrinter();
-            System.out.println("Pretty Printing JSON String: " + s);
-            String result = pp.prettyPrint(s);
-            System.out.println("Pretty Printed JSON: " + result);
-        }
-    }
+//    public static void main(String[] args) {
+//        args = new String[2];
+//        args[0] = "[0,{\"1\":{\"2\":{\"3\":{\"4\":[5,{\"6\":7}]}}}}]";
+//        args[1] = "{\"abc\":{\"def\":{\"ghi\":{\"jkl\":[5,{\"mno\":7}]}}}}";
+//        for (String s : args) {
+//            JsonPrettyPrinter pp = new JsonPrettyPrinter();
+//            System.out.println("Pretty Printing JSON String: " + s);
+//            String result = pp.prettyPrint(s);
+//            System.out.println("Pretty Printed JSON: " + result);
+//        }
+//    }
 }

@@ -54,6 +54,10 @@ public class ControlParser {
     private void parse() {
         // gather all controls
         Map<String, String[]> controls = request.getParameterMap();
+        if (controls == null) {
+            return;
+        }
+
         for (Map.Entry<String, String[]> control : controls.entrySet()) {
             String controlName = control.getKey().trim().toLowerCase(Locale.ENGLISH);
 

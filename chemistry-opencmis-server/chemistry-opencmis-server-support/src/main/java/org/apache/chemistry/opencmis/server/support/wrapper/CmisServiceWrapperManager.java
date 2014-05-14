@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.support.wrapper;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -150,8 +151,10 @@ public class CmisServiceWrapperManager {
                         throw new CmisRuntimeException("More than one service wrapper at the same position: " + index);
                     }
 
-                    LOG.trace("Found wrapper at index {}: {}{}", index, wrapperClass.getName(), params == null ? ""
-                            : params.toString());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Found wrapper at index {}: {}{}", index, wrapperClass.getName(), params == null ? ""
+                                : Arrays.asList(params).toString());
+                    }
 
                     wrappers.put(index, new WrapperDefinition(
                             (Class<? extends AbstractCmisServiceWrapper>) wrapperClass, params));

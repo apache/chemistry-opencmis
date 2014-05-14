@@ -28,11 +28,8 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -57,6 +54,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +63,6 @@ public class LoggingFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingFilter.class);
     private static int requestNo = 0;
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("EEE MMM dd hh:mm:ss a z yyyy", Locale.US);
     private String logDir;
     private boolean prettyPrint = true;
     private boolean logHeaders = true;
@@ -498,7 +495,7 @@ public class LoggingFilter implements Filter {
         }
 
         private String getDateString(long date) {
-            return FORMAT.format(new Date(date));
+            return DateTimeHelper.formatXmlDateTime(date);
         }
 
         @Override
