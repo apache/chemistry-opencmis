@@ -207,6 +207,24 @@ public interface Session extends Serializable {
     ObjectType getTypeDefinition(String typeId);
 
     /**
+     * Gets the definition of a type.
+     * 
+     * @param typeId
+     *            the ID of the type
+     * @param useCache
+     *            specifies whether the type definition should be looked up in
+     *            the type definition cache first or not
+     * 
+     * @return the type definition
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if a type with the given type ID doesn't exist
+     * 
+     * @cmis 1.0
+     */
+    ObjectType getTypeDefinition(String typeId, boolean useCache);
+
+    /**
      * Gets the type children of a type.
      * 
      * @param typeId

@@ -49,6 +49,18 @@ public class ClientTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    public TypeDefinition reloadTypeDefinition(String typeId) {
+
+        TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(service.getSession());
+
+        TypeDefinition type = service.getTypeDefinitionInternal(repositoryId, typeId);
+        if (type != null) {
+            cache.put(repositoryId, type);
+        }
+
+        return type;
+    }
+
     public TypeDefinition getTypeDefinitionForObject(String objectId) {
         // not used
         assert false;

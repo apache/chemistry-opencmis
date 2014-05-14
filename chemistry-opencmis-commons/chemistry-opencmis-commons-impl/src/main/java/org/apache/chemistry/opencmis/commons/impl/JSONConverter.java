@@ -2126,9 +2126,11 @@ public final class JSONConverter {
 
             if (propDef == null && secTypeDefs != null) {
                 for (TypeDefinition secTypeDef : secTypeDefs) {
-                    propDef = secTypeDef.getPropertyDefinitions().get(id);
-                    if (propDef != null) {
-                        break;
+                    if (secTypeDef != null && secTypeDef.getPropertyDefinitions() != null) {
+                        propDef = secTypeDef.getPropertyDefinitions().get(id);
+                        if (propDef != null) {
+                            break;
+                        }
                     }
                 }
             }
@@ -2140,6 +2142,25 @@ public final class JSONConverter {
 
             if (propDef == null) {
                 propDef = typeCache.getTypeDefinition(BaseTypeId.CMIS_FOLDER.value()).getPropertyDefinitions().get(id);
+            }
+
+            if (propDef == null && typeDef != null) {
+                TypeDefinition reloadedTypeDef = typeCache.reloadTypeDefinition(typeDef.getId());
+                if (reloadedTypeDef != null) {
+                    propDef = reloadedTypeDef.getPropertyDefinitions().get(id);
+                }
+            }
+
+            if (propDef == null && secTypeDefs != null) {
+                for (TypeDefinition secTypeDef : secTypeDefs) {
+                    TypeDefinition reloadedTypeDef = typeCache.reloadTypeDefinition(secTypeDef.getId());
+                    if (reloadedTypeDef != null && reloadedTypeDef.getPropertyDefinitions() != null) {
+                        propDef = reloadedTypeDef.getPropertyDefinitions().get(id);
+                        if (propDef != null) {
+                            break;
+                        }
+                    }
+                }
             }
 
             List<Object> values = null;

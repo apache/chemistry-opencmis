@@ -666,7 +666,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                             oc.isIncludeAcls(), null);
 
             // reset this object
-            initialize(getSession(), getObjectType(), objectData, this.creationContext);
+            initialize(session, session.getTypeDefinition(objectType.getId()), objectData, creationContext);
         } finally {
             writeUnlock();
         }

@@ -91,6 +91,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.DiscoveryService;
 import org.apache.chemistry.opencmis.commons.spi.ExtendedAclService;
 import org.apache.chemistry.opencmis.commons.spi.ExtendedHolder;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedRepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.NavigationService;
 import org.apache.chemistry.opencmis.commons.spi.RelationshipService;
@@ -742,6 +743,19 @@ public class SessionImpl implements Session {
     public ObjectType getTypeDefinition(String typeId) {
         TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
                 typeId, null);
+
+        return convertTypeDefinition(typeDefinition);
+    }
+
+    public ObjectType getTypeDefinition(String typeId, boolean useCache) {
+        RepositoryService service = getBinding().getRepositoryService();
+        if (!(service instanceof ExtendedRepositoryService)) {
+            throw new CmisRuntimeException(
+                    "Internal error: Repository Service does not implement ExtendedRepositoryService!");
+        }
+
+        ExtendedRepositoryService extRepSrv = (ExtendedRepositoryService) service;
+        TypeDefinition typeDefinition = extRepSrv.getTypeDefinition(getRepositoryId(), typeId, null, useCache);
 
         return convertTypeDefinition(typeDefinition);
     }

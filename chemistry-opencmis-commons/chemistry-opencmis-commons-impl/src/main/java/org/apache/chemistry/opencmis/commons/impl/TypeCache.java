@@ -27,10 +27,15 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 public interface TypeCache {
 
     /**
-     * Gets the type definition by type id.
+     * Gets the type definition by type ID.
      */
     TypeDefinition getTypeDefinition(String typeId);
 
+    /**
+     * Reloads the type definition by type ID.
+     */
+    TypeDefinition reloadTypeDefinition(String typeId);
+    
     /**
      * Gets the type definition of an object.
      */

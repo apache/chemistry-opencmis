@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.spi.ExtendedRepositoryService;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 
 /**
@@ -38,7 +39,7 @@ import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
  * 
  * Passes requests to the SPI and handles caching.
  */
-public class RepositoryServiceImpl implements RepositoryService, Serializable {
+public class RepositoryServiceImpl implements RepositoryService, ExtendedRepositoryService, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -122,13 +123,19 @@ public class RepositoryServiceImpl implements RepositoryService, Serializable {
     }
 
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
+        return getTypeDefinition(repositoryId, typeId, extension, true);
+    }
+
+    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension,
+            boolean useCache) {
         TypeDefinition result = null;
         boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
 
         TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
 
-        // if extension is not set, check the cache first
-        if (!hasExtension) {
+        // if the cache should be used and the extension is not set,
+        // check the cache first
+        if (useCache && !hasExtension) {
             result = cache.get(repositoryId, typeId);
             if (result != null) {
                 return result;

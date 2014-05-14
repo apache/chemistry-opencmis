@@ -60,6 +60,15 @@ public class ServerTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    public TypeDefinition reloadTypeDefinition(String typeId) {
+        TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
+        if (type != null) {
+            typeDefinitions.put(type.getId(), type);
+        }
+
+        return type;
+    }
+
     public TypeDefinition getTypeDefinitionForObject(String objectId) {
         TypeDefinition type = objectToTypeDefinitions.get(objectId);
         if (type == null) {

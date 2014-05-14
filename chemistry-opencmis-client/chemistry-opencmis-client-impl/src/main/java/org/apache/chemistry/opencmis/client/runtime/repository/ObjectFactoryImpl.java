@@ -283,6 +283,27 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             }
         }
 
+        // the type might have changed -> reload type definitions
+        if (definition == null) {
+            TypeDefinition reloadedObjectType = session.getTypeDefinition(objectType.getId(), false);
+            definition = (PropertyDefinition<T>) reloadedObjectType.getPropertyDefinitions().get(pd.getId());
+
+            if (definition == null && secondaryTypes != null) {
+                for (SecondaryType secondaryType : secondaryTypes) {
+                    if (secondaryType != null) {
+                        TypeDefinition reloadedSecondaryType = session.getTypeDefinition(secondaryType.getId(), false);
+                        if (reloadedSecondaryType.getPropertyDefinitions() != null) {
+                            definition = (PropertyDefinition<T>) reloadedSecondaryType.getPropertyDefinitions().get(
+                                    pd.getId());
+                            if (definition != null) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (definition == null) {
             // property without definition
             throw new CmisRuntimeException("Property '" + pd.getId() + "' doesn't exist!");
