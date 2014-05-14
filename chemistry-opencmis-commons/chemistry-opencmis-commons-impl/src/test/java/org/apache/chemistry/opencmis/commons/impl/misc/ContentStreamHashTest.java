@@ -19,7 +19,9 @@
 package org.apache.chemistry.opencmis.commons.impl.misc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -56,9 +58,13 @@ public class ContentStreamHashTest {
 
         assertEquals(hash1.getAlgorithm(), hash2.getAlgorithm());
         assertEquals(hash1.getHash(), hash2.getHash());
-        
+
         assertEquals(hash1.getAlgorithm(), hash3.getAlgorithm());
         assertEquals(hash1.getHash(), hash3.getHash());
+
+        assertFalse(hash1.equals(hash2));
+        assertFalse(hash1.equals(hash2));
+        assertTrue(hash2.equals(hash3));
     }
 
     @Test
