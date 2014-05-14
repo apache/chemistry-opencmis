@@ -90,6 +90,28 @@ public class ContentStreamHashImpl implements ContentStreamHash {
         this.propertyValue = "{" + algorithm + "}" + hash;
     }
 
+    /**
+     * Constructs an object from the algorithm and hash.
+     * 
+     * @param algorithm
+     *            the algorithm
+     * @param hashBytes
+     *            the hash value as byte array
+     */
+    public ContentStreamHashImpl(String algorithm, byte[] hashBytes) {
+        if (algorithm == null || algorithm.trim().length() == 0) {
+            throw new IllegalArgumentException("Algorithm must be set!");
+        }
+
+        if (hashBytes == null || hashBytes.length == 0) {
+            throw new IllegalArgumentException("Hash must be set!");
+        }
+
+        this.algorithm = algorithm.toLowerCase(Locale.ENGLISH);
+        this.hash = byteArrayToHexString(hashBytes);
+        this.propertyValue = "{" + algorithm + "}" + hash;
+    }
+
     public String getPropertyValue() {
         return propertyValue;
     }
@@ -139,7 +161,7 @@ public class ContentStreamHashImpl implements ContentStreamHash {
         List<ContentStreamHash> result = new ArrayList<ContentStreamHash>();
 
         for (int i = 0; i < md.length; i++) {
-            result.add(new ContentStreamHashImpl(algorithm[i], byteArrayToHexString(md[i].digest())));
+            result.add(new ContentStreamHashImpl(algorithm[i], md[i].digest()));
         }
 
         return result;
