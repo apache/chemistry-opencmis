@@ -18,12 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 
-import org.apache.chemistry.opencmis.commons.data.Principal;
+import org.apache.chemistry.opencmis.commons.data.MutablePrincipal;
 
 /**
  * AccessControlPrincipalData implementation.
  */
-public class AccessControlPrincipalDataImpl extends AbstractExtensionData implements Principal {
+public class AccessControlPrincipalDataImpl extends AbstractExtensionData implements MutablePrincipal {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,7 +36,10 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
     }
 
     /**
-     * Constructor with principal id.
+     * Constructor with principal ID.
+     * 
+     * @param principalId
+     *            the principal ID
      */
     public AccessControlPrincipalDataImpl(String principalId) {
         this.principalId = principalId;
@@ -46,8 +49,15 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
         return principalId;
     }
 
-    public void setPrincipalId(String principalId) {
+    public void setId(String principalId) {
         this.principalId = principalId;
+    }
+
+    /**
+     * @deprecated use {@link #setId(String)}
+     */
+    public void setPrincipalId(String principalId) {
+        setId(principalId);
     }
 
     @Override

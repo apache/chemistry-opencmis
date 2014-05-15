@@ -1975,8 +1975,7 @@ public class FileShareRepository {
 
         for (Map.Entry<String, Boolean> ue : readWriteUserMap.entrySet()) {
             // create principal
-            AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl();
-            principal.setPrincipalId(ue.getKey());
+            AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl(ue.getKey());
 
             // create ACE
             AccessControlEntryImpl entry = new AccessControlEntryImpl();

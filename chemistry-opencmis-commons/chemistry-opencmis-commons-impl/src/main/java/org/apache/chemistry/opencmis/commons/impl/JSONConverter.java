@@ -1921,7 +1921,7 @@ public final class JSONConverter {
                     if (jsonPrincipal != null) {
                         AccessControlPrincipalDataImpl principal = new AccessControlPrincipalDataImpl();
 
-                        principal.setPrincipalId(getString(jsonPrincipal, JSON_ACE_PRINCIPAL_ID));
+                        principal.setId(getString(jsonPrincipal, JSON_ACE_PRINCIPAL_ID));
 
                         convertExtension(jsonPrincipal, principal, PRINCIPAL_KEYS);
 
