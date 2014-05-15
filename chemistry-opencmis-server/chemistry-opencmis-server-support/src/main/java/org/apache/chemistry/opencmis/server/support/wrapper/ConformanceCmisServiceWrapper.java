@@ -351,18 +351,6 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>VersioningState.MAJOR</code> if <code>value</code> is
-     * {@code null}.
-     */
-    protected VersioningState getDefault(VersioningState value) {
-        if (value == null) {
-            return VersioningState.MAJOR;
-        }
-
-        return value;
-    }
-
-    /**
      * Returns the <code>UnfileObjects.DELETE</code> if <code>value</code> is
      * {@code null}.
      */
@@ -721,7 +709,6 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
         checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
-        versioningState = getDefault(versioningState);
 
         try {
             return getWrappedService().create(repositoryId, properties, folderId, contentStream, versioningState,
@@ -737,7 +724,6 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         checkRepositoryId(repositoryId);
         checkProperties(properties);
         checkProperty(properties, PropertyIds.OBJECT_TYPE_ID, String.class);
-        versioningState = getDefault(versioningState);
 
         try {
             return getWrappedService().createDocument(repositoryId, properties, folderId, contentStream,
@@ -752,7 +738,6 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Source Id", sourceId);
-        versioningState = getDefault(versioningState);
 
         try {
             return getWrappedService().createDocumentFromSource(repositoryId, sourceId, properties, folderId,

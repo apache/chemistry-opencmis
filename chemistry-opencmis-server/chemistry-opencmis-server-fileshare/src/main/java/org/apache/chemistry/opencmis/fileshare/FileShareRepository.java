@@ -438,7 +438,7 @@ public class FileShareRepository {
         }
 
         // check versioning state
-        if (VersioningState.NONE != versioningState) {
+        if (!(VersioningState.NONE == versioningState || versioningState == null)) {
             throw new CmisConstraintException("Versioning not supported!");
         }
 
@@ -504,7 +504,7 @@ public class FileShareRepository {
         checkUser(context, true);
 
         // check versioning state
-        if (VersioningState.NONE != versioningState) {
+        if (!(VersioningState.NONE == versioningState || versioningState == null)) {
             throw new CmisConstraintException("Versioning not supported!");
         }
 
