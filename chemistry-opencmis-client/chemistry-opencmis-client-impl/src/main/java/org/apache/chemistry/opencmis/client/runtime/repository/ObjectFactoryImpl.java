@@ -338,7 +338,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Properties convertProperties(Map<String, ?> properties, ObjectType type,
             Collection<SecondaryType> secondaryTypes, Set<Updatability> updatabilityFilter) {
         // check input
@@ -349,11 +349,14 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         // get the type
         if (type == null) {
             Object typeId = properties.get(PropertyIds.OBJECT_TYPE_ID);
-            if (!(typeId instanceof String)) {
+
+            if (typeId instanceof String) {
+                type = session.getTypeDefinition(typeId.toString());
+            } else if (typeId instanceof List && !((List) typeId).isEmpty() && ((List) typeId).get(0) instanceof String) {
+                type = session.getTypeDefinition(((List) typeId).get(0).toString());
+            } else {
                 throw new IllegalArgumentException("Type or type property must be set!");
             }
-
-            type = session.getTypeDefinition(typeId.toString());
         }
 
         // get secondary types
