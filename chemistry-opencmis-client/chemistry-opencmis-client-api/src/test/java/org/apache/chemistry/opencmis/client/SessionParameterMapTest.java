@@ -33,11 +33,11 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.handler.HandlerResolver;
 
-import org.apache.chemistry.opencmis.client.api.Repository;
-import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -215,14 +215,39 @@ public class SessionParameterMapTest {
         }
     }
 
-    private class TestLocalSessionFactory implements SessionFactory {
+    private class TestLocalSessionFactory implements CmisServiceFactory {
 
-        public Session createSession(Map<String, String> parameters) {
+        @Override
+        public void init(Map<String, String> parameters) {
+        }
+
+        @Override
+        public void destroy() {
+        }
+
+        @Override
+        public CmisService getService(CallContext context) {
             return null;
         }
 
-        public List<Repository> getRepositories(Map<String, String> parameters) {
+        @Override
+        public File getTempDirectory() {
             return null;
+        }
+
+        @Override
+        public boolean encryptTempFiles() {
+            return false;
+        }
+
+        @Override
+        public int getMemoryThreshold() {
+            return 0;
+        }
+
+        @Override
+        public long getMaxContentSize() {
+            return 0;
         }
     }
 }

@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 
 /**
@@ -204,7 +205,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
      * @param serviceFactoryClass
      *            the local service factory class
      */
-    public void setLocalBindingClass(Class<? extends SessionFactory> serviceFactoryClass) {
+    public void setLocalBindingClass(Class<? extends CmisServiceFactory> serviceFactoryClass) {
         if (serviceFactoryClass == null) {
             remove(SessionParameter.BINDING_TYPE);
             remove(SessionParameter.LOCAL_FACTORY);
