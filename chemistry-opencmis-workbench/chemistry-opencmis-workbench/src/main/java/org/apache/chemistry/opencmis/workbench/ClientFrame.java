@@ -202,7 +202,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_QUERY]);
 
-        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Logger", ClientHelper.getIcon("changelog.png"));
+        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Log", ClientHelper.getIcon("changelog.png"));
         toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
         toolbarButton[BUTTON_CHANGELOG].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

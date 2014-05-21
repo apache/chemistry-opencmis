@@ -72,7 +72,7 @@ public class ChangeLogFrame extends JFrame {
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
-        inputPanel.add(new JLabel("Change Logger Token: "), BorderLayout.LINE_START);
+        inputPanel.add(new JLabel("Change Log Token: "), BorderLayout.LINE_START);
 
         changeLogTokenField = new JTextField();
         try {
