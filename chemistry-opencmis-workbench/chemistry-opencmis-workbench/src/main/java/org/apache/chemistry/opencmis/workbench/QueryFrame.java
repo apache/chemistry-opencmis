@@ -453,7 +453,11 @@ public class QueryFrame extends JFrame {
                     } else {
                         sb.append("<br>");
                     }
-                    sb.append(value.toString());
+                    if (value == null) {
+                        sb.append("<i>null</i>");
+                    } else {
+                        ClientHelper.encodeHtml(sb, value.toString());
+                    }
                 }
 
                 result = sb.toString();

@@ -418,6 +418,27 @@ public final class ClientHelper {
         clipboard.setContents(transferable, null);
     }
 
+    public static String encodeHtml(StringBuilder sb, String s) {
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '<') {
+                sb.append("&lt;");
+            } else if (c == '<') {
+                sb.append("&lt;");
+            } else if (c == '"') {
+                sb.append("&quot;");
+            } else if (c == '\'') {
+                sb.append("&apos;");
+            } else if (c > 127) {
+                sb.append("&#" + (int) c + ";");
+            } else {
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
     private static String formatCSVValue(Object value) {
         if (value == null) {
             return "";

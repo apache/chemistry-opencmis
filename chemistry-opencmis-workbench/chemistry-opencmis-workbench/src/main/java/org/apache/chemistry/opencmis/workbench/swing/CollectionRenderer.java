@@ -82,9 +82,16 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
             } else if (o instanceof GregorianCalendar) {
                 sb.append(ClientHelper.getDateString((GregorianCalendar) o));
             } else if (o instanceof Choice<?>) {
-                sb.append(((Choice<?>) o).getValue());
+                Object choiceValue = ((Choice<?>) o).getValue();
+                if (choiceValue == null) {
+                    sb.append("<i>null</i>");
+                } else if (o instanceof GregorianCalendar) {
+                    sb.append(ClientHelper.getDateString((GregorianCalendar) o));
+                } else {
+                    ClientHelper.encodeHtml(sb, choiceValue.toString());
+                }
             } else {
-                sb.append(o.toString());
+                ClientHelper.encodeHtml(sb, o.toString());
             }
             sb.append("</span><br/>");
         }

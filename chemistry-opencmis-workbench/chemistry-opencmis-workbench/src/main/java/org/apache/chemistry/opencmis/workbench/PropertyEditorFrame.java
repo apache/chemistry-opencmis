@@ -273,9 +273,13 @@ public class PropertyEditorFrame extends JFrame {
             JPanel titlePanel = new JPanel();
             titlePanel.setLayout(new BorderLayout());
             titlePanel.setBackground(bgColor);
-            titlePanel.setToolTipText("<html><b>" + propDef.getPropertyType().value() + "</b> ("
-                    + propDef.getCardinality().value() + " value)"
-                    + (propDef.getDescription() != null ? "<br>" + propDef.getDescription() : ""));
+            titlePanel.setToolTipText("<html><b>"
+                    + propDef.getPropertyType().value()
+                    + "</b> ("
+                    + propDef.getCardinality().value()
+                    + " value)"
+                    + (propDef.getDescription() != null ? "<br>"
+                            + ClientHelper.encodeHtml(new StringBuilder(), propDef.getDescription()) : ""));
             add(titlePanel);
 
             JPanel namePanel = new JPanel();
