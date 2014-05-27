@@ -63,7 +63,6 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChoiceImpl;
@@ -829,16 +828,13 @@ public final class TypeDefinitionFactory {
         }
 
         int maxItemsInt = (maxItems == null ? Integer.MAX_VALUE : maxItems.intValue());
-        if (maxItemsInt <= 0) {
-            return result;
+        if (maxItemsInt < 0) {
+            maxItemsInt = 0;
         }
 
         int skipCountInt = (skipCount == null ? 0 : skipCount.intValue());
         if (skipCountInt < 0) {
             skipCountInt = 0;
-        }
-        if (skipCountInt > allTypes.size()) {
-            return result;
         }
 
         boolean includePropertyDefinitionsBool = (includePropertyDefinitions == null ? false
