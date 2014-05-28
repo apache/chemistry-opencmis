@@ -57,7 +57,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
         boolean sendBasicAuth = getSendBasicAuth();
 
-        if (getHandleCookies()) {
+        if (getHandleCookies() && cookieManager == null) {
             cookieManager = new CmisCookieManager(session.getSessionId());
         }
 
