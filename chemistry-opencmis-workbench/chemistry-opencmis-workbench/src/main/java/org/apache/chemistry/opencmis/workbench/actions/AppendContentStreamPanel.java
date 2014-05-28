@@ -66,7 +66,7 @@ public class AppendContentStreamPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_SET_CONTENT_STREAM);
+        return getObject().hasAllowableAction(Action.CAN_SET_CONTENT_STREAM);
     }
 
     @Override

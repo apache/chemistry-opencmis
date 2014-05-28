@@ -126,8 +126,8 @@ public class PropertyEditorFrame extends JFrame {
         // primary type
         for (PropertyDefinition<?> propDef : object.getType().getPropertyDefinitions().values()) {
             boolean isUpdatable = (propDef.getUpdatability() == Updatability.READWRITE)
-                    || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object.getAllowableActions()
-                            .getAllowableActions().contains(Action.CAN_CHECK_IN));
+                    || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object
+                            .hasAllowableAction(Action.CAN_CHECK_IN));
 
             if (isUpdatable) {
                 PropertyInputPanel propertyPanel = new PropertyInputPanel(propDef, object.getPropertyValue(propDef
@@ -145,7 +145,7 @@ public class PropertyEditorFrame extends JFrame {
                     for (PropertyDefinition<?> propDef : secType.getPropertyDefinitions().values()) {
                         boolean isUpdatable = (propDef.getUpdatability() == Updatability.READWRITE)
                                 || (propDef.getUpdatability() == Updatability.WHENCHECKEDOUT && object
-                                        .getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN));
+                                        .hasAllowableAction(Action.CAN_CHECK_IN));
 
                         if (isUpdatable) {
                             PropertyInputPanel propertyPanel = new PropertyInputPanel(propDef,

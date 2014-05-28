@@ -46,7 +46,7 @@ public class AclUpdatePanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_APPLY_ACL);
+        return getObject().hasAllowableAction(Action.CAN_APPLY_ACL);
     }
 
     @Override

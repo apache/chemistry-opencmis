@@ -46,7 +46,7 @@ public class CheckOutPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_OUT);
+        return getObject().hasAllowableAction(Action.CAN_CHECK_OUT);
     }
 
     @Override

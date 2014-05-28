@@ -64,7 +64,7 @@ public class RemovePolicyPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_REMOVE_POLICY);
+        return getObject().hasAllowableAction(Action.CAN_REMOVE_POLICY);
     }
 
     @Override

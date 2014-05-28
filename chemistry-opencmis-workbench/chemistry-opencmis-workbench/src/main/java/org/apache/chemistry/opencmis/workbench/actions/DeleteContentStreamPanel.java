@@ -46,7 +46,7 @@ public class DeleteContentStreamPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_DELETE_CONTENT_STREAM);
+        return getObject().hasAllowableAction(Action.CAN_DELETE_CONTENT_STREAM);
     }
 
     @Override

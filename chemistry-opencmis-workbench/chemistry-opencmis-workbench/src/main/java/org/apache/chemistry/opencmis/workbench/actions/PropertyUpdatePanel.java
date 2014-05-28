@@ -46,7 +46,7 @@ public class PropertyUpdatePanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES);
+        return getObject().hasAllowableAction(Action.CAN_UPDATE_PROPERTIES);
     }
 
     @Override

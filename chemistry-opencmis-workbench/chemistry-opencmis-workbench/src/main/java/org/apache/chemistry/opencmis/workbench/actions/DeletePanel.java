@@ -51,7 +51,7 @@ public class DeletePanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_DELETE_OBJECT);
+        return getObject().hasAllowableAction(Action.CAN_DELETE_OBJECT);
     }
 
     @Override

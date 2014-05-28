@@ -41,10 +41,7 @@ public class PropertyTable extends AbstractDetailsTable {
 
     @Override
     public void doubleClickAction(MouseEvent e, int rowIndex) {
-        AllowableActions aa = getObject().getAllowableActions();
-
-        if ((aa == null) || (aa.getAllowableActions() == null)
-                || aa.getAllowableActions().contains(Action.CAN_UPDATE_PROPERTIES)) {
+        if (getObject().hasAllowableAction(Action.CAN_UPDATE_PROPERTIES)) {
             new PropertyEditorFrame(getClientModel(), getObject());
         }
     }

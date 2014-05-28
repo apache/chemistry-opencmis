@@ -64,7 +64,11 @@ public class VersionTable extends AbstractDetailsTable {
         if (getObject() instanceof Document) {
             final Document doc = (Document) getObject();
 
-            if (doc.getAllowableActions().getAllowableActions().contains(Action.CAN_GET_ALL_VERSIONS)) {
+            boolean fetchVersions = (getObject().getAllowableActions() == null)
+                    || (getObject().getAllowableActions().getAllowableActions() == null)
+                    || doc.hasAllowableAction(Action.CAN_GET_ALL_VERSIONS);
+            
+            if (fetchVersions) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {

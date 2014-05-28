@@ -64,7 +64,7 @@ public class ApplyPolicyPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_APPLY_POLICY);
+        return getObject().hasAllowableAction(Action.CAN_APPLY_POLICY);
     }
 
     @Override

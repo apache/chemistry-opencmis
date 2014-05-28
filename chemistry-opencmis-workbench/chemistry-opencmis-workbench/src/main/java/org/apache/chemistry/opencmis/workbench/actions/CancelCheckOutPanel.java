@@ -46,7 +46,7 @@ public class CancelCheckOutPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_CANCEL_CHECK_OUT);
+        return getObject().hasAllowableAction(Action.CAN_CANCEL_CHECK_OUT);
     }
 
     @Override

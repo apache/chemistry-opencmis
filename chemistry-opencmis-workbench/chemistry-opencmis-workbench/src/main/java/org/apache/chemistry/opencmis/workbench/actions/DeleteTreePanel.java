@@ -67,7 +67,7 @@ public class DeleteTreePanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_DELETE_TREE);
+        return getObject().hasAllowableAction(Action.CAN_DELETE_TREE);
     }
 
     @Override

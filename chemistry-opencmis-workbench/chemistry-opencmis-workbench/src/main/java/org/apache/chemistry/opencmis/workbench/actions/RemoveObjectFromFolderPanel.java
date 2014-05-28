@@ -78,7 +78,7 @@ public class RemoveObjectFromFolderPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
+        return getObject().hasAllowableAction(Action.CAN_REMOVE_OBJECT_FROM_FOLDER);
     }
 
     @Override

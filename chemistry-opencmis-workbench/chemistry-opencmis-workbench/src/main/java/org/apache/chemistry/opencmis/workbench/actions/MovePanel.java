@@ -66,7 +66,7 @@ public class MovePanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_MOVE_OBJECT);
+        return getObject().hasAllowableAction(Action.CAN_MOVE_OBJECT);
     }
 
     @Override

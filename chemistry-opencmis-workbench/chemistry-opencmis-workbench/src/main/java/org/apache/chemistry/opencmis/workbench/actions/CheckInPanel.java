@@ -61,7 +61,7 @@ public class CheckInPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_CHECK_IN);
+        return getObject().hasAllowableAction(Action.CAN_CHECK_IN);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class AddObjectToFolderPanel extends ActionPanel {
             return true;
         }
 
-        return getObject().getAllowableActions().getAllowableActions().contains(Action.CAN_ADD_OBJECT_TO_FOLDER);
+        return getObject().hasAllowableAction(Action.CAN_ADD_OBJECT_TO_FOLDER);
     }
 
     @Override
