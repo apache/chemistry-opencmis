@@ -967,6 +967,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 f = createResult(FAILURE, "Object has no CAN_GET_PROPERTIES allowable action!");
                 addResult(results, assertAllowableAction(object, Action.CAN_GET_PROPERTIES, null, f));
+                addResult(results, assertIsTrue(object.hasAllowableAction(Action.CAN_GET_PROPERTIES), null, f));
 
                 if (object instanceof Document) {
                     if (actions.contains(Action.CAN_CHECK_OUT) && actions.contains(Action.CAN_CHECK_IN)) {

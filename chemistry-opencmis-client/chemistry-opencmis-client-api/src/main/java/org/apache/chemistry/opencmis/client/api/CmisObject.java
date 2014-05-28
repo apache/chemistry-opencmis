@@ -20,12 +20,14 @@ package org.apache.chemistry.opencmis.client.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
@@ -44,6 +46,22 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     AllowableActions getAllowableActions();
 
     /**
+     * Returns if a given action in the Allowable Actions.
+     * 
+     * @param action
+     *            the action to test, must not be {@code null}
+     * @return {@code true} if the action was found in the Allowable Actions,
+     *         {@code false} if the action was not found in the Allowable
+     *         Actions
+     * @throws IllegalStateException
+     *             if the Allowable Actions haven't been fetched or provided by
+     *             the repository
+     * 
+     * @cmis 1.0
+     */
+    boolean hasAllowableAction(Action action);
+
+    /**
      * Returns the relationships if they have been fetched for this object.
      * 
      * @cmis 1.0
@@ -56,6 +74,20 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * @cmis 1.0
      */
     Acl getAcl();
+
+    /**
+     * Returns all permissions for the given user from the ACL.
+     * 
+     * @param principalId
+     *            the principal ID, must not be {@code null}
+     * @return the set of permissions for this user, or an empty set if
+     *         principal is not in the ACL
+     * @throws IllegalStateException
+     *             if the ACL hasn't been fetched or provided by the repository
+     * 
+     * @cmis 1.0
+     */
+    Set<String> getPermissonsForPrincipal(String principalId);
 
     // object service
 

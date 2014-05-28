@@ -25,6 +25,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
@@ -527,6 +529,19 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    public boolean hasAllowableAction(Action action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action must be set!");
+        }
+
+        AllowableActions currentAllowableActions = getAllowableActions();
+        if (currentAllowableActions == null || currentAllowableActions.getAllowableActions() == null) {
+            throw new IllegalStateException("Allowable Actions are not available!");
+        }
+
+        return currentAllowableActions.getAllowableActions().contains(action);
+    }
+
     // --- renditions ---
 
     public List<Rendition> getRenditions() {
@@ -576,6 +591,32 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         } finally {
             readUnlock();
         }
+    }
+
+    public Set<String> getPermissonsForPrincipal(String principalId) {
+        if (principalId == null) {
+            throw new IllegalArgumentException("Principal must be set!");
+        }
+
+        Acl currentAcl = getAcl();
+
+        if (currentAcl == null) {
+            throw new IllegalStateException("ACLs are not available!");
+        }
+
+        if (acl.getAces() == null || acl.getAces().isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        HashSet<String> result = new HashSet<String>();
+
+        for (Ace ace : acl.getAces()) {
+            if (principalId.equals(ace.getPrincipalId()) && ace.getPermissions() != null) {
+                result.addAll(ace.getPermissions());
+            }
+        }
+
+        return result;
     }
 
     // --- policies ---

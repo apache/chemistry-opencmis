@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -38,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
@@ -79,6 +81,10 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public Acl getAcl() {
         return null;
     }
+    
+    public Set<String> getPermissonsForPrincipal(String principalId) {
+        return null;
+    }
 
     public Acl getAcl(boolean onlyBasicPermissions) {
         return null;
@@ -86,6 +92,10 @@ public class CmisObjectMock implements CmisObject, Serializable {
 
     public AllowableActions getAllowableActions() {
         return null;
+    }
+    
+    public boolean hasAllowableAction(Action action) {
+        return false;
     }
 
     public ObjectType getBaseType() {
