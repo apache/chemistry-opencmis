@@ -203,8 +203,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     public String loadLink(String repositoryId, String id, String rel, String type) {
         String link = getLink(repositoryId, id, rel, type);
         if (link == null) {
-            getObjectInternal(repositoryId, IdentifierType.ID, id, ReturnVersion.THIS, null, null, null, null, null,
-                    null, null);
+            getObjectInternal(repositoryId, IdentifierType.ID, id, ReturnVersion.THIS, "cmis:objectId", Boolean.FALSE,
+                    IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
             link = getLink(repositoryId, id, rel, type);
         }
 
