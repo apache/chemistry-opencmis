@@ -588,6 +588,10 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             throw new IllegalArgumentException("Object data is null!");
         }
 
+        if (objectData.getBaseTypeId() == null) {
+            throw new IllegalArgumentException("Base type ID property not set!");
+        }
+        
         ObjectType type = getTypeFromObjectData(objectData);
 
         /* determine type */
