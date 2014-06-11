@@ -440,6 +440,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             f = createResult(FAILURE, "Document name does not match!", false);
             addResult(assertEquals(name, result.getName(), null, f));
 
+            // check content length
+            f = createResult(WARNING, "Content length does not match!", false);
+            addResult(assertEquals((long) contentBytes.length, result.getContentStreamLength(), null, f));
+
             // check the new document
             addResult(checkObject(session, result, getAllProperties(result), "New document object spec compliance"));
 

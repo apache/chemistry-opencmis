@@ -646,6 +646,14 @@ public class ObjectService {
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 setStatus(request, response, HttpServletResponse.SC_PARTIAL_CONTENT);
+
+                if (content.getBigLength() != null && content.getBigLength().signum() == 1) {
+                    BigInteger firstBytePos = (offset == null ? BigInteger.ZERO : offset);
+                    BigInteger lastBytePos = firstBytePos.add(content.getBigLength().subtract(BigInteger.ONE));
+
+                    response.setHeader("Content-Range",
+                            "bytes " + firstBytePos.toString() + "-" + lastBytePos.toString() + "/*");
+                }
             }
             response.setContentType(contentType);
 

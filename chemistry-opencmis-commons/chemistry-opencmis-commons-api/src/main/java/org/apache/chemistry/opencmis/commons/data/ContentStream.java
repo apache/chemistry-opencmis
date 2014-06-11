@@ -27,14 +27,14 @@ import java.math.BigInteger;
 public interface ContentStream extends ExtensionsData {
 
     /**
-     * Returns the length of stream.
+     * Returns the length of the stream.
      * 
      * @return the length of the stream in bytes or -1 if the length is unknown
      */
     long getLength();
 
     /**
-     * Returns the length of stream.
+     * Returns the length of the stream.
      * 
      * @return the length of the stream in bytes or {@code null} if the length
      *         is unknown

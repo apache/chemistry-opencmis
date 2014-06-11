@@ -60,11 +60,17 @@ public class ContentRangesTest extends AbstractSessionTest {
 
             String excerpt;
             ContentStream content;
+            long contentLength = doc.getContentStreamLength();
 
             // no offset, no length -> full content
             try {
                 content = doc.getContentStream(null, null);
                 excerpt = getStringFromContentStream(content);
+
+                if (contentLength > -1 && content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=null, length=null}!", false);
+                    addResult(assertEquals(contentLength, content.getLength(), null, f));
+                }
 
                 if (CONTENT.equals(excerpt)) {
                     addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(FAILURE,
@@ -83,6 +89,11 @@ public class ContentRangesTest extends AbstractSessionTest {
                 content = doc.getContentStream(BigInteger.ZERO, null);
                 excerpt = getStringFromContentStream(content);
 
+                if (contentLength > -1 && content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=0, length=null}!", false);
+                    addResult(assertEquals(contentLength, content.getLength(), null, f));
+                }
+
                 if (CONTENT.equals(excerpt)) {
                     addResult(assertIsFalse(content instanceof PartialContentStream, null, createResult(WARNING,
                             "Retrieved stream is marked as partial stream "
@@ -99,6 +110,11 @@ public class ContentRangesTest extends AbstractSessionTest {
             try {
                 content = doc.getContentStream(BigInteger.valueOf(3), null);
                 excerpt = getStringFromContentStream(content);
+
+                if (contentLength > -1 && content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=3, length=null}!", false);
+                    addResult(assertEquals(contentLength - 3, content.getLength(), null, f));
+                }
 
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
@@ -122,6 +138,11 @@ public class ContentRangesTest extends AbstractSessionTest {
                 content = doc.getContentStream(null, BigInteger.valueOf(12));
                 excerpt = getStringFromContentStream(content);
 
+                if (content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=null, length=12}!", false);
+                    addResult(assertEquals(12L, content.getLength(), null, f));
+                }
+
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=null, length=12}! Content ranges supported?"));
@@ -144,6 +165,11 @@ public class ContentRangesTest extends AbstractSessionTest {
                 content = doc.getContentStream(BigInteger.valueOf(5), BigInteger.valueOf(17));
                 excerpt = getStringFromContentStream(content);
 
+                if (content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=5, length=17}!", false);
+                    addResult(assertEquals((long) (17 - 5), content.getLength(), null, f));
+                }
+
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
                             "Retrieved full stream instead of an excerpt {offset=5, length=17}! Content ranges supported?"));
@@ -165,6 +191,11 @@ public class ContentRangesTest extends AbstractSessionTest {
             try {
                 content = doc.getContentStream(BigInteger.valueOf(9), BigInteger.valueOf(123));
                 excerpt = getStringFromContentStream(content);
+
+                if (content.getLength() > -1) {
+                    f = createResult(WARNING, "Content length does not match {offset=9, length=123}!", false);
+                    addResult(assertEquals((long) (CONTENT.length() - 9), content.getLength(), null, f));
+                }
 
                 if (CONTENT.equals(excerpt)) {
                     addResult(createResult(WARNING,
