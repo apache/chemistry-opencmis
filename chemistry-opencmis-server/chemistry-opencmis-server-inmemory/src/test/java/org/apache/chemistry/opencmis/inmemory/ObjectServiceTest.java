@@ -29,6 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +63,7 @@ import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -81,9 +84,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDef
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
-import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.RenditionUtil;
-import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoredObjectImpl;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
@@ -208,7 +209,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         }
 
         try {
-            createDocumentNoCatch("/(%#$a����", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
+            createDocumentNoCatch("/(%#$a������������", fRootFolderId, DOCUMENT_TYPE_ID, VersioningState.NONE, false);
             fail("Document creation with ilegal name should fail.");
         } catch (Exception e) {
             assertTrue(e instanceof CmisInvalidArgumentException);
@@ -241,7 +242,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
 
         try {
             createFolderNoCatch(
-                    "/(%#$���������������������������������������������������������������������������������",
+                    "/(%#$���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������",
                     fRootFolderId, FOLDER_TYPE_ID);
             fail("Folder creation with ilegal name should fail.");
         } catch (Exception e) {
@@ -931,10 +932,10 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("starting testGetObjectByPath() with specal chars...");
         log.info("  creating object");
 
-        String docID = createDocument("H��nschen", fRootFolderId, false);
+        String docID = createDocument("H������nschen", fRootFolderId, false);
         log.info("  getting object by path with special chars");
         try {
-            ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H��nschen", "*", false,
+            ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H������nschen", "*", false,
                     IncludeRelationships.NONE, null, false, false, null);
             assertNotNull(res);
             assertNotNull(res.getId());
@@ -1137,6 +1138,59 @@ public class ObjectServiceTest extends AbstractServiceTest {
         fObjSvc.deleteObject(fRepositoryId, id, true, null);
 
         log.info("... testAppendContent() finished.");
+    }
+
+    @Test
+    public void testGetPartialContent() throws IOException, UnsupportedEncodingException {
+        log.info("starting testGetPartialContent() ...");
+        final String STREAM_NAME  = "data.txt";
+        final String MIME_TYPE = "text/plain";
+        // append content again in a second call
+
+        ContentStreamDataImpl content = new ContentStreamDataImpl(-1);
+        content.setFileName(STREAM_NAME);
+        content.setMimeType(MIME_TYPE);
+
+        String prefix = "################ ~~~~This is a completeley irrelevant prefix header. ~~~~ ################";
+		String main = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.";
+        String postfix = "################ ~~~~POSTFIX Please ignore POSTFIX POSTFIX POSTFIX ~~~~ ################";
+
+        ByteArrayOutputStream ba = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(ba); 
+        printStream.println(prefix);
+        printStream.println(main);
+        printStream.println(postfix);
+
+        content.setContent(new ByteArrayInputStream(ba.toByteArray()));
+        
+        // Create document with content
+        Properties props = createDocumentProperties("PartialContentTest", BaseTypeId.CMIS_DOCUMENT.value());
+        String id = fObjSvc.createDocument(fRepositoryId, props, fRootFolderId, content, VersioningState.NONE, null,
+                null, null, null);
+        if (id != null) {
+            log.info("createDocument succeeded with created id: " + id);
+        }
+        
+        int offset = prefix.length() + 1; // +1 for \n
+        int length = main.length();
+		ContentStream readContent = fObjSvc.getContentStream(fRepositoryId, id, null,
+				BigInteger.valueOf(offset), BigInteger.valueOf(length), null);
+		
+        assertEquals(MIME_TYPE, readContent.getMimeType());
+        assertEquals(STREAM_NAME, readContent.getFileName());
+        assertEquals(length, readContent.getBigLength().longValue());
+
+        byte[] bytesRead = new byte[10240];
+        InputStream is = readContent.getStream();
+        int lengthRead = is.read(bytesRead);
+        String result = new String(bytesRead, 0, lengthRead, "UTF-8");
+        assertEquals(length, lengthRead);
+        assertEquals(main, result);
+        
+        // cleanup
+        fObjSvc.deleteObject(fRepositoryId, id, true, null);
+
+        log.info("... testGetPartialContent() finished.");
     }
 
     @Test

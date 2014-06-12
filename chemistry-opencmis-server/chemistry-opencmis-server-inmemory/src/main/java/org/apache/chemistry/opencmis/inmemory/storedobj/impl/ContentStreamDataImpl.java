@@ -229,11 +229,11 @@ public class ContentStreamDataImpl implements LastModifiedContentStream {
     public ContentStream getCloneWithLimits(long offset, long length) {
         ContentStreamDataImpl clone = new ContentStreamDataImpl(0, doNotStoreContent);
         clone.fFileName = fFileName;
-        clone.fLength = fLength;
+        clone.fLength = length < 0 ? fLength : Math.min(fLength, length);
         clone.fContent = fContent;
         clone.fMimeType = fMimeType;
         clone.fStreamLimitOffset = offset;
-        clone.fStreamLimitLength = length;
+        clone.fStreamLimitLength = clone.fLength;
         clone.fLastModified = fLastModified;
         return clone;
     }
