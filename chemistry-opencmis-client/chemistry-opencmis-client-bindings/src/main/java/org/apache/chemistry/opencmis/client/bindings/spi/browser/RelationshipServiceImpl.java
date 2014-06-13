@@ -57,6 +57,7 @@ public class RelationshipServiceImpl extends AbstractBrowserBindingService imple
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);

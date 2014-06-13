@@ -112,7 +112,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CHECK_IN, contentStream);
         formData.addParameter(Constants.PARAM_MAJOR, major);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addParameter(Constants.PARAM_CHECKIN_COMMENT, checkinComment);
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
@@ -149,6 +149,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RETURN_VERSION,
                 (major == null || Boolean.FALSE.equals(major) ? ReturnVersion.LATEST : ReturnVersion.LASTESTMAJOR));
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -167,6 +168,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RETURN_VERSION,
                 (major == null || Boolean.FALSE.equals(major) ? ReturnVersion.LATEST : ReturnVersion.LASTESTMAJOR));
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -187,6 +189,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_ALLOWABLE_ACTIONS, includeAllowableActions);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);

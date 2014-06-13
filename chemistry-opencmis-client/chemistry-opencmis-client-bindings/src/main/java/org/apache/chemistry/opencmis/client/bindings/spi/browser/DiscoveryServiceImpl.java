@@ -64,6 +64,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
         formData.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         formData.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         formData.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        formData.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
         // Important: No succinct flag here!!!
 
         // send and parse

@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
@@ -103,7 +104,7 @@ public final class TypeUtils {
         }
 
         Writer writer = new BufferedWriter(new OutputStreamWriter(stream, IOUtils.UTF8));
-        JSONConverter.convert(type).writeJSONString(writer);
+        JSONConverter.convert(type, DateTimeFormat.SIMPLE).writeJSONString(writer);
         writer.flush();
     }
 

@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -63,6 +64,7 @@ public class VersioningService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> checkOutId = new Holder<String>(objectId);
@@ -76,7 +78,7 @@ public class VersioningService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             // set headers
             setStatus(request, response, HttpServletResponse.SC_CREATED);
@@ -131,6 +133,7 @@ public class VersioningService {
             String checkinComment = getStringParameter(request, PARAM_CHECKIN_COMMENT);
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -155,7 +158,7 @@ public class VersioningService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             // set headers
             setStatus(request, response, HttpServletResponse.SC_CREATED);
@@ -185,6 +188,7 @@ public class VersioningService {
             String filter = getStringParameter(request, PARAM_FILTER);
             Boolean includeAllowableActions = getBooleanParameter(request, PARAM_ALLOWABLE_ACTIONS);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
@@ -197,8 +201,8 @@ public class VersioningService {
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONArray jsonVersions = new JSONArray();
             for (ObjectData version : versions) {
-                jsonVersions
-                        .add(JSONConverter.convert(version, typeCache, JSONConverter.PropertyMode.OBJECT, succinct));
+                jsonVersions.add(JSONConverter.convert(version, typeCache, JSONConverter.PropertyMode.OBJECT, succinct,
+                        dateTimeFormat));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);

@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -79,6 +80,7 @@ public class NavigationService {
             BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
             BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
@@ -90,7 +92,7 @@ public class NavigationService {
             }
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
-            JSONObject jsonChildren = JSONConverter.convert(children, typeCache, succinct);
+            JSONObject jsonChildren = JSONConverter.convert(children, typeCache, succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonChildren, request, response);
@@ -119,6 +121,7 @@ public class NavigationService {
             String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
             Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
@@ -131,7 +134,7 @@ public class NavigationService {
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONArray jsonDescendants = new JSONArray();
             for (ObjectInFolderContainer descendant : descendants) {
-                jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
+                jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct, dateTimeFormat));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -161,6 +164,7 @@ public class NavigationService {
             String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
             Boolean includePathSegment = getBooleanParameter(request, PARAM_PATH_SEGMENT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
@@ -173,7 +177,7 @@ public class NavigationService {
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONArray jsonDescendants = new JSONArray();
             for (ObjectInFolderContainer descendant : folderTree) {
-                jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct));
+                jsonDescendants.add(JSONConverter.convert(descendant, typeCache, succinct, dateTimeFormat));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -197,6 +201,7 @@ public class NavigationService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectData parent = service.getFolderParent(repositoryId, objectId, filter, null);
@@ -207,7 +212,7 @@ public class NavigationService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(parent, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonObject, request, response);
@@ -235,6 +240,7 @@ public class NavigationService {
             String renditionFilter = getStringParameter(request, PARAM_RENDITION_FILTER);
             Boolean includeRelativePathSegment = getBooleanParameter(request, PARAM_RELATIVE_PATH_SEGMENT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
@@ -247,7 +253,7 @@ public class NavigationService {
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONArray jsonParents = new JSONArray();
             for (ObjectParentData parent : parents) {
-                jsonParents.add(JSONConverter.convert(parent, typeCache, succinct));
+                jsonParents.add(JSONConverter.convert(parent, typeCache, succinct, dateTimeFormat));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -278,6 +284,7 @@ public class NavigationService {
             BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
             BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectList checkedout = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
@@ -289,7 +296,7 @@ public class NavigationService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonCheckedOut = JSONConverter.convert(checkedout, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonCheckedOut, request, response);

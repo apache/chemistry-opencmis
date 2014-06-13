@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
@@ -34,6 +35,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -79,6 +81,7 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     private BindingSession session;
     private boolean succint;
+    private DateTimeFormat dateTimeFormat;
 
     /**
      * Sets the current session.
@@ -88,6 +91,10 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
         Object succintObj = session.get(SessionParameter.BROWSER_SUCCINCT);
         this.succint = (succintObj == null ? true : Boolean.parseBoolean(succintObj.toString()));
+
+        Object dateTimeFormatObj = session.get(SessionParameter.BROWSER_DATETIME_FORMAT);
+        this.dateTimeFormat = (dateTimeFormatObj == null ? DateTimeFormat.SIMPLE : DateTimeFormat
+                .fromValue(dateTimeFormatObj.toString().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
@@ -197,6 +204,14 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     protected String getSuccinctParameter() {
         return succint ? "true" : null;
+    }
+
+    protected DateTimeFormat getDateTimeFormat() {
+        return dateTimeFormat;
+    }
+
+    protected String getDateTimeFormatParameter() {
+        return dateTimeFormat == null || dateTimeFormat == DateTimeFormat.SIMPLE ? null : dateTimeFormat.value();
     }
 
     // ---- exceptions ----

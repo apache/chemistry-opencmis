@@ -63,6 +63,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -85,6 +86,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -107,6 +109,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_PATH_SEGMENT, includePathSegment);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -128,6 +131,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_RENDITION_FILTER, renditionFilter);
         url.addParameter(Constants.PARAM_RELATIVE_PATH_SEGMENT, includeRelativePathSegment);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -143,6 +147,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         UrlBuilder url = getObjectUrl(repositoryId, folderId, Constants.SELECTOR_PARENT);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -167,6 +172,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);

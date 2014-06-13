@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
@@ -358,7 +359,8 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         StringWriter sw = new StringWriter();
 
-        JSONObject jsonObject = JSONConverter.convert(data, typeCache, JSONConverter.PropertyMode.CHANGE, false);
+        JSONObject jsonObject = JSONConverter.convert(data, typeCache, JSONConverter.PropertyMode.CHANGE, false,
+                DateTimeFormat.SIMPLE);
         jsonObject.writeJSONString(sw);
 
         // test toJSONString()
@@ -394,7 +396,8 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(children, typeCache, JSONConverter.PropertyMode.CHANGE, false).writeJSONString(sw);
+        JSONConverter.convert(children, typeCache, JSONConverter.PropertyMode.CHANGE, false, DateTimeFormat.SIMPLE)
+                .writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);
@@ -419,7 +422,7 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(children, typeCache, false).writeJSONString(sw);
+        JSONConverter.convert(children, typeCache, false, DateTimeFormat.SIMPLE).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);
@@ -449,7 +452,7 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(container, typeCache, false).writeJSONString(sw);
+        JSONConverter.convert(container, typeCache, false, DateTimeFormat.EXTENDED).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -55,6 +56,7 @@ public class MultiFilingService {
             String folderId = getStringParameter(request, PARAM_FOLDER_ID);
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -74,7 +76,7 @@ public class MultiFilingService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
@@ -96,6 +98,7 @@ public class MultiFilingService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String folderId = getStringParameter(request, PARAM_FOLDER_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -115,7 +118,7 @@ public class MultiFilingService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }

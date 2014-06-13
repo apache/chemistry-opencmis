@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.TypeCache;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -376,15 +377,23 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             break;
         case DATETIME:
             List<GregorianCalendar> calValues = new ArrayList<GregorianCalendar>(strValues.size());
-            try {
-                for (String s : strValues) {
-                    GregorianCalendar cal = new GregorianCalendar();
-                    cal.setTimeInMillis(Long.parseLong(s));
-                    calValues.add(cal);
+            for (String s : strValues) {
+                GregorianCalendar cal;
+                try {
+                    long timestamp = Long.parseLong(s);
+                    cal = new GregorianCalendar();
+                    cal.setTimeInMillis(timestamp);
+                } catch (NumberFormatException e) {
+                    cal = DateTimeHelper.parseXmlDateTime(s);
                 }
-            } catch (NumberFormatException e) {
-                throw new CmisInvalidArgumentException(propDef.getId() + " value is not an datetime value!", e);
+
+                if (cal == null) {
+                    throw new CmisInvalidArgumentException(propDef.getId() + " value is not an datetime value!");
+                }
+
+                calValues.add(cal);
             }
+
             propertyData = new PropertyDateTimeImpl(propDef.getId(), calValues);
             break;
         case HTML:

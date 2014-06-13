@@ -91,6 +91,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
         url.addParameter(Constants.PARAM_MAX_ITEMS, maxItems);
         url.addParameter(Constants.PARAM_SKIP_COUNT, skipCount);
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -106,6 +107,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         url.addParameter(Constants.PARAM_TYPE_ID, typeId);
         url.addParameter(Constants.PARAM_DEPTH, depth);
         url.addParameter(Constants.PARAM_PROPERTY_DEFINITIONS, includePropertyDefinitions);
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -121,7 +123,8 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_TYPE);
         if (type != null) {
-            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type).toJSONString());
+            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type, getDateTimeFormat())
+                    .toJSONString());
         }
 
         // send
@@ -143,7 +146,8 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_TYPE);
         if (type != null) {
-            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type).toJSONString());
+            formData.addParameter(Constants.CONTROL_TYPE, JSONConverter.convert(type, getDateTimeFormat())
+                    .toJSONString());
         }
 
         // send

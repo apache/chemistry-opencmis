@@ -32,7 +32,9 @@ import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeTok
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -67,7 +69,7 @@ public final class FormDataWriter {
         parameters.put(name, UrlBuilder.normalizeParameter(value));
     }
 
-    public void addPropertiesParameters(Properties properties) {
+    public void addPropertiesParameters(Properties properties, DateTimeFormat dateTimeFormat) {
         if (properties == null) {
             return;
         }
@@ -83,12 +85,14 @@ public final class FormDataWriter {
 
             if (prop.getValues() != null && prop.getValues().size() > 0) {
                 if (prop.getValues().size() == 1) {
-                    addParameter(Constants.CONTROL_PROP_VALUE + idxStr, convertPropertyValue(prop.getFirstValue()));
+                    addParameter(Constants.CONTROL_PROP_VALUE + idxStr,
+                            convertPropertyValue(prop.getFirstValue(), dateTimeFormat));
                 } else {
                     int vidx = 0;
                     for (Object obj : prop.getValues()) {
                         String vidxStr = "[" + vidx + "]";
-                        addParameter(Constants.CONTROL_PROP_VALUE + idxStr + vidxStr, convertPropertyValue(obj));
+                        addParameter(Constants.CONTROL_PROP_VALUE + idxStr + vidxStr,
+                                convertPropertyValue(obj, dateTimeFormat));
                         vidx++;
                     }
                 }
@@ -197,13 +201,17 @@ public final class FormDataWriter {
         }
     }
 
-    private String convertPropertyValue(Object value) {
+    private String convertPropertyValue(Object value, DateTimeFormat dateTimeFormat) {
         if (value == null) {
             return null;
         }
 
         if (value instanceof GregorianCalendar) {
-            return "" + ((GregorianCalendar) value).getTimeInMillis();
+            if (dateTimeFormat == DateTimeFormat.EXTENDED) {
+                return DateTimeHelper.formatXmlDateTime((GregorianCalendar) value);
+            } else {
+                return String.valueOf(((GregorianCalendar) value).getTimeInMillis());
+            }
         }
 
         return value.toString();

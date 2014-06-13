@@ -75,7 +75,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT, contentStream);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
@@ -107,7 +107,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT_FROM_SOURCE);
         formData.addParameter(Constants.PARAM_SOURCE_ID, sourceId);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addParameter(Constants.PARAM_VERSIONIG_STATE, versioningState);
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
@@ -137,7 +137,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_FOLDER);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
@@ -166,7 +166,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_RELATIONSHIP);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
@@ -195,7 +195,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_POLICY);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
@@ -224,7 +224,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_ITEM);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addPoliciesParameters(policies);
         formData.addAddAcesParameters(addAces);
         formData.addRemoveAcesParameters(removeAces);
@@ -269,6 +269,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
         url.addParameter(Constants.PARAM_ACL, includeAcl);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -291,6 +292,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         url.addParameter(Constants.PARAM_POLICY_IDS, includePolicyIds);
         url.addParameter(Constants.PARAM_ACL, includeAcl);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -306,6 +308,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_PROPERTIES);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);
@@ -384,7 +387,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_PROPERTIES);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
         formData.addSuccinctFlag(getSuccinct());
 
@@ -423,7 +426,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_BULK_UPDATE);
         formData.addObjectIdsAndChangeTokens(objectIdAndChangeToken);
-        formData.addPropertiesParameters(properties);
+        formData.addPropertiesParameters(properties, getDateTimeFormat());
         formData.addSecondaryTypeIds(addSecondaryTypeIds);
         formData.removeSecondaryTypeIds(removeSecondaryTypeIds);
 

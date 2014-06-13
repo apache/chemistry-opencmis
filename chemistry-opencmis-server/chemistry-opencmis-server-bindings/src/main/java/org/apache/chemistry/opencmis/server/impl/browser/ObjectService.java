@@ -53,6 +53,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -95,6 +96,7 @@ public class ObjectService {
             VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -118,7 +120,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -146,6 +148,7 @@ public class ObjectService {
             VersioningState versioningState = getEnumParameter(request, PARAM_VERSIONIG_STATE, VersioningState.class);
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -171,7 +174,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -197,6 +200,7 @@ public class ObjectService {
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -212,7 +216,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -238,6 +242,7 @@ public class ObjectService {
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -253,7 +258,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -279,6 +284,7 @@ public class ObjectService {
             String folderId = ((BrowserCallContextImpl) context).getObjectId();
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -294,7 +300,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -319,6 +325,7 @@ public class ObjectService {
             // get parameters
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -334,7 +341,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             setStatus(request, response, HttpServletResponse.SC_CREATED);
             setCookie(request, response, repositoryId, token,
@@ -362,6 +369,7 @@ public class ObjectService {
             String changeToken = getStringParameter(request, Constants.CONTROL_CHANGE_TOKEN);
             String token = getStringParameter(request, PARAM_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ControlParser cp = new ControlParser(request);
@@ -381,7 +389,7 @@ public class ObjectService {
 
             // return object
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             int status = HttpServletResponse.SC_OK;
             if (!objectId.equals(newObjectId)) {
@@ -471,6 +479,7 @@ public class ObjectService {
             ReturnVersion returnVersion = getEnumParameter(request, PARAM_RETURN_VERSION, ReturnVersion.class);
             String filter = getStringParameter(request, PARAM_FILTER);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Properties properties;
@@ -489,7 +498,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(properties, objectId, typeCache,
-                    JSONConverter.PropertyMode.OBJECT, succinct);
+                    JSONConverter.PropertyMode.OBJECT, succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonObject, request, response);
@@ -519,6 +528,7 @@ public class ObjectService {
             Boolean includePolicyIds = getBooleanParameter(request, PARAM_POLICY_IDS);
             Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectData object;
@@ -539,7 +549,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonObject, request, response);
@@ -755,6 +765,7 @@ public class ObjectService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -773,7 +784,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
@@ -796,6 +807,7 @@ public class ObjectService {
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
             Boolean overwriteFlag = getBooleanParameter(request, Constants.PARAM_OVERWRITE_FLAG);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -823,7 +835,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
@@ -846,6 +858,7 @@ public class ObjectService {
             boolean isLastChunk = getBooleanParameter(request, Constants.CONTROL_IS_LAST_CHUNK, false);
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -873,7 +886,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
@@ -896,6 +909,7 @@ public class ObjectService {
             String targetFolderId = getStringParameter(request, PARAM_TARGET_FOLDER_ID);
             String sourceFolderId = getStringParameter(request, PARAM_SOURCE_FOLDER_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -915,7 +929,7 @@ public class ObjectService {
             // return object
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }

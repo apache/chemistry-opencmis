@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
@@ -169,11 +170,12 @@ public class RepositoryService {
             boolean includePropertyDefinitions = getBooleanParameter(request, PARAM_PROPERTY_DEFINITIONS, false);
             BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
             BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
                     maxItems, skipCount, null);
-            JSONObject jsonTypeList = JSONConverter.convert(typeList);
+            JSONObject jsonTypeList = JSONConverter.convert(typeList, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonTypeList, request, response);
@@ -193,6 +195,7 @@ public class RepositoryService {
             String typeId = getStringParameter(request, PARAM_TYPE_ID);
             BigInteger depth = getBigIntegerParameter(request, PARAM_DEPTH);
             boolean includePropertyDefinitions = getBooleanParameter(request, PARAM_PROPERTY_DEFINITIONS, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
@@ -204,7 +207,7 @@ public class RepositoryService {
 
             JSONArray jsonTypeTree = new JSONArray();
             for (TypeDefinitionContainer container : typeTree) {
-                jsonTypeTree.add(JSONConverter.convert(container));
+                jsonTypeTree.add(JSONConverter.convert(container, dateTimeFormat));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -226,10 +229,11 @@ public class RepositoryService {
 
             // get parameters
             String typeId = getStringParameter(request, PARAM_TYPE_ID);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
-            JSONObject jsonType = JSONConverter.convert(type);
+            JSONObject jsonType = JSONConverter.convert(type, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonType, request, response);
@@ -250,6 +254,8 @@ public class RepositoryService {
 
             // get parameters
             String typeStr = getStringParameter(request, CONTROL_TYPE);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
+
             if (typeStr == null) {
                 throw new CmisInvalidArgumentException("Type definition missing!");
             }
@@ -266,7 +272,7 @@ public class RepositoryService {
 
             // execute
             TypeDefinition typeOut = service.createType(repositoryId, typeIn, null);
-            JSONObject jsonType = JSONConverter.convert(typeOut);
+            JSONObject jsonType = JSONConverter.convert(typeOut, dateTimeFormat);
 
             // set headers
             response.setStatus(HttpServletResponse.SC_CREATED);
@@ -290,6 +296,8 @@ public class RepositoryService {
 
             // get parameters
             String typeStr = getStringParameter(request, CONTROL_TYPE);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
+
             if (typeStr == null) {
                 throw new CmisInvalidArgumentException("Type definition missing!");
             }
@@ -306,7 +314,7 @@ public class RepositoryService {
 
             // execute
             TypeDefinition typeOut = service.updateType(repositoryId, typeIn, null);
-            JSONObject jsonType = JSONConverter.convert(typeOut);
+            JSONObject jsonType = JSONConverter.convert(typeOut, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonType, request, response);

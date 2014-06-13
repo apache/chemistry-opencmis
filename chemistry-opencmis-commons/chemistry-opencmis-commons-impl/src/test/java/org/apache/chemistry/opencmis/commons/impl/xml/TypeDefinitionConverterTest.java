@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -505,7 +506,7 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
     protected void assertJsonTypeDefinition11(TypeDefinition typeDef) throws Exception {
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(typeDef).writeJSONString(sw);
+        JSONConverter.convert(typeDef, DateTimeFormat.SIMPLE).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);
@@ -535,7 +536,7 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
     protected void assertJsonTypeDefinitionList(TypeDefinitionList typeDefList) throws Exception {
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(typeDefList).writeJSONString(sw);
+        JSONConverter.convert(typeDefList, DateTimeFormat.SIMPLE).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);
@@ -568,7 +569,7 @@ public class TypeDefinitionConverterTest extends AbstractXMLConverterTest {
     protected void assertJsonTypeDefinitionContainer(TypeDefinitionContainer typeDefContainer) throws Exception {
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(typeDefContainer).writeJSONString(sw);
+        JSONConverter.convert(typeDefContainer, DateTimeFormat.SIMPLE).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);

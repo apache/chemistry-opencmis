@@ -565,6 +565,7 @@ public final class SessionParameter {
     /** URL of the Browser Binding entry point. */
     public static final String BROWSER_URL = "org.apache.chemistry.opencmis.binding.browser.url";
     public static final String BROWSER_SUCCINCT = "org.apache.chemistry.opencmis.binding.browser.succinct";
+    public static final String BROWSER_DATETIME_FORMAT ="org.apache.chemistry.opencmis.binding.browser.datetimeformat";
 
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";

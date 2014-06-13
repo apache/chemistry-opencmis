@@ -98,6 +98,7 @@ import org.apache.chemistry.opencmis.commons.enums.CapabilityRenditions;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.ContentStreamAllowed;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.DecimalPrecision;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
@@ -1051,7 +1052,7 @@ public final class JSONConverter {
      * Converts an object.
      */
     public static JSONObject convert(final ObjectData object, final TypeCache typeCache,
-            final PropertyMode propertyMode, final boolean succinct) {
+            final PropertyMode propertyMode, final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if (object == null) {
             return null;
         }
@@ -1061,12 +1062,14 @@ public final class JSONConverter {
         // properties
         if (object.getProperties() != null) {
             if (succinct) {
-                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, propertyMode, true);
+                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, propertyMode, true,
+                        dateTimeFormat);
                 if (properties != null) {
                     result.put(JSON_OBJECT_SUCCINCT_PROPERTIES, properties);
                 }
             } else {
-                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, propertyMode, false);
+                JSONObject properties = convert(object.getProperties(), object.getId(), typeCache, propertyMode, false,
+                        dateTimeFormat);
                 if (properties != null) {
                     result.put(JSON_OBJECT_PROPERTIES, properties);
                 }
@@ -1089,7 +1092,7 @@ public final class JSONConverter {
             JSONArray relationships = new JSONArray();
 
             for (ObjectData relationship : object.getRelationships()) {
-                relationships.add(convert(relationship, typeCache, propertyMode, succinct));
+                relationships.add(convert(relationship, typeCache, propertyMode, succinct, dateTimeFormat));
             }
 
             result.put(JSON_OBJECT_RELATIONSHIPS, relationships);
@@ -1101,7 +1104,7 @@ public final class JSONConverter {
 
             ChangeEventInfo cei = object.getChangeEventInfo();
             changeEventInfo.put(JSON_CHANGE_EVENT_TYPE, getJSONEnumValue(cei.getChangeType()));
-            changeEventInfo.put(JSON_CHANGE_EVENT_TIME, getJSONValue(cei.getChangeTime()));
+            changeEventInfo.put(JSON_CHANGE_EVENT_TIME, getJSONValue(cei.getChangeTime(), dateTimeFormat));
 
             convertExtension(object.getChangeEventInfo(), changeEventInfo);
 
@@ -1150,7 +1153,7 @@ public final class JSONConverter {
      * Converts a bag of properties.
      */
     public static JSONObject convert(final Properties properties, final String objectId, final TypeCache typeCache,
-            final PropertyMode propertyMode, final boolean succinct) {
+            final PropertyMode propertyMode, final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if (properties == null) {
             return null;
         }
@@ -1193,7 +1196,7 @@ public final class JSONConverter {
             if (propId == null) {
                 throw new CmisRuntimeException("No query name or alias for property '" + property.getId() + "'!");
             }
-            result.put(propId, convert(property, propDef, succinct));
+            result.put(propId, convert(property, propDef, succinct, dateTimeFormat));
         }
 
         return result;
@@ -1202,7 +1205,8 @@ public final class JSONConverter {
     /**
      * Converts a property.
      */
-    public static Object convert(final PropertyData<?> property, final PropertyDefinition<?> propDef, boolean succinct) {
+    public static Object convert(final PropertyData<?> property, final PropertyDefinition<?> propDef, boolean succinct,
+            final DateTimeFormat dateTimeFormat) {
         if (property == null) {
             return null;
         }
@@ -1214,12 +1218,12 @@ public final class JSONConverter {
                 if ((property.getValues() == null) || (property.getValues().size() == 0)) {
                     result = null;
                 } else if (propDef.getCardinality() == Cardinality.SINGLE) {
-                    result = getJSONValue(property.getValues().get(0));
+                    result = getJSONValue(property.getValues().get(0), dateTimeFormat);
                 } else {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
-                        values.add(getJSONValue(value));
+                        values.add(getJSONValue(value, dateTimeFormat));
                     }
 
                     result = values;
@@ -1231,7 +1235,7 @@ public final class JSONConverter {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
-                        values.add(getJSONValue(value));
+                        values.add(getJSONValue(value, dateTimeFormat));
                     }
 
                     result = values;
@@ -1254,12 +1258,12 @@ public final class JSONConverter {
                 if ((property.getValues() == null) || (property.getValues().size() == 0)) {
                     result.put(JSON_PROPERTY_VALUE, null);
                 } else if (propDef.getCardinality() == Cardinality.SINGLE) {
-                    result.put(JSON_PROPERTY_VALUE, getJSONValue(property.getValues().get(0)));
+                    result.put(JSON_PROPERTY_VALUE, getJSONValue(property.getValues().get(0), dateTimeFormat));
                 } else {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
-                        values.add(getJSONValue(value));
+                        values.add(getJSONValue(value, dateTimeFormat));
                     }
 
                     result.put(JSON_PROPERTY_VALUE, values);
@@ -1273,7 +1277,7 @@ public final class JSONConverter {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
-                        values.add(getJSONValue(value));
+                        values.add(getJSONValue(value, dateTimeFormat));
                     }
 
                     result.put(JSON_PROPERTY_VALUE, values);
@@ -1376,7 +1380,7 @@ public final class JSONConverter {
      * Converts a query object list.
      */
     public static JSONObject convert(final ObjectList list, final TypeCache typeCache, final PropertyMode propertyMode,
-            final boolean succinct) {
+            final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if (list == null) {
             return null;
         }
@@ -1386,7 +1390,7 @@ public final class JSONConverter {
         JSONArray objects = new JSONArray();
         if (list.getObjects() != null) {
             for (ObjectData object : list.getObjects()) {
-                objects.add(convert(object, typeCache, propertyMode, succinct));
+                objects.add(convert(object, typeCache, propertyMode, succinct, dateTimeFormat));
             }
         }
 
@@ -1411,14 +1415,14 @@ public final class JSONConverter {
      * Converts an object in a folder list.
      */
     public static JSONObject convert(final ObjectInFolderData objectInFolder, final TypeCache typeCache,
-            final boolean succinct) {
+            final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if ((objectInFolder == null) || (objectInFolder.getObject() == null)) {
             return null;
         }
 
         JSONObject result = new JSONObject();
         result.put(JSON_OBJECTINFOLDER_OBJECT,
-                convert(objectInFolder.getObject(), typeCache, PropertyMode.OBJECT, succinct));
+                convert(objectInFolder.getObject(), typeCache, PropertyMode.OBJECT, succinct, dateTimeFormat));
         setIfNotNull(JSON_OBJECTINFOLDER_PATH_SEGMENT, objectInFolder.getPathSegment(), result);
 
         convertExtension(objectInFolder, result);
@@ -1430,7 +1434,7 @@ public final class JSONConverter {
      * Converts a folder list.
      */
     public static JSONObject convert(final ObjectInFolderList objectInFolderList, final TypeCache typeCache,
-            final boolean succinct) {
+            final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if (objectInFolderList == null) {
             return null;
         }
@@ -1441,7 +1445,7 @@ public final class JSONConverter {
             JSONArray objects = new JSONArray();
 
             for (ObjectInFolderData object : objectInFolderList.getObjects()) {
-                objects.add(convert(object, typeCache, succinct));
+                objects.add(convert(object, typeCache, succinct, dateTimeFormat));
             }
 
             result.put(JSON_OBJECTINFOLDERLIST_OBJECTS, objects);
@@ -1459,18 +1463,19 @@ public final class JSONConverter {
      * Converts a folder container.
      */
     public static JSONObject convert(final ObjectInFolderContainer container, final TypeCache typeCache,
-            final boolean succinct) {
+            final boolean succinct, final DateTimeFormat dateTimeFormat) {
         if (container == null) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTINFOLDERCONTAINER_OBJECT, convert(container.getObject(), typeCache, succinct));
+        result.put(JSON_OBJECTINFOLDERCONTAINER_OBJECT,
+                convert(container.getObject(), typeCache, succinct, dateTimeFormat));
 
         if ((container.getChildren() != null) && (container.getChildren().size() > 0)) {
             JSONArray children = new JSONArray();
             for (ObjectInFolderContainer descendant : container.getChildren()) {
-                children.add(JSONConverter.convert(descendant, typeCache, succinct));
+                children.add(JSONConverter.convert(descendant, typeCache, succinct, dateTimeFormat));
             }
 
             result.put(JSON_OBJECTINFOLDERCONTAINER_CHILDREN, children);
@@ -1484,13 +1489,15 @@ public final class JSONConverter {
     /**
      * Converts an object parent.
      */
-    public static JSONObject convert(final ObjectParentData parent, final TypeCache typeCache, final boolean succinct) {
+    public static JSONObject convert(final ObjectParentData parent, final TypeCache typeCache, final boolean succinct,
+            final DateTimeFormat dateTimeFormat) {
         if ((parent == null) || (parent.getObject() == null)) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_OBJECTPARENTS_OBJECT, convert(parent.getObject(), typeCache, PropertyMode.OBJECT, succinct));
+        result.put(JSON_OBJECTPARENTS_OBJECT,
+                convert(parent.getObject(), typeCache, PropertyMode.OBJECT, succinct, dateTimeFormat));
         if (parent.getRelativePathSegment() != null) {
             result.put(JSON_OBJECTPARENTS_RELATIVE_PATH_SEGMENT, parent.getRelativePathSegment());
         }
@@ -1503,7 +1510,7 @@ public final class JSONConverter {
     /**
      * Converts a type definition.
      */
-    public static JSONObject convert(final TypeDefinition type) {
+    public static JSONObject convert(final TypeDefinition type, final DateTimeFormat dateTimeFormat) {
         if (type == null) {
             return null;
         }
@@ -1555,7 +1562,7 @@ public final class JSONConverter {
             JSONObject propertyDefs = new JSONObject();
 
             for (PropertyDefinition<?> pd : type.getPropertyDefinitions().values()) {
-                propertyDefs.put(pd.getId(), convert(pd));
+                propertyDefs.put(pd.getId(), convert(pd, dateTimeFormat));
             }
 
             result.put(JSON_TYPE_PROPERTY_DEFINITIONS, propertyDefs);
@@ -1569,7 +1576,7 @@ public final class JSONConverter {
     /**
      * Converts a property type definition.
      */
-    public static JSONObject convert(final PropertyDefinition<?> propertyDefinition) {
+    public static JSONObject convert(final PropertyDefinition<?> propertyDefinition, final DateTimeFormat dateTimeFormat) {
         if (propertyDefinition == null) {
             return null;
         }
@@ -1615,13 +1622,13 @@ public final class JSONConverter {
         if (propertyDefinition.getDefaultValue() != null) {
             if (propertyDefinition.getCardinality() == Cardinality.SINGLE) {
                 if (!propertyDefinition.getDefaultValue().isEmpty()) {
-                    result.put(JSON_PROPERTY_TYPE_DEAULT_VALUE, getJSONValue(propertyDefinition.getDefaultValue()
-                            .get(0)));
+                    result.put(JSON_PROPERTY_TYPE_DEAULT_VALUE,
+                            getJSONValue(propertyDefinition.getDefaultValue().get(0), dateTimeFormat));
                 }
             } else {
                 JSONArray values = new JSONArray();
                 for (Object value : propertyDefinition.getDefaultValue()) {
-                    values.add(getJSONValue(value));
+                    values.add(getJSONValue(value, dateTimeFormat));
                 }
                 result.put(JSON_PROPERTY_TYPE_DEAULT_VALUE, values);
             }
@@ -1629,8 +1636,9 @@ public final class JSONConverter {
 
         // choices
         if (propertyDefinition.getChoices() != null && !propertyDefinition.getChoices().isEmpty()) {
-            result.put(JSON_PROPERTY_TYPE_CHOICE,
-                    convertChoices(propertyDefinition.getChoices(), propertyDefinition.getCardinality()));
+            result.put(
+                    JSON_PROPERTY_TYPE_CHOICE,
+                    convertChoices(propertyDefinition.getChoices(), propertyDefinition.getCardinality(), dateTimeFormat));
         }
 
         // generic
@@ -1657,7 +1665,8 @@ public final class JSONConverter {
     /**
      * Converts choices.
      */
-    private static <T> JSONArray convertChoices(final List<Choice<T>> choices, final Cardinality cardinality) {
+    private static <T> JSONArray convertChoices(final List<Choice<T>> choices, final Cardinality cardinality,
+            final DateTimeFormat dateTimeFormat) {
         assert cardinality != null;
 
         if (choices == null) {
@@ -1673,18 +1682,20 @@ public final class JSONConverter {
 
             if (cardinality == Cardinality.SINGLE) {
                 if (!choice.getValue().isEmpty()) {
-                    jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE, getJSONValue(choice.getValue().get(0)));
+                    jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE,
+                            getJSONValue(choice.getValue().get(0), dateTimeFormat));
                 }
             } else {
                 JSONArray values = new JSONArray();
                 for (Object value : choice.getValue()) {
-                    values.add(getJSONValue(value));
+                    values.add(getJSONValue(value, dateTimeFormat));
                 }
                 jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE, values);
             }
 
             if (choice.getChoice() != null && !choice.getChoice().isEmpty()) {
-                jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_CHOICE, convertChoices(choice.getChoice(), cardinality));
+                jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_CHOICE,
+                        convertChoices(choice.getChoice(), cardinality, dateTimeFormat));
             }
 
             result.add(jsonChoice);
@@ -1696,7 +1707,7 @@ public final class JSONConverter {
     /**
      * Converts a type definition list.
      */
-    public static JSONObject convert(final TypeDefinitionList list) {
+    public static JSONObject convert(final TypeDefinitionList list, final DateTimeFormat dateTimeFormat) {
         if (list == null) {
             return null;
         }
@@ -1707,7 +1718,7 @@ public final class JSONConverter {
             JSONArray objects = new JSONArray();
 
             for (TypeDefinition type : list.getList()) {
-                objects.add(convert(type));
+                objects.add(convert(type, dateTimeFormat));
             }
 
             result.put(JSON_TYPESLIST_TYPES, objects);
@@ -1755,18 +1766,18 @@ public final class JSONConverter {
     /**
      * Converts a type definition container.
      */
-    public static JSONObject convert(final TypeDefinitionContainer container) {
+    public static JSONObject convert(final TypeDefinitionContainer container, final DateTimeFormat dateTimeFormat) {
         if (container == null) {
             return null;
         }
 
         JSONObject result = new JSONObject();
-        result.put(JSON_TYPESCONTAINER_TYPE, convert(container.getTypeDefinition()));
+        result.put(JSON_TYPESCONTAINER_TYPE, convert(container.getTypeDefinition(), dateTimeFormat));
 
         if ((container.getChildren() != null) && (container.getChildren().size() > 0)) {
             JSONArray children = new JSONArray();
             for (TypeDefinitionContainer child : container.getChildren()) {
-                children.add(JSONConverter.convert(child));
+                children.add(convert(child, dateTimeFormat));
             }
 
             result.put(JSON_TYPESCONTAINER_CHILDREN, children);
@@ -2329,6 +2340,12 @@ public final class JSONConverter {
                     GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
                     cal.setTimeInMillis(((Number) obj).longValue());
                     result.add(cal);
+                } else if (obj instanceof String) {
+                    GregorianCalendar cal = DateTimeHelper.parseXmlDateTime((String) obj);
+                    if (cal == null) {
+                        throw new CmisRuntimeException("Invalid property value: " + obj);
+                    }
+                    result.add(cal);
                 } else {
                     throw new CmisRuntimeException("Invalid property value: " + obj);
                 }
@@ -2807,9 +2824,13 @@ public final class JSONConverter {
         return obj.toString();
     }
 
-    public static Object getJSONValue(final Object value) {
+    public static Object getJSONValue(final Object value, final DateTimeFormat dateTimeFormat) {
         if (value instanceof GregorianCalendar) {
-            return ((GregorianCalendar) value).getTimeInMillis();
+            if (dateTimeFormat == DateTimeFormat.EXTENDED) {
+                return DateTimeHelper.formatXmlDateTime((GregorianCalendar) value);
+            } else {
+                return ((GregorianCalendar) value).getTimeInMillis();
+            }
         }
 
         return value;
@@ -2865,6 +2886,12 @@ public final class JSONConverter {
             if (value instanceof Number) {
                 GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
                 cal.setTimeInMillis(((Number) value).longValue());
+                return cal;
+            } else if (value instanceof String) {
+                GregorianCalendar cal = DateTimeHelper.parseXmlDateTime((String) value);
+                if (cal == null) {
+                    new CmisRuntimeException("Invalid DateTime value!");
+                }
                 return cal;
             }
             throw new CmisRuntimeException("Invalid DateTime value!");
@@ -2987,6 +3014,8 @@ public final class JSONConverter {
             GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
             cal.setTimeInMillis(((Number) obj).longValue());
             return cal;
+        } else if (obj instanceof String) {
+            return DateTimeHelper.parseXmlDateTime((String) obj);
         }
 
         return null;

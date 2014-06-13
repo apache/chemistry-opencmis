@@ -84,6 +84,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_POLICIES);
         url.addParameter(Constants.PARAM_FILTER, filter);
         url.addParameter(Constants.PARAM_SUCCINCT, getSuccinctParameter());
+        url.addParameter(Constants.PARAM_DATETIME_FORMAT, getDateTimeFormatParameter());
 
         // read and parse
         Response resp = read(url);

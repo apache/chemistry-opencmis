@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -71,6 +72,7 @@ public class DiscoveryService {
             BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
@@ -82,7 +84,7 @@ public class DiscoveryService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonResults = JSONConverter.convert(results, typeCache, JSONConverter.PropertyMode.QUERY,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonResults, request, response);
@@ -109,6 +111,7 @@ public class DiscoveryService {
             Boolean includeAcl = getBooleanParameter(request, PARAM_ACL);
             BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
             ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
@@ -116,7 +119,7 @@ public class DiscoveryService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, JSONConverter.PropertyMode.CHANGE,
-                    succinct);
+                    succinct, dateTimeFormat);
             jsonChanges.put(JSONConstants.JSON_OBJECTLIST_CHANGE_LOG_TOKEN, changeLogTokenHolder.getValue());
 
             response.setStatus(HttpServletResponse.SC_OK);

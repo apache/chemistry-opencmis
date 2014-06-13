@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -66,6 +67,7 @@ public class RelationshipService {
             BigInteger maxItems = getBigIntegerParameter(request, PARAM_MAX_ITEMS);
             BigInteger skipCount = getBigIntegerParameter(request, PARAM_SKIP_COUNT);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             ObjectList relationships = service.getObjectRelationships(repositoryId, objectId,
@@ -78,7 +80,7 @@ public class RelationshipService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonChildren = JSONConverter.convert(relationships, typeCache,
-                    JSONConverter.PropertyMode.OBJECT, succinct);
+                    JSONConverter.PropertyMode.OBJECT, succinct, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(jsonChildren, request, response);

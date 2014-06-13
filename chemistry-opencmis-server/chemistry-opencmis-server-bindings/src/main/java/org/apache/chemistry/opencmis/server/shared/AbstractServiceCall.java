@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,8 +32,10 @@ import org.apache.chemistry.opencmis.commons.data.ContentLengthContentStream;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.LastModifiedContentStream;
 import org.apache.chemistry.opencmis.commons.data.RedirectingContentStream;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.CmisEnumHelper;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
@@ -94,6 +97,21 @@ public abstract class AbstractServiceCall implements ServiceCall {
             return new BigInteger(value);
         } catch (Exception e) {
             throw new CmisInvalidArgumentException("Invalid parameter '" + name + "'!", e);
+        }
+    }
+
+    public DateTimeFormat getDateTimeFormatParameter(HttpServletRequest request) {
+        String s = getStringParameter(request, Constants.PARAM_DATETIME_FORMAT);
+
+        if (s == null) {
+            return DateTimeFormat.SIMPLE;
+        }
+
+        try {
+            return DateTimeFormat.fromValue(s.trim().toLowerCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException e) {
+            throw new CmisInvalidArgumentException("Invalid value for parameter " + Constants.PARAM_DATETIME_FORMAT
+                    + "!");
         }
     }
 

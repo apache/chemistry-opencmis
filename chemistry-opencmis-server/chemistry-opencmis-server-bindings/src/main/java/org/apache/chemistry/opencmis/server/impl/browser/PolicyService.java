@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.JSONConverter;
@@ -57,6 +58,7 @@ public class PolicyService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String filter = getStringParameter(request, PARAM_FILTER);
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
@@ -66,7 +68,7 @@ public class PolicyService {
                 TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
                 for (ObjectData policy : policies) {
                     jsonPolicies.add(JSONConverter.convert(policy, typeCache, JSONConverter.PropertyMode.OBJECT,
-                            succinct));
+                            succinct, dateTimeFormat));
                 }
             }
 
@@ -91,6 +93,7 @@ public class PolicyService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String policyId = getStringParameter(request, PARAM_POLICY_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             service.applyPolicy(repositoryId, policyId, objectId, null);
@@ -105,7 +108,7 @@ public class PolicyService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
@@ -127,6 +130,7 @@ public class PolicyService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String policyId = getStringParameter(request, PARAM_POLICY_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
+            DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
             service.removePolicy(repositoryId, policyId, objectId, null);
@@ -141,7 +145,7 @@ public class PolicyService {
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonObject = JSONConverter.convert(object, typeCache, JSONConverter.PropertyMode.OBJECT,
-                    succinct);
+                    succinct, dateTimeFormat);
 
             writeJSON(jsonObject, request, response);
         }
