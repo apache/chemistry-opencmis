@@ -22,6 +22,9 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+/*
+ * HEADHttpServletRequestWrapper
+ */
 public final class HEADHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
 
     public HEADHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
