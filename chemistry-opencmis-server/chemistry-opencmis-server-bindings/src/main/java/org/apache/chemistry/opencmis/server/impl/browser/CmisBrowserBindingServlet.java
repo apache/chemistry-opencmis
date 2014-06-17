@@ -106,7 +106,9 @@ import org.apache.chemistry.opencmis.server.impl.browser.token.TokenHandler;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.apache.chemistry.opencmis.server.shared.HEADHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrapper;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.slf4j.Logger;
@@ -122,6 +124,9 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
     private final Dispatcher rootDispatcher = new Dispatcher(false);
     private static final ErrorServiceCall ERROR_SERTVICE_CALL = new ErrorServiceCall();
 
+    private static final String OPTIONS_ALLOW_HEADER = Dispatcher.METHOD_GET + "," + 
+            Dispatcher.METHOD_POST + "," + METHOD_HEAD + "," + METHOD_OPTIONS;  
+            
     public enum CallUrl {
         SERVICE, REPOSITORY, ROOT
     }
@@ -211,12 +216,21 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
         response.addHeader("Cache-Control", "private, max-age=0");
         response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
 
+        String method = request.getMethod();
+        if (METHOD_OPTIONS.equals(method)) {
+            response.addHeader("Allow", OPTIONS_ALLOW_HEADER);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            String method = request.getMethod();
 
-            if (METHOD_GET.equals(method)) {
+            if (METHOD_HEAD.equals(method)) {
+                request = new HEADHttpServletRequestWrapper(request);
+                response = new NoBodyHttpServletResponseWrapper(response);
+            } else if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
                 request = new POSTHttpServletRequestWrapper(request, getThresholdOutputStreamFactory());
@@ -248,6 +262,9 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             }
         }
 
+        if (METHOD_HEAD.equals(method)) {
+            ((NoBodyHttpServletResponseWrapper) response).setContentLength();
+        }
         // we are done.
         response.flushBuffer();
     }
