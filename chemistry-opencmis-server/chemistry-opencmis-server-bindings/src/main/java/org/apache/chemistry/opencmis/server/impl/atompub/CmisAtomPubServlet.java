@@ -75,7 +75,9 @@ import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.apache.chemistry.opencmis.server.shared.HEADHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrapper;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -160,7 +162,6 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        QueryStringHttpServletRequestWrapper qsRequest = new QueryStringHttpServletRequestWrapper(request);
 
         // set default headers
         response.addHeader("Cache-Control", "private, max-age=0");
@@ -169,8 +170,17 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
         // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
-            context = createContext(getServletContext(), qsRequest, response);
-            dispatch(context, qsRequest, response);
+            String method = request.getMethod();
+
+            if (METHOD_HEAD.equals(method)) {
+                request = new HEADHttpServletRequestWrapper(request);
+                response = new NoBodyHttpServletResponseWrapper(response);
+            } else {
+                request = new QueryStringHttpServletRequestWrapper(request);
+            }
+
+            context = createContext(getServletContext(), request, response);
+            dispatch(context, request, response);
         } catch (Exception e) {
             if (e instanceof CmisUnauthorizedException) {
                 response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");

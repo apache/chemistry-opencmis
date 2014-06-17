@@ -106,7 +106,9 @@ import org.apache.chemistry.opencmis.server.impl.browser.token.TokenHandler;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.apache.chemistry.opencmis.server.shared.HEADHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrapper;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.slf4j.Logger;
@@ -216,7 +218,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
         try {
             String method = request.getMethod();
 
-            if (METHOD_GET.equals(method)) {
+            if (METHOD_HEAD.equals(method)) {
+                request = new HEADHttpServletRequestWrapper(request);
+                response = new NoBodyHttpServletResponseWrapper(response);
+            } else if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
                 request = new POSTHttpServletRequestWrapper(request, getThresholdOutputStreamFactory());
