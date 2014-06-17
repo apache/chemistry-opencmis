@@ -41,6 +41,8 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
     public static final String PARAM_CALL_CONTEXT_HANDLER = "callContextHandler";
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
 
+    public static final String METHOD_HEAD = "HEAD";
+    
     private static final long serialVersionUID = 1L;
 
     private CmisServiceFactory factory;
