@@ -236,9 +236,6 @@ public class TypeDefinitionFactoryTest {
         typeDefs = tdf.createTypeDescendants(types, null, BigInteger.valueOf(1), null);
         assertNotNull(typeDefs);
         assertEquals(2, typeDefs.size());
-        assertEquals(0, typeDefs.get(0).getChildren().size());
-        assertEquals(0, typeDefs.get(1).getChildren().size());
-
     }
 
     @Test

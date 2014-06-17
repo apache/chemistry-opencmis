@@ -927,6 +927,9 @@ public final class TypeDefinitionFactory {
         if (depthInt == 0) {
             throw new IllegalArgumentException("Depth must not be 0!");
         }
+        if (typeId == null) {
+            depthInt = -1;
+        }
 
         if (typeId != null && !allTypes.containsKey(typeId)) {
             throw new CmisObjectNotFoundException("Type '" + typeId + "' does not exist!");
