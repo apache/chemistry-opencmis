@@ -317,7 +317,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
         HttpProtocolParams.setContentCharset(params, IOUtils.UTF8);
         HttpProtocolParams.setUseExpectContinue(params, true);
 
-        HttpConnectionParams.setStaleCheckingEnabled(params, false);
+        HttpConnectionParams.setStaleCheckingEnabled(params, true);
 
         int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);
         if (connectTimeout >= 0) {
