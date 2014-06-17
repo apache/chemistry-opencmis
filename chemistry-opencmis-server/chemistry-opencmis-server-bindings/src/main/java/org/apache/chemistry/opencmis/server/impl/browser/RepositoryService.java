@@ -76,7 +76,7 @@ public class RepositoryService {
                 String repositoryUrl = compileRepositoryUrl(request, ri.getId()).toString();
                 String rootUrl = compileRootUrl(request, ri.getId()).toString();
 
-                result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl));
+                result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl, true));
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -103,7 +103,7 @@ public class RepositoryService {
             String rootUrl = compileRootUrl(request, ri.getId()).toString();
 
             JSONObject result = new JSONObject();
-            result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl));
+            result.put(ri.getId(), JSONConverter.convert(ri, repositoryUrl, rootUrl, true));
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeJSON(result, request, response);

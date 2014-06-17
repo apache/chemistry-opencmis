@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.chemistry.opencmis.commons.ExtensionFeatures;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
@@ -187,7 +188,7 @@ public final class JSONConverter {
      * Converts a repository info object.
      */
     public static JSONObject convert(final RepositoryInfo repositoryInfo, final String repositoryUrl,
-            final String rootUrl) {
+            final String rootUrl, final boolean addExtendedDatetimeExtensionFeature) {
         if (repositoryInfo == null) {
             return null;
         }
@@ -225,26 +226,20 @@ public final class JSONConverter {
             JSONArray extendedFeatures = new JSONArray();
 
             for (ExtensionFeature feature : repositoryInfo.getExtensionFeatures()) {
-                JSONObject jsonFeature = new JSONObject();
-
-                setIfNotNull(JSON_FEATURE_ID, feature.getId(), jsonFeature);
-                setIfNotNull(JSON_FEATURE_URL, feature.getUrl(), jsonFeature);
-                setIfNotNull(JSON_FEATURE_COMMON_NAME, feature.getCommonName(), jsonFeature);
-                setIfNotNull(JSON_FEATURE_VERSION_LABEL, feature.getVersionLabel(), jsonFeature);
-                setIfNotNull(JSON_FEATURE_DESCRIPTION, feature.getDescription(), jsonFeature);
-
-                if (feature.getFeatureData() != null && !feature.getFeatureData().isEmpty()) {
-                    JSONObject data = new JSONObject();
-                    data.putAll(feature.getFeatureData());
-                    jsonFeature.put(JSON_FEATURE_DATA, data);
-                }
-
-                convertExtension(feature, jsonFeature);
-
-                extendedFeatures.add(jsonFeature);
+                extendedFeatures.add(convert(feature));
             }
 
             result.put(JSON_REPINFO_EXTENDED_FEATURES, extendedFeatures);
+        }
+
+        if (addExtendedDatetimeExtensionFeature) {
+            JSONArray extendedFeatures = (JSONArray) result.get(JSON_REPINFO_EXTENDED_FEATURES);
+            if (extendedFeatures == null) {
+                extendedFeatures = new JSONArray();
+                result.put(JSON_REPINFO_EXTENDED_FEATURES, extendedFeatures);
+            }
+
+            extendedFeatures.add(convert(ExtensionFeatures.EXTENDED_DATETIME_FORMAT));
         }
 
         result.put(JSON_REPINFO_REPOSITORY_URL, repositoryUrl);
@@ -253,6 +248,30 @@ public final class JSONConverter {
         convertExtension(repositoryInfo, result);
 
         return result;
+    }
+
+    private static JSONObject convert(final ExtensionFeature feature) {
+        if (feature == null) {
+            return null;
+        }
+
+        JSONObject jsonFeature = new JSONObject();
+
+        setIfNotNull(JSON_FEATURE_ID, feature.getId(), jsonFeature);
+        setIfNotNull(JSON_FEATURE_URL, feature.getUrl(), jsonFeature);
+        setIfNotNull(JSON_FEATURE_COMMON_NAME, feature.getCommonName(), jsonFeature);
+        setIfNotNull(JSON_FEATURE_VERSION_LABEL, feature.getVersionLabel(), jsonFeature);
+        setIfNotNull(JSON_FEATURE_DESCRIPTION, feature.getDescription(), jsonFeature);
+
+        if (feature.getFeatureData() != null && !feature.getFeatureData().isEmpty()) {
+            JSONObject data = new JSONObject();
+            data.putAll(feature.getFeatureData());
+            jsonFeature.put(JSON_FEATURE_DATA, data);
+        }
+
+        convertExtension(feature, jsonFeature);
+
+        return jsonFeature;
     }
 
     /**

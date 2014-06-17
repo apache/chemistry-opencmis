@@ -299,7 +299,7 @@ public class RepositoryInfoConverterTest extends AbstractXMLConverterTest {
     protected void assertJsonRepositoryInfo11(RepositoryInfo repInfo) throws Exception {
         StringWriter sw = new StringWriter();
 
-        JSONConverter.convert(repInfo, null, null).writeJSONString(sw);
+        JSONConverter.convert(repInfo, null, null, false).writeJSONString(sw);
 
         Object json = (new JSONParser()).parse(sw.toString());
         assertTrue(json instanceof Map<?, ?>);

@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -31,6 +32,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
@@ -243,6 +245,53 @@ public class RepositoryInfoFrame extends JFrame {
                     permMapTable.setFillsViewportHeight(true);
                     addComponent("Permission mapping:", new JScrollPane(permMapTable));
                 }
+            }
+
+            if (repInfo.getExtensionFeatures() != null && !repInfo.getExtensionFeatures().isEmpty()) {
+                JTree extensionFeaturesTree = new JTree();
+                extensionFeaturesTree.setRootVisible(false);
+                extensionFeaturesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+                DefaultMutableTreeNode extFeatRootNode = new DefaultMutableTreeNode("Extensions");
+
+                for (ExtensionFeature ef : repInfo.getExtensionFeatures()) {
+                    String efId = ef.getId();
+                    if (efId == null) {
+                        efId = "???";
+                    }
+
+                    DefaultMutableTreeNode efNode = new DefaultMutableTreeNode(efId);
+                    extFeatRootNode.add(efNode);
+
+                    if (ef.getCommonName() != null) {
+                        efNode.add(new DefaultMutableTreeNode("Common Name: " + ef.getCommonName()));
+                    }
+
+                    if (ef.getVersionLabel() != null) {
+                        efNode.add(new DefaultMutableTreeNode("Version Label: " + ef.getVersionLabel()));
+                    }
+
+                    if (ef.getDescription() != null) {
+                        efNode.add(new DefaultMutableTreeNode("Description: " + ef.getDescription()));
+                    }
+
+                    if (ef.getUrl() != null) {
+                        efNode.add(new DefaultMutableTreeNode("URL: " + ef.getUrl()));
+                    }
+
+                    if (ef.getFeatureData() != null && !ef.getFeatureData().isEmpty()) {
+                        DefaultMutableTreeNode dataNode = new DefaultMutableTreeNode("Feature Data");
+                        efNode.add(dataNode);
+
+                        for (Map.Entry<String, String> e : ef.getFeatureData().entrySet()) {
+                            dataNode.add(new DefaultMutableTreeNode(e.getKey() + ": " + e.getValue()));
+                        }
+                    }
+                }
+
+                extensionFeaturesTree.setModel(new DefaultTreeModel(extFeatRootNode));
+
+                addComponent("Extension Features:", new JScrollPane(extensionFeaturesTree));
             }
 
             if (repInfo.getExtensions() != null && !repInfo.getExtensions().isEmpty()) {
