@@ -71,6 +71,7 @@ import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_EXC
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_MESSAGE;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.ERROR_STACKTRACE;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_GET;
+import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_HEAD;
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 
 import java.io.IOException;
@@ -106,7 +107,9 @@ import org.apache.chemistry.opencmis.server.impl.browser.token.TokenHandler;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.apache.chemistry.opencmis.server.shared.HEADHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
+import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrapper;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.slf4j.Logger;
@@ -220,6 +223,9 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
                 request = new POSTHttpServletRequestWrapper(request, getThresholdOutputStreamFactory());
+            } else if (METHOD_HEAD.equals(method)) {
+                request = new HEADHttpServletRequestWrapper(request);
+                response = new NoBodyHttpServletResponseWrapper(response);
             } else {
                 throw new CmisNotSupportedException("Unsupported method");
             }
