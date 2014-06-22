@@ -819,7 +819,13 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             throw convertStatusCode(resp.getResponseCode(), resp.getResponseMessage(), resp.getErrorContent(), null);
         }
 
-        objectId.setValue(null);
+        if (resp.getResponseCode() == 201) {
+            // unset the object ID if a new resource has been created
+            // (if the resource has been updated (200 and 204), the object ID
+            // hasn't changed)
+            objectId.setValue(null);
+        }
+
         if (changeToken != null) {
             changeToken.setValue(null);
         }
