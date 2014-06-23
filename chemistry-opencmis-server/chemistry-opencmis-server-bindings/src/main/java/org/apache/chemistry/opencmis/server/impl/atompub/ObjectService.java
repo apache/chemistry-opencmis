@@ -292,7 +292,8 @@ public class ObjectService {
 
             // set headers
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
-            String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
+            String contentLocation = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
+            String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_OBJECTBYID, newObjectId);
 
             // set status
             if (newObjectId.equals(objectId)) {
@@ -318,7 +319,7 @@ public class ObjectService {
                 // new version created -> CREATED
                 response.setStatus(HttpServletResponse.SC_CREATED);
             }
-            response.setHeader("Content-Location", location);
+            response.setHeader("Content-Location", contentLocation);
             response.setHeader("Location", location);
         }
     }
