@@ -220,6 +220,8 @@ public final class ClientHelper {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZ");
+        sdf.setTimeZone(cal.getTimeZone());
+
         return sdf.format(cal.getTime());
     }
 
