@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.impl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -85,6 +86,8 @@ public final class CmisBindingsHelper {
                 spi = (CmisSpi) c.newInstance(session);
             } catch (CmisBaseException e) {
                 throw e;
+            } catch (InvocationTargetException ite) {
+                throw new CmisRuntimeException("SPI cannot be initialized: " + ite.getCause().getMessage(), ite);
             } catch (Exception e) {
                 throw new CmisRuntimeException("SPI cannot be initialized: " + e.getMessage(), e);
             }

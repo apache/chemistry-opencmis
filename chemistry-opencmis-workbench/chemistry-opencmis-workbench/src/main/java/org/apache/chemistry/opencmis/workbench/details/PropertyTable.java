@@ -22,7 +22,6 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 import org.apache.chemistry.opencmis.client.api.Property;
-import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.workbench.PropertyEditorFrame;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
