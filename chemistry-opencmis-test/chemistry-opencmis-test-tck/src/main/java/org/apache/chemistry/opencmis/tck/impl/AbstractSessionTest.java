@@ -961,6 +961,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 f = createResult(FAILURE, "Last modification date precedes creation date!");
                 addResult(results,
                         assertIsTrue(creationDate.getTimeInMillis() <= lastModificationDate.getTimeInMillis(), null, f));
+
+                f = createResult(WARNING, "Creation date and last modification date have different timezones.");
+                addResult(assertIsTrue(creationDate.getTimeZone().hasSameRules(lastModificationDate.getTimeZone()),
+                        null, f));
             }
 
             // allowable actions
@@ -1614,7 +1618,6 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     addResult(results,
                             assertIsTrue(version.getCreationDate().getTimeInMillis() <= creatationDate, null, f));
                 }
-                version.getCreationDate().getTimeInMillis();
 
                 // count latest versions and latest major versions
                 if (version.isLatestVersion()) {
