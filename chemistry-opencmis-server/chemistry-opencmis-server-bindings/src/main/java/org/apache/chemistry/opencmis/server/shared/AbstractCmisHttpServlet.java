@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
+import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
@@ -127,6 +128,12 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         String repositoryId = null;
         if (pathFragments.length > 0) {
             repositoryId = pathFragments[0];
+        }
+
+        if (repositoryId == null && CallContext.BINDING_ATOMPUB.equals(binding)) {
+            // it's a getRepositories or getRepositoryInfo call
+            // getRepositoryInfo has the repository ID in the query parameters
+            repositoryId = HttpUtils.getStringParameter(request, Constants.PARAM_REPOSITORY_ID);
         }
 
         CallContextImpl context = null;
