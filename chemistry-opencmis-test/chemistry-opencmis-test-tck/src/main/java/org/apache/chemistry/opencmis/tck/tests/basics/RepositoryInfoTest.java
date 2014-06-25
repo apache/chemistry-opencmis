@@ -55,8 +55,8 @@ public class RepositoryInfoTest extends AbstractSessionTest {
 
         RepositoryInfo ri = getRepositoryInfo(session);
 
-        // id
-        success = createResult(OK, "Repository id: " + ri.getId());
+        // ID
+        success = createResult(OK, "Repository ID: " + ri.getId());
         failure = createResult(FAILURE, "Repository id is not set!", true);
         addResult(assertStringNotEmpty(ri.getId(), success, failure));
 
@@ -110,8 +110,8 @@ public class RepositoryInfoTest extends AbstractSessionTest {
         }
 
         // root folder
-        success = createResult(OK, "Root folder id: " + ri.getRootFolderId());
-        failure = createResult(FAILURE, "Root folder id is not set!");
+        success = createResult(OK, "Root folder ID: " + ri.getRootFolderId());
+        failure = createResult(FAILURE, "Root folder ID is not set!");
         addResult(assertStringNotEmpty(ri.getRootFolderId(), success, failure));
 
         // thin client URI
@@ -137,13 +137,13 @@ public class RepositoryInfoTest extends AbstractSessionTest {
             }
         }
 
-        // principal id anonymous
-        success = createResult(OK, "Principal Id anonymous: " + ri.getPrincipalIdAnonymous());
-        failure = createResult(WARNING, "Principal Id anonymous is not set!");
+        // principal ID anonymous
+        success = createResult(OK, "Principal ID anonymous: " + ri.getPrincipalIdAnonymous());
+        failure = createResult(WARNING, "Principal ID anonymous is not set!");
         addResult(assertStringNotEmpty(ri.getPrincipalIdAnonymous(), success, failure));
 
-        // principal id anyone
-        success = createResult(OK, "Principal Id anyone: " + ri.getPrincipalIdAnyone());
+        // principal ID anyone
+        success = createResult(OK, "Principal ID anyone: " + ri.getPrincipalIdAnyone());
         failure = createResult(WARNING, "Principal Id anyone is not set!");
         addResult(assertStringNotEmpty(ri.getPrincipalIdAnyone(), success, failure));
 
@@ -175,7 +175,7 @@ public class RepositoryInfoTest extends AbstractSessionTest {
 
             if (ri.getExtensionFeatures() != null) {
                 for (ExtensionFeature feature : ri.getExtensionFeatures()) {
-                    failure = createResult(FAILURE, "At least one repository features has no id!");
+                    failure = createResult(FAILURE, "At least one repository features has no ID!");
                     addResult(assertStringNotEmpty(feature.getId(), null, failure));
                 }
             }
@@ -299,7 +299,7 @@ public class RepositoryInfoTest extends AbstractSessionTest {
                     addResult(assertNotNull(permDef, null, failure));
 
                     if (permDef != null) {
-                        failure = createResult(FAILURE, "Id of permission #" + i + " is not set!");
+                        failure = createResult(FAILURE, "ID of permission #" + i + " is not set!");
                         addResult(assertStringNotEmpty(permDef.getId(), null, failure));
                     }
 
@@ -312,6 +312,23 @@ public class RepositoryInfoTest extends AbstractSessionTest {
                     + (aclCap.getPermissionMapping() == null ? "?" : aclCap.getPermissionMapping().size()));
             failure = createResult(WARNING, "Permission mapping is not set!");
             addResult(assertNotNull(aclCap.getPermissionMapping(), success, failure));
+        }
+
+        if (ri.getExtensionFeatures() != null) {
+            for (ExtensionFeature ef : ri.getExtensionFeatures()) {
+                success = createResult(OK, "Extension Feature: " + ef.getId());
+                failure = createResult(FAILURE, "Extension Feature without ID!");
+                addResult(assertStringNotEmpty(ef.getId(), success, failure));
+
+                failure = createResult(WARNING, "Extension Feature without common name: " + ef.getId());
+                addResult(assertStringNotEmpty(ef.getCommonName(), null, failure));
+
+                failure = createResult(WARNING, "Extension Feature without version label: " + ef.getId());
+                addResult(assertStringNotEmpty(ef.getVersionLabel(), null, failure));
+
+                failure = createResult(WARNING, "Extension Feature without URL: " + ef.getId());
+                addResult(assertStringNotEmpty(ef.getUrl(), null, failure));
+            }
         }
     }
 }
