@@ -554,9 +554,6 @@ public class JSONParser {
         } catch (RuntimeException re) {
             status = S_IN_ERROR;
             throw re;
-        } catch (Error e) {
-            status = S_IN_ERROR;
-            throw e;
         }
 
         status = S_IN_ERROR;

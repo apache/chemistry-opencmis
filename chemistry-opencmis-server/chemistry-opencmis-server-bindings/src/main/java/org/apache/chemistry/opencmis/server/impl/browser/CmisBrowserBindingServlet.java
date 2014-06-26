@@ -209,14 +209,13 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-
-        // set default headers
-        response.addHeader("Cache-Control", "private, max-age=0");
-        response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
-
-        // create a context object, dispatch and handle exceptions
         CallContext context = null;
+
         try {
+            // set default headers
+            response.addHeader("Cache-Control", "private, max-age=0");
+            response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
+
             String method = request.getMethod();
 
             if (METHOD_GET.equals(method)) {
@@ -252,10 +251,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             } else {
                 printError(context, e, request, response);
             }
+        } finally {
+            // we are done.
+            response.flushBuffer();
         }
-
-        // we are done.
-        response.flushBuffer();
     }
 
     // --------------------------------------------------------

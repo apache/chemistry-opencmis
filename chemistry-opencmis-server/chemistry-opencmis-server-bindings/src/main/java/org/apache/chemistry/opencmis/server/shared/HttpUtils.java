@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 
 public final class HttpUtils {
@@ -72,6 +73,14 @@ public final class HttpUtils {
         String[] result = p.substring(1).split("/");
         for (int i = 0; i < result.length; i++) {
             result[i] = IOUtils.decodeURL(result[i]);
+
+            // check for malicious characters
+            for (int j = 0; j < result[i].length(); j++) {
+                char c = result[i].charAt(j);
+                if (c == '\n' || c == '\r' || c == '\b' || c == 0) {
+                    throw new CmisInvalidArgumentException("Invalid path!");
+                }
+            }
         }
 
         return result;

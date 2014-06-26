@@ -72,6 +72,7 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
      * @deprecated Use
      *             {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache)}
      */
+    @Deprecated
     public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
             AuthenticationProvider authenticationProvider, Cache cache) {
         return createSession(parameters, objectFactory, authenticationProvider, cache, null);
@@ -115,6 +116,7 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
      * @deprecated Use
      *             {@link #getRepositories(Map, ObjectFactory, AuthenticationProvider, Cache, TypeDefinitionCache)}
      */
+    @Deprecated
     public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
             AuthenticationProvider authenticationProvider, Cache cache) {
         return getRepositories(parameters, objectFactory, authenticationProvider, cache, null);

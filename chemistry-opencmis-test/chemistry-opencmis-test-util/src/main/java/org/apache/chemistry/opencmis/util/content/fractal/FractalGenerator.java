@@ -72,8 +72,8 @@ public class FractalGenerator {
     private static final String COLORS_WARPED = "warped";
     private static final String COLORS_WILD = "wild";
     private static final String COLORS_ZEBRA = "zebra";
-    private final String[] colorSchemes = { COLORS_BLACK_AND_WHITE, COLORS_BLUE_ICE, COLORS_FUNKY, COLORS_PASTEL,
-            COLORS_PSYCHEDELIC, COLORS_PURPLE_HAZE, COLORS_RADICAL, COLORS_RAINBOW, COLORS_RAINBOWS,
+    private static final String[] colorSchemes = { COLORS_BLACK_AND_WHITE, COLORS_BLUE_ICE, COLORS_FUNKY,
+            COLORS_PASTEL, COLORS_PSYCHEDELIC, COLORS_PURPLE_HAZE, COLORS_RADICAL, COLORS_RAINBOW, COLORS_RAINBOWS,
             COLORS_SCINTILLATION, COLORS_WARPED, COLORS_WILD, COLORS_ZEBRA };
     private static final int IMAGE_HEIGHT = 512; // default
     private static final int IMAGE_WIDTH = 512; // default

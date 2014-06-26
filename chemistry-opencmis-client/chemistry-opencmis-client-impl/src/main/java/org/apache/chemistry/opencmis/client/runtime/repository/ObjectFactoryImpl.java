@@ -591,7 +591,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         if (objectData.getBaseTypeId() == null) {
             throw new IllegalArgumentException("Base type ID property not set!");
         }
-        
+
         ObjectType type = getTypeFromObjectData(objectData);
 
         /* determine type */
@@ -684,11 +684,11 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     private void throwWrongTypeError(Object obj, String type, Class<?> clazz, String id) {
         String expectedTypes;
-        if (clazz.equals(BigInteger.class)) {
+        if (BigInteger.class.isAssignableFrom(clazz)) {
             expectedTypes = "<BigInteger, Byte, Short, Integer, Long>";
-        } else if (clazz.equals(BigDecimal.class)) {
+        } else if (BigDecimal.class.isAssignableFrom(clazz)) {
             expectedTypes = "<BigDecimal, Double, Float, Byte, Short, Integer, Long>";
-        } else if (clazz.equals(GregorianCalendar.class)) {
+        } else if (GregorianCalendar.class.isAssignableFrom(clazz)) {
             expectedTypes = "<java.util.GregorianCalendar, java.util.Date>";
         } else {
             expectedTypes = clazz.getName();

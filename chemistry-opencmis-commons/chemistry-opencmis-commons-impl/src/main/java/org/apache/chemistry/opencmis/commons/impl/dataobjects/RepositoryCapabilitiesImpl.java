@@ -180,6 +180,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
     /**
      * @deprecated use {@link #setCapabilityOrderBy(CapabilityOrderBy)}
      */
+    @Deprecated
     public void setOrderByCapability(CapabilityOrderBy capabilityOrderBy) {
         setCapabilityOrderBy(capabilityOrderBy);
     }

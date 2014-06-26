@@ -213,6 +213,8 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
             Cookie transactionCookie = new Cookie(getCookieName(token), cookieValue);
             transactionCookie.setMaxAge(expiry);
             transactionCookie.setPath(request.getContextPath() + request.getServletPath() + "/" + repositoryId);
+            transactionCookie.setSecure(request.isSecure());
+
             response.addCookie(transactionCookie);
         }
     }

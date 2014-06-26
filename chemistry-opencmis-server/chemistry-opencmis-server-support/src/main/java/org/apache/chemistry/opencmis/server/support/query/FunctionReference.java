@@ -20,7 +20,9 @@ package org.apache.chemistry.opencmis.server.support.query;
 
 public class FunctionReference extends CmisSelector {
 
-    public enum CmisQlFunction { SCORE, }
+    public enum CmisQlFunction {
+        SCORE
+    }
 
     private final CmisQlFunction function;
 

@@ -514,17 +514,20 @@ class Yylex {
             switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
             case 11: {
                 sb.append(yytext());
+                break;
             }
             case 25:
                 break;
             case 4: {
                 sb.delete(0, sb.length());
                 yybegin(STRING_BEGIN);
+                break;
             }
             case 26:
                 break;
             case 16: {
                 sb.append('\b');
+                break;
             }
             case 27:
                 break;
@@ -552,6 +555,7 @@ class Yylex {
                 break;
             case 12: {
                 sb.append('\\');
+                break;
             }
             case 32:
                 break;
@@ -574,11 +578,13 @@ class Yylex {
                 break;
             case 19: {
                 sb.append('\r');
+                break;
             }
             case 36:
                 break;
             case 15: {
                 sb.append('/');
+                break;
             }
             case 37:
                 break;
@@ -589,6 +595,7 @@ class Yylex {
                 break;
             case 14: {
                 sb.append('"');
+                break;
             }
             case 39:
                 break;
@@ -599,6 +606,7 @@ class Yylex {
                 break;
             case 17: {
                 sb.append('\f');
+                break;
             }
             case 41:
                 break;
@@ -614,12 +622,12 @@ class Yylex {
                 break;
             case 20: {
                 sb.append('\t');
+                break;
             }
             case 43:
                 break;
-            case 7: {
+            case 7:
                 return new Yytoken(Yytoken.TYPE_LEFT_SQUARE, null);
-            }
             case 44:
                 break;
             case 2: {
@@ -630,16 +638,16 @@ class Yylex {
                 break;
             case 18: {
                 sb.append('\n');
+                break;
             }
             case 46:
                 break;
-            case 9: {
+            case 9:
                 return new Yytoken(Yytoken.TYPE_COMMA, null);
-            }
             case 47:
                 break;
-            case 3: {
-            }
+            case 3:
+                break;
             case 48:
                 break;
             default:

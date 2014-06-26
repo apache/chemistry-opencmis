@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServi
  * 
  * @deprecated use {@link ConformanceCmisServiceWrapper} instead
  */
+@Deprecated
 public class CmisServiceWrapper<T extends CmisService> extends ConformanceCmisServiceWrapper {
 
     /**

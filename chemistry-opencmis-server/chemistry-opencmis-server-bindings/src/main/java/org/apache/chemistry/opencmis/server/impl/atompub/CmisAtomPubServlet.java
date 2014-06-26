@@ -164,20 +164,19 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
 
-        if (METHOD_HEAD.equals(request.getMethod())) {
-            request = new HEADHttpServletRequestWrapper(request);
-            response = new NoBodyHttpServletResponseWrapper(response);
-        } else {
-            request = new QueryStringHttpServletRequestWrapper(request);
-        }
-
-        // set default headers
-        response.addHeader("Cache-Control", "private, max-age=0");
-        response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
-
-        // create a context object, dispatch and handle exceptions
         CallContext context = null;
         try {
+            if (METHOD_HEAD.equals(request.getMethod())) {
+                request = new HEADHttpServletRequestWrapper(request);
+                response = new NoBodyHttpServletResponseWrapper(response);
+            } else {
+                request = new QueryStringHttpServletRequestWrapper(request);
+            }
+
+            // set default headers
+            response.addHeader("Cache-Control", "private, max-age=0");
+            response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
+
             context = createContext(getServletContext(), request, response);
             dispatch(context, request, response);
         } catch (Exception e) {
@@ -194,10 +193,10 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             } else {
                 printError(e, response);
             }
+        } finally {
+            // we are done.
+            response.flushBuffer();
         }
-
-        // we are done.
-        response.flushBuffer();
     }
 
     /**
