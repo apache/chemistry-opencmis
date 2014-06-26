@@ -2356,7 +2356,7 @@ public final class JSONConverter {
             result = new ArrayList<GregorianCalendar>(source.size());
             for (Object obj : source) {
                 if (obj instanceof Number) {
-                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
                     cal.setTimeInMillis(((Number) obj).longValue());
                     result.add(cal);
                 } else if (obj instanceof String) {
@@ -2903,7 +2903,7 @@ public final class JSONConverter {
             throw new CmisRuntimeException("Invalid Decimal value!");
         case DATETIME:
             if (value instanceof Number) {
-                GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+                GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
                 cal.setTimeInMillis(((Number) value).longValue());
                 return cal;
             } else if (value instanceof String) {
@@ -3030,7 +3030,7 @@ public final class JSONConverter {
         Object obj = json.get(key);
 
         if (obj instanceof Number) {
-            GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+            GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
             cal.setTimeInMillis(((Number) obj).longValue());
             return cal;
         } else if (obj instanceof String) {

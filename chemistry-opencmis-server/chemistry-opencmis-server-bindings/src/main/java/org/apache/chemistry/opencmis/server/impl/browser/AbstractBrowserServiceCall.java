@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -381,7 +382,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
                 GregorianCalendar cal;
                 try {
                     long timestamp = Long.parseLong(s);
-                    cal = new GregorianCalendar();
+                    cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
                     cal.setTimeInMillis(timestamp);
                 } catch (NumberFormatException e) {
                     cal = DateTimeHelper.parseXmlDateTime(s);
