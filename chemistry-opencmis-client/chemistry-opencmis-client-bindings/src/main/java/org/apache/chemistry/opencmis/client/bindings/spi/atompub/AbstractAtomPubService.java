@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -150,7 +152,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
 
         if (info == null) {
             List<RepositoryInfo> infoList = getRepositoriesInternal(repositoryId);
-            if (!infoList.isEmpty()) {
+            if (isNotEmpty(infoList)) {
                 info = infoList.get(0);
                 cache.put(info);
             }
@@ -560,7 +562,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
         object.setProperties(properties);
 
-        if (policies != null && !policies.isEmpty()) {
+        if (isNotEmpty(policies)) {
             PolicyIdListImpl policyIdList = new PolicyIdListImpl();
             policyIdList.setPolicyIds(policies);
             object.setPolicyIds(policyIdList);
@@ -682,8 +684,8 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Checks if at least one ACE list is not empty.
      */
     protected boolean isAclMergeRequired(Acl addAces, Acl removeAces) {
-        return (addAces != null && addAces.getAces() != null && !addAces.getAces().isEmpty())
-                || (removeAces != null && removeAces.getAces() != null && !removeAces.getAces().isEmpty());
+        return (addAces != null && isNotEmpty(addAces.getAces()))
+                || (removeAces != null && isNotEmpty(removeAces.getAces()));
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,7 +176,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         FailedToDeleteData failed = getBinding().getObjectService().deleteTree(repositoryId, objectId, allVersions,
                 unfile, continueOnFailure, null);
 
-        if ((failed == null) || (failed.getIds() == null) || (failed.getIds().isEmpty())) {
+        if (failed == null || isNullOrEmpty(failed.getIds())) {
             getSession().removeObjectFromCache(this);
         }
 
@@ -364,7 +366,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         }
 
         List<Folder> parents = getParents(getSession().getDefaultContext());
-        if ((parents == null) || (parents.isEmpty())) {
+        if (isNullOrEmpty(parents)) {
             return null;
         }
 

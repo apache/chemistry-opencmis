@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 import static org.apache.chemistry.opencmis.commons.impl.JSONConstants.*;
 
 import java.lang.reflect.Method;
@@ -222,7 +224,7 @@ public final class JSONConverter {
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANONYMOUS, repositoryInfo.getPrincipalIdAnonymous(), result);
         setIfNotNull(JSON_REPINFO_PRINCIPAL_ID_ANYONE, repositoryInfo.getPrincipalIdAnyone(), result);
 
-        if (repositoryInfo.getExtensionFeatures() != null && !repositoryInfo.getExtensionFeatures().isEmpty()) {
+        if (isNotEmpty(repositoryInfo.getExtensionFeatures())) {
             JSONArray extendedFeatures = new JSONArray();
 
             for (ExtensionFeature feature : repositoryInfo.getExtensionFeatures()) {
@@ -263,7 +265,7 @@ public final class JSONConverter {
         setIfNotNull(JSON_FEATURE_VERSION_LABEL, feature.getVersionLabel(), jsonFeature);
         setIfNotNull(JSON_FEATURE_DESCRIPTION, feature.getDescription(), jsonFeature);
 
-        if (feature.getFeatureData() != null && !feature.getFeatureData().isEmpty()) {
+        if (isNotEmpty(feature.getFeatureData())) {
             JSONObject data = new JSONObject();
             data.putAll(feature.getFeatureData());
             jsonFeature.put(JSON_FEATURE_DATA, data);
@@ -285,7 +287,7 @@ public final class JSONConverter {
         JSONObject result = new JSONObject();
 
         result.put(JSON_CAP_CONTENT_STREAM_UPDATABILITY,
-                getJSONEnumValue((capabilities.getContentStreamUpdatesCapability())));
+                getJSONEnumValue(capabilities.getContentStreamUpdatesCapability()));
         result.put(JSON_CAP_CHANGES, getJSONEnumValue(capabilities.getChangesCapability()));
         result.put(JSON_CAP_RENDITIONS, getJSONEnumValue(capabilities.getRenditionsCapability()));
         result.put(JSON_CAP_GET_DESCENDANTS, capabilities.isGetDescendantsSupported());
@@ -696,7 +698,7 @@ public final class JSONConverter {
             Object allowedSourceTypes = json.get(JSON_TYPE_ALLOWED_SOURCE_TYPES);
             if (allowedSourceTypes instanceof List) {
                 List<String> types = new ArrayList<String>();
-                for (Object type : ((List<Object>) allowedSourceTypes)) {
+                for (Object type : (List<Object>) allowedSourceTypes) {
                     if (type != null) {
                         types.add(type.toString());
                     }
@@ -708,7 +710,7 @@ public final class JSONConverter {
             Object allowedTargetTypes = json.get(JSON_TYPE_ALLOWED_TARGET_TYPES);
             if (allowedTargetTypes instanceof List) {
                 List<String> types = new ArrayList<String>();
-                for (Object type : ((List<Object>) allowedTargetTypes)) {
+                for (Object type : (List<Object>) allowedTargetTypes) {
                     if (type != null) {
                         types.add(type.toString());
                     }
@@ -1107,7 +1109,7 @@ public final class JSONConverter {
         }
 
         // relationships
-        if ((object.getRelationships() != null) && (!object.getRelationships().isEmpty())) {
+        if (isNotEmpty(object.getRelationships())) {
             JSONArray relationships = new JSONArray();
 
             for (ObjectData relationship : object.getRelationships()) {
@@ -1153,7 +1155,7 @@ public final class JSONConverter {
         }
 
         // renditions
-        if ((object.getRenditions() != null) && (!object.getRenditions().isEmpty())) {
+        if (isNotEmpty(object.getRenditions())) {
             JSONArray renditions = new JSONArray();
 
             for (RenditionData rendition : object.getRenditions()) {
@@ -1234,7 +1236,7 @@ public final class JSONConverter {
             Object result = null;
 
             if (propDef != null) {
-                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                if (isNullOrEmpty(property.getValues())) {
                     result = null;
                 } else if (propDef.getCardinality() == Cardinality.SINGLE) {
                     result = getJSONValue(property.getValues().get(0), dateTimeFormat);
@@ -1248,9 +1250,9 @@ public final class JSONConverter {
                     result = values;
                 }
             } else {
-                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                if (isNullOrEmpty(property.getValues())) {
                     result = null;
-                } else if (property.getValues().size() > 0) {
+                } else {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
@@ -1274,7 +1276,7 @@ public final class JSONConverter {
                 result.put(JSON_PROPERTY_DATATYPE, getJSONEnumValue(propDef.getPropertyType()));
                 result.put(JSON_PROPERTY_CARDINALITY, getJSONEnumValue(propDef.getCardinality()));
 
-                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                if (isNullOrEmpty(property.getValues())) {
                     result.put(JSON_PROPERTY_VALUE, null);
                 } else if (propDef.getCardinality() == Cardinality.SINGLE) {
                     result.put(JSON_PROPERTY_VALUE, getJSONValue(property.getValues().get(0), dateTimeFormat));
@@ -1290,9 +1292,9 @@ public final class JSONConverter {
             } else {
                 result.put(JSON_PROPERTY_DATATYPE, getJSONPropertyDataType(property));
 
-                if ((property.getValues() == null) || (property.getValues().size() == 0)) {
+                if (isNullOrEmpty(property.getValues())) {
                     result.put(JSON_PROPERTY_VALUE, null);
-                } else if (property.getValues().size() > 0) {
+                } else {
                     JSONArray values = new JSONArray();
 
                     for (Object value : property.getValues()) {
@@ -1491,7 +1493,7 @@ public final class JSONConverter {
         result.put(JSON_OBJECTINFOLDERCONTAINER_OBJECT,
                 convert(container.getObject(), typeCache, succinct, dateTimeFormat));
 
-        if ((container.getChildren() != null) && (container.getChildren().size() > 0)) {
+        if (isNotEmpty(container.getChildren())) {
             JSONArray children = new JSONArray();
             for (ObjectInFolderContainer descendant : container.getChildren()) {
                 children.add(JSONConverter.convert(descendant, typeCache, succinct, dateTimeFormat));
@@ -1577,7 +1579,7 @@ public final class JSONConverter {
                     getJSONArrayFromList(((RelationshipTypeDefinition) type).getAllowedTargetTypeIds()));
         }
 
-        if ((type.getPropertyDefinitions() != null) && (!type.getPropertyDefinitions().isEmpty())) {
+        if (isNotEmpty(type.getPropertyDefinitions())) {
             JSONObject propertyDefs = new JSONObject();
 
             for (PropertyDefinition<?> pd : type.getPropertyDefinitions().values()) {
@@ -1654,7 +1656,7 @@ public final class JSONConverter {
         }
 
         // choices
-        if (propertyDefinition.getChoices() != null && !propertyDefinition.getChoices().isEmpty()) {
+        if (isNotEmpty(propertyDefinition.getChoices())) {
             result.put(
                     JSON_PROPERTY_TYPE_CHOICE,
                     convertChoices(propertyDefinition.getChoices(), propertyDefinition.getCardinality(), dateTimeFormat));
@@ -1712,7 +1714,7 @@ public final class JSONConverter {
                 jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_VALUE, values);
             }
 
-            if (choice.getChoice() != null && !choice.getChoice().isEmpty()) {
+            if (isNotEmpty(choice.getChoice())) {
                 jsonChoice.put(JSON_PROPERTY_TYPE_CHOICE_CHOICE,
                         convertChoices(choice.getChoice(), cardinality, dateTimeFormat));
             }
@@ -1793,7 +1795,7 @@ public final class JSONConverter {
         JSONObject result = new JSONObject();
         result.put(JSON_TYPESCONTAINER_TYPE, convert(container.getTypeDefinition(), dateTimeFormat));
 
-        if ((container.getChildren() != null) && (container.getChildren().size() > 0)) {
+        if (isNotEmpty(container.getChildren())) {
             JSONArray children = new JSONArray();
             for (TypeDefinitionContainer child : container.getChildren()) {
                 children.add(convert(child, dateTimeFormat));
@@ -2135,7 +2137,7 @@ public final class JSONConverter {
 
         List<Object> secTypeIds = getList(json.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS));
         List<TypeDefinition> secTypeDefs = null;
-        if (secTypeIds != null && !secTypeIds.isEmpty()) {
+        if (isNotEmpty(secTypeIds)) {
             secTypeDefs = new ArrayList<TypeDefinition>(secTypeIds.size());
             for (Object secTypeId : secTypeIds) {
                 if (secTypeId instanceof String) {
@@ -2730,7 +2732,7 @@ public final class JSONConverter {
 
         Object value = null;
 
-        if (ext.getChildren() != null && !ext.getChildren().isEmpty()) {
+        if (isNotEmpty(ext.getChildren())) {
             value = convertExtensionList(ext.getChildren());
         } else {
             value = ext.getValue();

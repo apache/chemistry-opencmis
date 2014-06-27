@@ -91,7 +91,7 @@ public class AtomParserTest extends TestCase {
         AtomEntry entry = (AtomEntry) parseResult;
 
         assertNotNull(entry);
-        assertTrue(entry.getElements().size() > 0);
+        assertFalse(entry.getElements().isEmpty());
 
         // find the object
         ObjectData object2 = null;

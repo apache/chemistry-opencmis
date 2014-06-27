@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -115,7 +117,7 @@ public class VersioningService {
             List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, versionSeriesId, filter,
                     includeAllowableActions, null);
 
-            if (versions == null || versions.isEmpty()) {
+            if (isNullOrEmpty(versions)) {
                 throw new CmisRuntimeException("Version list is null or empty!");
             }
 

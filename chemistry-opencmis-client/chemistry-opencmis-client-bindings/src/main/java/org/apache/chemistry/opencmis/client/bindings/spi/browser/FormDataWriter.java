@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -83,7 +86,7 @@ public final class FormDataWriter {
             String idxStr = "[" + idx + "]";
             addParameter(Constants.CONTROL_PROP_ID + idxStr, prop.getId());
 
-            if (prop.getValues() != null && prop.getValues().size() > 0) {
+            if (isNotEmpty(prop.getValues())) {
                 if (prop.getValues().size() == 1) {
                     addParameter(Constants.CONTROL_PROP_VALUE + idxStr,
                             convertPropertyValue(prop.getFirstValue(), dateTimeFormat));
@@ -138,7 +141,7 @@ public final class FormDataWriter {
 
         int idx = 0;
         for (Ace ace : acl.getAces()) {
-            if (ace.getPrincipalId() != null && ace.getPermissions() != null && !ace.getPermissions().isEmpty()) {
+            if (ace.getPrincipalId() != null && isNotEmpty(ace.getPermissions())) {
                 String idxStr = "[" + idx + "]";
                 addParameter(principalControl + idxStr, ace.getPrincipalId());
 
@@ -156,7 +159,7 @@ public final class FormDataWriter {
     }
 
     public void addObjectIdsAndChangeTokens(List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens) {
-        if (objectIdsAndChangeTokens == null || objectIdsAndChangeTokens.size() == 0) {
+        if (isNullOrEmpty(objectIdsAndChangeTokens)) {
             return;
         }
 
@@ -184,7 +187,7 @@ public final class FormDataWriter {
     }
 
     private void addSecondaryTypeIdParameters(List<String> secondaryTypeIds, String secondaryTypeIdControl) {
-        if (secondaryTypeIds == null || secondaryTypeIds.size() == 0) {
+        if (isNullOrEmpty(secondaryTypeIds)) {
             return;
         }
 

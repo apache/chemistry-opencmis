@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.support;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -97,7 +99,7 @@ public final class TypeValidator {
                 }
             }
 
-            if (propDef.getChoices() != null && propDef.getChoices().size() > 0) {
+            if (isNotEmpty(propDef.getChoices())) {
                 validateChoices(propDef, prop);
             }
         }
@@ -166,10 +168,10 @@ public final class TypeValidator {
         private List<T> getAllowedValues(List<Choice<T>> choices) {
             List<T> allowedValues = new ArrayList<T>(choices.size());
             for (Choice<T> choice : choices) {
-                if (choice.getValue() != null && !choice.getValue().isEmpty()) {
+                if (isNotEmpty(choice.getValue())) {
                     allowedValues.add(choice.getValue().get(0));
                 }
-                if (choice.getChoice() != null && !choice.getChoice().isEmpty()) {
+                if (isNotEmpty(choice.getChoice())) {
                     List<Choice<T>> x = choice.getChoice();
                     allowedValues.addAll(getAllowedValues(x));
                 }
@@ -372,7 +374,7 @@ public final class TypeValidator {
     }
 
     protected static void validateAllowedTypes(TypeDefinition typeDef, List<String> allowedTypes, String description) {
-        if (null == allowedTypes || allowedTypes.size() == 0) {
+        if (isNullOrEmpty(allowedTypes)) {
             return; // all types are allowed
         }
 

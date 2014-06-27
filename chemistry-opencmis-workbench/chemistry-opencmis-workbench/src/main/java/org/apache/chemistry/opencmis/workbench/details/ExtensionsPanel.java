@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
+
 import java.awt.Color;
 import java.util.List;
 
@@ -68,7 +71,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
                     // object extensions
                     extensions = object.getExtensions(ExtensionLevel.OBJECT);
-                    if ((extensions != null) && (!extensions.isEmpty())) {
+                    if (isNotEmpty(extensions)) {
                         DefaultMutableTreeNode objectRootNode = new DefaultMutableTreeNode("Object");
                         addExtension(objectRootNode, extensions);
                         rootNode.add(objectRootNode);
@@ -76,7 +79,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
                     // property extensions
                     extensions = object.getExtensions(ExtensionLevel.PROPERTIES);
-                    if ((extensions != null) && (!extensions.isEmpty())) {
+                    if (isNotEmpty(extensions)) {
                         DefaultMutableTreeNode propertiesRootNode = new DefaultMutableTreeNode("Properties");
                         addExtension(propertiesRootNode, extensions);
                         rootNode.add(propertiesRootNode);
@@ -84,7 +87,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
                     // allowable actions extensions
                     extensions = object.getExtensions(ExtensionLevel.ALLOWABLE_ACTIONS);
-                    if ((extensions != null) && (!extensions.isEmpty())) {
+                    if (isNotEmpty(extensions)) {
                         DefaultMutableTreeNode allowableActionsRootNode = new DefaultMutableTreeNode(
                                 "Allowable Actions");
                         addExtension(allowableActionsRootNode, extensions);
@@ -93,7 +96,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
                     // ACL extensions
                     extensions = object.getExtensions(ExtensionLevel.ACL);
-                    if ((extensions != null) && (!extensions.isEmpty())) {
+                    if (isNotEmpty(extensions)) {
                         DefaultMutableTreeNode aclRootNode = new DefaultMutableTreeNode("ACL");
                         addExtension(aclRootNode, extensions);
                         rootNode.add(aclRootNode);
@@ -101,7 +104,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
                     // policies extensions
                     extensions = object.getExtensions(ExtensionLevel.POLICIES);
-                    if ((extensions != null) && (!extensions.isEmpty())) {
+                    if (isNotEmpty(extensions)) {
                         DefaultMutableTreeNode policiesRootNode = new DefaultMutableTreeNode("Policies");
                         addExtension(policiesRootNode, extensions);
                         rootNode.add(policiesRootNode);
@@ -116,7 +119,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
     }
 
     private void addExtension(DefaultMutableTreeNode parent, List<CmisExtensionElement> extensions) {
-        if ((extensions == null) || (extensions.isEmpty())) {
+        if (isNullOrEmpty(extensions)) {
             return;
         }
 
@@ -124,7 +127,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ExtensionNode(ext));
             parent.add(node);
 
-            if (ext.getChildren().size() > 0) {
+            if (isNotEmpty(ext.getChildren())) {
                 addExtension(node, ext.getChildren());
             }
         }

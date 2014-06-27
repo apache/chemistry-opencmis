@@ -83,7 +83,7 @@ public abstract class AbstractWebServicesService {
         BigInteger code = ex.getFaultInfo().getCode();
 
         String errorContent = null;
-        if (ex.getFaultInfo().getAny().size() > 0) {
+        if (!ex.getFaultInfo().getAny().isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (Object o : ex.getFaultInfo().getAny()) {
                 if (o != null) {

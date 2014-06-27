@@ -66,7 +66,7 @@ public class DeleteTreeTest extends AbstractSessionTest {
         List<String> failedIds = testFolder.deleteTree(true, UnfileObject.DELETE, true);
 
         // check failed ids
-        if (failedIds != null && failedIds.size() > 0) {
+        if (failedIds != null && !failedIds.isEmpty()) {
             f = createResult(FAILURE, "deleteTree() could not delete " + failedIds.size() + " out of " + numOfDocuments
                     + " objects in the folder!");
             addResult(assertEquals(0, failedIds.size(), null, f));

@@ -245,7 +245,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     }
 
     protected CmisTestResult assertListNotEmpty(List<?> list, CmisTestResult success, CmisTestResult failure) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             return success;
         }
 
@@ -254,6 +254,15 @@ public abstract class AbstractCmisTest implements CmisTest {
         } else {
             return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "List is empty!"));
         }
+    }
+
+    protected CmisTestResult assertListNullOrEmpty(List<?> list, CmisTestResult success, CmisTestResult failure) {
+        if (list == null || list.isEmpty()) {
+            return success;
+        }
+
+        return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "List is not empty!"));
+
     }
 
     protected CmisTestResult assertEquals(Object expected, Object actual, CmisTestResult success, CmisTestResult failure) {

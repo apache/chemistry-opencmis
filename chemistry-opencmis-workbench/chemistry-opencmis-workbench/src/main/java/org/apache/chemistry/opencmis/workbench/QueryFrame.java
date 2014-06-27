@@ -350,7 +350,7 @@ public class QueryFrame extends JFrame {
 
             if (value instanceof List<?>) {
                 List<?> values = (List<?>) value;
-                if (values.size() == 0) {
+                if (values.isEmpty()) {
                     return;
                 }
 

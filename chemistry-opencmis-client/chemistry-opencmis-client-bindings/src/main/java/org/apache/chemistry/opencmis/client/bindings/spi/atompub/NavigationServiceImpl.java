@@ -404,7 +404,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
      * Adds descendants level recursively.
      */
     private void addDescendantsLevel(String repositoryId, AtomFeed feed, List<ObjectInFolderContainer> containerList) {
-        if ((feed == null) || (feed.getEntries().isEmpty())) {
+        if (feed == null || feed.getEntries().isEmpty()) {
             return;
         }
 

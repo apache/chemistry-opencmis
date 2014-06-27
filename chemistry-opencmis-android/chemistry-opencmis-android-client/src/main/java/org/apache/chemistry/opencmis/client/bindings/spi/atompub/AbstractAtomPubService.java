@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -86,8 +88,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.util.Xml;
-
 /**
  * Base class for all AtomPub client services.
  */
@@ -151,7 +151,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
 
         if (info == null) {
             List<RepositoryInfo> infoList = getRepositoriesInternal(repositoryId);
-            if (!infoList.isEmpty()) {
+            if (isNotEmpty(infoList)) {
                 info = infoList.get(0);
                 cache.put(info);
             }

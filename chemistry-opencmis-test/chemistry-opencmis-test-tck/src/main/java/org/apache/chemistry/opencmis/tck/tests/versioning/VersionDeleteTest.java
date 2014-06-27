@@ -106,7 +106,7 @@ public class VersionDeleteTest extends AbstractSessionTest {
                 + "!");
         addResult(assertEquals(version, versions.size(), null, f));
 
-        if (versions.size() > 0) {
+        if (!versions.isEmpty()) {
             f = createResult(FAILURE, "Newly created version " + version + " is not the latest version!");
             addResult(assertEquals(newVersion.getId(), versions.get(0).getId(), null, f));
 

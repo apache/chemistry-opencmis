@@ -68,7 +68,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
-        if (repositoryInfos.size() == 0) {
+        if (repositoryInfos.isEmpty()) {
             throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
         }
 
@@ -194,7 +194,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
      * Adds type descendants level recursively.
      */
     private void addTypeDescendantsLevel(String repositoryId, AtomFeed feed, List<TypeDefinitionContainer> containerList) {
-        if ((feed == null) || (feed.getEntries().isEmpty())) {
+        if (feed == null || feed.getEntries().isEmpty()) {
             return;
         }
 

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -190,7 +192,7 @@ public class Response {
 
     public String getHeader(String name) {
         List<String> list = headers.get(name.toLowerCase(Locale.US));
-        if ((list == null) || (list.isEmpty())) {
+        if (isNullOrEmpty(list)) {
             return null;
         }
 

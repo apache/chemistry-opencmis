@@ -121,15 +121,15 @@ public class OperationContextTest extends AbstractSessionTest {
 
         f = createResult(CmisTestResultStatus.WARNING,
                 "getObject() delivered policies, although they have not been requested.");
-        addResult(assertIsTrue(doc1.getPolicies() == null || doc1.getPolicies().isEmpty(), null, f));
+        addResult(assertListNullOrEmpty(doc1.getPolicies(), null, f));
 
         f = createResult(CmisTestResultStatus.WARNING,
                 "getObject() delivered relationships, although they have not been requested.");
-        addResult(assertIsTrue(doc1.getRelationships() == null || doc1.getRelationships().isEmpty(), null, f));
+        addResult(assertListNullOrEmpty(doc1.getRelationships(), null, f));
 
         f = createResult(CmisTestResultStatus.WARNING,
                 "getObject() delivered renditions, although they have not been requested.");
-        addResult(assertIsTrue(doc1.getRenditions() == null || doc1.getRenditions().isEmpty(), null, f));
+        addResult(assertListNullOrEmpty(doc1.getRenditions(), null, f));
 
         // get the test folder children with the OperationContext
         for (CmisObject child : testFolder.getChildren(context)) {
@@ -151,15 +151,15 @@ public class OperationContextTest extends AbstractSessionTest {
                 addResult(assertNull(child.getAllowableActions(), null, f));
 
                 f = createResult(CmisTestResultStatus.INFO, "getChildren() delivered policies, which is not required.");
-                addResult(assertIsTrue(child.getPolicies() == null || child.getPolicies().isEmpty(), null, f));
+                addResult(assertListNullOrEmpty(child.getPolicies(), null, f));
 
                 f = createResult(CmisTestResultStatus.WARNING,
                         "getChildren() delivered relationships, although they have not been requested.");
-                addResult(assertIsTrue(child.getRelationships() == null || child.getRelationships().isEmpty(), null, f));
+                addResult(assertListNullOrEmpty(child.getRelationships(), null, f));
 
                 f = createResult(CmisTestResultStatus.WARNING,
                         "getChildren() delivered renditions, although they have not been requested.");
-                addResult(assertIsTrue(child.getRenditions() == null || child.getRenditions().isEmpty(), null, f));
+                addResult(assertListNullOrEmpty(child.getRenditions(), null, f));
 
                 break;
             }

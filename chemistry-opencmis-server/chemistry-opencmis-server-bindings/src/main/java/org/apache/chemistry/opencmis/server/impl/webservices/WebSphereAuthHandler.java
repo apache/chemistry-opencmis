@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +62,7 @@ public class WebSphereAuthHandler extends AbstractUsernameTokenAuthHandler imple
 
         if (requestHeaders != null) {
             List<String> secHeaders = requestHeaders.get(WSSE_SECURITY);
-            if (secHeaders != null && secHeaders.size() > 0) {
+            if (isNotEmpty(secHeaders)) {
                 try {
                     Unmarshaller unmarshaller = WSSE_CONTEXT.createUnmarshaller();
 

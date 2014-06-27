@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -238,7 +240,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
 
         // load primary type
         List<String> objectTypeIdsValues = properties.get(PropertyIds.OBJECT_TYPE_ID);
-        if (objectTypeIdsValues != null && !objectTypeIdsValues.isEmpty()) {
+        if (isNotEmpty(objectTypeIdsValues)) {
             TypeDefinition typeDef = typeCache.getTypeDefinition(objectTypeIdsValues.get(0));
             if (typeDef == null) {
                 throw new CmisInvalidArgumentException("Invalid type: " + objectTypeIdsValues.get(0));
@@ -247,7 +249,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
 
         // load secondary types
         List<String> secondaryObjectTypeIdsValues = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
-        if (secondaryObjectTypeIdsValues != null && !secondaryObjectTypeIdsValues.isEmpty()) {
+        if (isNotEmpty(secondaryObjectTypeIdsValues)) {
             for (String secTypeId : secondaryObjectTypeIdsValues) {
                 TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
                 if (typeDef == null) {
@@ -287,7 +289,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
 
         // load secondary types
         List<String> secondaryObjectTypeIdsValues = properties.get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
-        if (secondaryObjectTypeIdsValues != null && !secondaryObjectTypeIdsValues.isEmpty()) {
+        if (isNotEmpty(secondaryObjectTypeIdsValues)) {
             for (String secTypeId : secondaryObjectTypeIdsValues) {
                 TypeDefinition typeDef = typeCache.getTypeDefinition(secTypeId);
                 if (typeDef == null) {

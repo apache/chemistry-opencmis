@@ -22,6 +22,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -266,7 +268,7 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
         }
 
         // write children
-        if ((children != null) && (children.size() > 0)) {
+        if (isNotEmpty(children)) {
             writeObjectChildren(service, entry, info, children, repositoryId, baseUrl, cmisVersion);
         }
 
@@ -385,7 +387,7 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
         entry.writeDescribedByLink(compileUrl(baseUrl, RESOURCE_TYPE, type.getBaseTypeId().value()));
 
         // write children
-        if ((children != null) && (children.size() > 0)) {
+        if (isNotEmpty(children)) {
             writeTypeChildren(entry, type, children, repositoryId, baseUrl, cmisVersion);
         }
 

@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.model;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -174,7 +176,7 @@ public class ClientModel {
             } else {
                 if (selectedObject instanceof FileableCmisObject) {
                     List<Folder> parents = ((FileableCmisObject) selectedObject).getParents();
-                    if (parents != null && parents.size() > 0) {
+                    if (isNotEmpty(parents)) {
                         folderObject = parents.get(0);
                     } else {
                         setCurrentFolder(null, new ArrayList<CmisObject>(0));
@@ -413,7 +415,7 @@ public class ClientModel {
     }
 
     public synchronized CmisObject getFromCurrentChildren(String id) {
-        if ((currentChildren == null) || (currentChildren.isEmpty())) {
+        if (isNullOrEmpty(currentChildren)) {
             return null;
         }
 

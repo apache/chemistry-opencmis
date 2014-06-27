@@ -57,7 +57,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
-        if (repositoryInfos.size() == 0) {
+        if (repositoryInfos.isEmpty()) {
             throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
         }
 

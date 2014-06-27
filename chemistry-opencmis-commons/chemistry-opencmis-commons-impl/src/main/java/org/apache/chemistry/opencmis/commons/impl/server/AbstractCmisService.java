@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.server;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -160,7 +162,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         TypeDefinitionList children = getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
                 BigInteger.valueOf(Integer.MAX_VALUE), BigInteger.ZERO, null);
 
-        if (children != null && children.getList() != null && children.getList().size() > 0) {
+        if (children != null && isNotEmpty(children.getList())) {
             for (TypeDefinition td : children.getList()) {
                 TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
                 addTypeChildren(repositoryId, includePropertyDefinitions, (d > 0 ? d - 1 : -1), tdc);
@@ -186,7 +188,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         TypeDefinitionList children = getTypeChildren(repositoryId, container.getTypeDefinition().getId(),
                 includePropertyDefinitions, BigInteger.valueOf(Integer.MAX_VALUE), BigInteger.ZERO, null);
 
-        if (children != null && children.getList() != null && children.getList().size() > 0) {
+        if (children != null && isNotEmpty(children.getList())) {
             List<TypeDefinitionContainer> list = new ArrayList<TypeDefinitionContainer>();
             container.setChildren(list);
 
@@ -1124,7 +1126,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 // get latest version
                 List<ObjectData> versions = getAllVersions(repositoryId, object.getId(), info.getVersionSeriesId(),
                         null, Boolean.FALSE, null);
-                if (versions != null && versions.size() > 0) {
+                if (isNotEmpty(versions)) {
                     info.setWorkingCopyOriginalId(versions.get(0).getId());
                 }
             }
@@ -1155,7 +1157,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
             try {
                 List<ObjectParentData> parents = getObjectParents(repositoryId, object.getId(), null, Boolean.FALSE,
                         IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, null);
-                info.setHasParent(parents.size() > 0);
+                info.setHasParent(isNotEmpty(parents));
             } catch (CmisInvalidArgumentException e) {
                 info.setHasParent(false);
             }
@@ -1178,7 +1180,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         // renditions
         info.setRenditionInfos(null);
         List<RenditionData> renditions = object.getRenditions();
-        if (renditions != null && renditions.size() > 0) {
+        if (isNotEmpty(renditions)) {
             List<RenditionInfo> renditionInfos = new ArrayList<RenditionInfo>();
             for (RenditionData rendition : renditions) {
                 RenditionInfoImpl renditionInfo = new RenditionInfoImpl();
@@ -1196,7 +1198,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         info.setRelationshipSourceIds(null);
         info.setRelationshipTargetIds(null);
         List<ObjectData> relationships = object.getRelationships();
-        if (relationships != null && relationships.size() > 0) {
+        if (isNotEmpty(relationships)) {
             List<String> sourceIds = new ArrayList<String>();
             List<String> targetIds = new ArrayList<String>();
             for (ObjectData relationship : relationships) {
@@ -1209,10 +1211,10 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                     targetIds.add(relationship.getId());
                 }
             }
-            if (sourceIds.size() > 0) {
+            if (isNotEmpty(sourceIds)) {
                 info.setRelationshipSourceIds(sourceIds);
             }
-            if (targetIds.size() > 0) {
+            if (isNotEmpty(targetIds)) {
                 info.setRelationshipTargetIds(targetIds);
             }
         }

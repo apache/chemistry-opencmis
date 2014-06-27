@@ -71,7 +71,7 @@ public class BaseTypesTest extends AbstractSessionTest {
                 addResult(createResult(FAILURE, "Base type has an invalid id: " + typeId));
             }
 
-            if (typeDef.getPropertyDefinitions() != null && typeDef.getPropertyDefinitions().size() > 0) {
+            if (typeDef.getPropertyDefinitions() != null && !typeDef.getPropertyDefinitions().isEmpty()) {
                 addResult(createResult(WARNING, "Property type definitions were not requested but delivered. Type id: "
                         + typeId));
             }

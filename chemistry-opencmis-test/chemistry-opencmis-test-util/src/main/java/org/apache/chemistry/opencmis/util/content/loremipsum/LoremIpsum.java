@@ -495,13 +495,12 @@ public class LoremIpsum {
             previous.len2 = wi.len;
         }
 
-        if (chains.size() > 0) {
-            this.chains = chains;
-            this.starts = starts;
-        } else {
+        if (chains.isEmpty()) {
             throw new RuntimeException("Invalid sample text.");
         }
 
+        this.chains = chains;
+        this.starts = starts;
     }
 
     /**

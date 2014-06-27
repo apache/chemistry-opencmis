@@ -142,7 +142,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
                 tempSet.add(toid);
             }
 
-            if (tempSet.size() == 0) {
+            if (tempSet.isEmpty()) {
                 filter = null;
             } else {
                 filter = tempSet;
@@ -270,7 +270,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
                 tempSet.add(trf);
             }
 
-            if (tempSet.size() == 0) {
+            if (tempSet.isEmpty()) {
                 tempSet.add(RENDITION_NONE);
             }
         } else {

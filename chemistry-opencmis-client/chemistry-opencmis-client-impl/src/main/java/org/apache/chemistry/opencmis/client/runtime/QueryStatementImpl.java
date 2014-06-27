@@ -17,6 +17,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -96,7 +98,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Session must be set!");
         }
 
-        if (fromTypes == null || fromTypes.size() == 0) {
+        if (isNullOrEmpty(fromTypes)) {
             throw new IllegalArgumentException("Types must be set!");
         }
 
@@ -132,7 +134,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             }
 
             // exclude secondary types without properties
-            if (type.getPropertyDefinitions() != null && type.getPropertyDefinitions().size() > 0) {
+            if (isNotEmpty(type.getPropertyDefinitions())) {
                 types.put(alias, type);
             }
         }
@@ -146,7 +148,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
 
         StringListBuilder selectList = new StringListBuilder(",", stmt);
 
-        if (selectPropertyIds == null || selectPropertyIds.size() == 0) {
+        if (isNullOrEmpty(selectPropertyIds)) {
             // select all properties
             for (String alias : types.keySet()) {
                 selectList.add(alias + ".*");
@@ -231,7 +233,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         }
 
         // ORDER BY
-        if (orderByPropertyIds != null && orderByPropertyIds.size() > 0) {
+        if (isNotEmpty(orderByPropertyIds)) {
             stmt.append(" ORDER BY ");
 
             StringListBuilder orderByList = new StringListBuilder(",", stmt);

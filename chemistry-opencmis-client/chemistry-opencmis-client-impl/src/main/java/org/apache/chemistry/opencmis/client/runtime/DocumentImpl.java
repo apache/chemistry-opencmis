@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -126,7 +128,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     public List<ContentStreamHash> getContentStreamHashes() {
         List<String> hashes = getPropertyValue(PropertyIds.CONTENT_STREAM_HASH);
-        if (hashes == null || hashes.size() == 0) {
+        if (isNullOrEmpty(hashes)) {
             return null;
         }
 

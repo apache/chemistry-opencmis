@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -346,7 +348,7 @@ public class ObjectService {
             FailedToDeleteData ftd = service.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
                     continueOnFailure, null);
 
-            if ((ftd != null) && (ftd.getIds() != null) && (ftd.getIds().size() > 0)) {
+            if (ftd != null && isNotEmpty(ftd.getIds())) {
                 // print ids that could not be deleted
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("text/plain");

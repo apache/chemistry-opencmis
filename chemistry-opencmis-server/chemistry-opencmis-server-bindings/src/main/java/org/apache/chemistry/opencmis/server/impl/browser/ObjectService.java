@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.MEDIATYPE_OCTETSTREAM;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ACL;
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_ALLOWABLE_ACTIONS;
@@ -423,7 +425,7 @@ public class ObjectService {
             List<String> objectIds = cp.getValues(Constants.CONTROL_OBJECT_ID);
             List<String> changeTokens = cp.getValues(Constants.CONTROL_CHANGE_TOKEN);
 
-            if (objectIds == null || objectIds.size() == 0) {
+            if (isNullOrEmpty(objectIds)) {
                 throw new CmisInvalidArgumentException("No object ids provided!");
             }
 
@@ -739,7 +741,7 @@ public class ObjectService {
 
             response.setStatus(HttpServletResponse.SC_OK);
 
-            if ((ftd != null) && (ftd.getIds() != null) && (ftd.getIds().size() > 0)) {
+            if (ftd != null && isNotEmpty(ftd.getIds())) {
                 JSONObject jsonObject = JSONConverter.convert(ftd);
                 writeJSON(jsonObject, request, response);
                 return;

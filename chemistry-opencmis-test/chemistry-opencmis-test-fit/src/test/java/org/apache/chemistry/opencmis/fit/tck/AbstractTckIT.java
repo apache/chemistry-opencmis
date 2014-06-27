@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.tck;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -157,7 +158,7 @@ public abstract class AbstractTckIT extends AbstractRunner {
     }
 
     public static CmisTestResultStatus getWorst(List<CmisTestResult> results) {
-        if ((results == null) || (results.isEmpty())) {
+        if (isNullOrEmpty(results)) {
             return CmisTestResultStatus.OK;
         }
 

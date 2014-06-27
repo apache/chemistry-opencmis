@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.chemistry.opencmis.client.bindings.impl;
+
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -56,7 +57,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
 
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         RepositoryInfo result = null;
-        boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+        boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
 
         RepositoryInfoCache cache = CmisBindingsHelper.getRepositoryInfoCache(session);
 
@@ -82,7 +83,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
 
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         List<RepositoryInfo> result = null;
-        boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+        boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
 
         // get the SPI and fetch the repository infos
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
@@ -102,7 +103,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         TypeDefinitionList result = null;
-        boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+        boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
         boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
         // get the SPI and fetch the type definitions
@@ -129,7 +130,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension,
             boolean useCache) {
         TypeDefinition result = null;
-        boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+        boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
 
         TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(session);
 
@@ -157,7 +158,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         List<TypeDefinitionContainer> result = null;
-        boolean hasExtension = (extension != null) && (!extension.getExtensions().isEmpty());
+        boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
         boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
 
         // get the SPI and fetch the type definitions

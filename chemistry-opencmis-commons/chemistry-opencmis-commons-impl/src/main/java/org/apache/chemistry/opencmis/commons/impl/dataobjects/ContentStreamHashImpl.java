@@ -38,7 +38,7 @@ public class ContentStreamHashImpl implements ContentStreamHash {
     public static final String ALGORITHM_SHA512 = "sha-512";
     public static final String ALGORITHM_SHA3 = "sha-3";
 
-    private final static char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
+    private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
 
     private String propertyValue;
     private String algorithm = null;

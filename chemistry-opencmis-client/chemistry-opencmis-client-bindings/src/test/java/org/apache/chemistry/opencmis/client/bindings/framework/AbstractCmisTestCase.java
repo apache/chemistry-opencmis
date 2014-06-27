@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.framework;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -68,10 +70,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base test case for CMIS tests.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
- */
+  */
 public abstract class AbstractCmisTestCase extends TestCase {
 
     public static final String DEFAULT_TESTS_ENABLED = "true";
@@ -552,7 +551,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
                     folderId, "*", null, Boolean.TRUE, IncludeRelationships.BOTH, null, Boolean.TRUE, null, null, null);
 
             assertNotNull(children);
-            assertTrue(children.getObjects().size() > 0);
+            assertTrue(isNotEmpty(children.getObjects()));
 
             hasMore = (children.hasMoreItems() == null ? false : children.hasMoreItems().booleanValue());
 

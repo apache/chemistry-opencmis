@@ -111,7 +111,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             f = createResult(FAILURE, "Version series should have 2 versions but has " + versions.size() + "!");
             addResult(assertEquals(2, versions.size(), null, f));
 
-            if (versions.size() > 0) {
+            if (!versions.isEmpty()) {
                 f = createResult(FAILURE,
                         "Version history order is incorrect! The first version should be the new version.");
                 addResult(assertEquals(newVersion.getId(), versions.get(0).getId(), null, f));

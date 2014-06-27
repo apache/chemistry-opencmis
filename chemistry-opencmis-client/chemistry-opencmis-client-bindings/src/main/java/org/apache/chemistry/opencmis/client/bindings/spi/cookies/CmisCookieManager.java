@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

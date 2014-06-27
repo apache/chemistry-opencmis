@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
+
 import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
@@ -247,7 +250,7 @@ public class RepositoryInfoFrame extends JFrame {
                 }
             }
 
-            if (repInfo.getExtensionFeatures() != null && !repInfo.getExtensionFeatures().isEmpty()) {
+            if (isNotEmpty(repInfo.getExtensionFeatures())) {
                 JTree extensionFeaturesTree = new JTree();
                 extensionFeaturesTree.setRootVisible(false);
                 extensionFeaturesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -279,7 +282,7 @@ public class RepositoryInfoFrame extends JFrame {
                         efNode.add(new DefaultMutableTreeNode("URL: " + ef.getUrl()));
                     }
 
-                    if (ef.getFeatureData() != null && !ef.getFeatureData().isEmpty()) {
+                    if (isNotEmpty(ef.getFeatureData())) {
                         DefaultMutableTreeNode dataNode = new DefaultMutableTreeNode("Feature Data");
                         efNode.add(dataNode);
 
@@ -294,7 +297,7 @@ public class RepositoryInfoFrame extends JFrame {
                 addComponent("Extension Features:", new JScrollPane(extensionFeaturesTree));
             }
 
-            if (repInfo.getExtensions() != null && !repInfo.getExtensions().isEmpty()) {
+            if (isNotEmpty(repInfo.getExtensions())) {
                 JTree extensionsTree = new JTree();
                 extensionsTree.setRootVisible(false);
                 extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -309,7 +312,7 @@ public class RepositoryInfoFrame extends JFrame {
         }
 
         private void addExtension(DefaultMutableTreeNode parent, List<CmisExtensionElement> extensions) {
-            if ((extensions == null) || (extensions.isEmpty())) {
+            if (isNullOrEmpty(extensions)) {
                 return;
             }
 
@@ -317,7 +320,7 @@ public class RepositoryInfoFrame extends JFrame {
                 DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ExtensionNode(ext));
                 parent.add(node);
 
-                if (ext.getChildren().size() > 0) {
+                if (isNotEmpty(ext.getChildren())) {
                     addExtension(node, ext.getChildren());
                 }
             }

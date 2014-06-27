@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.swing;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -201,7 +203,7 @@ public abstract class InfoPanel extends JPanel {
         public void setList(Collection<?> list) {
             clear();
 
-            if (list == null || list.size() == 0) {
+            if (isNullOrEmpty(list)) {
                 return;
             }
 

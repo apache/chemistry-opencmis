@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.tck.impl;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
@@ -1264,7 +1266,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
     private void checkRelationships(Session session, List<CmisTestResult> results, CmisObject object) {
         if (object instanceof Relationship) {
-            if (object.getRelationships() != null && !object.getRelationships().isEmpty()) {
+            if (isNotEmpty(object.getRelationships())) {
                 addResult(results, createResult(FAILURE, "A relationship has relationships!"));
                 return;
             }
@@ -1533,9 +1535,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         }
 
         f = createResult(FAILURE, "Version history must have at least one version!");
-        addResult(results, assertIsTrue(versions.size() > 0, null, f));
+        addResult(results, assertListNotEmpty(versions, null, f));
 
-        if (versions.size() > 0) {
+        if (!versions.isEmpty()) {
             // get latest version
             Document lastestVersion = doc.getObjectOfLatestVersion(false, SELECT_ALL_NO_CACHE_OC);
             addResult(results,
@@ -1782,13 +1784,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             if ((propertyCheck == PropertyCheckEnum.MUST_BE_SET)
                     || (propertyCheck == PropertyCheckEnum.STRING_MUST_NOT_BE_EMPTY)) {
                 f = createResult(FAILURE, "Property has no value!");
-                addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+                addResult(results, assertListNotEmpty(property.getValues(), null, f));
             } else if (propertyCheck == PropertyCheckEnum.STRING_SHOULD_NOT_BE_EMPTY) {
                 f = createResult(WARNING, "Property has no value!");
-                addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+                addResult(results, assertListNotEmpty(property.getValues(), null, f));
             } else if (propertyCheck == PropertyCheckEnum.MUST_NOT_BE_SET) {
                 f = createResult(FAILURE, "Property has a value!");
-                addResult(results, assertIsTrue(property.getValues().size() == 0, null, f));
+                addResult(results, assertIsTrue(property.getValues().isEmpty(), null, f));
             }
 
             boolean isString = ((property.getDefinition().getPropertyType() == PropertyType.STRING)
@@ -1820,7 +1822,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             } else {
                 if (property.getDefinition().isRequired().booleanValue()) {
                     f = createResult(FAILURE, "Property is required but has no value!");
-                    addResult(results, assertIsTrue(property.getValues().size() > 0, null, f));
+                    addResult(results, assertListNotEmpty(property.getValues(), null, f));
                 }
             }
         }
@@ -1972,13 +1974,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     List<Folder> parents = fileableChild.getParents();
 
                     f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
-                    addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                    addResult(results, assertListNotEmpty(parents, null, f));
 
                     boolean foundParent = false;
                     for (Folder parent : parents) {
                         if (parent == null) {
                             f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
-                            addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                            addResult(results, assertListNotEmpty(parents, null, f));
                         } else if (folder.getId().equals(parent.getId())) {
                             foundParent = true;
                             break;
@@ -1987,7 +1989,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                     if (!foundParent) {
                         f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
-                        addResult(results, assertIsTrue(parents.size() > 0, null, f));
+                        addResult(results, assertListNotEmpty(parents, null, f));
                     }
 
                 }
@@ -2001,7 +2003,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 // get object by path and compare
                 List<String> paths = ((FileableCmisObject) child).getPaths();
 
-                if (paths == null || paths.isEmpty()) {
+                if (isNullOrEmpty(paths)) {
                     addResult(results, createResult(FAILURE, "Child has no path! " + child.getId()));
                 } else {
                     for (String path : paths) {
@@ -3284,7 +3286,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     }
 
     protected CmisTestResultStatus getWorst(List<CmisTestResult> results) {
-        if ((results == null) || (results.isEmpty())) {
+        if (isNullOrEmpty(results)) {
             return CmisTestResultStatus.OK;
         }
 

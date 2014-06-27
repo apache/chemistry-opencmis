@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,7 +122,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     @SuppressWarnings("unchecked")
                     List<String> stids = (List<String>) objectData.getProperties().getProperties()
                             .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
-                    if (stids != null && stids.size() > 0) {
+                    if (isNotEmpty(stids)) {
                         secondaryTypes = new ArrayList<SecondaryType>();
                         for (String stid : stids) {
                             if (stid != null) {
@@ -320,7 +323,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     }
 
     public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
-        if (properties == null || properties.isEmpty()) {
+        if (isNullOrEmpty(properties)) {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
 
@@ -604,7 +607,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             throw new IllegalStateException("ACLs are not available!");
         }
 
-        if (acl.getAces() == null || acl.getAces().isEmpty()) {
+        if (isNullOrEmpty(acl.getAces())) {
             return Collections.emptySet();
         }
 

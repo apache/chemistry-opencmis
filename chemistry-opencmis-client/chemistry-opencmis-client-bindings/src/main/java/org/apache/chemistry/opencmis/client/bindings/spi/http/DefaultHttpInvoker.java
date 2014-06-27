@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -119,7 +121,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
                 if (httpHeaders != null) {
                     for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
-                        if (header.getKey() != null && header.getValue() != null && !header.getValue().isEmpty()) {
+                        if (header.getKey() != null && isNotEmpty(header.getValue())) {
                             String key = header.getKey();
                             if (key.equalsIgnoreCase("user-agent")) {
                                 conn.setRequestProperty("User-Agent", header.getValue().get(0));

@@ -134,8 +134,11 @@ public class LoginDialog extends JDialog {
                         }
                     });
 
-                    if (repositories.size() > 0) {
-
+                    if (repositories.isEmpty()) {
+                        repositoryBox.setEnabled(false);
+                        loginButton.setEnabled(false);
+                        getRootPane().setDefaultButton(loadRepositoryButton);
+                    } else {
                         for (Repository repository : repositories) {
                             repositoryBox.addItem(repository);
                         }
@@ -143,10 +146,6 @@ public class LoginDialog extends JDialog {
                         repositoryBox.setEnabled(true);
                         loginButton.setEnabled(true);
                         getRootPane().setDefaultButton(loginButton);
-                    } else {
-                        repositoryBox.setEnabled(false);
-                        loginButton.setEnabled(false);
-                        getRootPane().setDefaultButton(loadRepositoryButton);
                     }
 
                     currentTab.afterLoadRepositories(repositories);

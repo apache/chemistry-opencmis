@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
 import groovy.ui.Console;
 
 import java.awt.BorderLayout;
@@ -172,7 +173,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                                     public void run() {
                                         try {
                                             List<String> paths = pathObject.getPaths();
-                                            if ((paths == null) || (paths.size() == 0)) {
+                                            if (isNullOrEmpty(paths)) {
                                                 pathsList.setList(Collections.singletonList("(unfiled)"));
                                             } else {
                                                 pathsList.setList(paths);

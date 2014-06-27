@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.repository;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -466,7 +468,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
             // assemble property
             PropertyData<?> propertyData = null;
-            Object firstValue = (values == null || values.isEmpty() ? null : values.get(0));
+            Object firstValue = (isNullOrEmpty(values) ? null : values.get(0));
 
             if (definition instanceof PropertyStringDefinition) {
                 if (firstValue == null) {
@@ -643,7 +645,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
             if (properties.containsKey(PropertyIds.OBJECT_ID)) {
                 List<?> objectIdList = properties.get(PropertyIds.OBJECT_ID);
-                if ((objectIdList != null) && (!objectIdList.isEmpty())) {
+                if (isNotEmpty(objectIdList)) {
                     objectId = objectIdList.get(0).toString();
                 }
             }

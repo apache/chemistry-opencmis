@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.framework;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +50,6 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 /**
  * Simple read-only tests.
- * 
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- * 
  */
 public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
 
@@ -511,7 +510,7 @@ public abstract class AbstractSimpleReadOnlyTests extends AbstractCmisTestCase {
             List<ObjectData> allVersions = getBinding().getVersioningService().getAllVersions(getTestRepositoryId(),
                     objectId, versionSeriesId, "*", Boolean.FALSE, null);
             assertNotNull(allVersions);
-            assertTrue(allVersions.size() > 0);
+            assertTrue(isNotEmpty(allVersions));
 
             boolean foundObject = false;
             boolean foundLatestObject = false;

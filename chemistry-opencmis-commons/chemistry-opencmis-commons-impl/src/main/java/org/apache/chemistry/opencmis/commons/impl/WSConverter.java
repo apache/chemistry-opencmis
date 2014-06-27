@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.impl;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
@@ -340,7 +342,7 @@ public final class WSConverter {
         result.setRootFolder(repositoryInfo.getRootFolderId());
         result.setThinClientUri(repositoryInfo.getThinClientURI());
         result.setVendorName(repositoryInfo.getVendorName());
-        if (repositoryInfo.getExtendedFeatures().size() > 0) {
+        if (isNotEmpty(repositoryInfo.getExtendedFeatures())) {
             List<ExtensionFeature> extensionFeatures = new ArrayList<ExtensionFeature>();
             result.setExtensionFeature(extensionFeatures);
 
@@ -353,7 +355,7 @@ public final class WSConverter {
                 target.setVersionLabel(feature.getVersionLabel());
                 target.setDescription(feature.getDescription());
 
-                if (feature.getFeatureData().size() > 0) {
+                if (isNotEmpty(feature.getFeatureData())) {
                     Map<String, String> featureData = new HashMap<String, String>();
 
                     for (CmisExtensionFeatureKeyValuePair keyValue : feature.getFeatureData()) {
@@ -407,7 +409,7 @@ public final class WSConverter {
             CreatablePropertyTypesImpl target = new CreatablePropertyTypesImpl();
             result.setCreatablePropertyTypes(target);
 
-            if (creatablePropertyTypes.getCanCreate().size() > 0) {
+            if (isNotEmpty(creatablePropertyTypes.getCanCreate())) {
                 Set<PropertyType> propertyTypeSet = EnumSet.noneOf(PropertyType.class);
                 target.setCanCreate(propertyTypeSet);
                 for (EnumPropertyType propType : creatablePropertyTypes.getCanCreate()) {
