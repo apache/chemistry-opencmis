@@ -52,11 +52,11 @@ public class JreWssMUTube extends AbstractJreWssTube {
 
     @Override
     public NextAction processResponse(Packet response) {
-        if (response.getMessage() == null) {
+        if (response.getMessage() == null || !response.getMessage().hasHeaders()) {
             return super.processResponse(response);
         }
 
-        HeaderList headers = response.getMessage().getHeaders();
+        HeaderList headers = (HeaderList) response.getMessage().getHeaders();
 
         for (int i = 0; i < headers.size(); i++) {
             if (!headers.isUnderstood(i)) {
