@@ -2911,7 +2911,7 @@ public final class JSONConverter {
             } else if (value instanceof String) {
                 GregorianCalendar cal = DateTimeHelper.parseXmlDateTime((String) value);
                 if (cal == null) {
-                    new CmisRuntimeException("Invalid DateTime value!");
+                    throw new CmisRuntimeException("Invalid DateTime value!");
                 }
                 return cal;
             }

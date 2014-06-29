@@ -50,7 +50,7 @@ public class NoBodyHttpServletResponseWrapper extends HttpServletResponseWrapper
         return writer;
     }
 
-    private class NoBodyOutputStream extends ServletOutputStream {
+    private static class NoBodyOutputStream extends ServletOutputStream {
         @Override
         public void write(int b) throws IOException {
             // ignore

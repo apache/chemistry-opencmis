@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -246,7 +247,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
         // check URL
         String url = request.getParameter(SimpleTokenHandlerSessionHelper.PARAM_URL);
 
-        if (url == null || url.trim().length() < 8 || !url.toLowerCase().startsWith("http")) {
+        if (url == null || url.trim().length() < 8 || !url.toLowerCase(Locale.ENGLISH).startsWith("http")) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

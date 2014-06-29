@@ -45,7 +45,7 @@ public class ProxyDetector {
     public static final Pattern PROXY_ENV_VAR2 = Pattern.compile("(.+):(\\d+)");
     public static final Pattern PROXY_WIN_REG = Pattern.compile("\\s+Proxy(.+)\\s+REG.+\\s+(.+)");
 
-    public static boolean debug = false;
+    private static boolean debug = false;
 
     /**
      * Gets proxy settings from system properties.
@@ -98,7 +98,9 @@ public class ProxyDetector {
         Map<String, String> env = System.getenv();
 
         for (Map.Entry<String, String> e : env.entrySet()) {
-            if (e.getKey().equalsIgnoreCase("http_proxy")) {
+            String key = e.getKey().trim().toLowerCase(Locale.ENGLISH);
+
+            if ("http_proxy".equals(key)) {
                 Matcher m = PROXY_ENV_VAR1.matcher(e.getValue());
                 if (m.matches()) {
                     settings.setHttpProxyHost(parseHost(m.group(1)));
@@ -110,9 +112,7 @@ public class ProxyDetector {
                         settings.setHttpProxyPort(parsePort(m.group(2)));
                     }
                 }
-            }
-
-            if (e.getKey().equalsIgnoreCase("https_proxy")) {
+            } else if ("https_proxy".equals(key)) {
                 Matcher m = PROXY_ENV_VAR1.matcher(e.getValue());
                 if (m.matches()) {
                     settings.setHttpsProxyHost(parseHost(m.group(1)));
@@ -124,9 +124,7 @@ public class ProxyDetector {
                         settings.setHttpProxyPort(parsePort(m.group(2)));
                     }
                 }
-            }
-
-            if (e.getKey().equalsIgnoreCase("no_proxy")) {
+            } else if ("no_proxy".equals(key)) {
                 List<String> noHosts = new ArrayList<String>();
                 for (String noHost : e.getValue().split(",")) {
                     noHost = noHost.trim();
@@ -184,12 +182,12 @@ public class ProxyDetector {
                 String key = m.group(1).trim().toLowerCase(Locale.ENGLISH);
                 String value = m.group(2).trim();
 
-                if (key.equals("enable")) {
+                if ("enable".equals(key)) {
                     if (!value.equals("0x1")) {
                         // proxies disabled
                         return null;
                     }
-                } else if (key.equals("server")) {
+                } else if ("server".equals(key)) {
                     // server
                     String host = value;
                     int port = 80;
@@ -204,7 +202,7 @@ public class ProxyDetector {
                     settings.setHttpProxyPort(port);
                     settings.setHttpsProxyHost(host);
                     settings.setHttpsProxyPort(port);
-                } else if (key.equals("override")) {
+                } else if ("override".equals(key)) {
                     // no proxy
                     List<String> noHosts = new ArrayList<String>();
                     for (String noHost : value.split(";")) {

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,7 +63,7 @@ public class QueryObject {
     /** main from alias name */
     protected String from = null;
 
-    protected final List<JoinSpec> joinSpecs = new LinkedList<JoinSpec>();
+    protected final List<JoinSpec> joinSpecs = new ArrayList<JoinSpec>();
 
     // where part
     protected final Map<Integer, CmisSelector> columnReferences = new HashMap<Integer, CmisSelector>();

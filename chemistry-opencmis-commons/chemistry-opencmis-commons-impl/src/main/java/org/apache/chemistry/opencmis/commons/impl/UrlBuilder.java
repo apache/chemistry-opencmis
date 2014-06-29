@@ -210,7 +210,7 @@ public class UrlBuilder {
         // quote some additional reserved characters to be safe
         for (char c : RFC7232_RESERVED) {
             if (r.indexOf(c) >= 0) {
-                r = r.replace("" + c, "%" + Integer.toHexString(c));
+                r = r.replace(String.valueOf(c), "%" + Integer.toHexString(c));
             }
         }
         if (quoteSlash && r.indexOf('/') >= 0) {

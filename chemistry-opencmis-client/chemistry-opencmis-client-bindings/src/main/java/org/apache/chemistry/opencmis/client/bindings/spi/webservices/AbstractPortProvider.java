@@ -27,11 +27,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -241,7 +241,7 @@ public abstract class AbstractPortProvider {
     private String acceptLanguage;
 
     private final ReentrantLock portObjectLock = new ReentrantLock();
-    private final EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>> portObjectCache = new EnumMap<CmisWebSerivcesService, LinkedList<SoftReference<BindingProvider>>>(
+    private final EnumMap<CmisWebSerivcesService, ArrayDeque<SoftReference<BindingProvider>>> portObjectCache = new EnumMap<CmisWebSerivcesService, ArrayDeque<SoftReference<BindingProvider>>>(
             CmisWebSerivcesService.class);
 
     public BindingSession getSession() {
@@ -405,7 +405,7 @@ public abstract class AbstractPortProvider {
 
             portObjectLock.lock();
             try {
-                LinkedList<SoftReference<BindingProvider>> queue = portObjectCache.get(service);
+                ArrayDeque<SoftReference<BindingProvider>> queue = portObjectCache.get(service);
                 if (queue == null) {
                     throw new CmisRuntimeException("This is a bug!");
                 }
@@ -679,7 +679,7 @@ public abstract class AbstractPortProvider {
      */
     protected void setSoapAction(BindingProvider portObject, String soapAction, CmisVersion cmisVersion) {
         portObject.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-        
+
         if (cmisVersion == CmisVersion.CMIS_1_0) {
             portObject.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "");
         } else {
@@ -694,9 +694,9 @@ public abstract class AbstractPortProvider {
             WebServiceFeature... features) throws Exception {
         portObjectLock.lock();
         try {
-            LinkedList<SoftReference<BindingProvider>> queue = portObjectCache.get(serviceHolder.getService());
+            ArrayDeque<SoftReference<BindingProvider>> queue = portObjectCache.get(serviceHolder.getService());
             if (queue == null) {
-                queue = new LinkedList<SoftReference<BindingProvider>>();
+                queue = new ArrayDeque<SoftReference<BindingProvider>>();
                 portObjectCache.put(serviceHolder.getService(), queue);
             }
 

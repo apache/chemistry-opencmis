@@ -1316,7 +1316,7 @@ public class FileShareRepository {
     public ObjectData getFolderParent(CallContext context, String folderId, String filter, ObjectInfoHandler objectInfos) {
         List<ObjectParentData> parents = getObjectParents(context, folderId, filter, false, false, objectInfos);
 
-        if (parents.size() == 0) {
+        if (parents.isEmpty()) {
             throw new CmisInvalidArgumentException("The root folder has no parent!");
         }
 

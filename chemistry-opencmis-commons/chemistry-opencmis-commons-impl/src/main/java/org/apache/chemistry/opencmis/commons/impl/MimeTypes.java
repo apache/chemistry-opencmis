@@ -452,7 +452,7 @@ public final class MimeTypes {
             ext = ext.substring(x + 1);
         }
 
-        String mime = EXT2MIME.get(ext.toLowerCase());
+        String mime = EXT2MIME.get(ext.toLowerCase(Locale.ENGLISH));
         if (mime == null) {
             mime = URLConnection.getFileNameMap().getContentTypeFor("x." + ext);
         }

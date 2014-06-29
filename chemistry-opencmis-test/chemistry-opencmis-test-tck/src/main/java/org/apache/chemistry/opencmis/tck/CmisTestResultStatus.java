@@ -46,6 +46,6 @@ public enum CmisTestResultStatus {
                 return c;
             }
         }
-        throw new IllegalArgumentException("" + level);
+        throw new IllegalArgumentException(String.valueOf(level));
     }
 }

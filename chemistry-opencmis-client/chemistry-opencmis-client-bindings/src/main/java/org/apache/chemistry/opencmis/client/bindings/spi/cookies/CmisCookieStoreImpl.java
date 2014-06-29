@@ -83,7 +83,7 @@ public class CmisCookieStoreImpl implements Serializable {
             throw new IllegalArgumentException("URI is null!");
         }
 
-        final String uriHost = uri.getHost().toLowerCase();
+        final String uriHost = uri.getHost().toLowerCase(Locale.ENGLISH);
 
         boolean isSecure = false;
         String scheme = uri.getScheme();

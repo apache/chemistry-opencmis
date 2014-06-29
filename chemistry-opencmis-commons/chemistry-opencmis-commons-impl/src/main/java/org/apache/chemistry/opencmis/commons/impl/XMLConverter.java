@@ -2168,7 +2168,7 @@ public final class XMLConverter {
         protected abstract void addValue(XMLStreamReader parser, ChoiceImpl<T> target) throws XMLStreamException;
 
         protected abstract void addChoice(XMLStreamReader parser, ChoiceImpl<T> target) throws XMLStreamException;
-    };
+    }
 
     // ---------------------------------
     // --- objects and lists parsers ---
@@ -2600,7 +2600,7 @@ public final class XMLConverter {
             return false;
         }
 
-    };
+    }
 
     private abstract static class PropertyStringXMLWalker<T extends AbstractPropertyData<String>> extends
             PropertyXMLWalker<T> {

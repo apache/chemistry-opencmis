@@ -66,7 +66,7 @@ public abstract class QueryUtilBase<T extends TreeParser> {
      * 
      * @throws RecognitionException
      */
-    public abstract void walkStatement() throws RecognitionException;;
+    public abstract void walkStatement() throws RecognitionException;
 
     /**
      * Fully process a query by parsing and walking it and setting up the

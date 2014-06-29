@@ -28,7 +28,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -394,7 +393,7 @@ public class SessionImpl implements Session {
                         ctxt.isIncludeAcls(), BigInteger.valueOf(this.maxNumItems), null);
 
                 // convert type definitions
-                LinkedList<ChangeEvent> page = new LinkedList<ChangeEvent>();
+                List<ChangeEvent> page = new ArrayList<ChangeEvent>();
                 for (ObjectData objectData : objectList.getObjects()) {
                     page.add(of.convertChangeEvent(objectData));
                 }
@@ -402,7 +401,7 @@ public class SessionImpl implements Session {
                 if (!firstPage) {
                     // the last entry of the previous page is repeated
                     // -> remove the first entry
-                    page.removeFirst();
+                    page.remove(0);
                 }
                 firstPage = false;
 

@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.bindings.webservices;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.bindings.CmisBindingFactory;
@@ -29,13 +30,15 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * Web Services Binding Factory.
  */
 public class WebServicesTestBindingFactory {
-    
+
     private WebServicesTestBindingFactory() {
     }
 
     public static CmisBinding createBinding(String url, String username, String password) {
         boolean isPrefix = true;
-        String urlLower = url.toLowerCase();
+
+        url = url.trim();
+        String urlLower = url.toLowerCase(Locale.ENGLISH);
 
         if (urlLower.endsWith("?wsdl")) {
             isPrefix = false;

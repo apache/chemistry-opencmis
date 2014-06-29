@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.util.repository;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +35,13 @@ public class TimeLogger {
     }
 
     private final String fAction;
-    private LinkedList<TimeRecord> fTimeRecs = new LinkedList<TimeRecord>();
+    private ArrayDeque<TimeRecord> fTimeRecs = new ArrayDeque<TimeRecord>();
     private static final int MAX_SIZE = 2500;
     TimeRecord fCurrentRec;
 
     public TimeLogger() {
         fAction = "";
-        fTimeRecs = new LinkedList<TimeRecord>();
+        fTimeRecs = new ArrayDeque<TimeRecord>();
     }
 
     public TimeLogger(String action) {

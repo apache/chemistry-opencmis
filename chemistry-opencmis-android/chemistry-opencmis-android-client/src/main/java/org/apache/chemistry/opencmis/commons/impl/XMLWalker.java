@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.next;
 import static org.apache.chemistry.opencmis.commons.impl.XMLUtils.skip;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;

@@ -2175,7 +2175,7 @@ public final class XMLConverter {
         protected abstract void addValue(XmlPullParser parser, ChoiceImpl<T> target) throws XmlPullParserException;
 
         protected abstract void addChoice(XmlPullParser parser, ChoiceImpl<T> target) throws XmlPullParserException;
-    };
+    }
 
     // ---------------------------------
     // --- objects and lists parsers ---
@@ -2608,7 +2608,7 @@ public final class XMLConverter {
             return false;
         }
 
-    };
+    }
 
     private abstract static class PropertyStringAtomPubXMLWalker<T extends AbstractPropertyData<String>> extends
             PropertyAtomPubXMLWalker<T> {

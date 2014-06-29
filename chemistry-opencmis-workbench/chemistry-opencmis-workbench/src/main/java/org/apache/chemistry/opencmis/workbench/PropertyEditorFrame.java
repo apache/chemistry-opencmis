@@ -37,7 +37,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -250,7 +249,7 @@ public class PropertyEditorFrame extends JFrame {
         private final Object value;
         private final Color bgColor;
         private JComboBox changeBox;
-        private LinkedList<JComponent> valueComponents;
+        private List<JComponent> valueComponents;
 
         public PropertyInputPanel(PropertyDefinition<?> propDef, Object value, int position) {
             super();
@@ -296,7 +295,7 @@ public class PropertyEditorFrame extends JFrame {
             changeBox = new JComboBox(new Object[] { "Don't change     ", "Update    ", "Unset     " });
             titlePanel.add(changeBox, BorderLayout.LINE_END);
 
-            valueComponents = new LinkedList<JComponent>();
+            valueComponents = new ArrayList<JComponent>();
             if (propDef.getCardinality() == Cardinality.SINGLE) {
                 JComponent valueField = createInputField(value);
                 valueComponents.add(valueField);

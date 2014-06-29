@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class Response {
         this.headers = new HashMap<String, List<String>>();
         if (headers != null) {
             for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-                this.headers.put(e.getKey() == null ? null : e.getKey().toLowerCase(), e.getValue());
+                this.headers.put(e.getKey() == null ? null : e.getKey().toLowerCase(Locale.ENGLISH), e.getValue());
             }
         }
 
@@ -73,7 +73,7 @@ public class Response {
         if (contentType != null) {
             String[] parts = contentType.split(";");
             for (int i = 1; i < parts.length; i++) {
-                String part = parts[i].trim().toLowerCase();
+                String part = parts[i].trim().toLowerCase(Locale.ENGLISH);
                 if (part.startsWith("charset")) {
                     int x = part.indexOf('=');
                     charset = part.substring(x + 1).trim();
@@ -85,7 +85,7 @@ public class Response {
         // if there is an error page, get it
         if (errorStream != null) {
             if (contentType != null) {
-                String contentTypeLower = contentType.toLowerCase().split(";")[0];
+                String contentTypeLower = contentType.toLowerCase(Locale.ENGLISH).split(";")[0];
                 if (contentTypeLower.startsWith("text/") || contentTypeLower.endsWith("+xml")
                         || contentTypeLower.startsWith("application/xml")
                         || contentTypeLower.startsWith("application/json")) {
@@ -95,9 +95,10 @@ public class Response {
                     try {
                         String encoding = getContentEncoding();
                         if (encoding != null) {
-                            if (encoding.toLowerCase().trim().equals("gzip") && !isGZIP) {
+                            String encLower = encoding.trim().toLowerCase(Locale.ENGLISH);
+                            if (encLower.equals("gzip") && !isGZIP) {
                                 errorStream = new GZIPInputStream(errorStream, 4096);
-                            } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                            } else if (encLower.equals("deflate")) {
                                 errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
                             }
                         }
@@ -151,7 +152,8 @@ public class Response {
             if (hasResponseStream) {
                 String encoding = getContentEncoding();
                 if (encoding != null) {
-                    if (encoding.toLowerCase().trim().equals("gzip") && !isGZIP) {
+                    String encLower = encoding.trim().toLowerCase(Locale.ENGLISH);
+                    if (encLower.equals("gzip") && !isGZIP) {
                         // if the stream is gzip encoded, decode it
                         length = null;
                         try {
@@ -161,7 +163,7 @@ public class Response {
                             stream = null;
                             IOUtils.closeQuietly(responseStream);
                         }
-                    } else if (encoding.toLowerCase().trim().equals("deflate")) {
+                    } else if (encLower.equals("deflate")) {
                         // if the stream is deflate encoded, decode it
                         length = null;
                         stream = new InflaterInputStream(stream, new Inflater(true), 4096);
@@ -169,7 +171,7 @@ public class Response {
                 }
 
                 String transferEncoding = getContentTransferEncoding();
-                if (transferEncoding != null && transferEncoding.toLowerCase().trim().equals("base64")) {
+                if (transferEncoding != null && transferEncoding.trim().toLowerCase(Locale.ENGLISH).equals("base64")) {
                     // if the stream is base64 encoded, decode it
                     length = null;
                     stream = new Base64.InputStream(stream);

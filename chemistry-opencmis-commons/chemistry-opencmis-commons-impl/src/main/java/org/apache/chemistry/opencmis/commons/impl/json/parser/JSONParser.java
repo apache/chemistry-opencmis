@@ -21,7 +21,8 @@ package org.apache.chemistry.opencmis.commons.impl.json.parser;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +48,12 @@ public class JSONParser {
     public static final int S_END = 6;
     public static final int S_IN_ERROR = -1;
 
-    private LinkedList<Integer> handlerStatusStack;
+    private ArrayDeque<Integer> handlerStatusStack;
     private Yylex lexer = new Yylex((Reader) null);
     private Yytoken token = null;
     private int status = S_INIT;
 
-    private int peekStatus(LinkedList<Integer> statusStack) {
+    private int peekStatus(Deque<Integer> statusStack) {
         if (statusStack.isEmpty()) {
             return -1;
         }
@@ -128,8 +129,8 @@ public class JSONParser {
     @SuppressWarnings("unchecked")
     public Object parse(Reader in, ContainerFactory containerFactory) throws IOException, JSONParseException {
         reset(in);
-        LinkedList<Integer> statusStack = new LinkedList<Integer>();
-        LinkedList<Object> valueStack = new LinkedList<Object>();
+        Deque<Integer> statusStack = new ArrayDeque<Integer>();
+        Deque<Object> valueStack = new ArrayDeque<Object>();
 
         try {
             do {
@@ -355,16 +356,16 @@ public class JSONParser {
             JSONParseException {
         if (!isResume) {
             reset(in);
-            handlerStatusStack = new LinkedList<Integer>();
+            handlerStatusStack = new ArrayDeque<Integer>();
         } else {
             if (handlerStatusStack == null) {
                 isResume = false;
                 reset(in);
-                handlerStatusStack = new LinkedList<Integer>();
+                handlerStatusStack = new ArrayDeque<Integer>();
             }
         }
 
-        LinkedList<Integer> statusStack = handlerStatusStack;
+        ArrayDeque<Integer> statusStack = handlerStatusStack;
 
         try {
             do {

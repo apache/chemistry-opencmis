@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -396,7 +397,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
         if (contentType != null) {
             String[] parts = contentType.split(";");
             for (int i = 1; i < parts.length; i++) {
-                String part = parts[i].trim().toLowerCase();
+                String part = parts[i].trim().toLowerCase(Locale.ENGLISH);
                 if (part.startsWith("charset")) {
                     int x = part.indexOf('=');
                     charset = part.substring(x + 1).trim();
