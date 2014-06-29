@@ -512,7 +512,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         if (resp.hasResponseStream()) {
             try {
-                InputStream responseStream = IOUtils.checkForBytes(resp.getStream(), 4096);
+                InputStream responseStream = IOUtils.checkForBytes(resp.getStream(), 8192);
                 if (responseStream != null) {
                     Map<String, Object> json = parseObject(responseStream, resp.getCharset());
                     return JSONConverter.convertFailedToDelete(json);

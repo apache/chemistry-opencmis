@@ -257,7 +257,7 @@ public class ClientModel {
         ContentStream content = null;
         if ((filename != null) && (filename.length() > 0)) {
             File file = new File(filename);
-            InputStream stream = new LoggingInputStream(new BufferedInputStream(new FileInputStream(file)),
+            InputStream stream = new LoggingInputStream(new BufferedInputStream(new FileInputStream(file), 512 * 1024),
                     file.getName());
 
             content = clientSession.getSession().getObjectFactory()

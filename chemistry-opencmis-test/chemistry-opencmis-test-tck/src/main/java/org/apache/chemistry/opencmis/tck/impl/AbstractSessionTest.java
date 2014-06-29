@@ -3218,8 +3218,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         boolean match = true;
 
-        BufferedInputStream as = new BufferedInputStream(actual.getStream());
-        BufferedInputStream es = new BufferedInputStream(expected.getStream());
+        BufferedInputStream as = new BufferedInputStream(actual.getStream(), 64 * 1024);
+        BufferedInputStream es = new BufferedInputStream(expected.getStream(), 64 * 1024);
 
         try {
             int ab = 0;

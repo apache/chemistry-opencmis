@@ -180,7 +180,8 @@ public class TypesFrame extends JFrame {
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
+                                64 * 1024);
                         TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
 
@@ -206,7 +207,8 @@ public class TypesFrame extends JFrame {
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load JSON");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
+                                64 * 1024);
                         TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
 
@@ -269,7 +271,8 @@ public class TypesFrame extends JFrame {
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
+                                64 * 1024);
                         TypeDefinition type = TypeUtils.readFromXML(in);
                         in.close();
 
@@ -295,7 +298,8 @@ public class TypesFrame extends JFrame {
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load JSON");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()));
+                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
+                                64 * 1024);
                         TypeDefinition type = TypeUtils.readFromJSON(in);
                         in.close();
 

@@ -138,7 +138,7 @@ public class FileShareTypeManager {
     }
 
     public void loadTypeDefinitionFromFile(String filename) throws IOException, XMLStreamException {
-        loadTypeDefinitionFromStream(new BufferedInputStream(new FileInputStream(filename)));
+        loadTypeDefinitionFromStream(new BufferedInputStream(new FileInputStream(filename), 64 * 1024));
     }
 
     public void loadTypeDefinitionFromResource(String name) throws IOException, XMLStreamException {

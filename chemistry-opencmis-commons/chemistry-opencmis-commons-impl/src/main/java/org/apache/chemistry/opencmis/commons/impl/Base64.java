@@ -1215,7 +1215,7 @@ public final class Base64 {
                 try {
                     baos = new java.io.ByteArrayOutputStream();
                     bais = new java.io.ByteArrayInputStream(bytes);
-                    gzis = new java.util.zip.GZIPInputStream(bais);
+                    gzis = new java.util.zip.GZIPInputStream(bais, 64 * 1024);
 
                     while ((length = gzis.read(buffer)) >= 0) {
                         baos.write(buffer, 0, length);

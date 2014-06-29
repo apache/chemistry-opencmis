@@ -24,9 +24,9 @@ package org.apache.chemistry.opencmis.client.bindings.spi.cookies;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public class CmisCookieStoreImpl implements Serializable {
     private static final Pattern IP_ADDRESS_PATTERN = Pattern.compile(IP_ADDRESS_PATTERN_STR);
 
     private final int maxUrls;
-    private final LinkedList<CmisHttpCookie> storeList;
+    private final ArrayDeque<CmisHttpCookie> storeList;
 
     public CmisCookieStoreImpl() {
         this(300);
@@ -49,7 +49,7 @@ public class CmisCookieStoreImpl implements Serializable {
 
     public CmisCookieStoreImpl(final int maxUrls) {
         this.maxUrls = maxUrls;
-        storeList = new LinkedList<CmisHttpCookie>();
+        storeList = new ArrayDeque<CmisHttpCookie>(maxUrls);
     }
 
     public void add(final URI uri, final CmisHttpCookie cookie) {

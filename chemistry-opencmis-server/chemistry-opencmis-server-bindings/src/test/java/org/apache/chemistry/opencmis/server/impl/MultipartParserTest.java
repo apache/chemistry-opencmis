@@ -34,6 +34,7 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.impl.browser.MultipartParser;
 import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
 import org.junit.Test;
@@ -204,7 +205,7 @@ public class MultipartParserTest {
     }
 
     @Test
-    public void testManyField() throws Exception {
+    public void testManyFields() throws Exception {
         String boundary = "============";
 
         StringBuilder sb = new StringBuilder("\r\n");
@@ -223,7 +224,46 @@ public class MultipartParserTest {
 
         sb.append("\r\n" + "--" + boundary + "--");
 
-        MultipartParser parser = prepareParser(boundary, sb.toString().getBytes());
+        MultipartParser parser = prepareParser(boundary, sb.toString().getBytes(IOUtils.ISO_8859_1));
+
+        assertMultipartBasics(parser, values.size(), values, false, null, null, null);
+    }
+
+    @Test
+    public void testLargeFields() throws Exception {
+        testLargeFields(64 * 1024);
+        testLargeFields(128 * 1024);
+        testLargeFields(256 * 1024);
+        testLargeFields(512 * 1024);
+        testLargeFields(1024 * 1024);
+    }
+
+    private void testLargeFields(int size) throws Exception {
+        String boundary = "============";
+
+        StringBuilder sb = new StringBuilder("\r\n");
+
+        Random rnd = new Random();
+        Map<String, String> values = new HashMap<String, String>();
+
+        for (int i = 0; i < 5; i++) {
+            String name = "field" + i;
+
+            StringBuilder valueBuffer = new StringBuilder();
+            for (int j = 0; j < size; j++) {
+                valueBuffer.append((char) ('a' + rnd.nextInt(26)));
+            }
+            String value = valueBuffer.toString();
+
+            values.put(name, value);
+
+            sb.append("\r\n--" + boundary + "\r\n" + "Content-Disposition: form-data; name=\"" + name + "\"\r\n\r\n");
+            sb.append(value);
+        }
+
+        sb.append("\r\n" + "--" + boundary + "--");
+
+        MultipartParser parser = prepareParser(boundary, sb.toString().getBytes(IOUtils.ISO_8859_1));
 
         assertMultipartBasics(parser, values.size(), values, false, null, null, null);
     }

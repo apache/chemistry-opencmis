@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -50,7 +49,7 @@ public class MultipartParser {
     private static final String CHARSET_FIELD = "_charset_";
 
     private static final int MAX_FIELD_BYTES = 10 * 1024 * 1024;
-    private static final int BUFFER_SIZE = 128 * 1024;
+    private static final int BUFFER_SIZE = 256 * 1024;
 
     private static final byte CR = 0x0D;
     private static final byte LF = 0x0A;
@@ -345,9 +344,10 @@ public class MultipartParser {
         int len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
         addFieldBytes(len);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(len + 32);
+        byte[] bodyBytes = new byte[len + BUFFER_SIZE];
+        int bodyBytesPos = len;
 
-        bos.write(buffer, bufferPosition, len);
+        System.arraycopy(buffer, bufferPosition, bodyBytes, 0, len);
         bufferPosition = bufferPosition + len;
 
         // read next chunk
@@ -357,22 +357,53 @@ public class MultipartParser {
             boundaryPosition = findBoundary();
 
             if (boundaryPosition > -1) {
+                // last chunk
                 len = boundaryPosition - bufferPosition;
                 addFieldBytes(len);
 
-                bos.write(buffer, bufferPosition, len);
+                if (bodyBytesPos + len >= bodyBytes.length) {
+                    byte[] newBodyBytes = new byte[bodyBytesPos + len];
+                    System.arraycopy(bodyBytes, 0, newBodyBytes, 0, bodyBytesPos);
+                    bodyBytes = newBodyBytes;
+                }
+                System.arraycopy(buffer, bufferPosition, bodyBytes, bodyBytesPos, len);
+                bodyBytesPos += len;
+
                 bufferPosition = boundaryPosition + boundary.length;
                 break;
             } else {
+                // not the last chunk
                 len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
                 addFieldBytes(len);
 
-                bos.write(buffer, bufferPosition, len);
+                if (bodyBytesPos + len >= bodyBytes.length) {
+                    int newSize = bodyBytes.length << 1;
+                    if (newSize < 0 || newSize > MAX_FIELD_BYTES) {
+                        newSize = MAX_FIELD_BYTES;
+                    }
+                    if (newSize < bodyBytesPos + len) {
+                        newSize = bodyBytesPos + BUFFER_SIZE;
+                    }
+                    
+                    byte[] newBodyBytes = new byte[newSize];
+                    System.arraycopy(bodyBytes, 0, newBodyBytes, 0, bodyBytesPos);
+                    bodyBytes = newBodyBytes;
+                }
+                System.arraycopy(buffer, bufferPosition, bodyBytes, bodyBytesPos, len);
+                bodyBytesPos += len;
+
                 bufferPosition = bufferPosition + len;
             }
         }
 
-        return bos.toByteArray();
+        if (bodyBytes.length == bodyBytesPos) {
+            return bodyBytes;
+        }
+
+        byte[] returnBytes = new byte[bodyBytesPos];
+        System.arraycopy(bodyBytes, 0, returnBytes, 0, returnBytes.length);
+
+        return returnBytes;
     }
 
     private void addFieldBytes(int len) {

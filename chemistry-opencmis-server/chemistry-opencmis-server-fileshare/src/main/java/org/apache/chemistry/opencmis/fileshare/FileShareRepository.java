@@ -1120,7 +1120,7 @@ public class FileShareRepository {
 
         InputStream stream = null;
         try {
-            stream = new BufferedInputStream(new FileInputStream(file), 4 * 1024);
+            stream = new BufferedInputStream(new FileInputStream(file), 64 * 1024);
             if (offset != null || length != null) {
                 stream = new ContentRangeInputStream(stream, offset, length);
             }
@@ -1614,7 +1614,7 @@ public class FileShareRepository {
         ObjectData obj = null;
         InputStream stream = null;
         try {
-            stream = new BufferedInputStream(new FileInputStream(propFile));
+            stream = new BufferedInputStream(new FileInputStream(propFile), 64 * 1024);
             XMLStreamReader parser = XMLUtils.createParser(stream);
             XMLUtils.findNextStartElemenet(parser);
             obj = XMLConverter.convertObject(parser);

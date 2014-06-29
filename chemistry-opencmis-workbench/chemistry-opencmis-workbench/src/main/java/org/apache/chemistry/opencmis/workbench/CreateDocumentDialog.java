@@ -337,8 +337,8 @@ public class CreateDocumentDialog extends CreateDialog {
         InputStream sourceContent = null;
         InputStream docContent = null;
         try {
-            sourceContent = new BufferedInputStream(sourceContentStream.getStream());
-            docContent = new BufferedInputStream(docContentStream.getStream());
+            sourceContent = new BufferedInputStream(sourceContentStream.getStream(), 64 * 1024);
+            docContent = new BufferedInputStream(docContentStream.getStream(), 64 * 1024);
 
             int fb = 0;
             int db = 0;

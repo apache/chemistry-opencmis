@@ -56,7 +56,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateImpl;
  */
 public class AtomEntryWriter {
 
-    private static final int BUFFER_SIZE = 8 * 1024;
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     private final CmisVersion cmisVersion;
     private final ObjectData object;

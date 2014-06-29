@@ -501,7 +501,7 @@ public final class AtomEntryParser {
      */
     private static byte[] copy(XMLStreamReader parser) throws XMLStreamException {
         // create a writer
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream(32 * 1024);
         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
 
         writer.writeStartDocument();

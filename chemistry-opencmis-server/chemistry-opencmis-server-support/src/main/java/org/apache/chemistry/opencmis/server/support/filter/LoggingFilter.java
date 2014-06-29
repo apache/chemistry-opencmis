@@ -228,7 +228,7 @@ public class LoggingFilter implements Filter {
         BufferedReader in = new BufferedReader(new StringReader(messageBody));
         StringBuffer out = new StringBuffer();
         String line;
-        ByteArrayOutputStream xmlBodyBuffer = new ByteArrayOutputStream();
+        ByteArrayOutputStream xmlBodyBuffer = new ByteArrayOutputStream(32 * 1024);
         boolean boundaryFound;
 
         boolean inXmlOrJsonBody = false;

@@ -579,7 +579,7 @@ public abstract class AbstractPortProvider {
 
         // parse the WSDL
         try {
-            final Document doc = XMLUtils.parseDomDocument(new BufferedInputStream(wsdlStream, 16 * 1024));
+            final Document doc = XMLUtils.parseDomDocument(new BufferedInputStream(wsdlStream, 64 * 1024));
 
             NodeList serivceList = doc.getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/", "service");
             for (int i = 0; i < serivceList.getLength(); i++) {

@@ -625,7 +625,7 @@ public final class MimeHelper {
     }
 
     protected static byte[] fromHex(String data) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream(data.length());
         for (int i = 0; i < data.length();) {
             char c = data.charAt(i++);
             if (c == '%') {

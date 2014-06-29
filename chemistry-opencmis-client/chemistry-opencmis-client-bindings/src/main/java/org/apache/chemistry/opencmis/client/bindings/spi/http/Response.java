@@ -97,9 +97,9 @@ public class Response {
                         if (encoding != null) {
                             String encLower = encoding.trim().toLowerCase(Locale.ENGLISH);
                             if (encLower.equals("gzip") && !isGZIP) {
-                                errorStream = new GZIPInputStream(errorStream, 4096);
+                                errorStream = new GZIPInputStream(errorStream, 64 * 1024);
                             } else if (encLower.equals("deflate")) {
-                                errorStream = new InflaterInputStream(errorStream, new Inflater(true), 4096);
+                                errorStream = new InflaterInputStream(errorStream, new Inflater(true), 64 * 1024);
                             }
                         }
 
@@ -157,7 +157,7 @@ public class Response {
                         // if the stream is gzip encoded, decode it
                         length = null;
                         try {
-                            stream = new GZIPInputStream(stream, 4096);
+                            stream = new GZIPInputStream(stream, 64 * 1024);
                         } catch (IOException e) {
                             errorContent = e.getMessage();
                             stream = null;
@@ -166,7 +166,7 @@ public class Response {
                     } else if (encLower.equals("deflate")) {
                         // if the stream is deflate encoded, decode it
                         length = null;
-                        stream = new InflaterInputStream(stream, new Inflater(true), 4096);
+                        stream = new InflaterInputStream(stream, new Inflater(true), 64 * 1024);
                     }
                 }
 
