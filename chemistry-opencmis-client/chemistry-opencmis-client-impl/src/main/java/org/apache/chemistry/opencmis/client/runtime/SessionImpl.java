@@ -125,7 +125,7 @@ public class SessionImpl implements Session {
     /*
      * default session context (serializable)
      */
-    private OperationContext context = DEFAULT_CONTEXT;
+    private OperationContext defaultContext = DEFAULT_CONTEXT;
 
     /*
      * session parameter (serializable)
@@ -445,7 +445,7 @@ public class SessionImpl implements Session {
     public OperationContext getDefaultContext() {
         lock.readLock().lock();
         try {
-            return context;
+            return defaultContext;
         } finally {
             lock.readLock().unlock();
         }
@@ -454,7 +454,7 @@ public class SessionImpl implements Session {
     public void setDefaultContext(OperationContext context) {
         lock.writeLock().lock();
         try {
-            this.context = (context == null ? DEFAULT_CONTEXT : context);
+            this.defaultContext = (context == null ? DEFAULT_CONTEXT : context);
         } finally {
             lock.writeLock().unlock();
         }
@@ -1040,13 +1040,10 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Properties must not be empty!");
         }
 
-        String newId = getBinding().getObjectService().createDocument(
-                getRepositoryId(),
-                objectFactory.convertProperties(properties, null, null,
-                        (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
-                                : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()),
-                objectFactory.convertContentStream(contentStream), versioningState,
-                objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
+        String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
+                objectFactory.convertProperties(properties, null, null, CREATE_AND_CHECKOUT_UPDATABILITY),
+                (folderId == null ? null : folderId.getId()), objectFactory.convertContentStream(contentStream),
+                versioningState, objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
                 objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {
@@ -1078,14 +1075,10 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Source object must be a document!");
         }
 
-        String newId = getBinding().getObjectService().createDocumentFromSource(
-                getRepositoryId(),
-                source.getId(),
-                objectFactory.convertProperties(properties, type, secondaryTypes,
-                        (versioningState == VersioningState.CHECKEDOUT ? CREATE_AND_CHECKOUT_UPDATABILITY
-                                : CREATE_UPDATABILITY)), (folderId == null ? null : folderId.getId()), versioningState,
-                objectFactory.convertPolicies(policies), objectFactory.convertAces(addAces),
-                objectFactory.convertAces(removeAces), null);
+        String newId = getBinding().getObjectService().createDocumentFromSource(getRepositoryId(), source.getId(),
+                objectFactory.convertProperties(properties, type, secondaryTypes, CREATE_AND_CHECKOUT_UPDATABILITY),
+                (folderId == null ? null : folderId.getId()), versioningState, objectFactory.convertPolicies(policies),
+                objectFactory.convertAces(addAces), objectFactory.convertAces(removeAces), null);
 
         if (newId == null) {
             return null;
