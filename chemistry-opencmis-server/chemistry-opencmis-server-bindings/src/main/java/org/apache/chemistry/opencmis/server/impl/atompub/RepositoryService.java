@@ -54,7 +54,6 @@ public class RepositoryService {
                 HttpServletResponse response) throws Exception {
             assert context != null;
             assert service != null;
-            assert repositoryId != null;
             assert request != null;
             assert response != null;
 
