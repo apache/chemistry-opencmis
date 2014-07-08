@@ -77,7 +77,10 @@ public class CallContextImpl implements MutableCallContext {
             return;
         }
 
-        rangeHeader = rangeHeader.trim().toLowerCase(Locale.ENGLISH);
+        remove(OFFSET);
+        remove(LENGTH);
+
+        rangeHeader = rangeHeader.replaceAll("\\s", "").toLowerCase(Locale.ENGLISH);
 
         if (rangeHeader.length() > 6 && rangeHeader.startsWith("bytes=") && rangeHeader.indexOf(',') == -1
                 && rangeHeader.charAt(6) != '-') {
@@ -119,15 +122,66 @@ public class CallContextImpl implements MutableCallContext {
             return;
         }
 
-        String[] locale = acceptLanguageHeader.split("-");
-        put(LOCALE_ISO639_LANGUAGE, locale[0].trim());
-        if (locale.length > 1) {
-            int x = locale[1].indexOf(',');
-            if (x == -1) {
-                put(LOCALE_ISO3166_COUNTRY, locale[1].trim());
+        remove(LOCALE_ISO639_LANGUAGE);
+        remove(LOCALE_ISO3166_COUNTRY);
+        remove(LOCALE);
+
+        double lastQ = 0;
+        String language = null;
+        String country = null;
+
+        String[] languageHeader = acceptLanguageHeader.split(",");
+        for (String languageRange : languageHeader) {
+            String langRange = languageRange.trim();
+            double currentQ = 0;
+
+            int x = langRange.indexOf(';');
+            if (x > -1) {
+                String qStr = langRange.substring(x + 1).replaceAll("\\s", "").toLowerCase(Locale.ENGLISH);
+                if (!qStr.startsWith("q=") && qStr.length() < 3) {
+                    continue;
+                }
+                currentQ = Double.parseDouble(qStr.substring(2));
+                langRange = langRange.substring(0, x);
             } else {
-                put(LOCALE_ISO3166_COUNTRY, locale[1].substring(0, x).trim());
+                currentQ = 1;
             }
+
+            if (currentQ <= lastQ) {
+                continue;
+            } else {
+                lastQ = currentQ;
+            }
+
+            String[] locale = langRange.split("-");
+            String local0 = locale[0].trim();
+
+            language = null;
+            country = null;
+
+            if (!locale.equals("*")) {
+                language = local0;
+                if (locale.length > 1) {
+                    String local1 = locale[1].trim();
+                    if (!local1.equals("*")) {
+                        country = local1;
+                    }
+                }
+            }
+
+            if (currentQ >= 1) {
+                break;
+            }
+        }
+
+        if (language != null) {
+            put(LOCALE_ISO639_LANGUAGE, language);
+            put(LOCALE, language);
+        }
+
+        if (country != null) {
+            put(LOCALE_ISO3166_COUNTRY, country);
+            put(LOCALE, language + "-" + country);
         }
     }
 
