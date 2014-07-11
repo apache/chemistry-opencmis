@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class CallContextImplTest {
 
     @Test
     public void testLocal() {
-        CallContextImpl context = new CallContextImpl(null, null, null, null, null, null, null, null);
+        CallContextImpl context = new CallContextImpl(null, CmisVersion.CMIS_1_1, null, null, null, null, null, null);
 
         context.setAcceptLanguage(" en - us ");
         assertEquals("en", context.get(CallContext.LOCALE_ISO639_LANGUAGE));
@@ -48,7 +49,7 @@ public class CallContextImplTest {
 
     @Test
     public void testRange() {
-        CallContextImpl context = new CallContextImpl(null, null, null, null, null, null, null, null);
+        CallContextImpl context = new CallContextImpl(null, CmisVersion.CMIS_1_1, null, null, null, null, null, null);
 
         context.setRange("bytes=100-299");
         assertEquals(100L, context.getOffset().longValue());

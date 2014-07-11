@@ -97,6 +97,9 @@ public abstract class AbstractService {
                 MessageContext.SERVLET_RESPONSE);
 
         CmisVersion cmisVersion = (CmisVersion) request.getAttribute(CmisWebServicesServlet.CMIS_VERSION);
+        if (cmisVersion == null) {
+            throw new CmisRuntimeException("Server configuration issue. CMIS version not set!");
+        }
 
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, cmisVersion, repositoryId,
                 servletContext, request, response, factory, null);

@@ -51,6 +51,9 @@ public class CallContextImpl implements MutableCallContext {
         put(REPOSITORY_ID, repositoryId);
 
         // CMIS version
+        if (cmisVersion == null) {
+            throw new IllegalArgumentException("CMIS version must be set!");
+        }
         put(CallContext.CMIS_VERSION, cmisVersion);
 
         // servlet context and HTTP servlet request and response
