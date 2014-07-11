@@ -89,11 +89,17 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
     }
 
     public void objectLoaded(ClientModelEvent event) {
-        if ((folderTable.getSelectedRow() > -1) && (event.getClientModel().getCurrentObject() != null)) {
-            String selId = folderTable.getValueAt(folderTable.getSelectedRow(), FolderTable.ID_COLUMN).toString();
-            String curId = event.getClientModel().getCurrentObject().getId();
+        int selectedRow = folderTable.getSelectedRow();
+        if (selectedRow > -1 && event.getClientModel().getCurrentObject() != null) {
+            if (selectedRow < folderTable.getRowCount()) {
 
-            if (!curId.equals(selId)) {
+                String selId = folderTable.getValueAt(folderTable.getSelectedRow(), FolderTable.ID_COLUMN).toString();
+                String curId = event.getClientModel().getCurrentObject().getId();
+
+                if (!curId.equals(selId)) {
+                    folderTable.clearSelection();
+                }
+            } else {
                 folderTable.clearSelection();
             }
         }
