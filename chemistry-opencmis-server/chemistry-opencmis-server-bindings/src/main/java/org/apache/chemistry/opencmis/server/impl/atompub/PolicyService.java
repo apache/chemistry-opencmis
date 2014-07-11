@@ -82,7 +82,15 @@ public class PolicyService {
             String filter = getStringParameter(request, Constants.PARAM_FILTER);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (policies == null) {
                 throw new CmisRuntimeException("Policies are null!");
@@ -151,7 +159,15 @@ public class PolicyService {
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.applyPolicy(repositoryId, parser.getId(), objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());
             if (objectInfo == null) {
@@ -198,7 +214,15 @@ public class PolicyService {
             String policyId = getStringParameter(request, Constants.PARAM_POLICY_ID);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removePolicy(repositoryId, policyId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);

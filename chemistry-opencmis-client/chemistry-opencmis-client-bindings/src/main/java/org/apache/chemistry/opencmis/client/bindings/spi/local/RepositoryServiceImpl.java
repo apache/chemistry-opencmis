@@ -50,7 +50,17 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getRepositoryInfo(repositoryId, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            RepositoryInfo serviceResult = service.getRepositoryInfo(repositoryId, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -60,7 +70,17 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(null);
 
         try {
-            return service.getRepositoryInfos(extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<RepositoryInfo> serviceResult = service.getRepositoryInfos(extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -70,7 +90,17 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getTypeDefinition(repositoryId, typeId, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinition serviceResult = service.getTypeDefinition(repositoryId, typeId, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -81,8 +111,18 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems, skipCount,
-                    extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinitionList serviceResult = service.getTypeChildren(repositoryId, typeId,
+                    includePropertyDefinitions, maxItems, skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -93,7 +133,18 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getTypeDescendants(repositoryId, typeId, depth, includePropertyDefinitions, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<TypeDefinitionContainer> serviceResult = service.getTypeDescendants(repositoryId, typeId, depth,
+                    includePropertyDefinitions, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -103,7 +154,17 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createType(repositoryId, type, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinition serviceResult = service.createType(repositoryId, type, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -113,7 +174,17 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
-            return service.updateType(repositoryId, type, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinition serviceResult = service.updateType(repositoryId, type, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -123,7 +194,15 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteType(repositoryId, typeId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }

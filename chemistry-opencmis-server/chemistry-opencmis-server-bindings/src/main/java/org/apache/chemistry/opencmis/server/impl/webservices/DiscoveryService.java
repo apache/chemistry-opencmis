@@ -60,8 +60,16 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeLogTokenHolder = convertHolder(changeLogToken);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList changesList = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
                     filter, includePolicyIds, includeAcl, maxItems, convert(extension));
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objects != null) {
                 objects.value = convert(changesList, cmisVersion);
@@ -84,9 +92,19 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
-                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-                    convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.query(repositoryId, statement, searchAllVersions,
+                    includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+                    renditionFilter, maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

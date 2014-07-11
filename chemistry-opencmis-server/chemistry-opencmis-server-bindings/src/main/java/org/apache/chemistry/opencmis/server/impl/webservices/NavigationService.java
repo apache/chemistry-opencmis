@@ -29,7 +29,10 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -62,9 +65,19 @@ public class NavigationService extends AbstractService implements NavigationServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions,
-                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, maxItems, skipCount,
-                    convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+                    renditionFilter, maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -82,9 +95,19 @@ public class NavigationService extends AbstractService implements NavigationServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions,
-                    convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePathSegment,
-                    maxItems, skipCount, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectInFolderList serviceResult = service.getChildren(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+                    renditionFilter, includePathSegment, maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -103,9 +126,17 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<ObjectInFolderContainer> serviceResult = service.getDescendants(repositoryId, folderId, depth, filter,
                     includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
                     renditionFilter, includePathSegment, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (serviceResult != null) {
                 for (ObjectInFolderContainer container : serviceResult) {
@@ -129,7 +160,17 @@ public class NavigationService extends AbstractService implements NavigationServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getFolderParent(repositoryId, folderId, filter, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getFolderParent(repositoryId, folderId, filter, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -148,9 +189,21 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             List<CmisObjectInFolderContainerType> result = new ArrayList<CmisObjectInFolderContainerType>();
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
             List<ObjectInFolderContainer> serviceResult = service.getFolderTree(repositoryId, folderId, depth, filter,
                     includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
                     renditionFilter, includePathSegment, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (serviceResult != null) {
                 for (ObjectInFolderContainer container : serviceResult) {
@@ -177,9 +230,17 @@ public class NavigationService extends AbstractService implements NavigationServ
 
             List<CmisObjectParentsType> result = new ArrayList<CmisObjectParentsType>();
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<ObjectParentData> serviceResult = service.getObjectParents(repositoryId, objectId, filter,
                     includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
                     renditionFilter, includeRelativePathSegment, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (serviceResult != null) {
                 for (ObjectParentData parent : serviceResult) {

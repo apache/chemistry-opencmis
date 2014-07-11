@@ -59,8 +59,16 @@ public class MultiFilingService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             service.addObjectToFolder(repositoryId, objectId, folderId, allVersions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 
@@ -101,8 +109,16 @@ public class MultiFilingService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             service.removeObjectFromFolder(repositoryId, objectId, folderId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

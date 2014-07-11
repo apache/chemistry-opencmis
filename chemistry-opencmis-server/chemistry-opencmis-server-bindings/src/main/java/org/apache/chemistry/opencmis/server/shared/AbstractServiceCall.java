@@ -38,6 +38,9 @@ import org.apache.chemistry.opencmis.commons.impl.CmisEnumHelper;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService;
+import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService.Progress;
 
 public abstract class AbstractServiceCall implements ServiceCall {
 
@@ -230,5 +233,35 @@ public abstract class AbstractServiceCall implements ServiceCall {
         }
 
         return false;
+    }
+
+    /**
+     * Determines if the processing should be stopped before the service method
+     * is called.
+     * 
+     * @return {@code true} if the processing should be stopped, {@code false}
+     *         otherwise
+     */
+    protected boolean stopBeforeService(CmisService service) {
+        if (!(service instanceof ProgressControlCmisService)) {
+            return false;
+        }
+
+        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
+    }
+
+    /**
+     * Determines if the processing should be stopped after the service method
+     * is called.
+     * 
+     * @return {@code true} if the processing should be stopped, {@code false}
+     *         otherwise
+     */
+    protected boolean stopAfterService(CmisService service) {
+        if (!(service instanceof ProgressControlCmisService)) {
+            return false;
+        }
+
+        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
     }
 }

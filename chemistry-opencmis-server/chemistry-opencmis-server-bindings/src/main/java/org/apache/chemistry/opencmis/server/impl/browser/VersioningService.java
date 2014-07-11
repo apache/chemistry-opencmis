@@ -67,8 +67,16 @@ public class VersioningService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> checkOutId = new Holder<String>(objectId);
             service.checkOut(repositoryId, checkOutId, null, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, checkOutId.getValue());
             if (object == null) {
@@ -107,7 +115,15 @@ public class VersioningService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.cancelCheckOut(repositoryId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeEmpty(request, response);
@@ -141,12 +157,20 @@ public class VersioningService {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             ContentStream contentStream = createContentStream(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             try {
                 service.checkIn(repositoryId, objectIdHolder, major,
                         createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
                         contentStream, checkinComment, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
             } finally {
                 closeContentStream(contentStream);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
@@ -191,8 +215,16 @@ public class VersioningService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, null, filter,
                     includeAllowableActions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (versions == null) {
                 throw new CmisRuntimeException("Versions are null!");

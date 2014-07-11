@@ -62,9 +62,17 @@ public class RelationshipService {
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList relationships = service.getObjectRelationships(repositoryId, objectId,
                     includeSubRelationshipTypes, relationshipDirection, typeId, filter, includeAllowableActions,
                     maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (relationships == null) {
                 throw new CmisRuntimeException("Relationships are null!");

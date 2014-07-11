@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
+import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
@@ -55,7 +56,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
  * derived from this class and must provide a constructor that takes a
  * {@link CmisService} object as the sole parameter.
  */
-public abstract class AbstractCmisServiceWrapper implements CallContextAwareCmisService {
+public abstract class AbstractCmisServiceWrapper implements CallContextAwareCmisService, ProgressControlCmisService {
 
     private CmisService service;
     private CallContext context;
@@ -101,6 +102,24 @@ public abstract class AbstractCmisServiceWrapper implements CallContextAwareCmis
      */
     public CallContext getCallContext() {
         return context;
+    }
+
+    // --- processing ---
+
+    public ProgressControlCmisService.Progress beforeServiceCall() {
+        if (service instanceof ProgressControlCmisService) {
+            return ((ProgressControlCmisService) service).beforeServiceCall();
+        }
+
+        return ProgressControlCmisService.Progress.CONTINUE;
+    }
+
+    public ProgressControlCmisService.Progress afterServiceCall() {
+        if (service instanceof ProgressControlCmisService) {
+            return ((ProgressControlCmisService) service).afterServiceCall();
+        }
+
+        return ProgressControlCmisService.Progress.CONTINUE;
     }
 
     // --- service methods ---

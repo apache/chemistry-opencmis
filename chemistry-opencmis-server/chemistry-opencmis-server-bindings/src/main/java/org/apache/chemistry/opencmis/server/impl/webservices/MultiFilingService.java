@@ -50,7 +50,15 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.addObjectToFolder(repositoryId, objectId, folderId, allVersions, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
@@ -68,7 +76,15 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removeObjectFromFolder(repositoryId, objectId, folderId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {

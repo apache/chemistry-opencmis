@@ -25,6 +25,8 @@ import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService;
+import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService.Progress;
 
 /**
  * Base class for all local clients.
@@ -69,6 +71,36 @@ public abstract class AbstractLocalService {
      */
     protected CmisServiceFactory getServiceFactory() {
         return factory;
+    }
+
+    /**
+     * Determines if the processing should be stopped before the service method
+     * is called.
+     * 
+     * @return {@code true} if the processing should be stopped, {@code false}
+     *         otherwise
+     */
+    protected boolean stopBeforeService(CmisService service) {
+        if (!(service instanceof ProgressControlCmisService)) {
+            return false;
+        }
+
+        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
+    }
+
+    /**
+     * Determines if the processing should be stopped after the service method
+     * is called.
+     * 
+     * @return {@code true} if the processing should be stopped, {@code false}
+     *         otherwise
+     */
+    protected boolean stopAfterService(CmisService service) {
+        if (!(service instanceof ProgressControlCmisService)) {
+            return false;
+        }
+
+        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
     }
 
     /**

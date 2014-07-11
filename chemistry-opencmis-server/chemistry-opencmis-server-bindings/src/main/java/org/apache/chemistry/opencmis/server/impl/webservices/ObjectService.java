@@ -34,8 +34,12 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
+import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -81,9 +85,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createDocument(repositoryId, convert(properties), folderId,
                     convert(contentStream, false), convert(VersioningState.class, versioningState), policies,
                     convert(addAces, null), convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -107,9 +119,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createDocumentFromSource(repositoryId, sourceId, convert(properties), folderId,
                     convert(VersioningState.class, versioningState), policies, convert(addAces, null),
                     convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -132,8 +152,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createFolder(repositoryId, convert(properties), folderId, policies,
                     convert(addAces, null), convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -156,8 +184,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createPolicy(repositoryId, convert(properties), folderId, policies,
                     convert(addAces, null), convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -180,8 +216,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createRelationship(repositoryId, convert(properties), policies, convert(addAces, null),
                     convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -204,8 +248,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String id = service.createItem(repositoryId, convert(properties), folderId, null, convert(addAces, null),
                     convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectId != null) {
                 objectId.value = id;
@@ -229,7 +281,15 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteContentStream(repositoryId, objectIdHolder, changeTokenHolder, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
@@ -249,7 +309,15 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteObject(repositoryId, objectId, allVersions, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
@@ -266,8 +334,18 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.deleteTree(repositoryId, folderId, allVersions,
-                    convert(UnfileObject.class, unfileObjects), continueOnFailure, convert(extension)));
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            FailedToDeleteData serviceResult = service.deleteTree(repositoryId, folderId, allVersions,
+                    convert(UnfileObject.class, unfileObjects), continueOnFailure, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -283,7 +361,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getAllowableActions(repositoryId, objectId, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            AllowableActions serviceResult = service.getAllowableActions(repositoryId, objectId, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -297,9 +385,18 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(
-                    service.getContentStream(repositoryId, objectId, streamId, offset, length, convert(extension)),
-                    true);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ContentStream serviceResult = service.getContentStream(repositoryId, objectId, streamId, offset, length,
+                    convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, true);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -316,9 +413,19 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getObject(repositoryId, objectId, filter, includeAllowableActions,
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObject(repositoryId, objectId, filter, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
-                    includeAcl, convert(extension)), cmisVersion);
+                    includeAcl, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -335,9 +442,19 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
                     convert(IncludeRelationships.class, includeRelationships), renditionFilter, includePolicyIds,
-                    includeAcl, convert(extension)), cmisVersion);
+                    includeAcl, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -351,7 +468,17 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getProperties(repositoryId, objectId, filter, convert(extension)));
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Properties serviceResult = service.getProperties(repositoryId, objectId, filter, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -367,8 +494,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             List<CmisRenditionType> result = new ArrayList<CmisRenditionType>();
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<RenditionData> renditionList = service.getRenditions(repositoryId, objectId, renditionFilter,
                     maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (renditionList != null) {
                 for (RenditionData rendition : renditionList) {
@@ -393,7 +528,15 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.moveObject(repositoryId, objectIdHolder, targetFolderId, sourceFolderId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setExtensionValues(extData, extension);
@@ -415,8 +558,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
                     convert(contentStream, false), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
@@ -439,8 +590,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, convert(contentStream, true),
                     isLastChunk, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
@@ -462,7 +621,15 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             org.apache.chemistry.opencmis.commons.spi.Holder<String> changeTokenHolder = convertHolder(changeToken);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder, convert(properties), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setHolderValue(changeTokenHolder, changeToken);
@@ -503,8 +670,16 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
                 }
             }
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
                     objectIdsAndChangeTokens, properties, addSecondaryTypeIds, removeSecondaryTypeIds, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (objectIdAndChangeToken != null && result != null) {
                 // TODO: add workaround

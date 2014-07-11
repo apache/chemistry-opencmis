@@ -46,8 +46,19 @@ public class RelationshipServiceImpl extends AbstractLocalService implements Rel
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
-                    relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.getObjectRelationships(repositoryId, objectId,
+                    includeSubRelationshipTypes, relationshipDirection, typeId, filter, includeAllowableActions,
+                    maxItems, skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }

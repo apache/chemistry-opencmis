@@ -63,6 +63,10 @@ public class RepositoryService {
             // execute
             List<RepositoryInfo> infoDataList = null;
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             if (repositoryId == null) {
                 infoDataList = service.getRepositoryInfos(null);
             } else {
@@ -70,6 +74,10 @@ public class RepositoryService {
                 if (context instanceof CallContextImpl) {
                     ((CallContextImpl) context).put(CallContext.REPOSITORY_ID, repositoryId);
                 }
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             // set headers
@@ -246,8 +254,16 @@ public class RepositoryService {
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
                     maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             BigInteger numItems = (typeList == null ? null : typeList.getNumItems());
             Boolean hasMoreItems = (typeList == null ? null : typeList.hasMoreItems());
@@ -344,8 +360,16 @@ public class RepositoryService {
                     false);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
                     includePropertyDefinitions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String parentTypeId = null;
             String typeName = "Type Children";
@@ -425,7 +449,15 @@ public class RepositoryService {
             String typeId = getStringParameter(request, Constants.PARAM_ID);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // write XML
             response.setStatus(HttpServletResponse.SC_OK);
@@ -458,7 +490,15 @@ public class RepositoryService {
             parser.parse(request.getInputStream());
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -495,7 +535,15 @@ public class RepositoryService {
             parser.parse(request.getInputStream());
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
@@ -529,7 +577,15 @@ public class RepositoryService {
             String typeId = getStringParameter(request, Constants.PARAM_ID);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteType(repositoryId, typeId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);

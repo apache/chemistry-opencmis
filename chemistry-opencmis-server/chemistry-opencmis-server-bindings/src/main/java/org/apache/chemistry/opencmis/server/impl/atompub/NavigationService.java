@@ -71,9 +71,17 @@ public class NavigationService {
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
                     skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (children == null) {
                 throw new CmisRuntimeException("Children are null!");
@@ -209,8 +217,16 @@ public class NavigationService {
             Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (descendants == null) {
                 throw new CmisRuntimeException("Descendants are null!");
@@ -301,8 +317,16 @@ public class NavigationService {
             Boolean includePathSegment = getBooleanParameter(request, Constants.PARAM_PATH_SEGMENT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (folderTree == null) {
                 throw new CmisRuntimeException("Folder tree is null!");
@@ -393,8 +417,16 @@ public class NavigationService {
             Boolean includeRelativePathSegment = getBooleanParameter(request, Constants.PARAM_RELATIVE_PATH_SEGMENT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (parents == null) {
                 throw new CmisRuntimeException("Parents are null!");
@@ -471,8 +503,16 @@ public class NavigationService {
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList checkedOut = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (checkedOut == null) {
                 throw new CmisRuntimeException("Checked Out list is null!");

@@ -27,6 +27,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.MTOM;
 
+import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
@@ -55,9 +56,19 @@ public class RelationshipService extends AbstractService implements Relationship
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getObjectRelationships(repositoryId, objectId, includeSubRelationshipTypes,
-                    convert(RelationshipDirection.class, relationshipDirection), typeId, filter,
-                    includeAllowableActions, maxItems, skipCount, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.getObjectRelationships(repositoryId, objectId,
+                    includeSubRelationshipTypes, convert(RelationshipDirection.class, relationshipDirection), typeId,
+                    filter, includeAllowableActions, maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

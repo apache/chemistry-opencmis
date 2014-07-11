@@ -48,7 +48,16 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.cancelCheckOut(repositoryId, objectId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
         } finally {
             service.close();
         }
@@ -60,8 +69,16 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.checkIn(repositoryId, objectId, major, properties, contentStream, checkinComment, policies,
                     addAces, removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -72,7 +89,15 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.checkOut(repositoryId, objectId, extension, contentCopied);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -83,8 +108,18 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getAllVersions(repositoryId, objectId, versionSeriesId, filter, includeAllowableActions,
-                    extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<ObjectData> serviceResult = service.getAllVersions(repositoryId, objectId, versionSeriesId, filter,
+                    includeAllowableActions, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -96,9 +131,19 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
-                    includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeAcl,
-                    extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major,
+                    filter, includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds,
+                    includeAcl, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -109,8 +154,18 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getPropertiesOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter,
-                    extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Properties serviceResult = service.getPropertiesOfLatestVersion(repositoryId, objectId, versionSeriesId,
+                    major, filter, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }

@@ -43,7 +43,15 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.applyPolicy(repositoryId, policyId, objectId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -54,7 +62,16 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getAppliedPolicies(repositoryId, objectId, filter, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+            List<ObjectData> serviceResut = service.getAppliedPolicies(repositoryId, objectId, filter, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResut;
         } finally {
             service.close();
         }
@@ -64,7 +81,15 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removePolicy(repositoryId, policyId, objectId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }

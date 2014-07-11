@@ -51,8 +51,17 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy, includeAllowableActions,
-                    includeRelationships, renditionFilter, maxItems, skipCount, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+            ObjectList serviceResult = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -64,8 +73,19 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getChildren(repositoryId, folderId, filter, orderBy, includeAllowableActions,
-                    includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectInFolderList serviceResult = service.getChildren(repositoryId, folderId, filter, orderBy,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
+                    skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -77,8 +97,17 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getDescendants(repositoryId, folderId, depth, filter, includeAllowableActions,
-                    includeRelationships, renditionFilter, includePathSegment, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+            List<ObjectInFolderContainer> serviceResult = service.getDescendants(repositoryId, folderId, depth, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -88,7 +117,17 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getFolderParent(repositoryId, folderId, filter, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getFolderParent(repositoryId, folderId, filter, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -100,8 +139,17 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getFolderTree(repositoryId, folderId, depth, filter, includeAllowableActions,
-                    includeRelationships, renditionFilter, includePathSegment, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<ObjectInFolderContainer> serviceResult = service.getFolderTree(repositoryId, folderId, depth, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -113,8 +161,19 @@ public class NavigationServiceImpl extends AbstractLocalService implements Navig
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getObjectParents(repositoryId, objectId, filter, includeAllowableActions,
-                    includeRelationships, renditionFilter, includeRelativePathSegment, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<ObjectParentData> serviceResult = service.getObjectParents(repositoryId, objectId, filter,
+                    includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment,
+                    extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }

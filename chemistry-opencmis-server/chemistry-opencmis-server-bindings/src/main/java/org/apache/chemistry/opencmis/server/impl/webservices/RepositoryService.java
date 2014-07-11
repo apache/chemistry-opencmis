@@ -35,6 +35,9 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
@@ -60,7 +63,15 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, null);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<RepositoryInfo> infoDataList = service.getRepositoryInfos(convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (infoDataList == null) {
                 return null;
@@ -91,7 +102,17 @@ public class RepositoryService extends AbstractService implements RepositoryServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getRepositoryInfo(repositoryId, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            RepositoryInfo serviceResult = service.getRepositoryInfo(repositoryId, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -106,8 +127,18 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions, maxItems,
-                    skipCount, convert(extension)));
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinitionList serviceResult = service.getTypeChildren(repositoryId, typeId,
+                    includePropertyDefinitions, maxItems, skipCount, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -121,7 +152,17 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getTypeDefinition(repositoryId, typeId, convert(extension)));
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            TypeDefinition serviceResult = service.getTypeDefinition(repositoryId, typeId, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -135,9 +176,19 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, repositoryId);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<TypeDefinitionContainer> serviceResult = service.getTypeDescendants(repositoryId, typeId, depth,
+                    includePropertyDefinitions, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
             List<CmisTypeContainer> result = new ArrayList<CmisTypeContainer>();
-            convertTypeContainerList(service.getTypeDescendants(repositoryId, typeId, depth,
-                    includePropertyDefinitions, convert(extension)), result);
+            convertTypeContainerList(serviceResult, result);
 
             return result;
         } catch (Exception e) {
@@ -153,7 +204,17 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, repositoryId);
 
-            type.value = convert(service.createType(repositoryId, convert(type.value), convert(extension)));
+            if (stopBeforeService(service)) {
+                return;
+            }
+
+            TypeDefinition serviceResult = service.createType(repositoryId, convert(type.value), convert(extension));
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
+            type.value = convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -167,7 +228,17 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         try {
             service = getService(wsContext, repositoryId);
 
-            type.value = convert(service.updateType(repositoryId, convert(type.value), convert(extension)));
+            if (stopBeforeService(service)) {
+                return;
+            }
+
+            TypeDefinition serviceResult = service.updateType(repositoryId, convert(type.value), convert(extension));
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
+            type.value = convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -184,7 +255,15 @@ public class RepositoryService extends AbstractService implements RepositoryServ
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteType(repositoryId, typeId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {

@@ -69,7 +69,15 @@ public class RepositoryService {
             assert response != null;
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<RepositoryInfo> infoDataList = service.getRepositoryInfos(null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             JSONObject result = new JSONObject();
             for (RepositoryInfo ri : infoDataList) {
@@ -97,7 +105,15 @@ public class RepositoryService {
             assert response != null;
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             RepositoryInfo ri = service.getRepositoryInfo(repositoryId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String repositoryUrl = compileRepositoryUrl(request, ri.getId()).toString();
             String rootUrl = compileRootUrl(request, ri.getId()).toString();
@@ -173,8 +189,17 @@ public class RepositoryService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinitionList typeList = service.getTypeChildren(repositoryId, typeId, includePropertyDefinitions,
                     maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
             JSONObject jsonTypeList = JSONConverter.convert(typeList, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -198,8 +223,16 @@ public class RepositoryService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<TypeDefinitionContainer> typeTree = service.getTypeDescendants(repositoryId, typeId, depth,
                     includePropertyDefinitions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (typeTree == null) {
                 throw new CmisRuntimeException("Type tree is null!");
@@ -232,7 +265,16 @@ public class RepositoryService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
             JSONObject jsonType = JSONConverter.convert(type, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -271,7 +313,16 @@ public class RepositoryService {
             TypeDefinition typeIn = JSONConverter.convertTypeDefinition((Map<String, Object>) typeJson);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition typeOut = service.createType(repositoryId, typeIn, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
             JSONObject jsonType = JSONConverter.convert(typeOut, dateTimeFormat);
 
             // set headers
@@ -313,7 +364,16 @@ public class RepositoryService {
             TypeDefinition typeIn = JSONConverter.convertTypeDefinition((Map<String, Object>) typeJson);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             TypeDefinition typeOut = service.updateType(repositoryId, typeIn, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
             JSONObject jsonType = JSONConverter.convert(typeOut, dateTimeFormat);
 
             response.setStatus(HttpServletResponse.SC_OK);
@@ -336,7 +396,16 @@ public class RepositoryService {
             // get parameters
             String typeId = getStringParameter(request, CONTROL_TYPE_ID);
 
+            // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteType(repositoryId, typeId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeEmpty(request, response);

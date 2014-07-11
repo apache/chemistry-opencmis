@@ -57,8 +57,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createDocument(repositoryId, properties, folderId, contentStream, versioningState, policies,
-                    addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            String serviceResult = service.createDocument(repositoryId, properties, folderId, contentStream,
+                    versioningState, policies, addAces, removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -70,8 +80,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createDocumentFromSource(repositoryId, sourceId, properties, folderId, versioningState,
-                    policies, addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            String serviceResult = service.createDocumentFromSource(repositoryId, sourceId, properties, folderId,
+                    versioningState, policies, addAces, removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -82,7 +102,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createFolder(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            String serviceResult = service.createFolder(repositoryId, properties, folderId, policies, addAces,
+                    removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -93,7 +124,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createPolicy(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            String serviceResult = service.createPolicy(repositoryId, properties, folderId, policies, addAces,
+                    removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -104,7 +146,17 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createItem(repositoryId, properties, folderId, policies, addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+            String serviceResult = service.createItem(repositoryId, properties, folderId, policies, addAces,
+                    removeAces, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -115,7 +167,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.createRelationship(repositoryId, properties, policies, addAces, removeAces, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            String serviceResult = service.createRelationship(repositoryId, properties, policies, addAces, removeAces,
+                    extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -126,7 +189,16 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteContentStream(repositoryId, objectId, changeToken, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
         } finally {
             service.close();
         }
@@ -136,7 +208,16 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteObject(repositoryId, objectId, allVersions, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
         } finally {
             service.close();
         }
@@ -147,7 +228,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.deleteTree(repositoryId, folderId, allVersions, unfileObjects, continueOnFailure, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            FailedToDeleteData serviceResult = service.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
+                    continueOnFailure, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -157,7 +249,17 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getAllowableActions(repositoryId, objectId, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            AllowableActions serviceResult = service.getAllowableActions(repositoryId, objectId, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -168,7 +270,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getContentStream(repositoryId, objectId, streamId, offset, length, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ContentStream serviceResult = service.getContentStream(repositoryId, objectId, streamId, offset, length,
+                    extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -180,8 +293,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getObject(repositoryId, objectId, filter, includeAllowableActions, includeRelationships,
-                    renditionFilter, includePolicyIds, includeAcl, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObject(repositoryId, objectId, filter, includeAllowableActions,
+                    includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -193,8 +316,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getObjectByPath(repositoryId, path, filter, includeAllowableActions, includeRelationships,
-                    renditionFilter, includePolicyIds, includeAcl, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
+                    includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -204,7 +337,17 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getProperties(repositoryId, objectId, filter, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Properties serviceResult = service.getProperties(repositoryId, objectId, filter, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -215,7 +358,18 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getRenditions(repositoryId, objectId, renditionFilter, maxItems, skipCount, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<RenditionData> serviceResult = service.getRenditions(repositoryId, objectId, renditionFilter,
+                    maxItems, skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -226,7 +380,15 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.moveObject(repositoryId, objectId, targetFolderId, sourceFolderId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -237,7 +399,15 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.setContentStream(repositoryId, objectId, overwriteFlag, changeToken, contentStream, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -248,7 +418,15 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.appendContentStream(repositoryId, objectId, changeToken, contentStream, isLastChunk, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -259,7 +437,15 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.updateProperties(repositoryId, objectId, changeToken, properties, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -271,11 +457,20 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         CmisService service = getService(repositoryId);
 
         try {
-            return service.bulkUpdateProperties(repositoryId, objectIdAndChangeToken, properties, addSecondaryTypeIds,
-                    removeSecondaryTypeIds, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            List<BulkUpdateObjectIdAndChangeToken> serviceResult = service.bulkUpdateProperties(repositoryId,
+                    objectIdAndChangeToken, properties, addSecondaryTypeIds, removeSecondaryTypeIds, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
     }
-
 }

@@ -35,6 +35,7 @@ import javax.xml.ws.soap.MTOM;
 
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
@@ -67,7 +68,15 @@ public class VersioningService extends AbstractService implements VersioningServ
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.cancelCheckOut(repositoryId, objectId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
@@ -88,8 +97,16 @@ public class VersioningService extends AbstractService implements VersioningServ
             org.apache.chemistry.opencmis.commons.spi.Holder<String> objectIdHolder = convertHolder(objectId);
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.checkIn(repositoryId, objectIdHolder, major, convert(properties), convert(contentStream, false),
                     checkinComment, policies, convert(addAces, null), convert(removeAces, null), extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setHolderValue(objectIdHolder, objectId);
             setExtensionValues(extData, extension);
@@ -110,7 +127,15 @@ public class VersioningService extends AbstractService implements VersioningServ
             org.apache.chemistry.opencmis.commons.spi.Holder<Boolean> contentCopiedHolder = new org.apache.chemistry.opencmis.commons.spi.Holder<Boolean>();
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.checkOut(repositoryId, objectIdHolder, extData, contentCopiedHolder);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (contentCopied != null) {
                 contentCopied.value = contentCopiedHolder.getValue();
@@ -133,8 +158,16 @@ public class VersioningService extends AbstractService implements VersioningServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<ObjectData> versions = service.getAllVersions(repositoryId, null, versionSeriesId, filter,
                     includeAllowableActions, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (versions == null) {
                 return null;
@@ -163,9 +196,19 @@ public class VersioningService extends AbstractService implements VersioningServ
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
-            return convert(service.getObjectOfLatestVersion(repositoryId, null, versionSeriesId, major, filter,
-                    includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
-                    renditionFilter, includePolicyIds, includeAcl, convert(extension)), cmisVersion);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectData serviceResult = service.getObjectOfLatestVersion(repositoryId, null, versionSeriesId, major,
+                    filter, includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
+                    renditionFilter, includePolicyIds, includeAcl, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult, cmisVersion);
         } catch (Exception e) {
             throw convertException(e);
         } finally {
@@ -179,8 +222,18 @@ public class VersioningService extends AbstractService implements VersioningServ
         try {
             service = getService(wsContext, repositoryId);
 
-            return convert(service.getPropertiesOfLatestVersion(repositoryId, null, versionSeriesId, major, filter,
-                    convert(extension)));
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Properties serviceResult = service.getPropertiesOfLatestVersion(repositoryId, null, versionSeriesId, major,
+                    filter, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return convert(serviceResult);
         } catch (Exception e) {
             throw convertException(e);
         } finally {

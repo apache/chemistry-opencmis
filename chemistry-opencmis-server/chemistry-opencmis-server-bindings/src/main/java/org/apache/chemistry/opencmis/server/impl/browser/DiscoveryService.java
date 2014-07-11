@@ -75,8 +75,16 @@ public class DiscoveryService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
                     includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (results == null) {
                 throw new CmisRuntimeException("Results are null!");
@@ -113,9 +121,17 @@ public class DiscoveryService {
             boolean succinct = getBooleanParameter(request, Constants.PARAM_SUCCINCT, false);
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
             ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
                     filter, includePolicyIds, includeAcl, maxItems, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
             JSONObject jsonChanges = JSONConverter.convert(changes, typeCache, JSONConverter.PropertyMode.CHANGE,

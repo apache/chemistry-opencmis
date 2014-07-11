@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.util.List;
 
@@ -60,8 +60,16 @@ public class VersioningService {
             parser.parse(request.getInputStream());
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> checkOutId = new Holder<String>(parser.getId());
             service.checkOut(repositoryId, checkOutId, null, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, checkOutId.getValue());
             if (objectInfo == null) {
@@ -114,8 +122,16 @@ public class VersioningService {
             Boolean includeAllowableActions = getBooleanParameter(request, Constants.PARAM_ALLOWABLE_ACTIONS);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectData> versions = service.getAllVersions(repositoryId, objectId, versionSeriesId, filter,
                     includeAllowableActions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (isNullOrEmpty(versions)) {
                 throw new CmisRuntimeException("Version list is null or empty!");
@@ -178,7 +194,15 @@ public class VersioningService {
             String objectId = getStringParameter(request, Constants.PARAM_ID);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteObjectOrCancelCheckOut(repositoryId, objectId, Boolean.TRUE, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);

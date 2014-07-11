@@ -60,6 +60,10 @@ public class MultiFilingService {
 
             String objectId = parser.getId();
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             if (objectId == null && removeFrom == null) {
                 // create unfiled object
                 createUnfiledObject(context, service, repositoryId, request, response, parser);
@@ -68,6 +72,10 @@ public class MultiFilingService {
 
             // execute
             service.removeObjectFromFolder(repositoryId, objectId, removeFrom, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
             if (objectInfo == null) {

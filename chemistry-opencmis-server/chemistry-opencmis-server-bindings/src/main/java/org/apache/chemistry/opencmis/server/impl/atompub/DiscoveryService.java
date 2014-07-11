@@ -120,8 +120,16 @@ public class DiscoveryService {
             }
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList results = service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
                     includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (results == null) {
                 throw new CmisRuntimeException("Results are null!");
@@ -234,9 +242,17 @@ public class DiscoveryService {
             BigInteger maxItems = getBigIntegerParameter(request, Constants.PARAM_MAX_ITEMS);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
             ObjectList changes = service.getContentChanges(repositoryId, changeLogTokenHolder, includeProperties,
                     filter, includePolicyIds, includeAcl, maxItems, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (changes == null) {
                 throw new CmisRuntimeException("Changes are null!");

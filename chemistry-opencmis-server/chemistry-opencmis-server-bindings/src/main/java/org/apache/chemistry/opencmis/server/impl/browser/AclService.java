@@ -45,13 +45,21 @@ public class AclService {
             assert repositoryId != null;
             assert request != null;
             assert response != null;
-            
+
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // return ACL
             response.setStatus(HttpServletResponse.SC_OK);
@@ -85,8 +93,16 @@ public class AclService {
             // execute
             ControlParser cp = new ControlParser(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Acl acl = service.applyAcl(repositoryId, objectId, createAddAcl(cp), createRemoveAcl(cp), aclPropagation,
                     null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // return ACL
             setStatus(request, response, HttpServletResponse.SC_CREATED);

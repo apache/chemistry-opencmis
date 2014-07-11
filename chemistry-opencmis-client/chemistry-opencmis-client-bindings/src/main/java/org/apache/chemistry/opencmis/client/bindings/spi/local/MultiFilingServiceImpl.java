@@ -41,7 +41,15 @@ public class MultiFilingServiceImpl extends AbstractLocalService implements Mult
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.addObjectToFolder(repositoryId, objectId, folderId, allVersions, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }
@@ -51,7 +59,15 @@ public class MultiFilingServiceImpl extends AbstractLocalService implements Mult
         CmisService service = getService(repositoryId);
 
         try {
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removeObjectFromFolder(repositoryId, objectId, folderId, extension);
+
+            if (stopAfterService(service)) {
+                return;
+            }
         } finally {
             service.close();
         }

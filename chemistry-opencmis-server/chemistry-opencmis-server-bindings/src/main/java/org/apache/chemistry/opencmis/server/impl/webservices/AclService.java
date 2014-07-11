@@ -51,8 +51,16 @@ public class AclService extends AbstractService implements ACLServicePort {
         try {
             service = getService(wsContext, repositoryId);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             Acl acl = service.applyAcl(repositoryId, objectId, convert(addAces, null), convert(removeAces, null),
                     convert(AclPropagation.class, aclPropagation), convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (acl == null) {
                 return null;
@@ -76,7 +84,16 @@ public class AclService extends AbstractService implements ACLServicePort {
         try {
             service = getService(wsContext, repositoryId);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
             if (acl == null) {
                 return null;
             }

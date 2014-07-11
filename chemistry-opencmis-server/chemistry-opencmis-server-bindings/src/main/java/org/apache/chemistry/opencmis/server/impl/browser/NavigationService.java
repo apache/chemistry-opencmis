@@ -83,9 +83,17 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectInFolderList children = service.getChildren(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, maxItems,
                     skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (children == null) {
                 throw new CmisRuntimeException("Children are null!");
@@ -124,8 +132,16 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectInFolderContainer> descendants = service.getDescendants(repositoryId, folderId, depth, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (descendants == null) {
                 throw new CmisRuntimeException("Descendants are null!");
@@ -167,8 +183,16 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectInFolderContainer> folderTree = service.getFolderTree(repositoryId, folderId, depth, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (folderTree == null) {
                 throw new CmisRuntimeException("Folder Tree are null!");
@@ -204,7 +228,15 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectData parent = service.getFolderParent(repositoryId, objectId, filter, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (parent == null) {
                 throw new CmisRuntimeException("Parent is null!");
@@ -243,8 +275,16 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectParentData> parents = service.getObjectParents(repositoryId, objectId, filter,
                     includeAllowableActions, includeRelationships, renditionFilter, includeRelativePathSegment, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (parents == null) {
                 throw new CmisRuntimeException("Parents are null!");
@@ -287,8 +327,16 @@ public class NavigationService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectList checkedout = service.getCheckedOutDocs(repositoryId, folderId, filter, orderBy,
                     includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (checkedout == null) {
                 throw new CmisRuntimeException("Checked out list is null!");

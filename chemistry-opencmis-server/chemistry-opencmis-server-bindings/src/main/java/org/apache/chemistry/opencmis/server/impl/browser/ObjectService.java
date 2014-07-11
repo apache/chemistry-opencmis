@@ -106,6 +106,10 @@ public class ObjectService {
 
             ContentStream contentStream = createContentStream(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = null;
             try {
                 newObjectId = service
@@ -113,6 +117,10 @@ public class ObjectService {
                                 versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
             } finally {
                 closeContentStream(contentStream);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
@@ -162,12 +170,20 @@ public class ObjectService {
                 throw new CmisRuntimeException("Source object has no type!?!");
             }
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createDocumentFromSource(
                     repositoryId,
                     sourceId,
                     createUpdateProperties(cp, sourceTypeId.getFirstValue().toString(), null,
                             Collections.singletonList(sourceId), typeCache), folderId, versioningState,
                     createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
             if (object == null) {
@@ -208,8 +224,16 @@ public class ObjectService {
             ControlParser cp = new ControlParser(request);
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createFolder(repositoryId, createNewProperties(cp, typeCache), folderId,
                     createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
             if (object == null) {
@@ -250,8 +274,16 @@ public class ObjectService {
             ControlParser cp = new ControlParser(request);
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createPolicy(repositoryId, createNewProperties(cp, typeCache), folderId,
                     createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
             if (object == null) {
@@ -292,8 +324,16 @@ public class ObjectService {
             ControlParser cp = new ControlParser(request);
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createItem(repositoryId, createNewProperties(cp, typeCache), folderId,
                     createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
             if (object == null) {
@@ -333,8 +373,16 @@ public class ObjectService {
             ControlParser cp = new ControlParser(request);
             TypeCache typeCache = new ServerTypeCacheImpl(repositoryId, service);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createRelationship(repositoryId, createNewProperties(cp, typeCache),
                     createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, newObjectId);
             if (object == null) {
@@ -379,8 +427,16 @@ public class ObjectService {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.updateProperties(repositoryId, objectIdHolder, changeTokenHolder,
                     createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 
@@ -446,8 +502,16 @@ public class ObjectService {
             Properties properties = createUpdateProperties(cp, null, addSecondaryTypes, objectIds, typeCache);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<BulkUpdateObjectIdAndChangeToken> result = service.bulkUpdateProperties(repositoryId,
                     objectIdAndChangeToken, properties, addSecondaryTypes, removeSecondaryTypes, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // return result
             JSONArray jsonList = new JSONArray();
@@ -486,11 +550,19 @@ public class ObjectService {
             // execute
             Properties properties;
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             if (returnVersion == ReturnVersion.LATEST || returnVersion == ReturnVersion.LASTESTMAJOR) {
                 properties = service.getPropertiesOfLatestVersion(repositoryId, objectId, null,
                         returnVersion == ReturnVersion.LASTESTMAJOR, filter, null);
             } else {
                 properties = service.getProperties(repositoryId, objectId, filter, null);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             if (properties == null) {
@@ -535,6 +607,10 @@ public class ObjectService {
             // execute
             ObjectData object;
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             if (returnVersion == ReturnVersion.LATEST || returnVersion == ReturnVersion.LASTESTMAJOR) {
                 object = service.getObjectOfLatestVersion(repositoryId, objectId, null,
                         returnVersion == ReturnVersion.LASTESTMAJOR, filter, includeAllowableActions,
@@ -542,6 +618,10 @@ public class ObjectService {
             } else {
                 object = service.getObject(repositoryId, objectId, filter, includeAllowableActions,
                         includeRelationships, renditionFilter, includePolicyIds, includeAcl, null);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             if (object == null) {
@@ -573,7 +653,16 @@ public class ObjectService {
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
 
+            // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             AllowableActions allowableActions = service.getAllowableActions(repositoryId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             JSONObject jsonAllowableActions = JSONConverter.convert(allowableActions);
 
@@ -601,8 +690,16 @@ public class ObjectService {
             BigInteger skipCount = getBigIntegerParameter(request, Constants.PARAM_SKIP_COUNT);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<RenditionData> renditions = service.getRenditions(repositoryId, objectId, renditionFilter, maxItems,
                     skipCount, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             JSONArray jsonRenditions = new JSONArray();
             if (renditions != null) {
@@ -637,7 +734,15 @@ public class ObjectService {
             BigInteger length = context.getLength();
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ContentStream content = service.getContentStream(repositoryId, objectId, streamId, offset, length, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (content == null || content.getStream() == null) {
                 throw new CmisRuntimeException("Content stream is null!");
@@ -710,7 +815,16 @@ public class ObjectService {
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
 
+            // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteObject(repositoryId, objectId, allVersions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             response.setStatus(HttpServletResponse.SC_OK);
             writeEmpty(request, response);
@@ -736,8 +850,16 @@ public class ObjectService {
             Boolean continueOnFailure = getBooleanParameter(request, Constants.PARAM_CONTINUE_ON_FAILURE);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             FailedToDeleteData ftd = service.deleteTree(repositoryId, objectId, allVersions, unfileObjects,
                     continueOnFailure, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             response.setStatus(HttpServletResponse.SC_OK);
 
@@ -772,7 +894,16 @@ public class ObjectService {
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
+
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteContentStream(repositoryId, objectIdHolder, changeTokenHolder, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 
@@ -816,11 +947,19 @@ public class ObjectService {
             Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
             ContentStream contentStream = createContentStream(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             try {
                 service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder, contentStream,
                         null);
             } finally {
                 closeContentStream(contentStream);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
@@ -867,11 +1006,19 @@ public class ObjectService {
             Holder<String> changeTokenHolder = (changeToken == null ? null : new Holder<String>(changeToken));
             ContentStream contentStream = createContentStream(request);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             try {
                 service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, contentStream,
                         isLastChunk, null);
             } finally {
                 closeContentStream(contentStream);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
@@ -915,7 +1062,16 @@ public class ObjectService {
 
             // execute
             Holder<String> objectIdHolder = new Holder<String>(objectId);
+
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.moveObject(repositoryId, objectIdHolder, targetFolderId, sourceFolderId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
 

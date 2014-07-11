@@ -61,7 +61,15 @@ public class PolicyService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             JSONArray jsonPolicies = new JSONArray();
             if (policies != null) {
@@ -96,7 +104,15 @@ public class PolicyService {
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.applyPolicy(repositoryId, policyId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, objectId);
             if (object == null) {

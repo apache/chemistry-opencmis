@@ -46,8 +46,18 @@ public class DiscoveryServiceImpl extends AbstractLocalService implements Discov
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getContentChanges(repositoryId, changeLogToken, includeProperties, filter, includePolicyIds,
-                    includeAcl, maxItems, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.getContentChanges(repositoryId, changeLogToken, includeProperties,
+                    filter, includePolicyIds, includeAcl, maxItems, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -59,8 +69,18 @@ public class DiscoveryServiceImpl extends AbstractLocalService implements Discov
         CmisService service = getService(repositoryId);
 
         try {
-            return service.query(repositoryId, statement, searchAllVersions, includeAllowableActions,
-                    includeRelationships, renditionFilter, maxItems, skipCount, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            ObjectList serviceResult = service.query(repositoryId, statement, searchAllVersions,
+                    includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }

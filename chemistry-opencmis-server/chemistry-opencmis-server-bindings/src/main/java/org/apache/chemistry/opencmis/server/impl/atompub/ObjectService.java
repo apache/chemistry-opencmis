@@ -103,6 +103,10 @@ public class ObjectService {
             String newObjectId = null;
 
             if (objectId == null) {
+                if (stopBeforeService(service)) {
+                    return;
+                }
+
                 // create
                 ContentStream contentStream = parser.getContentStream();
                 try {
@@ -111,8 +115,16 @@ public class ObjectService {
                 } finally {
                     closeContentStream(contentStream);
                 }
+
+                if (stopAfterService(service)) {
+                    return;
+                }
             } else {
-                if ((sourceFolderId == null) || (sourceFolderId.trim().length() == 0)) {
+                if (stopBeforeService(service)) {
+                    return;
+                }
+
+                if (sourceFolderId == null || sourceFolderId.trim().length() == 0) {
                     // addObjectToFolder
                     service.addObjectToFolder(repositoryId, objectId, folderId, null, null);
                     newObjectId = objectId;
@@ -121,6 +133,10 @@ public class ObjectService {
                     Holder<String> objectIdHolder = new Holder<String>(objectId);
                     service.moveObject(repositoryId, objectIdHolder, folderId, sourceFolderId, null);
                     newObjectId = objectIdHolder.getValue();
+                }
+
+                if (stopAfterService(service)) {
+                    return;
                 }
             }
 
@@ -168,8 +184,16 @@ public class ObjectService {
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             String newObjectId = service.createRelationship(repositoryId, parser.getProperties(),
                     parser.getPolicyIds(), null, null, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
             if (objectInfo == null) {
@@ -214,7 +238,15 @@ public class ObjectService {
             Boolean allVersions = getBooleanParameter(request, Constants.PARAM_ALL_VERSIONS);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -238,8 +270,16 @@ public class ObjectService {
             String changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.deleteContentStream(repositoryId, new Holder<String>(objectId), changeToken == null ? null
                     : new Holder<String>(changeToken), null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -282,6 +322,10 @@ public class ObjectService {
             }
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Holder<String> objectIdHolder = new Holder<String>(objectId);
             if (Boolean.TRUE.equals(appendFlag)) {
                 service.appendContentStream(repositoryId, objectIdHolder, changeToken == null ? null
@@ -290,6 +334,10 @@ public class ObjectService {
             } else {
                 service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeToken == null ? null
                         : new Holder<String>(changeToken), contentStream, null);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             // set headers
@@ -345,8 +393,16 @@ public class ObjectService {
             Boolean continueOnFailure = getBooleanParameter(request, Constants.PARAM_CONTINUE_ON_FAILURE);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             FailedToDeleteData ftd = service.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
                     continueOnFailure, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (ftd != null && isNotEmpty(ftd.getIds())) {
                 // print ids that could not be deleted
@@ -394,15 +450,22 @@ public class ObjectService {
             Boolean includeAcl = getBooleanParameter(request, Constants.PARAM_ACL);
 
             // execute
-            ObjectData object = null;
+            if (stopBeforeService(service)) {
+                return;
+            }
 
-            if ((returnVersion == ReturnVersion.LATEST) || (returnVersion == ReturnVersion.LASTESTMAJOR)) {
+            ObjectData object = null;
+            if (returnVersion == ReturnVersion.LATEST || returnVersion == ReturnVersion.LASTESTMAJOR) {
                 object = service.getObjectOfLatestVersion(repositoryId, objectId, null,
                         returnVersion == ReturnVersion.LASTESTMAJOR, filter, includeAllowableActions,
                         includeRelationships, renditionFilter, includePolicyIds, includeAcl, null);
             } else {
                 object = service.getObject(repositoryId, objectId, filter, includeAllowableActions,
                         includeRelationships, renditionFilter, includePolicyIds, includeAcl, null);
+            }
+
+            if (stopAfterService(service)) {
+                return;
             }
 
             if (object == null) {
@@ -452,8 +515,16 @@ public class ObjectService {
             Boolean includeAcl = getBooleanParameter(request, Constants.PARAM_ACL);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ObjectData object = service.getObjectByPath(repositoryId, path, filter, includeAllowableActions,
                     includeRelationships, renditionFilter, includePolicyIds, includeAcl, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (object == null) {
                 throw new CmisRuntimeException("Object is null!");
@@ -495,7 +566,15 @@ public class ObjectService {
             String objectId = getStringParameter(request, Constants.PARAM_ID);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             AllowableActions allowableActions = service.getAllowableActions(repositoryId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (allowableActions == null) {
                 throw new CmisRuntimeException("Allowable Actions is null!");
@@ -533,9 +612,17 @@ public class ObjectService {
             BigInteger length = context.getLength();
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             ContentStream content = service.getContentStream(repositoryId, objectId, streamId, offset, length, null);
 
-            if ((content == null) || (content.getStream() == null)) {
+            if (stopAfterService(service)) {
+                return;
+            }
+
+            if (content == null || content.getStream() == null) {
                 throw new CmisRuntimeException("Content stream is null!");
             }
 
@@ -608,12 +695,20 @@ public class ObjectService {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
 
             if ((checkin != null) && (checkin.booleanValue())) {
+                if (stopBeforeService(service)) {
+                    return;
+                }
+
                 ContentStream contentStream = parser.getContentStream();
                 try {
                     service.checkIn(repositoryId, objectIdHolder, major, parser.getProperties(), contentStream,
                             checkinComment, parser.getPolicyIds(), null, null, null);
                 } finally {
                     closeContentStream(contentStream);
+                }
+
+                if (stopAfterService(service)) {
+                    return;
                 }
             } else {
                 Properties properties = parser.getProperties();
@@ -633,8 +728,16 @@ public class ObjectService {
                     changeToken = getStringParameter(request, Constants.PARAM_CHANGE_TOKEN);
                 }
 
+                if (stopBeforeService(service)) {
+                    return;
+                }
+
                 service.updateProperties(repositoryId, objectIdHolder, changeToken == null ? null : new Holder<String>(
                         changeToken), properties, null);
+
+                if (stopAfterService(service)) {
+                    return;
+                }
             }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectIdHolder.getValue());

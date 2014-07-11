@@ -57,7 +57,15 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.applyPolicy(repositoryId, policyId, objectId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {
@@ -75,7 +83,15 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
             service = getService(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
             List<ObjectData> policies = service.getAppliedPolicies(repositoryId, objectId, filter, convert(extension));
+
+            if (stopAfterService(service)) {
+                return null;
+            }
 
             if (policies == null) {
                 return null;
@@ -102,7 +118,15 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
 
             ExtensionsData extData = convertExtensionHolder(extension);
 
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removePolicy(repositoryId, policyId, objectId, extData);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             setExtensionValues(extData, extension);
         } catch (Exception e) {

@@ -44,7 +44,18 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         CmisService service = getService(repositoryId);
 
         try {
-            return service.applyAcl(repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Acl serviceResult = service
+                    .applyAcl(repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -54,7 +65,17 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         CmisService service = getService(repositoryId);
 
         try {
-            return service.getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Acl serviceResult = service.getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }
@@ -64,7 +85,17 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         CmisService service = getService(repositoryId);
 
         try {
-            return service.applyAcl(repositoryId, objectId, aces, AclPropagation.OBJECTONLY);
+            if (stopBeforeService(service)) {
+                return null;
+            }
+
+            Acl serviceResult = service.applyAcl(repositoryId, objectId, aces, AclPropagation.OBJECTONLY);
+
+            if (stopAfterService(service)) {
+                return null;
+            }
+
+            return serviceResult;
         } finally {
             service.close();
         }

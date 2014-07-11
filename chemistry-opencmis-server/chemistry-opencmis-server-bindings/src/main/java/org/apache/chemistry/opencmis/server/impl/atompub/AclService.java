@@ -68,7 +68,15 @@ public class AclService {
             Boolean onlyBasicPermissions = getBooleanParameter(request, Constants.PARAM_ONLY_BASIC_PERMISSIONS);
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Acl acl = service.getAcl(repositoryId, objectId, onlyBasicPermissions, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             if (acl == null) {
                 throw new CmisRuntimeException("ACL is null!");
@@ -89,7 +97,7 @@ public class AclService {
     public static class ApplyAcl extends AclServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
-           
+
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
             AclPropagation aclPropagation = getEnumParameter(request, Constants.PARAM_ACL_PROPAGATION,
@@ -114,7 +122,19 @@ public class AclService {
             }
 
             // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             Acl acl = service.applyAcl(repositoryId, objectId, aces, aclPropagation);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
+            if (acl == null) {
+                throw new CmisRuntimeException("ACL is null!");
+            }
 
             // set headers
             response.setStatus(HttpServletResponse.SC_CREATED);
