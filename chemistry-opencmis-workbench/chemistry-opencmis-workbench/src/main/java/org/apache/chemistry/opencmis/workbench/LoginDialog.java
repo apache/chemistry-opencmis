@@ -40,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.ListCellRenderer;
@@ -138,6 +139,10 @@ public class LoginDialog extends JDialog {
                         repositoryBox.setEnabled(false);
                         loginButton.setEnabled(false);
                         getRootPane().setDefaultButton(loadRepositoryButton);
+
+                        JOptionPane.showMessageDialog(getOwner(),
+                                "The CMIS endpoint retruned an empty list of repositories.", "No repositories!",
+                                JOptionPane.WARNING_MESSAGE);
                     } else {
                         for (Repository repository : repositories) {
                             repositoryBox.addItem(repository);
