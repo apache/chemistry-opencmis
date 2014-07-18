@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
@@ -223,7 +224,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
+            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken));
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.updateProperties(repositoryId, portObjectId, portChangeToken, convert(properties), portExtension);
@@ -449,7 +451,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
+            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken));
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.setContentStream(repositoryId, portObjectId, overwriteFlag, portChangeToken,
@@ -473,7 +476,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
+            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken));
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.deleteContentStream(repositoryId, portObjectId, portChangeToken, portExtension);
@@ -500,7 +504,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = convertHolder(changeToken);
+            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken));
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.appendContentStream(repositoryId, portObjectId, isLastChunk, portChangeToken,

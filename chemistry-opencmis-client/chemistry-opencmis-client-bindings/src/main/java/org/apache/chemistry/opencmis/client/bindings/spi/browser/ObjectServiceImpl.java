@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
@@ -379,7 +380,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
-        // we need an object id
+        // we need an object ID
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
             throw new CmisInvalidArgumentException("Object id must be set!");
         }
@@ -390,7 +391,9 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_UPDATE_PROPERTIES);
         formData.addPropertiesParameters(properties, getDateTimeFormat());
-        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN,
+                (changeToken == null || getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                        : changeToken.getValue()));
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
@@ -538,7 +541,9 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_SET_CONTENT, contentStream);
         formData.addParameter(Constants.PARAM_OVERWRITE_FLAG, overwriteFlag);
-        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN,
+                (changeToken == null || getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                        : changeToken.getValue()));
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
@@ -575,7 +580,9 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_APPEND_CONTENT, contentStream);
         formData.addParameter(Constants.CONTROL_IS_LAST_CHUNK, isLastChunk);
-        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN,
+                (changeToken == null || getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                        : changeToken.getValue()));
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse
@@ -611,7 +618,9 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_DELETE_CONTENT);
-        formData.addParameter(Constants.PARAM_CHANGE_TOKEN, (changeToken == null ? null : changeToken.getValue()));
+        formData.addParameter(Constants.PARAM_CHANGE_TOKEN,
+                (changeToken == null || getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                        : changeToken.getValue()));
         formData.addSuccinctFlag(getSuccinct());
 
         // send and parse

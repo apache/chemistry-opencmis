@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLin
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
@@ -321,9 +322,14 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
         UrlBuilder url = new UrlBuilder(link);
         if (changeToken != null) {
-            // not required by the CMIS specification
-            // -> keep for backwards compatibility with older OpenCMIS servers
-            url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
+            if (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false)) {
+                changeToken.setValue(null);
+            } else {
+                // not required by the CMIS specification
+                // -> keep for backwards compatibility with older OpenCMIS
+                // servers
+                url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
+            }
         }
 
         // set up writer
@@ -708,7 +714,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         }
 
         UrlBuilder url = new UrlBuilder(link);
-        if (changeToken != null) {
+        if (changeToken != null && !getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false)) {
             url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
         }
 
@@ -784,7 +790,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         }
 
         UrlBuilder url = new UrlBuilder(link);
-        if (changeToken != null) {
+        if (changeToken != null && !getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false)) {
             url.addParameter(Constants.PARAM_CHANGE_TOKEN, changeToken.getValue());
         }
 

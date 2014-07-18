@@ -47,14 +47,17 @@ public class SessionImpl implements BindingSession {
         data = new HashMap<String, Object>();
     }
 
+    @Override
     public String getSessionId() {
         return id;
     }
 
+    @Override
     public Collection<String> getKeys() {
         return data.keySet();
     }
 
+    @Override
     public Object get(String key) {
         Object value = null;
 
@@ -72,11 +75,13 @@ public class SessionImpl implements BindingSession {
         return value;
     }
 
+    @Override
     public Object get(String key, Object defValue) {
         Object value = get(key);
         return (value == null ? defValue : value);
     }
 
+    @Override
     public int get(String key, int defValue) {
         Object value = get(key);
         int intValue = defValue;
@@ -94,6 +99,22 @@ public class SessionImpl implements BindingSession {
         return intValue;
     }
 
+    @Override
+    public boolean get(String key, boolean defValue) {
+        Object value = get(key);
+
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
+        }
+
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+
+        return defValue;
+    }
+
+    @Override
     public void put(String key, Serializable obj) {
         lock.writeLock().lock();
         try {
@@ -103,6 +124,7 @@ public class SessionImpl implements BindingSession {
         }
     }
 
+    @Override
     public void put(String key, Object obj, boolean isTransient) {
         Object value = (isTransient ? new TransientWrapper(obj) : obj);
         if (!(value instanceof Serializable)) {

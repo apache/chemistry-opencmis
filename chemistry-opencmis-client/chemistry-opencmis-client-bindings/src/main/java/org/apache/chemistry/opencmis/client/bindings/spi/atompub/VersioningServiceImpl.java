@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFee
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
@@ -74,6 +75,11 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         }
 
         UrlBuilder url = new UrlBuilder(link);
+
+        // workaround for SharePoint 2010 - see CMIS-362
+        if (getSession().get(SessionParameter.INCLUDE_OBJECTID_URL_PARAM_ON_CHECKOUT, false)) {
+            url.addParameter("objectId", objectId.getValue());
+        }
 
         // set up object and writer
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),

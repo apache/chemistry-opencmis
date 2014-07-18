@@ -253,45 +253,27 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
      * bindings.)
      */
     protected boolean getSendBasicAuth() {
-        return isTrue(SessionParameter.AUTH_HTTP_BASIC);
+        return getSession().get(SessionParameter.AUTH_HTTP_BASIC, false);
     }
 
     /**
      * Returns if an OAuth Bearer token header should be sent. (All bindings.)
      */
     protected boolean getSendBearerToken() {
-        return isTrue(SessionParameter.AUTH_OAUTH_BEARER);
+        return getSession().get(SessionParameter.AUTH_OAUTH_BEARER, false);
     }
 
     /**
      * Returns if a UsernameToken should be sent. (Web Services binding only.)
      */
     protected boolean getSendUsernameToken() {
-        return isTrue(SessionParameter.AUTH_SOAP_USERNAMETOKEN);
+        return getSession().get(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
     }
 
     /**
      * Returns if the authentication provider should handle cookies.
      */
     protected boolean getHandleCookies() {
-        return isTrue(SessionParameter.COOKIES);
-    }
-
-    /**
-     * Returns <code>true</code> if the given parameter exists in the session
-     * and is set to true, <code>false</code> otherwise.
-     */
-    protected boolean isTrue(String parameterName) {
-        Object value = getSession().get(parameterName);
-
-        if (value instanceof Boolean) {
-            return ((Boolean) value).booleanValue();
-        }
-
-        if (value instanceof String) {
-            return Boolean.parseBoolean((String) value);
-        }
-
-        return false;
+        return getSession().get(SessionParameter.COOKIES, false);
     }
 }

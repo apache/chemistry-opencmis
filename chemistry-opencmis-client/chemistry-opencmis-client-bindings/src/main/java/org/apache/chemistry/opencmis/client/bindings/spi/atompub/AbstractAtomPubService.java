@@ -181,11 +181,11 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected String getLink(String repositoryId, String id, String rel, String type) {
         if (repositoryId == null) {
-            throw new CmisInvalidArgumentException("Repository id must be set!");
+            throw new CmisInvalidArgumentException("Repository ID must be set!");
         }
 
         if (id == null) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         return getLinkCache().getLink(repositoryId, id, rel, type);
@@ -283,11 +283,11 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      */
     protected String getTypeLink(String repositoryId, String typeId, String rel, String type) {
         if (repositoryId == null) {
-            throw new CmisInvalidArgumentException("Repository id must be set!");
+            throw new CmisInvalidArgumentException("Repository ID must be set!");
         }
 
         if (typeId == null) {
-            throw new CmisInvalidArgumentException("Type id must be set!");
+            throw new CmisInvalidArgumentException("Type ID must be set!");
         }
 
         return getLinkCache().getTypeLink(repositoryId, typeId, rel, type);
@@ -545,21 +545,34 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
-     * Creates a CMIS object with properties and policy ids.
+     * Creates a CMIS object with properties and policy IDs.
      */
     protected ObjectDataImpl createObject(Properties properties, String changeToken, List<String> policies) {
         ObjectDataImpl object = new ObjectDataImpl();
 
+        boolean omitChangeToken = getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false);
+
         if (properties == null) {
             properties = new PropertiesImpl();
-            if (changeToken != null) {
+            if (changeToken != null && !omitChangeToken) {
                 ((PropertiesImpl) properties)
                         .addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, changeToken));
             }
-        } else if (changeToken != null && !properties.getProperties().containsKey(PropertyIds.CHANGE_TOKEN)) {
-            properties = new PropertiesImpl(properties);
-            ((PropertiesImpl) properties).addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN, changeToken));
+        } else {
+            if (omitChangeToken) {
+                if (properties.getProperties().containsKey(PropertyIds.CHANGE_TOKEN)) {
+                    properties = new PropertiesImpl(properties);
+                    ((PropertiesImpl) properties).removeProperty(PropertyIds.CHANGE_TOKEN);
+                }
+            } else {
+                if (changeToken != null && !properties.getProperties().containsKey(PropertyIds.CHANGE_TOKEN)) {
+                    properties = new PropertiesImpl(properties);
+                    ((PropertiesImpl) properties).addProperty(new PropertyStringImpl(PropertyIds.CHANGE_TOKEN,
+                            changeToken));
+                }
+            }
         }
+
         object.setProperties(properties);
 
         if (isNotEmpty(policies)) {
@@ -572,7 +585,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
-     * Creates a CMIS object that only contains an id in the property list.
+     * Creates a CMIS object that only contains an ID in the property list.
      */
     protected ObjectData createIdObject(String objectId) {
         ObjectDataImpl object = new ObjectDataImpl();

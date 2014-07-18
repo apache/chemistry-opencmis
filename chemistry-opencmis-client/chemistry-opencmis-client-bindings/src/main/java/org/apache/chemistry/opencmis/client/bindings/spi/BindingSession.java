@@ -52,6 +52,11 @@ public interface BindingSession extends Serializable {
     int get(String key, int defValue);
 
     /**
+     * Returns a session value or the default value if the key doesn't exist.
+     */
+    boolean get(String key, boolean defValue);
+
+    /**
      * Adds a non-transient session value.
      */
     void put(String key, Serializable object);

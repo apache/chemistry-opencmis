@@ -506,6 +506,27 @@ package org.apache.chemistry.opencmis.commons;
  * <td>yes</td>
  * <td>-</td>
  * </tr>
+ * <tr>
+ * <td colspan="6"><b>Workarounds</b></td>
+ * </tr>
+ * <tr>
+ * <td>{@link #INCLUDE_OBJECTID_URL_PARAM_ON_CHECKOUT}</td>
+ * <td>Defines if the object ID should be added to the check out URL<br>
+ * (Workaround for SharePoint 2010)</td>
+ * <td>AtomPub</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #OMIT_CHANGE_TOKENS}</td>
+ * <td>Defines if the change token should be omitted for updating calls<br>
+ * (Workaround for SharePoint 2010 and SharePoint 2013)</td>
+ * <td>all</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
  * </table>
  */
 public final class SessionParameter {
@@ -565,7 +586,7 @@ public final class SessionParameter {
     /** URL of the Browser Binding entry point. */
     public static final String BROWSER_URL = "org.apache.chemistry.opencmis.binding.browser.url";
     public static final String BROWSER_SUCCINCT = "org.apache.chemistry.opencmis.binding.browser.succinct";
-    public static final String BROWSER_DATETIME_FORMAT ="org.apache.chemistry.opencmis.binding.browser.datetimeformat";
+    public static final String BROWSER_DATETIME_FORMAT = "org.apache.chemistry.opencmis.binding.browser.datetimeformat";
 
     /** Factory class name for the local binding. */
     public static final String LOCAL_FACTORY = "org.apache.chemistry.opencmis.binding.local.classname";
@@ -647,4 +668,9 @@ public final class SessionParameter {
     public static final String TYPE_DEFINITION_CACHE_CLASS = "org.apache.chemistry.opencmis.cache.types.classname";
 
     public static final String REPOSITORY_ID = "org.apache.chemistry.opencmis.session.repository.id";
+
+    // --- workarounds ---
+
+    public static final String INCLUDE_OBJECTID_URL_PARAM_ON_CHECKOUT = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnCheckout";
+    public static final String OMIT_CHANGE_TOKENS = "org.apache.chemistry.opencmis.workaround.omitChangeTokens";
 }
