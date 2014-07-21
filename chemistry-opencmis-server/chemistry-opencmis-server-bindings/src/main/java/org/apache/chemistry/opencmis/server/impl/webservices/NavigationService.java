@@ -193,10 +193,6 @@ public class NavigationService extends AbstractService implements NavigationServ
                 return null;
             }
 
-            if (stopAfterService(service)) {
-                return null;
-            }
-
             List<ObjectInFolderContainer> serviceResult = service.getFolderTree(repositoryId, folderId, depth, filter,
                     includeAllowableActions, convert(IncludeRelationships.class, includeRelationships),
                     renditionFilter, includePathSegment, convert(extension));
