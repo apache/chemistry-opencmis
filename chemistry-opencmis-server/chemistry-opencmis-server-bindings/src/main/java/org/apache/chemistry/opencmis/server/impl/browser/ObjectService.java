@@ -42,6 +42,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -728,7 +729,19 @@ public class ObjectService {
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
             String streamId = getStringParameter(request, PARAM_STREAM_ID);
-            boolean download = "attachment".equalsIgnoreCase(getStringParameter(request, PARAM_DOWNLOAD));
+
+            boolean download = false;
+            String downloadParam = getStringParameter(request, PARAM_DOWNLOAD);
+            if (downloadParam != null && downloadParam.length() > 0) {
+                String downloadParamLower = downloadParam.trim().toLowerCase(Locale.ENGLISH);
+                if ("attachment".equals(downloadParamLower)) {
+                    download = true;
+                } else if ("inline".equals(downloadParamLower)) {
+                    download = false;
+                } else {
+                    throw new CmisInvalidArgumentException("Invalid download parameter value!");
+                }
+            }
 
             BigInteger offset = context.getOffset();
             BigInteger length = context.getLength();
