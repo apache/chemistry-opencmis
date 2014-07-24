@@ -302,6 +302,11 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             return;
         }
 
+        String message = ex.getMessage();
+        if (!(ex instanceof CmisBaseException)) {
+            message = "An error occurred!";
+        }
+
         try {
             response.resetBuffer();
             response.setStatus(statusCode);
@@ -317,7 +322,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                     + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
                     + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
             pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
-            pw.print("<p><!--message-->" + StringEscapeUtils.escapeHtml(ex.getMessage()) + "<!--/message--></p>");
+            pw.print("<p><!--message-->" + StringEscapeUtils.escapeHtml(message) + "<!--/message--></p>");
 
             String st = ExceptionHelper.getStacktraceAsString(ex);
             if (st != null) {
@@ -329,7 +334,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             try {
-                response.sendError(statusCode, ex.getMessage());
+                response.sendError(statusCode, message);
             } catch (Exception en) {
                 // there is nothing else we can do
             }

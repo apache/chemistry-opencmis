@@ -458,9 +458,14 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 response.resetBuffer();
                 setStatus(request, response, statusCode);
 
+                String message = ex.getMessage();
+                if (!(ex instanceof CmisBaseException)) {
+                    message = "An error occurred!";
+                }
+
                 JSONObject jsonResponse = new JSONObject();
                 jsonResponse.put(ERROR_EXCEPTION, exceptionName);
-                jsonResponse.put(ERROR_MESSAGE, ex.getMessage());
+                jsonResponse.put(ERROR_MESSAGE, message);
 
                 String st = ExceptionHelper.getStacktraceAsString(ex);
                 if (st != null) {
@@ -471,6 +476,11 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                     writeJSON(jsonResponse, request, response);
                 } catch (Exception e) {
                     LOG.error(e.getMessage(), e);
+                    try {
+                        response.sendError(statusCode, message);
+                    } catch (Exception en) {
+                        // there is nothing else we can do
+                    }
                 }
             } else {
                 setStatus(request, response, HttpServletResponse.SC_OK);

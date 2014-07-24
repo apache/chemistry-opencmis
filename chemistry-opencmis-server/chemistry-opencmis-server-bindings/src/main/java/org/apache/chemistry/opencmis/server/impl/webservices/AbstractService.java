@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +56,16 @@ import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 /**
  * This class contains operations used by all services.
  */
 public abstract class AbstractService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
 
     public static final String CALL_CONTEXT_MAP = "org.apache.chemistry.opencmis.callcontext";
 
@@ -196,36 +201,43 @@ public abstract class AbstractService {
         fault.setType(EnumServiceException.RUNTIME);
 
         if (ex != null) {
-            fault.setMessage(ex.getMessage());
-
             if (ex instanceof CmisBaseException) {
                 fault.setCode(((CmisBaseException) ex).getCode());
-            }
+                fault.setMessage(ex.getMessage());
 
-            if (ex instanceof CmisConstraintException) {
-                fault.setType(EnumServiceException.CONSTRAINT);
-            } else if (ex instanceof CmisContentAlreadyExistsException) {
-                fault.setType(EnumServiceException.CONTENT_ALREADY_EXISTS);
-            } else if (ex instanceof CmisFilterNotValidException) {
-                fault.setType(EnumServiceException.FILTER_NOT_VALID);
-            } else if (ex instanceof CmisInvalidArgumentException) {
-                fault.setType(EnumServiceException.INVALID_ARGUMENT);
-            } else if (ex instanceof CmisNameConstraintViolationException) {
-                fault.setType(EnumServiceException.NAME_CONSTRAINT_VIOLATION);
-            } else if (ex instanceof CmisNotSupportedException) {
-                fault.setType(EnumServiceException.NOT_SUPPORTED);
-            } else if (ex instanceof CmisObjectNotFoundException) {
-                fault.setType(EnumServiceException.OBJECT_NOT_FOUND);
-            } else if (ex instanceof CmisPermissionDeniedException) {
-                fault.setType(EnumServiceException.PERMISSION_DENIED);
-            } else if (ex instanceof CmisStorageException) {
-                fault.setType(EnumServiceException.STORAGE);
-            } else if (ex instanceof CmisStreamNotSupportedException) {
-                fault.setType(EnumServiceException.STREAM_NOT_SUPPORTED);
-            } else if (ex instanceof CmisUpdateConflictException) {
-                fault.setType(EnumServiceException.UPDATE_CONFLICT);
-            } else if (ex instanceof CmisVersioningException) {
-                fault.setType(EnumServiceException.VERSIONING);
+                if (ex instanceof CmisConstraintException) {
+                    fault.setType(EnumServiceException.CONSTRAINT);
+                } else if (ex instanceof CmisContentAlreadyExistsException) {
+                    fault.setType(EnumServiceException.CONTENT_ALREADY_EXISTS);
+                } else if (ex instanceof CmisFilterNotValidException) {
+                    fault.setType(EnumServiceException.FILTER_NOT_VALID);
+                } else if (ex instanceof CmisInvalidArgumentException) {
+                    fault.setType(EnumServiceException.INVALID_ARGUMENT);
+                } else if (ex instanceof CmisNameConstraintViolationException) {
+                    fault.setType(EnumServiceException.NAME_CONSTRAINT_VIOLATION);
+                } else if (ex instanceof CmisNotSupportedException) {
+                    fault.setType(EnumServiceException.NOT_SUPPORTED);
+                } else if (ex instanceof CmisObjectNotFoundException) {
+                    fault.setType(EnumServiceException.OBJECT_NOT_FOUND);
+                } else if (ex instanceof CmisPermissionDeniedException) {
+                    fault.setType(EnumServiceException.PERMISSION_DENIED);
+                } else if (ex instanceof CmisStorageException) {
+                    fault.setType(EnumServiceException.STORAGE);
+                } else if (ex instanceof CmisStreamNotSupportedException) {
+                    fault.setType(EnumServiceException.STREAM_NOT_SUPPORTED);
+                } else if (ex instanceof CmisUpdateConflictException) {
+                    fault.setType(EnumServiceException.UPDATE_CONFLICT);
+                } else if (ex instanceof CmisVersioningException) {
+                    fault.setType(EnumServiceException.VERSIONING);
+                }
+            } else {
+                fault.setMessage("An error occurred!");
+
+                if (ex instanceof IOException) {
+                    LOG.warn(ex.getMessage(), ex);
+                } else {
+                    LOG.error(ex.getMessage(), ex);
+                }
             }
 
             Node node = ExceptionHelper.getStacktraceAsNode(ex);
