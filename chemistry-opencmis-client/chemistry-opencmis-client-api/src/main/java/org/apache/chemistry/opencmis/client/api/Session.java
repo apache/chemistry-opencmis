@@ -212,8 +212,10 @@ public interface Session extends Serializable {
      * @param typeId
      *            the ID of the type
      * @param useCache
-     *            specifies whether the type definition should be looked up in
-     *            the type definition cache first or not
+     *            specifies if the type definition should be first looked up in
+     *            the type definition cache, if it is set to {@code false} or
+     *            the type definition is not in the cache, the type definition
+     *            is loaded from the repository
      * 
      * @return the type definition
      * 

@@ -76,7 +76,7 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     Acl getAcl();
 
     /**
-     * Returns all permissions for the given user from the ACL.
+     * Returns all permissions for the given principal from the ACL.
      * 
      * @param principalId
      *            the principal ID, must not be {@code null}
