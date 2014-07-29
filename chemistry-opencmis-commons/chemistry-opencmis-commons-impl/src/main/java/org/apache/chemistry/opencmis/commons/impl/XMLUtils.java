@@ -40,34 +40,65 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.ctc.wstx.stax.WstxInputFactory;
+import com.ctc.wstx.stax.WstxOutputFactory;
+
 public final class XMLUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLUtils.class);
 
-    private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
+    private static final XMLInputFactory XML_INPUT_FACTORY;
     static {
+        XMLInputFactory factory;
+
         try {
-            XML_INPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
-            LOG.warn("You are using an unsupported StAX parser.");
-        } catch (IllegalArgumentException ex) {
-            // expected for Woodstox
+            // Woodstox is the only supported and tested StAX implementation
+            factory = new WstxInputFactory();
+        } catch (Exception e) {
+            // other StAX implementations may work, too
+            factory = XMLInputFactory.newInstance();
+
+            try {
+                // for the SJSXP parser
+                factory.setProperty("reuse-instance", Boolean.FALSE);
+            } catch (IllegalArgumentException ex) {
+                // ignore
+            }
+
+            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName());
         }
 
-        XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
-        XML_INPUT_FACTORY.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-        XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+
+        XML_INPUT_FACTORY = factory;
     }
 
-    private static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newInstance();
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY;
     static {
+        XMLOutputFactory factory;
+
         try {
-            XML_OUTPUT_FACTORY.setProperty("reuse-instance", Boolean.FALSE);
-            LOG.warn("You are using an unsupported StAX parser.");
-        } catch (IllegalArgumentException ex) {
-            // expected for Woodstox
+            // Woodstox is the only supported and tested StAX implementation
+            factory = new WstxOutputFactory();
+        } catch (Exception e) {
+            // other StAX implementations may work, too
+            factory = XMLOutputFactory.newInstance();
+
+            try {
+                // for the SJSXP parser
+                factory.setProperty("reuse-instance", Boolean.FALSE);
+            } catch (IllegalArgumentException ex) {
+                // ignore
+            }
+
+            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName());
         }
 
-        XML_OUTPUT_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
+        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
+
+        XML_OUTPUT_FACTORY = factory;
     }
 
     private XMLUtils() {
