@@ -2046,7 +2046,8 @@ public final class JSONConverter {
                 AbstractPropertyData<?> property = null;
 
                 String id = getString(jsonPropertyMap, JSON_PROPERTY_ID);
-                if (id == null) {
+                String queryName = getString(jsonPropertyMap, JSON_PROPERTY_QUERYNAME);
+                if (id == null && queryName == null) {
                     throw new CmisRuntimeException("Invalid property!");
                 }
 
@@ -2104,7 +2105,7 @@ public final class JSONConverter {
 
                 property.setId(id);
                 property.setDisplayName(getString(jsonPropertyMap, JSON_PROPERTY_DISPLAYNAME));
-                property.setQueryName(getString(jsonPropertyMap, JSON_PROPERTY_QUERYNAME));
+                property.setQueryName(queryName);
                 property.setLocalName(getString(jsonPropertyMap, JSON_PROPERTY_LOCALNAME));
 
                 convertExtension(jsonPropertyMap, property, PROPERTY_KEYS);
