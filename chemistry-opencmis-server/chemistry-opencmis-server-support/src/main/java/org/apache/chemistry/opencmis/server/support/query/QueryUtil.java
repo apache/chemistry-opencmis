@@ -72,13 +72,15 @@ public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
      */
     public static CmisQueryWalker getWalker(String statement) throws RecognitionException {
         CharStream input = new ANTLRStringStream(statement);
-        TokenSource lexer = new CmisQlStrictLexer(input);
+        CmisQlStrictLexer lexer = new CmisQlStrictLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
         CommonTree parserTree; // the ANTLR tree after parsing phase
 
         query_return parsedStatement = parser.query();
-        if (parser.hasErrors()) {
+        if (lexer.hasErrors()) {
+            throw new CmisInvalidArgumentException(lexer.getErrorMessages());
+        } else if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
         } else if ( tokens.index()!=tokens.size() ) {
             throw new  CmisInvalidArgumentException("Query String has illegal tokens after end of statement: " + tokens.get(tokens.index()));

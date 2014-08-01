@@ -50,12 +50,14 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
     @Override
     public CommonTree parseStatement() throws RecognitionException {
         CharStream input = new ANTLRStringStream(statement);
-        TokenSource lexer = new CmisQlStrictLexer(input);
+        CmisQlStrictLexer lexer = new CmisQlStrictLexer(input);
         tokens = new CommonTokenStream(lexer);
         CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
 
         query_return parsedStatement = parser.query();
-        if (parser.hasErrors()) {
+        if (lexer.hasErrors()) {
+            throw new CmisInvalidArgumentException(lexer.getErrorMessages());
+        } else if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
         }
 

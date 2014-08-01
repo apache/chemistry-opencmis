@@ -56,6 +56,20 @@ import CmisBaseLexer;
 package org.apache.chemistry.opencmis.server.support.query;
 }
 
+@members {
+    public boolean hasErrors() {
+    	return gCmisBaseLexer.hasErrors();
+    }
+
+	public String getErrorMessages() {
+    	return gCmisBaseLexer.getErrorMessages();
+	}
+	
+	public void emitErrorMessage(String msg) {
+    	gCmisBaseLexer.emitErrorMessage(msg);
+	}
+}
+
 // all lexer rules for a strict CMIS parser are in the base lexer defined
 
 // we need a dummy rule to make AntLR happy (an empty file will not compile)

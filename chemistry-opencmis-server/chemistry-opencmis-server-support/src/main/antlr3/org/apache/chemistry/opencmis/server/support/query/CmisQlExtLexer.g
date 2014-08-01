@@ -63,4 +63,17 @@ package org.apache.chemistry.opencmis.server.support.query;
 
 }
 
+@members {
+    public boolean hasErrors() {
+    	return gCmisBaseLexer.hasErrors();
+    }
+
+	public String getErrorMessages() {
+    	return gCmisBaseLexer.getErrorMessages();
+	}
+
+	public void emitErrorMessage(String msg) {
+    	gCmisBaseLexer.emitErrorMessage(msg);
+	}
+}
 DISTINCT : ('D'|'d')('I'|'i')('S'|'s')('T'|'t')('I'|'i')('N'|'n')('C'|'c')('T'|'t');
