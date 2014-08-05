@@ -437,6 +437,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
             if (ex instanceof CmisRuntimeException) {
                 LOG.error(ex.getMessage(), ex);
+            } else if (ex instanceof CmisStorageException) {
+                LOG.error(ex.getMessage(), ex);
+                statusCode = getErrorCode((CmisStorageException) ex);
+                exceptionName = ((CmisStorageException) ex).getExceptionName();
             } else if (ex instanceof CmisBaseException) {
                 statusCode = getErrorCode((CmisBaseException) ex);
                 exceptionName = ((CmisBaseException) ex).getExceptionName();
