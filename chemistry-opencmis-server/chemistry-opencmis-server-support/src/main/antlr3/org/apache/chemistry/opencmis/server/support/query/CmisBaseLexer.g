@@ -46,14 +46,15 @@ tokens {
     private List<String> errorMessages = new ArrayList<String>();
     
     public boolean hasErrors() {
-    	return errorMessages.size() > 0;
+    	return !errorMessages.isEmpty();
     }
 
 	public String getErrorMessages() {
-		StringBuffer allMessages = new StringBuffer();
+		StringBuilder allMessages = new StringBuilder();
 		
-		for (String msg : errorMessages)
+		for (String msg : errorMessages) {
 			allMessages.append(msg).append('\n');
+		}
 			
 		return allMessages.toString();
 	}
