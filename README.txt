@@ -17,14 +17,14 @@ You can build OpenCMIS like this:
 
     mvn clean install
 
-You need Maven 3 with Java 5 (or higher) for the build.
+You need Maven 3 with Java 6 (or higher) for the build.
 Set the environment variable MAVEN_OPTS to 
 '-Xmx1024m -XX:MaxPermSize=256m' to give Maven more memory.
 
 License (see also package specific LICENSE files)
 =================================================
 
-Collective work: Copyright 2010-2013 The Apache Software Foundation.
+Collective work: Copyright 2010-2014 The Apache Software Foundation.
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with

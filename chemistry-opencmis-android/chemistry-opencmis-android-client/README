@@ -1,27 +1,27 @@
 OpenCMIS Android Client
-===========================
+=======================
 
 The OpenCMIS Android Client provides a collection of methods to access and manage CMIS Repository.
 
 
 OpenCMIS Client Bindings supported
 ----------------------------------
-OpenCMIS Android Client uses ATOMPUB binding.
-Web Service Binding (SOAP protocol) & jSON Binding are not supported in this library.
+OpenCMIS Android Client supports the AtomPub Binding and the Browser Binding.
+The Web Service Binding (SOAP protocol) is not supported by this library.
 
 
 Android Version Supported
 -------------------------
 Previous versions of Android don't contain all dependencies required to run and use OpenCMIS Android client.  
 It's only since Android 2.3 (aka Gingerbread) everything works. 
-In other terms, Android client supports Android 2.3 and above
+In other terms, Android client supports Android 2.3 and above.
 
 -------------------------
  !!! IMPORTANT NOTE !!!
 -------------------------
 OpenCMIS Android Client is a SYNCHRONOUS library ! 
 It's highly recommended that you encapsulate all CMIS operations in background thread. 
-In Android It's possible to use
+In Android it's possible to use
 +	Services
 +	Loaders
 +	AsyncTask
@@ -56,7 +56,7 @@ Add to your pom project :
 	<dependency>
 		<groupId>org.apache.chemistry.opencmis</groupId>
 		<artifactId>chemistry-opencmis-android-client</artifactId>
-		<version>0.8.0</version>
+		<version>x.z.y</version>
 		<exclusions>
 			<exclusion>
 				<groupId>org.slf4j</groupId>
@@ -67,7 +67,7 @@ Add to your pom project :
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-android</artifactId>
-		<version>1.6.1-RC1</version>
+		<version>1.7.5</version>
 	</dependency>
 	...
 </dependencies>
