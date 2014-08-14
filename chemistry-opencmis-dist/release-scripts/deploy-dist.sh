@@ -50,11 +50,6 @@ STAGING_REPO=https://repository.apache.org/content/repositories
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-bindings-war/${VERSION}/chemistry-opencmis-server-bindings-war-${VERSION}.war.md5
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-bindings-war/${VERSION}/chemistry-opencmis-server-bindings-war-${VERSION}.war.sha1
 
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-jcr/${VERSION}/chemistry-opencmis-server-jcr-${VERSION}.war
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-jcr/${VERSION}/chemistry-opencmis-server-jcr-${VERSION}.war.asc
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-jcr/${VERSION}/chemistry-opencmis-server-jcr-${VERSION}.war.md5
- wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-server-jcr/${VERSION}/chemistry-opencmis-server-jcr-${VERSION}.war.sha1
-
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-workbench/${VERSION}/chemistry-opencmis-workbench-${VERSION}-full.zip
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-workbench/${VERSION}/chemistry-opencmis-workbench-${VERSION}-full.zip.asc
  wget --no-check-certificate ${STAGING_REPO}/${STAGING_FOLDER}/chemistry-opencmis-workbench/${VERSION}/chemistry-opencmis-workbench-${VERSION}-full.zip.md5
