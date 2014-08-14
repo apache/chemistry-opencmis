@@ -450,7 +450,6 @@ public final class AtomEntryParser {
      */
     private ThresholdOutputStream readBase64(XMLStreamReader parser) throws XMLStreamException, IOException {
         ThresholdOutputStream bufferStream = streamFactory.newOutputStream();
-        @SuppressWarnings("resource")
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         XMLUtils.next(parser);
@@ -472,6 +471,8 @@ public final class AtomEntryParser {
                         cappedStream.deductBytes(len);
                     }
                 } else if (event == XMLStreamReader.START_ELEMENT) {
+                    b64stream.close();
+                    bufferStream.destroy();
                     throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
                 }
 

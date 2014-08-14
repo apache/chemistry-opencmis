@@ -59,6 +59,7 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
     public static final String RESOURCE_TYPES = "types";
     public static final String RESOURCE_TYPESDESC = "typedesc";
     public static final String RESOURCE_ENTRY = "entry";
+    public static final String RESOURCE_PARENT = "parent";
     public static final String RESOURCE_PARENTS = "parents";
     public static final String RESOURCE_VERSIONS = "versions";
     public static final String RESOURCE_ALLOWABLEACIONS = "allowableactions";
@@ -188,7 +189,11 @@ public abstract class AbstractAtomPubServiceCall extends AbstractServiceCall {
         entry.writeAllowableActionsLink(compileUrl(baseUrl, RESOURCE_ALLOWABLEACIONS, info.getId()));
 
         if (info.hasParent()) {
-            entry.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, info.getId()), Constants.MEDIATYPE_FEED);
+            if (info.getBaseType() == BaseTypeId.CMIS_FOLDER) {
+                entry.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENT, info.getId()), Constants.MEDIATYPE_ENTRY);
+            } else {
+                entry.writeUpLink(compileUrl(baseUrl, RESOURCE_PARENTS, info.getId()), Constants.MEDIATYPE_FEED);
+            }
         }
 
         if (info.getBaseType() == BaseTypeId.CMIS_FOLDER) {

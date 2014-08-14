@@ -18,8 +18,8 @@
  */
 package org.apache.chemistry.opencmis.tck.impl;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
-
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
@@ -1976,6 +1976,33 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
                     addResult(results, assertListNotEmpty(parents, null, f));
 
+                    if (child instanceof Folder) {
+                        f = createResult(FAILURE,
+                                "Child is a folder and has more than one parent! Id: " + child.getId());
+                        addResult(results, assertIsFalse(parents.size() > 1, null, f));
+
+                        Folder folderParent = ((Folder) child).getFolderParent();
+                        if (folderParent == null) {
+                            addResult(
+                                    results,
+                                    createResult(
+                                            FAILURE,
+                                            "getFolderParent() returns null for a non-root folder object! Id: "
+                                                    + child.getId()));
+                        } else {
+                            f = createResult(FAILURE,
+                                    "getFolderParent() returns wrong parent object! Id: " + child.getId());
+                            addResult(results, assertEquals(folder.getId(), folderParent.getId(), null, f));
+
+                            if (parents.size() > 0 && parents.get(0) != null) {
+                                f = createResult(FAILURE,
+                                        "getFolderParent() and getParents() return different parents for a folder object! Id: "
+                                                + child.getId());
+                                addResult(results, assertEquals(parents.get(0).getId(), folderParent.getId(), null, f));
+                            }
+                        }
+                    }
+
                     boolean foundParent = false;
                     for (Folder parent : parents) {
                         if (parent == null) {
@@ -1988,10 +2015,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     }
 
                     if (!foundParent) {
-                        f = createResult(FAILURE, "Folder is not found in childs parents! Id: " + child.getId());
-                        addResult(results, assertListNotEmpty(parents, null, f));
+                        addResult(
+                                results,
+                                createResult(FAILURE,
+                                        "Parent folder is not in parents of the child! Id: " + child.getId()));
                     }
-
                 }
 
                 // get object by id and compare

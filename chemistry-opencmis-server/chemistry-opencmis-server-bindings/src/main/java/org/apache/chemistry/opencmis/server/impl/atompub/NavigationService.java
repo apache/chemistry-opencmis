@@ -398,6 +398,57 @@ public class NavigationService {
     /**
      * Object parents feed GET.
      */
+    public static class GetFolderParent extends AbstractAtomPubServiceCall {
+        public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
+                HttpServletResponse response) throws Exception {
+            assert context != null;
+            assert service != null;
+            assert repositoryId != null;
+            assert request != null;
+            assert response != null;
+
+            // get parameters
+            String folderId = getStringParameter(request, Constants.PARAM_ID);
+            String filter = getStringParameter(request, Constants.PARAM_FILTER);
+
+            // execute
+            if (stopBeforeService(service)) {
+                return;
+            }
+
+            ObjectData object = service.getFolderParent(repositoryId, folderId, filter, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
+
+            if (object == null) {
+                throw new CmisRuntimeException("Object is null!");
+            }
+
+            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, folderId);
+            if (objectInfo == null) {
+                throw new CmisRuntimeException("Object Info is missing!");
+            }
+
+            // set headers
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(Constants.MEDIATYPE_ENTRY);
+
+            // write XML
+            UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
+
+            AtomEntry entry = new AtomEntry();
+            entry.startDocument(response.getOutputStream(), getNamespaces(service));
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
+                    context.getCmisVersion());
+            entry.endDocument();
+        }
+    }
+
+    /**
+     * Object parents feed GET.
+     */
     public static class GetObjectParents extends AbstractAtomPubServiceCall {
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
