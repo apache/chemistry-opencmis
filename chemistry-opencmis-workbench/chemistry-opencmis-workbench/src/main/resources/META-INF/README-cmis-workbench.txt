@@ -37,6 +37,7 @@ cmis.workbench.folder.includeRelationships
 cmis.workbench.folder.renditionFilter
 cmis.workbench.folder.orderBy
 cmis.workbench.folder.maxItemsPerPage
+cmis.workbench.folder.maxChildren
 
 
 Object operation context:

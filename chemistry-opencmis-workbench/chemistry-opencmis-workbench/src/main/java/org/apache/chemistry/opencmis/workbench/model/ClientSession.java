@@ -62,6 +62,7 @@ public class ClientSession {
     public static final String FOLDER_PREFIX = WORKBENCH_PREFIX + "folder.";
     public static final String VERSION_PREFIX = WORKBENCH_PREFIX + "version.";
     public static final String ACCEPT_SELF_SIGNED_CERTIFICATES = WORKBENCH_PREFIX + "acceptSelfSignedCertificates";
+    public static final String MAX_FOLDER_CHILDREN = FOLDER_PREFIX + "maxChildren";
 
     public enum Authentication {
         NONE, STANDARD, NTLM, OAUTH_BEARER
@@ -103,6 +104,7 @@ public class ClientSession {
     private OperationContext objectOperationContext;
     private OperationContext folderOperationContext;
     private OperationContext versionOperationContext;
+    private int maxChildren;
 
     public ClientSession(Map<String, String> sessionParameters, ObjectFactory objectFactory,
             AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
@@ -175,6 +177,16 @@ public class ClientSession {
             acceptSelfSignedCertificates();
         }
 
+        maxChildren = -1;
+        String maxChildrenStr = sessionParameters.get(MAX_FOLDER_CHILDREN);
+        if (maxChildrenStr != null) {
+            try {
+                maxChildren = Integer.valueOf(maxChildrenStr.trim());
+            } catch (NumberFormatException e) {
+                LOG.warn("Invalid " + MAX_FOLDER_CHILDREN + " parameter!", e);
+            }
+        }
+
         repositories = SessionFactoryImpl.newInstance().getRepositories(sessionParameters, objectFactory,
                 authenticationProvider, cache, typeDefCache);
     }
@@ -197,6 +209,10 @@ public class ClientSession {
 
     public Map<String, String> getSessionParameters() {
         return Collections.unmodifiableMap(sessionParameters);
+    }
+
+    public int getMaxChildren() {
+        return maxChildren;
     }
 
     public synchronized OperationContext getObjectOperationContext() {

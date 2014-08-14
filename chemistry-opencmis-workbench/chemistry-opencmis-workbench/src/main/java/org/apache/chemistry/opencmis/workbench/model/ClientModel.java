@@ -18,7 +18,8 @@
  */
 package org.apache.chemistry.opencmis.workbench.model;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -189,10 +190,21 @@ public class ClientModel {
             }
 
             List<CmisObject> children = new ArrayList<CmisObject>();
-            ItemIterable<CmisObject> iter = ((Folder) folderObject).getChildren(clientSession
-                    .getFolderOperationContext());
-            for (CmisObject child : iter) {
-                children.add(child);
+
+            if (clientSession.getMaxChildren() != 0) {
+                // if maxChildren == 0 don't call getChildren()
+                ItemIterable<CmisObject> iter = ((Folder) folderObject).getChildren(clientSession
+                        .getFolderOperationContext());
+
+                if (clientSession.getMaxChildren() > 0) {
+                    // if maxChildren > 0 restrict number of children
+                    // otherwise load all
+                    iter = iter.getPage(clientSession.getMaxChildren());
+                }
+
+                for (CmisObject child : iter) {
+                    children.add(child);
+                }
             }
 
             setCurrentFolder((Folder) folderObject, children);
