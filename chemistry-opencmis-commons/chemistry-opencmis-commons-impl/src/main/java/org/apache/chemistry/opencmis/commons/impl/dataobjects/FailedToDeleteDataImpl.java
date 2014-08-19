@@ -43,4 +43,9 @@ public class FailedToDeleteDataImpl extends AbstractExtensionData implements Fai
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
+
+    @Override
+    public String toString() {
+        return "FailedToDeleteData [IDs=" + ids + "]" + super.toString();
+    }
 }
