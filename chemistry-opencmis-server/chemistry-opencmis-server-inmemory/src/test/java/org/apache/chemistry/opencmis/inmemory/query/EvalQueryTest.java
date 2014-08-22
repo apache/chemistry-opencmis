@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.inmemory.AbstractServiceTest;
@@ -78,7 +79,7 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("Start testAll...");
         String statement = "SELECT * FROM cmis:document";
         ObjectList res = doQuery(statement);
-        assertEquals(5, res.getObjects().size());
+        assertEquals(6, res.getObjects().size());
         assertTrue(resultContains("alpha", res));
         assertFalse(resultContains("jens", res));
         log.debug("...Stop testAll.");
@@ -410,6 +411,16 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("...Stop testStringGreaterOrEquals.");
     }
 
+    @Test
+    public void testStringEscape() {
+        log.debug("Start testStringEscape...");
+        String statement = "SELECT * FROM " + BaseTypeId.CMIS_DOCUMENT.value() + " WHERE " + PropertyIds.NAME
+                + "='John\\'s Document'";
+        ObjectList res = doQuery(statement);
+        assertEquals(1, res.getObjects().size());
+        assertTrue(resultContains( "John's Document", res));
+        log.debug("...Stop testStringEscape.");
+    }
     // //////////////////////////////////////////////////////////////////
     // Boolean condition tests
 
@@ -581,11 +592,11 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("Start testOrderBySystemProperties...");
         String statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.NAME;
         ObjectList res = doQuery(statement);
-        assertEquals(5, res.getObjects().size());
+        assertEquals(6, res.getObjects().size());
         statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.CREATION_DATE + " ASC";
-        assertEquals(5, res.getObjects().size());
+        assertEquals(6, res.getObjects().size());
         statement = "SELECT * from cmis:document ORDER BY " + PropertyIds.LAST_MODIFICATION_DATE + " DESC";
-        assertEquals(5, res.getObjects().size());
+        assertEquals(6, res.getObjects().size());
         log.debug("...Stop testOrderBySystemProperties.");
     }
 

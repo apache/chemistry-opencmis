@@ -752,12 +752,20 @@ public class InMemoryQueryProcessor {
             }
             break;
         case HTML:
-        case STRING:
         case URI:
         case ID:
             if (rVal instanceof String) {
                 LOG.debug("compare strings: " + lValue + " with " + rVal);
                 return ((String) lValue).compareTo((String) rVal);
+            } else {
+                throwIncompatibleTypesException(lValue, rVal);
+            }
+            break;
+        case STRING:
+            if (rVal instanceof String) {
+            	String unesc = StringUtil.unescape((String) rVal, null);
+                LOG.debug("compare strings: " + lValue + " with " + unesc);
+                return ((String) lValue).compareTo(unesc);
             } else {
                 throwIncompatibleTypesException(lValue, rVal);
             }

@@ -51,6 +51,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
@@ -201,6 +202,10 @@ public class QueryTestDataCreator {
         ContentStream content5 = createContent("I hate having pets.");
         doc5 = createDocument("epsilon", rootFolderId, COMPLEX_TYPE, propertyMap5, content5);
         assertNotNull(doc5);
+        
+        final Map<String, Object> propertyMap6 = new HashMap<String, Object>();
+        doc4 = createDocument("John's Document", rootFolderId, BaseTypeId.CMIS_DOCUMENT.value(), propertyMap6, null);
+        assertNotNull(doc4);
 
     }
 
