@@ -35,8 +35,10 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisRepositoryEntryType;
@@ -89,8 +91,17 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
 
                 // iterate through the list and fetch repository infos
                 for (CmisRepositoryEntryType entry : entries) {
-                    CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
-                    infos.add(convert(info));
+                    try {
+                        CmisRepositoryInfoType info = port.getRepositoryInfo(entry.getRepositoryId(), null);
+                        infos.add(convert(info));
+                    } catch (CmisBaseException e) {
+                        // getRepositoryInfo() failed for whatever reason
+                        // -> provide at least a repository info stub
+                        RepositoryInfoImpl info = new RepositoryInfoImpl();
+                        info.setId(entry.getRepositoryId());
+                        info.setName(entry.getRepositoryName());
+                        infos.add(info);
+                    }
                 }
             } catch (CmisException e) {
                 throw convertException(e);
