@@ -310,7 +310,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
             Properties properties, ExtensionsData extension) {
         // we need an object id
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // find the link
@@ -658,12 +658,12 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
-        if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+        if (objectId == null || objectId.getValue() == null || objectId.getValue().length() == 0) {
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
-        if ((targetFolderId == null) || (targetFolderId.length() == 0) || (sourceFolderId == null)
-                || (sourceFolderId.length() == 0)) {
+        if (targetFolderId == null || targetFolderId.length() == 0 || sourceFolderId == null
+                || sourceFolderId.length() == 0) {
             throw new CmisInvalidArgumentException("Source and target folder must be set!");
         }
 
@@ -677,6 +677,13 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
         UrlBuilder url = new UrlBuilder(link);
         url.addParameter(Constants.PARAM_SOURCE_FOLDER_ID, sourceFolderId);
 
+        // workaround for SharePoint 2010 - see CMIS-839
+        boolean objectIdOnMove = getSession().get(SessionParameter.INCLUDE_OBJECTID_URL_PARAM_ON_MOVE, false);
+        if (objectIdOnMove) {
+            url.addParameter("objectId", objectId.getValue());
+            url.addParameter("targetFolderId", targetFolderId);
+        }
+
         // set up object and writer
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId.getValue()),
                 getCmisVersion(repositoryId));
@@ -687,6 +694,13 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
                 entryWriter.write(out);
             }
         });
+
+        // workaround for SharePoint 2010 - see CMIS-839
+        if (objectIdOnMove) {
+            // SharePoint doesn't return a new object ID
+            // we assume that the object ID hasn't changed
+            return;
+        }
 
         // parse the response
         AtomEntry entry = parse(resp.getStream(), AtomEntry.class);

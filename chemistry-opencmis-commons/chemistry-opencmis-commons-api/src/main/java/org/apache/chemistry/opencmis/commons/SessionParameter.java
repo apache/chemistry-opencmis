@@ -519,6 +519,15 @@ package org.apache.chemistry.opencmis.commons;
  * <td>"false"</td>
  * </tr>
  * <tr>
+ * <td>{@link #INCLUDE_OBJECTID_URL_PARAM_ON_MOVE}</td>
+ * <td>Defines if the object ID should be added to the move URL<br>
+ * (Workaround for SharePoint 2010)</td>
+ * <td>AtomPub</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
+ * <tr>
  * <td>{@link #OMIT_CHANGE_TOKENS}</td>
  * <td>Defines if the change token should be omitted for updating calls<br>
  * (Workaround for SharePoint 2010 and SharePoint 2013)</td>
@@ -672,5 +681,6 @@ public final class SessionParameter {
     // --- workarounds ---
 
     public static final String INCLUDE_OBJECTID_URL_PARAM_ON_CHECKOUT = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnCheckout";
+    public static final String INCLUDE_OBJECTID_URL_PARAM_ON_MOVE = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnMove";
     public static final String OMIT_CHANGE_TOKENS = "org.apache.chemistry.opencmis.workaround.omitChangeTokens";
 }
