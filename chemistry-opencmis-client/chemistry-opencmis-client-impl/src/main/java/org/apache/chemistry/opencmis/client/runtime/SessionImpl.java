@@ -567,6 +567,31 @@ public class SessionImpl implements Session {
         return result;
     }
 
+    public CmisObject getObjectByPath(String parentPath, String name) {
+        return getObjectByPath(parentPath, name, getDefaultContext());
+    }
+
+    public CmisObject getObjectByPath(String parentPath, String name, OperationContext context) {
+        if (parentPath == null || parentPath.length() < 1) {
+            throw new IllegalArgumentException("Parent path must be set!");
+        }
+        if (parentPath.charAt(0) != '/') {
+            throw new IllegalArgumentException("Parent path must start with a '/'!");
+        }
+        if (name == null || name.length() < 1) {
+            throw new IllegalArgumentException("Name must be set!");
+        }
+
+        StringBuilder path = new StringBuilder();
+        path.append(parentPath);
+        if (!parentPath.endsWith("/")) {
+            path.append('/');
+        }
+        path.append(name);
+
+        return getObjectByPath(path.toString(), context);
+    }
+
     public Document getLatestDocumentVersion(ObjectId objectId) {
         return getLatestDocumentVersion(objectId, false, getDefaultContext());
     }

@@ -70,6 +70,8 @@ import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.NewTypeSettableAttributes;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
+import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
@@ -1885,6 +1887,31 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results, assertEquals(0, orderByNameIssues, null, f));
         } else {
             addResult(results, createResult(INFO, "Repository doesn't support Order By for getChildren()."));
+        }
+
+        // test path segments
+
+        ObjectInFolderList pathSegementChildren = session
+                .getBinding()
+                .getNavigationService()
+                .getChildren(session.getRepositoryInfo().getId(), folder.getId(), "cmis:objectId,cmis:name", null,
+                        null, null, null, Boolean.TRUE, BigInteger.valueOf(10), BigInteger.ZERO, null);
+
+        for (ObjectInFolderData objectInFolder : pathSegementChildren.getObjects()) {
+            String pathSegement = objectInFolder.getPathSegment();
+            String objectId = (String) objectInFolder.getObject().getProperties().getProperties()
+                    .get(PropertyIds.OBJECT_ID).getFirstValue();
+
+            if (pathSegement == null) {
+                addResult(results, createResult(FAILURE, "getChildren omitted path segement! Id: " + objectId));
+            } else {
+                CmisObject pathSegementChild = session.getObjectByPath(folder.getPath(), pathSegement);
+
+                f = createResult(FAILURE,
+                        "Combining the path of the parent folder and the path segement of a child returns a different object! Id: "
+                                + objectId);
+                addResult(results, assertEquals(objectId, pathSegementChild.getId(), null, f));
+            }
         }
 
         // getDescendants

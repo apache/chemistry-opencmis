@@ -483,6 +483,56 @@ public interface Session extends Serializable {
     CmisObject getObjectByPath(String path, OperationContext context);
 
     /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the cache is turned off per default {@link OperationContext}, it
+     * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
+     * 
+     * @param parentPath
+     *            the path of the parent folder
+     * @param name
+     *            the (path segment) name of the object in the folder
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
+     * 
+     * @cmis 1.0
+     */
+    CmisObject getObjectByPath(String parentPath, String name);
+
+    /**
+     * Returns a CMIS object from the session cache. If the object is not in the
+     * cache or the given {@link OperationContext} has caching turned off, it
+     * will load the object from the repository and puts it into the cache.
+     * <p>
+     * This method might return a stale object if the object has been found in
+     * the cache and has been changed in or removed from the repository. Use
+     * {@link CmisObject#refresh()} and {@link CmisObject#refreshIfOld(long)} to
+     * update the object if necessary.
+     * 
+     * @param parentPath
+     *            the path of the parent folder
+     * @param name
+     *            the (path segment) name of the object in the folder
+     * @param context
+     *            the {@link OperationContext} to use
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
+     * 
+     * @cmis 1.0
+     */
+    CmisObject getObjectByPath(String parentPath, String name, OperationContext context);
+
+    /**
      * Returns the latest version in a version series.
      * 
      * @param objectId
