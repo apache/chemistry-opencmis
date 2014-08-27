@@ -52,8 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An abstract CMIS service wrapper. All service wrappers managed by
- * {@link CmisServiceWrapperManager} must be derived from this class.
+ * A simple CMIS service wrapper that logs CMIS calls.
  */
 public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper {
 

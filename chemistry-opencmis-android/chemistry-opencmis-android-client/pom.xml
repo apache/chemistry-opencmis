@@ -44,7 +44,6 @@
 		<plugins>
 		    <plugin>
                  <artifactId>maven-antrun-plugin</artifactId>
-                 <version>1.5</version>
                  <executions>
                      <execution>
                          <phase>generate-resources</phase>

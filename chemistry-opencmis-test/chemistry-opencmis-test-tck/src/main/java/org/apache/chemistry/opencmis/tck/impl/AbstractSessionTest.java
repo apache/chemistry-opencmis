@@ -1897,20 +1897,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 .getChildren(session.getRepositoryInfo().getId(), folder.getId(), "cmis:objectId,cmis:name", null,
                         null, null, null, Boolean.TRUE, BigInteger.valueOf(10), BigInteger.ZERO, null);
 
-        for (ObjectInFolderData objectInFolder : pathSegementChildren.getObjects()) {
-            String pathSegement = objectInFolder.getPathSegment();
-            String objectId = (String) objectInFolder.getObject().getProperties().getProperties()
-                    .get(PropertyIds.OBJECT_ID).getFirstValue();
+        if (pathSegementChildren != null && pathSegementChildren.getObjects() != null) {
+            for (ObjectInFolderData objectInFolder : pathSegementChildren.getObjects()) {
+                String pathSegement = objectInFolder.getPathSegment();
+                String objectId = (String) objectInFolder.getObject().getProperties().getProperties()
+                        .get(PropertyIds.OBJECT_ID).getFirstValue();
 
-            if (pathSegement == null) {
-                addResult(results, createResult(FAILURE, "getChildren omitted path segement! Id: " + objectId));
-            } else {
-                CmisObject pathSegementChild = session.getObjectByPath(folder.getPath(), pathSegement);
+                if (pathSegement == null) {
+                    addResult(results, createResult(FAILURE, "getChildren omitted path segement! Id: " + objectId));
+                } else {
+                    CmisObject pathSegementChild = session.getObjectByPath(folder.getPath(), pathSegement);
 
-                f = createResult(FAILURE,
-                        "Combining the path of the parent folder and the path segement of a child returns a different object! Id: "
-                                + objectId);
-                addResult(results, assertEquals(objectId, pathSegementChild.getId(), null, f));
+                    f = createResult(FAILURE,
+                            "Combining the path of the parent folder and the path segement of a child returns a different object! Id: "
+                                    + objectId);
+                    addResult(results, assertEquals(objectId, pathSegementChild.getId(), null, f));
+                }
             }
         }
 
