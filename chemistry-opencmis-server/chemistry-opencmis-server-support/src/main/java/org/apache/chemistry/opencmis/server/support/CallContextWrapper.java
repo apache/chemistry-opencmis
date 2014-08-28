@@ -24,6 +24,13 @@ import java.math.BigInteger;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 
+/**
+ * Provides a convenient implementation of the {@link CallContext} interface that can be
+ * subclassed by developers wishing to change, add, or hide call context data.
+ * 
+ * This class implements the Wrapper or Decorator pattern. Methods default to
+ * calling through to the wrapped request object.
+ */
 public class CallContextWrapper implements CallContext {
 
     private final CallContext context;
