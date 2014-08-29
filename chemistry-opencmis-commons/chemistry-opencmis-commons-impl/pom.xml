@@ -48,6 +48,12 @@
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
             <version>${woodstox.version}</version>
+            <exclusions>
+                <exclusion> <!-- included in Java 6 and above -->
+                    <groupId>javax.xml.stream</groupId>
+                    <artifactId>stax-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
