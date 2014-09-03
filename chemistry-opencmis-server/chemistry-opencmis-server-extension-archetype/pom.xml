@@ -22,10 +22,10 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>chemistry-opencmis-server-archetype</artifactId>
-    <name>OpenCMIS Server Archetype</name>
+    <artifactId>chemistry-opencmis-server-extension-archetype</artifactId>
+    <name>OpenCMIS Server Extension Archetype</name>
     <packaging>maven-archetype</packaging>
-    <description>OpenCMIS Server Framework archetype</description>
+    <description>OpenCMIS Server Extension archetype</description>
 
     <properties>
         <parentBasedir>../../</parentBasedir>
