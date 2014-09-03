@@ -81,7 +81,11 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public Acl getAcl() {
         return null;
     }
-    
+
+    public Set<String> getPermissionsForPrincipal(String principalId) {
+        return null;
+    }
+
     public Set<String> getPermissonsForPrincipal(String principalId) {
         return null;
     }
@@ -93,7 +97,7 @@ public class CmisObjectMock implements CmisObject, Serializable {
     public AllowableActions getAllowableActions() {
         return null;
     }
-    
+
     public boolean hasAllowableAction(Action action) {
         return false;
     }

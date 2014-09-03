@@ -596,7 +596,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
-    public Set<String> getPermissonsForPrincipal(String principalId) {
+    public Set<String> getPermissionsForPrincipal(String principalId) {
         if (principalId == null) {
             throw new IllegalArgumentException("Principal must be set!");
         }
@@ -620,6 +620,10 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
 
         return result;
+    }
+
+    public Set<String> getPermissonsForPrincipal(String principalId) {
+        return getPermissionsForPrincipal(principalId);
     }
 
     // --- policies ---
