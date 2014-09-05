@@ -37,8 +37,12 @@ public class ProxyDetector {
 
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
+    public static final String HTTP_PROXY_USER = "http.proxyUser";
+    public static final String HTTP_PROXY_PASSWORD = "http.proxyPassword";
     public static final String HTTPS_PROXY_HOST = "https.proxyHost";
     public static final String HTTPS_PROXY_PORT = "https.proxyPort";
+    public static final String HTTPS_PROXY_USER = "https.proxyUser";
+    public static final String HTTPS_PROXY_PASSWORD = "https.proxyPassword";
     public static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
     public static final Pattern PROXY_ENV_VAR1 = Pattern.compile("http.?:\\/\\/(.+):(\\d+).*");
@@ -55,8 +59,12 @@ public class ProxyDetector {
 
         settings.setHttpProxyHost(System.getProperty(HTTP_PROXY_HOST));
         settings.setHttpProxyPort(parsePort(System.getProperty(HTTP_PROXY_PORT)));
+        settings.setHttpProxyUser(System.getProperty(HTTP_PROXY_USER));
+        settings.setHttpProxyPassword(System.getProperty(HTTP_PROXY_PASSWORD));
         settings.setHttpsProxyHost(System.getProperty(HTTPS_PROXY_HOST));
         settings.setHttpsProxyPort(parsePort(System.getProperty(HTTPS_PROXY_PORT)));
+        settings.setHttpsProxyUser(System.getProperty(HTTPS_PROXY_USER));
+        settings.setHttpsProxyPassword(System.getProperty(HTTPS_PROXY_PASSWORD));
 
         String nonProxyHosts = System.getProperty(HTTP_NON_PROXY_HOSTS);
         if (nonProxyHosts != null) {
@@ -105,11 +113,15 @@ public class ProxyDetector {
                 if (m.matches()) {
                     settings.setHttpProxyHost(parseHost(m.group(1)));
                     settings.setHttpProxyPort(parsePort(m.group(2)));
+                    settings.setHttpProxyUser(parseProxyUser(m.group(1)));
+                    settings.setHttpProxyPassword(parseProxyPassword(m.group(1)));
                 } else {
                     m = PROXY_ENV_VAR2.matcher(e.getValue());
                     if (m.matches()) {
                         settings.setHttpProxyHost(parseHost(m.group(1)));
                         settings.setHttpProxyPort(parsePort(m.group(2)));
+                        settings.setHttpProxyUser(parseProxyUser(m.group(1)));
+                        settings.setHttpProxyPassword(parseProxyPassword(m.group(1)));
                     }
                 }
             } else if ("https_proxy".equals(key)) {
@@ -117,11 +129,15 @@ public class ProxyDetector {
                 if (m.matches()) {
                     settings.setHttpsProxyHost(parseHost(m.group(1)));
                     settings.setHttpsProxyPort(parsePort(m.group(2)));
+                    settings.setHttpsProxyUser(parseProxyUser(m.group(1)));
+                    settings.setHttpsProxyPassword(parseProxyPassword(m.group(1)));
                 } else {
                     m = PROXY_ENV_VAR2.matcher(e.getValue());
                     if (m.matches()) {
                         settings.setHttpProxyHost(parseHost(m.group(1)));
                         settings.setHttpProxyPort(parsePort(m.group(2)));
+                        settings.setHttpsProxyUser(parseProxyUser(m.group(1)));
+                        settings.setHttpsProxyPassword(parseProxyPassword(m.group(1)));
                     }
                 }
             } else if ("no_proxy".equals(key)) {
@@ -257,6 +273,42 @@ public class ProxyDetector {
         }
     }
 
+    private static String parseProxyUser(String host) {
+        if (host == null) {
+            return null;
+        }
+
+        int at = host.lastIndexOf('@');
+        if (at == -1) {
+            return null;
+        }
+
+        int colon = host.indexOf(':');
+        if (colon == -1 || colon > at) {
+            return host.substring(0, at);
+        }
+
+        return host.substring(0, colon);
+    }
+
+    private static String parseProxyPassword(String host) {
+        if (host == null) {
+            return null;
+        }
+
+        int at = host.lastIndexOf('@');
+        if (at == -1) {
+            return null;
+        }
+
+        int colon = host.indexOf(':');
+        if (colon == -1 || colon > at) {
+            return null;
+        }
+
+        return host.substring(colon + 1, at);
+    }
+
     private static boolean isWindows() {
         return System.getProperty("os.name").startsWith("Windows");
     }
@@ -328,9 +380,13 @@ public class ProxyDetector {
     public static class ProxySettings {
         private String httpProxyHost;
         private int httpProxyPort;
+        private String httpProxyUser;
+        private String httpProxyPassword;
 
         private String httpsProxyHost;
         private int httpsProxyPort;
+        private String httpsProxyUser;
+        private String httpsProxyPassword;
 
         private List<String> nonProxyHosts;
 
@@ -353,6 +409,22 @@ public class ProxyDetector {
             this.httpProxyPort = httpProxyPort;
         }
 
+        public String getHttpProxyUser() {
+            return httpProxyUser;
+        }
+
+        public void setHttpProxyUser(String httpProxyUser) {
+            this.httpProxyUser = httpProxyUser;
+        }
+
+        public String getHttpProxyPassword() {
+            return httpProxyPassword;
+        }
+
+        public void setHttpProxyPassword(String httpProxyPassword) {
+            this.httpProxyPassword = httpProxyPassword;
+        }
+
         public String getHttpsProxyHost() {
             return httpsProxyHost;
         }
@@ -367,6 +439,22 @@ public class ProxyDetector {
 
         public void setHttpsProxyPort(int httpsProxyPort) {
             this.httpsProxyPort = httpsProxyPort;
+        }
+
+        public String getHttpsProxyUser() {
+            return httpsProxyUser;
+        }
+
+        public void setHttpsProxyUser(String httpsProxyUser) {
+            this.httpsProxyUser = httpsProxyUser;
+        }
+
+        public String getHttpsProxyPassword() {
+            return httpsProxyPassword;
+        }
+
+        public void setHttpsProxyPassword(String httpsProxyPassword) {
+            this.httpsProxyPassword = httpsProxyPassword;
         }
 
         public List<String> getNonProxyHosts() {
@@ -384,6 +472,22 @@ public class ProxyDetector {
                 sb.append("-D" + HTTP_PROXY_HOST + "=" + httpProxyHost + " -D" + HTTP_PROXY_PORT + "=" + httpProxyPort);
             }
 
+            if (httpProxyUser != null) {
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
+
+                sb.append("-D" + HTTP_PROXY_USER + "=" + httpProxyUser);
+            }
+
+            if (httpProxyPassword != null) {
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
+
+                sb.append("-D" + HTTP_PROXY_PASSWORD + "=" + httpProxyPassword);
+            }
+
             if (httpsProxyHost != null) {
                 if (sb.length() > 0) {
                     sb.append(' ');
@@ -391,6 +495,22 @@ public class ProxyDetector {
 
                 sb.append("-D" + HTTPS_PROXY_HOST + "=" + httpsProxyHost + " -D" + HTTPS_PROXY_PORT + "="
                         + httpsProxyPort);
+            }
+
+            if (httpsProxyUser != null) {
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
+
+                sb.append("-D" + HTTPS_PROXY_USER + "=" + httpsProxyUser);
+            }
+
+            if (httpsProxyPassword != null) {
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
+
+                sb.append("-D" + HTTPS_PROXY_PASSWORD + "=" + httpsProxyPassword);
             }
 
             if (nonProxyHosts != null && !nonProxyHosts.isEmpty()) {
@@ -431,12 +551,44 @@ public class ProxyDetector {
                 sb.append("HTTP proxy: " + httpProxyHost + ":" + httpProxyPort);
             }
 
+            if (httpProxyUser != null) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
+                }
+
+                sb.append("HTTP proxy user: " + httpProxyUser);
+            }
+
+            if (httpProxyPassword != null) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
+                }
+
+                sb.append("HTTP proxy password: " + httpProxyPassword);
+            }
+
             if (httpsProxyHost != null) {
                 if (sb.length() > 0) {
                     sb.append('\n');
                 }
 
                 sb.append("HTTPS proxy: " + httpsProxyHost + ":" + httpsProxyPort);
+            }
+
+            if (httpsProxyUser != null) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
+                }
+
+                sb.append("HTTPS proxy user: " + httpsProxyUser);
+            }
+
+            if (httpsProxyPassword != null) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
+                }
+
+                sb.append("HTTPS proxy password: " + httpsProxyPassword);
             }
 
             if (nonProxyHosts != null && !nonProxyHosts.isEmpty()) {

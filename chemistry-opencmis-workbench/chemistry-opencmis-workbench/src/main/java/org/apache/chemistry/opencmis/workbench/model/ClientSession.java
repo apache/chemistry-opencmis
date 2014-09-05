@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -160,6 +161,25 @@ public class ClientSession {
         for (String key : sysProps.stringPropertyNames()) {
             if (key.startsWith(WORKBENCH_PREFIX)) {
                 parameters.put(key, sysProps.getProperty(key));
+            }
+        }
+
+        // set proxy authentication
+        if (url != null) {
+            String urlLower = url.trim().toLowerCase(Locale.ENGLISH);
+
+            if (urlLower.startsWith("http://")) {
+                String proxyUser = System.getProperty("http.proxyUser");
+                if (proxyUser != null) {
+                    String proxyPassword = System.getProperty("http.proxyPassword");
+                    parameters.setProxyUserAndPassword(proxyUser, proxyPassword);
+                }
+            } else if (urlLower.startsWith("https://")) {
+                String proxyUser = System.getProperty("https.proxyUser");
+                if (proxyUser != null) {
+                    String proxyPassword = System.getProperty("https.proxyPassword");
+                    parameters.setProxyUserAndPassword(proxyUser, proxyPassword);
+                }
             }
         }
 
