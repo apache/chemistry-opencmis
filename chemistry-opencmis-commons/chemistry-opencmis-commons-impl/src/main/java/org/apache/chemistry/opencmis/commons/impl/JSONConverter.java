@@ -2048,14 +2048,15 @@ public final class JSONConverter {
                 String id = getString(jsonPropertyMap, JSON_PROPERTY_ID);
                 String queryName = getString(jsonPropertyMap, JSON_PROPERTY_QUERYNAME);
                 if (id == null && queryName == null) {
-                    throw new CmisRuntimeException("Invalid property!");
+                    throw new CmisRuntimeException(
+                            "Invalid property! Neither a property ID nor a query name is provided!");
                 }
 
                 PropertyType propertyType = null;
                 try {
                     propertyType = PropertyType.fromValue(getString(jsonPropertyMap, JSON_PROPERTY_DATATYPE));
                 } catch (Exception e) {
-                    throw new CmisRuntimeException("Invalid property: " + id, e);
+                    throw new CmisRuntimeException("Invalid property datatype: " + id, e);
                 }
 
                 Object value = jsonPropertyMap.get(JSON_PROPERTY_VALUE);
@@ -2100,7 +2101,7 @@ public final class JSONConverter {
                     ((PropertyUriImpl) property).setValues(copyStringValues(values));
                     break;
                 default:
-                    throw new CmisRuntimeException("Unknown property type!");
+                    throw new CmisRuntimeException("Unknown property data type!");
                 }
 
                 property.setId(id);

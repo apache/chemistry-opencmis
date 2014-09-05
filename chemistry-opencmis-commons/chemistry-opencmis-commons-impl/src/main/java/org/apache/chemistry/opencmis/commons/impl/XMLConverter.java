@@ -794,7 +794,7 @@ public final class XMLConverter {
             } else if (source instanceof PropertyUri) {
                 writer.writeStartElement(PREFIX_CMIS, TAG_PROP_URI, NAMESPACE_CMIS);
             } else {
-                throw new CmisRuntimeException("Invalid property!");
+                throw new CmisRuntimeException("Invalid property datatype!");
             }
         }
 
@@ -1853,7 +1853,7 @@ public final class XMLConverter {
                 if (isTag(name, TAG_PROPERTY_TYPE_PROPERTY_TYPE)) {
                     PropertyType propType = readEnum(parser, PropertyType.class);
                     if (propType == null) {
-                        throw new CmisInvalidArgumentException("Invalid property type!");
+                        throw new CmisInvalidArgumentException("Invalid property data type!");
                     }
 
                     target.setPropertyType(propType);
