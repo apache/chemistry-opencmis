@@ -1857,7 +1857,7 @@ public final class JSONConverter {
 
         ObjectDataImpl result = new ObjectDataImpl();
 
-        result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL)), null));
+        result.setAcl(convertAcl(getMap(json.get(JSON_OBJECT_ACL))));
         result.setAllowableActions(convertAllowableActions(getMap(json.get(JSON_OBJECT_ALLOWABLE_ACTIONS))));
         Map<String, Object> jsonChangeEventInfo = getMap(json.get(JSON_OBJECT_CHANGE_EVENT_INFO));
         if (jsonChangeEventInfo != null) {
@@ -1919,7 +1919,7 @@ public final class JSONConverter {
     /**
      * Converts an ACL.
      */
-    public static Acl convertAcl(final Map<String, Object> json, final Boolean isExact) {
+    public static Acl convertAcl(final Map<String, Object> json) {
         if (json == null) {
             return null;
         }
@@ -1969,7 +1969,7 @@ public final class JSONConverter {
 
         result.setAces(aces);
 
-        result.setExact(isExact);
+        result.setExact(getBoolean(json, JSON_ACL_IS_EXACT));
 
         convertExtension(json, result, ACL_KEYS);
 

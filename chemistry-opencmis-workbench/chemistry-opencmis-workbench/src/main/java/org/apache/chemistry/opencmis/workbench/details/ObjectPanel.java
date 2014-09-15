@@ -81,6 +81,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField contentUrlField;
     private InfoList pathsList;
     private InfoList allowableActionsList;
+    private JTextField aclExactField;
     private JPanel buttonPanel;
     private JButton refreshButton;
     private JButton checkButton;
@@ -121,6 +122,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     pathsList.removeAll();
                     contentUrlField.setText("");
                     allowableActionsList.removeAll();
+                    aclExactField.setText("");
                     refreshButton.setEnabled(false);
                     checkButton.setEnabled(false);
                     scriptPanel.setVisible(false);
@@ -203,6 +205,18 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                             allowableActionsList.setList(Collections.singletonList("(missing)"));
                         }
 
+                        if (object.getAcl() == null) {
+                            aclExactField.setText("(no ACL)");
+                        } else {
+                            if (object.getAcl().isExact() == null) {
+                                aclExactField.setText("exact flag not set");
+                            } else if (object.getAcl().isExact().booleanValue()) {
+                                aclExactField.setText("is exact");
+                            } else {
+                                aclExactField.setText("is not exact");
+                            }
+                        }
+
                         refreshButton.setEnabled(true);
                         checkButton.setEnabled(true);
 
@@ -239,6 +253,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         pwcField = addId("PWC:");
         contentUrlField = addLink("Content URL:");
         allowableActionsList = addComponent("Allowable Actions:", new InfoList());
+        aclExactField = addLine("ACL:");
 
         buttonPanel = addComponent("", new JPanel(new BorderLayout()));
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));

@@ -1151,7 +1151,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // check ACL
             if (object.getAcl() != null && object.getAcl().getAces() != null) {
-                addResult(results, checkACL(session, object.getAcl(), "ACL"));
+                addResult(results, checkACL(session, object.getAcl(), true, "ACL"));
             }
 
             // check policies
@@ -1229,7 +1229,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
     }
 
-    protected CmisTestResult checkACL(Session session, Acl acl, String message) {
+    protected CmisTestResult checkACL(Session session, Acl acl, boolean checkExact, String message) {
         List<CmisTestResult> results = new ArrayList<CmisTestResult>();
 
         CmisTestResult f;
@@ -1244,7 +1244,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             if (acl.getAces() != null) {
                 for (Ace ace : acl.getAces()) {
-                    f = createResult(FAILURE, "ACE with empty principal id!");
+                    f = createResult(FAILURE, "ACE with empty principal ID!");
                     addResult(results, assertStringNotEmpty(ace.getPrincipalId(), null, f));
 
                     f = createResult(FAILURE, "ACE with empty permission list!");
@@ -1257,6 +1257,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         }
                     }
                 }
+            }
+
+            if (checkExact) {
+                f = createResult(FAILURE, "ACL is provided but the isExact flag is not set!");
+                addResult(results, assertNotNull(acl.isExact(), null, f));
             }
         }
 

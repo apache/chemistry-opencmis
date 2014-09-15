@@ -75,7 +75,7 @@ public class ACLSmokeTest extends AbstractSessionTest {
                 addResult(assertNotNull(basicAcl, null, f));
 
                 if (basicAcl != null) {
-                    addResult(checkACL(session, basicAcl, "Basic ACL"));
+                    addResult(checkACL(session, basicAcl, false, "Basic ACL"));
 
                     if (basicAcl.getAces() != null) {
                         for (Ace ace : basicAcl.getAces()) {

@@ -59,7 +59,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         Response resp = read(url);
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertAcl(json, null);
+        return JSONConverter.convertAcl(json);
     }
 
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
@@ -81,7 +81,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         });
         Map<String, Object> json = parseObject(resp.getStream(), resp.getCharset());
 
-        return JSONConverter.convertAcl(json, null);
+        return JSONConverter.convertAcl(json);
     }
 
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
