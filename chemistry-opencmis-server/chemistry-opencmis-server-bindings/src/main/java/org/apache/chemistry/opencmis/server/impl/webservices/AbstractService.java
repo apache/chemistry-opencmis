@@ -222,6 +222,7 @@ public abstract class AbstractService {
                 } else if (ex instanceof CmisPermissionDeniedException) {
                     fault.setType(EnumServiceException.PERMISSION_DENIED);
                 } else if (ex instanceof CmisStorageException) {
+                    LOG.error(ex.getMessage(), ex);
                     fault.setType(EnumServiceException.STORAGE);
                 } else if (ex instanceof CmisStreamNotSupportedException) {
                     fault.setType(EnumServiceException.STREAM_NOT_SUPPORTED);
@@ -229,6 +230,8 @@ public abstract class AbstractService {
                     fault.setType(EnumServiceException.UPDATE_CONFLICT);
                 } else if (ex instanceof CmisVersioningException) {
                     fault.setType(EnumServiceException.VERSIONING);
+                } else {
+                    LOG.error(ex.getMessage(), ex);
                 }
             } else {
                 fault.setMessage("An error occurred!");

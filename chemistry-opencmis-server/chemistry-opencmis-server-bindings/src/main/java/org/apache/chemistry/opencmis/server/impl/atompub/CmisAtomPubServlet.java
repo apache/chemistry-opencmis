@@ -297,6 +297,10 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
         } else if (ex instanceof CmisBaseException) {
             statusCode = getErrorCode((CmisBaseException) ex);
             exceptionName = ((CmisBaseException) ex).getExceptionName();
+
+            if (statusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                LOG.error(ex.getMessage(), ex);
+            }
         } else if (ex instanceof IOException) {
             LOG.warn(ex.getMessage(), ex);
         } else {
