@@ -18,9 +18,12 @@
  */
 package org.apache.chemistry.opencmis.commons.impl.tube.client;
 
+import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.tube.AbstractJreWssTube;
 
 import com.sun.xml.internal.ws.api.SOAPVersion;
@@ -56,19 +59,30 @@ public class JreWssMUTube extends AbstractJreWssTube {
             return super.processResponse(response);
         }
 
-        HeaderList headers = (HeaderList) response.getMessage().getHeaders();
+        Object headersObject = response.getMessage().getHeaders();
 
-        for (int i = 0; i < headers.size(); i++) {
-            if (!headers.isUnderstood(i)) {
-                Header header = headers.get(i);
-                if (!header.isIgnorable(soapVersion, soapVersion.implicitRoleSet)) {
-                    QName qName = new QName(header.getNamespaceURI(), header.getLocalPart());
-                    if (WSSE.equals(qName)) {
-                        checkSecurityHeader(header);
-                    } else {
-                        throw new CmisConnectionException("MustUnderstand header is not understood: " + qName);
+        if (headersObject instanceof HeaderList) {
+            HeaderList headers = (HeaderList) headersObject;
+
+            for (int i = 0; i < headers.size(); i++) {
+                if (!headers.isUnderstood(i)) {
+                    Header header = headers.get(i);
+                    if (!header.isIgnorable(soapVersion, soapVersion.implicitRoleSet)) {
+                        QName qName = new QName(header.getNamespaceURI(), header.getLocalPart());
+                        if (WSSE.equals(qName)) {
+                            checkSecurityHeader(header);
+                        } else {
+                            throw new CmisConnectionException("MustUnderstand header is not understood: " + qName);
+                        }
                     }
                 }
+            }
+        } else {
+            try {
+                Method m = headersObject.getClass().getMethod("understood", QName.class);
+                m.invoke(headersObject, WSSE);
+            } catch (Exception e) {
+                throw new CmisRuntimeException("Could not mark WSSE header as understood.", e);
             }
         }
 
