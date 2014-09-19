@@ -346,8 +346,13 @@ public final class AtomEntryParser {
         }
 
         if (ths != null) {
-            atomContentStream.setStream(ths.getInputStream());
-            atomContentStream.setLength(BigInteger.valueOf(ths.getSize()));
+            try {
+                atomContentStream.setStream(ths.getInputStream());
+                atomContentStream.setLength(BigInteger.valueOf(ths.getSize()));
+            } catch (IOException e) {
+                ths.destroy();
+                throw e;
+            }
         }
 
         if (bytes != null) {
@@ -376,8 +381,13 @@ public final class AtomEntryParser {
                         cmisContentStream.setMimeType(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
                         ThresholdOutputStream ths = readBase64(parser);
-                        cmisContentStream.setStream(ths.getInputStream());
-                        cmisContentStream.setLength(BigInteger.valueOf(ths.getSize()));
+                        try {
+                            cmisContentStream.setStream(ths.getInputStream());
+                            cmisContentStream.setLength(BigInteger.valueOf(ths.getSize()));
+                        } catch (IOException e) {
+                            ths.destroy();
+                            throw e;
+                        }
                     } else {
                         XMLUtils.skip(parser);
                     }
@@ -423,6 +433,7 @@ public final class AtomEntryParser {
                         cappedStream.deductBytes(bytes.length);
                     }
                 } else if (event == XMLStreamReader.START_ELEMENT) {
+                    bufferStream.destroy();
                     throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
                 }
 

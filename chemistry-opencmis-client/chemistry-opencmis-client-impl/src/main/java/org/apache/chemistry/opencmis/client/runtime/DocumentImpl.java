@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -205,11 +206,14 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
             return getSession().createDocument(newProperties, targetFolderId, contentStream, versioningState, policies,
                     addAces, removeAces);
         } finally {
-            if (contentStream != null && contentStream.getStream() != null) {
-                try {
-                    contentStream.getStream().close();
-                } catch (IOException ioe) {
-                    throw new CmisRuntimeException("Cannot close source stream!", ioe);
+            if (contentStream != null) {
+                InputStream stream = contentStream.getStream();
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ioe) {
+                        throw new CmisRuntimeException("Cannot close source stream!", ioe);
+                    }
                 }
             }
         }

@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
@@ -132,6 +133,8 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
                 request = new HttpPut(url.toString());
             } else if ("DELETE".equals(method)) {
                 request = new HttpDelete(url.toString());
+            } else {
+                throw new CmisRuntimeException("Invalid HTTP method!");
             }
 
             // set content type

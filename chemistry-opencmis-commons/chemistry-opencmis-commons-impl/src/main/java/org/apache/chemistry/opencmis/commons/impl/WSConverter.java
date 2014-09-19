@@ -2666,7 +2666,7 @@ public final class WSConverter {
         if (!(in instanceof BufferedInputStream) && !(in instanceof ByteArrayInputStream)) {
             stream = new BufferedInputStream(in, BUFFER_SIZE);
         } else {
-            stream = contentStream.getStream();
+            stream = in;
         }
 
         result.setStream(new DataHandler(new DataSource() {

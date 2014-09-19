@@ -148,9 +148,18 @@ public final class SessionFactoryFinder {
                     try {
                         reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
                         factoryClassName = reader.readLine();
-                        reader.close();
                     } catch (IOException e) {
                         factoryClassName = null;
+                    } finally {
+                        try {
+                            if (reader != null) {
+                                reader.close();
+                            } else {
+                                stream.close();
+                            }
+                        } catch (IOException e) {
+                            // ignore
+                        }
                     }
                 }
             }

@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.GregorianCalendar;
@@ -225,7 +226,9 @@ public final class FormDataWriter {
     }
 
     public void write(OutputStream out) throws IOException {
-        if (contentStream == null || contentStream.getStream() == null) {
+        InputStream stream = (contentStream == null ? null : contentStream.getStream());
+
+        if (stream == null) {
             boolean first = true;
             byte[] amp = IOUtils.toUTF8Bytes("&");
 
@@ -271,7 +274,7 @@ public final class FormDataWriter {
             writeLine(out, "Content-Transfer-Encoding: binary");
             writeLine(out);
 
-            IOUtils.copy(contentStream.getStream(), out, BUFFER_SIZE);
+            IOUtils.copy(stream, out, BUFFER_SIZE);
 
             writeLine(out);
             writeLine(out, "--" + boundary + "--");

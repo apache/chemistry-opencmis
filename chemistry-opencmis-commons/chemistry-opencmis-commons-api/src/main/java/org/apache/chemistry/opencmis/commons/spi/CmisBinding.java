@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.commons.spi;
 
+import java.io.Serializable;
+
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 
 /**
@@ -33,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
  * provided if they are supported by the underlying binding.
  * </p>
  */
-public interface CmisBinding {
+public interface CmisBinding extends Serializable {
 
     /**
      * Returns the client session id.
