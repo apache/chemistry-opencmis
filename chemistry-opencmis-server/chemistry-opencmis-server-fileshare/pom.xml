@@ -100,6 +100,13 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>          
         </dependency>
+        <!-- Uncomment for CORS support 
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        -->
         <dependency><!-- for development only -->
             <groupId>${project.groupId}</groupId>
             <artifactId>chemistry-opencmis-server-bindings</artifactId>

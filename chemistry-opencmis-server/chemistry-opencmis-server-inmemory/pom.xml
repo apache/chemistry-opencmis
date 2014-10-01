@@ -164,6 +164,13 @@
             <scope>provided</scope>
             <type>war</type>
         </dependency>
+        <!-- Uncomment for CORS support 
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
