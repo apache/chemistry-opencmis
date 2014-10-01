@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
  */
 public class QueryStringHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
-    private Map<String, String[]> parameters;
+    protected Map<String, String[]> parameters;
 
     public QueryStringHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);

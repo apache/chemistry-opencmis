@@ -408,7 +408,7 @@ public class MultipartParserTest {
     // ---- helpers ----
 
     private MultipartParser prepareParser(String boundary, byte[] content) throws Exception {
-        HttpServletRequest request = HttpRequestMockHelper.createRequest(boundary, content);
+        HttpServletRequest request = HttpRequestMockHelper.createMultipartRequest(boundary, content);
 
         ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);

@@ -106,8 +106,8 @@ public class CheckServletInputStreamTest {
         ByteArrayInputStream originStream = new ByteArrayInputStream(byteBuffer);
 
         try {
-            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createRequest(BOUNDARY,
-                    originStream), max);
+            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createMultipartRequest(
+                    BOUNDARY, originStream), max);
             InputStream stream = prw.getInputStream();
 
             int countS = 0;
@@ -143,8 +143,8 @@ public class CheckServletInputStreamTest {
         originStream = new ByteArrayInputStream(byteBuffer);
 
         try {
-            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createRequest(BOUNDARY,
-                    originStream), max);
+            ProtectionRequestWrapper prw = new ProtectionRequestWrapper(HttpRequestMockHelper.createMultipartRequest(
+                    BOUNDARY, originStream), max);
             InputStream stream = prw.getInputStream();
 
             int countS = 0;

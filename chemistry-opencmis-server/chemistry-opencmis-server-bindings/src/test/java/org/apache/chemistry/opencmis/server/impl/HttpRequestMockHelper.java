@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 
 public class HttpRequestMockHelper {
 
-    public static HttpServletRequest createRequest(String boundary, byte[] content) throws IOException {
+    public static HttpServletRequest createMultipartRequest(String boundary, byte[] content) throws IOException {
         FakeServletInputStream stream = new FakeServletInputStream(content);
 
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -39,11 +39,23 @@ public class HttpRequestMockHelper {
         return request;
     }
 
-    public static HttpServletRequest createRequest(String boundary, InputStream inputStream) throws IOException {
+    public static HttpServletRequest createMultipartRequest(String boundary, InputStream inputStream)
+            throws IOException {
         FakeServletInputStream stream = new FakeServletInputStream(inputStream);
 
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getContentType()).thenReturn("multipart/form-data; boundary=\"" + boundary + "\"");
+        Mockito.when(request.getInputStream()).thenReturn(stream);
+
+        return request;
+    }
+
+    public static HttpServletRequest createFormRequest(String encoding, byte[] content) throws IOException {
+        FakeServletInputStream stream = new FakeServletInputStream(content);
+
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getContentType()).thenReturn(
+                "application/x-www-form-urlencoded" + (encoding == null ? "" : ";charset=" + encoding));
         Mockito.when(request.getInputStream()).thenReturn(stream);
 
         return request;
