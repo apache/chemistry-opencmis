@@ -455,7 +455,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             try {
                 ContentStream contentStream = result.getContentStream();
 
-                f = createResult(WARNING, "Document filename does not match!", false);
+                f = createResult(WARNING, "Document filename and the filename of the content stream do not match!",
+                        false);
                 addResult(assertEquals(name, contentStream.getFileName(), null, f));
 
                 f = createResult(WARNING,

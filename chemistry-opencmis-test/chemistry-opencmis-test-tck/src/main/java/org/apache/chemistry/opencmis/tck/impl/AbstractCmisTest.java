@@ -162,7 +162,9 @@ public abstract class AbstractCmisTest implements CmisTest {
             return "null";
         }
 
-        if (o instanceof Calendar) {
+        if (o instanceof String) {
+            return "'" + o + "'";
+        } else if (o instanceof Calendar) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             return sdf.format(((Calendar) o).getTime());
         }
@@ -287,7 +289,7 @@ public abstract class AbstractCmisTest implements CmisTest {
         }
 
         return addResultChild(failure,
-                createResult(CmisTestResultStatus.INFO, "Collection does not contain '" + formatValue(value) + "'"));
+                createResult(CmisTestResultStatus.INFO, "Collection does not contain " + formatValue(value)));
     }
 
     protected CmisTestResult assertEqualLists(List<?> expected, List<?> actual, CmisTestResult success,
