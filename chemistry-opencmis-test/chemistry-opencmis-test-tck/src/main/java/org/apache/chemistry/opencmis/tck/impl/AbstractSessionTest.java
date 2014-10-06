@@ -75,7 +75,10 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDecimalDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyIntegerDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyStringDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
@@ -3445,6 +3448,45 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             f = createResult(FAILURE,
                                     "Inhertited: expected: " + inherited + " / actual: " + propDef.isInherited());
                             addResult(results, f);
+                        }
+                    }
+
+                    // data type specific tests
+                    if (propDef instanceof PropertyStringDefinition) {
+                        PropertyStringDefinition stringPropDef = (PropertyStringDefinition) propDef;
+
+                        if (stringPropDef.getMaxLength() != null) {
+                            if (stringPropDef.getMaxLength().signum() == 0) {
+                                f = createResult(WARNING, "Max length is 0!");
+                                addResult(results, f);
+                            } else if (stringPropDef.getMaxLength().signum() == -1) {
+                                f = createResult(FAILURE, "Max length is negative!");
+                                addResult(results, f);
+                            }
+                        }
+                    } else if (propDef instanceof PropertyIntegerDefinition) {
+                        PropertyIntegerDefinition intPropDef = (PropertyIntegerDefinition) propDef;
+
+                        if (intPropDef.getMinValue() != null & intPropDef.getMaxValue() != null) {
+                            if (intPropDef.getMinValue().compareTo(intPropDef.getMaxValue()) == 0) {
+                                f = createResult(WARNING, "Min and max values are equal!");
+                                addResult(results, f);
+                            } else if (intPropDef.getMinValue().compareTo(intPropDef.getMaxValue()) == 1) {
+                                f = createResult(FAILURE, "Min value is greater than max value!");
+                                addResult(results, f);
+                            }
+                        }
+                    } else if (propDef instanceof PropertyDecimalDefinition) {
+                        PropertyDecimalDefinition decPropDef = (PropertyDecimalDefinition) propDef;
+
+                        if (decPropDef.getMinValue() != null & decPropDef.getMaxValue() != null) {
+                            if (decPropDef.getMinValue().compareTo(decPropDef.getMaxValue()) == 0) {
+                                f = createResult(WARNING, "Min and max values are equal!");
+                                addResult(results, f);
+                            } else if (decPropDef.getMinValue().compareTo(decPropDef.getMaxValue()) == 1) {
+                                f = createResult(FAILURE, "Min value is greater than max value!");
+                                addResult(results, f);
+                            }
                         }
                     }
                 }
