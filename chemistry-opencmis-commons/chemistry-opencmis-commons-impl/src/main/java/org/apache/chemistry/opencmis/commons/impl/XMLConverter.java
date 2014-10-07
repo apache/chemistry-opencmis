@@ -2151,7 +2151,14 @@ public final class XMLConverter {
         protected boolean read(XMLStreamReader parser, QName name, ChoiceImpl<T> target) throws XMLStreamException {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_PROPERTY_TYPE_CHOICE_VALUE)) {
-                    addValue(parser, target);
+                    try {
+                        addValue(parser, target);
+                    } catch (CmisInvalidArgumentException e) {
+                        // a few repositories send invalid values here
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Found invalid choice value for choice entry \"{}\"!", target.getDisplayName(), e);
+                        }
+                    }
                     return true;
                 }
 
@@ -2591,7 +2598,19 @@ public final class XMLConverter {
         protected boolean read(XMLStreamReader parser, QName name, T target) throws XMLStreamException {
             if (isCmisNamespace(name)) {
                 if (isTag(name, TAG_PROPERTY_VALUE)) {
-                    addValue(parser, target);
+                    try {
+                        addValue(parser, target);
+                    } catch (CmisInvalidArgumentException e) {
+                        // a few repositories send invalid values here
+                        // for example, in some cases SharePoint sends an empty
+                        // "value" tag instead of omitting the "value" tag to
+                        // indicate a "not set" value
+                        // -> being tolerant is better than breaking an
+                        // application because of this
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Found invalid property value for property {}!", target.getId(), e);
+                        }
+                    }
                     return true;
                 }
             }
