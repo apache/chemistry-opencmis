@@ -1069,8 +1069,8 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 info = null;
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Getting the object info for object " + objectId + " in repository " + repositoryId
-                            + "  failed: " + e.toString(), e);
+                    LOG.trace("Getting the object info for object {} in repository {}  failed: {}", objectId,
+                            repositoryId, e.toString(), e);
                 }
             } finally {
                 addObjectInfos = true;
@@ -1097,7 +1097,14 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         ObjectInfoImpl info = new ObjectInfoImpl();
 
         // get the repository info
-        RepositoryInfo repositoryInfo = getRepositoryInfo(repositoryId, null);
+        RepositoryInfo repositoryInfo = null;
+        try {
+            repositoryInfo = getRepositoryInfo(repositoryId, null);
+        } catch (CmisRuntimeException e) {
+            LOG.error("getRepositoryInfo returned an error while compiling object info for object {}.", object.getId(),
+                    e);
+            throw e;
+        }
 
         // general properties
         info.setObject(object);
@@ -1124,10 +1131,17 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 info.setWorkingCopyId(getIdProperty(object, PropertyIds.VERSION_SERIES_CHECKED_OUT_ID));
 
                 // get latest version
-                List<ObjectData> versions = getAllVersions(repositoryId, object.getId(), info.getVersionSeriesId(),
-                        null, Boolean.FALSE, null);
-                if (isNotEmpty(versions)) {
-                    info.setWorkingCopyOriginalId(versions.get(0).getId());
+                try {
+                    List<ObjectData> versions = getAllVersions(repositoryId, object.getId(), info.getVersionSeriesId(),
+                            null, Boolean.FALSE, null);
+                    if (isNotEmpty(versions)) {
+                        info.setWorkingCopyOriginalId(versions.get(0).getId());
+                    }
+                } catch (CmisNotSupportedException nse) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("getAllVersions is not implemented! Object info for object {} might be incorrect.",
+                                info.getId(), nse);
+                    }
                 }
             }
         }
@@ -1160,6 +1174,11 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
                 info.setHasParent(isNotEmpty(parents));
             } catch (CmisInvalidArgumentException e) {
                 info.setHasParent(false);
+            } catch (CmisNotSupportedException nse) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("getObjectParents is not implemented! Object info for object {} might be incorrect.",
+                            info.getId(), nse);
+                }
             }
         }
 
@@ -1167,13 +1186,20 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         info.setSupportsRelationships(false);
         info.setSupportsPolicies(false);
 
-        TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE, BigInteger.valueOf(4),
-                BigInteger.ZERO, null);
-        for (TypeDefinition type : baseTypesList.getList()) {
-            if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
-                info.setSupportsRelationships(true);
-            } else if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
-                info.setSupportsPolicies(true);
+        try {
+            TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE,
+                    BigInteger.valueOf(4), BigInteger.ZERO, null);
+            for (TypeDefinition type : baseTypesList.getList()) {
+                if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
+                    info.setSupportsRelationships(true);
+                } else if (BaseTypeId.CMIS_POLICY.value().equals(type.getId())) {
+                    info.setSupportsPolicies(true);
+                }
+            }
+        } catch (CmisNotSupportedException nse) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("getTypeChildren is not implemented! Object info for object {} might be incorrect.",
+                        info.getId(), nse);
             }
         }
 
