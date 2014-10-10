@@ -1188,7 +1188,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
 
         try {
             TypeDefinitionList baseTypesList = getTypeChildren(repositoryId, null, Boolean.FALSE,
-                    BigInteger.valueOf(4), BigInteger.ZERO, null);
+                    BigInteger.valueOf(6), BigInteger.ZERO, null);
             for (TypeDefinition type : baseTypesList.getList()) {
                 if (BaseTypeId.CMIS_RELATIONSHIP.value().equals(type.getId())) {
                     info.setSupportsRelationships(true);
