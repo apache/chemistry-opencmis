@@ -177,6 +177,11 @@ public class StoreManagerImpl implements StoreManager {
                     || td.getId().equals(BaseTypeId.CMIS_ITEM.value())
                     || td.getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
                 tdc = null; // filter new types for CMIS 1.0
+            } else {
+            	// remove type mutability information:
+                MutableTypeDefinition tdm = typeFactory.copy(td, true);
+                tdm.setTypeMutability(null);
+                tdc = new TypeDefinitionContainerImpl(tdm);
             }
         }
         return tdc;
@@ -192,10 +197,11 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
+        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (tc != null) {
             if (depth == -1) {
-                if (includePropertyDefinitions) {
+                if (cmis11 && includePropertyDefinitions) {
                     return tc;
                 } else {
                     depth = Integer.MAX_VALUE;
@@ -204,7 +210,7 @@ public class StoreManagerImpl implements StoreManager {
                 throw new CmisInvalidArgumentException("illegal depth value: " + depth);
             }
 
-            return cloneTypeList(depth, includePropertyDefinitions, tc, null);
+            return cloneTypeList(depth, includePropertyDefinitions, tc, null, cmis11);
         } else {
             return null;
         }
@@ -251,21 +257,28 @@ public class StoreManagerImpl implements StoreManager {
             }
         }
 
-        if (includePropertyDefinitions) {
+        if (cmis11 && includePropertyDefinitions) {
             result = rootTypes;
         } else {
-            result = new ArrayList<TypeDefinitionContainer>(rootTypes.size());
-            // copy list and omit properties
-            for (TypeDefinitionContainer c : rootTypes) {
-                MutableTypeDefinition td = typeFactory.copy(c.getTypeDefinition(), includePropertyDefinitions);
-                TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-                tdc.setChildren(c.getChildren());
-                result.add(tdc);
-            }
+            result = cloneTypeDefinitionTree(rootTypes, includePropertyDefinitions, cmis11);
         }
         return result;
     }
-
+    
+    private List<TypeDefinitionContainer> cloneTypeDefinitionTree (List<TypeDefinitionContainer> tdcList, boolean includePropertyDefinitions, boolean cmis11) {
+    	List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>(tdcList.size());
+		for (TypeDefinitionContainer c : tdcList) {
+			MutableTypeDefinition td = typeFactory.copy(c.getTypeDefinition(), includePropertyDefinitions);
+			if (!cmis11) {
+				td.setTypeMutability(null);
+			}
+			TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+			tdc.setChildren(cloneTypeDefinitionTree(c.getChildren(), includePropertyDefinitions, cmis11));
+			result.add(tdc);
+		}
+		return result;
+	}
+    
     @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
@@ -523,11 +536,13 @@ public class StoreManagerImpl implements StoreManager {
      * @return cloned type definition
      */
     public static TypeDefinitionContainer cloneTypeList(int depth, boolean includePropertyDefinitions,
-            TypeDefinitionContainer tdc, TypeDefinitionContainer parent) {
+            TypeDefinitionContainer tdc, TypeDefinitionContainer parent, boolean cmis11) {
 
         final TypeDefinitionFactory typeFactory = TypeDefinitionFactory.newInstance();
         MutableTypeDefinition tdClone = typeFactory.copy(tdc.getTypeDefinition(), includePropertyDefinitions);
-
+        if (!cmis11) {
+        	tdClone.setTypeMutability(null);
+        }
         TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(tdClone);
         if (null != parent) {
             parent.getChildren().add(tdcClone);
@@ -536,7 +551,7 @@ public class StoreManagerImpl implements StoreManager {
         if (depth > 0) {
             List<TypeDefinitionContainer> children = tdc.getChildren();
             for (TypeDefinitionContainer child : children) {
-                cloneTypeList(depth - 1, includePropertyDefinitions, child, tdcClone);
+                cloneTypeList(depth - 1, includePropertyDefinitions, child, tdcClone, cmis11);
             }
         }
         return tdcClone;

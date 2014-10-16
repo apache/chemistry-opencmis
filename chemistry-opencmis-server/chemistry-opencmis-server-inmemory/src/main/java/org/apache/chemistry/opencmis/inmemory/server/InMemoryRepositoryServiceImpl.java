@@ -97,6 +97,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         }
 
         result.setList(childrenTypes);
+
         return result;
     }
 
