@@ -66,8 +66,8 @@
 
 </head>
 <body>
-  <img alt="Apache Chemistry Logo" title="Apache Chemistry Logo" src="images/chemistry_logo_small.png" />
-
+<img alt="Apache Chemistry Logo" title="Apache Chemistry Logo" src="images/chemistry_logo_small.png"/>
+<img align="right" alt="Powered by Apache" src="images/pb-chemistry-150x150.jpg"/>
 <h1>OpenCMIS InMemory Server</h1>
 <p> Your server is up and running.</p>
 <p>
@@ -287,6 +287,5 @@ This software is licensed under the
 <a href="http://www.apache.org">
   <img alt="ASF Logo" title="ASF Logo" src="images/asf_logo.png" align="right"/>
 </a>
-
 </body>
 </html>
