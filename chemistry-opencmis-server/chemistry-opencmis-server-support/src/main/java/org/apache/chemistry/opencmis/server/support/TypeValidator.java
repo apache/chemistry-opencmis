@@ -240,7 +240,7 @@ public final class TypeValidator {
             // check max length
             if (maxLen >= 0 && len >= 0 && maxLen < len) {
                 throw new CmisConstraintException("For property with id " + propDef.getId() + " the length of " + len
-                        + "is bigger than the maximum allowed length  " + maxLen);
+                        + " is bigger than the maximum allowed length  " + maxLen);
             }
         }
     }
