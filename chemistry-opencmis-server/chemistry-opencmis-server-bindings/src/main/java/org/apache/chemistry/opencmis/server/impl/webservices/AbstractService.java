@@ -179,7 +179,7 @@ public abstract class AbstractService {
             return false;
         }
 
-        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
+        return ((ProgressControlCmisService) service).afterServiceCall() == Progress.STOP;
     }
 
     /**

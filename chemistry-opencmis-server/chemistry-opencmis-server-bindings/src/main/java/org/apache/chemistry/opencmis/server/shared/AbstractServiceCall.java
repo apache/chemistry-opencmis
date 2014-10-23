@@ -262,6 +262,6 @@ public abstract class AbstractServiceCall implements ServiceCall {
             return false;
         }
 
-        return ((ProgressControlCmisService) service).beforeServiceCall() == Progress.STOP;
+        return ((ProgressControlCmisService) service).afterServiceCall() == Progress.STOP;
     }
 }
