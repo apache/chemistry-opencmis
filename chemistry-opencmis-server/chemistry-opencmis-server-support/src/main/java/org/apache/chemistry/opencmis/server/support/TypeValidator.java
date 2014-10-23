@@ -113,9 +113,12 @@ public final class TypeValidator {
                 }
             }
 
-            // check if value is in list
-            if (hasMultiValueChoiceLists) {
-                // do a complex check if this combination of actual values is
+            if (propDef.isOpenChoice() != null && propDef.isOpenChoice()) {
+            	isAllowedValue = true;
+            } else if (hasMultiValueChoiceLists) {
+                // check if value is in list
+
+            	// do a complex check if this combination of actual values is
                 // allowed check if value is in list
                 isAllowedValue = false;
                 List<?> actualValues = prop.getValues();
