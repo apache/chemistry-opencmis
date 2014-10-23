@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
-import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
@@ -411,10 +410,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
-            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
-            changeToken.setValue(ct == null ? null : ct.toString());
-        }
+        setChangeToken(changeToken, newObj);
     }
 
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
@@ -561,10 +557,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
-            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
-            changeToken.setValue(ct == null ? null : ct.toString());
-        }
+        setChangeToken(changeToken, newObj);
     }
 
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -600,10 +593,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
-            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
-            changeToken.setValue(ct == null ? null : ct.toString());
-        }
+        setChangeToken(changeToken, newObj);
     }
 
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
@@ -638,9 +628,6 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         objectId.setValue(newObj == null ? null : newObj.getId());
 
-        if (changeToken != null && newObj != null && newObj.getProperties() != null) {
-            Object ct = newObj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
-            changeToken.setValue(ct == null ? null : ct.toString());
-        }
+        setChangeToken(changeToken, newObj);
     }
 }

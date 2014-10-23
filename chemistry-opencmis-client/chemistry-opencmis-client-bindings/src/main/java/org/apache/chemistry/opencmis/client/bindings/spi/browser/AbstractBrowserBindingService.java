@@ -32,7 +32,11 @@ import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.HttpInvoker;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeFormat;
@@ -63,6 +67,7 @@ import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.ContainerFactory;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
+import org.apache.chemistry.opencmis.commons.spi.Holder;
 
 /**
  * Base class for all Browser Binding client services.
@@ -212,6 +217,23 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     protected String getDateTimeFormatParameter() {
         return dateTimeFormat == null || dateTimeFormat == DateTimeFormat.SIMPLE ? null : dateTimeFormat.value();
+    }
+
+    protected void setChangeToken(Holder<String> changeToken, ObjectData obj) {
+        if (changeToken == null) {
+            return;
+        }
+
+        changeToken.setValue(null);
+
+        if (obj == null || obj.getProperties() == null || obj.getProperties().getProperties() == null) {
+            return;
+        }
+
+        PropertyData<?> ct = obj.getProperties().getProperties().get(PropertyIds.CHANGE_TOKEN);
+        if (ct instanceof PropertyString) {
+            changeToken.setValue(((PropertyString) ct).getFirstValue());
+        }
     }
 
     // ---- exceptions ----
