@@ -125,6 +125,10 @@ public class MultiFilingService {
                 closeContentStream(contentStream);
             }
 
+            if (stopAfterService(service)) {
+                return;
+            }
+
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, newObjectId);
             if (objectInfo == null) {
                 throw new CmisRuntimeException("Object Info is missing!");
