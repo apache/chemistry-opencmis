@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisServiceUnavailableException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
@@ -285,6 +286,8 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
                     return new CmisUpdateConflictException(message, errorContent, t);
                 } else if (CmisVersioningException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
                     return new CmisVersioningException(message, errorContent, t);
+                } else if (code == 503) {
+                    return new CmisServiceUnavailableException(message, errorContent, t);
                 }
             }
         }
@@ -311,6 +314,8 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
             return new CmisProxyAuthenticationException(message, errorContent, t);
         case 409:
             return new CmisConstraintException(message, errorContent, t);
+        case 503:
+            return new CmisServiceUnavailableException(message, errorContent, t);
         default:
             return new CmisRuntimeException(message, errorContent, t);
         }
