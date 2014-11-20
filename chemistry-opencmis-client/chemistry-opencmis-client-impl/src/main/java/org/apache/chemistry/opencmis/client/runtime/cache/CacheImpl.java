@@ -32,6 +32,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.SessionParameterDefaults;
 
 /**
  * Synchronized cache implementation. The cache is limited to a specific size of
@@ -71,17 +72,17 @@ public class CacheImpl implements Cache {
                     cacheSize = 0;
                 }
             } catch (Exception e) {
-                cacheSize = 1000;
+                cacheSize = SessionParameterDefaults.CACHE_SIZE_OBJECTS;
             }
 
             // cache time-to-live
             try {
                 cacheTtl = Integer.valueOf(parameters.get(SessionParameter.CACHE_TTL_OBJECTS));
                 if (cacheTtl < 0) {
-                    cacheTtl = 2 * 60 * 60 * 1000;
+                    cacheTtl = SessionParameterDefaults.CACHE_TTL_OBJECTS;
                 }
             } catch (Exception e) {
-                cacheTtl = 2 * 60 * 60 * 1000;
+                cacheTtl = SessionParameterDefaults.CACHE_TTL_OBJECTS;
             }
 
             // path-to-id size
@@ -91,17 +92,17 @@ public class CacheImpl implements Cache {
                     pathToIdSize = 0;
                 }
             } catch (Exception e) {
-                pathToIdSize = 1000;
+                pathToIdSize = SessionParameterDefaults.CACHE_SIZE_PATHTOID;
             }
 
             // path-to-id time-to-live
             try {
                 pathToIdTtl = Integer.valueOf(parameters.get(SessionParameter.CACHE_TTL_PATHTOID));
                 if (pathToIdTtl < 0) {
-                    pathToIdTtl = 30 * 60 * 1000;
+                    pathToIdTtl = SessionParameterDefaults.CACHE_TTL_PATHTOID;
                 }
             } catch (Exception e) {
-                pathToIdTtl = 30 * 60 * 1000;
+                pathToIdTtl = SessionParameterDefaults.CACHE_TTL_PATHTOID;
             }
 
             initializeInternals();

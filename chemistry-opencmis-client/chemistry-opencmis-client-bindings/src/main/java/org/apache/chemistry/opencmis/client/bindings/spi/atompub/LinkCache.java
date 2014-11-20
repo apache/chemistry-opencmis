@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.LruCacheLevelImp
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.SessionParameterDefaults;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -58,10 +59,6 @@ public class LinkCache implements Serializable {
         KNOWN_LINKS.add(AtomPubParser.LINK_REL_CONTENT);
     }
 
-    private static final int CACHE_SIZE_REPOSITORIES = 10;
-    private static final int CACHE_SIZE_TYPES = 100;
-    private static final int CACHE_SIZE_OBJECTS = 400;
-
     private final Cache linkCache;
     private final Cache typeLinkCache;
     private final Cache collectionLinkCache;
@@ -72,19 +69,20 @@ public class LinkCache implements Serializable {
      * Constructor.
      */
     public LinkCache(BindingSession session) {
-        int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
+        int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES,
+                SessionParameterDefaults.CACHE_SIZE_REPOSITORIES);
         if (repCount < 1) {
-            repCount = CACHE_SIZE_REPOSITORIES;
+            repCount = SessionParameterDefaults.CACHE_SIZE_REPOSITORIES;
         }
 
-        int typeCount = session.get(SessionParameter.CACHE_SIZE_TYPES, CACHE_SIZE_TYPES);
+        int typeCount = session.get(SessionParameter.CACHE_SIZE_TYPES, SessionParameterDefaults.CACHE_SIZE_TYPES);
         if (typeCount < 1) {
-            typeCount = CACHE_SIZE_TYPES;
+            typeCount = SessionParameterDefaults.CACHE_SIZE_TYPES;
         }
 
-        int objCount = session.get(SessionParameter.CACHE_SIZE_LINKS, CACHE_SIZE_OBJECTS);
+        int objCount = session.get(SessionParameter.CACHE_SIZE_LINKS, SessionParameterDefaults.CACHE_SIZE_LINKS);
         if (objCount < 1) {
-            objCount = CACHE_SIZE_OBJECTS;
+            objCount = SessionParameterDefaults.CACHE_SIZE_LINKS;
         }
 
         linkCache = new CacheImpl("Link Cache");

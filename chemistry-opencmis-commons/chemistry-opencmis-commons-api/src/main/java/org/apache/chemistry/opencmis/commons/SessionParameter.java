@@ -258,6 +258,14 @@ package org.apache.chemistry.opencmis.commons;
  * <td>1000</td>
  * </tr>
  * <tr>
+ * <td>{@link #CACHE_TTL_PATHTOID}</td>
+ * <td>Path-to-id cache time-to-live</td>
+ * <td>all</td>
+ * <td>time in milliseconds</td>
+ * <td>no</td>
+ * <td>180000 (30 minutes)</td>
+ * </tr>
+ * <tr>
  * <td>{@link #CACHE_PATH_OMIT}</td>
  * <td>Turn off path-to-id cache</td>
  * <td>all</td>

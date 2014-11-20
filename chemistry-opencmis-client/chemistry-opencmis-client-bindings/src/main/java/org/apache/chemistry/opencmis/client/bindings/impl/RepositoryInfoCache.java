@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.client.bindings.cache.impl.CacheImpl;
 import org.apache.chemistry.opencmis.client.bindings.cache.impl.MapCacheLevelImpl;
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.SessionParameterDefaults;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 
 /**
@@ -34,8 +35,6 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 public class RepositoryInfoCache implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private static final int CACHE_SIZE_REPOSITORIES = 10;
 
     private final Cache cache;
 
@@ -47,10 +46,11 @@ public class RepositoryInfoCache implements Serializable {
      */
     public RepositoryInfoCache(BindingSession session) {
         assert session != null;
-        
-        int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES, CACHE_SIZE_REPOSITORIES);
+
+        int repCount = session.get(SessionParameter.CACHE_SIZE_REPOSITORIES,
+                SessionParameterDefaults.CACHE_SIZE_REPOSITORIES);
         if (repCount < 1) {
-            repCount = CACHE_SIZE_REPOSITORIES;
+            repCount = SessionParameterDefaults.CACHE_SIZE_REPOSITORIES;
         }
 
         cache = new CacheImpl("Repository Info Cache");

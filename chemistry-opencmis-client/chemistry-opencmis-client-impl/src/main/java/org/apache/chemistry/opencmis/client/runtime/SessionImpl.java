@@ -26,8 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +60,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.client.util.OperationContextUtils;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.SessionParameterDefaults;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
@@ -120,7 +120,7 @@ public class SessionImpl implements Session {
     // private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private transient IdentityHashMap<TypeDefinition, ObjectType> objectTypeCache;
+    private transient LinkedHashMap<String, ObjectType> objectTypeCache;
 
     /*
      * default session context (serializable)
@@ -275,7 +275,7 @@ public class SessionImpl implements Session {
             cache = createCache();
 
             // clear object type cache
-            objectTypeCache = new IdentityHashMap<TypeDefinition, ObjectType>();
+            objectTypeCache = null;
 
             // clear provider cache
             getBinding().clearAllCaches();
@@ -770,7 +770,7 @@ public class SessionImpl implements Session {
         TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
                 typeId, null);
 
-        return convertTypeDefinition(typeDefinition);
+        return convertAndCacheTypeDefinition(typeDefinition, true);
     }
 
     public ObjectType getTypeDefinition(String typeId, boolean useCache) {
@@ -783,7 +783,7 @@ public class SessionImpl implements Session {
         ExtendedRepositoryService extRepSrv = (ExtendedRepositoryService) service;
         TypeDefinition typeDefinition = extRepSrv.getTypeDefinition(getRepositoryId(), typeId, null, useCache);
 
-        return convertTypeDefinition(typeDefinition);
+        return convertAndCacheTypeDefinition(typeDefinition, useCache);
     }
 
     public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions) {
@@ -810,27 +810,73 @@ public class SessionImpl implements Session {
         return result;
     }
 
-    /**
-     * Converts a type definition into an object type. If the object type is
-     * cached, it returns the cached object. Otherwise it creates an object type
-     * object and puts it into the cache.
-     */
     private ObjectType convertTypeDefinition(TypeDefinition typeDefinition) {
+        return objectFactory.convertTypeDefinition(typeDefinition);
+    }
+
+    /**
+     * Converts a type definition into an object type and caches the result.
+     * 
+     * The cache should only be used for type definitions that have been fetched
+     * with getTypeDefinition() because the high level cache should roughly
+     * correspond to the low level type cache. The type definitions returned by
+     * getTypeChildren() and getTypeDescendants() are not cached in the low
+     * level cache and therefore shouldn't be cached here.
+     */
+    private ObjectType convertAndCacheTypeDefinition(TypeDefinition typeDefinition, boolean useCache) {
+        ObjectType result = null;
+
         lock.writeLock().lock();
         try {
-            ObjectType result = null;
             if (objectTypeCache == null) {
-                objectTypeCache = new IdentityHashMap<TypeDefinition, ObjectType>();
-            } else {
-                result = objectTypeCache.get(typeDefinition);
+                int cacheSize;
+                try {
+                    cacheSize = Integer.valueOf(parameters.get(SessionParameter.CACHE_SIZE_TYPES));
+                    if (cacheSize < 0) {
+                        cacheSize = SessionParameterDefaults.CACHE_SIZE_TYPES;
+                    }
+                } catch (NumberFormatException nfe) {
+                    cacheSize = SessionParameterDefaults.CACHE_SIZE_TYPES;
+                }
+
+                final int maxEntries = cacheSize;
+
+                objectTypeCache = new LinkedHashMap<String, ObjectType>(maxEntries + 1, 0.70f, true) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public boolean removeEldestEntry(Map.Entry<String, ObjectType> eldest) {
+                        return size() > maxEntries;
+                    }
+                };
             }
 
-            if (result == null) {
+            if (!useCache) {
                 result = objectFactory.convertTypeDefinition(typeDefinition);
-                objectTypeCache.put(typeDefinition, result);
+                objectTypeCache.put(result.getId(), result);
+            } else {
+                result = objectTypeCache.get(typeDefinition.getId());
+                if (result == null) {
+                    result = objectFactory.convertTypeDefinition(typeDefinition);
+                    objectTypeCache.put(result.getId(), result);
+                }
             }
 
             return result;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Removes the object type object with the given type ID from the cache.
+     */
+    private void removeFromObjectTypeCache(String typeId) {
+        lock.writeLock().lock();
+        try {
+            if (objectTypeCache != null) {
+                objectTypeCache.remove(typeId);
+            }
         } finally {
             lock.writeLock().unlock();
         }
@@ -864,29 +910,6 @@ public class SessionImpl implements Session {
 
         getBinding().getRepositoryService().deleteType(getRepositoryId(), typeId, null);
         removeFromObjectTypeCache(typeId);
-    }
-
-    /**
-     * Removes the object type object with the given type ID from the cache.
-     */
-    private void removeFromObjectTypeCache(String typeId) {
-        lock.writeLock().lock();
-        try {
-            if (objectTypeCache == null) {
-                return;
-            }
-
-            Iterator<TypeDefinition> iter = objectTypeCache.keySet().iterator();
-            while (iter.hasNext()) {
-                TypeDefinition typeDef = iter.next();
-                if (typeDef.getId().equals(typeId)) {
-                    iter.remove();
-                    break;
-                }
-            }
-        } finally {
-            lock.writeLock().unlock();
-        }
     }
 
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {

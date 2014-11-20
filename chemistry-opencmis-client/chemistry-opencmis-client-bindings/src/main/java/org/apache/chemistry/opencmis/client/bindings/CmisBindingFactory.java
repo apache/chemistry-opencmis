@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.SessionParameterDefaults;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
@@ -132,7 +133,8 @@ public class CmisBindingFactory {
         }
         if (typeDefCache == null) {
             if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
-                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+                sessionParameters
+                        .put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_HTTP_BASIC)) {
@@ -172,7 +174,8 @@ public class CmisBindingFactory {
         }
         if (typeDefCache == null) {
             if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
-                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+                sessionParameters
+                        .put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         if (!sessionParameters.containsKey(SessionParameter.AUTH_SOAP_USERNAMETOKEN)) {
@@ -231,7 +234,8 @@ public class CmisBindingFactory {
         }
         if (typeDefCache == null) {
             if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
-                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+                sessionParameters
+                        .put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         if (!sessionParameters.containsKey(SessionParameter.BROWSER_SUCCINCT)) {
@@ -264,7 +268,8 @@ public class CmisBindingFactory {
         sessionParameters.put(SessionParameter.BINDING_SPI_CLASS, BINDING_SPI_LOCAL);
         if (typeDefCache == null) {
             if (!sessionParameters.containsKey(SessionParameter.TYPE_DEFINITION_CACHE_CLASS)) {
-                sessionParameters.put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
+                sessionParameters
+                        .put(SessionParameter.TYPE_DEFINITION_CACHE_CLASS, DEFAULT_TYPE_DEFINITION_CACHE_CLASS);
             }
         }
         addDefaultParameters(sessionParameters);
@@ -332,9 +337,10 @@ public class CmisBindingFactory {
     private static Map<String, String> createNewDefaultParameters() {
         Map<String, String> result = new HashMap<String, String>();
 
-        result.put(SessionParameter.CACHE_SIZE_REPOSITORIES, "10");
-        result.put(SessionParameter.CACHE_SIZE_TYPES, "100");
-        result.put(SessionParameter.CACHE_SIZE_LINKS, "400");
+        result.put(SessionParameter.CACHE_SIZE_REPOSITORIES,
+                String.valueOf(SessionParameterDefaults.CACHE_SIZE_REPOSITORIES));
+        result.put(SessionParameter.CACHE_SIZE_TYPES, String.valueOf(SessionParameterDefaults.CACHE_SIZE_TYPES));
+        result.put(SessionParameter.CACHE_SIZE_LINKS, String.valueOf(SessionParameterDefaults.CACHE_SIZE_LINKS));
 
         return result;
     }
