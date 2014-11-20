@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>13</version>
+        <version>16</version>
     </parent>
 
     <!-- Project Information -->
@@ -376,6 +376,7 @@
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
                     <encoding>UTF-8</encoding>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     <compilerArgument>-XDignore.symbol.file</compilerArgument>
                 </configuration>
             </plugin>
