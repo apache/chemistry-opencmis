@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.ctc.wstx.api.InvalidCharHandler;
+import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxInputFactory;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
@@ -54,6 +56,8 @@ public final class XMLUtils {
         try {
             // Woodstox is the only supported and tested StAX implementation
             factory = new WstxInputFactory();
+            factory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
+                    new InvalidCharHandler.ReplacingHandler(' '));
         } catch (Exception e) {
             // other StAX implementations may work, too
             factory = XMLInputFactory.newInstance();
