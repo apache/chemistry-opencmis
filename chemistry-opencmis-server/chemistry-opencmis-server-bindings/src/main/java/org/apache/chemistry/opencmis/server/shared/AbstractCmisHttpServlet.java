@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -71,7 +70,7 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
                 CmisRepositoryContextListener.SERVICES_FACTORY);
 
         if (factory == null) {
-            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
+            throw new ServletException("Service factory not available! Configuration problem?");
         }
 
         // set up stream factory
