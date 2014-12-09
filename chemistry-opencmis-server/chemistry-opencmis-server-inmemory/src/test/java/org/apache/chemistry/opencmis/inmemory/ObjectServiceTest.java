@@ -140,6 +140,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
     public static final String TEST_RESTRICTED_RELATION_TYPE_ID = "RestrictedRelationType";
     public static final String TEST_POLICY_TYPE_ID = "AuditPolicy";
     public static final String TEST_POLICY_PROPERTY_ID = "AuditSettings";
+	private static final String ENCODING_UTF8 = "UTF-8";
 
     ObjectCreator fCreator;
 
@@ -1142,8 +1143,6 @@ public class ObjectServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    @Ignore
- // Disable causing a failure on Java8  
     public void testGetPartialContent() throws IOException, UnsupportedEncodingException {
         log.info("starting testGetPartialContent() ...");
         final String STREAM_NAME  = "data.txt";
@@ -1159,7 +1158,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         String postfix = "################ ~~~~POSTFIX Please ignore POSTFIX POSTFIX POSTFIX ~~~~ ################";
 
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(ba); 
+        PrintStream printStream = new PrintStream(ba, false, ENCODING_UTF8); 
         printStream.println(prefix);
         printStream.println(main);
         printStream.println(postfix);
@@ -1186,7 +1185,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         byte[] bytesRead = new byte[10240];
         InputStream is = readContent.getStream();
         int lengthRead = is.read(bytesRead);
-        String result = new String(bytesRead, 0, lengthRead, "UTF-8");
+        String result = new String(bytesRead, 0, lengthRead, ENCODING_UTF8);
         assertEquals(length, lengthRead);
         assertEquals(main, result);
         
@@ -1239,10 +1238,9 @@ public class ObjectServiceTest extends AbstractServiceTest {
             assertEquals(objs.size(), newObjs.size());
             for (int i = 0; i < newObjs.size(); i++) {
                 assertEquals(objs.get(i).getId(), newObjs.get(i).getId());
-// Disable one check for now, causing a failure on Java8                
-//                assertTrue(!objs.get(i).getChangeToken().equals(newObjs.get(i).getChangeToken()));
+                assertTrue(!objs.get(i).getChangeToken().equals(newObjs.get(i).getChangeToken()));
             }
-            // check that new propertie are set
+            // check that new properties are set
             verifyUpdatedProperties(id1, MY_CUSTOM_NAME);
             verifyUpdatedProperties(id2, MY_CUSTOM_NAME_2);
 
