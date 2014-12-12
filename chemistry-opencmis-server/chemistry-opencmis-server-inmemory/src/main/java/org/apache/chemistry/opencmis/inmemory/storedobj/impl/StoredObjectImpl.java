@@ -142,7 +142,16 @@ public class StoredObjectImpl implements StoredObject {
 
     @Override
     public void setModifiedAtNow() {
-        this.fModifiedAt = getNow();
+    	GregorianCalendar now = getNow();
+    	// ensure a larger time for modification date and change token:
+    	while (now.getTimeInMillis() == fModifiedAt.getTimeInMillis()) {
+    		try {
+    			Thread.sleep(1);
+    		} catch (InterruptedException ex) {    			
+    		}
+    		now = getNow();
+    	}
+        this.fModifiedAt = now;
     }
 
     @Override

@@ -1173,7 +1173,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             log.info("createDocument succeeded with created id: " + id);
         }
         
-        int offset = prefix.length() + 1; // +1 for \n
+        int offset = prefix.length() + System.getProperty("line.separator").length(); // for \n
         int length = main.length();
 		ContentStream readContent = fObjSvc.getContentStream(fRepositoryId, id, null,
 				BigInteger.valueOf(offset), BigInteger.valueOf(length), null);
