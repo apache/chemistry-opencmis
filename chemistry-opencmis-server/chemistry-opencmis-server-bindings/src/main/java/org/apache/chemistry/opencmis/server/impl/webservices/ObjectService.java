@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.closeStream;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
@@ -92,6 +93,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             String id = service.createDocument(repositoryId, convert(properties), folderId,
                     convert(contentStream, false), convert(VersioningState.class, versioningState), policies,
                     convert(addAces, null), convert(removeAces, null), extData);
+
+            closeStream(contentStream);
 
             if (stopAfterService(service)) {
                 return;
@@ -565,6 +568,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
             service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder,
                     convert(contentStream, false), extData);
 
+            closeStream(contentStream);
+
             if (stopAfterService(service)) {
                 return;
             }
@@ -596,6 +601,8 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
 
             service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, convert(contentStream, true),
                     isLastChunk, extData);
+
+            closeStream(contentStream);
 
             if (stopAfterService(service)) {
                 return;

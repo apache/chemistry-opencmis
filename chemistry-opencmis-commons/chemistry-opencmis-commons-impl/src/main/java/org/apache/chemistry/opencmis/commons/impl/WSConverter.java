@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -281,24 +282,30 @@ public final class WSConverter {
 
     private static Class<?> streamDataHandlerClass1;
     private static Method streamDataHandlerReadMethod1;
+    private static Method streamDataHandlerCloseMethod1;
     private static Class<?> streamDataHandlerClass2;
     private static Method streamDataHandlerReadMethod2;
+    private static Method streamDataHandlerCloseMethod2;
 
     static {
         try {
             streamDataHandlerClass1 = Class.forName("org.jvnet.staxex.StreamingDataHandler");
             streamDataHandlerReadMethod1 = streamDataHandlerClass1.getMethod("readOnce", new Class<?>[0]);
+            streamDataHandlerCloseMethod1 = streamDataHandlerClass1.getMethod("close", new Class<?>[0]);
         } catch (Exception e) {
             streamDataHandlerClass1 = null;
             streamDataHandlerReadMethod1 = null;
+            streamDataHandlerCloseMethod1 = null;
         }
 
         try {
             streamDataHandlerClass2 = Class.forName("com.sun.xml.internal.org.jvnet.staxex.StreamingDataHandler");
             streamDataHandlerReadMethod2 = streamDataHandlerClass2.getMethod("readOnce", new Class<?>[0]);
+            streamDataHandlerCloseMethod2 = streamDataHandlerClass1.getMethod("close", new Class<?>[0]);
         } catch (Exception e) {
             streamDataHandlerClass2 = null;
             streamDataHandlerReadMethod2 = null;
+            streamDataHandlerCloseMethod2 = null;
         }
     }
 
@@ -2643,6 +2650,33 @@ public final class WSConverter {
         convertExtension(contentStream, result);
 
         return result;
+    }
+
+    public static void closeStream(CmisContentStreamType contentStream) {
+        if (contentStream == null) {
+            return;
+        }
+
+        DataHandler streamDataHandler = contentStream.getStream();
+
+        if (streamDataHandler != null) {
+            try {
+                if (streamDataHandler instanceof Closeable) {
+                    ((Closeable) streamDataHandler).close();
+                } else {
+                    if (streamDataHandlerClass1 != null && streamDataHandlerClass1.isInstance(streamDataHandler)) {
+                        streamDataHandlerCloseMethod1.invoke(streamDataHandler, (Object[]) null);
+                    } else if (streamDataHandlerClass2 != null && streamDataHandlerClass2.isInstance(streamDataHandler)) {
+                        streamDataHandlerCloseMethod2.invoke(streamDataHandler, (Object[]) null);
+                    }
+                }
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing the stream failed: " + e.toString(), e);
+                }
+            }
+        }
+
     }
 
     /**

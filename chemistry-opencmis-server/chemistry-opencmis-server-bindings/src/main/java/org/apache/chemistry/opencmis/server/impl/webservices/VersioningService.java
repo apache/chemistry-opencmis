@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import static org.apache.chemistry.opencmis.commons.impl.WSConverter.closeStream;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convert;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertExtensionHolder;
 import static org.apache.chemistry.opencmis.commons.impl.WSConverter.convertHolder;
@@ -104,6 +105,8 @@ public class VersioningService extends AbstractService implements VersioningServ
             service.checkIn(repositoryId, objectIdHolder, major, convert(properties), convert(contentStream, false),
                     checkinComment, policies, convert(addAces, null), convert(removeAces, null), extData);
 
+            closeStream(contentStream);
+            
             if (stopAfterService(service)) {
                 return;
             }
