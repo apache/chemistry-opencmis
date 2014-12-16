@@ -105,10 +105,22 @@ public class FolderTest extends TestCase {
         assertEquals(getPath(f11), "/Folder 1/Folder B");
         assertNull(fStore.getObjectByPath(oldPath, USER));
         assertEquals(f11, fStore.getObjectByPath("/Folder 1/Folder B", USER));
+
+        // rename to existing name
         try {
+        	newName = f3.getName();
             fStore.rename(f2, newName, USER);
             fail("Should not allow to rename a folder to an existing name");
         } catch (Exception e) {
+        }
+
+        // rename to same name
+        try {
+            newName = f2.getName();
+        	fStore.rename(f2, f2.getName(), USER);
+            assertEquals(f2.getName(), newName);
+        } catch (Exception e) {
+            fail("Rename with same name as before should succeed.");
         }
 
         // rename root folder

@@ -760,6 +760,9 @@ public class ObjectStoreImpl implements ObjectStore {
             if (so.getId().equals(fRootFolder.getId())) {
                 throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
             }
+            if (so.getName().equals(newName)) {
+            	return;
+            }
             if (so instanceof Fileable) {
                 for (String folderId : ((Fileable)so).getParentIds()) {
                     Folder folder = (Folder) getObjectById(folderId);
