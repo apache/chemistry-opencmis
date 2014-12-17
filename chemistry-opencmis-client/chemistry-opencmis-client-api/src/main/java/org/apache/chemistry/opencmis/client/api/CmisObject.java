@@ -140,7 +140,7 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * @param properties
      *            the properties to update
      * @param refresh
-     *            {@code true} if this object should be refresh after the
+     *            {@code true} if this object should be refreshed after the
      *            update, {@code false} if not
      * 
      * @return the object ID of the updated object
@@ -172,7 +172,7 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * @param newName
      *            the new name, not {@code null} or empty
      * @param refresh
-     *            {@code true} if this object should be refresh after the
+     *            {@code true} if this object should be refreshed after the
      *            update, {@code false} if not
      * 
      * @return the object ID of the updated object

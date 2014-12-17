@@ -958,7 +958,7 @@ public class SessionImpl implements Session {
     public ItemIterable<CmisObject> queryObjects(String typeId, String where, final boolean searchAllVersions,
             OperationContext context) {
         if (typeId == null || typeId.trim().length() == 0) {
-            throw new IllegalArgumentException("Type id must be set!");
+            throw new IllegalArgumentException("Type ID must be set!");
         }
 
         if (context == null) {
@@ -1042,7 +1042,7 @@ public class SessionImpl implements Session {
         try {
             binding = CmisBindingHelper.createBinding(parameters, authenticationProvider, typeDefCache);
 
-            /* get initial repository id from session parameter */
+            /* get initial repository ID from session parameter */
             String repositoryId = parameters.get(SessionParameter.REPOSITORY_ID);
             if (repositoryId == null) {
                 throw new IllegalStateException("Repository ID is not set!");
@@ -1241,7 +1241,7 @@ public class SessionImpl implements Session {
     public ItemIterable<Relationship> getRelationships(ObjectId objectId, final boolean includeSubRelationshipTypes,
             final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
         if (context == null) {
             throw new IllegalArgumentException("Operation context must be set!");
@@ -1347,7 +1347,7 @@ public class SessionImpl implements Session {
 
     public void delete(ObjectId objectId, boolean allVersions) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
 
         getBinding().getObjectService().deleteObject(getRepositoryId(), objectId.getId(), allVersions, null);
@@ -1362,7 +1362,7 @@ public class SessionImpl implements Session {
 
     public ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length) {
         if ((docId == null) || (docId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid document id!");
+            throw new IllegalArgumentException("Invalid document ID!");
         }
 
         // get the stream
@@ -1382,7 +1382,7 @@ public class SessionImpl implements Session {
 
     public Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
 
         String id = objectId.getId();
@@ -1392,7 +1392,7 @@ public class SessionImpl implements Session {
 
     public Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
 
         ObjectFactory of = getObjectFactory();
@@ -1403,7 +1403,7 @@ public class SessionImpl implements Session {
 
     public Acl setAcl(ObjectId objectId, List<Ace> aces) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
         if (aces == null) {
             aces = Collections.emptyList();
@@ -1423,7 +1423,7 @@ public class SessionImpl implements Session {
 
     public void applyPolicy(ObjectId objectId, ObjectId... policyIds) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
 
         if ((policyIds == null) || (policyIds.length == 0)) {
@@ -1446,7 +1446,7 @@ public class SessionImpl implements Session {
 
     public void removePolicy(ObjectId objectId, ObjectId... policyIds) {
         if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object id!");
+            throw new IllegalArgumentException("Invalid object ID!");
         }
 
         if ((policyIds == null) || (policyIds.length == 0)) {

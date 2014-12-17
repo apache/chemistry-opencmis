@@ -381,7 +381,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             Properties properties, ExtensionsData extension) {
         // we need an object ID
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // build URL
@@ -447,7 +447,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             ExtensionsData extension) {
         // we need an object id
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // build URL
@@ -528,7 +528,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         // we need an object id
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // build URL
@@ -564,7 +564,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         // we need an object id
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // build URL
@@ -600,7 +600,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
             ExtensionsData extension) {
         // we need an object id
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
-            throw new CmisInvalidArgumentException("Object id must be set!");
+            throw new CmisInvalidArgumentException("Object ID must be set!");
         }
 
         // build URL

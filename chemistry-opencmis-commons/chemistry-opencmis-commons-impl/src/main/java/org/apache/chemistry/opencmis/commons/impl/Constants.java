@@ -199,7 +199,6 @@ public final class Constants {
     public static final String PARAM_RENDITION_FILTER = "renditionFilter";
     public static final String PARAM_REPOSITORY_ID = "repositoryId";
     public static final String PARAM_RETURN_VERSION = "returnVersion";
-    public static final String PARAM_ROPERTY_DEFINITIONS = "includePropertyDefinitions";
     public static final String PARAM_SKIP_COUNT = "skipCount";
     public static final String PARAM_SOURCE_FOLDER_ID = "sourceFolderId";
     public static final String PARAM_TARGET_FOLDER_ID = "targetFolderId";
