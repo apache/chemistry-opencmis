@@ -143,6 +143,12 @@ public class UpdateSmokeTest extends AbstractSessionTest {
         f = createResult(FAILURE, "Folder name doesn't match updated value!");
         addResult(assertEquals(FOLDER_NAME2, folder.getName(), null, f));
 
+        // update again with the same name
+        folder.rename(FOLDER_NAME2, true);
+        
+        f = createResult(FAILURE, "Folder name doesn't match updated value!");
+        addResult(assertEquals(FOLDER_NAME2, folder.getName(), null, f));
+        
         deleteObject(folder);
     }
 }

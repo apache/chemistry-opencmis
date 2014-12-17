@@ -23,15 +23,23 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.OK;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 import org.apache.chemistry.opencmis.tck.impl.CmisTestResultImpl;
@@ -70,6 +78,13 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             int i = 0;
             for (String propId : doc.getType().getPropertyDefinitions().keySet()) {
                 propertiesToCheck[i++] = propId;
+            }
+
+            Map<String, Object> writableProperties = new HashMap<String, Object>();
+            for (Property<?> property : doc.getProperties()) {
+                if (property.getDefinition().getUpdatability() == Updatability.READWRITE) {
+                    writableProperties.put(property.getId(), property.getValue());
+                }
             }
 
             // check out
@@ -133,6 +148,64 @@ public class VersioningSmokeTest extends AbstractSessionTest {
 
             // check version series
             addResult(checkVersionSeries(session, versions, propertiesToCheck, "Test version series after check in"));
+
+            // check out again
+            pwcId = doc.checkOut();
+            pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 3"));
+
+            checkCheckedOut(pwc);
+
+            // check in giving back all updateable properties
+            ObjectId thirdVersionId = pwc.checkIn(true, writableProperties, null, "Test Version 3");
+            Document thirdVersion = (Document) session.getObject(thirdVersionId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, thirdVersion, getAllProperties(thirdVersion), "New version compliance"));
+
+            // check out again
+            pwcId = doc.checkOut();
+            pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 4"));
+
+            checkCheckedOut(pwc);
+
+            // check in giving a new content stream
+            String fourthContent = "new content";
+            byte[] fourthContentBytes = IOUtils.toUTF8Bytes(fourthContent);
+            ContentStream fourthContentStream = new ContentStreamImpl("version4",
+                    BigInteger.valueOf(fourthContentBytes.length), "text/plain", new ByteArrayInputStream(
+                            fourthContentBytes));
+
+            ObjectId fourthVersionId = pwc.checkIn(true, null, fourthContentStream, "Test Version 5");
+            Document fourthVersion = (Document) session.getObject(fourthVersionId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, fourthVersion, getAllProperties(fourthVersion), "New version compliance"));
+
+            checkCheckedIn(fourthVersion);
+
+            // check out again
+            pwcId = doc.checkOut();
+            pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 5"));
+
+            checkCheckedOut(pwc);
+            
+            // check in giving properties and a new content stream
+            String fifthContent = "brand-new content";
+            byte[] fifthContentBytes = IOUtils.toUTF8Bytes(fifthContent);
+            ContentStream fifthContentStream = new ContentStreamImpl("version5",
+                    BigInteger.valueOf(fifthContentBytes.length), "text/plain", new ByteArrayInputStream(
+                            fifthContentBytes));
+
+            ObjectId fifthVersionId = pwc.checkIn(true, writableProperties, fifthContentStream, "Test Version 5");
+            Document fifthVersion = (Document) session.getObject(fifthVersionId, SELECT_ALL_NO_CACHE_OC);
+
+            addResult(checkObject(session, fifthVersion, getAllProperties(fifthVersion), "New version compliance"));
+
+            checkCheckedIn(fifthVersion);
 
             // remove the document
             deleteObject(doc);
