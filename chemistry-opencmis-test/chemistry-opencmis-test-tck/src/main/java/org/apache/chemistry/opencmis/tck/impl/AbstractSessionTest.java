@@ -285,6 +285,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Object Type Id is not set!");
         }
 
+        // check type
+        ObjectType type;
+        try {
+            type = session.getTypeDefinition(objectTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Folder type '" + objectTypeId + "' is not available: " + e.getMessage(), e, true));
+            return null;
+        }
+
+        if (Boolean.FALSE.equals(type.isCreatable())) {
+            addResult(createResult(SKIPPED, "Folder type '" + objectTypeId + "' is not creatable!", true));
+            return null;
+        }
+
+        // create
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -404,6 +420,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             content = "";
         }
 
+        // check type
+        ObjectType type;
+        try {
+            type = session.getTypeDefinition(objectTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Document type '" + objectTypeId + "' is not available: " + e.getMessage(), e, true));
+            return null;
+        }
+
+        if (Boolean.FALSE.equals(type.isCreatable())) {
+            addResult(createResult(SKIPPED, "Document type '" + objectTypeId + "' is not creatable!", true));
+            return null;
+        }
+
+        // create
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -412,7 +444,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, Arrays.asList(secondaryTypeIds));
         }
 
-        TypeDefinition type = session.getTypeDefinition(objectTypeId);
+        type = session.getTypeDefinition(objectTypeId);
         if (!(type instanceof DocumentTypeDefinition)) {
             addResult(createResult(FAILURE, "Type is not a document type! Type: " + objectTypeId, true));
             return null;
@@ -522,6 +554,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Object Type Id is not set!");
         }
 
+        // check type
+        ObjectType type;
+        try {
+            type = session.getTypeDefinition(objectTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Relationship type '" + objectTypeId + "' is not available: "
+                    + e.getMessage(), e, true));
+            return null;
+        }
+
+        if (Boolean.FALSE.equals(type.isCreatable())) {
+            addResult(createResult(SKIPPED, "Relationship type '" + objectTypeId + "' is not creatable!", true));
+            return null;
+        }
+
+        // create
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -573,6 +621,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Object Type Id is not set!");
         }
 
+        // check type
+        ObjectType type;
+        try {
+            type = session.getTypeDefinition(objectTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Item type '" + objectTypeId + "' is not available: " + e.getMessage(), e, true));
+            return null;
+        }
+
+        if (Boolean.FALSE.equals(type.isCreatable())) {
+            addResult(createResult(SKIPPED, "Item type '" + objectTypeId + "' is not creatable!", true));
+            return null;
+        }
+
+        // create
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
