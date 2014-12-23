@@ -236,12 +236,24 @@ public final class JSONConverter {
 
         if (addExtendedDatetimeExtensionFeature) {
             JSONArray extendedFeatures = (JSONArray) result.get(JSON_REPINFO_EXTENDED_FEATURES);
+            boolean addFeature = true;
             if (extendedFeatures == null) {
                 extendedFeatures = new JSONArray();
                 result.put(JSON_REPINFO_EXTENDED_FEATURES, extendedFeatures);
+            } else {
+                for (Object ef : extendedFeatures) {
+                    if (ef instanceof ExtensionFeature) {
+                        if (ExtensionFeatures.EXTENDED_DATETIME_FORMAT.getId().equals(((ExtensionFeature) ef).getId())) {
+                            addFeature = false;
+                            break;
+                        }
+                    }
+                }
             }
 
-            extendedFeatures.add(convert(ExtensionFeatures.EXTENDED_DATETIME_FORMAT));
+            if (addFeature) {
+                extendedFeatures.add(convert(ExtensionFeatures.EXTENDED_DATETIME_FORMAT));
+            }
         }
 
         result.put(JSON_REPINFO_REPOSITORY_URL, repositoryUrl);
