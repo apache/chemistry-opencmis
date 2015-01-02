@@ -309,7 +309,7 @@ public final class XMLConverter {
 
         XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACLCAP_SUPPORTED_PERMISSIONS,
                 source.getSupportedPermissions());
-        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAGACLCAP_ACL_PROPAGATION, source.getAclPropagation());
+        XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_ACLCAP_ACL_PROPAGATION, source.getAclPropagation());
         if (source.getPermissions() != null) {
             for (PermissionDefinition pd : source.getPermissions()) {
                 writer.startTag(NAMESPACE_CMIS, TAG_ACLCAP_PERMISSIONS);
@@ -580,13 +580,13 @@ public final class XMLConverter {
             PropertyHtmlDefinition def = (PropertyHtmlDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyHtmlImpl(null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyUriDefinition) {
             PropertyUriDefinition def = (PropertyUriDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyUriImpl(null, def.getDefaultValue()), true);
             }
         }
 
@@ -1445,7 +1445,7 @@ public final class XMLConverter {
                     return true;
                 }
 
-                if (isTag(name, TAGACLCAP_ACL_PROPAGATION)) {
+                if (isTag(name, TAG_ACLCAP_ACL_PROPAGATION)) {
                     target.setAclPropagation(readEnum(parser, AclPropagation.class));
                     return true;
                 }

@@ -96,7 +96,7 @@ public final class XMLConstants {
     public static final String TAG_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL = "controllableACL";
 
     public static final String TAG_ACLCAP_SUPPORTED_PERMISSIONS = "supportedPermissions";
-    public static final String TAGACLCAP_ACL_PROPAGATION = "propagation";
+    public static final String TAG_ACLCAP_ACL_PROPAGATION = "propagation";
     public static final String TAG_ACLCAP_PERMISSIONS = "permissions";
     public static final String TAG_ACLCAP_PERMISSION_MAPPING = "mapping";
 
