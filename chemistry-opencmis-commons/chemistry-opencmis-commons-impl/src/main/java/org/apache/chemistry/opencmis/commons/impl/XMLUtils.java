@@ -55,9 +55,11 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            factory = new WstxInputFactory();
-            factory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
-                    new InvalidCharHandler.ReplacingHandler(' '));
+            WstxInputFactory wstxFactory = (WstxInputFactory) ClassLoaderUtil.loadClass(
+                    "com.ctc.wstx.stax.WstxInputFactory").newInstance();
+            wstxFactory.configureForSpeed();
+
+            factory = wstxFactory;
         } catch (Exception e) {
             // other StAX implementations may work, too
             factory = XMLInputFactory.newInstance();
@@ -69,7 +71,8 @@ public final class XMLUtils {
                 // ignore
             }
 
-            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName());
+            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName() + " (Exception: " + e.toString() + ")",
+                    e);
         }
 
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
@@ -85,7 +88,13 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            factory = new WstxOutputFactory();
+            WstxOutputFactory wstxFactory = (WstxOutputFactory) ClassLoaderUtil.loadClass(
+                    "com.ctc.wstx.stax.WstxOutputFactory").newInstance();
+            wstxFactory.configureForSpeed();
+            wstxFactory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
+                    new InvalidCharHandler.ReplacingHandler(' '));
+
+            factory = wstxFactory;
         } catch (Exception e) {
             // other StAX implementations may work, too
             factory = XMLOutputFactory.newInstance();
@@ -97,7 +106,8 @@ public final class XMLUtils {
                 // ignore
             }
 
-            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName());
+            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName() + " (Exception: " + e.toString() + ")",
+                    e);
         }
 
         factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
