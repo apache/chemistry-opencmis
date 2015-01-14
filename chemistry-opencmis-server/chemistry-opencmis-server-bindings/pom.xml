@@ -52,17 +52,21 @@
         <dependency>
             <groupId>org.jvnet.mimepull</groupId>
             <artifactId>mimepull</artifactId>
-            <version>1.9.4</version>
+            <version>${mimepull.version}</version>
         </dependency> 
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <version>${jaxws-rt.version}</version>
             <exclusions>
-                <exclusion>	 
-                    <groupId>stax</groupId>	 
-                    <artifactId>stax-api</artifactId>	 
-                </exclusion>	 
+                <exclusion> <!-- included in Java 6 and above -->
+                    <groupId>javax.xml.stream</groupId>
+                    <artifactId>stax-api</artifactId>
+                </exclusion>
+                <exclusion> <!-- included in Java 6 and above -->
+                    <groupId>stax</groupId>
+                    <artifactId>stax-api</artifactId>
+                </exclusion>
                 <exclusion>	 
                     <groupId>org.codehaus.woodstox</groupId>	 
                     <artifactId>wstx-asl</artifactId>	 

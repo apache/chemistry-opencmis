@@ -236,6 +236,7 @@
         <jaxws-rt.version>2.1.7</jaxws-rt.version>
         <cxf.version>2.7.11</cxf.version>
         <axis2.version>1.6.2</axis2.version>
+        <mimepull.version>1.9.4</mimepull.version>
     </properties>
 
     <build>

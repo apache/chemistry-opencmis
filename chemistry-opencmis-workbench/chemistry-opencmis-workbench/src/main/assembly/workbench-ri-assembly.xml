@@ -71,6 +71,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>com.sun.xml.ws:jaxws-rt</include>
+                <include>org.jvnet.mimepull:mimepull</include>
             </includes>
         </dependencySet>
         <dependencySet>
