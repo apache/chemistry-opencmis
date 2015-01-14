@@ -39,8 +39,7 @@ public class CopyTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Copy Test");
-        setDescription("Creates two folders and a document and copies the document from one folder to the other. "
-                + " If the AtomPub binding is used, this test is skipped.");
+        setDescription("Creates two folders and a document and copies the document from one folder to the other.");
     }
 
     @Override
