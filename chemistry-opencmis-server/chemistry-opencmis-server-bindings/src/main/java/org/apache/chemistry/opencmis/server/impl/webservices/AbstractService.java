@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -108,8 +109,9 @@ public abstract class AbstractService {
             throw new CmisRuntimeException("Server configuration issue. CMIS version not set!");
         }
 
+        TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(factory, repositoryId);
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, cmisVersion, repositoryId,
-                servletContext, request, response, factory, null);
+                servletContext, request, response, factory, streamFactoy);
 
         Map<String, List<String>> headers = (Map<String, List<String>>) wsContext.getMessageContext().get(
                 MessageContext.HTTP_REQUEST_HEADERS);

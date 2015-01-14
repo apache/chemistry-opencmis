@@ -70,7 +70,7 @@ public interface CallContext {
     String MAX_CONTENT_SIZE = "maxContentSize";
     /** Key: encrypt temp files (values is a Boolean) */
     String ENCRYPT_TEMP_FILE = "encryptTempFiles";
-    /** Key: factory for threshold streams (value is a ThresholdOutputStreamFactory) */
+    /** Key: factory for threshold streams (value is a TempStoreOutputStreamFactory) */
     String STREAM_FACTORY = "streamFactory";
     
     /**

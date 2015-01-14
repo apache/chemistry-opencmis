@@ -22,19 +22,13 @@ import java.io.File;
 
 /**
  * A factory for {@link ThresholdOutputStream} objects.
+ * 
+ * @deprecated use {@link TempStoreOutputStreamFactory}
  */
-public final class ThresholdOutputStreamFactory {
-
-    private File tempDir;
-    private int memoryThreshold;
-    private long maxContentSize;
-    private boolean encrypt;
+public final class ThresholdOutputStreamFactory extends TempStoreOutputStreamFactory {
 
     private ThresholdOutputStreamFactory(File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
-        this.tempDir = tempDir;
-        this.memoryThreshold = memoryThreshold;
-        this.maxContentSize = maxContentSize;
-        this.encrypt = encrypt;
+        super(tempDir, memoryThreshold, maxContentSize, encrypt);
     }
 
     /**
@@ -42,8 +36,7 @@ public final class ThresholdOutputStreamFactory {
      * {@link ThresholdOutputStream} objects.
      * 
      * @param tempDir
-     *            temp directory or <code>null</code> for the default temp
-     *            directory
+     *            temp directory or {@code null} for the default temp directory
      * @param memoryThreshold
      *            memory threshold in bytes
      * @param maxContentSize
@@ -59,36 +52,8 @@ public final class ThresholdOutputStreamFactory {
     /**
      * Creates a new {@link ThresholdOutputStream} object.
      */
+    @Override
     public ThresholdOutputStream newOutputStream() {
-        return new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize, encrypt);
-    }
-
-    /**
-     * Returns the temp directory or <code>null</code> for the default temp
-     * directory.
-     */
-    public File getTempDir() {
-        return tempDir;
-    }
-
-    /**
-     * Returns the memory threshold in bytes.
-     */
-    public int getMemoryThreshold() {
-        return memoryThreshold;
-    }
-
-    /**
-     * Returns the max content size in bytes.
-     */
-    public long getMaxContentSize() {
-        return maxContentSize;
-    }
-
-    /**
-     * Indicates if temporary files are encrypted.
-     */
-    public boolean isEncrypted() {
-        return encrypt;
+        return new ThresholdOutputStream(getTempDir(), getMemoryThreshold(), getMaxContentSize(), isEncrypted());
     }
 }

@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.impl.browser.MultipartParser;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.junit.Test;
 
 /**
@@ -410,7 +410,7 @@ public class MultipartParserTest {
     private MultipartParser prepareParser(String boundary, byte[] content) throws Exception {
         HttpServletRequest request = HttpRequestMockHelper.createMultipartRequest(boundary, content);
 
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         return new MultipartParser(request, streamFactory);
     }

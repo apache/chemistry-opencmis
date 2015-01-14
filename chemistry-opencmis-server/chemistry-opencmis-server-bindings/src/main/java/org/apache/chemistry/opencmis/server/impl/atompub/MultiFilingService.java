@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * MultiFiling Service operations.
@@ -52,7 +52,7 @@ public class MultiFilingService {
             // get parameters
             String removeFrom = getStringParameter(request, Constants.PARAM_REMOVE_FROM);
 
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.setIgnoreAtomContentSrc(true); // needed for some clients

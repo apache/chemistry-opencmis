@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * A {@link CallContext} implementation that holds browser binding specific
@@ -53,7 +53,7 @@ public class BrowserCallContextImpl extends CallContextImpl {
 
     public BrowserCallContextImpl(String binding, CmisVersion cmisVersion, String repositoryId,
             ServletContext servletContext, HttpServletRequest request, HttpServletResponse response,
-            CmisServiceFactory factory, ThresholdOutputStreamFactory streamFactory) {
+            CmisServiceFactory factory, TempStoreOutputStreamFactory streamFactory) {
         super(binding, cmisVersion, repositoryId, servletContext, request, response, factory, streamFactory);
     }
 

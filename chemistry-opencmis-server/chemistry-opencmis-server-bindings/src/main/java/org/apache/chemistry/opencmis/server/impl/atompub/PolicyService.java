@@ -31,7 +31,7 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Policy Service operations.
@@ -154,7 +154,7 @@ public class PolicyService {
             // get parameters
             String objectId = getStringParameter(request, Constants.PARAM_ID);
 
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 

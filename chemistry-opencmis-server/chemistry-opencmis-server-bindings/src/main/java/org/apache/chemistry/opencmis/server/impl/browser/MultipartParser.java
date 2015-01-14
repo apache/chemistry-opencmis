@@ -35,8 +35,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Simple multi-part parser, following all necessary standards for the CMIS
@@ -57,7 +57,7 @@ public class MultipartParser {
     private static final byte[] BOUNDARY_PREFIX = { CR, LF, DASH, DASH };
 
     private final HttpServletRequest request;
-    private final ThresholdOutputStreamFactory streamFactory;
+    private final TempStoreOutputStreamFactory streamFactory;
     private final InputStream requestStream;
 
     private byte[] boundary;
@@ -84,7 +84,7 @@ public class MultipartParser {
     private Map<String, byte[][]> rawFields;
     private String charset = IOUtils.ISO_8859_1;
 
-    public MultipartParser(HttpServletRequest request, ThresholdOutputStreamFactory streamFactory) throws IOException {
+    public MultipartParser(HttpServletRequest request, TempStoreOutputStreamFactory streamFactory) throws IOException {
         this.request = request;
         this.streamFactory = streamFactory;
         this.requestStream = request.getInputStream();
@@ -384,7 +384,7 @@ public class MultipartParser {
                     if (newSize < bodyBytesPos + len) {
                         newSize = bodyBytesPos + BUFFER_SIZE;
                     }
-                    
+
                     byte[] newBodyBytes = new byte[newSize];
                     System.arraycopy(bodyBytes, 0, newBodyBytes, 0, bodyBytesPos);
                     bodyBytes = newBodyBytes;
@@ -414,7 +414,7 @@ public class MultipartParser {
     }
 
     private void readBodyAsStream() throws IOException {
-        ThresholdOutputStream stream = streamFactory.newOutputStream();
+        TempStoreOutputStream stream = streamFactory.newOutputStream();
 
         try {
             while (true) {
@@ -435,12 +435,12 @@ public class MultipartParser {
 
             stream.close();
 
-            contentSize = BigInteger.valueOf(stream.getSize());
+            contentSize = BigInteger.valueOf(stream.getLength());
             contentStream = stream.getInputStream();
         } catch (IOException e) {
             // if something went wrong, make sure the temp file will
             // be deleted
-            stream.destroy();
+            stream.destroy(e);
             throw e;
         }
     }

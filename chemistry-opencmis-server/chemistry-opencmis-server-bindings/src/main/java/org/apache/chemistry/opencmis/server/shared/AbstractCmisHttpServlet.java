@@ -47,7 +47,6 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
     private String binding;
     private CmisVersion cmisVersion;
     private CallContextHandler callContextHandler;
-    private ThresholdOutputStreamFactory streamFactory;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -72,10 +71,6 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         if (factory == null) {
             throw new ServletException("Service factory not available! Configuration problem?");
         }
-
-        // set up stream factory
-        streamFactory = ThresholdOutputStreamFactory.newInstance(factory.getTempDirectory(),
-                factory.getMemoryThreshold(), factory.getMaxContentSize(), factory.encryptTempFiles());
     }
 
     /**
@@ -111,17 +106,10 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
     }
 
     /**
-     * Returns the {@link ThresholdOutputStreamFactory}.
-     */
-    protected ThresholdOutputStreamFactory getThresholdOutputStreamFactory() {
-        return streamFactory;
-    }
-
-    /**
      * Creates a {@link CallContext} object from a servlet request.
      */
     protected CallContext createContext(ServletContext servletContext, HttpServletRequest request,
-            HttpServletResponse response) {
+            HttpServletResponse response, TempStoreOutputStreamFactory streamFactory) {
         String[] pathFragments = HttpUtils.splitPath(request);
 
         String repositoryId = null;

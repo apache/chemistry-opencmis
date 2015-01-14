@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -248,6 +249,11 @@ public class SessionParameterMapTest {
         @Override
         public long getMaxContentSize() {
             return 0;
+        }
+
+        @Override
+        public TempStoreOutputStream getTempFileOutputStream(String repositoryId) {
+            return null;
         }
     }
 }

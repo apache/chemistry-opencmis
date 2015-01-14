@@ -83,6 +83,7 @@ import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrapper;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,6 +170,14 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
         CallContext context = null;
         try {
+            // split path
+            String[] pathFragments = HttpUtils.splitPath(request);
+
+            // create stream factory
+            TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(getServiceFactory(),
+                    pathFragments.length > 0 ? pathFragments[0] : null);
+
+            // treat HEAD requests
             if (METHOD_HEAD.equals(request.getMethod())) {
                 request = new HEADHttpServletRequestWrapper(request);
                 response = new NoBodyHttpServletResponseWrapper(response);
@@ -180,8 +189,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             response.addHeader("Cache-Control", "private, max-age=0");
             response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
 
-            context = createContext(getServletContext(), request, response);
-            dispatch(context, request, response);
+            context = createContext(getServletContext(), request, response, streamFactoy);
+            dispatch(context, request, response, pathFragments);
         } catch (Exception e) {
             if (e instanceof CmisUnauthorizedException) {
                 response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
@@ -212,8 +221,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
     /**
      * Dispatches to feed, entry or whatever.
      */
-    private void dispatch(CallContext context, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    private void dispatch(CallContext context, HttpServletRequest request, HttpServletResponse response,
+            String[] pathFragments) throws Exception {
 
         CmisService service = null;
         try {
@@ -221,8 +230,6 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             service = getServiceFactory().getService(context);
 
             // analyze the path
-            String[] pathFragments = HttpUtils.splitPath(request);
-
             if (pathFragments.length < 2) {
                 // root -> service document
                 dispatcher.dispatch("", METHOD_GET, context, service, null, request, response);

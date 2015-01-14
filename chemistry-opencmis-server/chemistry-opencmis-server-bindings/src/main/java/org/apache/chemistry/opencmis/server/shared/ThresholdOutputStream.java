@@ -36,6 +36,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * {@link #getInputStream()} is called or call {@link #destroy()} if the
  * InputStream isn't required!
  */
-public class ThresholdOutputStream extends OutputStream {
+public class ThresholdOutputStream extends TempStoreOutputStream {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThresholdOutputStream.class);
 
@@ -68,7 +69,7 @@ public class ThresholdOutputStream extends OutputStream {
 
     private byte[] buf = null;
     private int bufSize = 0;
-    private long size = 0;
+    private long length = 0;
     private File tempFile;
     private OutputStream tmpStream;
     private Key key;
@@ -184,8 +185,8 @@ public class ThresholdOutputStream extends OutputStream {
         }
     }
 
-    public long getSize() {
-        return size;
+    public long getLength() {
+        return length;
     }
 
     @Override
@@ -200,17 +201,17 @@ public class ThresholdOutputStream extends OutputStream {
                 return;
             }
 
-            if ((maxContentSize > -1) && (size + len > maxContentSize)) {
-                destroy();
+            if ((maxContentSize > -1) && (length + len > maxContentSize)) {
+                destroy(null);
                 throw new CmisConstraintException("Content too big!");
             }
 
             expand(len);
             System.arraycopy(buffer, offset, buf, bufSize, len);
             bufSize += len;
-            size += len;
+            length += len;
         } catch (IOException ioe) {
-            destroy();
+            destroy(ioe);
 
             if (LOG.isErrorEnabled()) {
                 if (tempFile != null) {
@@ -227,8 +228,8 @@ public class ThresholdOutputStream extends OutputStream {
     @Override
     public void write(int oneByte) throws IOException {
         try {
-            if (maxContentSize > -1 && size + 1 > maxContentSize) {
-                destroy();
+            if (maxContentSize > -1 && length + 1 > maxContentSize) {
+                destroy(null);
                 throw new CmisConstraintException("Content too big!");
             }
 
@@ -237,9 +238,9 @@ public class ThresholdOutputStream extends OutputStream {
             }
 
             buf[bufSize++] = (byte) oneByte;
-            size++;
+            length++;
         } catch (IOException ioe) {
-            destroy();
+            destroy(ioe);
 
             if (LOG.isErrorEnabled()) {
                 if (tempFile != null) {
@@ -267,7 +268,7 @@ public class ThresholdOutputStream extends OutputStream {
                 }
                 tmpStream.flush();
             } catch (IOException ioe) {
-                destroy();
+                destroy(ioe);
 
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Flushing the temp file {} failed: {}", tempFile.getAbsolutePath(), ioe.toString(), ioe);
@@ -290,7 +291,12 @@ public class ThresholdOutputStream extends OutputStream {
     /**
      * Destroys the object before it has been read.
      */
-    public void destroy() {
+    @Override
+    public void destroy(Throwable cause) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ThresholdOutputStream destroyed." + (cause == null ? "" : " Cause: " + cause.toString()), cause);
+        }
+
         try {
             if (tmpStream != null) {
                 tmpStream.flush();
@@ -315,6 +321,7 @@ public class ThresholdOutputStream extends OutputStream {
     /**
      * Returns the data as an InputStream.
      */
+    @Override
     public InputStream getInputStream() throws IOException {
         if (tmpStream != null) {
             close();
@@ -367,8 +374,8 @@ public class ThresholdOutputStream extends OutputStream {
          * 
          * @return the length of the stream in bytes
          */
-        public long length() {
-            return size;
+        public long getLength() {
+            return length;
         }
 
         /**

@@ -39,7 +39,7 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Repository Service operations.
@@ -484,7 +484,7 @@ public class RepositoryService {
             assert response != null;
 
             // parse entry
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.parse(request.getInputStream());
@@ -529,7 +529,7 @@ public class RepositoryService {
             assert response != null;
 
             // parse entry
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.parse(request.getInputStream());

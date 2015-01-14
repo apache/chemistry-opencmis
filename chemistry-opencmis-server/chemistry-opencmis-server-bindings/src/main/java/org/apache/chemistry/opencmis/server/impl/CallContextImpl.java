@@ -32,7 +32,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.MutableCallContext;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Implementation of the {@link CallContext} interface.
@@ -45,7 +45,7 @@ public class CallContextImpl implements MutableCallContext {
 
     public CallContextImpl(String binding, CmisVersion cmisVersion, String repositoryId, ServletContext servletContext,
             HttpServletRequest request, HttpServletResponse response, CmisServiceFactory factory,
-            ThresholdOutputStreamFactory streamFactory) {
+            TempStoreOutputStreamFactory streamFactory) {
         this.binding = binding;
         this.objectInfoRequired = BINDING_ATOMPUB.equals(binding);
         put(REPOSITORY_ID, repositoryId);
@@ -61,17 +61,12 @@ public class CallContextImpl implements MutableCallContext {
         put(CallContext.HTTP_SERVLET_REQUEST, request);
         put(CallContext.HTTP_SERVLET_RESPONSE, response);
 
-        if (streamFactory != null) {
-            put(TEMP_DIR, streamFactory.getTempDir());
-            put(MEMORY_THRESHOLD, streamFactory.getMemoryThreshold());
-            put(MAX_CONTENT_SIZE, streamFactory.getMaxContentSize());
-            put(ENCRYPT_TEMP_FILE, streamFactory.isEncrypted());
-            put(STREAM_FACTORY, streamFactory);
-        } else if (factory != null) {
+        if (factory != null) {
             put(TEMP_DIR, factory.getTempDirectory());
             put(MEMORY_THRESHOLD, factory.getMemoryThreshold());
-            put(MAX_CONTENT_SIZE, -1);
-            put(ENCRYPT_TEMP_FILE, false);
+            put(MAX_CONTENT_SIZE, factory.getMaxContentSize());
+            put(ENCRYPT_TEMP_FILE, factory.encryptTempFiles());
+            put(STREAM_FACTORY, streamFactory);
         }
     }
 

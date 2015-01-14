@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.shared.HttpUtils;
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletRequestWrapper {
 
@@ -49,7 +49,7 @@ public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletR
     private InputStream stream;
 
     @SuppressWarnings("unchecked")
-    public POSTHttpServletRequestWrapper(HttpServletRequest request, ThresholdOutputStreamFactory streamFactory)
+    public POSTHttpServletRequestWrapper(HttpServletRequest request, TempStoreOutputStreamFactory streamFactory)
             throws IOException {
         super(request);
 

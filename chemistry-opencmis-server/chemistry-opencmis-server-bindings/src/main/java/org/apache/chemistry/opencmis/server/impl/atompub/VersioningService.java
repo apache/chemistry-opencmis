@@ -33,7 +33,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Versioning Service operations.
@@ -53,7 +53,7 @@ public class VersioningService {
             assert response != null;
 
             // get parameters
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.setIgnoreAtomContentSrc(true); // needed for some clients

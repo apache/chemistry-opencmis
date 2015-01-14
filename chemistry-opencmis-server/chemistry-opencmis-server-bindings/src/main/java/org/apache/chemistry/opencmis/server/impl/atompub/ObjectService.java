@@ -64,7 +64,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfo;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
 /**
  * Object Service operations.
@@ -91,7 +91,7 @@ public class ObjectService {
             VersioningState versioningState = getEnumParameter(request, Constants.PARAM_VERSIONIG_STATE,
                     VersioningState.class);
 
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.setIgnoreAtomContentSrc(true); // needed for some clients
@@ -179,7 +179,7 @@ public class ObjectService {
             assert response != null;
 
             // get parameters
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
@@ -687,7 +687,7 @@ public class ObjectService {
             String checkinComment = getStringParameter(request, Constants.PARAM_CHECKIN_COMMENT);
             Boolean major = getBooleanParameter(request, Constants.PARAM_MAJOR);
 
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
@@ -801,7 +801,7 @@ public class ObjectService {
             assert request != null;
             assert response != null;
 
-            ThresholdOutputStreamFactory streamFactory = (ThresholdOutputStreamFactory) context
+            TempStoreOutputStreamFactory streamFactory = (TempStoreOutputStreamFactory) context
                     .get(CallContext.STREAM_FACTORY);
             AtomEntryParser parser = new AtomEntryParser(streamFactory);
             parser.parse(request.getInputStream());

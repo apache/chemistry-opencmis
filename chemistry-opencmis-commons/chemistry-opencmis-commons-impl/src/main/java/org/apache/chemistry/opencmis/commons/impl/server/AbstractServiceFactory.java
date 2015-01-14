@@ -24,28 +24,34 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
+import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 
 public abstract class AbstractServiceFactory implements CmisServiceFactory {
 
+    @Override
     public void init(Map<String, String> parameters) {
     }
 
+    @Override
     public void destroy() {
     }
 
+    @Override
     public abstract CmisService getService(CallContext context);
 
     /**
      * Returns the Java temp directory.
      */
+    @Override
     public File getTempDirectory() {
         String tempDir = System.getProperty("java.io.tmpdir");
         return new File(tempDir);
     }
 
     /**
-     * Returns <code>false</code>, do not encrypt temporary files.
+     * Returns {@code false}, do not encrypt temporary files.
      */
+    @Override
     public boolean encryptTempFiles() {
         return false;
     }
@@ -53,6 +59,7 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     /**
      * Returns a threshold of 4 MiB.
      */
+    @Override
     public int getMemoryThreshold() {
         return 4 * 1024 * 1024;
     }
@@ -60,7 +67,17 @@ public abstract class AbstractServiceFactory implements CmisServiceFactory {
     /**
      * Returns a max size of 4 GiB.
      */
+    @Override
     public long getMaxContentSize() {
         return (long) 4 * 1024 * 1024 * 1024;
+    }
+
+    /**
+     * Returns {@code null} to indicate that the default, temp files based
+     * implementation should be used.
+     */
+    @Override
+    public TempStoreOutputStream getTempFileOutputStream(String repositoryId) {
+        return null;
     }
 }

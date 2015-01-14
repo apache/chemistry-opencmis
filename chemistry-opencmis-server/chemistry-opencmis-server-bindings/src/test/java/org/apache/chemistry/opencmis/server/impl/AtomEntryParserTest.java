@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyString;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
-import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.junit.Test;
 
 /**
@@ -177,7 +177,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomTitle() throws Exception {
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(ATOM_ENTRY_NAME.getBytes()), streamFactory);
 
@@ -195,7 +195,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testNullStream() throws Exception {
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         AtomEntryParser aep = new AtomEntryParser(null, streamFactory);
 
@@ -208,7 +208,7 @@ public class AtomEntryParserTest {
 
     @Test(expected = XMLStreamException.class)
     public void testEmptyStream() throws Exception {
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         new AtomEntryParser(new ByteArrayInputStream(new byte[0]), streamFactory);
     }
@@ -232,7 +232,7 @@ public class AtomEntryParserTest {
         System.arraycopy(end, 0, entry, entry.length - end.length, end.length);
         Arrays.fill(entry, begin.length, entry.length - end.length, (byte) 'a');
 
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), streamFactory);
         ContentStream contentStream = aep.getContentStream();
@@ -244,7 +244,7 @@ public class AtomEntryParserTest {
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
-        ThresholdOutputStreamFactory streamFactory = ThresholdOutputStreamFactory.newInstance(null, THRESHOLD,
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), streamFactory);
         ContentStream contentStream = aep.getContentStream();
