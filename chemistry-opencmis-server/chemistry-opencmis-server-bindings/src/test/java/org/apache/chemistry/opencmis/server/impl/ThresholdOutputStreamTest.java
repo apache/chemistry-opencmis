@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.server.impl;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -180,7 +181,17 @@ public class ThresholdOutputStreamTest {
                 assertTrue(tis.isInMemory());
             }
 
-            tos.close();
+            File tempFile = tis.getTemporaryFile();
+
+            tis.close();
+
+            assertEquals(-1, tis.read());
+            if (tis.isInMemory()) {
+                assertNull(tempFile);
+            } else {
+                assertNotNull(tempFile);
+                assertFalse(tempFile.exists());
+            }
         }
     }
 
