@@ -75,6 +75,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_HEAD
 import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -262,6 +263,18 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 printError(context, e, request, response);
             }
         } finally {
+            // in any case close the content stream if one has been provided
+            if (request instanceof POSTHttpServletRequestWrapper) {
+                InputStream stream = ((POSTHttpServletRequestWrapper) request).getStream();
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                        LOG.error("Could not close POST stream: {}", e.toString(), e);
+                    }
+                }
+            }
+
             // we are done.
             response.flushBuffer();
         }

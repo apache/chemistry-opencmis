@@ -159,14 +159,18 @@ public class PolicyService {
             AtomEntryParser parser = new AtomEntryParser(request.getInputStream(), streamFactory);
 
             // execute
-            if (stopBeforeService(service)) {
-                return;
-            }
+            try {
+                if (stopBeforeService(service)) {
+                    return;
+                }
 
-            service.applyPolicy(repositoryId, parser.getId(), objectId, null);
+                service.applyPolicy(repositoryId, parser.getId(), objectId, null);
 
-            if (stopAfterService(service)) {
-                return;
+                if (stopAfterService(service)) {
+                    return;
+                }
+            } finally {
+                parser.release();
             }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());

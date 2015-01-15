@@ -194,9 +194,7 @@ public final class AtomEntryParser {
      * Parses the stream.
      */
     public void parse(InputStream stream) throws XMLStreamException, IOException {
-        object = null;
-        atomContentStream = null;
-        cmisContentStream = null;
+        release();
 
         if (stream == null) {
             return;
@@ -224,9 +222,45 @@ public final class AtomEntryParser {
                     break;
                 }
             }
+        } catch (XMLStreamException xse) {
+            release();
+            throw xse;
+        } catch (IOException ioe) {
+            release();
+            throw ioe;
+        } catch (RuntimeException re) {
+            release();
+            throw re;
         } finally {
             parser.close();
         }
+    }
+
+    /**
+     * Releases all resources.
+     */
+    public void release() {
+        object = null;
+        typeDef = null;
+        bulkUpdate = null;
+        closeAtomContentStream();
+        closeCmisContentStream();
+    }
+
+    /**
+     * Closes the Atom content stream.
+     */
+    private void closeAtomContentStream() {
+        IOUtils.closeQuietly(atomContentStream);
+        atomContentStream = null;
+    }
+
+    /**
+     * Closes the CMIS content stream.
+     */
+    private void closeCmisContentStream() {
+        IOUtils.closeQuietly(cmisContentStream);
+        cmisContentStream = null;
     }
 
     /**
@@ -310,6 +344,17 @@ public final class AtomEntryParser {
      * @throws IOException
      */
     private void parseAtomContent(XMLStreamReader parser) throws XMLStreamException, IOException {
+        if (atomContentStream != null) {
+            closeAtomContentStream();
+            throw new CmisInvalidArgumentException("More than one content provided!");
+        }
+
+        if (cmisContentStream != null) {
+            // CMIS content takes precedence (see CMIS spec)
+            XMLUtils.skip(parser);
+            return;
+        }
+
         atomContentStream = new ContentStreamImpl();
 
         // read attributes
@@ -366,6 +411,12 @@ public final class AtomEntryParser {
      * Extract the content stream.
      */
     private void parseCmisContent(XMLStreamReader parser) throws XMLStreamException, IOException {
+        closeAtomContentStream();
+        if (cmisContentStream != null) {
+            closeCmisContentStream();
+            throw new CmisInvalidArgumentException("More than one content provided!");
+        }
+
         cmisContentStream = new ContentStreamImpl();
 
         XMLUtils.next(parser);

@@ -159,29 +159,45 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
     private void openTempFile() throws IOException {
         tempFile = File.createTempFile("opencmis", null, tempDir);
 
-        if (encrypt) {
-            Cipher cipher;
-            try {
-                KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
-                keyGenerator.init(KEY_SIZE);
-                key = keyGenerator.generateKey();
+        try {
+            if (encrypt) {
+                Cipher cipher;
+                try {
+                    KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
+                    keyGenerator.init(KEY_SIZE);
+                    key = keyGenerator.generateKey();
 
-                cipher = Cipher.getInstance(TRANSFORMATION);
-                cipher.init(Cipher.ENCRYPT_MODE, key);
+                    cipher = Cipher.getInstance(TRANSFORMATION);
+                    cipher.init(Cipher.ENCRYPT_MODE, key);
 
-                iv = cipher.getIV();
-            } catch (Exception e) {
+                    iv = cipher.getIV();
+                } catch (Exception e) {
 
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Cannot initialize encryption cipher: {}", e.toString(), e);
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Cannot initialize encryption cipher: {}", e.toString(), e);
+                    }
+
+                    throw new IOException("Cannot initialize encryption cipher!", e);
                 }
 
-                throw new IOException("Cannot initialize encryption cipher!", e);
+                tmpStream = new BufferedOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), cipher));
+            } else {
+                tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+            }
+        } catch (IOException ioe) {
+            if (tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Temp file {} could not be deleted!", tempFile.getAbsolutePath());
+                    }
+                }
             }
 
-            tmpStream = new BufferedOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), cipher));
-        } else {
-            tmpStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+            throw ioe;
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created temp file: {}", tempFile.getAbsolutePath());
         }
     }
 
@@ -297,13 +313,23 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             LOG.debug("ThresholdOutputStream destroyed." + (cause == null ? "" : " Cause: " + cause.toString()), cause);
         }
 
-        try {
-            if (tmpStream != null) {
+        if (tmpStream != null) {
+            try {
                 tmpStream.flush();
-                tmpStream.close();
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Flushing the temp file {} failed: {}", tempFile.getAbsolutePath(), e.toString(), e);
+                }
             }
-        } catch (Exception e) {
-            // ignore
+            try {
+                tmpStream.close();
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing the temp file {} failed: {}", tempFile.getAbsolutePath(), e.toString(), e);
+                }
+            }
+
+            tmpStream = null;
         }
 
         if (tempFile != null) {
@@ -311,6 +337,10 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             if (!isDeleted) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Temp file {} could not be deleted!", tempFile.getAbsolutePath());
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Deleted temp file: {}", tempFile.getAbsolutePath());
                 }
             }
         }
@@ -654,15 +684,24 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
                 try {
                     stream.close();
                     isClosed = true;
+                    stream = null;
                 } catch (Exception e) {
-                    // ignore
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Closing the temp file {} failed: {}", tempFile.getAbsolutePath(), e.toString(), e);
+                    }
                 }
             }
 
             if (!isDeleted) {
                 isDeleted = tempFile.delete();
                 if (!isDeleted) {
-                    LOG.warn("Temp file {} could not be deleted!", tempFile.getAbsolutePath());
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Temp file {} could not be deleted!", tempFile.getAbsolutePath());
+                    }
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Deleted temp file: {}", tempFile.getAbsolutePath());
+                    }
                 }
             }
         }

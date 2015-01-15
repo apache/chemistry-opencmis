@@ -111,14 +111,8 @@ public class ObjectService {
                 return;
             }
 
-            String newObjectId = null;
-            try {
-                newObjectId = service
-                        .createDocument(repositoryId, createNewProperties(cp, typeCache), folderId, contentStream,
-                                versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
-            } finally {
-                closeContentStream(contentStream);
-            }
+            String newObjectId = service.createDocument(repositoryId, createNewProperties(cp, typeCache), folderId,
+                    contentStream, versioningState, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
             if (stopAfterService(service)) {
                 return;
@@ -964,12 +958,8 @@ public class ObjectService {
                 return;
             }
 
-            try {
-                service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder, contentStream,
-                        null);
-            } finally {
-                closeContentStream(contentStream);
-            }
+            service.setContentStream(repositoryId, objectIdHolder, overwriteFlag, changeTokenHolder, contentStream,
+                    null);
 
             if (stopAfterService(service)) {
                 return;
@@ -1023,12 +1013,8 @@ public class ObjectService {
                 return;
             }
 
-            try {
-                service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, contentStream,
-                        isLastChunk, null);
-            } finally {
-                closeContentStream(contentStream);
-            }
+            service.appendContentStream(repositoryId, objectIdHolder, changeTokenHolder, contentStream, isLastChunk,
+                    null);
 
             if (stopAfterService(service)) {
                 return;

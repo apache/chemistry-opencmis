@@ -191,6 +191,9 @@ public class AtomEntryParserTest {
                 .get(PropertyIds.NAME);
 
         assertEquals("atom.title", nameProperty.getFirstValue());
+
+        aep.release();
+        assertNull(aep.getContentStream());
     }
 
     @Test
@@ -241,6 +244,9 @@ public class AtomEntryParserTest {
         assertNotNull(contentStream.getStream());
 
         contentStream.getStream().close();
+
+        aep.release();
+        assertNull(aep.getContentStream());
     }
 
     private static byte[] parse(byte[] entry) throws Exception {
@@ -257,6 +263,9 @@ public class AtomEntryParserTest {
         IOUtils.copy(contentStream.getStream(), baos);
 
         contentStream.getStream().close();
+
+        aep.release();
+        assertNull(aep.getContentStream());
 
         return baos.toByteArray();
     }

@@ -60,15 +60,19 @@ public class VersioningService {
             parser.parse(request.getInputStream());
 
             // execute
-            if (stopBeforeService(service)) {
-                return;
-            }
-
             Holder<String> checkOutId = new Holder<String>(parser.getId());
-            service.checkOut(repositoryId, checkOutId, null, null);
+            try {
+                if (stopBeforeService(service)) {
+                    return;
+                }
 
-            if (stopAfterService(service)) {
-                return;
+                service.checkOut(repositoryId, checkOutId, null, null);
+
+                if (stopAfterService(service)) {
+                    return;
+                }
+            } finally {
+                parser.release();
             }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, checkOutId.getValue());

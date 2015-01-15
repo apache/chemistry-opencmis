@@ -126,13 +126,6 @@ public abstract class AbstractServiceCall implements ServiceCall {
     }
 
     /**
-     * Closes a content stream.
-     */
-    public void closeContentStream(ContentStream contentStream) {
-        IOUtils.closeQuietly(contentStream);
-    }
-
-    /**
      * Sets certain HTTP headers if the server implementation requested them.
      * 
      * @return {@code true} if the request has been served by this method (for

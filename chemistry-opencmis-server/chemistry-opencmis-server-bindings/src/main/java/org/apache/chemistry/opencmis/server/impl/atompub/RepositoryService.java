@@ -490,14 +490,19 @@ public class RepositoryService {
             parser.parse(request.getInputStream());
 
             // execute
-            if (stopBeforeService(service)) {
-                return;
-            }
+            TypeDefinition newType = null;
+            try {
+                if (stopBeforeService(service)) {
+                    return;
+                }
 
-            TypeDefinition newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
+                newType = service.createType(repositoryId, parser.getTypeDefinition(), null);
 
-            if (stopAfterService(service)) {
-                return;
+                if (stopAfterService(service)) {
+                    return;
+                }
+            } finally {
+                parser.release();
             }
 
             // set headers
@@ -535,14 +540,19 @@ public class RepositoryService {
             parser.parse(request.getInputStream());
 
             // execute
-            if (stopBeforeService(service)) {
-                return;
-            }
+            TypeDefinition newType = null;
+            try {
+                if (stopBeforeService(service)) {
+                    return;
+                }
 
-            TypeDefinition newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
+                newType = service.updateType(repositoryId, parser.getTypeDefinition(), null);
 
-            if (stopAfterService(service)) {
-                return;
+                if (stopAfterService(service)) {
+                    return;
+                }
+            } finally {
+                parser.release();
             }
 
             // set headers

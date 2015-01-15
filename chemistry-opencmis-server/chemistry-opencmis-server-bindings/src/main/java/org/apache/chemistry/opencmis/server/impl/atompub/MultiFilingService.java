@@ -58,23 +58,25 @@ public class MultiFilingService {
             parser.setIgnoreAtomContentSrc(true); // needed for some clients
             parser.parse(request.getInputStream());
 
-            String objectId = parser.getId();
-
-            if (stopBeforeService(service)) {
-                return;
-            }
-
-            if (objectId == null && removeFrom == null) {
-                // create unfiled object
-                createUnfiledObject(context, service, repositoryId, request, response, parser);
-                return;
-            }
-
             // execute
-            service.removeObjectFromFolder(repositoryId, objectId, removeFrom, null);
+            String objectId = parser.getId();
+            try {
+                if (stopBeforeService(service)) {
+                    return;
+                }
 
-            if (stopAfterService(service)) {
-                return;
+                if (objectId == null && removeFrom == null) {
+                    createUnfiledObject(context, service, repositoryId, request, response, parser);
+                    return;
+                }
+
+                service.removeObjectFromFolder(repositoryId, objectId, removeFrom, null);
+
+                if (stopAfterService(service)) {
+                    return;
+                }
+            } finally {
+                parser.release();
             }
 
             ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
@@ -117,13 +119,8 @@ public class MultiFilingService {
 
             // create
             ContentStream contentStream = parser.getContentStream();
-            String newObjectId = null;
-            try {
-                newObjectId = service.create(repositoryId, parser.getProperties(), null, contentStream,
-                        versioningState, parser.getPolicyIds(), null);
-            } finally {
-                closeContentStream(contentStream);
-            }
+            String newObjectId = service.create(repositoryId, parser.getProperties(), null, contentStream,
+                    versioningState, parser.getPolicyIds(), null);
 
             if (stopAfterService(service)) {
                 return;

@@ -161,13 +161,9 @@ public class VersioningService {
                 return;
             }
 
-            try {
-                service.checkIn(repositoryId, objectIdHolder, major,
-                        createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
-                        contentStream, checkinComment, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
-            } finally {
-                closeContentStream(contentStream);
-            }
+            service.checkIn(repositoryId, objectIdHolder, major,
+                    createUpdateProperties(cp, typeId, null, Collections.singletonList(objectId), typeCache),
+                    contentStream, checkinComment, createPolicies(cp), createAddAcl(cp), createRemoveAcl(cp), null);
 
             if (stopAfterService(service)) {
                 return;
