@@ -484,6 +484,15 @@ package org.apache.chemistry.opencmis.commons;
  * <td>4194304 (4MB)</td>
  * </tr>
  * <tr>
+ * <td>{@link #WEBSERVICES_REPSONSE_MEMORY_THRESHOLD}</td>
+ * <td>Web Service responses (XML SOAP parts) smaller than the threshold are
+ * kept in main memory, larger responses are written to a temporary file</td>
+ * <td>Web Services</td>
+ * <td>size in bytes</td>
+ * <td>no</td>
+ * <td>(JAX-WS implementation default)</td>
+ * </tr>
+ * <tr>
  * <td colspan="6"><b>Browser Binding</b></td>
  * </tr>
  * <tr>
@@ -595,6 +604,7 @@ public final class SessionParameter {
     public static final String WEBSERVICES_ACL_SERVICE_ENDPOINT = "org.apache.chemistry.opencmis.binding.webservices.ACLService.endpoint";
 
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
+    public static final String WEBSERVICES_REPSONSE_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.responseMemoryThreshold";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
 

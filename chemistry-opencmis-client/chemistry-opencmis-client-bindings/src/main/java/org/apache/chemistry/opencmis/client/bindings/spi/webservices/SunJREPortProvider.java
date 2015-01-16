@@ -28,6 +28,7 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -44,12 +45,29 @@ import com.sun.xml.internal.ws.developer.WSBindingProvider;
 /**
  * Sun JRE JAX-WS implementation.
  */
+@SuppressWarnings("restriction")
 public class SunJREPortProvider extends AbstractPortProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SunJREPortProvider.class);
+
+    private int contentThreshold;
+    private int responseThreshold;
+
+    @Override
+    public void setSession(BindingSession session) {
+        super.setSession(session);
+
+        contentThreshold = session.get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
+        responseThreshold = session.get(SessionParameter.WEBSERVICES_REPSONSE_MEMORY_THRESHOLD, -1);
+
+        if (responseThreshold > contentThreshold) {
+            contentThreshold = responseThreshold;
+        }
+    }
 
     /**
      * Creates a port object.
      */
+    @SuppressWarnings("restriction")
     protected BindingProvider createPortObject(CmisServiceHolder serviceHolder) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Session {}: Creating Web Service port object of {} ...", getSession().getSessionId(),
@@ -60,11 +78,15 @@ public class SunJREPortProvider extends AbstractPortProvider {
             // prepare features
             WebServiceFeature[] features;
             if (serviceHolder.getService().handlesContent()) {
-                int threshold = getSession().get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
                 features = new WebServiceFeature[] { new MTOMFeature(),
-                        new StreamingAttachmentFeature(null, true, threshold) };
+                        new StreamingAttachmentFeature(null, true, contentThreshold) };
             } else {
-                features = new WebServiceFeature[] { new MTOMFeature() };
+                if (responseThreshold > -1) {
+                    features = new WebServiceFeature[] { new MTOMFeature(),
+                            new StreamingAttachmentFeature(null, true, responseThreshold) };
+                } else {
+                    features = new WebServiceFeature[] { new MTOMFeature() };
+                }
             }
 
             // create port object
