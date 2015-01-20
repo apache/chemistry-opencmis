@@ -27,7 +27,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser.root_return;
 
 public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
 
@@ -53,7 +53,7 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
         tokens = new CommonTokenStream(lexer);
         CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
 
-        query_return parsedStatement = parser.query();
+        root_return parsedStatement = parser.root();
         if (lexer.hasErrors()) {
             throw new CmisInvalidArgumentException(lexer.getErrorMessages());
         } else if (parser.hasErrors()) {

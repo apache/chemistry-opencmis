@@ -494,10 +494,11 @@ public class QueryParseTest extends AbstractQueryTest {
         String statement = "SELECT p1 FROM MyType WHERE p1 LIKE 'abc*' IN_FOLDER('def')";
         try {
             checkTreeWhere(statement);
+            fail("Parsing query with tokens after end of statement should fail.");
         } catch (Exception e) {
             LOG.debug("Exception is: ", e);
             assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.getMessage().contains("illegal tokens after end"));
+            assertTrue(e.getMessage().contains("missing EOF at "));
         }
     }
 

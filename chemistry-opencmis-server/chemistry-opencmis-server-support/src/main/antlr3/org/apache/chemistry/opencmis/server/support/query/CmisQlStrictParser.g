@@ -64,13 +64,35 @@ package org.apache.chemistry.opencmis.server.support.query;
 }
 
 @members {
+    private List<String> errorMessages = new ArrayList<String>();
+
     public boolean hasErrors() {
-    	return gCmisBaseGrammar.hasErrors();
+    	return errorMessages.size() > 0 ||  gCmisBaseGrammar.hasErrors();
     }
 
-	public String getErrorMessages() {
-    	return gCmisBaseGrammar.getErrorMessages();
+	public String getStrictParserErrorMessages() {
+		StringBuffer allMessages = new StringBuffer();
+		
+		for (String msg : errorMessages)
+			allMessages.append(msg).append('\n');
+			
+		return allMessages.toString();
 	}
+	
+	public String getErrorMessages() {
+	    if (errorMessages.size() > 0) {
+	        return getStrictParserErrorMessages();
+	    } else {
+    	    return gCmisBaseGrammar.getErrorMessages();
+    	}
+	}
+	
+	@Override
+    // Instead of sending all errors to System.err collect them in a list
+	public void emitErrorMessage(String msg) {
+		errorMessages.add(msg);
+	}
+	
 }
 
   // Rules can't be empty so we have one dummy rule here
