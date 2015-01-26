@@ -41,6 +41,19 @@ import java.io.OutputStream;
 public abstract class TempStoreOutputStream extends OutputStream {
 
     /**
+     * Sets the MIME type of the stream.
+     * 
+     * This method is usually be called once before {@link #getInputStream()} is
+     * called. It might never be called if the MIME type is unknown or multiple
+     * times if previous MIME type detections were inaccurate.
+     * 
+     * @param mimeType
+     *            the MIME type or {@code null} if the MIME type is unknown or
+     *            should be reset to unknown
+     */
+    public abstract void setMimeType(String mimeType);
+
+    /**
      * Returns an {@link InputStream} that serves the content that has been
      * provided to this {@link TempStoreOutputStream} instance.
      * 

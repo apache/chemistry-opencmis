@@ -18,8 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.impl.atompub;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -29,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -359,10 +356,10 @@ public final class AtomEntryParser {
 
         // read attributes
         String type = "text";
+        String mimeType = "text/plain";
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             QName attrName = parser.getAttributeName(i);
             if (ATTR_TYPE.equals(attrName.getLocalPart())) {
-                atomContentStream.setMimeType(parser.getAttributeValue(i));
                 if (parser.getAttributeValue(i) != null) {
                     type = parser.getAttributeValue(i).trim().toLowerCase(Locale.ENGLISH);
                 }
@@ -377,18 +374,27 @@ public final class AtomEntryParser {
         }
 
         TempStoreOutputStream tsos = null;
-        byte[] bytes = null;
-        if (type.equals("text") || type.equals("html")) {
-            tsos = readContentBytes(parser);
+        if (type.equals("text")) {
+            mimeType = "text/plain";
+            tsos = readContentBytes(parser, mimeType);
+        } else if (type.equals("html")) {
+            mimeType = "text/html";
+            tsos = readContentBytes(parser, mimeType);
         } else if (type.equals("xhtml")) {
-            bytes = copy(parser);
+            mimeType = "application/xhtml+xml";
+            tsos = copy(parser, mimeType);
         } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
-            bytes = copy(parser);
+            mimeType = type;
+            tsos = copy(parser, mimeType);
         } else if (type.startsWith("text/")) {
-            tsos = readContentBytes(parser);
+            mimeType = type;
+            tsos = readContentBytes(parser, mimeType);
         } else {
-            tsos = readBase64(parser);
+            mimeType = type;
+            tsos = readBase64(parser, mimeType);
         }
+
+        atomContentStream.setMimeType(mimeType);
 
         if (tsos != null) {
             try {
@@ -398,12 +404,6 @@ public final class AtomEntryParser {
                 tsos.destroy(e);
                 throw e;
             }
-        }
-
-        if (bytes != null) {
-            atomContentStream.setStream(new ByteArrayInputStream(bytes));
-            atomContentStream.setLength(BigInteger.valueOf(bytes.length));
-            cappedStream.deductBytes(bytes.length);
         }
     }
 
@@ -431,7 +431,7 @@ public final class AtomEntryParser {
                     if (TAG_MEDIATYPE.equals(name.getLocalPart())) {
                         cmisContentStream.setMimeType(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
-                        TempStoreOutputStream tsos = readBase64(parser);
+                        TempStoreOutputStream tsos = readBase64(parser, cmisContentStream.getMimeType());
                         try {
                             cmisContentStream.setStream(tsos.getInputStream());
                             cmisContentStream.setLength(BigInteger.valueOf(tsos.getLength()));
@@ -466,8 +466,10 @@ public final class AtomEntryParser {
     /**
      * Parses a tag that contains content bytes.
      */
-    private TempStoreOutputStream readContentBytes(XMLStreamReader parser) throws XMLStreamException, IOException {
+    private TempStoreOutputStream readContentBytes(XMLStreamReader parser, String mimeType) throws XMLStreamException,
+            IOException {
         TempStoreOutputStream bufferStream = streamFactory.newOutputStream();
+        bufferStream.setMimeType(mimeType);
 
         XMLUtils.next(parser);
 
@@ -510,8 +512,10 @@ public final class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private TempStoreOutputStream readBase64(XMLStreamReader parser) throws XMLStreamException, IOException {
+    private TempStoreOutputStream readBase64(XMLStreamReader parser, String mimeType) throws XMLStreamException,
+            IOException {
         TempStoreOutputStream bufferStream = streamFactory.newOutputStream();
+        bufferStream.setMimeType(mimeType);
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         XMLUtils.next(parser);
@@ -562,42 +566,57 @@ public final class AtomEntryParser {
     /**
      * Copies a subtree into a stream.
      */
-    private static byte[] copy(XMLStreamReader parser) throws XMLStreamException {
+    private TempStoreOutputStream copy(XMLStreamReader parser, String mimeType) throws XMLStreamException, IOException {
         // create a writer
-        ByteArrayOutputStream out = new ByteArrayOutputStream(32 * 1024);
-        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+        TempStoreOutputStream bufferStream = streamFactory.newOutputStream();
+        bufferStream.setMimeType(mimeType);
 
-        writer.writeStartDocument();
+        try {
+            XMLStreamWriter writer = XMLUtils.createWriter(bufferStream);
 
-        // copy subtree
-        int level = 1;
-        while (XMLUtils.next(parser)) {
-            int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
-                copyStartElement(parser, writer);
-                level++;
-            } else if (event == XMLStreamReader.CHARACTERS) {
-                writer.writeCharacters(parser.getText());
-            } else if (event == XMLStreamReader.COMMENT) {
-                writer.writeComment(parser.getText());
-            } else if (event == XMLStreamReader.CDATA) {
-                writer.writeCData(parser.getText());
-            } else if (event == XMLStreamReader.END_ELEMENT) {
-                level--;
-                if (level == 0) {
+            writer.writeStartDocument();
+
+            // copy subtree
+            int level = 1;
+            while (XMLUtils.next(parser)) {
+                int event = parser.getEventType();
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    copyStartElement(parser, writer);
+                    level++;
+                } else if (event == XMLStreamReader.CHARACTERS) {
+                    writer.writeCharacters(parser.getText());
+                } else if (event == XMLStreamReader.COMMENT) {
+                    writer.writeComment(parser.getText());
+                } else if (event == XMLStreamReader.CDATA) {
+                    writer.writeCData(parser.getText());
+                } else if (event == XMLStreamReader.END_ELEMENT) {
+                    level--;
+                    if (level == 0) {
+                        break;
+                    }
+                    writer.writeEndElement();
+                } else {
                     break;
                 }
-                writer.writeEndElement();
-            } else {
-                break;
             }
-        }
 
-        writer.writeEndDocument();
+            writer.writeEndDocument();
+            writer.flush();
+
+            bufferStream.close();
+        } catch (XMLStreamException xse) {
+            // remove temp file
+            bufferStream.destroy(xse);
+            throw xse;
+        } catch (IOException ioe) {
+            // remove temp file
+            bufferStream.destroy(ioe);
+            throw ioe;
+        }
 
         XMLUtils.next(parser);
 
-        return out.toByteArray();
+        return bufferStream;
     }
 
     /**

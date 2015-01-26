@@ -74,6 +74,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
     private OutputStream tmpStream;
     private Key key;
     private byte[] iv;
+    private String mimeType;
 
     /**
      * Constructor.
@@ -199,6 +200,14 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created temp file: {}", tempFile.getAbsolutePath());
         }
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
 
     public long getLength() {
@@ -397,6 +406,15 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
          */
         public byte[] getBytes() {
             return null;
+        }
+
+        /**
+         * Returns the MIME type of the stream.
+         * 
+         * @return the MIME type or {@code null} if the MIME type is unknown
+         */
+        public String getMimeType() {
+            return mimeType;
         }
 
         /**

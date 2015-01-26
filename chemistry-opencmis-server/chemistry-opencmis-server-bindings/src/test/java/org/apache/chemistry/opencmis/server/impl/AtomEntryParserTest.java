@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.server.impl.atompub.AtomEntryParser;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
+import org.apache.chemistry.opencmis.server.shared.ThresholdOutputStream.ThresholdInputStream;
 import org.junit.Test;
 
 /**
@@ -143,19 +144,19 @@ public class AtomEntryParserTest {
 
     @Test
     public void testCmisContent() throws Exception {
-        byte[] content = parse(CMIS_ENTRY.getBytes());
+        byte[] content = parse(CMIS_ENTRY.getBytes(), "text/plain");
         assertEquals(CMIS_ENTRY_CONTENT, new String(content));
     }
 
     @Test
     public void testAtomContentText() throws Exception {
-        byte[] content = parse(ATOM_ENTRY_TEXT.getBytes());
+        byte[] content = parse(ATOM_ENTRY_TEXT.getBytes(), "text/plain");
         assertEquals(ATOM_ENTRY_TEXT_CONTENT, new String(content));
     }
 
     @Test
     public void testAtomContentXml() throws Exception {
-        byte[] content = parse(ATOM_ENTRY_XML.getBytes());
+        byte[] content = parse(ATOM_ENTRY_XML.getBytes(), "text/xml");
         String xmlContent = new String(content);
         assertTrue(xmlContent.indexOf('>') > -1);
         assertEquals(ATOM_ENTRY_XML_CONTENT, xmlContent.substring(xmlContent.indexOf('>') + 1));
@@ -163,7 +164,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomContentXHtml() throws Exception {
-        byte[] content = parse(ATOM_ENTRY_XHTML.getBytes());
+        byte[] content = parse(ATOM_ENTRY_XHTML.getBytes(), "application/xhtml+xml");
         String xmlContent = new String(content);
         assertTrue(xmlContent.indexOf('>') > -1);
         assertEquals(ATOM_ENTRY_XHTML_CONTENT, xmlContent.substring(xmlContent.indexOf('>') + 1));
@@ -171,7 +172,7 @@ public class AtomEntryParserTest {
 
     @Test
     public void testAtomContentBase64() throws Exception {
-        byte[] content = parse(ATOM_ENTRY_BASE64.getBytes());
+        byte[] content = parse(ATOM_ENTRY_BASE64.getBytes(), "application/something");
         assertEquals(ATOM_ENTRY_BASE64_CONTENT, new String(content));
     }
 
@@ -249,7 +250,7 @@ public class AtomEntryParserTest {
         assertNull(aep.getContentStream());
     }
 
-    private static byte[] parse(byte[] entry) throws Exception {
+    private static byte[] parse(byte[] entry, String mimeType) throws Exception {
         TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, THRESHOLD,
                 MAX_SIZE, false);
         AtomEntryParser aep = new AtomEntryParser(new ByteArrayInputStream(entry), streamFactory);
@@ -257,6 +258,11 @@ public class AtomEntryParserTest {
 
         assertNotNull(contentStream);
         assertNotNull(contentStream.getStream());
+
+        assertEquals(mimeType, contentStream.getMimeType());
+        if (contentStream.getStream() instanceof ThresholdInputStream) {
+            assertEquals(mimeType, ((ThresholdInputStream) contentStream.getStream()).getMimeType());
+        }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

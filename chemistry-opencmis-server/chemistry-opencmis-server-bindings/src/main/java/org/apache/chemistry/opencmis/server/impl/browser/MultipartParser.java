@@ -413,8 +413,9 @@ public class MultipartParser {
         }
     }
 
-    private void readBodyAsStream() throws IOException {
+    private void readBodyAsStream(String contentType) throws IOException {
         TempStoreOutputStream stream = streamFactory.newOutputStream();
+        stream.setMimeType(contentType);
 
         try {
             while (true) {
@@ -485,7 +486,7 @@ public class MultipartParser {
                 contentType = Constants.MEDIATYPE_OCTETSTREAM;
             }
 
-            readBodyAsStream();
+            readBodyAsStream(contentType);
         } else {
             String name = params.get(MimeHelper.DISPOSITION_NAME);
             byte[] rawValue = readBodyBytes();
