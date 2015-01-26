@@ -394,4 +394,15 @@ public final class PropertyIds {
      * @cmis Extension
      */
     public static final String CONTENT_STREAM_HASH = "cmis:contentStreamHash";
+
+    /**
+     * Latest accessible state property {@code cmis:latestAccessibleStateId}: ID
+     * of the latest accessible version of a document
+     * <p>
+     * CMIS data type: id<br>
+     * Java type: String
+     * 
+     * @cmis Extension
+     */
+    public static final String LATEST_ACCESSIBLE_STATE_ID = "cmis:latestAccessibleStateId";
 }

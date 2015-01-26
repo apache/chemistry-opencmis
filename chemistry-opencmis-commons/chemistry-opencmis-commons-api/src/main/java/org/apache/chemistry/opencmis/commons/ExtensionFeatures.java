@@ -111,4 +111,48 @@ public final class ExtensionFeatures {
             return null;
         }
     };
+
+    public static final ExtensionFeature LATEST_ACCESSIBLE_STATE = new ExtensionFeature() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public String getId() {
+            return "http://docs.oasis-open.org/ns/cmis/extension/latestAccessibleState/1.1";
+        }
+
+        @Override
+        public String getUrl() {
+            return "https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=cmis";
+        }
+
+        @Override
+        public String getCommonName() {
+            return "Latest Accessible State";
+        }
+
+        @Override
+        public String getVersionLabel() {
+            return "1.1";
+        }
+
+        @Override
+        public String getDescription() {
+            return "This extension provides for an identifier of each cmis:document that retrieves "
+                    + "the latest accessible state of the document whether the document is versioned or not.";
+        }
+
+        @Override
+        public Map<String, String> getFeatureData() {
+            return null;
+        }
+
+        @Override
+        public void setExtensions(List<CmisExtensionElement> extensions) {
+        }
+
+        @Override
+        public List<CmisExtensionElement> getExtensions() {
+            return null;
+        }
+    };
 }
