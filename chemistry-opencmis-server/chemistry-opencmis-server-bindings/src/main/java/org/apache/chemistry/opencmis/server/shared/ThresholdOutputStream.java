@@ -75,6 +75,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
     private Key key;
     private byte[] iv;
     private String mimeType;
+    private String filename;
 
     /**
      * Constructor.
@@ -208,6 +209,14 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
 
     public String getMimeType() {
         return mimeType;
+    }
+
+    public void setFileName(String filename) {
+        this.filename = filename;
+    }
+
+    public String getFileName() {
+        return filename;
     }
 
     public long getLength() {
@@ -415,6 +424,15 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
          */
         public String getMimeType() {
             return mimeType;
+        }
+
+        /**
+         * Returns the file name of the stream.
+         * 
+         * @return the file name or {@code null} if the file name is unknown
+         */
+        public String getFileName() {
+            return filename;
         }
 
         /**

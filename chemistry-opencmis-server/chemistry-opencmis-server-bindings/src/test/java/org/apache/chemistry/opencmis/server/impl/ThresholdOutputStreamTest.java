@@ -38,6 +38,8 @@ public class ThresholdOutputStreamTest {
 
     private static final String MIME_TYPE_1 = "some/type";
     private static final String MIME_TYPE_2 = "another/type";
+    private static final String FILE_NAME_1 = "file1.txt";
+    private static final String FILE_NAME_2 = "the_other_file";
     private static final byte[] CONTENT = "Hello".getBytes();
 
     @Test
@@ -46,6 +48,7 @@ public class ThresholdOutputStreamTest {
 
         TempStoreOutputStream tempStream = streamFactory.newOutputStream();
         tempStream.setMimeType(MIME_TYPE_1);
+        tempStream.setFileName(FILE_NAME_1);
         assertTrue(tempStream instanceof ThresholdOutputStream);
 
         // set content
@@ -62,6 +65,7 @@ public class ThresholdOutputStreamTest {
         assertEquals(CONTENT.length, tis.getLength());
         assertArrayEquals(CONTENT, getBytesFromArray(tis.getBytes(), (int) tis.getLength()));
         assertEquals(MIME_TYPE_1, tis.getMimeType());
+        assertEquals(FILE_NAME_1, tis.getFileName());
 
         // read stream
         byte[] buffer = new byte[CONTENT.length];
@@ -104,6 +108,7 @@ public class ThresholdOutputStreamTest {
 
         TempStoreOutputStream tempStream = streamFactory.newOutputStream();
         tempStream.setMimeType(MIME_TYPE_2);
+        tempStream.setFileName(FILE_NAME_2);
         assertTrue(tempStream instanceof ThresholdOutputStream);
 
         // set content
@@ -119,6 +124,7 @@ public class ThresholdOutputStreamTest {
         assertNull(tis.getBytes());
         assertEquals(CONTENT.length, tis.getLength());
         assertEquals(MIME_TYPE_2, tis.getMimeType());
+        assertEquals(FILE_NAME_2, tis.getFileName());
 
         assertTrue(tis.getTemporaryFile().exists());
         assertEquals(CONTENT.length, tis.getTemporaryFile().length());

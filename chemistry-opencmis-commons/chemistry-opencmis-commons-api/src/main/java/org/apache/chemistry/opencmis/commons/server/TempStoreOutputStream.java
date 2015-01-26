@@ -54,6 +54,18 @@ public abstract class TempStoreOutputStream extends OutputStream {
     public abstract void setMimeType(String mimeType);
 
     /**
+     * Sets the file name.
+     * 
+     * This method is usually be called once before {@link #getInputStream()} is
+     * called. It might never be called if the file name is unknown.
+     * 
+     * @param filename
+     *            the file name or {@code null} if the file name is unknown or
+     *            should be reset to unknown
+     */
+    public abstract void setFileName(String filename);
+
+    /**
      * Returns an {@link InputStream} that serves the content that has been
      * provided to this {@link TempStoreOutputStream} instance.
      * 

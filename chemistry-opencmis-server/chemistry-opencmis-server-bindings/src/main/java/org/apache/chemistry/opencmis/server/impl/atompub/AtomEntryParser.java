@@ -391,7 +391,7 @@ public final class AtomEntryParser {
             tsos = readContentBytes(parser, mimeType);
         } else {
             mimeType = type;
-            tsos = readBase64(parser, mimeType);
+            tsos = readBase64(parser, mimeType, null);
         }
 
         atomContentStream.setMimeType(mimeType);
@@ -431,7 +431,8 @@ public final class AtomEntryParser {
                     if (TAG_MEDIATYPE.equals(name.getLocalPart())) {
                         cmisContentStream.setMimeType(XMLUtils.readText(parser, XMLConstraints.MAX_STRING_LENGTH));
                     } else if (TAG_BASE64.equals(name.getLocalPart())) {
-                        TempStoreOutputStream tsos = readBase64(parser, cmisContentStream.getMimeType());
+                        TempStoreOutputStream tsos = readBase64(parser, cmisContentStream.getMimeType(),
+                                cmisContentStream.getFileName());
                         try {
                             cmisContentStream.setStream(tsos.getInputStream());
                             cmisContentStream.setLength(BigInteger.valueOf(tsos.getLength()));
@@ -512,10 +513,11 @@ public final class AtomEntryParser {
     /**
      * Parses a tag that contains base64 encoded content.
      */
-    private TempStoreOutputStream readBase64(XMLStreamReader parser, String mimeType) throws XMLStreamException,
-            IOException {
+    private TempStoreOutputStream readBase64(XMLStreamReader parser, String mimeType, String filename)
+            throws XMLStreamException, IOException {
         TempStoreOutputStream bufferStream = streamFactory.newOutputStream();
         bufferStream.setMimeType(mimeType);
+        bufferStream.setFileName(filename);
         Base64.OutputStream b64stream = new Base64.OutputStream(bufferStream, Base64.DECODE);
 
         XMLUtils.next(parser);
