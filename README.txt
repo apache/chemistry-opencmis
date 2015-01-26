@@ -24,7 +24,7 @@ Set the environment variable MAVEN_OPTS to
 License (see also package specific LICENSE files)
 =================================================
 
-Collective work: Copyright 2010-2014 The Apache Software Foundation.
+Collective work: Copyright 2010-2015 The Apache Software Foundation.
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
