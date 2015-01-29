@@ -86,7 +86,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
 
         public CheckServletInputStream() {
             streamMax = messageMax + 2 * (boundary.length + 6);
-            linebuffer = new byte[64 * 1024];
+            linebuffer = new byte[32 * 1024];
             pos = 0;
             count = 0;
             boundariesFound = 0;
@@ -160,29 +160,38 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
         }
 
         private void checkBoundary(int startPos) {
-            int lastStartPos = 0;
+            int lastLineFeed = -1;
             for (int i = startPos; i < pos; i++) {
                 if (linebuffer[i] == LF) {
-                    if (countBoundaries(lastStartPos, i)) {
+                    if (countBoundaries(i)) {
                         return;
                     }
-
-                    lastStartPos = i + 1;
+                    lastLineFeed = i;
                 }
             }
 
-            if (lastStartPos > 0) {
-                if (lastStartPos == pos) {
+            if (lastLineFeed == -1) {
+                if (pos > boundary.length + 3) {
+                    // buffer is bigger than the boundary and doesn't contain a
+                    // LF -> only keep the length of the boundary plus three
+                    // characters (two dashes and a CR)
+                    System.arraycopy(linebuffer, pos - (boundary.length + 3), linebuffer, 0, boundary.length + 3);
+                    pos = boundary.length + 3;
+                }
+            } else {
+                if (lastLineFeed == pos - 1) {
+                    // last byte is a LF -> discard the whole buffer
                     pos = 0;
                 } else {
-                    System.arraycopy(linebuffer, lastStartPos, linebuffer, 0, pos - lastStartPos);
-                    pos = pos - lastStartPos;
+                    // only keep bytes after the last LF
+                    System.arraycopy(linebuffer, lastLineFeed + 1, linebuffer, 0, pos - (lastLineFeed + 1));
+                    pos = pos - (lastLineFeed + 1);
                 }
             }
         }
 
-        private boolean countBoundaries(int startPos, int newLinePos) {
-            if (isBoundary(startPos, newLinePos)) {
+        private boolean countBoundaries(int lineFeedPos) {
+            if (isBoundary(lineFeedPos)) {
                 boundariesFound++;
 
                 if (boundariesFound == 2) {
@@ -195,12 +204,14 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
             return boundariesFound > 1;
         }
 
-        private boolean isBoundary(int startPos, int newLinePos) {
+        private boolean isBoundary(int lineFeedPos) {
             // a boundary consists of two dashes, the boundary and a CR
             // -> boundary line length == boundary length + three characters
-            if (newLinePos - startPos == boundary.length + 3) {
+            int startPos = lineFeedPos - (boundary.length + 3);
+
+            if (startPos >= 0) {
                 if (linebuffer[startPos] == DASH && linebuffer[startPos + 1] == DASH
-                        && linebuffer[startPos + boundary.length + 2] == CR) {
+                        && linebuffer[lineFeedPos - 1] == CR) {
 
                     for (int i = 0; i < boundary.length; i++) {
                         if (linebuffer[startPos + i + 2] != boundary[i]) {
@@ -270,7 +281,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
                 throw new IOException("SOAP message too big!");
             }
 
-            int expand = (len < 64 * 1024 ? 64 * 1024 : len);
+            int expand = (len < 32 * 1024 ? 32 * 1024 : len);
             byte[] newBuffer = new byte[linebuffer.length + expand];
             System.arraycopy(linebuffer, 0, newBuffer, 0, pos);
             linebuffer = newBuffer;

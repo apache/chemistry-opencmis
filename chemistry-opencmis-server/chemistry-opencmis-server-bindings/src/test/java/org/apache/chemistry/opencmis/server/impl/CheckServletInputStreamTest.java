@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Random;
 
 import org.apache.chemistry.opencmis.server.impl.webservices.ProtectionRequestWrapper;
 import org.junit.Test;
@@ -74,6 +75,45 @@ public class CheckServletInputStreamTest {
     @Test
     public void testStream9() {
         baseTest(100 * 1024, 80 * 1024, 79 * 1024, 1234, true);
+    }
+
+    @Test
+    public void testStream10() {
+        baseTest(900 * 1024, 1 * 1024 * 1024, 900 * 1024, 8 * 1024, true);
+    }
+
+    @Test
+    public void testStream11() {
+        baseTest(900 * 1024, 512 * 1024, 900 * 1024, 8 * 1024, false);
+    }
+
+    @Test
+    public void testStream12() {
+        baseTest(900 * 1024, 1 * 1024 * 1024, 700 * 1024, 2345, true);
+    }
+
+    @Test
+    public void testStream13() {
+        baseTest(900 * 1024, 1 * 1024 * 1024, 700, 2345, true);
+    }
+
+    @Test
+    public void testStream14() {
+        baseTest(900 * 1024, 1 * 1024 * 1024, 2048, 2345, true);
+    }
+
+    @Test
+    public void testStreamRandom() {
+        int bufferSize = 1 * 1024 * 1024;
+        Random rnd = new Random(1234567890);
+
+        for (int i = 0; i < 100; i++) {
+            int max = rnd.nextInt(bufferSize);
+            int soap = rnd.nextInt(bufferSize);
+            int readBufferSize = rnd.nextInt(64 * 1024);
+
+            baseTest(bufferSize, max, soap, readBufferSize, soap <= max);
+        }
     }
 
     private void baseTest(int bufferSize, int max, int soap, int readBufferSize, boolean success) {
