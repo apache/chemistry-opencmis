@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +112,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
     private Token token = null;
     private long defaultTokenLifetime = 3600;
+    private List<TokenListener> tokenListeners;
 
     @Override
     public void setSession(BindingSession session) {
@@ -156,6 +158,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             }
 
             token = new Token(accessToken, refreshToken, expirationTimestamp);
+            fireTokenListner(token);
         }
     }
 
@@ -182,6 +185,63 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             return token;
         } finally {
             lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Adds a token listener.
+     * 
+     * @param listner
+     *            the listener object
+     */
+    public void addTokenListener(TokenListener listner) {
+        if (listner == null) {
+            return;
+        }
+
+        lock.writeLock().lock();
+        try {
+            if (tokenListeners == null) {
+                tokenListeners = new ArrayList<OAuthAuthenticationProvider.TokenListener>();
+            }
+
+            tokenListeners.add(listner);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Removes a token listener.
+     * 
+     * @param listner
+     *            the listener object
+     */
+    public void removeTokenListener(TokenListener listner) {
+        if (listner == null) {
+            return;
+        }
+
+        lock.writeLock().lock();
+        try {
+            if (tokenListeners != null) {
+                tokenListeners.remove(listner);
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Lets all token listeners know that there is a new token.
+     */
+    protected void fireTokenListner(Token token) {
+        if (tokenListeners == null) {
+            return;
+        }
+
+        for (TokenListener listner : tokenListeners) {
+            listner.tokenRefreshed(token);
         }
     }
 
@@ -355,6 +415,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
         token = new Token(jsonAccessToken.toString(), (jsonRefreshToken == null ? null : jsonRefreshToken.toString()),
                 expiresIn * 1000 + System.currentTimeMillis());
+        fireTokenListner(token);
     }
 
     private JSONObject parseResponse(HttpURLConnection conn) {
@@ -466,5 +527,19 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             return "Access token: " + accessToken + " / Refresh token: " + refreshToken + " / Expires : "
                     + expirationTimestamp;
         }
+    }
+
+    /**
+     * Listener for OAuth token events.
+     */
+    public interface TokenListener {
+
+        /**
+         * Called when a token is requested of refreshed.
+         * 
+         * @param token
+         *            the new token
+         */
+        void tokenRefreshed(Token token);
     }
 }
