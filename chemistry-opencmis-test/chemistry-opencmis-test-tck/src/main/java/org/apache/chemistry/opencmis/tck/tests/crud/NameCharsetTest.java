@@ -26,6 +26,8 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
@@ -55,7 +57,8 @@ public class NameCharsetTest extends AbstractSessionTest {
             "\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23", //
             "\u062f\u0633\u062a\u0627\u0648\u06cc\u0632", //
             "\u0074\u00e0\u0069\u0020\u006c\u0069\u1ec7\u0075", //
-            "a&b" };
+            "a&b", //
+            "abc%_Pxyz" };
 
     @Override
     public void init(Map<String, String> parameters) {
@@ -86,6 +89,13 @@ public class NameCharsetTest extends AbstractSessionTest {
 
                     f = createResult(FAILURE, "Names of the created and the fetched document don't match!");
                     assertEquals(NAMES[i], doc2.getName(), null, f);
+
+                    ContentStream contentStream = doc.getContentStream();
+
+                    f = createResult(FAILURE, "Document has no content!");
+                    assertNotNull(contentStream, null, f);
+
+                    IOUtils.consumeAndClose(contentStream.getStream());
                 } catch (Exception e) {
                     addResult(createResult(WARNING, "The name '" + NAMES[i] + "' raised this exception: " + e, e, false));
                 } finally {
