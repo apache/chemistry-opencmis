@@ -262,6 +262,10 @@ public class QueryFrame extends JFrame {
             try {
                 maxHitsField.commitEdit();
                 maxHits = ((Number) maxHitsField.getValue()).intValue();
+                if (maxHits < 0) {
+                    maxHits = 0;
+                    maxHitsField.setValue(0);
+                }
             } catch (Exception e) {
                 ClientHelper.showError(this, e);
             }

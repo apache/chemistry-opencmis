@@ -254,7 +254,7 @@ public class ClientModel {
 
     public synchronized ItemIterable<QueryResult> query(String q, boolean searchAllVersions, int maxHits) {
         OperationContext queryContext = new OperationContextImpl(null, false, false, false, IncludeRelationships.NONE,
-                null, false, null, false, maxHits);
+                null, false, null, false, maxHits > 0 ? maxHits : 1);
 
         Session session = clientSession.getSession();
         return session.query(q, searchAllVersions, queryContext);
