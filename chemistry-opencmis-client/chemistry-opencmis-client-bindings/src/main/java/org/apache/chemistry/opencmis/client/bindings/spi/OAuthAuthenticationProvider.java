@@ -101,6 +101,45 @@ import org.slf4j.LoggerFactory;
  * ...
  * Session session = factory.createSession(parameter);
  * </pre>
+ * 
+ * <p>
+ * Getting tokens at runtime:
+ * 
+ * <pre>
+ * OAuthAuthenticationProvider authProvider = (OAuthAuthenticationProvider) session.getBinding()
+ *         .getAuthenticationProvider();
+ * 
+ * // get the current token
+ * Token token = authProvider.getToken();
+ * 
+ * // listen for token refreshes
+ * authProvider.addTokenListener(new OAuthAuthenticationProvider.TokenListener() {
+ *     public void tokenRefreshed(Token token) {
+ *         // do something with the new token
+ *     }
+ * });
+ * </pre>
+ * 
+ * <p>
+ * OAuth errors can be handled like this:
+ * 
+ * <pre>
+ *  try {
+ *      ...
+ *      // CMIS calls
+ *      ...
+ *  } catch (CmisConnectionException connEx) {
+ *      if (connEx.getCause() instanceof CmisOAuthException) {
+ *          CmisOAuthException oauthEx = (CmisOAuthException) connEx.getCause();
+ * 
+ *          if (CmisOAuthException.ERROR_INVALID_GRANT.equals(oauthEx.getError())) {
+ *              // ask the user to authenticate again
+ *          } else {
+ *             // a configuration or server problem
+ *          }
+ *    }
+ * }
+ * </pre>
  */
 public class OAuthAuthenticationProvider extends StandardAuthenticationProvider {
 
@@ -368,15 +407,22 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
         // check success
         if (conn.getResponseCode() != 200) {
             JSONObject jsonResponse = parseResponse(conn);
+
             Object error = jsonResponse.get("error");
+            String errorStr = (error == null ? null : error.toString());
+
             Object description = jsonResponse.get("error_description");
+            String descriptionStr = (description == null ? null : description.toString());
+
+            Object uri = jsonResponse.get("error_uri");
+            String uriStr = (uri == null ? null : uri.toString());
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("OAuth token request failed: {}", jsonResponse.toJSONString());
             }
 
-            throw new CmisConnectionException("OAuth token request failed" + (error == null ? "" : ": " + error)
-                    + (description == null ? "" : ": " + description));
+            throw new CmisOAuthException("OAuth token request failed" + (errorStr == null ? "" : ": " + errorStr)
+                    + (descriptionStr == null ? "" : ": " + descriptionStr), errorStr, descriptionStr, uriStr);
         }
 
         // parse response
@@ -384,17 +430,17 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
         Object tokenType = jsonResponse.get("token_type");
         if (!(tokenType instanceof String) || !"bearer".equalsIgnoreCase((String) tokenType)) {
-            throw new CmisConnectionException("Unsupported OAuth token type: " + tokenType);
+            throw new CmisOAuthException("Unsupported OAuth token type: " + tokenType);
         }
 
         Object jsonAccessToken = jsonResponse.get("access_token");
         if (!(jsonAccessToken instanceof String)) {
-            throw new CmisConnectionException("Invalid OAuth access_token!");
+            throw new CmisOAuthException("Invalid OAuth access_token!");
         }
 
         Object jsonRefreshToken = jsonResponse.get("refresh_token");
         if (jsonRefreshToken != null && !(jsonRefreshToken instanceof String)) {
-            throw new CmisConnectionException("Invalid OAuth refresh_token!");
+            throw new CmisOAuthException("Invalid OAuth refresh_token!");
         }
 
         long expiresIn = defaultTokenLifetime;
@@ -406,10 +452,14 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
                 try {
                     expiresIn = Long.parseLong((String) jsonExpiresIn);
                 } catch (NumberFormatException nfe) {
-                    throw new CmisConnectionException("Invalid OAuth expires_in value!");
+                    throw new CmisOAuthException("Invalid OAuth expires_in value!");
                 }
             } else {
-                throw new CmisConnectionException("Invalid OAuth expires_in value!");
+                throw new CmisOAuthException("Invalid OAuth expires_in value!");
+            }
+
+            if (expiresIn <= 0) {
+                expiresIn = defaultTokenLifetime;
             }
         }
 
@@ -430,7 +480,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
                 stream = conn.getErrorStream();
             }
             if (stream == null) {
-                throw new CmisConnectionException("Invalid OAuth token response!");
+                throw new CmisOAuthException("Invalid OAuth token response!");
             }
 
             reader = new InputStreamReader(stream, extractCharset(conn));
@@ -438,14 +488,14 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             Object response = parser.parse(reader);
 
             if (!(response instanceof JSONObject)) {
-                throw new CmisConnectionException("Invalid OAuth token response!");
+                throw new CmisOAuthException("Invalid OAuth token response!");
             }
 
             return (JSONObject) response;
         } catch (CmisConnectionException ce) {
             throw ce;
         } catch (Exception pe) {
-            throw new CmisConnectionException("Parsing the OAuth token response failed: " + pe.getMessage(), pe);
+            throw new CmisOAuthException("Parsing the OAuth token response failed: " + pe.getMessage(), pe);
         } finally {
             IOUtils.consumeAndClose(reader);
         }
@@ -541,5 +591,55 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
          *            the new token
          */
         void tokenRefreshed(Token token);
+    }
+
+    /**
+     * Exception for OAuth errors.
+     */
+    public static class CmisOAuthException extends CmisConnectionException {
+
+        private static final long serialVersionUID = 1L;
+
+        public static final String ERROR_INVALID_REQUEST = "invalid_request";
+        public static final String ERROR_INVALID_CLIENT = "invalid_client";
+        public static final String ERROR_INVALID_GRANT = "invalid_grant";
+        public static final String ERROR_UNAUTHORIZED_CLIENT = "unauthorized_client";
+        public static final String ERROR_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
+        public static final String ERROR_INVALID_SCOPE = "invalid_scope";
+
+        private String error;
+        private String errorDescription;
+        private String errorUri;
+
+        public CmisOAuthException() {
+            super();
+        }
+
+        public CmisOAuthException(String message) {
+            super(message);
+        }
+
+        public CmisOAuthException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public CmisOAuthException(String message, String error, String errorDescription, String errorUri) {
+            super(message);
+            this.error = error;
+            this.errorDescription = errorDescription;
+            this.errorUri = errorUri;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public String getErrorDescription() {
+            return errorDescription;
+        }
+
+        public String getErrorUri() {
+            return errorUri;
+        }
     }
 }
