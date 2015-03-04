@@ -32,20 +32,26 @@ import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomFee
 import org.apache.chemistry.opencmis.client.bindings.spi.atompub.objects.AtomLink;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Output;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.Response;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.VersioningService;
 
@@ -161,6 +167,41 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         url.addParameter(Constants.PARAM_CHECKIN_COMMENT, checkinComment);
         url.addParameter(Constants.PARAM_MAJOR, major);
         url.addParameter(Constants.PARAM_CHECK_IN, "true");
+
+        // workaround for SharePoint - check in without property change
+        if (getSession().get(SessionParameter.ADD_NAME_ON_CHECK_IN, false)) {
+            if (properties == null || properties.getPropertyList().isEmpty()) {
+                properties = new PropertiesImpl();
+
+                try {
+                    String name = null;
+
+                    // fetch the current name
+                    ObjectData obj = getObjectInternal(repositoryId, IdentifierType.ID, objectId.getValue(),
+                            ReturnVersion.THIS, "cmis:objectId,cmis:name", Boolean.FALSE, IncludeRelationships.NONE,
+                            "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
+
+                    if (obj != null && obj.getProperties() != null && obj.getProperties().getProperties() != null
+                            && obj.getProperties().getProperties().get(PropertyIds.NAME) != null) {
+                        PropertyData<?> nameProp = obj.getProperties().getProperties().get(PropertyIds.NAME);
+                        if (nameProp.getFirstValue() instanceof String) {
+                            name = (String) nameProp.getFirstValue();
+                        }
+                    }
+
+                    if (name == null) {
+                        throw new CmisRuntimeException("Could not determine the name of the PWC!");
+                    }
+
+                    // set the document name to the same value - silly, but
+                    // SharePoint requires that at least one property value has
+                    // to be changed and the name is the only reliable property
+                    ((PropertiesImpl) properties).addProperty(new PropertyStringImpl(PropertyIds.NAME, name));
+                } catch (CmisBaseException e) {
+                    throw new CmisRuntimeException("Could not determine the name of the PWC: " + e.toString(), e);
+                }
+            }
+        }
 
         // set up writer
         final AtomEntryWriter entryWriter = new AtomEntryWriter(createObject(properties, null, policies),

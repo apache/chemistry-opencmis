@@ -553,6 +553,16 @@ package org.apache.chemistry.opencmis.commons;
  * <td>no</td>
  * <td>"false"</td>
  * </tr>
+ * <tr>
+ * <td>{@link #ADD_NAME_ON_CHECK_IN}</td>
+ * <td>Defines if the document name should be added to the properties on check
+ * in if no properties are updated<br>
+ * (Workaround for SharePoint 2010 and SharePoint 2013)</td>
+ * <td>AtomPub</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
  * </table>
  */
 public final class SessionParameter {
@@ -701,4 +711,5 @@ public final class SessionParameter {
     public static final String INCLUDE_OBJECTID_URL_PARAM_ON_CHECKOUT = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnCheckout";
     public static final String INCLUDE_OBJECTID_URL_PARAM_ON_MOVE = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnMove";
     public static final String OMIT_CHANGE_TOKENS = "org.apache.chemistry.opencmis.workaround.omitChangeTokens";
+    public static final String ADD_NAME_ON_CHECK_IN = "org.apache.chemistry.opencmis.workaround.addNameOnCheckIn";
 }
