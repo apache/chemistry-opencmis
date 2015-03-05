@@ -35,4 +35,10 @@ public interface LinkAccess {
      * cache if it is not there.
      */
     String loadContentLink(String repositoryId, String documentId);
+
+    /**
+     * Gets a rendition content link from the cache if it is there or loads it
+     * into the cache if it is not there.
+     */
+    String loadRenditionContentLink(String repositoryId, String documentId, String streamId);
 }

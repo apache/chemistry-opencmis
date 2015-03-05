@@ -105,6 +105,35 @@ public interface Document extends FileableCmisObject, DocumentProperties {
     ContentStream getContentStream(String streamId, BigInteger offset, BigInteger length);
 
     /**
+     * Returns the content URL of the document if the binding supports content
+     * URLs.
+     * 
+     * Depending on the repository and the binding, the server might not return
+     * the content but an error message. Authentication data is not attached.
+     * That is, a user may have to re-authenticate to get the content.
+     * 
+     * @return the content URL of the document or {@code null} if the binding
+     *         does not support content URLs
+     */
+    public String getContentUrl();
+
+    /**
+     * Returns the content URL of the document or a rendition if the binding
+     * supports content URLs.
+     * 
+     * Depending on the repository and the binding, the server might not return
+     * the content but an error message. Authentication data is not attached.
+     * That is, a user may have to re-authenticate to get the content.
+     * 
+     * @param streamId
+     *            the ID of the rendition or {@code null} for the document
+     * 
+     * @return the content URL of the document or rendition or {@code null} if
+     *         the binding does not support content URLs
+     */
+    public String getContentUrl(String streamId);
+
+    /**
      * Sets a new content stream for the document and refreshes this object
      * afterwards. If the repository created a new version, this new document is
      * returned. Otherwise the current document is returned.

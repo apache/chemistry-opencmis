@@ -77,4 +77,17 @@ public interface Rendition extends RenditionData {
      *         rendition has no content
      */
     ContentStream getContentStream();
+
+    /**
+     * Returns the content URL of the rendition if the binding supports content
+     * URLs.
+     * 
+     * Depending on the repository and the binding, the server might not return
+     * the content but an error message. Authentication data is not attached.
+     * That is, a user may have to re-authenticate to get the content.
+     * 
+     * @return the content URL of the rendition or {@code null} if the binding
+     *         does not support content URLs
+     */
+    String getContentUrl();
 }

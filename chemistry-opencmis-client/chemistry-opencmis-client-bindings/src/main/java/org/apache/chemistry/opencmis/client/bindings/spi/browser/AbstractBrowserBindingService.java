@@ -510,4 +510,14 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
         return result == null ? null : result.toString();
     }
+
+    public String loadRenditionContentLink(String repositoryId, String documentId, String streamId) {
+        UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
+        if (result != null) {
+            result.addParameter(Constants.PARAM_STREAM_ID, streamId);
+            return result.toString();
+        }
+
+        return null;
+    }
 }

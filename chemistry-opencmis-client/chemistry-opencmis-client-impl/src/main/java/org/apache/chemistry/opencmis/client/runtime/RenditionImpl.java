@@ -25,6 +25,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
@@ -110,4 +111,12 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
                 contentStream.getStream());
     }
 
+    public String getContentUrl() {
+        if (session.getBinding().getObjectService() instanceof LinkAccess) {
+            LinkAccess linkAccess = (LinkAccess) session.getBinding().getObjectService();
+            return linkAccess.loadRenditionContentLink(session.getRepositoryInfo().getId(), objectId, getStreamId());
+        }
+
+        return null;
+    }
 }

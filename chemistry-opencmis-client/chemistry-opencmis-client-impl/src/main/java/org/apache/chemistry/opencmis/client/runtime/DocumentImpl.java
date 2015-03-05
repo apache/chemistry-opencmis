@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
+import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -373,6 +374,24 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         // convert and return stream object
         return getSession().getObjectFactory().createContentStream(filename, lengthLong, contentStream.getMimeType(),
                 contentStream.getStream(), contentStream instanceof PartialContentStream);
+    }
+
+    public String getContentUrl() {
+        return getContentUrl(null);
+    }
+
+    public String getContentUrl(String streamId) {
+        if (getBinding().getObjectService() instanceof LinkAccess) {
+            LinkAccess linkAccess = (LinkAccess) getBinding().getObjectService();
+
+            if (streamId == null) {
+                return linkAccess.loadContentLink(getRepositoryId(), getId());
+            } else {
+                return linkAccess.loadRenditionContentLink(getRepositoryId(), getId(), streamId);
+            }
+        }
+
+        return null;
     }
 
     public Document setContentStream(ContentStream contentStream, boolean overwrite) {

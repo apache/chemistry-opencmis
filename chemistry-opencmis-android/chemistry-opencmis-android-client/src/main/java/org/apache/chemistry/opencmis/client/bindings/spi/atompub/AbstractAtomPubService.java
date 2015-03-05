@@ -221,6 +221,14 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     }
 
     /**
+     * Gets a rendition content link from the cache if it is there or loads it
+     * into the cache if it is not there.
+     */
+    public String loadRenditionContentLink(String repositoryId, String id, String streamId) {
+        return loadLink(repositoryId, id, Constants.REL_ALTERNATE, streamId);
+    }
+
+    /**
      * Adds a link to the cache.
      */
     protected void addLink(String repositoryId, String id, String rel, String type, String link) {
