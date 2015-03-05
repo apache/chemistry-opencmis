@@ -333,8 +333,8 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
                 // dispatch
                 if (callUrl == CallUrl.REPOSITORY) {
-                    if (selector == null) {
-                        selector = "";
+                    if (selector == null || selector.length() == 0) {
+                        throw new CmisNotSupportedException("No selector");
                     }
 
                     browserContext.setCallDetails(service, objectId, null, null);
