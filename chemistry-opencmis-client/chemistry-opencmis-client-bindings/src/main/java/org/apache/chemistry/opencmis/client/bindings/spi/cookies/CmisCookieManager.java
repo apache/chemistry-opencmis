@@ -123,30 +123,22 @@ public class CmisCookieManager implements Serializable {
 
     private static Map<String, List<String>> getCookieMap(List<CmisHttpCookie> cookies,
             Map<String, List<String>> requestHeaders) {
-        HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-        ArrayList<String> cookieStr = new ArrayList<String>();
-        // If all cookies are version 1, add a "$Version="1"" header
-        boolean versionOne = true;
-        for (CmisHttpCookie cookie : cookies) {
-            if (cookie.getVersion() == 0) {
-                versionOne = false;
-                break;
-            }
-        }
-        if (versionOne && !cookies.isEmpty()) {
-            cookieStr.add("$Version=\"1\"");
-        }
-        // add every cookie's string representation into map
-        for (CmisHttpCookie cookie : cookies) {
-            cookieStr.add(cookie.toString());
-        }
-
-        if (cookieStr.isEmpty()) {
+        if (cookies.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        map.put("Cookie", cookieStr);
-        return map;
+        StringBuilder cookieHeaderStr = new StringBuilder();
+
+        for (CmisHttpCookie cookie : cookies) {
+            if (cookieHeaderStr.length() > 0) {
+                cookieHeaderStr.append("; ");
+            }
+            cookieHeaderStr.append(cookie.getName());
+            cookieHeaderStr.append('=');
+            cookieHeaderStr.append(cookie.getValue());
+        }
+
+        return Collections.singletonMap("Cookie", Collections.singletonList(cookieHeaderStr.toString()));
     }
 
     /**

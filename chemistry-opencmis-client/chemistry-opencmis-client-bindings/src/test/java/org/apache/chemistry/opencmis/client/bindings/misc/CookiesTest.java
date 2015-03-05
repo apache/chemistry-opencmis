@@ -52,9 +52,9 @@ public class CookiesTest extends TestCase {
         List<String> cookies = manager.get("https://www.example.com/s/test/abc/s", new HashMap<String, List<String>>())
                 .get("Cookie");
 
-        assertEquals(2, cookies.size());
-        assertEquals(cookies.get(0), "cookie1=c1-3333");
-        assertEquals(cookies.get(1), "cookie1=c1-2222");
+        assertEquals(1, cookies.size());
+        assertEquals(cookies.get(0), "cookie1=c1-3333; cookie1=c1-2222");
+        //assertEquals(cookies.get(1), "cookie1=c1-2222");
     }
 
     private void addCookie(CmisCookieManager manager, String url, String name, String value, String path) {
