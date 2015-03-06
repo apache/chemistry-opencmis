@@ -193,11 +193,11 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             dispatch(context, request, response, pathFragments);
         } catch (Exception e) {
             if (e instanceof CmisUnauthorizedException) {
-                response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
+                response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\", charset=\"UTF-8\"");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
             } else if (e instanceof CmisPermissionDeniedException) {
                 if ((context == null) || (context.getUsername() == null)) {
-                    response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\"");
+                    response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\", charset=\"UTF-8\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
                 } else {
                     response.sendError(getErrorCode((CmisPermissionDeniedException) e), e.getMessage());
