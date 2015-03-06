@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyHtml;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * HTML property data implementation.
@@ -39,6 +40,16 @@ public class PropertyHtmlImpl extends AbstractPropertyData<String> implements Mu
 
     public PropertyHtmlImpl(String id, String value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyHtmlImpl(PropertyDefinition<String> propDef, List<String> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyHtmlImpl(PropertyDefinition<String> propDef, String value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

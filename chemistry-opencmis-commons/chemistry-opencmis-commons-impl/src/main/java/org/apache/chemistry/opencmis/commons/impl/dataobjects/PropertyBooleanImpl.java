@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyBoolean;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Boolean property data implementation.
@@ -39,6 +40,16 @@ public class PropertyBooleanImpl extends AbstractPropertyData<Boolean> implement
 
     public PropertyBooleanImpl(String id, Boolean value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyBooleanImpl(PropertyDefinition<Boolean> propDef, List<Boolean> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyBooleanImpl(PropertyDefinition<Boolean> propDef, Boolean value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

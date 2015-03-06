@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyDateTime;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * DateTime property data implementation.
@@ -40,6 +41,16 @@ public class PropertyDateTimeImpl extends AbstractPropertyData<GregorianCalendar
 
     public PropertyDateTimeImpl(String id, GregorianCalendar value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyDateTimeImpl(PropertyDefinition<GregorianCalendar> propDef, List<GregorianCalendar> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyDateTimeImpl(PropertyDefinition<GregorianCalendar> propDef, GregorianCalendar value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

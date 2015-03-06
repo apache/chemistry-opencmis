@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyInteger;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Integer property data implementation.
@@ -40,6 +41,16 @@ public class PropertyIntegerImpl extends AbstractPropertyData<BigInteger> implem
 
     public PropertyIntegerImpl(String id, BigInteger value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyIntegerImpl(PropertyDefinition<BigInteger> propDef, List<BigInteger> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyIntegerImpl(PropertyDefinition<BigInteger> propDef, BigInteger value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

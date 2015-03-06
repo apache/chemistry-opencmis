@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyDecimal;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Decimal property data implementation.
@@ -40,6 +41,16 @@ public class PropertyDecimalImpl extends AbstractPropertyData<BigDecimal> implem
 
     public PropertyDecimalImpl(String id, BigDecimal value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyDecimalImpl(PropertyDefinition<BigDecimal> propDef, List<BigDecimal> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyDecimalImpl(PropertyDefinition<BigDecimal> propDef, BigDecimal value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

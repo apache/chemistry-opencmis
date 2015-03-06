@@ -531,7 +531,7 @@ public final class XMLConverter {
             PropertyStringDefinition def = (PropertyStringDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyStringImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyStringImpl((String) null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_LENGTH, def.getMaxLength());
@@ -539,13 +539,13 @@ public final class XMLConverter {
             PropertyIdDefinition def = (PropertyIdDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIdImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyIdImpl((String) null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyIntegerDefinition) {
             PropertyIntegerDefinition def = (PropertyIntegerDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyIntegerImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyIntegerImpl((String) null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_VALUE, def.getMaxValue());
@@ -554,13 +554,13 @@ public final class XMLConverter {
             PropertyBooleanDefinition def = (PropertyBooleanDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyBooleanImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyBooleanImpl((String) null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyDateTimeDefinition) {
             PropertyDateTimeDefinition def = (PropertyDateTimeDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyDateTimeImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyDateTimeImpl((String) null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_RESOLUTION,
@@ -569,7 +569,7 @@ public final class XMLConverter {
             PropertyDecimalDefinition def = (PropertyDecimalDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyDecimalImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyDecimalImpl((String) null, def.getDefaultValue()), true);
             }
 
             XMLUtils.write(writer, PREFIX_CMIS, NAMESPACE_CMIS, TAG_PROPERTY_TYPE_MAX_VALUE, def.getMaxValue());
@@ -579,13 +579,13 @@ public final class XMLConverter {
             PropertyHtmlDefinition def = (PropertyHtmlDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyHtmlImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyHtmlImpl((String) null, def.getDefaultValue()), true);
             }
         } else if (source instanceof PropertyUriDefinition) {
             PropertyUriDefinition def = (PropertyUriDefinition) source;
 
             if (def.getDefaultValue() != null) {
-                writeProperty(writer, new PropertyUriImpl(null, def.getDefaultValue()), true);
+                writeProperty(writer, new PropertyUriImpl((String) null, def.getDefaultValue()), true);
             }
         }
 

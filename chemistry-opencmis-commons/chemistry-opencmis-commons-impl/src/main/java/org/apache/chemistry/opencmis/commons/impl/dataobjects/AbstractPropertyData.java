@@ -23,11 +23,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyDataWithDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Abstract property data implementation.
  */
-public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements MutablePropertyData<T> {
+public abstract class AbstractPropertyData<T> extends AbstractExtensionData implements MutablePropertyData<T>,
+        PropertyDataWithDefinition<T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,8 +38,28 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
     private String displayName;
     private String localName;
     private String queryName;
+    private PropertyDefinition<T> propDef;
 
     private List<T> values = Collections.emptyList();
+
+    public PropertyDefinition<T> getPropertyDefinition() {
+        return propDef;
+    }
+
+    public void setPropertyDefinition(PropertyDefinition<T> propDef) {
+        this.propDef = propDef;
+        if (propDef != null) {
+            this.id = propDef.getId();
+            this.displayName = propDef.getDisplayName();
+            this.localName = propDef.getLocalName();
+            this.queryName = propDef.getQueryName();
+        } else {
+            this.id = null;
+            this.displayName = null;
+            this.localName = null;
+            this.queryName = null;
+        }
+    }
 
     public String getId() {
         return id;

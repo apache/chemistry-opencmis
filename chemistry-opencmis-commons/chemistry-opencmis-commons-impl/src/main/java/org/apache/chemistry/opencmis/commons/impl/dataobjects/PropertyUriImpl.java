@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.commons.impl.dataobjects;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.MutablePropertyUri;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 
 /**
  * Uri property data implementation.
@@ -39,6 +40,16 @@ public class PropertyUriImpl extends AbstractPropertyData<String> implements Mut
 
     public PropertyUriImpl(String id, String value) {
         setId(id);
+        setValue(value);
+    }
+
+    public PropertyUriImpl(PropertyDefinition<String> propDef, List<String> values) {
+        setPropertyDefinition(propDef);
+        setValues(values);
+    }
+
+    public PropertyUriImpl(PropertyDefinition<String> propDef, String value) {
+        setPropertyDefinition(propDef);
         setValue(value);
     }
 }

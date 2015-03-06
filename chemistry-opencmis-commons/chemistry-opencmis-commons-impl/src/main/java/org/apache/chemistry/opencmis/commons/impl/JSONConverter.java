@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.commons.data.PolicyIdList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyDataWithDefinition;
 import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
 import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
 import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
@@ -1201,10 +1202,6 @@ public final class JSONConverter {
                     type = typeCache.getTypeDefinition(typeId);
                 }
             }
-
-            if (type == null && objectId != null && propertyMode != PropertyMode.CHANGE) {
-                type = typeCache.getTypeDefinitionForObject(objectId);
-            }
         }
 
         JSONObject result = new JSONObject();
@@ -1214,7 +1211,10 @@ public final class JSONConverter {
             assert property.getId() != null;
 
             PropertyDefinition<?> propDef = null;
-            if (typeCache != null) {
+            if (property instanceof PropertyDataWithDefinition) {
+                propDef = ((PropertyDataWithDefinition<?>) property).getPropertyDefinition();
+            }
+            if (propDef == null && typeCache != null) {
                 propDef = typeCache.getPropertyDefinition(property.getId());
             }
             if (propDef == null && type != null) {
