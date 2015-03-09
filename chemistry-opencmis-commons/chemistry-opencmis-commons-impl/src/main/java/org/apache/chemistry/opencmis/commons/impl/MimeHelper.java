@@ -239,6 +239,117 @@ public final class MimeHelper {
     }
 
     /**
+     * Parses a WWW-Authenticate header value.
+     * 
+     * @param value
+     *            the header value to parse
+     * 
+     * @return a map with the (lower case) challenge name as key and as the
+     *         value a sub-map with parameters of the challenge
+     */
+    public static Map<String, Map<String, String>> getChallengesFromAuthenticateHeader(String value) {
+        if (value == null || value.length() == 0) {
+            return null;
+        }
+
+        final String trimValue = value.trim();
+
+        Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
+
+        boolean inQuotes = false;
+        boolean inName = true;
+        String challenge = null;
+        String paramName = "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < trimValue.length(); i++) {
+            char c = trimValue.charAt(i);
+
+            if (c == '\\') {
+                if (!inQuotes) {
+                    return null;
+                }
+                if (trimValue.length() > i && trimValue.charAt(i + 1) == '\\') {
+                    sb.append('\\');
+                    i++;
+                } else if (trimValue.length() > i && trimValue.charAt(i + 1) == '"') {
+                    sb.append('"');
+                    i++;
+                } else {
+                    return null;
+                }
+            } else if (c == '"') {
+                if (inName) {
+                    return null;
+                }
+                if (inQuotes) {
+                    Map<String, String> authMap = result.get(challenge);
+                    if (authMap == null) {
+                        return null;
+                    }
+                    authMap.put(paramName, sb.toString());
+                }
+                sb = new StringBuilder();
+                inQuotes = !inQuotes;
+            } else if (c == '=') {
+                if (inName) {
+                    paramName = sb.toString().trim();
+
+                    int spcIdx = paramName.indexOf(' ');
+                    if (spcIdx > -1) {
+                        challenge = paramName.substring(0, spcIdx).toLowerCase(Locale.ENGLISH);
+                        result.put(challenge, new HashMap<String, String>());
+                        paramName = paramName.substring(spcIdx).trim();
+                    }
+
+                    sb = new StringBuilder();
+                    inName = false;
+                } else if (!inQuotes) {
+                    return null;
+                }
+            } else if (c == ',') {
+                if (inName) {
+                    challenge = sb.toString().trim().toLowerCase(Locale.ENGLISH);
+                    result.put(challenge, new HashMap<String, String>());
+                    sb = new StringBuilder();
+                } else {
+                    if (inQuotes) {
+                        sb.append(c);
+                    } else {
+                        Map<String, String> authMap = result.get(challenge);
+                        if (authMap == null) {
+                            return null;
+                        }
+                        if (!authMap.containsKey(paramName)) {
+                            authMap.put(paramName, sb.toString().trim());
+                        }
+                        sb = new StringBuilder();
+                        inName = true;
+                    }
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        if (inQuotes) {
+            return null;
+        }
+        if (inName) {
+            challenge = sb.toString().trim().toLowerCase(Locale.ENGLISH);
+            result.put(challenge, new HashMap<String, String>());
+        } else {
+            Map<String, String> authMap = result.get(challenge);
+            if (authMap == null) {
+                return null;
+            }
+            if (!authMap.containsKey(paramName)) {
+                authMap.put(paramName, sb.toString().trim());
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Gets the boundary from a <code>multipart/formdata</code> content type
      * header.
      * 

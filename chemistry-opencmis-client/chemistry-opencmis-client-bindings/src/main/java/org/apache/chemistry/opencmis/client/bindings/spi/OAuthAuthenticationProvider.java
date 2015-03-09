@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 import org.slf4j.Logger;
@@ -132,7 +133,8 @@ import org.slf4j.LoggerFactory;
  *      if (connEx.getCause() instanceof CmisOAuthException) {
  *          CmisOAuthException oauthEx = (CmisOAuthException) connEx.getCause();
  * 
- *          if (CmisOAuthException.ERROR_INVALID_GRANT.equals(oauthEx.getError())) {
+ *          if (CmisOAuthException.ERROR_INVALID_GRANT.equals(oauthEx.getError()) ||
+ *              CmisOAuthException.ERROR_INVALID_TOKEN.equals(oauthEx.getError())) {
  *              // ask the user to authenticate again
  *          } else {
  *             // a configuration or server problem
@@ -474,6 +476,28 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             InputStream stream = null;
 
             int respCode = conn.getResponseCode();
+            if (respCode == 401) {
+                Map<String, Map<String, String>> challenges = MimeHelper.getChallengesFromAuthenticateHeader(conn
+                        .getHeaderField("WWW-Authenticate"));
+
+                if (challenges != null && challenges.containsKey("bearer")) {
+                    Map<String, String> params = challenges.get("bearer");
+
+                    String errorStr = params.get("error");
+                    String descriptionStr = params.get("error_description");
+                    String uriStr = params.get("error_uri");
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Invalid OAuth token: {}", params.toString());
+                    }
+
+                    throw new CmisOAuthException("Unauthorized" + (errorStr == null ? "" : ": " + errorStr)
+                            + (descriptionStr == null ? "" : ": " + descriptionStr), errorStr, descriptionStr, uriStr);
+                }
+
+                throw new CmisOAuthException("Unauthorized!");
+            }
+
             if (respCode >= 200 && respCode < 300) {
                 stream = conn.getInputStream();
             } else {
@@ -600,12 +624,16 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
         private static final long serialVersionUID = 1L;
 
+        // general OAuth errors
         public static final String ERROR_INVALID_REQUEST = "invalid_request";
         public static final String ERROR_INVALID_CLIENT = "invalid_client";
         public static final String ERROR_INVALID_GRANT = "invalid_grant";
         public static final String ERROR_UNAUTHORIZED_CLIENT = "unauthorized_client";
         public static final String ERROR_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
         public static final String ERROR_INVALID_SCOPE = "invalid_scope";
+
+        // bearer specific
+        public static final String ERROR_INVALID_TOKEN = "invalid_token";
 
         private String error;
         private String errorDescription;

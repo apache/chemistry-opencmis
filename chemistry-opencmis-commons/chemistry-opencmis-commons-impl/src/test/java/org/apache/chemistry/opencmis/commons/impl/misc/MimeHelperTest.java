@@ -25,6 +25,7 @@ import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeConten
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.decodeContentDispositionFilename;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.encodeContentDisposition;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.getBoundaryFromMultiPart;
+import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.getChallengesFromAuthenticateHeader;
 import static org.apache.chemistry.opencmis.commons.impl.MimeHelper.getCharsetFromContentType;
 import static org.junit.Assert.assertArrayEquals;
 
@@ -104,5 +105,79 @@ public class MimeHelperTest extends TestCase {
         assertNull(getBoundaryFromMultiPart("multipart/form-data"));
         assertArrayEquals(boundary, getBoundaryFromMultiPart("multipart/form-data;boundary="
                 + new String(boundary, IOUtils.ISO_8859_1)));
+    }
+
+    @Test
+    public void testAuthenticateHeaderParameters() {
+        Map<String, Map<String, String>> challenges = null;
+
+        challenges = getChallengesFromAuthenticateHeader(null);
+        assertNull(challenges);
+
+        challenges = getChallengesFromAuthenticateHeader("");
+        assertNull(challenges);
+
+        challenges = getChallengesFromAuthenticateHeader("Basic");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("basic"));
+        assertTrue(challenges.get("basic").isEmpty());
+
+        challenges = getChallengesFromAuthenticateHeader("Basic realm=\"example\"");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("basic"));
+        assertEquals("example", challenges.get("basic").get("realm"));
+
+        challenges = getChallengesFromAuthenticateHeader("Basic realm= \"example\" ");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("basic"));
+        assertEquals("example", challenges.get("basic").get("realm"));
+
+        challenges = getChallengesFromAuthenticateHeader("Basic realm=example");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("basic"));
+        assertEquals("example", challenges.get("basic").get("realm"));
+
+        challenges = getChallengesFromAuthenticateHeader("Basic realm=\"example\",charset=\"UTF-8\"");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("basic"));
+        assertEquals("example", challenges.get("basic").get("realm"));
+        assertEquals("UTF-8", challenges.get("basic").get("charset"));
+
+        challenges = getChallengesFromAuthenticateHeader("Bearer realm=\"example\", error=\"invalid_token\"");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("bearer"));
+        assertEquals("example", challenges.get("bearer").get("realm"));
+        assertEquals("invalid_token", challenges.get("bearer").get("error"));
+
+        challenges = getChallengesFromAuthenticateHeader("Bearer realm=\"example\", error=invalid_token");
+        assertNotNull(challenges);
+        assertEquals("example", challenges.get("bearer").get("realm"));
+        assertEquals("invalid_token", challenges.get("bearer").get("error"));
+
+        challenges = getChallengesFromAuthenticateHeader("Bearer realm=\"example\", error=\"invalid_token\", error_description=\"The access token expired\"");
+        assertNotNull(challenges);
+        assertEquals("example", challenges.get("bearer").get("realm"));
+        assertEquals("invalid_token", challenges.get("bearer").get("error"));
+        assertEquals("The access token expired", challenges.get("bearer").get("error_description"));
+
+        challenges = getChallengesFromAuthenticateHeader("Bearer realm=\"example\",error_description=\"It's expires, really!\", error=\"invalid_token\",");
+        assertNotNull(challenges);
+        assertEquals("example", challenges.get("bearer").get("realm"));
+        assertEquals("invalid_token", challenges.get("bearer").get("error"));
+        assertEquals("It's expires, really!", challenges.get("bearer").get("error_description"));
+
+        challenges = getChallengesFromAuthenticateHeader("Newauth realm=\"apps\", type=1, title=\"Login to \\\"apps\\\"\", Basic realm=\"simple\"");
+        assertNotNull(challenges);
+        assertEquals("apps", challenges.get("newauth").get("realm"));
+        assertEquals("1", challenges.get("newauth").get("type"));
+        assertEquals("Login to \"apps\"", challenges.get("newauth").get("title"));
+        assertEquals("simple", challenges.get("basic").get("realm"));
+
+        challenges = getChallengesFromAuthenticateHeader("a1, a2 ,a3 ,a4");
+        assertNotNull(challenges);
+        assertTrue(challenges.containsKey("a1"));
+        assertTrue(challenges.containsKey("a2"));
+        assertTrue(challenges.containsKey("a3"));
+        assertTrue(challenges.containsKey("a4"));
     }
 }
