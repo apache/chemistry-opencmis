@@ -42,6 +42,7 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
 
         try {
             testCenterSpaceSpace(session, testFolder);
+            testMultipleCenterSpaceSpace(session, testFolder);
             testLeadingSpace(session, testFolder);
             testTrailingSpace(session, testFolder);
         } finally {
@@ -103,6 +104,29 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
             } else {
                 if (doc.getName().equals("centerspace.txt")) {
                     addResult(createInfoResult("Repository removes spaces from document name."));
+                } else {
+                    addResult(createInfoResult("Repository renames documents with a space."));
+                }
+            }
+        } catch (CmisBaseException e) {
+            addResult(createInfoResult("Repository does not support document names with a space. Exception: "
+                    + e.toString()));
+        }
+    }
+
+    private void testMultipleCenterSpaceSpace(Session session, Folder testFolder) {
+        String name = "twocenter  spaces.txt";
+
+        try {
+            Document doc = createDocument(session, testFolder, name, "");
+
+            if (doc.getName().equals(name)) {
+                addResult(createInfoResult("Repository does supports document names with more than one successive spaces."));
+            } else {
+                if (doc.getName().equals("twocenterspaces.txt")) {
+                    addResult(createInfoResult("Repository removes spaces from document name."));
+                } else if (doc.getName().equals("twocenter spaces.txt")) {
+                    addResult(createInfoResult("Repository combines multiple spaces into one in document names."));
                 } else {
                     addResult(createInfoResult("Repository renames documents with a space."));
                 }
