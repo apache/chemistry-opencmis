@@ -268,6 +268,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     public void setNoAuthentication() {
         put(SessionParameter.AUTH_HTTP_BASIC, false);
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
 
         remove(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
     }
@@ -291,6 +292,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
 
         put(SessionParameter.AUTH_HTTP_BASIC, true);
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
 
         remove(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
     }
@@ -317,6 +319,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
 
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, true);
         put(SessionParameter.AUTH_HTTP_BASIC, basicAuth);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
 
         remove(SessionParameter.AUTHENTICATION_PROVIDER_CLASS);
     }
@@ -341,6 +344,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
 
         put(SessionParameter.AUTH_HTTP_BASIC, false);
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
         put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                 "org.apache.chemistry.opencmis.client.bindings.spi.NTLMAuthenticationProvider");
     }
