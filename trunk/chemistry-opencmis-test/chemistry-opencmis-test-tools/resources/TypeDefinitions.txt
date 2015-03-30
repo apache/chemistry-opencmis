@@ -1,0 +1,149 @@
+#EXIF type definition http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html
+document
+audioFile;audioFile;apache
+Audio File
+Audio Content (compressed or uncompressed)
+    Artist
+    Album
+    Title
+    Comment
+    Genre
+    Length
+    Track
+    Year
+    Composer
+    Disc Number
+    Audio Format
+    Sample Rate
+    Audio Channel Type
+    Number Channels
+    Compressor Version
+
+document
+emailDocument;emailDocument;apache
+Email Document
+Document of type Email
+    From
+    To
+    Cc
+    Bcc
+    Subject
+    Message Recipient Address
+    Creation Date
+    Last Save Date
+
+document
+exifImage;exifImage;apache
+EXIF Image
+Image with EXIF tags
+    Image Width
+    Image Height
+    Bits Per Sample
+    Compression
+    Photometric Interpretation
+    Image Description
+    Make
+    Model
+    Orientation
+    X Resolution
+    Y Resolution
+    Resolution Unit
+    Software
+    Modify Date
+    Artist
+    YCbCrPositioning
+    Copyright
+    Exposure Time
+    F Number
+    Exposure Program
+    ISO Speed
+    GPS Latitude
+    GPS Latitude Ref
+    GPS Longitude
+    GPS Longitude Ref
+    GPS Altitude
+    GPS Altitude Ref
+    Self Timer Mode
+    Time Zone Offset
+    Date Time Original
+    Create Date
+    Shutter Speed Value
+    Aperture Value
+    Brightness Value
+    Exposure Compensation
+    Max Aperture Value 	
+    Metering Mode
+    Subject Distance
+    Light Source
+    Flash
+    Focal Length
+    User Comment
+    Color Space
+    PixelXDimension
+    PixelYDimension
+    Exposure Mode
+    White Balance
+    Scene Capture Type
+    Image Unique Id
+    Owner Name
+    Serial Number
+    Rating
+    Rating Percent
+    Data Precision
+
+document
+officeDocument;officeDocument;apache
+Office Document
+Document of type Office
+    Application Name
+    Application Version
+    Author
+    Category
+    Content Status
+    Comments
+    Company
+    Keywords
+    Last Author
+    Manager
+    Notes
+    Presentation Format
+    Revision Number
+    Template
+    Version
+    Character Count
+    Character Count With Spaces
+    Word Count
+    Line Count
+    Page Count
+    Slide Count
+    Paragraph Count
+    Total Time
+    Edit Time
+    Creation Date
+    Last Save Date
+    Last Printed
+
+document
+pdfDocument;pdfDocument;apache:officeDocument
+PDF Document
+Document of type PDF
+    Creator
+    Title
+    Subject
+    Trapped
+
+document
+videoFile;videoFile;apache
+Video File
+Video Movies
+    Artist
+    Album
+    Title
+    Comment
+    Genre
+    Length
+    Track
+    Year
+    Disc Number
+    Image Width
+    Image Height

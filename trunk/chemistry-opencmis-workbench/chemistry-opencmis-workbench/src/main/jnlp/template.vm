@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.5+" codebase="!server!">
+  <information>
+    <title>$project.Name</title>
+    <vendor>$project.Organization.Name</vendor>
+    <homepage href="http://chemistry.apache.org/java/opencmis.html"/>
+    <description>$project.Description</description>
+    <offline-allowed/>
+    <update check="timeout" policy="prompt-update"/>
+  </information>
+  <security>
+     <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.6+" initial-heap-size="64m" max-heap-size="256m"/>
+     $dependencies
+    <property name="cmis.workbench.url" value="!repository!"/>  
+    <property name="cmis.workbench.user" value="!user!"/>  
+    <property name="cmis.workbench.password" value="!password!"/>
+    <property name="cmis.workbench.binding" value="!binding!"/>
+  </resources>
+  <application-desc main-class="$mainClass"/>
+</jnlp>
+
