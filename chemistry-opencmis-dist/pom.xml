@@ -131,38 +131,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Fetches docs from ${docs.download.directory} -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1.1</version>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>fetch-docs</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>wget</executable>
-                                    <arguments>
-                                        <argument>--directory-prefix=${docs.download.directory}</argument>
-                                        <argument>--domains=chemistry.apache.org</argument>
-                                        <argument>--mirror</argument>
-                                        <argument>-k</argument>
-                                        <argument>-np</argument>
-                                        <argument>--include-directories=/java/</argument>
-                                        <argument>--exclude-directories=/java/0.4.0/maven/,/java/0.5.0/maven/,/java/0.6.0/maven/,/java/0.7.0/maven/</argument>
-                                        <argument>${docs.start.url}</argument>
-                                    </arguments>
-                                    <successCodes>
-                                        <successCode>8</successCode>
-                                    </successCodes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <inherited>false</inherited>
@@ -179,9 +147,6 @@
                                     <descriptors>
                                         <descriptor>
                                             src/main/assembly/server-webapps-assembly.xml
-                                        </descriptor>
-                                        <descriptor>
-                                            src/main/assembly/docs-assembly.xml
                                         </descriptor>
                                     </descriptors>
                                 </configuration>
