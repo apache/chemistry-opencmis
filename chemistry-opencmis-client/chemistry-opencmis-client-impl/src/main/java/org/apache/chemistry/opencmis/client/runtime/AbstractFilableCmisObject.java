@@ -117,6 +117,10 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
             }
 
             String folderPath = ((String) pathProperty.getFirstValue());
+            if (folderPath == null) {
+                // the repository sent a folder without a valid path...
+                throw new CmisRuntimeException("Repository sent invalid data! No path property value!");
+            }
             paths.add(folderPath + (folderPath.endsWith("/") ? "" : "/") + p.getRelativePathSegment());
         }
 
