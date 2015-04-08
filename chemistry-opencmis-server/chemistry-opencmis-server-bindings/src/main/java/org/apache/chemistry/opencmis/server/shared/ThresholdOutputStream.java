@@ -64,6 +64,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
 
     private final File tempDir;
     private final int memoryThreshold;
+    private final int initSize;
     private final long maxContentSize;
     private final boolean encrypt;
 
@@ -124,6 +125,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             throw new IllegalArgumentException("Negative initial size: " + initSize);
         }
 
+        this.initSize = initSize;
         this.tempDir = tempDir;
         this.memoryThreshold = (memoryThreshold < 0 ? DEFAULT_THRESHOLD : memoryThreshold);
         this.maxContentSize = maxContentSize;
@@ -144,7 +146,14 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             tmpStream.write(buf, 0, bufSize);
 
             if (buf.length != memoryThreshold) {
-                buf = new byte[memoryThreshold];
+                if (memoryThreshold >= initSize) {
+                    buf = new byte[memoryThreshold];
+                } else if (buf.length != initSize) {
+                    buf = new byte[initSize];
+                }
+            }
+            if (buf.length < nextBufferSize) {
+                buf = new byte[nextBufferSize];
             }
             bufSize = 0;
 

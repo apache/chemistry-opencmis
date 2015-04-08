@@ -207,6 +207,30 @@ public class ThresholdOutputStreamTest {
         }
     }
 
+    @Test
+    public void testNoThreshold() throws Exception {
+        int size = 128 * 1024;
+
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, 0, size * 2, false);
+
+        TempStoreOutputStream tempStream = streamFactory.newOutputStream();
+        assertTrue(tempStream instanceof ThresholdOutputStream);
+
+        ThresholdOutputStream tos = (ThresholdOutputStream) tempStream;
+
+        byte[] bytes = new byte[size];
+        tos.write(bytes);
+        tos.close();
+
+        ThresholdInputStream tis = (ThresholdInputStream) tos.getInputStream();
+        assertFalse(tis.isInMemory());
+
+        File tempFile = tis.getTemporaryFile();
+        assertEquals(size, tempFile.length());
+
+        tis.close();
+    }
+
     private byte[] getBytesFromArray(byte[] buffer, int len) {
         byte[] result = new byte[len];
 
