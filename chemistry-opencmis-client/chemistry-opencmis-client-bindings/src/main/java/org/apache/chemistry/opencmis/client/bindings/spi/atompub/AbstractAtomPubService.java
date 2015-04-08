@@ -77,6 +77,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
@@ -662,6 +663,15 @@ public abstract class AbstractAtomPubService implements LinkAccess {
         }
 
         return resp;
+    }
+
+    /**
+     * Performs a POST on an URL, checks the response code and consumes the
+     * response.
+     */
+    protected void postAndConsume(UrlBuilder url, String contentType, Output writer) {
+        Response resp = post(url, contentType, writer);
+        IOUtils.consumeAndClose(resp.getStream());
     }
 
     /**
