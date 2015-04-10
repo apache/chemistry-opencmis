@@ -34,6 +34,7 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.antlr.runtime.RecognitionException;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
@@ -1010,6 +1011,20 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("...Stop testContainsAndScore.");
     }
 
+    @Test
+    public void testContainsSyntaxError() {
+        log.debug("Start testContainsSyntaxError...");
+        String statement = "SELECT cmis:objectId FROM " + COMPLEX_TYPE + " WHERE CONTAINS('')";
+        try {
+        	doQuery(statement);
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("line 1:0 no viable alternative at input '<EOF>'"));
+            assertTrue(e instanceof CmisInvalidArgumentException);                   	
+            assertTrue(e.getCause() instanceof RuntimeException);                   	
+            assertTrue(e.getCause().getCause() instanceof RecognitionException);                   	
+        }
+        log.debug("...Stop testContainsSyntaxError.");
+    }
     @Test
     public void testNotSetProperties() {
         log.debug("Start testNotSetProperties...");

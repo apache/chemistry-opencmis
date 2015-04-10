@@ -19,6 +19,8 @@
 package org.apache.chemistry.opencmis.server.support.query;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -514,4 +516,8 @@ public class TestParserTextSearch extends AbstractParserTest{
       testParserFail("text_search_expression", "c:\\My Documents");
     }
     
+    @Test
+    public void testTextSearchException() {
+    	testParserFail("text_search_expression", "AND OR");
+    }
 }

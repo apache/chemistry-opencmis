@@ -109,13 +109,13 @@ public abstract class QueryUtilBase<T extends TreeParser> {
         try {
             processStatement();
         } catch (RecognitionException e) {
-            String errorMsg = queryObj.getErrorMessage();
-            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   "
+            String errorMsg = getErrorMessage(e);
+            throw new CmisInvalidArgumentException("Processing of query statement failed with RecognitionException error: \n   "
                     + errorMsg, e);
         } catch (CmisBaseException e) {
             throw e;
         } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Walking of statement failed with exception: \n   ", e);
+            throw new CmisInvalidArgumentException("Processing of query statement failed with exception: " + e.getMessage(), e);
         }
     }
 

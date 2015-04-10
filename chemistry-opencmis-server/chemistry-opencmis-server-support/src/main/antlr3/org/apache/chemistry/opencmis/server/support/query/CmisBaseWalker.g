@@ -73,8 +73,15 @@ options {
         TokenStream tokens = new CommonTokenStream(lexer);
         TextSearchParser parser = new TextSearchParser(tokens);
 
-        TextSearchParser.text_search_expression_return parsedStatement = parser.text_search_expression();
-        return (CommonTree) parsedStatement.getTree();
+        try {
+            TextSearchParser.text_search_expression_return parsedStatement = parser.text_search_expression();
+            return (CommonTree) parsedStatement.getTree();
+        } catch (RecognitionException e) {
+            String[] tokenNames = parser.getTokenNames();
+            String hdr = "Error in text search expression, line " + e.line + ":" + e.charPositionInLine;
+            String msg = parser.getErrorMessage(e, tokenNames);
+            throw new RuntimeException(hdr + " " + msg, e);
+        }
     }
 
 }
