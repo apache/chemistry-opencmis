@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.inmemory;
 
+import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -49,6 +50,7 @@ public class FolderTest extends TestCase {
     @Override
     @Before
     protected void setUp() throws Exception {
+        ConfigurationSettings.init(new HashMap<String, String>());
         fStore = new ObjectStoreImpl(TEST_REPOSITORY_ID);
         createFolders();
     }
