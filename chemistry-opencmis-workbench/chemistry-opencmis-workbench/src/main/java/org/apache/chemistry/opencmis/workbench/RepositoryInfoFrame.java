@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,9 @@ public class RepositoryInfoFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        setPreferredSize(new Dimension(700, 700));
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(200, 60));
 
         RepositoryInfo repInfo = null;
@@ -231,6 +234,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permTable = new JTable(data, new String[] { "Permission", "Description" });
                     permTable.setFillsViewportHeight(true);
+                    permTable.setRowHeight(getFontMetrics(permTable.getFont()).getHeight());
                     addComponent("Permissions:", new JScrollPane(permTable));
                 }
 
@@ -246,6 +250,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permMapTable = new JTable(data, new String[] { "Key", "Permissions" });
                     permMapTable.setFillsViewportHeight(true);
+                    permMapTable.setRowHeight(getFontMetrics(permMapTable.getFont()).getHeight());
                     addComponent("Permission mapping:", new JScrollPane(permMapTable));
                 }
             }

@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -329,7 +330,9 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         addWindowListener(this);
 
-        setPreferredSize(new Dimension(prefs.getInt(PREFS_WIDTH, 1000), prefs.getInt(PREFS_HEIGHT, 600)));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension(prefs.getInt(PREFS_WIDTH, (int) (screenSize.getWidth() / 1.5)), prefs.getInt(
+                PREFS_HEIGHT, (int) (screenSize.getHeight() / 1.5))));
         setMinimumSize(new Dimension(200, 60));
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

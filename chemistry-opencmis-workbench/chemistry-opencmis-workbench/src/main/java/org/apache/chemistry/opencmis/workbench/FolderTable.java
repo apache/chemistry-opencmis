@@ -95,6 +95,8 @@ public class FolderTable extends JTable implements FolderListener {
             column.setPreferredWidth(COLUMN_WIDTHS[i]);
         }
 
+        setRowHeight(getFontMetrics(getFont()).getHeight());
+
         final JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Copy to clipboard");
         popup.add(menuItem);

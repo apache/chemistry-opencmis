@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,14 +51,16 @@ public class LogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setPreferredSize(new Dimension(800, 600));
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));        
         setMinimumSize(new Dimension(200, 60));
 
         setLayout(new BorderLayout());
 
         logTextArea = new JTextArea();
         logTextArea.setEditable(false);
-        logTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        logTextArea.setFont(new Font("Monospaced", Font.PLAIN, logTextArea.getFont().getSize()));
         logTextArea.setLineWrap(true);
         logTextArea.setWrapStyleWord(true);
         add(new JScrollPane(logTextArea), BorderLayout.CENTER);

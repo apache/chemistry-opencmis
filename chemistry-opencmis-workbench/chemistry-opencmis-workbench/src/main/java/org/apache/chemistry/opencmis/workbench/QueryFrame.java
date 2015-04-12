@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -101,7 +102,9 @@ public class QueryFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        setPreferredSize(new Dimension(800, 700));
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(200, 60));
 
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -435,6 +438,8 @@ public class QueryFrame extends JFrame {
             setDefaultRenderer(ObjectIdImpl.class, new IdRenderer());
             setFillsViewportHeight(true);
             setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+            setRowHeight(getFontMetrics(getFont()).getHeight());
         }
 
         @Override

@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
@@ -100,7 +101,8 @@ public class TypesFrame extends JFrame {
             setIconImage(icon.getImage());
         }
 
-        setPreferredSize(new Dimension(1000, 700));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(200, 60));
         setLayout(new BorderLayout());
 

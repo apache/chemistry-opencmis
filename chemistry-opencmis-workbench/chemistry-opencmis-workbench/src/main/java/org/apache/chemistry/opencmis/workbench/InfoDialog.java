@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -49,7 +50,8 @@ public class InfoDialog extends JDialog {
     }
 
     private void createGUI() {
-        setPreferredSize(new Dimension(800, 500));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(600, 400));
 
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -85,7 +87,7 @@ public class InfoDialog extends JDialog {
 
         JTextArea ta = new JTextArea(readme.toString());
         ta.setEditable(false);
-        ta.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        ta.setFont(new Font(Font.MONOSPACED, Font.PLAIN, ta.getFont().getSize()));
         JScrollPane readmePane = new JScrollPane(ta);
         readmePane.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 

@@ -72,6 +72,8 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
             column.setPreferredWidth(colummnWidths[i]);
         }
 
+        setRowHeight(getFontMetrics(getFont()).getHeight());
+
         setFillsViewportHeight(true);
 
         final JPopupMenu popup = new JPopupMenu();

@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -64,7 +65,9 @@ public class ChangeLogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        setPreferredSize(new Dimension(700, 700));
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 4), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(200, 60));
 
         setLayout(new BorderLayout());

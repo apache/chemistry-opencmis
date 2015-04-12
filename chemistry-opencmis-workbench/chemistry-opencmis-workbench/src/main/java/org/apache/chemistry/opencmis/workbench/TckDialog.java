@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -125,7 +126,8 @@ public class TckDialog {
         }
 
         private void createGUI() {
-            setPreferredSize(new Dimension(600, 500));
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 1.5)));
             setMinimumSize(new Dimension(600, 500));
 
             setLayout(new BorderLayout());
@@ -269,10 +271,14 @@ public class TckDialog {
                 }
             });
 
+            int height = 30;
+            height = Math.max(height, getFontMetrics(runButton.getFont()).getHeight() + runButton.getInsets().top
+                    + runButton.getInsets().bottom);
+
             final JPanel runButtonPanel = new JPanel();
             runButtonPanel.setLayout(new BoxLayout(runButtonPanel, BoxLayout.PAGE_AXIS));
             runButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
-            runButton.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
+            runButton.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
             runButtonPanel.add(runButton);
 
             add(runButtonPanel, BorderLayout.PAGE_END);

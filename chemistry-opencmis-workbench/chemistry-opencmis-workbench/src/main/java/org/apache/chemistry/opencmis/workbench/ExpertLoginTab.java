@@ -93,7 +93,8 @@ public class ExpertLoginTab extends AbstractLoginTab {
         add(configs, BorderLayout.PAGE_START);
 
         sessionParameterTextArea = new JTextArea();
-        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, sessionParameterTextArea.getFont()
+                .getSize()));
         add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
     }
 

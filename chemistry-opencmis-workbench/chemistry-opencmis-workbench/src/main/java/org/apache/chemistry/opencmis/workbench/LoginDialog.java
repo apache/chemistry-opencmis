@@ -25,6 +25,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -78,8 +79,9 @@ public class LoginDialog extends JDialog {
     }
 
     private void createGUI() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(700, 500));
-        setPreferredSize(new Dimension(700, 500));
 
         Container pane = getContentPane();
         pane.setLayout(new BorderLayout());
@@ -240,7 +242,12 @@ public class LoginDialog extends JDialog {
 
     private JButton createButton(String title) {
         JButton button = new JButton(title);
-        button.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
+
+        int height = 30;
+        height = Math.max(height,
+                getFontMetrics(button.getFont()).getHeight() + button.getInsets().top + button.getInsets().bottom);
+
+        button.setPreferredSize(new Dimension(Short.MAX_VALUE, height));
         button.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -249,9 +256,14 @@ public class LoginDialog extends JDialog {
 
     private void createRepositoryBox(Container pane) {
         repositoryBox = new JComboBox();
+
+        int height = 60;
+        height = Math.max(height, (getFontMetrics(repositoryBox.getFont()).getHeight() * 3)
+                + repositoryBox.getInsets().top + repositoryBox.getInsets().bottom + 6);
+
         repositoryBox.setEnabled(false);
         repositoryBox.setRenderer(new RepositoryRenderer());
-        repositoryBox.setPreferredSize(new Dimension(Short.MAX_VALUE, 60));
+        repositoryBox.setPreferredSize(new Dimension(Short.MAX_VALUE, height));
         repositoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         pane.add(repositoryBox);
