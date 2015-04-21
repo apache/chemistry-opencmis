@@ -603,6 +603,10 @@ public abstract class AbstractPortProvider {
 
                 NodeList addressList = port.getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/soap/", "address");
                 if (addressList.getLength() < 1) {
+                    // see CMIS-908
+                    addressList = port.getElementsByTagNameNS("http://schemas.xmlsoap.org/wsdl/soap12/", "address");
+                }
+                if (addressList.getLength() < 1) {
                     throw new CmisRuntimeException("This service has no endpoint address: " + service.getServiceName());
                 }
 
