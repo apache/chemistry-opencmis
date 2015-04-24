@@ -199,27 +199,27 @@ public class TckDialog {
 
             final JComboBox folderComboBox = addComboBox(configPanel, "Test folder type:",
                     BaseTypeId.CMIS_FOLDER.value(), TestParameters.DEFAULT_FOLDER_TYPE_VALUE, true);
-            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
             final JComboBox documentComboBox = addComboBox(configPanel, "Test document type:",
                     BaseTypeId.CMIS_DOCUMENT.value(), TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE, true);
-            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
             final JComboBox relationshipComboBox = addComboBox(configPanel, "Test relationship type:",
                     BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE, true);
-            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
             final JComboBox itemComboBox = addComboBox(configPanel, "Test item type:", BaseTypeId.CMIS_ITEM.value(),
                     TestParameters.DEFAULT_ITEM_TYPE_VALUE, true);
-            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
             final JComboBox secondaryComboBox = addComboBox(configPanel, "Test secondary type:",
                     BaseTypeId.CMIS_SECONDARY.value(), TestParameters.DEFAULT_SECONDARY_TYPE_VALUE, false);
-            configPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
             configPanel.add(new JLabel("Test folder path:"));
             final JTextField testParentFolderField = new JTextField(TestParameters.DEFAULT_TEST_FOLDER_PARENT_VALUE);
-            testParentFolderField.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
+            testParentFolderField.setMaximumSize(new Dimension(Short.MAX_VALUE, WorkbenchScale.scaleInt(10)));
             testParentFolderField.setAlignmentX(Component.LEFT_ALIGNMENT);
             configPanel.add(testParentFolderField);
 

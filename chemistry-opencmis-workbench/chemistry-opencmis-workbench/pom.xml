@@ -135,6 +135,14 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <target>1.7</target>
+                    <source>1.7</source>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
@@ -145,8 +153,8 @@
                             <classpathPrefix />
                         </manifest>
                         <manifestEntries>
-                            <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
-                            <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                            <X-Compile-Source-JDK>1.7</X-Compile-Source-JDK>
+                            <X-Compile-Target-JDK>1.7</X-Compile-Target-JDK>
                         </manifestEntries>
                     </archive>
                 </configuration>

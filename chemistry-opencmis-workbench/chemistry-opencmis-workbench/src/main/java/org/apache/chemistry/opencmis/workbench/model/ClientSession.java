@@ -205,7 +205,7 @@ public class ClientSession {
             try {
                 maxChildren = Integer.valueOf(maxChildrenStr.trim());
             } catch (NumberFormatException e) {
-                LOG.warn("Invalid " + MAX_FOLDER_CHILDREN + " parameter!", e);
+                LOG.warn("Invalid {} parameter!", MAX_FOLDER_CHILDREN, e);
             }
         }
 

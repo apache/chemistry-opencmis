@@ -49,7 +49,11 @@ public class Workbench {
 
                         for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                             if ("Nimbus".equals(info.getName())) {
-                                UIManager.setLookAndFeel(info.getClassName());
+                                if (WorkbenchScale.isScaling()) {
+                                    UIManager.setLookAndFeel(new WorkbenchScale.ScaledNimbusLookAndFeel());
+                                } else {
+                                    UIManager.setLookAndFeel(info.getClassName());
+                                }
                                 nimbus = true;
                                 break;
                             }
@@ -59,12 +63,12 @@ public class Workbench {
                             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                         }
                     } catch (Exception e) {
-                        LOG.warn("Nimbus not available: " + e.getMessage(), e);
+                        LOG.warn("Nimbus not available: {}", e.getMessage(), e);
                     }
                 }
             });
         } catch (Exception e) {
-            LOG.warn("Nimbus not available: " + e.getMessage(), e);
+            LOG.warn("Nimbus not available: {}", e.getMessage(), e);
         }
 
         JFrame.setDefaultLookAndFeelDecorated(true);

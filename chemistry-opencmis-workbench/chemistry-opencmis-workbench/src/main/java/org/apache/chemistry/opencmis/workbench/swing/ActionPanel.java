@@ -39,6 +39,7 @@ import javax.swing.UIManager;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public abstract class ActionPanel extends JPanel implements ActionListener {

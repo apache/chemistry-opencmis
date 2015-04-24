@@ -26,6 +26,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -150,7 +151,10 @@ public class AclEditorFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setPreferredSize(new Dimension(800, 600));
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
+        setMinimumSize(new Dimension(200, 60));
         setMinimumSize(new Dimension(300, 120));
 
         setLayout(new BorderLayout());

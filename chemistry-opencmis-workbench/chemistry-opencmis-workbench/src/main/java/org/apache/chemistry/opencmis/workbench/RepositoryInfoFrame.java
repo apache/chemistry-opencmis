@@ -234,7 +234,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permTable = new JTable(data, new String[] { "Permission", "Description" });
                     permTable.setFillsViewportHeight(true);
-                    permTable.setRowHeight(getFontMetrics(permTable.getFont()).getHeight());
+                    permTable.setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
                     addComponent("Permissions:", new JScrollPane(permTable));
                 }
 
@@ -250,7 +250,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                     JTable permMapTable = new JTable(data, new String[] { "Key", "Permissions" });
                     permMapTable.setFillsViewportHeight(true);
-                    permMapTable.setRowHeight(getFontMetrics(permMapTable.getFont()).getHeight());
+                    permMapTable.setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
                     addComponent("Permission mapping:", new JScrollPane(permMapTable));
                 }
             }

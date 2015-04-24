@@ -95,7 +95,7 @@ public class FolderTable extends JTable implements FolderListener {
             column.setPreferredWidth(COLUMN_WIDTHS[i]);
         }
 
-        setRowHeight(getFontMetrics(getFont()).getHeight());
+        setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
 
         final JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Copy to clipboard");
@@ -166,7 +166,10 @@ public class FolderTable extends JTable implements FolderListener {
             }
         });
 
+        // load icon and set icon column size
         loadIcons();
+        getColumnModel().getColumn(0).setPreferredWidth(
+                (int) (icons.get(BaseTypeId.CMIS_DOCUMENT).getIconWidth() * 1.1));
     }
 
     private void loadIcons() {

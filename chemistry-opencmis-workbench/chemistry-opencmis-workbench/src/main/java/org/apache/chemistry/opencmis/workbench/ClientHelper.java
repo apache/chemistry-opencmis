@@ -208,7 +208,7 @@ public final class ClientHelper {
     public static ImageIcon getIcon(String name) {
         URL imageURL = ClientHelper.class.getResource("/images/" + name);
         if (imageURL != null) {
-            return new ImageIcon(imageURL);
+            return WorkbenchScale.scaleIcon(new ImageIcon(imageURL));
         }
 
         return null;
@@ -425,8 +425,8 @@ public final class ClientHelper {
             char c = s.charAt(i);
             if (c == '<') {
                 sb.append("&lt;");
-            } else if (c == '<') {
-                sb.append("&lt;");
+            } else if (c == '>') {
+                sb.append("&gt;");
             } else if (c == '"') {
                 sb.append("&quot;");
             } else if (c == '\'') {
@@ -536,7 +536,7 @@ public final class ClientHelper {
                 return null;
             }
         } catch (Exception e) {
-            LOG.error("Cannot open library file: " + propertiesFile, e);
+            LOG.error("Cannot open library file: {}", propertiesFile, e);
             return null;
         }
 
@@ -591,7 +591,7 @@ public final class ClientHelper {
                     if (uri != null) {
                         result.add(new FileEntry(properties.getProperty(file), uri));
                     } else {
-                        LOG.error("Cannot find library entry: " + file);
+                        LOG.error("Cannot find library entry: {}", file);
                     }
                 } catch (URISyntaxException e) {
                     // ignore entry
@@ -601,7 +601,7 @@ public final class ClientHelper {
 
             return result;
         } catch (IOException e) {
-            LOG.error("Cannot read library file: " + propertiesFile);
+            LOG.error("Cannot read library file: {}", propertiesFile);
             return null;
         } finally {
             IOUtils.closeQuietly(stream);
@@ -713,8 +713,11 @@ public final class ClientHelper {
 
     public static void runJSR223Script(final Component parent, final ClientModel model, final File file,
             final String ext, final Writer out) {
+        InputStreamReader reader = null;
         try {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            reader = new InputStreamReader(new FileInputStream(file), IOUtils.UTF8);
 
             ScriptEngineManager mgr = new ScriptEngineManager();
             ScriptEngine engine = mgr.getEngineByExtension(ext);
@@ -723,10 +726,11 @@ public final class ClientHelper {
             engine.put("session", model.getClientSession().getSession());
             engine.put("binding", model.getClientSession().getSession().getBinding());
             engine.put("out", new PrintWriter(out));
-            engine.eval(new InputStreamReader(new FileInputStream(file), IOUtils.UTF8));
+            engine.eval(reader);
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
         } finally {
+            IOUtils.closeQuietly(reader);
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }

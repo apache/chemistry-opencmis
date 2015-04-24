@@ -59,6 +59,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 import com.google.zxing.BarcodeFormat;
@@ -98,7 +99,7 @@ public abstract class InfoPanel extends JPanel {
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridy = 0;
-        gbc.insets = new Insets(3, 3, 3, 3);
+        gbc.insets = WorkbenchScale.scaleInsets(new Insets(3, 3, 3, 3));
 
         Font labelFont = UIManager.getFont("Label.font");
         boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);

@@ -439,7 +439,7 @@ public class QueryFrame extends JFrame {
             setFillsViewportHeight(true);
             setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-            setRowHeight(getFontMetrics(getFont()).getHeight());
+            setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
         }
 
         @Override

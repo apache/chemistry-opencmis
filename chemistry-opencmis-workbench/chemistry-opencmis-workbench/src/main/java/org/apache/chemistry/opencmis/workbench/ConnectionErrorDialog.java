@@ -106,7 +106,7 @@ public class ConnectionErrorDialog extends JDialog {
         add(buttonPanel, BorderLayout.PAGE_END);
 
         JButton closeButton = new JButton("Close");
-        closeButton.setPreferredSize(new Dimension(Short.MAX_VALUE, 30));
+        closeButton.setPreferredSize(new Dimension(Short.MAX_VALUE, WorkbenchScale.scaleInt(30)));
         closeButton.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 

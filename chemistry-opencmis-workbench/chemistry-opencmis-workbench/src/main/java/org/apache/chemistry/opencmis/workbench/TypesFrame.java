@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class TypesFrame extends JFrame {
@@ -125,13 +126,15 @@ public class TypesFrame extends JFrame {
 
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Save XML");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    OutputStream out = null;
                     try {
-                        OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                        out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
                         TypeUtils.writeToXML(currentType, out);
                         out.flush();
-                        out.close();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
+                    } finally {
+                        IOUtils.closeQuietly(out);
                     }
                 }
             }
@@ -147,13 +150,15 @@ public class TypesFrame extends JFrame {
 
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Save JSON");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    OutputStream out = null;
                     try {
-                        OutputStream out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
+                        out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
                         TypeUtils.writeToJSON(currentType, out);
                         out.flush();
-                        out.close();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
+                    } finally {
+                        IOUtils.closeQuietly(out);
                     }
                 }
             }
@@ -181,11 +186,10 @@ public class TypesFrame extends JFrame {
 
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    InputStream in = null;
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
-                                64 * 1024);
+                        in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()), 64 * 1024);
                         TypeDefinition type = TypeUtils.readFromXML(in);
-                        in.close();
 
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
@@ -194,6 +198,8 @@ public class TypesFrame extends JFrame {
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
+                    } finally {
+                        IOUtils.closeQuietly(in);
                     }
                 }
             }
@@ -208,11 +214,10 @@ public class TypesFrame extends JFrame {
 
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load JSON");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    InputStream in = null;
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
-                                64 * 1024);
+                        in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()), 64 * 1024);
                         TypeDefinition type = TypeUtils.readFromJSON(in);
-                        in.close();
 
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().updateType(type);
@@ -221,6 +226,8 @@ public class TypesFrame extends JFrame {
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
+                    } finally {
+                        IOUtils.closeQuietly(in);
                     }
                 }
             }
@@ -272,12 +279,10 @@ public class TypesFrame extends JFrame {
 
                 int chooseResult = fileChooser.showDialog(getRootPane(), "Load XML");
                 if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                    InputStream in = null;
                     try {
-                        InputStream in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()),
-                                64 * 1024);
+                        in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()), 64 * 1024);
                         TypeDefinition type = TypeUtils.readFromXML(in);
-                        in.close();
-
                         if (checkTypeDefinition(type)) {
                             model.getClientSession().getSession().createType(type);
                         }
@@ -285,6 +290,8 @@ public class TypesFrame extends JFrame {
                         loadData();
                     } catch (Exception e) {
                         ClientHelper.showError(getRootPane(), e);
+                    } finally {
+                        IOUtils.closeQuietly(in);
                     }
                 }
             }
