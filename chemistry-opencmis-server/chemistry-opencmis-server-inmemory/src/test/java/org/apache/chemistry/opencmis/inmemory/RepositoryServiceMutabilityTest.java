@@ -248,7 +248,7 @@ public class RepositoryServiceMutabilityTest extends AbstractServiceTest {
 
     private void checkAddingType(String repositoryId, TypeDefinition typeDef, Class<? extends Exception> clazz) {
         try {
-            typeDef = fRepSvc.createType(repositoryId, typeDef, null);
+            fRepSvc.createType(repositoryId, typeDef, null);
             fail("Illegal type should throw a " + clazz.getName());
         } catch (RuntimeException e) {
             assertTrue("Illegal type name threw wrong exception type (should be a " + clazz.getName() + ")",

@@ -88,11 +88,11 @@ public class SpecExamples {
     private static final String VERSIONED_TYPE = "VersionableType";
     private static final String VERSIONED_PROP = "VersionedStringProp";
     private static final String LOGDIR = System.getProperty("java.io.tmpdir");// +
-                                                                        // File.separator;
+    // File.separator;
     private static final String ROOT_URL = "http://localhost:8080/inmemory";
-    private static final String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory"; 
-      // required by OASIS rules, add this host to your hosts file
-    
+    private static final String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory";
+    // required by OASIS rules, add this host to your hosts file
+
     static int NO_FILES_LOGGED = 0;
 
     private String targetDir = System.getProperty("java.io.tmpdir");
@@ -739,7 +739,11 @@ public class SpecExamples {
         File dir = new File(directoryPath);
         FileFilter fileFilter = new WildcardFileFilter(wildcardFilter);
         File[] files = dir.listFiles(fileFilter);
-        LOG.debug("Number of files in filter dir " + files.length);
+        if (files == null) {
+            files = new File[0];
+        }
+
+        LOG.debug("Number of files in filter dir {}", files.length);
         if (files.length < NO_FILES_LOGGED) {
             LOG.warn("WARNING TOO FEW FILES!");
             // There might be some problem with disk caching, seems that
@@ -751,6 +755,9 @@ public class SpecExamples {
                 LOG.error("Thread interrupted: ", e);
             }
             files = dir.listFiles(fileFilter);
+            if (files == null) {
+                files = new File[0];
+            }
             if (files.length < NO_FILES_LOGGED) {
                 LOG.error("WARNING TOO FEW FILES EVEN AFTER SECOND TRY!!!");
             }
@@ -780,28 +787,34 @@ public class SpecExamples {
     private static boolean deleteDirRecursive(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    deleteDirRecursive(files[i]);
-                } else {
-                    files[i].delete();
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        deleteDirRecursive(files[i]);
+                    } else {
+                        files[i].delete();
+                    }
                 }
             }
         }
-        return (path.delete());
+        return path.delete();
     }
 
     private void cleanLogFilterDir() {
         File dir = new File(LOGDIR);
         FileFilter fileFilter = new WildcardFileFilter("*-request.log");
         File[] files = dir.listFiles(fileFilter);
-        for (File f : files) {
-            f.delete();
+        if (files != null) {
+            for (File f : files) {
+                f.delete();
+            }
         }
         fileFilter = new WildcardFileFilter("*-response.log");
         files = dir.listFiles(fileFilter);
-        for (File f : files) {
-            f.delete();
+        if (files != null) {
+            for (File f : files) {
+                f.delete();
+            }
         }
     }
 }

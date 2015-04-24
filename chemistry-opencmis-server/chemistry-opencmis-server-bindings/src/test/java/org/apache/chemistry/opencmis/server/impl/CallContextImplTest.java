@@ -45,6 +45,21 @@ public class CallContextImplTest {
         assertEquals("abc", context.get(CallContext.LOCALE_ISO639_LANGUAGE));
         assertEquals("123", context.get(CallContext.LOCALE_ISO3166_COUNTRY));
         assertEquals("abc-123", context.getLocale());
+
+        context.setAcceptLanguage("en;q=0.1,*;q=0.8");
+        assertNull(context.get(CallContext.LOCALE_ISO639_LANGUAGE));
+        assertNull(context.get(CallContext.LOCALE_ISO3166_COUNTRY));
+        assertNull(context.getLocale());
+
+        context.setAcceptLanguage("fr");
+        assertEquals("fr", context.get(CallContext.LOCALE_ISO639_LANGUAGE));
+        assertNull(context.get(CallContext.LOCALE_ISO3166_COUNTRY));
+        assertEquals("fr", context.getLocale());
+
+        context.setAcceptLanguage("de-*");
+        assertEquals("de", context.get(CallContext.LOCALE_ISO639_LANGUAGE));
+        assertNull(context.get(CallContext.LOCALE_ISO3166_COUNTRY));
+        assertEquals("de", context.getLocale());
     }
 
     @Test

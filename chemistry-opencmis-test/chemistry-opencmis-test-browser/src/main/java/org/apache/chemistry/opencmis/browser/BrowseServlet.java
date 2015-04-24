@@ -119,6 +119,12 @@ public class BrowseServlet extends HttpServlet {
                         LOG.info("Stylesheet: '" + stylesheetKey + "' -> '" + stylesheetFileName + "'");
                     } catch (Exception e) {
                         LOG.error(e.getMessage(), e);
+                    } finally {
+                        try {
+                            stream.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
                     }
                 }
             }
@@ -212,7 +218,7 @@ public class BrowseServlet extends HttpServlet {
 
             // debug messages
             if (LOG.isDebugEnabled()) {
-                LOG.debug("'" + browseUrl + "' -> '" + conn.getContentType() + "'");
+                LOG.debug("'{}' -> '{}'", browseUrl, conn.getContentType());
             }
 
             // find stylesheet
@@ -234,6 +240,8 @@ public class BrowseServlet extends HttpServlet {
             } else {
                 // apply stylesheet
                 TransformerFactory f = TransformerFactory.newInstance();
+                f.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
                 Transformer t = f.newTransformer(stylesheet);
                 t.setParameter("browseUrl", getServletUrl(req) + "?" + PARAM_URL + "=");
                 t.setParameter("auxRoot", getAuxRoot(req, fAuxRoot));
@@ -307,7 +315,7 @@ public class BrowseServlet extends HttpServlet {
             int i = 0;
             while (source == null && i < ctp.length) {
                 if (i > 0) {
-                    match.append(";");
+                    match.append(';');
                 }
                 match.append(ctp[i]);
                 source = fStyleSheets.get(match.toString());

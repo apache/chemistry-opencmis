@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.commons;
 
-public class SessionParameterDefaults {
+public final class SessionParameterDefaults {
 
     // utility class
     private SessionParameterDefaults() {

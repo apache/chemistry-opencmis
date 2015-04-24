@@ -3531,7 +3531,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     } else if (propDef instanceof PropertyIntegerDefinition) {
                         PropertyIntegerDefinition intPropDef = (PropertyIntegerDefinition) propDef;
 
-                        if (intPropDef.getMinValue() != null & intPropDef.getMaxValue() != null) {
+                        if (intPropDef.getMinValue() != null && intPropDef.getMaxValue() != null) {
                             if (intPropDef.getMinValue().compareTo(intPropDef.getMaxValue()) == 0) {
                                 f = createResult(WARNING, "Min and max values are equal!");
                                 addResult(results, f);
@@ -3543,7 +3543,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     } else if (propDef instanceof PropertyDecimalDefinition) {
                         PropertyDecimalDefinition decPropDef = (PropertyDecimalDefinition) propDef;
 
-                        if (decPropDef.getMinValue() != null & decPropDef.getMaxValue() != null) {
+                        if (decPropDef.getMinValue() != null && decPropDef.getMaxValue() != null) {
                             if (decPropDef.getMinValue().compareTo(decPropDef.getMaxValue()) == 0) {
                                 f = createResult(WARNING, "Min and max values are equal!");
                                 addResult(results, f);

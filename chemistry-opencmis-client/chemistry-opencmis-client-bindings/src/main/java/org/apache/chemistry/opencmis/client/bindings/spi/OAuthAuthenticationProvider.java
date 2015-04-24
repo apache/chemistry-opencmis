@@ -472,9 +472,8 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
 
     private JSONObject parseResponse(HttpURLConnection conn) {
         Reader reader = null;
+        InputStream stream = null;
         try {
-            InputStream stream = null;
-
             int respCode = conn.getResponseCode();
             if (respCode == 401) {
                 Map<String, Map<String, String>> challenges = MimeHelper.getChallengesFromAuthenticateHeader(conn
@@ -522,6 +521,9 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             throw new CmisOAuthException("Parsing the OAuth token response failed: " + pe.getMessage(), pe);
         } finally {
             IOUtils.consumeAndClose(reader);
+            if (reader == null) {
+                IOUtils.closeQuietly(stream);
+            }
         }
     }
 

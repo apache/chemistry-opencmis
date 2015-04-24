@@ -33,6 +33,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.slf4j.Logger;
@@ -71,8 +75,7 @@ public final class XMLUtils {
                 // ignore
             }
 
-            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName() + " (Exception: " + e.toString() + ")",
-                    e);
+            LOG.warn("Unsupported StAX parser: {} (Exception: {})", factory.getClass().getName(), e.toString(), e);
         }
 
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
@@ -106,8 +109,7 @@ public final class XMLUtils {
                 // ignore
             }
 
-            LOG.warn("Unsupported StAX parser: " + factory.getClass().getName() + " (Exception: " + e.toString() + ")",
-                    e);
+            LOG.warn("Unsupported StAX parser: {} (Exception: {})", factory.getClass().getName(), e.toString(), e);
         }
 
         factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
@@ -302,8 +304,8 @@ public final class XMLUtils {
     /**
      * Moves the parser to the next start element.
      * 
-     * @return <code>true</code> if another start element has been found,
-     *         <code>false</code> otherwise
+     * @return {@code true} if another start element has been found,
+     *         {@code false} otherwise
      */
     public static boolean findNextStartElemenet(XMLStreamReader parser) throws XMLStreamException {
         assert parser != null;
@@ -400,5 +402,30 @@ public final class XMLUtils {
     public static Document parseDomDocument(InputStream stream) throws ParserConfigurationException, SAXException,
             IOException {
         return newDocumentBuilder().parse(stream);
+    }
+
+    // --------------------------
+    // ---- Transformer stuff ---
+    // --------------------------
+
+    private static TransformerFactory newTransformerFactory() throws TransformerConfigurationException {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        return factory;
+    }
+
+    public static Transformer newTransformer() throws TransformerConfigurationException {
+        return newTransformerFactory().newTransformer();
+    }
+
+    public static Transformer newTransformer(int indent) throws TransformerConfigurationException {
+        TransformerFactory factory = newTransformerFactory();
+        factory.setAttribute("indent-number", Integer.valueOf(indent));
+
+        Transformer transformer = factory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        return transformer;
     }
 }

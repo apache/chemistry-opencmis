@@ -301,7 +301,7 @@ public final class WSConverter {
         try {
             streamDataHandlerClass2 = Class.forName("com.sun.xml.internal.org.jvnet.staxex.StreamingDataHandler");
             streamDataHandlerReadMethod2 = streamDataHandlerClass2.getMethod("readOnce", new Class<?>[0]);
-            streamDataHandlerCloseMethod2 = streamDataHandlerClass1.getMethod("close", new Class<?>[0]);
+            streamDataHandlerCloseMethod2 = streamDataHandlerClass2.getMethod("close", new Class<?>[0]);
         } catch (Exception e) {
             streamDataHandlerClass2 = null;
             streamDataHandlerReadMethod2 = null;

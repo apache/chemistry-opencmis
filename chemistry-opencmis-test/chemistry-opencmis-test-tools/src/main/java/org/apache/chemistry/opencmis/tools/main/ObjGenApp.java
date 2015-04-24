@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.RepositoryService;
 import org.apache.chemistry.opencmis.tools.filecopy.FileCopier;
@@ -99,7 +100,7 @@ public class ObjGenApp {
     private String contentKindStr;
     private String fileNamePattern;
     private String localDir;
-    private String localFile;   
+    private String localFile;
 
     public static void main(String[] args) {
 
@@ -146,8 +147,8 @@ public class ObjGenApp {
                 .describedAs("Documents on each level").defaultsTo(1);
         optFolderPerFolder = parser.accepts(FILLER_FOLDERS_PER_FOLDER).withOptionalArg().ofType(Integer.class)
                 .describedAs(" Folders on each level").defaultsTo(0);
-        optDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class).describedAs("Levels of folders")
-                .defaultsTo(1);
+        optDepth = parser.accepts(FILLER_DEPTH).withOptionalArg().ofType(Integer.class)
+                .describedAs("Levels of folders").defaultsTo(1);
         optContentSize = parser.accepts(FILLER_CONTENT_SIZE).withOptionalArg().ofType(Integer.class)
                 .describedAs("Content size of each doc").defaultsTo(0);
         optCount = parser.accepts(COUNT).withOptionalArg().ofType(Integer.class).defaultsTo(1)
@@ -158,7 +159,8 @@ public class ObjGenApp {
                 .describedAs("folder id used as root to create objects (default repository root folder)");
         optThreads = parser.accepts(THREADS).withOptionalArg().ofType(Integer.class).defaultsTo(1)
                 .describedAs("Number of threads to start in parallel");
-        optContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class).defaultsTo("lorem/text")
+        optContentKindStr = parser.accepts(CONTENT_KIND).withOptionalArg().ofType(String.class)
+                .defaultsTo("lorem/text")
                 .describedAs("kind of content: static/text, lorem/text, lorem/html, fractal/jpeg");
         optFileNamePattern = parser.accepts(FILE_NAME_PATTERN).withOptionalArg().ofType(String.class)
                 .defaultsTo("ContentData-%03d.bin").describedAs("file name pattern to be used with CreateFiles action");
@@ -338,12 +340,9 @@ public class ObjGenApp {
         printParameters(options);
         int noThreads = threads;
         if (noThreads <= 1) {
-            createSingleDocument(repositoryId, docType, contentSize,
-                    rootFolder, count, cleanup);
+            createSingleDocument(repositoryId, docType, contentSize, rootFolder, count, cleanup);
         } else {
-            createSingleDocumentMT(noThreads, repositoryId, docType,
-                    contentSize, rootFolder, count,
-                    cleanup);
+            createSingleDocumentMT(noThreads, repositoryId, docType, contentSize, rootFolder, count, cleanup);
         }
     }
 
@@ -358,15 +357,11 @@ public class ObjGenApp {
 
         int noThreads = threads;
         if (noThreads <= 1) {
-            fillRepository(repositoryId, docsPerFolder,
-                    folderPerFolder, depth, docType,
-                    folderType, contentSize, rootFolder,
-                    cleanup);
+            fillRepository(repositoryId, docsPerFolder, folderPerFolder, depth, docType, folderType, contentSize,
+                    rootFolder, cleanup);
         } else {
-            fillRepositoryMT(noThreads, repositoryId, docsPerFolder,
-                    folderPerFolder, depth, docType,
-                    folderType, contentSize, rootFolder,
-                    cleanup);
+            fillRepositoryMT(noThreads, repositoryId, docsPerFolder, folderPerFolder, depth, docType, folderType,
+                    contentSize, rootFolder, cleanup);
         }
 
     }
@@ -378,11 +373,9 @@ public class ObjGenApp {
         System.out.println("Folder Type: " + folderType);
         int noThreads = threads;
         if (noThreads <= 1) {
-            createFolders(repositoryId, folderType, rootFolder,
-                    count, cleanup);
+            createFolders(repositoryId, folderType, rootFolder, count, cleanup);
         } else {
-            createFoldersMT(noThreads, repositoryId, folderType,
-                    rootFolder, count, cleanup);
+            createFoldersMT(noThreads, repositoryId, folderType, rootFolder, count, cleanup);
         }
     }
 
@@ -506,6 +499,10 @@ public class ObjGenApp {
                     }
                 }
 
+                if (contentStream == null) {
+                    contentStream = new ContentStreamImpl("empty.txt", "text/plain", "");
+                }
+
                 // write to a file:
                 is = contentStream.getStream();
                 os = new FileOutputStream(fileName);
@@ -598,7 +595,7 @@ public class ObjGenApp {
             } else if (bindingType == BindingType.BROWSER) {
                 binding = createBrowserBinding(getBrowserUrl(), getUser(), getPassword());
             }
-            
+
             RepositoryInfo repoInfo = binding.getRepositoryService().getRepositoryInfo(null, null);
             if (null == repositoryId) {
                 repositoryId = repoInfo.getId();

@@ -80,7 +80,12 @@ public abstract class AbstractRunner {
             throw new IllegalArgumentException("File not found!");
         }
 
-        loadParameters(new FileInputStream(file));
+        InputStream stream = new FileInputStream(file);
+        try {
+            loadParameters(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     public void loadParameters(InputStream stream) throws IOException {
@@ -103,6 +108,8 @@ public abstract class AbstractRunner {
                 return IOUtils.readAllLines(stream);
             } catch (IOException e) {
                 return "";
+            } finally {
+                IOUtils.closeQuietly(stream);
             }
         }
 
@@ -120,6 +127,8 @@ public abstract class AbstractRunner {
                 return null;
             } catch (IOException e) {
                 return null;
+            } finally {
+                IOUtils.closeQuietly(stream);
             }
         }
 
@@ -129,7 +138,14 @@ public abstract class AbstractRunner {
     // --- groups ---
 
     public void loadDefaultTckGroups() throws Exception {
-        loadGroups(this.getClass().getResourceAsStream(DEFAULT_TCK_GROUPS));
+        InputStream stream = this.getClass().getResourceAsStream(DEFAULT_TCK_GROUPS);
+        if (stream != null) {
+            try {
+                loadGroups(stream);
+            } finally {
+                IOUtils.closeQuietly(stream);
+            }
+        }
     }
 
     public void loadGroups(File file) throws Exception {
@@ -137,7 +153,12 @@ public abstract class AbstractRunner {
             throw new IllegalArgumentException("File not found!");
         }
 
-        loadGroups(new FileInputStream(file));
+        InputStream stream = new FileInputStream(file);
+        try {
+            loadGroups(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     public void loadGroups(InputStream stream) throws Exception {

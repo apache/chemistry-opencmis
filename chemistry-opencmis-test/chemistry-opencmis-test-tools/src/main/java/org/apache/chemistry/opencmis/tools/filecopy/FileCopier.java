@@ -73,9 +73,11 @@ public class FileCopier {
             if (fileOrDir.isDirectory()) {
                 String newFolderId = createFolderInRepository(fileOrDir.getAbsolutePath(), folderId);
                 File[] children = fileOrDir.listFiles();
-                for (File file : children) {
-                    if (!file.getName().equals(".") && !file.getName().equals("..")) {
-                        copyRecursive(file.getAbsolutePath(), newFolderId);
+                if (children != null) {
+                    for (File file : children) {
+                        if (!file.getName().equals(".") && !file.getName().equals("..")) {
+                            copyRecursive(file.getAbsolutePath(), newFolderId);
+                        }
                     }
                 }
             } else {

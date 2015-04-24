@@ -169,7 +169,12 @@ public final class SessionFactoryFinder {
             factoryClassName = fallbackClassName;
         }
 
-        Class<?> clazz = cl.loadClass(factoryClassName);
+        Class<?> clazz = null;
+        if (cl != null) {
+            clazz = cl.loadClass(factoryClassName);
+        } else {
+            clazz = Class.forName(factoryClassName);
+        }
 
         SessionFactory result = null;
         try {

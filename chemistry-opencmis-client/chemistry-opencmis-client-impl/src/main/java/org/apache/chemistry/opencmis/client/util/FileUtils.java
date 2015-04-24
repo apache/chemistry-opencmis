@@ -253,11 +253,21 @@ public final class FileUtils {
      * @throws CmisBaseException
      */
     public static void download(Document doc, String destinationPath) throws IOException {
+        if (doc == null) {
+            return;
+        }
+
         FileOutputStream out = new FileOutputStream(destinationPath);
+
+        ContentStream stream = null;
         try {
-            IOUtils.copy(doc.getContentStream().getStream(), out, 64 * 1024);
+            stream = doc.getContentStream();
+            if (stream != null) {
+                IOUtils.copy(stream.getStream(), out, 64 * 1024);
+            }
         } finally {
             IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(stream);
         }
     }
 

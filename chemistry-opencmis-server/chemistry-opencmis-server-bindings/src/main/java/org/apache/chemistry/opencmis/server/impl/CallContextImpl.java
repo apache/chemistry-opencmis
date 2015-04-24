@@ -152,17 +152,17 @@ public class CallContextImpl implements MutableCallContext {
             }
 
             String[] locale = langRange.split("-");
-            String local0 = locale[0].trim();
+            String locale0 = locale[0].trim();
 
             language = null;
             country = null;
 
-            if (!locale.equals("*")) {
-                language = local0;
+            if (!locale0.equals("*")) {
+                language = locale0;
                 if (locale.length > 1) {
-                    String local1 = locale[1].trim();
-                    if (!local1.equals("*")) {
-                        country = local1;
+                    String locale1 = locale[1].trim();
+                    if (!locale1.equals("*")) {
+                        country = locale1;
                     }
                 }
             }

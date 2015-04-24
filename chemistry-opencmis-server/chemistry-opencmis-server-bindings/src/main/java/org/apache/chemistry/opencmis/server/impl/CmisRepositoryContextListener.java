@@ -59,7 +59,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         try {
             factory = createServiceFactory(configFilename);
         } catch (Exception e) {
-            LOG.error("Service factory couldn't be created: " + e.toString(), e);
+            LOG.error("Service factory couldn't be created: {}", e.toString(), e);
             return;
         }
 
@@ -74,7 +74,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
             try {
                 factory.destroy();
             } catch (Exception e) {
-                LOG.error("Service factory couldn't be destroyed: " + e.toString(), e);
+                LOG.error("Service factory couldn't be destroyed: {}", e.toString(), e);
                 return;
             }
         }
@@ -96,7 +96,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         try {
             props.load(stream);
         } catch (IOException e) {
-            LOG.warn("Cannot load configuration: " + e, e);
+            LOG.warn("Cannot load configuration: {}", e.toString(), e);
             return null;
         } finally {
             IOUtils.closeQuietly(stream);
@@ -114,7 +114,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         try {
             object = ClassLoaderUtil.loadClass(className).newInstance();
         } catch (Exception e) {
-            LOG.warn("Could not create a services factory instance: " + e, e);
+            LOG.warn("Could not create a services factory instance: {}", e.toString(), e);
             return null;
         }
 
@@ -135,7 +135,9 @@ public class CmisRepositoryContextListener implements ServletContextListener {
 
         factory.init(parameters);
 
-        LOG.info("Initialized Services Factory: " + factory.getClass().getName());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Initialized Services Factory: {}", factory.getClass().getName());
+        }
 
         return factory;
     }

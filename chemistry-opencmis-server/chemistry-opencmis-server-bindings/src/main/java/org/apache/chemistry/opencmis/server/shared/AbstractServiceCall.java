@@ -167,7 +167,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
             RedirectingContentStream rcs = (RedirectingContentStream) content;
             // close stream
             if (content.getStream() != null) {
-                content.getStream().close();
+                IOUtils.closeQuietly(content.getStream());
             }
 
             if (rcs.getLocation() != null) {

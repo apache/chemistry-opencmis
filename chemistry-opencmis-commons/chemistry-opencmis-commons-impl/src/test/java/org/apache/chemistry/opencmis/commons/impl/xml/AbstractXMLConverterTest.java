@@ -28,11 +28,9 @@ import java.io.StringWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -226,11 +224,7 @@ public abstract class AbstractXMLConverterTest extends AbstractConverterTest {
      * Formats an XML document.
      */
     protected String format(byte[] xmlDocument) throws TransformerException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setAttribute("indent-number", Integer.valueOf(2));
-
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        Transformer transformer = XMLUtils.newTransformer(2);
 
         StreamResult result = new StreamResult(new StringWriter());
         Source source = new StreamSource(new ByteArrayInputStream(xmlDocument));

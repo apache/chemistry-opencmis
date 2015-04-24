@@ -46,16 +46,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +137,9 @@ public class LoggingFilter implements Filter {
             }
 
             xmlRequest = sb.toString() + xmlRequest;
-            LOG.debug("Found request: " + requestFileName + ": " + xmlRequest);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found request: {}: {}", requestFileName, xmlRequest);
+            }
             writeTextToFile(requestFileName, xmlRequest);
 
             sb = new StringBuilder();
@@ -165,7 +166,11 @@ public class LoggingFilter implements Filter {
             }
 
             xmlResponse = sb.toString() + xmlResponse;
-            LOG.debug("Found response: " + responseFileName + ": " + xmlResponse);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found response: {}: {}", responseFileName, xmlResponse);
+            }
+
             writeTextToFile(responseFileName, xmlResponse);
         } else {
             chain.doFilter(req, resp);
@@ -200,10 +205,7 @@ public class LoggingFilter implements Filter {
             Source xmlInput = new StreamSource(new StringReader(input));
             StringWriter stringWriter = new StringWriter();
             StreamResult xmlOutput = new StreamResult(stringWriter);
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            transformerFactory.setAttribute("indent-number", indent);
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            Transformer transformer = XMLUtils.newTransformer(indent);
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
@@ -224,7 +226,11 @@ public class LoggingFilter implements Filter {
             endIndex = cType.length();
         }
         String boundary = "--" + cType.substring(beginIndex, endIndex);
-        LOG.debug("Boundary = " + boundary);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Boundary = {}", boundary);
+        }
+
         BufferedReader in = new BufferedReader(new StringReader(messageBody));
         StringBuffer out = new StringBuffer();
         String line;
@@ -248,7 +254,9 @@ public class LoggingFilter implements Filter {
                         }
                         boundaryFound = line.startsWith(boundary);
                         if (boundaryFound) {
-                            LOG.debug("Leaving XML body: " + line);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Leaving XML body: {}", line);
+                            }
                             inXmlOrJsonBody = false;
                             inXmlOrJsonPart = false;
                             if (isXml) {
@@ -262,12 +270,16 @@ public class LoggingFilter implements Filter {
                         }
                     }
                 } else {
-                    LOG.debug("in XML part is: " + line);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("in XML part is: {}", line);
+                    }
                     out.append(line).append('\n');
                 }
 
             } else {
-                LOG.debug("not in XML part: " + line);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("not in XML part: {}", line);
+                }
                 out.append(line).append('\n');
                 boundaryFound = line.startsWith(boundary);
                 if (boundaryFound) {
@@ -415,7 +427,7 @@ public class LoggingFilter implements Filter {
         private LoggingOutputStream os;
         private PrintWriter writer;
         private int statusCode;
-        private Map<String, String> headers = new HashMap<String, String>();
+        private final Map<String, String> headers = new HashMap<String, String>();
         private String encoding;
 
         public LoggingResponseWrapper(HttpServletResponse response) throws IOException {
@@ -431,7 +443,7 @@ public class LoggingFilter implements Filter {
                 }
                 return writer;
             } catch (IOException e) {
-                LOG.error("Failed to get PrintWriter in LoggingFilter: " + e, e);
+                LOG.error("Failed to get PrintWriter in LoggingFilter: {}", e.toString(), e);
                 return null;
             }
         }

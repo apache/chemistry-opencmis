@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +68,7 @@ public class WebSpherePortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    TransformerFactory transFactory = TransformerFactory.newInstance();
-                    Transformer transformer = transFactory.newTransformer();
+                    Transformer transformer = XMLUtils.newTransformer();
                     StringWriter headerXml = new StringWriter();
                     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                     transformer.transform(new DOMSource(soapHeader), new StreamResult(headerXml));

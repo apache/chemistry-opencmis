@@ -145,7 +145,7 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
             for (CmisObject child : page2) {
                 count++;
 
-                if (count == 1) {
+                if (count == 1 && lastObject != null) {
                     f = createResult(FAILURE,
                             "Last object of the first page doesn't match the first object of the second page.");
                     addResult(assertEquals(lastObject.getId(), child.getId(), null, f));

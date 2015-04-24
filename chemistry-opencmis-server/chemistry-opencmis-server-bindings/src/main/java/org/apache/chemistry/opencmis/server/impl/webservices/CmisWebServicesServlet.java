@@ -111,6 +111,8 @@ public class CmisWebServicesServlet extends WSServlet {
             return IOUtils.readAllLines(stream);
         } catch (IOException e) {
             throw new ServletException("Cannot read file '" + path + "': " + e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
     }
 

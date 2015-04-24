@@ -48,7 +48,7 @@ public class LoremIpsumTest {
 
     @Before
     public void setUp() throws Exception {
-        dictionary.split(" ");
+        // dictionary.split(" ");
     }
 
     @After

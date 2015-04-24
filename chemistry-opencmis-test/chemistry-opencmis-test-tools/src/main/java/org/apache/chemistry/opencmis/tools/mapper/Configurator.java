@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.tools.parser.MetadataParser;
 import org.apache.chemistry.opencmis.tools.parser.MetadataParserTika;
 import org.slf4j.Logger;
@@ -92,6 +93,8 @@ public class Configurator {
                 LOG.error(e.toString(), e);
                 e.printStackTrace();
                 throw new MapperException("Could not load file mapping.properties as resource", e);
+            } finally {
+                IOUtils.closeQuietly(in);
             }
         }
     }

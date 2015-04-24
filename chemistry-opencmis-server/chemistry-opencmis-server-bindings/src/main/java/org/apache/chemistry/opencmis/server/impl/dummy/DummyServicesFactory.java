@@ -60,12 +60,12 @@ public class DummyServicesFactory extends AbstractServiceFactory {
         // create a repository service
         service = new DummyService(id, name);
 
-        LOG.info("Initialized dummy repository '" + name + "' (" + id + ")");
+        LOG.info("Initialized dummy repository '{}' ({})", name, id);
     }
 
     @Override
     public void destroy() {
-        LOG.info("Destroyed dummy repository '" + name + "' (" + id + ")");
+        LOG.info("Destroyed dummy repository '{}' ({})", name, id);
     }
 
     @Override

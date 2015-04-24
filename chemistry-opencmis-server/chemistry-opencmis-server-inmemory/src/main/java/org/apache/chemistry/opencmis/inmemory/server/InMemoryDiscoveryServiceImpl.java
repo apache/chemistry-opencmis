@@ -112,8 +112,10 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
         objList.setHasMoreItems(false);
 
         String changeToken = "token-" + (token + lod.size() - 1);
-        changeLogToken.setValue(changeToken);
-
+        if(changeLogToken != null) {
+            changeLogToken.setValue(changeToken);
+        }
+        
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (objectInfos != null) {

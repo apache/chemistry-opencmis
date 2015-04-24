@@ -167,7 +167,9 @@ public class QueryObject {
     }
 
     public void addAlias(String aliasName, CmisSelector aliasRef) {
-        LOG.debug("add alias: " + aliasName + " for: " + aliasRef);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("add alias: {} for: {}", aliasName, aliasRef);
+        }
         if (colOrFuncAlias.containsKey(aliasName)) {
             throw new CmisQueryException("You cannot use name " + aliasName + " more than once as alias in a select.");
         } else {
@@ -185,7 +187,10 @@ public class QueryObject {
 
     public String addType(String aliasName, String typeQueryName) {
         try {
-            LOG.debug("add alias: " + aliasName + " for: " + typeQueryName);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("add alias: {} for: {}", aliasName, typeQueryName);
+            }
+
             if (froms.containsKey(aliasName)) {
                 throw new CmisQueryException("You cannot use name " + aliasName
                         + " more than once as alias in a from part.");
@@ -334,7 +339,9 @@ public class QueryObject {
     // WHERE part
 
     public void addWhereReference(Tree node, CmisSelector reference) {
-        LOG.debug("add node to where: " + System.identityHashCode(node));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("add node to where: {}", System.identityHashCode(node));
+        }
         columnReferences.put(node.getTokenStartIndex(), reference);
         whereReferences.add(reference);
     }
@@ -357,7 +364,9 @@ public class QueryObject {
     }
 
     public void addSortCriterium(Tree node, ColumnReference colRef, boolean ascending) {
-        LOG.debug("addSortCriterium: " + colRef + " ascending: " + ascending);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("addSortCriterium: {} ascending: {}", colRef, ascending);
+        }
         columnReferences.put(node.getTokenStartIndex(), colRef);
         sortSpecs.add(new SortSpec(node.getTokenStartIndex(), ascending));
     }
