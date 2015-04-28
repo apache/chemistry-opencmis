@@ -32,11 +32,11 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -97,7 +97,7 @@ public class FractalGenerator {
         juliaPoint = null; // new ComplexPoint();
         maxIterations = DEFAULT_MAX_ITERATIONS;
 
-        Random ran = new Random();
+        SecureRandom ran = new SecureRandom();
         color = colorSchemes[ran.nextInt(colorSchemes.length)];
         parts = ran.nextInt(13) + 3;
         LOG.debug("Parts: " + parts);

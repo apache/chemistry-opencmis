@@ -19,7 +19,7 @@
 package org.apache.chemistry.opencmis.inmemory.server;
 
 import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 
 /**
  * Helper class to associate context information with each incoming call.
@@ -28,14 +28,14 @@ import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 public final class InMemoryServiceContext {
 
     private static final class ContextHolder {
-        private CmisServiceWrapper<InMemoryService> wrapper;
+        private ConformanceCmisServiceWrapper wrapper;
         private CallContext callContext;
 
-        private ContextHolder(CmisServiceWrapper<InMemoryService> wrapper) {
+        private ContextHolder(ConformanceCmisServiceWrapper wrapper) {
             this.wrapper = wrapper;
         }
 
-        public CmisServiceWrapper<InMemoryService> getServiceWrapper() {
+        public ConformanceCmisServiceWrapper getServiceWrapper() {
             return wrapper;
         }
 
@@ -53,7 +53,7 @@ public final class InMemoryServiceContext {
     private InMemoryServiceContext() {
     }
 
-    public static synchronized void setWrapperService(CmisServiceWrapper<InMemoryService> wrapperService) {
+    public static synchronized void setWrapperService(ConformanceCmisServiceWrapper wrapperService) {
         threadLocalService.remove();
         if (null != wrapperService) {
             ContextHolder holder = new ContextHolder(wrapperService);
@@ -66,8 +66,8 @@ public final class InMemoryServiceContext {
         if (null == holder) {
             return null;
         } else {
-            CmisServiceWrapper<InMemoryService> wrapperService = holder.getServiceWrapper();
-            return wrapperService == null ? null : wrapperService.getWrappedService();
+            ConformanceCmisServiceWrapper wrapperService = holder.getServiceWrapper();
+            return wrapperService == null ? null : (InMemoryService) wrapperService.getWrappedService();
         }
     }
 

@@ -49,7 +49,12 @@ public final class CmisBindingHelper {
             parameters.put(SessionParameter.BINDING_TYPE, BindingType.CUSTOM.value());
         }
 
-        BindingType bt = BindingType.fromValue(parameters.get(SessionParameter.BINDING_TYPE));
+        BindingType bt = null;
+        try {
+            bt = BindingType.fromValue(parameters.get(SessionParameter.BINDING_TYPE));
+        } catch (IllegalArgumentException iae) {
+            throw new CmisRuntimeException("Invalid binding type!");
+        }
 
         switch (bt) {
         case ATOMPUB:
@@ -63,7 +68,7 @@ public final class CmisBindingHelper {
         case CUSTOM:
             return createCustomBinding(parameters, authenticationProvider, typeDefCache);
         default:
-            throw new CmisRuntimeException("Ambiguous session parameter: " + parameters);
+            throw new CmisRuntimeException("Invalid binding type!");
         }
     }
 

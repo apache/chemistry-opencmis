@@ -116,7 +116,7 @@ public class BrowseServlet extends HttpServlet {
                         Document xslDoc = builder.parse(stream);
                         addStylesheet(stylesheetKey, new DOMSource(xslDoc), isOverride);
 
-                        LOG.info("Stylesheet: '" + stylesheetKey + "' -> '" + stylesheetFileName + "'");
+                        LOG.info("Stylesheet: '{}' -> '{}'", stylesheetKey, stylesheetFileName);
                     } catch (Exception e) {
                         LOG.error(e.getMessage(), e);
                     } finally {
@@ -133,13 +133,13 @@ public class BrowseServlet extends HttpServlet {
         String initAuxRoot = config.getInitParameter(INIT_PARAM_AUXROOT);
         if (initAuxRoot != null) {
             fAuxRoot = initAuxRoot;
-            LOG.info("Auxiliary root: " + fAuxRoot);
+            LOG.info("Auxiliary root: {}", fAuxRoot);
         }
 
         String initAllow = config.getInitParameter(INIT_PARAM_ALLOW);
         if (initAllow != null) {
             fAllow = initAllow;
-            LOG.info("Allow pattern: " + fAllow);
+            LOG.info("Allow pattern: {}", fAllow);
         }
     }
 

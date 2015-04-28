@@ -74,11 +74,15 @@ public class WebRunnerServlet extends HttpServlet {
         printHeader(pw);
 
         Map<String, String> parameters = new HashMap<String, String>();
-        for (Map.Entry<String, String[]> entry : ((Map<String, String[]>) req.getParameterMap()).entrySet()) {
-            if ((entry.getValue() == null) || (entry.getValue().length < 1)) {
-                continue;
+        Map<String, String[]> parameterMap = (Map<String, String[]>) req.getParameterMap();
+
+        if (parameterMap != null) {
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                if (entry.getValue() == null || entry.getValue().length < 1) {
+                    continue;
+                }
+                parameters.put(entry.getKey(), entry.getValue()[0]);
             }
-            parameters.put(entry.getKey(), entry.getValue()[0]);
         }
 
         try {

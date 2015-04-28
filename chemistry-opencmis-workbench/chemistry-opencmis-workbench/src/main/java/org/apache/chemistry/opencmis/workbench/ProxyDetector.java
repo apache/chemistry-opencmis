@@ -310,7 +310,8 @@ public class ProxyDetector {
     }
 
     private static boolean isWindows() {
-        return System.getProperty("os.name").startsWith("Windows");
+        String osname = System.getProperty("os.name");
+        return osname == null ? false : osname.startsWith("Windows");
     }
 
     /**

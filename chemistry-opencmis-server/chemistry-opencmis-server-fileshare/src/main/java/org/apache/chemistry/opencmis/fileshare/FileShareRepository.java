@@ -723,7 +723,9 @@ public class FileShareRepository {
                 File propFile = getPropertiesFile(file);
                 if (propFile.exists()) {
                     File newPropFile = new File(parent, propFile.getName());
-                    propFile.renameTo(newPropFile);
+                    if (!propFile.renameTo(newPropFile)) {
+                        LOG.error("Could not rename properties file: {}", propFile.getName());
+                    }
                 }
             }
         }
@@ -927,7 +929,9 @@ public class FileShareRepository {
                 if (newFile.isFile()) {
                     if (propFile.exists()) {
                         File newPropFile = new File(parent, newName + SHADOW_EXT);
-                        propFile.renameTo(newPropFile);
+                        if (!propFile.renameTo(newPropFile)) {
+                            LOG.error("Could not rename properties file: {}", propFile.getName());
+                        }
                     }
                 }
             }

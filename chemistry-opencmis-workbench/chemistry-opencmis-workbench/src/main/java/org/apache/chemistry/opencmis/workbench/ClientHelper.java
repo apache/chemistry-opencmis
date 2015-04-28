@@ -154,7 +154,8 @@ public final class ClientHelper {
     }
 
     public static boolean isMacOSX() {
-        return System.getProperty("os.name").startsWith("Mac OS X");
+        String osname = System.getProperty("os.name");
+        return osname == null ? false : osname.startsWith("Mac OS X");
     }
 
     public static void installKeyBindings() {

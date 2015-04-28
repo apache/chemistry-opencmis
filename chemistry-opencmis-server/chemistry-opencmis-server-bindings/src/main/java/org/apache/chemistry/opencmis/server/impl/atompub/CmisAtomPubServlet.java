@@ -207,7 +207,11 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             }
         } finally {
             // we are done.
-            response.flushBuffer();
+            try {
+                response.flushBuffer();
+            } catch (IOException ioe) {
+                LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+            }
         }
     }
 

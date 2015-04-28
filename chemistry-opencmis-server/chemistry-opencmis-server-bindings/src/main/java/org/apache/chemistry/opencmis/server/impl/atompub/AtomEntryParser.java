@@ -55,11 +55,15 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl
 import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 import org.apache.chemistry.opencmis.server.shared.CappedInputStream;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parser for Atom Entries.
  */
 public final class AtomEntryParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AtomEntryParser.class);
 
     private static final long MAX_STREAM_LENGTH = 10 * 1024 * 1024;
 
@@ -229,7 +233,13 @@ public final class AtomEntryParser {
             release();
             throw re;
         } finally {
-            parser.close();
+            try {
+                parser.close();
+            } catch (XMLStreamException xse) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Parser couldn't be closed: {}", xse.toString(), xse);
+                }
+            }
         }
     }
 

@@ -276,7 +276,11 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             }
 
             // we are done.
-            response.flushBuffer();
+            try {
+                response.flushBuffer();
+            } catch (IOException ioe) {
+                LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+            }
         }
     }
 

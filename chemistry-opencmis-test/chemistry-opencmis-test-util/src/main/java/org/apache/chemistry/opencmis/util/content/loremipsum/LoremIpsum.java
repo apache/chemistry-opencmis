@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.util.content.loremipsum;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -198,7 +199,7 @@ public class LoremIpsum {
         String delim;
     }
 
-    private Random randomGenerator = new Random();
+    private SecureRandom randomGenerator = new SecureRandom();
 
     /**
      * Generates random strings of "lorem ipsum" text, based on the word

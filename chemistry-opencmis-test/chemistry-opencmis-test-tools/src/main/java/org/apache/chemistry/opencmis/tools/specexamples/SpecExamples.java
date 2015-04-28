@@ -662,7 +662,7 @@ public class SpecExamples {
                 addDirectory(zout, dir, dirToZip);
             }
         } catch (Exception e) {
-            LOG.error("Creating ZIP file failed: " + e);
+            LOG.error("Creating ZIP file failed: {}", e.toString(), e);
         } finally {
             IOUtils.closeQuietly(zout);
             IOUtils.closeQuietly(fout);
@@ -679,7 +679,7 @@ public class SpecExamples {
                 if (files[i].isDirectory()) {
                     addDirectory(zout, prefix + File.separator + files[i].getName(), files[i]);
                 } else {
-                    LOG.debug("Create Zip, adding file " + files[i].getName());
+                    LOG.debug("Create Zip, adding file {}", files[i].getName());
                     byte[] buffer = new byte[BUFSIZE];
                     FileInputStream fin = new FileInputStream(files[i]);
                     try {
@@ -693,7 +693,11 @@ public class SpecExamples {
                         }
                     } finally {
                         IOUtils.closeQuietly(fin);
-                        zout.closeEntry();
+                        try {
+                            zout.closeEntry();
+                        } catch (IOException ioe) {
+                            LOG.debug("Closing zip entry failed: {}", ioe.toString(), ioe);
+                        }
                     }
                 }
             }

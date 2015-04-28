@@ -61,8 +61,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
-import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,9 +158,9 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         InMemoryService inMemoryService = InMemoryServiceContext.getCmisService();
         if (inMemoryService == null) {
             LOG.debug("Creating new InMemoryService instance!");
-            CmisServiceWrapper<InMemoryService> wrapperService;
+            ConformanceCmisServiceWrapper wrapperService;
             inMemoryService = new InMemoryService(storeManager);
-            wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
+            wrapperService = new ConformanceCmisServiceWrapper(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
                     DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
             InMemoryServiceContext.setWrapperService(wrapperService);
         }

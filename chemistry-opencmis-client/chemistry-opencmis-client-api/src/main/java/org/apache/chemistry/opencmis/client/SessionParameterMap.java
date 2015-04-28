@@ -703,7 +703,11 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         try {
             load(stream);
         } finally {
-            stream.close();
+            try {
+                stream.close();
+            } finally {
+                // ignore
+            }
         }
     }
 
@@ -787,7 +791,11 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         try {
             store(stream);
         } finally {
-            stream.close();
+            try {
+                stream.close();
+            } finally {
+                // ignore
+            }
         }
     }
 

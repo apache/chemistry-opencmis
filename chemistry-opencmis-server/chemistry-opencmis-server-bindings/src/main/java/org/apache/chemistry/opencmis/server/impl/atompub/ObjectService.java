@@ -659,7 +659,7 @@ public class ObjectService {
                 IOUtils.copy(in, out, BUFFER_SIZE);
                 out.flush();
             } finally {
-                in.close();
+                IOUtils.closeQuietly(in);
             }
         }
     }
