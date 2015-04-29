@@ -61,6 +61,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
     /*
      * In the public interface of this class we return the singleton containing
      * the required types for testing.
+     * 
      * @see org.apache.chemistry.opencmis.inmemory.TypeCreator#createTypesList()
      */
     @Override
@@ -356,6 +357,7 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             cmisSecondaryType.setDisplayName("MySecondaryType");
             cmisSecondaryType.setDescription(BUILTIN_IN_MEMORY_TYPE_DEFINITION_DESCR + SECONDARY_TYPE_ID);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
+            cmisSecondaryType.setIsCreatable(false);
             cmisSecondaryType.setIsFileable(false);
 
             // create a single String property definition
@@ -410,8 +412,6 @@ public class DefaultTypeSystemCreator implements TypeCreator {
             cmisTypeFake.setDescription("Builtin InMemory type definition for big content streams. Content is "
                     + "ignored and replaced by random bytes");
             typesList.add(cmisTypeFake);
-
-            
 
             return typesList;
         } catch (Exception e) {

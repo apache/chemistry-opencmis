@@ -221,7 +221,7 @@ public final class DocumentTypeCreationHelper {
         type.setTypeMutability(parentTypeDefinition.getTypeMutability());
     }
 
-    /*  
+    /*
      * Creates a new mutable document type definition, which is a child of the
      * provided type definition. Property definitions are not added which is
      * useful for creating additional types at runtime
@@ -326,6 +326,7 @@ public final class DocumentTypeCreationHelper {
             setDefaultTypeCapabilities(cmisTypeSecondary);
             cmisTypeSecondary.setTypeMutability(getBaseTypeMutability());
             cmisTypeSecondary.setIsFileable(false);
+            cmisTypeSecondary.setIsCreatable(false);
             typesList.add(cmisTypeSecondary);
         } catch (Exception e) {
             throw new CmisRuntimeException("Error when creating base types. ", e);

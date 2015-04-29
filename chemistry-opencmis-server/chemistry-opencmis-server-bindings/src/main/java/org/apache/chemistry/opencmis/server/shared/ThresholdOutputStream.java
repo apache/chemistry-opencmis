@@ -462,7 +462,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
     /**
      * InputStream for in-memory data.
      */
-    private class InternalBufferInputStream extends ThresholdInputStream {
+    private final class InternalBufferInputStream extends ThresholdInputStream {
 
         private int pos = 0;
         private int mark = -1;
@@ -582,7 +582,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
      * 
      * Call {@link #close()} to delete the temp file.
      */
-    private class InternalTempFileInputStream extends ThresholdInputStream {
+    private final class InternalTempFileInputStream extends ThresholdInputStream {
 
         private final Cipher cipher;
         private BufferedInputStream stream;

@@ -2268,10 +2268,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(type, null, f));
 
         if (type != null) {
-            f = createResult(FAILURE, "Type id is not set!");
+            f = createResult(FAILURE, "Type ID is not set!");
             addResult(results, assertStringNotEmpty(type.getId(), null, f));
 
-            f = createResult(FAILURE, "Base type id is not set!");
+            f = createResult(FAILURE, "Base type ID is not set!");
             addResult(results, assertNotNull(type.getBaseTypeId(), null, f));
 
             f = createResult(FAILURE, "Local name is not set!");
@@ -2288,6 +2288,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (type.getBaseTypeId().value().equals(type.getId())) {
                     f = createResult(FAILURE, "Base type has parent type!");
                     addResult(results, assertStringNullOrEmpty(type.getParentTypeId(), null, f));
+
+                    f = createResult(FAILURE, "Query name of base type is wrong!");
+                    addResult(results, assertEquals(type.getId(), type.getQueryName(), null, f));
                 } else {
                     f = createResult(FAILURE, "Parent type is not set!");
                     addResult(results, assertStringNotEmpty(type.getParentTypeId(), null, f));
@@ -2385,6 +2388,26 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             } else if (BaseTypeId.CMIS_POLICY.equals(type.getBaseTypeId())) {
                 // nothing to do
+            } else if (BaseTypeId.CMIS_SECONDARY.equals(type.getBaseTypeId())) {
+                if (type.isCreatable() != null) {
+                    f = createResult(FAILURE, "Secondary types must not be creatable!");
+                    addResult(results, assertIsFalse(type.isCreatable(), null, f));
+                }
+
+                if (type.isFileable() != null) {
+                    f = createResult(FAILURE, "Secondary types must not be fileable!");
+                    addResult(results, assertIsFalse(type.isFileable(), null, f));
+                }
+
+                if (type.isControllableAcl() != null) {
+                    f = createResult(FAILURE, "The controllable ACL flag must be false for secondary types!");
+                    addResult(results, assertIsFalse(type.isControllableAcl(), null, f));
+                }
+
+                if (type.isControllablePolicy() != null) {
+                    f = createResult(FAILURE, "The controllable policy flag must be false for secondary types!");
+                    addResult(results, assertIsFalse(type.isControllablePolicy(), null, f));
+                }
             }
 
             // check properties

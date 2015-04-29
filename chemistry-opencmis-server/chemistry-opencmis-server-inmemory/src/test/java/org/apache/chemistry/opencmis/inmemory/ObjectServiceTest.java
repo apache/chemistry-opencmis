@@ -2043,6 +2043,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             cmisSecondaryType.setDisplayName("MySecondaryType");
             cmisSecondaryType.setDescription("InMemory test type definition " + TEST_SECONDARY_TYPE_ID);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
+            cmisSecondaryType.setIsCreatable(false);
             cmisSecondaryType.setIsFileable(false);
 
             // create a single String property definition

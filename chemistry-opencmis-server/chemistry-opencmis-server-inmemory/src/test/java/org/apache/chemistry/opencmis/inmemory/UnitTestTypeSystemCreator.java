@@ -374,6 +374,7 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
             cmisSecondaryType.setDisplayName("MySecondaryType");
             cmisSecondaryType.setDescription("Builtin InMemory type definition " + SECONDARY_TYPE);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType);
+            cmisSecondaryType.setIsCreatable(false);
             cmisSecondaryType.setIsFileable(false);
 
             // create a single String property definition
@@ -392,7 +393,9 @@ public class UnitTestTypeSystemCreator implements TypeCreator {
             cmisSecondaryType2.setDisplayName("MySecondaryType-2");
             cmisSecondaryType2.setDescription("Builtin InMemory type definition " + SECONDARY_TYPE_2);
             DocumentTypeCreationHelper.setDefaultTypeCapabilities(cmisSecondaryType2);
-
+            cmisSecondaryType2.setIsCreatable(false);
+            cmisSecondaryType2.setIsFileable(false);
+            
             // add type to types collectio
             typesList.add(cmisDocTypeTopLevel);
             typesList.add(cmisDocTypeLevel1);

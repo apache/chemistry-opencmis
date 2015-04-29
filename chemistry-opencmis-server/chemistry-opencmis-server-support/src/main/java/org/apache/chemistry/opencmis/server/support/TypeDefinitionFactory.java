@@ -551,9 +551,9 @@ public final class TypeDefinitionFactory {
         MutableSecondaryTypeDefinition secondaryType = createSecondaryTypeDefinitionObject();
         secondaryType.setBaseTypeId(BaseTypeId.CMIS_SECONDARY);
         secondaryType.setParentTypeId(parentId);
-        secondaryType.setIsControllableAcl(defaultControllableAcl);
-        secondaryType.setIsControllablePolicy(defaultControllablePolicy);
-        secondaryType.setIsCreatable(true);
+        secondaryType.setIsControllableAcl(false);
+        secondaryType.setIsControllablePolicy(false);
+        secondaryType.setIsCreatable(false);
         secondaryType.setDescription("Secondary");
         secondaryType.setDisplayName("Secondary");
         secondaryType.setIsFileable(false);
