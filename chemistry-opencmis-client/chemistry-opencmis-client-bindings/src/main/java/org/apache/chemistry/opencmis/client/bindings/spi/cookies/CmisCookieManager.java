@@ -127,7 +127,7 @@ public class CmisCookieManager implements Serializable {
             return Collections.emptyMap();
         }
 
-        StringBuilder cookieHeaderStr = new StringBuilder();
+        StringBuilder cookieHeaderStr = new StringBuilder(128);
 
         for (CmisHttpCookie cookie : cookies) {
             if (cookieHeaderStr.length() > 0) {

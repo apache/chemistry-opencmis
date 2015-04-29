@@ -61,7 +61,7 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
         int parameterStart = 0;
 
         // first, get the MIME type

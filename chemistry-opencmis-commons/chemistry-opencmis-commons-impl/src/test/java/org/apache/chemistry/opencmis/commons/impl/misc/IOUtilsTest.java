@@ -142,6 +142,26 @@ public class IOUtilsTest {
     }
 
     @Test
+    public void testAllLinesWithMaxLines() throws IOException {
+        String content = "line 1\nline 2\nline 3";
+
+        InputStream stream1 = createStream(content);
+        assertEquals("", IOUtils.readAllLines(stream1, 0));
+
+        InputStream stream2 = createStream(content);
+        assertEquals("line 1\n", IOUtils.readAllLines(stream2, 1));
+
+        InputStream stream3 = createStream(content);
+        assertEquals("line 1\nline 2\n", IOUtils.readAllLines(stream3, 2));
+
+        InputStream stream4 = createStream(content);
+        assertEquals("line 1\nline 2\nline 3\n", IOUtils.readAllLines(stream4, 3));
+
+        InputStream stream5 = createStream(content);
+        assertEquals("line 1\nline 2\nline 3\n", IOUtils.readAllLines(stream5, 4));
+    }
+
+    @Test
     public void testAllLinesAndSkipHeader1() throws IOException {
         String content = "#header\n\nline 1\nline 2";
         InputStream stream = createStream(content);

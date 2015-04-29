@@ -311,7 +311,7 @@ public class BrowseServlet extends HttpServlet {
         if (source == null) {
             String[] ctp = contentType.trim().toLowerCase().split(";");
 
-            StringBuilder match = new StringBuilder();
+            StringBuilder match = new StringBuilder(1024);
             int i = 0;
             while (source == null && i < ctp.length) {
                 if (i > 0) {

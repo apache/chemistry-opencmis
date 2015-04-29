@@ -278,7 +278,8 @@ public class PropertyEditorFrame extends JFrame {
                     + propDef.getCardinality().value()
                     + " value)"
                     + (propDef.getDescription() != null ? "<br>"
-                            + ClientHelper.encodeHtml(new StringBuilder(), propDef.getDescription()) : ""));
+                            + ClientHelper.encodeHtml(new StringBuilder(propDef.getDescription().length() + 16),
+                                    propDef.getDescription()) : ""));
             add(titlePanel);
 
             JPanel namePanel = new JPanel();

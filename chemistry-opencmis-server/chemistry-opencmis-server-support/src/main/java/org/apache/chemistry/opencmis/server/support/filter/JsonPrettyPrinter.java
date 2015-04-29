@@ -25,7 +25,7 @@ public class JsonPrettyPrinter {
 
     private int indent = 0;
     private String indentStr;
-    private StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder(1024);
 
     public JsonPrettyPrinter() {
         init(3);

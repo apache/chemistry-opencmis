@@ -124,7 +124,7 @@ public final class DateTimeHelper {
             throw new IllegalArgumentException();
         }
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(32);
         add4d(sb, cal.get(Calendar.YEAR));
         sb.append('-');
         add2d(sb, cal.get(Calendar.MONTH) + 1);
@@ -250,7 +250,7 @@ public final class DateTimeHelper {
         final GregorianCalendar cal = new GregorianCalendar(GMT);
         cal.setTimeInMillis(millis);
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(64);
         sb.append(WDAYS[cal.get(Calendar.DAY_OF_WEEK) - 1]);
         sb.append(", ");
         add2d(sb, cal.get(Calendar.DAY_OF_MONTH));

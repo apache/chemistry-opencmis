@@ -90,7 +90,7 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
         }
 
         boolean first = true;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
 
         sb.append('[');
         for (Object value : list) {

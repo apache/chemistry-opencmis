@@ -117,7 +117,7 @@ public class RepositoryInfoFrame extends JFrame {
             addLine("Principal id anyone:").setText(repInfo.getPrincipalIdAnyone());
             addYesNoLabel("Changes incomplete:").setValue(is(repInfo.getChangesIncomplete()));
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(64);
             if (repInfo.getChangesOnType() != null) {
                 for (BaseTypeId bt : repInfo.getChangesOnType()) {
                     appendToString(sb, bt.value());
@@ -147,7 +147,7 @@ public class RepositoryInfoFrame extends JFrame {
                 addLine("Changes:").setText(str(cap.getChangesCapability()));
                 addLine("ACLs:").setText(str(cap.getAclCapability()));
 
-                sb = new StringBuilder();
+                sb = new StringBuilder(128);
                 if (cap.getNewTypeSettableAttributes() != null) {
                     if (Boolean.TRUE.equals(cap.getNewTypeSettableAttributes().canSetId())) {
                         appendToString(sb, "id");

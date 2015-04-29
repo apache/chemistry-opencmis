@@ -209,7 +209,7 @@ public class FileShareTypeManager {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         for (TypeDefinition type : typeDefinitions.values()) {
             sb.append('[');

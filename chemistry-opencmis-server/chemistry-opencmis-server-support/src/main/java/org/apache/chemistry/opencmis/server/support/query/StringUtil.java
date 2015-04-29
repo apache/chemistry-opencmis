@@ -39,7 +39,6 @@ public final class StringUtil {
     public static String unescape(String literal, String escapedChars) {
         char c = '?';
         int i = 0;
-        StringBuilder sb = new StringBuilder();
 
         if (null == escapedChars) {
             escapedChars = "\\'";
@@ -58,6 +57,8 @@ public final class StringUtil {
         if (len > 1 && literal.charAt(len - 2) != '\\' && literal.charAt(len - 1) == '\\') {
             return null;
         }
+
+        StringBuilder sb = new StringBuilder(len + 16);
 
         for (i = 0; i < len; i++) {
             c = literal.charAt(i);

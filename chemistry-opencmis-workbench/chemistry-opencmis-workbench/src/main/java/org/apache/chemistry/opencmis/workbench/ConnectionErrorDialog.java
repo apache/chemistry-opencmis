@@ -77,7 +77,7 @@ public class ConnectionErrorDialog extends JDialog {
 
         setLayout(new BorderLayout());
 
-        StringBuilder hint = new StringBuilder();
+        StringBuilder hint = new StringBuilder(1024);
         hint.append("<h2><font color=\"red\">Exception: <em>" + exception.getClass().getSimpleName()
                 + "</em></font><br>" + exception.getMessage() + "</h2>");
         if (exception.getCause() != null) {
@@ -134,9 +134,9 @@ public class ConnectionErrorDialog extends JDialog {
             return "The CMIS Workbench could connect to the server but the provided URL is not a CMIS endpoint URL."
                     + "<br>Check your URL and proxy settings." + getProxyConfig();
         } else if (exception instanceof CmisUnauthorizedException) {
-            return "The provide credentials are invalid.<br>Check your credentials.";
+            return "The provided credentials are invalid.<br>Check your credentials.";
         } else if (exception instanceof CmisPermissionDeniedException) {
-            return "The provide credentials are invalid or the user has no permission to connect."
+            return "The provided credentials are invalid or the user has no permission to connect."
                     + "<br>Check your credentials.";
         } else if (exception instanceof CmisProxyAuthenticationException) {
             return "The proxy server requires valid credentials.<br>Check the session parameters "
@@ -198,7 +198,7 @@ public class ConnectionErrorDialog extends JDialog {
     }
 
     private String getProxyConfig() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         sb.append("<br><br><hr><br><em>Current proxy settings:</em><br><br>");
 

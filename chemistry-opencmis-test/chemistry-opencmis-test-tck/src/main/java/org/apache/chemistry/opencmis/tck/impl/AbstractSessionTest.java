@@ -241,7 +241,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(4096);
         Reader reader = new InputStreamReader(contentStream.getStream(), IOUtils.UTF8);
 
         try {

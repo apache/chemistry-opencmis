@@ -185,7 +185,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
             filter.add(PropertyIds.SECONDARY_OBJECT_TYPE_IDS);
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         for (String oid : filter) {
             if (sb.length() > 0) {
@@ -301,7 +301,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         for (String rf : renditionFilter) {
             if (sb.length() > 0) {
@@ -351,7 +351,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
             cacheKey = null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         sb.append(includeAcls ? '1' : '0');
         sb.append(includeAllowableActions ? '1' : '0');

@@ -46,7 +46,8 @@ public class IdRenderer extends DefaultTableCellRenderer {
         String text = "";
         if (value instanceof ObjectId) {
             if (((ObjectId) value).getId() != null) {
-                StringBuilder sb = new StringBuilder("<html><u>");
+                StringBuilder sb = new StringBuilder(128);
+                sb.append("<html><u>");
                 ClientHelper.encodeHtml(sb, ((ObjectId) value).getId());
                 sb.append("</u></html>");
                 text = sb.toString();

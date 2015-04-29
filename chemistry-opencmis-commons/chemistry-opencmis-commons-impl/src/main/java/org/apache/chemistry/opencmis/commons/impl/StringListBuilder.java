@@ -25,7 +25,7 @@ public class StringListBuilder {
     private boolean first;
 
     public StringListBuilder() {
-        this(",", new StringBuilder());
+        this(",", new StringBuilder(128));
     }
 
     public StringListBuilder(StringBuilder stringBuilder) {
@@ -33,7 +33,7 @@ public class StringListBuilder {
     }
 
     public StringListBuilder(String seperator) {
-        this(seperator, new StringBuilder());
+        this(seperator, new StringBuilder(128));
     }
 
     public StringListBuilder(String seperator, StringBuilder stringBuilder) {

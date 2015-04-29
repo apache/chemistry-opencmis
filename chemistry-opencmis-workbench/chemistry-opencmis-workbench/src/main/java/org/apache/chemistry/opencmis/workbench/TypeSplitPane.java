@@ -133,7 +133,7 @@ public class TypeSplitPane extends JSplitPane {
                 policyLabel.setValue(is(type.isControllablePolicy()));
 
                 if (type.getTypeMutability() != null) {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder(64);
 
                     if (Boolean.TRUE.equals(type.getTypeMutability().canCreate())) {
                         sb.append("create");

@@ -101,7 +101,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
     public void setSessionParameters(Map<String, String> parameters) {
         configs.setSelectedIndex(0);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         for (Map.Entry<String, String> parameter : parameters.entrySet()) {
             sb.append(parameter.getKey());
             sb.append('=');

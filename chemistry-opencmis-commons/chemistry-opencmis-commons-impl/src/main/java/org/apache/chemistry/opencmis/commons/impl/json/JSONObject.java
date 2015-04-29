@@ -103,7 +103,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
             return "null";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
         boolean first = true;
 
         sb.append('{');
@@ -145,7 +145,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
     }
 
     public static String toString(String key, Object value) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
         toJSONString(key, value, sb);
         return sb.toString();
     }

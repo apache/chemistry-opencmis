@@ -17,7 +17,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.net.URI;
 import java.net.URL;
@@ -104,7 +105,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
 
         this.session = session;
 
-        StringBuilder stmt = new StringBuilder();
+        StringBuilder stmt = new StringBuilder(1024);
 
         // find the primary type and check if all types are queryable
         ObjectType primaryType = null;
@@ -454,7 +455,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             throw new IllegalArgumentException("Calendar must be set!");
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(64);
         for (Calendar c : cal) {
             if (c == null) {
                 throw new IllegalArgumentException("DateTime is null!");
@@ -524,7 +525,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         boolean inStr = false;
         int parameterIndex = 0;
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
         for (int i = 0; i < statement.length(); i++) {
             char c = statement.charAt(i);
 
@@ -575,7 +576,10 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     // --- internal ---
 
     private static String escape(String str) {
-        StringBuilder sb = new StringBuilder("'");
+        StringBuilder sb = new StringBuilder(str.length() + 16);
+
+        sb.append('\'');
+
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
 
@@ -592,7 +596,10 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     }
 
     private static String escapeLike(String str) {
-        StringBuilder sb = new StringBuilder("'");
+        StringBuilder sb = new StringBuilder(str.length() + 16);
+
+        sb.append('\'');
+
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
 
@@ -615,7 +622,10 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     }
 
     private static String escapeContains(String str) {
-        StringBuilder sb = new StringBuilder("'");
+        StringBuilder sb = new StringBuilder(str.length() + 16);
+
+        sb.append('\'');
+
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
 

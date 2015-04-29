@@ -84,7 +84,7 @@ public abstract class AbstractWebServicesService {
 
         String errorContent = null;
         if (!ex.getFaultInfo().getAny().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(1024);
             for (Object o : ex.getFaultInfo().getAny()) {
                 if (o != null) {
                     if (o instanceof Node) {

@@ -212,7 +212,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
     }
 
     protected String getSourceCodeLink(StackTraceElement ste, String revision) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(1024);
 
         if (!ste.getClassName().startsWith("org.apache.chemistry.opencmis.tck.")) {
             result.append(escape(ste.getFileName()));
@@ -252,7 +252,7 @@ public class CoreHtmlReport extends AbstractCmisTestReport {
             return "";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(s.length() + 32);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);

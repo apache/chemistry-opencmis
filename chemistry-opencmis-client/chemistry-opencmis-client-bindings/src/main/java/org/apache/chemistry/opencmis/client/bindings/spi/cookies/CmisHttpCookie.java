@@ -772,7 +772,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
      */
     @Override
     public String toString() {
-        StringBuilder cookieStr = new StringBuilder();
+        StringBuilder cookieStr = new StringBuilder(128);
         cookieStr.append(name);
         cookieStr.append('=');
         if (version == 0) {

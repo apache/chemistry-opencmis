@@ -234,7 +234,7 @@ public class CmisServiceWrapperManager {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         WrapperDefinition def = outerMost;
         while (def != null) {
@@ -319,7 +319,10 @@ public class CmisServiceWrapperManager {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(wrapperClass.getName());
+            StringBuilder sb = new StringBuilder(128);
+
+            sb.append(wrapperClass.getName());
+
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     sb.append(',');

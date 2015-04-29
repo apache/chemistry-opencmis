@@ -531,8 +531,10 @@ public final class WSConverter {
         if (repositoryInfo.getChangesOnType() != null) {
             for (BaseTypeId baseType : repositoryInfo.getChangesOnType()) {
                 if (cmisVersion == CmisVersion.CMIS_1_0 && baseType == BaseTypeId.CMIS_ITEM) {
-                    LOG.warn("Receiver only understands CMIS 1.0 but the Changes On Type list in the Repository info contains the base type Item. "
-                            + "The Item base type has been removed from the list.");
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Receiver only understands CMIS 1.0 but the Changes On Type list in the Repository info contains the base type Item. "
+                                + "The Item base type has been removed from the list.");
+                    }
                     continue;
                 }
                 result.getChangesOnType().add(convert(EnumBaseObjectTypeIds.class, baseType));
@@ -2087,8 +2089,10 @@ public final class WSConverter {
             result.setCanCreateFolder(set.contains(Action.CAN_CREATE_FOLDER));
             result.setCanCreateRelationship(set.contains(Action.CAN_CREATE_RELATIONSHIP));
             if (set.contains(Action.CAN_CREATE_ITEM) && cmisVersion == CmisVersion.CMIS_1_0) {
-                LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
-                        + "The canCreateItem action has been removed from the Allowable Actions.");
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Receiver only understands CMIS 1.0 but the Allowable Actions contain the canCreateItem action. "
+                            + "The canCreateItem action has been removed from the Allowable Actions.");
+                }
             } else {
                 result.setCanCreateItem(set.contains(Action.CAN_CREATE_ITEM));
             }
@@ -3032,7 +3036,7 @@ public final class WSConverter {
 
         CmisExtensionElement result = null;
         List<CmisExtensionElement> cmisChildren = new ArrayList<CmisExtensionElement>();
-        StringBuilder value = new StringBuilder();
+        StringBuilder value = new StringBuilder(128);
 
         NodeList children = node.getChildNodes();
 

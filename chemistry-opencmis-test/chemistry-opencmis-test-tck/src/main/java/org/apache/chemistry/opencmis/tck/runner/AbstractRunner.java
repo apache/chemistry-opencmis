@@ -105,7 +105,7 @@ public abstract class AbstractRunner {
 
         if (stream != null) {
             try {
-                return IOUtils.readAllLines(stream);
+                return IOUtils.readAllLines(stream, 1000);
             } catch (IOException e) {
                 return "";
             } finally {
@@ -166,7 +166,7 @@ public abstract class AbstractRunner {
             throw new IllegalArgumentException("Stream is null!");
         }
 
-        for (String groupName : IOUtils.readAllLinesAsList(stream)) {
+        for (String groupName : IOUtils.readAllLinesAsList(stream, 10000)) {
             addGroup(groupName);
         }
     }

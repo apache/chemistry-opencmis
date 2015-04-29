@@ -242,7 +242,7 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
             return null;
         }
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(128);
         StringBuilder property = null;
         boolean inProperty = false;
 
@@ -261,7 +261,7 @@ public class FileShareCmisServiceFactory extends AbstractServiceFactory {
                 }
             } else {
                 if (c == '{') {
-                    property = new StringBuilder();
+                    property = new StringBuilder(32);
                     inProperty = true;
                 } else {
                     result.append(c);

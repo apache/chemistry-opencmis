@@ -623,9 +623,11 @@ public class TckDialog {
                 status.put(tr.getStatus(), x + 1);
             }
 
-            StringBuilder sb = new StringBuilder("<html>");
+            StringBuilder sb = new StringBuilder(128);
             int x;
 
+            sb.append("<html>");
+            
             x = status.get(CmisTestResultStatus.INFO);
             if (x > 0) {
                 sb.append("<font color='#000000'>[Info: " + x + "]</font>  ");

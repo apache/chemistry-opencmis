@@ -259,7 +259,7 @@ public final class JSONValue {
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(s.length() + 16);
         escape(s, sb);
         return sb.toString();
     }

@@ -67,7 +67,7 @@ public class FileShareRepositoryManager {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         for (FileShareRepository repository : repositories.values()) {
             sb.append('[');

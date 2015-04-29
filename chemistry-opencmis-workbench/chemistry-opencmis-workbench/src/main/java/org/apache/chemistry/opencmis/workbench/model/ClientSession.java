@@ -285,7 +285,7 @@ public class ClientSession {
         if (!sessionParameters.containsKey(FOLDER_PREFIX + ClientOperationContext.FILTER)) {
             ObjectType type = session.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value());
 
-            StringBuilder filter = new StringBuilder();
+            StringBuilder filter = new StringBuilder(128);
             for (String propId : FOLDER_PROPERTY_SET) {
                 PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
                 if (propDef != null) {
@@ -313,7 +313,7 @@ public class ClientSession {
         if (!sessionParameters.containsKey(VERSION_PREFIX + ClientOperationContext.FILTER)) {
             ObjectType type = session.getTypeDefinition(BaseTypeId.CMIS_DOCUMENT.value());
 
-            StringBuilder filter = new StringBuilder();
+            StringBuilder filter = new StringBuilder(128);
             for (String propId : VERSION_PROPERTY_SET) {
                 PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(propId);
                 if (propDef != null) {

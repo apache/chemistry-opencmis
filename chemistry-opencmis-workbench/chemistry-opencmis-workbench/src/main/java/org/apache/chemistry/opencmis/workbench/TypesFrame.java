@@ -428,7 +428,7 @@ public class TypesFrame extends JFrame {
     }
 
     private boolean checkTypeDefinition(TypeDefinition type) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         List<ValidationError> typeResult = TypeUtils.validateTypeDefinition(type);
 

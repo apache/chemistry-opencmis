@@ -76,8 +76,9 @@ public class DeleteTreePanel extends ActionPanel {
                 (UnfileObject) unfileObjectsBox.getSelectedItem(), continueOnFailureBox.isSelected());
 
         if (ids != null && !ids.isEmpty()) {
-            StringBuilder sb = new StringBuilder(
-                    "Delete tree failed! At least the following objects could not be deleted:\n");
+            StringBuilder sb = new StringBuilder(128);
+
+            sb.append("Delete tree failed! At least the following objects could not be deleted:\n");
 
             for (String id : ids) {
                 sb.append('\n');

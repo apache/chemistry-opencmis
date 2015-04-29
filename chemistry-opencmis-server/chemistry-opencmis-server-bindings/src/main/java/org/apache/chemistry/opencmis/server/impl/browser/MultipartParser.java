@@ -265,7 +265,7 @@ public class MultipartParser {
     }
 
     private String readLine() throws IOException {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         int r;
         while ((r = nextByte()) > -1) {

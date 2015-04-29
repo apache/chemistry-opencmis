@@ -70,7 +70,7 @@ public class InfoDialog extends JDialog {
 
         add(topPanel);
 
-        StringBuilder readme = new StringBuilder();
+        StringBuilder readme = new StringBuilder(1024);
 
         readme.append(loadText("/META-INF/README-cmis-workbench.txt", "CMIS Workbench"));
         readme.append("\n---------------------------------------------------------\n");
@@ -112,7 +112,7 @@ public class InfoDialog extends JDialog {
         InputStream stream = getClass().getResourceAsStream(file);
         if (stream != null) {
             try {
-                return IOUtils.readAllLines(stream);
+                return IOUtils.readAllLines(stream, 10000);
             } catch (IOException e) {
                 return defaultText;
             }

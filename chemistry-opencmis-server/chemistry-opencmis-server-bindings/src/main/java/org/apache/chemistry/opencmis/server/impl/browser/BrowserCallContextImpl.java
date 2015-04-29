@@ -147,7 +147,7 @@ public class BrowserCallContextImpl extends CallContextImpl {
             return "/";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         for (int i = 2; i < pathFragments.length; i++) {
             if (pathFragments[i].length() == 0) {
                 continue;

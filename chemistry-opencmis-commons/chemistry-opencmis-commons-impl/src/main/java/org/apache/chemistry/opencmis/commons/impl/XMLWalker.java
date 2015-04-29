@@ -116,7 +116,7 @@ public abstract class XMLWalker<T> {
 
         final QName name = parser.getName();
         Map<String, String> attributes = null;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         List<CmisExtensionElement> children = null;
 
         if (parser.getAttributeCount() > 0) {

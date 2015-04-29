@@ -332,7 +332,7 @@ public final class XMLUtils {
         assert parser != null;
         assert maxLength >= 0;
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         next(parser);
 

@@ -454,7 +454,7 @@ public class QueryFrame extends JFrame {
 
             final List<?> values = model.getMultiValueAt(rowIndex, columnIndex);
             if (values != null) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(128);
 
                 for (Object value : values) {
                     if (sb.length() == 0) {

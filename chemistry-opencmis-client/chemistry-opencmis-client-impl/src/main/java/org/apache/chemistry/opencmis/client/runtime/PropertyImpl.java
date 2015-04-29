@@ -102,7 +102,7 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
     public String getValuesAsString() {
         List<T> values = getValues();
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(128);
         for (T value : values) {
             if (result.length() > 0) {
                 result.append(", ");

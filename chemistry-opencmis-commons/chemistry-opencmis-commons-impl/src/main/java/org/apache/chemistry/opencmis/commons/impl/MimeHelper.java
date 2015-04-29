@@ -121,7 +121,7 @@ public final class MimeHelper {
      * @return the encoded string
      */
     protected static String encodeRFC2231(String key, String value) {
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder(32);
         boolean encoded = encodeRFC2231value(value, buf);
         if (encoded) {
             return "; " + key + "*=" + buf.toString();
@@ -260,7 +260,7 @@ public final class MimeHelper {
         boolean inName = true;
         String challenge = null;
         String paramName = "";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(64);
         for (int i = 0; i < trimValue.length(); i++) {
             char c = trimValue.charAt(i);
 
@@ -288,7 +288,7 @@ public final class MimeHelper {
                     }
                     authMap.put(paramName, sb.toString());
                 }
-                sb = new StringBuilder();
+                sb = new StringBuilder(32);
                 inQuotes = !inQuotes;
             } else if (c == '=') {
                 if (inName) {
@@ -301,7 +301,7 @@ public final class MimeHelper {
                         paramName = paramName.substring(spcIdx).trim();
                     }
 
-                    sb = new StringBuilder();
+                    sb = new StringBuilder(32);
                     inName = false;
                 } else if (!inQuotes) {
                     return null;
@@ -310,7 +310,7 @@ public final class MimeHelper {
                 if (inName) {
                     challenge = sb.toString().trim().toLowerCase(Locale.ENGLISH);
                     result.put(challenge, new HashMap<String, String>());
-                    sb = new StringBuilder();
+                    sb = new StringBuilder(32);
                 } else {
                     if (inQuotes) {
                         sb.append(c);
@@ -322,7 +322,7 @@ public final class MimeHelper {
                         if (!authMap.containsKey(paramName)) {
                             authMap.put(paramName, sb.toString().trim());
                         }
-                        sb = new StringBuilder();
+                        sb = new StringBuilder(32);
                         inName = true;
                     }
                 }
@@ -542,7 +542,7 @@ public final class MimeHelper {
          * @return The processed string value.
          */
         private String getEscapedValue(int start, int end) throws ParseException {
-            StringBuilder value = new StringBuilder();
+            StringBuilder value = new StringBuilder(32);
             for (int i = start; i < end; i++) {
                 char ch = header.charAt(i);
                 // is this an escape character?

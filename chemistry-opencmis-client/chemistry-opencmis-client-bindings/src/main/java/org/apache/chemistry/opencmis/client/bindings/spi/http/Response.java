@@ -90,7 +90,7 @@ public class Response {
                         || contentTypeLower.startsWith("application/xml")
                         || contentTypeLower.startsWith("application/json")) {
                     errorStream = new BufferedInputStream(errorStream, 64 * 1024);
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder(4096);
 
                     try {
                         String encoding = getContentEncoding();

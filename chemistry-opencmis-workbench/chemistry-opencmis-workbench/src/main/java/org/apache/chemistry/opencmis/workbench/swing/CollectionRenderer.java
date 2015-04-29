@@ -74,7 +74,10 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
         }
 
         // build string
-        StringBuilder sb = new StringBuilder("<html>");
+        StringBuilder sb = new StringBuilder(128);
+
+        sb.append("<html>");
+
         for (Object o : col) {
             sb.append("<span>"); // workaround for a bug in Swing
             if (o == null) {

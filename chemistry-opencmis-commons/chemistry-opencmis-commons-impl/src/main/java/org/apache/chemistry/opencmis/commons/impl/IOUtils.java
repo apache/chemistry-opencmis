@@ -318,11 +318,15 @@ public final class IOUtils {
      *            the stream
      * @param handler
      *            a handler the processes each line.
+     * @param maxLines
+     *            maximum number of lines or -1 for unlimited number of lines
      */
-    public static void readLinesFromStream(InputStream stream, LineHandler handler) throws IOException {
+    public static void readLinesFromStream(InputStream stream, LineHandler handler, int maxLines) throws IOException {
         if (stream == null) {
             return;
         }
+
+        int counter = 0;
 
         BufferedReader reader = null;
         try {
@@ -330,6 +334,11 @@ public final class IOUtils {
 
             String line;
             while ((line = reader.readLine()) != null) {
+                if (maxLines > -1 && counter == maxLines) {
+                    break;
+                }
+                counter++;
+
                 if (!handler.handle(line)) {
                     break;
                 }
@@ -346,14 +355,14 @@ public final class IOUtils {
      *            the input stream
      */
     public static String readFirstLine(InputStream stream) throws IOException {
-        final StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder(128);
 
         readLinesFromStream(stream, new LineHandler() {
             public boolean handle(String line) {
                 result.append(line);
                 return false;
             }
-        });
+        }, 1);
 
         return result.toString();
     }
@@ -365,7 +374,11 @@ public final class IOUtils {
      *            the input stream
      */
     public static String readAllLines(InputStream stream) throws IOException {
-        final StringBuilder result = new StringBuilder();
+        return readAllLines(stream, Integer.MAX_VALUE);
+    }
+
+    public static String readAllLines(InputStream stream, int maxLines) throws IOException {
+        final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new LineHandler() {
             public boolean handle(String line) {
@@ -373,7 +386,7 @@ public final class IOUtils {
                 result.append('\n');
                 return true;
             }
-        });
+        }, maxLines);
 
         return result.toString();
     }
@@ -385,7 +398,11 @@ public final class IOUtils {
      *            the input stream
      */
     public static String readAllLinesAndRemoveHeader(InputStream stream) throws IOException {
-        final StringBuilder result = new StringBuilder();
+        return readAllLinesAndRemoveHeader(stream, Integer.MAX_VALUE);
+    }
+
+    public static String readAllLinesAndRemoveHeader(InputStream stream, int maxLines) throws IOException {
+        final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new SkipHeaderLineHandler() {
             public boolean handle(String line) {
@@ -395,7 +412,7 @@ public final class IOUtils {
                 }
                 return true;
             }
-        });
+        }, maxLines);
 
         return result.toString();
     }
@@ -408,7 +425,11 @@ public final class IOUtils {
      *            the input stream
      */
     public static String readAllLinesAndIgnoreComments(InputStream stream) throws IOException {
-        final StringBuilder result = new StringBuilder();
+        return readAllLinesAndIgnoreComments(stream, Integer.MAX_VALUE);
+    }
+
+    public static String readAllLinesAndIgnoreComments(InputStream stream, int maxLines) throws IOException {
+        final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
             public boolean handle(String line) {
@@ -418,7 +439,7 @@ public final class IOUtils {
                 }
                 return true;
             }
-        });
+        }, maxLines);
 
         return result.toString();
     }
@@ -431,6 +452,10 @@ public final class IOUtils {
      *            the input stream
      */
     public static List<String> readAllLinesAsList(InputStream stream) throws IOException {
+        return readAllLinesAsList(stream, Integer.MAX_VALUE);
+    }
+
+    public static List<String> readAllLinesAsList(InputStream stream, int maxLines) throws IOException {
         final List<String> result = new ArrayList<String>();
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
@@ -440,7 +465,7 @@ public final class IOUtils {
                 }
                 return true;
             }
-        });
+        }, maxLines);
 
         return result;
     }
@@ -453,6 +478,10 @@ public final class IOUtils {
      *            the input stream
      */
     public static Map<String, String> readAllLinesAsMap(InputStream stream) throws IOException {
+        return readAllLinesAsMap(stream, Integer.MAX_VALUE);
+    }
+
+    public static Map<String, String> readAllLinesAsMap(InputStream stream, int maxLines) throws IOException {
         final Map<String, String> result = new HashMap<String, String>();
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
@@ -467,7 +496,7 @@ public final class IOUtils {
                 }
                 return true;
             }
-        });
+        }, maxLines);
 
         return result;
     }

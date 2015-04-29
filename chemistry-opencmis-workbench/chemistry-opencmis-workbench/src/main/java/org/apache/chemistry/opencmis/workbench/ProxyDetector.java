@@ -467,7 +467,7 @@ public class ProxyDetector {
         }
 
         public String toJavaConfigString() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(128);
 
             if (httpProxyHost != null) {
                 sb.append("-D" + HTTP_PROXY_HOST + "=" + httpProxyHost + " -D" + HTTP_PROXY_PORT + "=" + httpProxyPort);
@@ -546,7 +546,7 @@ public class ProxyDetector {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(128);
 
             if (httpProxyHost != null) {
                 sb.append("HTTP proxy: " + httpProxyHost + ":" + httpProxyPort);

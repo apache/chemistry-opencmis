@@ -582,7 +582,7 @@ public class SessionImpl implements Session {
             throw new IllegalArgumentException("Name must be set!");
         }
 
-        StringBuilder path = new StringBuilder();
+        StringBuilder path = new StringBuilder(parentPath.length() + name.length() + 2);
         path.append(parentPath);
         if (!parentPath.endsWith("/")) {
             path.append('/');
@@ -968,7 +968,9 @@ public class SessionImpl implements Session {
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
         final ObjectFactory of = getObjectFactory();
         final OperationContext ctxt = new OperationContextImpl(context);
-        final StringBuilder statement = new StringBuilder("SELECT ");
+        final StringBuilder statement = new StringBuilder(1024);
+
+        statement.append("SELECT ");
 
         String select = ctxt.getFilterString();
         if (select == null) {

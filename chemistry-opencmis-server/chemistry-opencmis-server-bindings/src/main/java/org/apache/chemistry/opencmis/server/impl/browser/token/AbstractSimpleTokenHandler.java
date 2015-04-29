@@ -356,7 +356,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(s.length() + 16);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -375,7 +375,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
             return null;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(s.length() + 64);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);

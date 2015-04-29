@@ -120,7 +120,7 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
     }
 
     public String toTreeString(int level) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(512);
         nextTreelevel(sb, level);
         return sb.toString();
     }

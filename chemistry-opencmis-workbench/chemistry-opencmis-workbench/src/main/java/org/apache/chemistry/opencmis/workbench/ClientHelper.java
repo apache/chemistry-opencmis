@@ -390,7 +390,7 @@ public final class ClientHelper {
     public static void copyTableToClipboard(JTable table) {
         final String newline = System.getProperty("line.separator");
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(1024);
         final int rows = table.getModel().getRowCount();
         final int cols = table.getModel().getColumnCount();
 
@@ -450,7 +450,7 @@ public final class ClientHelper {
         } else if (value instanceof String) {
             String s = value.toString();
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(s.length() + 16);
             sb.append('\"');
 
             for (int i = 0; i < s.length(); i++) {
@@ -465,7 +465,7 @@ public final class ClientHelper {
 
             return sb.toString();
         } else if (value instanceof Collection<?>) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(((Collection<?>) value).size() * 16 + 16);
             sb.append('[');
 
             for (Object v : (Collection<?>) value) {
@@ -522,7 +522,7 @@ public final class ClientHelper {
         }
 
         try {
-            return IOUtils.readAllLinesAndRemoveHeader(stream);
+            return IOUtils.readAllLinesAndRemoveHeader(stream, 10000);
         } catch (IOException e1) {
             return "";
         }

@@ -118,7 +118,7 @@ public class LoggingFilter implements Filter {
             String requestFileName = getRequestFileName(reqNo);
             String cType = logReq.getContentType();
             String xmlRequest = logReq.getPayload();
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(1024);
 
             if (logHeaders) {
                 logHeaders(logReq, sb);

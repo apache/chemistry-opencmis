@@ -292,7 +292,7 @@ public class SimpleTokenHandlerSessionHelper {
         byte[] bytes = new byte[APP_ID_BYTES];
         random.nextBytes(bytes);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(APP_ID_BYTES * 2);
 
         for (byte b : bytes) {
             String s = Integer.toHexString(b & 0xff);
@@ -311,7 +311,7 @@ public class SimpleTokenHandlerSessionHelper {
         byte[] bytes = new byte[KEY_BYTES];
         random.nextBytes(bytes);
 
-        StringBuilder sb = new StringBuilder(appId);
+        StringBuilder sb = new StringBuilder(appId + KEY_BYTES * 2);
 
         for (byte b : bytes) {
             String s = Integer.toHexString(b & 0xff);

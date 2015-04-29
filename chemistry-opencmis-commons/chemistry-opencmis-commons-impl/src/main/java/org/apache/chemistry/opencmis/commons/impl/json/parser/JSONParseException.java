@@ -90,7 +90,7 @@ public class JSONParseException extends Exception {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
 
         switch (errorType) {
         case ERROR_UNEXPECTED_CHAR:

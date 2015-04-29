@@ -217,7 +217,7 @@ class Yylex {
     private boolean zzAtEOF;
 
     /* user code: */
-    private StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder(128);
 
     int getPosition() {
         return yychar;

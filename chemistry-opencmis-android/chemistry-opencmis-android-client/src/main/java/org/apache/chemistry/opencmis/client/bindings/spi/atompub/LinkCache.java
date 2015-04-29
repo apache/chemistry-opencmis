@@ -267,8 +267,8 @@ public class LinkCache implements Serializable {
             return null;
         }
 
-        StringBuilder result = new StringBuilder();
-        StringBuilder param = new StringBuilder();
+        StringBuilder result = new StringBuilder(128);
+        StringBuilder param = new StringBuilder(32);
 
         boolean paramMode = false;
         for (int i = 0; i < template.length(); i++) {
@@ -283,7 +283,7 @@ public class LinkCache implements Serializable {
                         result.append(IOUtils.encodeURL(paramValue));
                     }
 
-                    param = new StringBuilder();
+                    param = new StringBuilder(32);
                 } else {
                     param.append(c);
                 }

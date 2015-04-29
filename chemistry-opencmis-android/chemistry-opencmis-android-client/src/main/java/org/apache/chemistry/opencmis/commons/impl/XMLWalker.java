@@ -102,7 +102,7 @@ public abstract class XMLWalker<T> {
             throws XmlPullParserException {
         final QName name = new QName(parser.getNamespace(), parser.getName());
         Map<String, String> attributes = null;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         List<CmisExtensionElement> children = null;
 
         if (parser.getAttributeCount() > 0) {
@@ -188,7 +188,7 @@ public abstract class XMLWalker<T> {
 
     protected BigInteger readInteger(final XmlPullParser parser) throws XmlPullParserException {
         String value = readText(parser);
-        
+
         try {
             return new BigInteger(value);
         } catch (NumberFormatException e) {

@@ -44,7 +44,7 @@ public class Yytoken {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(64);
         switch (type) {
         case TYPE_VALUE:
             sb.append("VALUE(").append(value).append(')');

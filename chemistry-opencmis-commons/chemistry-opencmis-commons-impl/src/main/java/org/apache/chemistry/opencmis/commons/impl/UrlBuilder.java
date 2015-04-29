@@ -45,8 +45,8 @@ public class UrlBuilder {
             throw new IllegalArgumentException("URL must be set");
         }
 
-        urlPart = new StringBuilder();
-        queryPart = new StringBuilder();
+        urlPart = new StringBuilder(128);
+        queryPart = new StringBuilder(128);
 
         int qm = url.indexOf('?');
         if (qm == -1) {
@@ -80,8 +80,8 @@ public class UrlBuilder {
             port = -1;
         }
 
-        urlPart = new StringBuilder();
-        queryPart = new StringBuilder();
+        urlPart = new StringBuilder(128);
+        queryPart = new StringBuilder(128);
 
         urlPart.append(scheme);
         urlPart.append("://");
