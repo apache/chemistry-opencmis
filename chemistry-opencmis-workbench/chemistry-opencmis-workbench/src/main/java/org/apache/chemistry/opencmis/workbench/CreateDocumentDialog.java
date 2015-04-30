@@ -65,10 +65,10 @@ public class CreateDocumentDialog extends CreateDialog {
     private JRadioButton unfiledButton;
     private JRadioButton currentPathButton;
     private JTextField nameField;
-    private JComboBox typeBox;
+    private JComboBox<ObjectTypeItem> typeBox;
     private JTextField filenameField;
     private JFormattedTextField generateContentSizeField;
-    private JComboBox generateContentUnitField;
+    private JComboBox<String> generateContentUnitField;
     private JRadioButton versioningStateNoneButton;
     private JRadioButton versioningStateMajorButton;
     private JRadioButton versioningStateMinorButton;
@@ -108,14 +108,14 @@ public class CreateDocumentDialog extends CreateDialog {
         nameField = new JTextField(60);
         createRow("Name:", nameField, 1);
 
-        Object[] types = getTypes(BaseTypeId.CMIS_DOCUMENT.value());
+        ObjectTypeItem[] types = getTypes(BaseTypeId.CMIS_DOCUMENT.value());
         if (types.length == 0) {
             JOptionPane.showMessageDialog(this, "No creatable type!", "Creatable Types", JOptionPane.ERROR_MESSAGE);
             thisDialog.dispose();
             return;
         }
 
-        typeBox = new JComboBox(types);
+        typeBox = new JComboBox<ObjectTypeItem>(types);
         typeBox.setSelectedIndex(0);
         typeBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -192,7 +192,7 @@ public class CreateDocumentDialog extends CreateDialog {
         generateContentSizeField.setMaximumSize(generateContentSizeField.getPreferredSize());
         generateContentPanel.add(generateContentSizeField);
 
-        generateContentUnitField = new JComboBox(new String[] { "Bytes", "KiB", "MiB", "GiB" });
+        generateContentUnitField = new JComboBox<String>(new String[] { "Bytes", "KiB", "MiB", "GiB" });
         generateContentUnitField.setMaximumSize(new Dimension((int) generateContentUnitField.getPreferredSize()
                 .getWidth() + 200, (int) generateContentUnitField.getPreferredSize().getHeight()));
         generateContentPanel.add(generateContentUnitField);

@@ -92,7 +92,7 @@ public class FolderTable extends JTable implements FolderListener {
 
         for (int i = 0; i < COLUMN_WIDTHS.length; i++) {
             TableColumn column = getColumnModel().getColumn(i);
-            column.setPreferredWidth(COLUMN_WIDTHS[i]);
+            column.setPreferredWidth(WorkbenchScale.scaleInt(COLUMN_WIDTHS[i]));
         }
 
         setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));

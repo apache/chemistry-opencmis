@@ -151,7 +151,7 @@ public class AclEditorFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(200, 60));
@@ -167,7 +167,7 @@ public class AclEditorFrame extends JFrame {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        topPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         final JLabel nameLabel = new JLabel(object.getName());
         nameLabel.setFont(boldFont);
         topPanel.add(nameLabel);
@@ -215,7 +215,7 @@ public class AclEditorFrame extends JFrame {
 
         // update button
         JButton updateButton = new JButton("Update");
-        updateButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        updateButton.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         updateButton.setDefaultCapable(true);
         updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -244,7 +244,7 @@ public class AclEditorFrame extends JFrame {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.LINE_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        topPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         final JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(boldFont);
@@ -370,9 +370,9 @@ public class AclEditorFrame extends JFrame {
         private final List<String> permissions;
 
         private int position;
-        private final JComboBox principalBox;
+        private final JComboBox<String> principalBox;
         private final JPanel permissionsPanel;
-        private final List<JComboBox> permissionBoxes;
+        private final List<JComboBox<String>> permissionBoxes;
 
         public AceInputPanel(final AceList list, final List<String> principals, final List<String> permissions,
                 int position) {
@@ -383,8 +383,9 @@ public class AclEditorFrame extends JFrame {
             updatePosition(position);
 
             setLayout(new GridBagLayout());
-            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE),
-                    BorderFactory.createEmptyBorder(10, 5, 10, 5)));
+            setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                    WorkbenchScale.scaleBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE)),
+                    WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)))));
 
             GridBagConstraints c = new GridBagConstraints();
             c.gridheight = 1;
@@ -411,7 +412,7 @@ public class AclEditorFrame extends JFrame {
             c.fill = GridBagConstraints.HORIZONTAL;
             c.anchor = GridBagConstraints.LINE_START;
 
-            principalBox = new JComboBox(principals.toArray(new String[0]));
+            principalBox = new JComboBox<String>(principals.toArray(new String[0]));
             principalBox.setEditable(true);
             principalBox.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -425,7 +426,7 @@ public class AclEditorFrame extends JFrame {
             permissionsPanel.setLayout(new BoxLayout(permissionsPanel, BoxLayout.Y_AXIS));
             permissionsPanel.setOpaque(false);
 
-            permissionBoxes = new ArrayList<JComboBox>();
+            permissionBoxes = new ArrayList<JComboBox<String>>();
 
             updatePermissionsPanel(false);
 
@@ -449,8 +450,8 @@ public class AclEditorFrame extends JFrame {
             add(removeButton, c);
         }
 
-        private JComboBox createPermissionBox() {
-            JComboBox result = new JComboBox(permissions.toArray(new String[0]));
+        private JComboBox<String> createPermissionBox() {
+            JComboBox<String> result = new JComboBox<String>(permissions.toArray(new String[0]));
             result.setEditable(true);
             result.setPrototypeDisplayValue("1234567890123456789012345");
 
@@ -499,7 +500,7 @@ public class AclEditorFrame extends JFrame {
             if (changed) {
                 permissionsPanel.removeAll();
 
-                for (JComboBox box : permissionBoxes) {
+                for (JComboBox<String> box : permissionBoxes) {
                     permissionsPanel.add(box);
                 }
 
@@ -528,7 +529,7 @@ public class AclEditorFrame extends JFrame {
         public Ace getAce() {
             List<String> permissionsList = new ArrayList<String>();
 
-            for (JComboBox box : permissionBoxes) {
+            for (JComboBox<String> box : permissionBoxes) {
                 String permission = box.getSelectedItem().toString().trim();
                 if (permission.length() > 0) {
                     permissionsList.add(permission);

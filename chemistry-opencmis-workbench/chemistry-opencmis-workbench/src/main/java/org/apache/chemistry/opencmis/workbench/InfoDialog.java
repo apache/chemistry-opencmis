@@ -89,7 +89,7 @@ public class InfoDialog extends JDialog {
         ta.setEditable(false);
         ta.setFont(new Font(Font.MONOSPACED, Font.PLAIN, ta.getFont().getSize()));
         JScrollPane readmePane = new JScrollPane(ta);
-        readmePane.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+        readmePane.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5)));
 
         add(readmePane);
 

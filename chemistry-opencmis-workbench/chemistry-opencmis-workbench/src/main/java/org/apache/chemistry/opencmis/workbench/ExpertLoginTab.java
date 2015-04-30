@@ -45,7 +45,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
     private static final String CONFIGS_FOLDER = "/configs/";
     private static final String CONFIGS_LIBRARY = "config-library.properties";
 
-    private JComboBox configs;
+    private JComboBox<FileEntry> configs;
     private JTextArea sessionParameterTextArea;
     private List<FileEntry> sessionConfigurations;
 
@@ -56,7 +56,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
     private void createGUI() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5)));
 
         URI propFile = null;
 
@@ -69,7 +69,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
         sessionConfigurations = ClientHelper.readFileProperties(propFile);
 
-        configs = new JComboBox();
+        configs = new JComboBox<FileEntry>();
         configs.setMaximumRowCount(20);
 
         configs.addItem(new FileEntry("", null));

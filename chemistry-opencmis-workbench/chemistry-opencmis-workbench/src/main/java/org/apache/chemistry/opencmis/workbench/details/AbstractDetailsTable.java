@@ -37,6 +37,7 @@ import javax.swing.table.TableColumn;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
@@ -69,7 +70,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
 
         for (int i = 0; i < colummnWidths.length; i++) {
             TableColumn column = getColumnModel().getColumn(i);
-            column.setPreferredWidth(colummnWidths[i]);
+            column.setPreferredWidth(WorkbenchScale.scaleInt(colummnWidths[i]));
         }
 
         setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));

@@ -51,9 +51,9 @@ public class LogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));        
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(200, 60));
 
         setLayout(new BorderLayout());
@@ -80,7 +80,7 @@ public class LogFrame extends JFrame {
                 Level.INFO.toString(), Level.WARN.toString(), Level.ERROR.toString(), Level.FATAL.toString(),
                 Level.OFF.toString() };
 
-        final JComboBox levelBox = new JComboBox(levels);
+        final JComboBox<String> levelBox = new JComboBox<String>(levels);
         levelBox.setSelectedItem(Logger.getRootLogger().getLevel().toString());
         levelBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

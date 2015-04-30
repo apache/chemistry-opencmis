@@ -37,6 +37,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
@@ -135,18 +136,18 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
     private void createGUI() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setBorder(BorderFactory.createEmptyBorder());
+        setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
         setBackground(Color.WHITE);
 
         extensionsTree = new JTree();
         extensionsTree.setRootVisible(false);
         extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        extensionsTree.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        extensionsTree.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         extensionsTree.setModel(new DefaultTreeModel(null));
 
         JScrollPane pane = new JScrollPane(extensionsTree);
-        pane.setBorder(BorderFactory.createEmptyBorder());
+        pane.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
 
         add(pane);
     }

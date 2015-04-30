@@ -65,7 +65,7 @@ public class ChangeLogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 4), (int) (screenSize.getHeight() / 2)));
         setMinimumSize(new Dimension(200, 60));
@@ -73,7 +73,7 @@ public class ChangeLogFrame extends JFrame {
         setLayout(new BorderLayout());
 
         JPanel inputPanel = new JPanel(new BorderLayout());
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        inputPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
         inputPanel.add(new JLabel("Change Log Token: "), BorderLayout.LINE_START);
 
@@ -147,7 +147,7 @@ public class ChangeLogFrame extends JFrame {
 
             for (int i = 0; i < COLUMN_WIDTHS.length; i++) {
                 TableColumn column = getColumnModel().getColumn(i);
-                column.setPreferredWidth(COLUMN_WIDTHS[i]);
+                column.setPreferredWidth(WorkbenchScale.scaleInt(COLUMN_WIDTHS[i]));
             }
 
             setFillsViewportHeight(true);

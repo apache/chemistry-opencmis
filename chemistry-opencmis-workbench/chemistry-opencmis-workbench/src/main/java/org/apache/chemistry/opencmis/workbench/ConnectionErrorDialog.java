@@ -90,7 +90,7 @@ public class ConnectionErrorDialog extends JDialog {
         // hint area
         JPanel hintsPanel = new JPanel();
         hintsPanel.setLayout(new BoxLayout(hintsPanel, BoxLayout.PAGE_AXIS));
-        hintsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        hintsPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         add(hintsPanel, BorderLayout.CENTER);
 
         JEditorPane hints = new JEditorPane("text/html", hint.toString());
@@ -102,7 +102,7 @@ public class ConnectionErrorDialog extends JDialog {
         // close button
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+        buttonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5)));
         add(buttonPanel, BorderLayout.PAGE_END);
 
         JButton closeButton = new JButton("Close");

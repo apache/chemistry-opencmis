@@ -58,6 +58,7 @@ import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.checks.ObjectComplianceTestGroup;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -282,7 +283,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         scriptOutput = new JTextArea(null, 1, 80);
         scriptOutput.setEditable(false);
         scriptOutput.setFont(Font.decode("Monospaced"));
-        scriptOutput.setBorder(BorderFactory.createTitledBorder(""));
+        scriptOutput.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("")));
         scriptOutputWriter = new JTextAreaWriter(scriptOutput);
         scriptPanel.add(scriptOutput, BorderLayout.CENTER);
 

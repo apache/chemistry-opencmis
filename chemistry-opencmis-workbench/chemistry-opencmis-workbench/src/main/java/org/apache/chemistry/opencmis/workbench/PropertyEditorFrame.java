@@ -108,7 +108,7 @@ public class PropertyEditorFrame extends JFrame {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        topPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         final JLabel nameLabel = new JLabel(object.getName());
         nameLabel.setFont(boldFont);
         topPanel.add(nameLabel);
@@ -159,7 +159,7 @@ public class PropertyEditorFrame extends JFrame {
         }
 
         JButton updateButton = new JButton("Update");
-        updateButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        updateButton.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         updateButton.setDefaultCapable(true);
         updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -248,7 +248,7 @@ public class PropertyEditorFrame extends JFrame {
         private final PropertyDefinition<?> propDef;
         private final Object value;
         private final Color bgColor;
-        private JComboBox changeBox;
+        private JComboBox<String> changeBox;
         private List<JComponent> valueComponents;
 
         public PropertyInputPanel(PropertyDefinition<?> propDef, Object value, int position) {
@@ -263,8 +263,9 @@ public class PropertyEditorFrame extends JFrame {
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
             setBackground(bgColor);
-            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE),
-                    BorderFactory.createEmptyBorder(10, 5, 10, 5)));
+            setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                    WorkbenchScale.scaleBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE)),
+                    WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)))));
 
             Font labelFont = UIManager.getFont("Label.font");
             Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
@@ -293,7 +294,7 @@ public class PropertyEditorFrame extends JFrame {
 
             titlePanel.add(namePanel, BorderLayout.LINE_START);
 
-            changeBox = new JComboBox(new Object[] { "Don't change     ", "Update    ", "Unset     " });
+            changeBox = new JComboBox<String>(new String[] { "Don't change     ", "Update    ", "Unset     " });
             titlePanel.add(changeBox, BorderLayout.LINE_END);
 
             valueComponents = new ArrayList<JComponent>();
@@ -575,11 +576,11 @@ public class PropertyEditorFrame extends JFrame {
     /**
      * Boolean property.
      */
-    public static class BooleanPropertyInputField extends JComboBox implements PropertyValue {
+    public static class BooleanPropertyInputField extends JComboBox<Boolean> implements PropertyValue {
         private static final long serialVersionUID = 1L;
 
         public BooleanPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
-            super(new Object[] { true, false });
+            super(new Boolean[] { Boolean.TRUE, Boolean.FALSE });
             setSelectedItem(value == null ? true : value);
 
             addActionListener(new ActionListener() {
@@ -590,8 +591,8 @@ public class PropertyEditorFrame extends JFrame {
             });
         }
 
-        public Object getPropertyValue() {
-            return getSelectedItem();
+        public Boolean getPropertyValue() {
+            return (Boolean) getSelectedItem();
         }
     }
 

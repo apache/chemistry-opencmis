@@ -138,7 +138,7 @@ public class SwingReport extends AbstractCmisTestReport {
 
             final JPanel reportPanel = new JPanel();
             reportPanel.add(new JLabel("Open report as "));
-            final JComboBox reportType = new JComboBox(new Object[] { "HTML", "Text", "XML" });
+            final JComboBox<String> reportType = new JComboBox<String>(new String[] { "HTML", "Text", "XML" });
             reportPanel.add(reportType);
             final JButton reportButton = new JButton("go");
             reportPanel.add(reportButton);

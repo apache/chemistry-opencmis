@@ -83,10 +83,11 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
         setLayout(borderLayout);
 
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(5, 5, 5, 5),
-                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY, 2),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5))));
+        setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)),
+                WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                        WorkbenchScale.scaleBorder(BorderFactory.createLineBorder(Color.GRAY, 2)),
+                        WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)))))));
 
         Font labelFont = UIManager.getFont("Label.font");
         Font boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);

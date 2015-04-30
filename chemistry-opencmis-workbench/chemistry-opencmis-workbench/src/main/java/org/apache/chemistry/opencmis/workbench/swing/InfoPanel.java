@@ -115,7 +115,7 @@ public abstract class InfoPanel extends JPanel {
 
     protected JTextField addLine(final String label, final boolean bold, JTextField textField) {
         textField.setEditable(false);
-        textField.setBorder(BorderFactory.createEmptyBorder());
+        textField.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
         if (bold) {
             textField.setFont(boldFont);
         }
@@ -171,7 +171,7 @@ public abstract class InfoPanel extends JPanel {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder());
+        panel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
         panel.setOpaque(false);
         panel.add(comp);
         textLable.setLabelFor(panel);
@@ -211,7 +211,7 @@ public abstract class InfoPanel extends JPanel {
             for (Object o : list) {
                 JTextField textField = new JTextField(o == null ? "" : o.toString());
                 textField.setEditable(false);
-                textField.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+                textField.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0)));
                 add(textField);
             }
         }

@@ -41,6 +41,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public abstract class CreateDialog extends JDialog {
@@ -59,14 +60,14 @@ public abstract class CreateDialog extends JDialog {
 
         setLayout(new BorderLayout());
         panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         add(panel, BorderLayout.CENTER);
 
         mandatoryProperties = new HashMap<String, JComponent>();
         mandatoryPropertiesPanel = new JPanel(new GridBagLayout());
-        mandatoryPropertiesPanel
-                .setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0),
-                        BorderFactory.createTitledBorder("Mandatory properties")));
+        mandatoryPropertiesPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)),
+                WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("Mandatory properties")))));
 
         actionPanel = new JPanel();
         createRow(actionPanel, 10);
@@ -119,10 +120,10 @@ public abstract class CreateDialog extends JDialog {
         setVisible(true);
     }
 
-    protected final Object[] getTypes(String rootTypeId) {
+    protected final ObjectTypeItem[] getTypes(String rootTypeId) {
         List<ObjectType> types = model.getTypesAsList(rootTypeId, true);
 
-        Object[] result = new Object[types.size()];
+        ObjectTypeItem[] result = new ObjectTypeItem[types.size()];
 
         int i = 0;
         for (final ObjectType type : types) {

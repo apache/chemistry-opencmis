@@ -195,25 +195,25 @@ public class TckDialog {
             final JPanel configPanel = new JPanel();
             configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.PAGE_AXIS));
             configPanel.setPreferredSize(new Dimension(getWidth() / 2, 500));
-            configPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+            configPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0)));
 
-            final JComboBox folderComboBox = addComboBox(configPanel, "Test folder type:",
+            final JComboBox<String> folderComboBox = addComboBox(configPanel, "Test folder type:",
                     BaseTypeId.CMIS_FOLDER.value(), TestParameters.DEFAULT_FOLDER_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
-            final JComboBox documentComboBox = addComboBox(configPanel, "Test document type:",
+            final JComboBox<String> documentComboBox = addComboBox(configPanel, "Test document type:",
                     BaseTypeId.CMIS_DOCUMENT.value(), TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
-            final JComboBox relationshipComboBox = addComboBox(configPanel, "Test relationship type:",
+            final JComboBox<String> relationshipComboBox = addComboBox(configPanel, "Test relationship type:",
                     BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
-            final JComboBox itemComboBox = addComboBox(configPanel, "Test item type:", BaseTypeId.CMIS_ITEM.value(),
-                    TestParameters.DEFAULT_ITEM_TYPE_VALUE, true);
+            final JComboBox<String> itemComboBox = addComboBox(configPanel, "Test item type:",
+                    BaseTypeId.CMIS_ITEM.value(), TestParameters.DEFAULT_ITEM_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
-            final JComboBox secondaryComboBox = addComboBox(configPanel, "Test secondary type:",
+            final JComboBox<String> secondaryComboBox = addComboBox(configPanel, "Test secondary type:",
                     BaseTypeId.CMIS_SECONDARY.value(), TestParameters.DEFAULT_SECONDARY_TYPE_VALUE, false);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
@@ -228,7 +228,7 @@ public class TckDialog {
             add(configPanel);
 
             final JPanel mainPanel = new JPanel(new BorderLayout());
-            mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            mainPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
             mainPanel.add(new JScrollPane(groupTree), BorderLayout.CENTER);
             mainPanel.add(configPanel, BorderLayout.LINE_END);
             add(mainPanel, BorderLayout.CENTER);
@@ -277,7 +277,7 @@ public class TckDialog {
 
             final JPanel runButtonPanel = new JPanel();
             runButtonPanel.setLayout(new BoxLayout(runButtonPanel, BoxLayout.PAGE_AXIS));
-            runButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
+            runButtonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3)));
             runButton.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
             runButtonPanel.add(runButton);
 
@@ -305,7 +305,7 @@ public class TckDialog {
             treeModel.nodeChanged((TreeNode) treeModel.getRoot());
         }
 
-        private JComboBox addComboBox(JPanel panel, String title, String rootTypeId, String defaultTypeId,
+        private JComboBox<String> addComboBox(JPanel panel, String title, String rootTypeId, String defaultTypeId,
                 boolean creatableOnly) {
             final JLabel label = new JLabel(title);
             label.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -319,7 +319,7 @@ public class TckDialog {
                 typeIds[i++] = type.getId();
             }
 
-            final JComboBox comboBox = new JComboBox(typeIds);
+            final JComboBox<String> comboBox = new JComboBox<String>(typeIds);
             comboBox.setSelectedItem(defaultTypeId);
             comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
             comboBox.setMaximumSize(new Dimension(Short.MAX_VALUE, 10));
@@ -514,7 +514,7 @@ public class TckDialog {
 
             JPanel progressPanel = new JPanel();
             progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.Y_AXIS));
-            progressPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            progressPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
             progressPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -561,7 +561,7 @@ public class TckDialog {
 
             final JPanel cancelButtonPanel = new JPanel();
             cancelButtonPanel.setLayout(new BoxLayout(cancelButtonPanel, BoxLayout.PAGE_AXIS));
-            cancelButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
+            cancelButtonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3)));
             cancelButton.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
             cancelButtonPanel.add(cancelButton);
 
@@ -627,7 +627,7 @@ public class TckDialog {
             int x;
 
             sb.append("<html>");
-            
+
             x = status.get(CmisTestResultStatus.INFO);
             if (x > 0) {
                 sb.append("<font color='#000000'>[Info: " + x + "]</font>  ");

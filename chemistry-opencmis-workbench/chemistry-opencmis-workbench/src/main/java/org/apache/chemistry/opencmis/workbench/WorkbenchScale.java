@@ -28,8 +28,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.UIDefaults;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 public class WorkbenchScale {
@@ -91,6 +96,27 @@ public class WorkbenchScale {
         }
     }
 
+    public static Border scaleBorder(Border border) {
+        if (scale) {
+            if (border instanceof EmptyBorder) {
+                Insets borderInsets = scaleInsets(((EmptyBorder) border).getBorderInsets());
+                return BorderFactory.createEmptyBorder(borderInsets.top, borderInsets.left, borderInsets.bottom,
+                        borderInsets.right);
+            } else if (border instanceof LineBorder) {
+                return BorderFactory.createLineBorder(((LineBorder) border).getLineColor(),
+                        scaleInt(((LineBorder) border).getThickness()));
+            } else if (border instanceof MatteBorder) {
+                Insets borderInsets = scaleInsets(((MatteBorder) border).getBorderInsets());
+                return BorderFactory.createMatteBorder(borderInsets.top, borderInsets.left, borderInsets.bottom,
+                        borderInsets.right, ((MatteBorder) border).getMatteColor());
+            } else {
+                return border;
+            }
+        } else {
+            return border;
+        }
+    }
+
     public static ImageIcon scaleIcon(ImageIcon icon) {
         if (scale) {
             int newWidth = (int) (icon.getIconWidth() * getScaleFactor());
@@ -146,6 +172,11 @@ public class WorkbenchScale {
                 Insets insets = defs.getInsets(key);
                 if (insets != null) {
                     newDefs.put(key, scaleInsets(insets));
+                }
+
+                Border border = defs.getBorder(key);
+                if (border != null) {
+                    newDefs.put(key, scaleBorder(border));
                 }
             }
 

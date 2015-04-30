@@ -41,7 +41,7 @@ public class CreateFolderDialog extends CreateDialog {
     private static final long serialVersionUID = 1L;
 
     private JTextField nameField;
-    private JComboBox typeBox;
+    private JComboBox<ObjectTypeItem> typeBox;
 
     public CreateFolderDialog(Frame owner, ClientModel model) {
         super(owner, "Create Folder", model);
@@ -54,14 +54,14 @@ public class CreateFolderDialog extends CreateDialog {
         nameField = new JTextField(60);
         createRow("Name:", nameField, 0);
 
-        Object[] types = getTypes(BaseTypeId.CMIS_FOLDER.value());
+        ObjectTypeItem[] types = getTypes(BaseTypeId.CMIS_FOLDER.value());
         if (types.length == 0) {
             JOptionPane.showMessageDialog(this, "No creatable type!", "Creatable Types", JOptionPane.ERROR_MESSAGE);
             thisDialog.dispose();
             return;
         }
 
-        typeBox = new JComboBox(types);
+        typeBox = new JComboBox<ObjectTypeItem>(types);
         typeBox.setSelectedIndex(0);
         typeBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {

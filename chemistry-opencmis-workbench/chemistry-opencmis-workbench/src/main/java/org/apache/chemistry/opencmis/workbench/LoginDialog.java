@@ -66,7 +66,7 @@ public class LoginDialog extends JDialog {
     private ExpertLoginTab expertLoginTab;
     private JButton loadRepositoryButton;
     private JButton loginButton;
-    private JComboBox repositoryBox;
+    private JComboBox<Repository> repositoryBox;
     private AbstractLoginTab currentTab;
 
     private boolean canceled = true;
@@ -80,7 +80,7 @@ public class LoginDialog extends JDialog {
 
     private void createGUI() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 3)));
         setMinimumSize(new Dimension(700, 500));
 
         Container pane = getContentPane();
@@ -95,7 +95,7 @@ public class LoginDialog extends JDialog {
         // repository
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+        buttonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5)));
         add(buttonPanel, BorderLayout.PAGE_END);
 
         loadRepositoryButton = createButton("Load Repositories");
@@ -255,14 +255,14 @@ public class LoginDialog extends JDialog {
     }
 
     private void createRepositoryBox(Container pane) {
-        repositoryBox = new JComboBox();
+        repositoryBox = new JComboBox<Repository>();
 
-        int height = 60;
-        height = Math.max(height, (getFontMetrics(repositoryBox.getFont()).getHeight() * 3)
-                + repositoryBox.getInsets().top + repositoryBox.getInsets().bottom + 6);
+        RepositoryRenderer renderer = new RepositoryRenderer();
+
+        int height = (int) (renderer.getPreferredSize().height * 1.1);
 
         repositoryBox.setEnabled(false);
-        repositoryBox.setRenderer(new RepositoryRenderer());
+        repositoryBox.setRenderer(renderer);
         repositoryBox.setPreferredSize(new Dimension(Short.MAX_VALUE, height));
         repositoryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -303,7 +303,7 @@ public class LoginDialog extends JDialog {
         return canceled;
     }
 
-    static class RepositoryRenderer extends JPanel implements ListCellRenderer {
+    static class RepositoryRenderer extends JPanel implements ListCellRenderer<Repository> {
         private static final long serialVersionUID = 1L;
 
         private final JLabel nameLabel;
@@ -313,7 +313,7 @@ public class LoginDialog extends JDialog {
         public RepositoryRenderer() {
             super();
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-            setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+            setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
             Font labelFont = UIManager.getFont("Label.font");
 
@@ -326,13 +326,14 @@ public class LoginDialog extends JDialog {
 
             descriptionLabel = new JLabel();
             add(descriptionLabel);
+
+            setPreferredSize(new Dimension(Short.SIZE, (getFontMetrics(labelFont).getHeight() * 3)
+                    + WorkbenchScale.scaleInt(6)));
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
-            Repository repository = (Repository) value;
-
+        public Component getListCellRendererComponent(JList<? extends Repository> list, Repository value, int index,
+                boolean isSelected, boolean cellHasFocus) {
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
@@ -341,14 +342,14 @@ public class LoginDialog extends JDialog {
                 setForeground(list.getForeground());
             }
 
-            if (repository == null) {
+            if (value == null) {
                 nameLabel.setText("");
                 idLabel.setText("");
                 descriptionLabel.setText("");
             } else {
-                nameLabel.setText(repository.getName());
-                idLabel.setText(repository.getId());
-                descriptionLabel.setText(repository.getDescription());
+                nameLabel.setText(value.getName());
+                idLabel.setText(value.getId());
+                descriptionLabel.setText(value.getDescription());
             }
 
             return this;

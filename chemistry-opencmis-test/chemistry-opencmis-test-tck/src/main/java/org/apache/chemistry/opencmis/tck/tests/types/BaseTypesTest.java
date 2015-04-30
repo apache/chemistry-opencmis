@@ -265,7 +265,7 @@ public class BaseTypesTest extends AbstractSessionTest {
                     }
                 } catch (CmisObjectNotFoundException e) {
                     addResult(createResult(FAILURE,
-                            "Type children fetched via getTypeDescendants() is not available via getTypeChildren(): "
+                            "Type children fetched via getTypeDescendants() are not available via getTypeChildren(): "
                                     + tree.getItem().getId(), e, false));
                 }
 

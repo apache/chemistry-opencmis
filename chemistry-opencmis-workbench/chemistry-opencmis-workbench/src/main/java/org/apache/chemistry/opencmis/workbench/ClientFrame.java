@@ -338,7 +338,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
 
-        split.setDividerLocation(prefs.getInt(PREFS_DIV, 500));
+        split.setDividerLocation(prefs.getInt(PREFS_DIV, getPreferredSize().width / 4));
 
         if (prefs.getInt(PREFS_X, Integer.MAX_VALUE) == Integer.MAX_VALUE) {
             setLocationRelativeTo(null);

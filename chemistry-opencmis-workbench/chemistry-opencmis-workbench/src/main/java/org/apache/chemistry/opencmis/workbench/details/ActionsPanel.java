@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.actions.AclUpdatePanel;
 import org.apache.chemistry.opencmis.workbench.actions.AddObjectToFolderPanel;
 import org.apache.chemistry.opencmis.workbench.actions.AppendContentStreamPanel;
@@ -134,7 +135,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
     private void createGUI() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
         propertyUpdatePanel = new PropertyUpdatePanel(model);
         add(propertyUpdatePanel);
