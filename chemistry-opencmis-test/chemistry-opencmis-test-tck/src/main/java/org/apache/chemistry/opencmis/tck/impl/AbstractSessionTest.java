@@ -282,7 +282,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Name is not set!");
         }
         if (objectTypeId == null) {
-            throw new IllegalArgumentException("Object Type Id is not set!");
+            throw new IllegalArgumentException("Object Type ID is not set!");
         }
 
         // check type
@@ -335,21 +335,21 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             // check object parents
             List<Folder> objectParents = result.getParents();
 
-            f = createResult(FAILURE, "Newly created folder has no or more than one parent! Id: " + result.getId(),
+            f = createResult(FAILURE, "Newly created folder has no or more than one parent! ID: " + result.getId(),
                     true);
             addResult(assertEquals(1, objectParents.size(), null, f));
 
-            f = createResult(FAILURE, "First object parent of the newly created folder does not match parent! Id: "
+            f = createResult(FAILURE, "First object parent of the newly created folder does not match parent! ID: "
                     + result.getId(), true);
             assertShallowEquals(parent, objectParents.get(0), null, f);
 
             // check folder parent
             Folder folderParent = result.getFolderParent();
-            f = createResult(FAILURE, "Newly created folder has no folder parent! Id: " + result.getId(), true);
+            f = createResult(FAILURE, "Newly created folder has no folder parent! ID: " + result.getId(), true);
             addResult(assertNotNull(folderParent, null, f));
 
             f = createResult(FAILURE,
-                    "Folder parent of the newly created folder does not match parent! Id: " + result.getId(), true);
+                    "Folder parent of the newly created folder does not match parent! ID: " + result.getId(), true);
             assertShallowEquals(parent, folderParent, null, f);
 
             // check children of parent
@@ -361,7 +361,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     if (result.getId().equals(child.getId())) {
                         found = true;
 
-                        f = createResult(FAILURE, "Folder and parent child don't match! Id: " + result.getId(), true);
+                        f = createResult(FAILURE, "Folder and parent child don't match! ID: " + result.getId(), true);
                         assertShallowEquals(result, child, null, f);
                         break;
                     }
@@ -369,7 +369,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             if (!found) {
-                addResult(createResult(FAILURE, "Folder is not a child of the parent folder! Id: " + result.getId(),
+                addResult(createResult(FAILURE, "Folder is not a child of the parent folder! ID: " + result.getId(),
                         true));
             }
         } catch (CmisBaseException e) {
@@ -413,7 +413,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Name is not set!");
         }
         if (objectTypeId == null) {
-            throw new IllegalArgumentException("Object Type Id is not set!");
+            throw new IllegalArgumentException("Object Type ID is not set!");
         }
 
         if (content == null) {
@@ -551,7 +551,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Name is not set!");
         }
         if (objectTypeId == null) {
-            throw new IllegalArgumentException("Object Type Id is not set!");
+            throw new IllegalArgumentException("Object Type ID is not set!");
         }
 
         // check type
@@ -618,7 +618,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             throw new IllegalArgumentException("Name is not set!");
         }
         if (objectTypeId == null) {
-            throw new IllegalArgumentException("Object Type Id is not set!");
+            throw new IllegalArgumentException("Object Type ID is not set!");
         }
 
         // check type
@@ -703,7 +703,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
 
-            CmisTestResult f = createResult(FAILURE, "Object should not exist anymore but it is still there! Id: "
+            CmisTestResult f = createResult(FAILURE, "Object should not exist anymore but it is still there! ID: "
                     + object.getId(), true);
             addResult(assertIsFalse(exists(object), null, f));
         }
@@ -740,7 +740,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         try {
             newType = session.createType(typeDef);
             addResult(createInfoResult("Created type '" + typeDef.getId()
-                    + "'. Repository assigned the following type id: " + newType.getId()));
+                    + "'. Repository assigned the following type ID: " + newType.getId()));
         } catch (CmisBaseException e) {
             addResult(createResult(FAILURE, "Creating type '" + typeDef.getId() + "' failed: " + e.getMessage(), e,
                     false));
@@ -751,7 +751,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         if (newType.getTypeMutability() == null) {
             addResult(createResult(FAILURE,
-                    "Newly created type does not provide type mutability data! Id: " + newType.getId()));
+                    "Newly created type does not provide type mutability data! ID: " + newType.getId()));
         }
 
         return newType;
@@ -764,16 +764,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         ObjectType type = session.getTypeDefinition(typeId);
 
         if (type == null) {
-            addResult(createResult(FAILURE, "Type does not exist and therefore cannot be deleted! Id: " + typeId));
+            addResult(createResult(FAILURE, "Type does not exist and therefore cannot be deleted! ID: " + typeId));
             return;
         }
 
         // check if type can be deleted
         if (type.getTypeMutability() == null) {
-            addResult(createResult(FAILURE, "Type does not provide type mutability data! Id: " + typeId));
+            addResult(createResult(FAILURE, "Type does not provide type mutability data! ID: " + typeId));
         } else {
             if (!Boolean.TRUE.equals(type.getTypeMutability().canDelete())) {
-                addResult(createResult(WARNING, "Type indicates that it cannot be deleted. Trying it anyway. Id: "
+                addResult(createResult(WARNING, "Type indicates that it cannot be deleted. Trying it anyway. ID: "
                         + typeId));
             }
         }
@@ -789,7 +789,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         // check if the type still exists
         try {
             session.getTypeDefinition(typeId);
-            addResult(createResult(FAILURE, "Type should not exist anymore but it is still there! Id: " + typeId, true));
+            addResult(createResult(FAILURE, "Type should not exist anymore but it is still there! ID: " + typeId, true));
         } catch (CmisObjectNotFoundException e) {
             // expected result
         }
@@ -947,7 +947,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(object, null, f));
 
         if (object != null) {
-            f = createResult(FAILURE, "Object id is not set!");
+            f = createResult(FAILURE, "Object ID is not set!");
             addResult(results, assertStringNotEmpty(object.getId(), null, f));
 
             GregorianCalendar creationDate = null;
@@ -1268,8 +1268,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             addResult(
                                     results,
                                     createResult(FAILURE,
-                                            "The cmis:allowedChildObjectTypeIds property contains the type id '" + otid
-                                                    + "' but the type doesn't exists. Folder id: " + object.getId()));
+                                            "The cmis:allowedChildObjectTypeIds property contains the type ID '" + otid
+                                                    + "' but the type doesn't exists. Folder ID: " + object.getId()));
                         }
                     }
                 }
@@ -1504,36 +1504,36 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 addResult(results, assertNotNull(rend, null, f));
 
                 if (rend != null) {
-                    f = createResult(FAILURE, "A rendition has an empty stream id!");
+                    f = createResult(FAILURE, "A rendition has an empty stream ID!");
                     addResult(results, assertStringNotEmpty(rend.getStreamId(), null, f));
 
-                    f = createResult(FAILURE, "A rendition has an empty kind! Stream id: " + rend.getStreamId());
+                    f = createResult(FAILURE, "A rendition has an empty kind! Stream ID: " + rend.getStreamId());
                     addResult(results, assertStringNotEmpty(rend.getKind(), null, f));
 
-                    f = createResult(FAILURE, "A rendition has an empty MIME type! Stream id: " + rend.getStreamId());
+                    f = createResult(FAILURE, "A rendition has an empty MIME type! Stream ID: " + rend.getStreamId());
                     addResult(results, assertStringNotEmpty(rend.getMimeType(), null, f));
 
                     if ("cmis:thumbnail".equals(rend.getKind())) {
                         f = createResult(WARNING,
-                                "A rendition is of kind 'cmis:thumbnail' but the height is not set or has an invalid value! Stream id: "
+                                "A rendition is of kind 'cmis:thumbnail' but the height is not set or has an invalid value! Stream ID: "
                                         + rend.getStreamId());
                         addResult(results, assertIsTrue(rend.getHeight() > 0, null, f));
 
                         f = createResult(WARNING,
-                                "A rendition is of kind 'cmis:thumbnail' but the width is not set or has an invalid value! Stream id: "
+                                "A rendition is of kind 'cmis:thumbnail' but the width is not set or has an invalid value! Stream ID: "
                                         + rend.getStreamId());
                         addResult(results, assertIsTrue(rend.getWidth() > 0, null, f));
                     }
 
                     // check the content
                     ContentStream contentStream = rend.getContentStream();
-                    f = createResult(FAILURE, "A rendition has no content stream! Stream id: " + rend.getStreamId());
+                    f = createResult(FAILURE, "A rendition has no content stream! Stream ID: " + rend.getStreamId());
                     addResult(results, assertNotNull(contentStream, null, f));
 
                     if (contentStream != null) {
                         InputStream stream = contentStream.getStream();
 
-                        f = createResult(FAILURE, "A rendition has no stream! Stream id: " + rend.getStreamId());
+                        f = createResult(FAILURE, "A rendition has no stream! Stream ID: " + rend.getStreamId());
                         addResult(results, assertNotNull(stream, null, f));
 
                         if (stream != null) {
@@ -1587,10 +1587,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
         Document doc = (Document) object;
 
-        // check version series id
+        // check version series ID
         String versionSeriesId = doc.getVersionSeriesId();
 
-        f = createResult(FAILURE, "Versionable document has no version series id property!");
+        f = createResult(FAILURE, "Versionable document has no version series ID property!");
         addResult(results, assertStringNotEmpty(versionSeriesId, null, f));
         if (versionSeriesId == null) {
             CmisTestResultImpl result = createResult(getWorst(results), message);
@@ -1618,7 +1618,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             addResult(results,
                     checkObject(session, lastestVersion, properties, "Latest version check: " + lastestVersion.getId()));
 
-            f = createResult(FAILURE, "Latest version is not flagged as latest version! Id: " + lastestVersion.getId());
+            f = createResult(FAILURE, "Latest version is not flagged as latest version! ID: " + lastestVersion.getId());
             addResult(results, assertIsTrue(lastestVersion.isLatestVersion(), null, f));
 
             // get latest major version
@@ -1637,7 +1637,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         checkObject(session, lastestMajorVersion, properties, "Latest major version check: "
                                 + lastestMajorVersion.getId()));
 
-                f = createResult(FAILURE, "Latest major version is not flagged as latest major version! Id: "
+                f = createResult(FAILURE, "Latest major version is not flagged as latest major version! ID: "
                         + lastestMajorVersion.getId());
                 addResult(results, assertIsTrue(lastestMajorVersion.isLatestMajorVersion(), null, f));
             }
@@ -1669,7 +1669,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     if (version.isVersionSeriesCheckedOut()) {
                         f = createResult(
                                 WARNING,
-                                "Version series is checked-out and the PWC is not the latest version! Id: "
+                                "Version series is checked-out and the PWC is not the latest version! ID: "
                                         + version.getId()
                                         + " (Note: The words of the CMIS specification define that the PWC is the latest version."
                                         + " But that is not the intention of the spec and will be changed in CMIS 1.1."
@@ -1677,14 +1677,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
                     } else {
                         f = createResult(FAILURE,
-                                "Version series is not checked-out and first version history entry is not the latest version! Id: "
+                                "Version series is not checked-out and first version history entry is not the latest version! ID: "
                                         + version.getId());
                         addResult(results, assertIsTrue(version.isLatestVersion(), null, f));
                     }
                 }
 
-                // check version id
-                f = createResult(FAILURE, "Version series id does not match! Id: " + version.getId());
+                // check version ID
+                f = createResult(FAILURE, "Version series id does not match! ID: " + version.getId());
                 addResult(results, assertEquals(versionSeriesId, version.getVersionSeriesId(), null, f));
 
                 // check creation date
@@ -1723,29 +1723,29 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 // check PWC
                 if (version.getId().equals(version.getVersionSeriesCheckedOutId())) {
-                    f = createResult(FAILURE, "PWC must not be flagged as latest major version! Id: " + version.getId());
+                    f = createResult(FAILURE, "PWC must not be flagged as latest major version! ID: " + version.getId());
                     addResult(results, assertIsFalse(version.isLatestMajorVersion(), null, f));
                 }
 
                 // check checked out
                 if (Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut())) {
                     f = createResult(WARNING,
-                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutId is not set! Id: "
+                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutId is not set! ID: "
                                     + version.getId());
                     addResult(results, assertStringNotEmpty(doc.getVersionSeriesCheckedOutId(), null, f));
 
                     f = createResult(WARNING,
-                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutBy is not set! Id: "
+                            "Version series is marked as checked out but cmis:versionSeriesCheckedOutBy is not set! ID: "
                                     + version.getId());
                     addResult(results, assertStringNotEmpty(doc.getVersionSeriesCheckedOutBy(), null, f));
                 } else if (Boolean.FALSE.equals(doc.isVersionSeriesCheckedOut())) {
                     f = createResult(FAILURE,
-                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutId is set! Id: "
+                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutId is set! ID: "
                                     + version.getId());
                     addResult(results, assertNull(doc.getVersionSeriesCheckedOutId(), null, f));
 
                     f = createResult(FAILURE,
-                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutIdBy is set! Id: "
+                            "Version series is not marked as checked out but cmis:versionSeriesCheckedOutIdBy is set! ID: "
                                     + version.getId());
                     addResult(results, assertNull(doc.getVersionSeriesCheckedOutBy(), null, f));
                 }
@@ -1767,7 +1767,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             // check latest versions
-            f = createResult(FAILURE, "Version series id has " + latestVersion
+            f = createResult(FAILURE, "Version series ID has " + latestVersion
                     + " latest versions! There must be only one!");
             addResult(results, assertEquals(1, latestVersion, null, f));
 
@@ -1777,11 +1777,11 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             // check latest major versions
             if (lastestMajorVersion == null) {
-                f = createResult(FAILURE, "Version series id has " + latestMajorVersion
+                f = createResult(FAILURE, "Version series ID has " + latestMajorVersion
                         + " latest major version(s) but getObjectOfLatestVersion() didn't return a major version!");
                 addResult(results, assertEquals(0, latestMajorVersion, null, f));
             } else {
-                f = createResult(FAILURE, "Version series id has " + latestMajorVersion
+                f = createResult(FAILURE, "Version series ID has " + latestMajorVersion
                         + " latest major versions but there should be exactly one!");
                 addResult(results, assertEquals(1, latestMajorVersion, null, f));
 
@@ -1794,7 +1794,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             if (latestModifictaionIndex >= 0) {
                 f = createResult(
                         FAILURE,
-                        "Version with the latest modification date is not flagged as latest version! Id: "
+                        "Version with the latest modification date is not flagged as latest version! ID: "
                                 + versions.get(latestModifictaionIndex));
                 addResult(results, assertIsTrue(versions.get(latestModifictaionIndex).isLatestVersion(), null, f));
             }
@@ -1844,7 +1844,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(property, null, f));
 
         if (property != null) {
-            f = createResult(FAILURE, "Property id is not set or empty!");
+            f = createResult(FAILURE, "Property ID is not set or empty!");
             addResult(results, assertStringNotEmpty(property.getId(), null, f));
 
             f = createResult(WARNING, "Display name is not set!");
@@ -1977,12 +1977,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         .get(PropertyIds.OBJECT_ID).getFirstValue();
 
                 if (pathSegement == null) {
-                    addResult(results, createResult(FAILURE, "getChildren omitted path segement! Id: " + objectId));
+                    addResult(results, createResult(FAILURE, "getChildren omitted path segement! ID: " + objectId));
                 } else {
                     CmisObject pathSegementChild = session.getObjectByPath(folder.getPath(), pathSegement);
 
                     f = createResult(FAILURE,
-                            "Combining the path of the parent folder and the path segement of a child returns a different object! Id: "
+                            "Combining the path of the parent folder and the path segement of a child returns a different object! ID: "
                                     + objectId);
                     addResult(results, assertEquals(objectId, pathSegementChild.getId(), null, f));
                 }
@@ -2061,7 +2061,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     checkVersionHistory(session, child, propertiesToCheck,
                             "Child version history check: " + child.getId()));
 
-            f = createResult(FAILURE, "Child is not fileable! Id: " + child.getId() + " / Type: "
+            f = createResult(FAILURE, "Child is not fileable! ID: " + child.getId() + " / Type: "
                     + child.getType().getId());
             addResult(results, assertIsTrue(child instanceof FileableCmisObject, null, f));
 
@@ -2075,12 +2075,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 if (hasObjectParentsAction || hasFolderParentAction) {
                     List<Folder> parents = fileableChild.getParents();
 
-                    f = createResult(FAILURE, "Child has no parents! Id: " + child.getId());
+                    f = createResult(FAILURE, "Child has no parents! ID: " + child.getId());
                     addResult(results, assertListNotEmpty(parents, null, f));
 
                     if (child instanceof Folder) {
                         f = createResult(FAILURE,
-                                "Child is a folder and has more than one parent! Id: " + child.getId());
+                                "Child is a folder and has more than one parent! ID: " + child.getId());
                         addResult(results, assertIsFalse(parents.size() > 1, null, f));
 
                         Folder folderParent = ((Folder) child).getFolderParent();
@@ -2089,16 +2089,16 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                                     results,
                                     createResult(
                                             FAILURE,
-                                            "getFolderParent() returns null for a non-root folder object! Id: "
+                                            "getFolderParent() returns null for a non-root folder object! ID: "
                                                     + child.getId()));
                         } else {
                             f = createResult(FAILURE,
-                                    "getFolderParent() returns wrong parent object! Id: " + child.getId());
+                                    "getFolderParent() returns wrong parent object! ID: " + child.getId());
                             addResult(results, assertEquals(folder.getId(), folderParent.getId(), null, f));
 
                             if (parents.size() > 0 && parents.get(0) != null) {
                                 f = createResult(FAILURE,
-                                        "getFolderParent() and getParents() return different parents for a folder object! Id: "
+                                        "getFolderParent() and getParents() return different parents for a folder object! ID: "
                                                 + child.getId());
                                 addResult(results, assertEquals(parents.get(0).getId(), folderParent.getId(), null, f));
                             }
@@ -2108,7 +2108,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     boolean foundParent = false;
                     for (Folder parent : parents) {
                         if (parent == null) {
-                            f = createResult(FAILURE, "One of childs parents is null! Id: " + child.getId());
+                            f = createResult(FAILURE, "One of childs parents is null! ID: " + child.getId());
                             addResult(results, assertListNotEmpty(parents, null, f));
                         } else if (folder.getId().equals(parent.getId())) {
                             foundParent = true;
@@ -2120,14 +2120,14 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         addResult(
                                 results,
                                 createResult(FAILURE,
-                                        "Parent folder is not in parents of the child! Id: " + child.getId()));
+                                        "Parent folder is not in parents of the child! ID: " + child.getId()));
                     }
                 }
 
-                // get object by id and compare
+                // get object by ID and compare
                 CmisObject objectById = session.getObject(child.getId(), SELECT_ALL_NO_CACHE_OC);
 
-                f = createResult(FAILURE, "Child and object fetched by id don't match! Id: " + child.getId());
+                f = createResult(FAILURE, "Child and object fetched by ID don't match! ID: " + child.getId());
                 addResult(results, assertEquals(child, objectById, null, f, false, false));
 
                 // get object by path and compare
@@ -2139,22 +2139,22 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                     for (String path : paths) {
                         CmisObject objectByPath = session.getObjectByPath(path, SELECT_ALL_NO_CACHE_OC);
 
-                        f = createResult(FAILURE, "Child and object fetched by path don't match! Id: " + child.getId()
+                        f = createResult(FAILURE, "Child and object fetched by path don't match! ID: " + child.getId()
                                 + " / Path: " + path);
                         addResult(results, assertEquals(child, objectByPath, null, f, false, false));
 
-                        f = createResult(FAILURE, "Object fetched by id and object fetched by path don't match! Id: "
+                        f = createResult(FAILURE, "Object fetched by id and object fetched by path don't match! ID: "
                                 + child.getId() + " / Path: " + path);
                         addResult(results, assertEquals(objectById, objectByPath, null, f, true, true));
                     }
                 }
             }
 
-            f = createResult(WARNING, "Child has no CAN_GET_OBJECT_PARENTS allowable action! Id: " + child.getId());
+            f = createResult(WARNING, "Child has no CAN_GET_OBJECT_PARENTS allowable action! ID: " + child.getId());
             addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
 
             if (child instanceof Folder) {
-                f = createResult(WARNING, "Child has no CAN_GET_FOLDER_PARENT allowable action! Id: " + child.getId());
+                f = createResult(WARNING, "Child has no CAN_GET_FOLDER_PARENT allowable action! ID: " + child.getId());
                 addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
             }
         }
@@ -2340,7 +2340,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             } else if (BaseTypeId.CMIS_RELATIONSHIP.equals(type.getBaseTypeId())) {
                 RelationshipTypeDefinition relType = (RelationshipTypeDefinition) type;
 
-                f = createResult(FAILURE, "Allowed Source Type Ids are not set!");
+                f = createResult(FAILURE, "Allowed Source Type IDs are not set!");
                 addResult(results, assertNotNull(relType.getAllowedSourceTypeIds(), null, f));
 
                 if (relType.getAllowedSourceTypeIds() != null) {
@@ -2351,17 +2351,17 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             addResult(
                                     results,
                                     createResult(WARNING,
-                                            "Allowed Source Type Ids contain a type id that doesn't exist: " + typeId));
+                                            "Allowed Source Type IDs contain a type ID that doesn't exist: " + typeId));
                         } catch (CmisObjectNotFoundException e) {
                             addResult(
                                     results,
                                     createResult(WARNING,
-                                            "Allowed Source Type Ids contain a type id that doesn't exist: " + typeId));
+                                            "Allowed Source Type IDs contain a type ID that doesn't exist: " + typeId));
                         }
                     }
                 }
 
-                f = createResult(FAILURE, "Allowed Target Type Ids are not set!");
+                f = createResult(FAILURE, "Allowed Target Type IDs are not set!");
                 addResult(results, assertNotNull(relType.getAllowedTargetTypeIds(), null, f));
 
                 if (relType.getAllowedTargetTypeIds() != null) {
@@ -2372,12 +2372,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                             addResult(
                                     results,
                                     createResult(WARNING,
-                                            "Allowed Target Type Ids contain a type id that doesn't exist: " + typeId));
+                                            "Allowed Target Type IDs contain a type ID that doesn't exist: " + typeId));
                         } catch (CmisObjectNotFoundException e) {
                             addResult(
                                     results,
                                     createResult(WARNING,
-                                            "Allowed Target Type Ids contain a type id that doesn't exist: " + typeId));
+                                            "Allowed Target Type IDs contain a type ID that doesn't exist: " + typeId));
                         }
                     }
                 }
@@ -2421,7 +2421,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                         if (propDef == null) {
                             addResult(results, createResult(FAILURE, "A property definition is null!"));
                         } else if (propDef.getId() == null) {
-                            addResult(results, createResult(FAILURE, "A property definition id is null!"));
+                            addResult(results, createResult(FAILURE, "A property definition ID is null!"));
                         } else {
                             addResult(results,
                                     checkPropertyDefinition(propDef, "Property definition: " + propDef.getId()));
@@ -2615,7 +2615,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         addResult(results, assertNotNull(propDef, null, f));
 
         if (propDef != null) {
-            f = createResult(FAILURE, "Property id is not set!");
+            f = createResult(FAILURE, "Property ID is not set!");
             addResult(results, assertStringNotEmpty(propDef.getId(), null, f));
 
             f = createResult(WARNING, "Local name is not set!");
@@ -2687,13 +2687,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return failure;
         }
 
-        f = createResult(FAILURE, "Type ids don't match!");
+        f = createResult(FAILURE, "Type IDs don't match!");
         addResult(results, assertEquals(expected.getId(), actual.getId(), null, f));
 
-        f = createResult(FAILURE, "Base type ids don't match!");
+        f = createResult(FAILURE, "Base type IDs don't match!");
         addResult(results, assertEquals(expected.getBaseTypeId(), actual.getBaseTypeId(), null, f));
 
-        f = createResult(FAILURE, "Parent type ids don't match!");
+        f = createResult(FAILURE, "Parent type IDs don't match!");
         addResult(results, assertEquals(expected.getParentTypeId(), actual.getParentTypeId(), null, f));
 
         f = createResult(FAILURE, "Query names don't match!");
@@ -2809,7 +2809,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return failure;
         }
 
-        f = createResult(FAILURE, "Property ids don't match!");
+        f = createResult(FAILURE, "Property IDs don't match!");
         addResult(results, assertEquals(expected.getId(), actual.getId(), null, f));
 
         f = createResult(FAILURE, "Local names don't match!");
@@ -3198,7 +3198,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return failure;
         }
 
-        f = createResult(FAILURE, "Principal ids dont't match!");
+        f = createResult(FAILURE, "Principal IDs dont't match!");
         addResult(results, assertEquals(expected.getPrincipalId(), actual.getPrincipalId(), null, f));
 
         f = createResult(FAILURE, "Permissions dont't match!");
@@ -3292,7 +3292,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             return failure;
         }
 
-        f = createResult(FAILURE, "Stream ids dont't match!");
+        f = createResult(FAILURE, "Stream IDs dont't match!");
         addResult(results, assertEquals(expected.getStreamId(), actual.getStreamId(), null, f));
 
         f = createResult(FAILURE, "Kinds dont't match!");
@@ -3313,7 +3313,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         f = createResult(FAILURE, "Widths dont't match!");
         addResult(results, assertEquals(expected.getBigWidth(), actual.getBigWidth(), null, f));
 
-        f = createResult(FAILURE, "Rendition document ids dont't match!");
+        f = createResult(FAILURE, "Rendition document IDs dont't match!");
         addResult(results, assertEquals(expected.getRenditionDocumentId(), actual.getRenditionDocumentId(), null, f));
 
         if (getWorst(results).getLevel() <= OK.getLevel()) {

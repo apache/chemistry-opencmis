@@ -167,7 +167,7 @@ public class ContentRangesTest extends AbstractSessionTest {
 
                 if (content.getLength() > -1) {
                     f = createResult(WARNING, "Content length does not match {offset=5, length=17}!", false);
-                    addResult(assertEquals((long) (17 - 5), content.getLength(), null, f));
+                    addResult(assertEquals(17L, content.getLength(), null, f));
                 }
 
                 if (CONTENT.equals(excerpt)) {
