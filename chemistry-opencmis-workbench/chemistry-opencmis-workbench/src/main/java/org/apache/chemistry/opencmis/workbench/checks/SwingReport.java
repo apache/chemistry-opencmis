@@ -274,11 +274,11 @@ public class SwingReport extends AbstractCmisTestReport {
         }
 
         public int getIconWidth() {
-            return 8;
+            return WorkbenchScale.scaleInt(8);
         }
 
         public int getIconHeight() {
-            return 18;
+            return WorkbenchScale.scaleInt(18);
         }
     }
 }

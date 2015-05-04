@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -95,7 +96,9 @@ public class PropertyEditorFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setPreferredSize(new Dimension(800, 600));
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(300, 120));
 
         setLayout(new BorderLayout());

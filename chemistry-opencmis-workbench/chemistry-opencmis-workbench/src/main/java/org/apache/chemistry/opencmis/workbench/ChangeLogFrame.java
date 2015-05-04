@@ -150,6 +150,8 @@ public class ChangeLogFrame extends JFrame {
                 column.setPreferredWidth(WorkbenchScale.scaleInt(COLUMN_WIDTHS[i]));
             }
 
+            setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
+
             setFillsViewportHeight(true);
         }
 

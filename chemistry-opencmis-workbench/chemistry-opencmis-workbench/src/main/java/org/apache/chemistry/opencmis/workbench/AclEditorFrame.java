@@ -154,7 +154,6 @@ public class AclEditorFrame extends JFrame {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
-        setMinimumSize(new Dimension(200, 60));
         setMinimumSize(new Dimension(300, 120));
 
         setLayout(new BorderLayout());
