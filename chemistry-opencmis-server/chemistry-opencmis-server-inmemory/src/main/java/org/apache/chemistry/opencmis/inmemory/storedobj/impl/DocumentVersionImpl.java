@@ -137,9 +137,9 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 
         if (hasPwc) {
             // CMIS 1.1 forbids it for PWC
-            isLatestVersion = allVers.size() > 1 && allVers.get(allVers.size() - 2).equals(this);
+            isLatestVersion = allVers.size() > 1 && allVers.get(allVers.size() - 2) == this;
         } else {
-            isLatestVersion = allVers.get(allVers.size() - 1).equals(this);
+            isLatestVersion = allVers.get(allVers.size() - 1) == this;
         }
 
         return isLatestVersion;

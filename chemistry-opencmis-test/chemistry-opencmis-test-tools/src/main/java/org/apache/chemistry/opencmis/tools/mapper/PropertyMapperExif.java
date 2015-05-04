@@ -163,7 +163,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         String hexStr = getHexString(tag.getTagType());
 
         // Handle all tags corresponding to their directory specifics
-        if (GpsDirectory.class == dir.getClass()) {
+        if (dir instanceof GpsDirectory) {
             // first check for those tags that need special consideration:
             if (GpsDirectory.TAG_GPS_LONGITUDE == tag.getTagType()) {
                 Object ref = dir.getObject(GpsDirectory.TAG_GPS_LONGITUDE_REF);
@@ -223,7 +223,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                     LOG.error("Found a multi-value tag " + tag + ": multi value not implemented");
                     return null;
                 }
-                if (clazz == Rational.class) {
+                if (src instanceof Rational) {
                     // expect a CMIS decimal property
                     if (propType != PropertyType.DECIMAL) {
                         throw new MapperException("Tag value has type Rational and expected CMIS Decimal, but found: "
@@ -243,7 +243,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                         double d = ((Rational) src).doubleValue();
                         res = d;
                     }
-                } else if (clazz == Integer.class) {
+                } else if (src instanceof Integer) {
                     if (propType != PropertyType.INTEGER) {
                         throw new MapperException("Tag value has type Integer and expected CMIS Integer, but found: "
                                 + propType + " for tag: " + tag);
@@ -251,7 +251,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                     // convert to a long
                     long l = ((Integer) src).longValue();
                     res = l;
-                } else if (clazz == String.class) {
+                } else if (src instanceof String) {
                     if (propType != PropertyType.STRING && propType != PropertyType.ID && propType != PropertyType.URI
                             && propType != PropertyType.HTML && propType != PropertyType.DATETIME) {
                         throw new MapperException("Tag value has type String and expected CMIS String, but found: "
@@ -279,7 +279,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                         String s = (String) src;
                         res = s;
                     }
-                } else if (clazz == Date.class) {
+                } else if (src instanceof Date) {
                     if (propType != PropertyType.DATETIME) {
                         throw new MapperException("Tag value has type Date and expected CMIS DateTime, but found: "
                                 + propType + " for tag: " + tag);
@@ -290,7 +290,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                     GregorianCalendar cal = new GregorianCalendar();
                     cal.setTime(date);
                     res = cal;
-                } else if (clazz == Boolean.class) {
+                } else if (src instanceof Boolean) {
                     if (propType != PropertyType.BOOLEAN) {
                         throw new MapperException("Tag value has type Boolean and expected CMIS Boolean, but found: "
                                 + propType + " for tag: " + tag);
@@ -317,7 +317,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
                 Object src = dir.getObject(tag.getTagType());
                 Class<?> clazz = src.getClass();
 
-                if (clazz == Integer.class) {
+                if (src instanceof Integer) {
                     if (propType != PropertyType.INTEGER) {
                         throw new MapperException("Tag value has type Integer and expected CMIS Integer, but found: "
                                 + propType + " for tag: " + tag);

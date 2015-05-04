@@ -209,16 +209,26 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             Collection<PropertyDefinition<?>> propertyDefinitions) {
         RepositoryInfo repositoryInfo = fStoreManager.getRepositoryInfo(repositoryId);
         RepositoryCapabilities repositoryCapabilities = repositoryInfo.getCapabilities();
+        if (null == repositoryCapabilities) {
+        	return;
+        }
         CreatablePropertyTypes creatablePropertyTypes = repositoryCapabilities.getCreatablePropertyTypes();
+        if (null == creatablePropertyTypes) {
+        	return;
+        }
 
         Set<PropertyType> creatablePropertyTypeSet = creatablePropertyTypes.canCreate();
+        if (null == creatablePropertyTypeSet) {
+        	return;
+        }
+
         for (PropertyDefinition<?> propertyDefinition : propertyDefinitions) {
             if (!creatablePropertyTypeSet.contains(propertyDefinition.getPropertyType()))
                 throw new CmisConstraintException("propertyDefinition " + propertyDefinition.getId()
                         + "is of not creatable type " + propertyDefinition.getPropertyType());
 
             // mandatory properties must have a default value
-            if (propertyDefinition.isRequired() && (propertyDefinition.getDefaultValue() == null)) {
+            if (Boolean.TRUE.equals(propertyDefinition.isRequired()) && (propertyDefinition.getDefaultValue() == null)) {
                 throw new CmisConstraintException("property: " + propertyDefinition.getId()
                         + "required properties must have a default value");
             }
@@ -233,97 +243,113 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
 
         if (null == newTypeSettableAttributes)
             return; // no restrictions defined
-        if (newTypeSettableAttributes.canSetControllableAcl() && newTypeSettableAttributes.canSetControllablePolicy()
-                && newTypeSettableAttributes.canSetCreatable() && newTypeSettableAttributes.canSetDescription()
-                && newTypeSettableAttributes.canSetDisplayName() && newTypeSettableAttributes.canSetFileable()
-                && newTypeSettableAttributes.canSetFulltextIndexed() && newTypeSettableAttributes.canSetId()
-                && newTypeSettableAttributes.canSetIncludedInSupertypeQuery()
-                && newTypeSettableAttributes.canSetLocalName() && newTypeSettableAttributes.canSetLocalNamespace()
-                && newTypeSettableAttributes.canSetQueryable() && newTypeSettableAttributes.canSetQueryName())
+        if (Boolean.TRUE.equals( newTypeSettableAttributes.canSetControllableAcl())
+        		&& Boolean.TRUE.equals( newTypeSettableAttributes.canSetControllablePolicy())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetCreatable()) 
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetDescription())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetDisplayName()) 
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetFileable())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetFulltextIndexed()) 
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetId())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetIncludedInSupertypeQuery())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetLocalName()) 
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetLocalNamespace())
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetQueryable()) 
+        		&& Boolean.TRUE.equals(newTypeSettableAttributes.canSetQueryName()))
             return; // all is allowed
-        if (!newTypeSettableAttributes.canSetControllableAcl()
-                && oldTypeDefinition.isControllableAcl() != newTypeDefinition.isControllableAcl())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetControllableAcl())
+                && !isSameAs(oldTypeDefinition.isControllableAcl(), newTypeDefinition.isControllableAcl()))
             throw new CmisConstraintException("controllableAcl is not settable in repository " + repositoryId
                     + ", but " + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId()
                     + " differ in controllableAcl");
-        if (!newTypeSettableAttributes.canSetControllablePolicy()
-                && oldTypeDefinition.isControllablePolicy() != newTypeDefinition.isControllablePolicy())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetControllablePolicy())
+                && !isSameAs(oldTypeDefinition.isControllablePolicy(), newTypeDefinition.isControllablePolicy()))
             throw new CmisConstraintException("controllablePolicy is not settable in repository " + repositoryId
                     + ", but " + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId()
                     + " differ in controllablePolicy");
-        if (!newTypeSettableAttributes.canSetCreatable()
-                && oldTypeDefinition.isCreatable() != newTypeDefinition.isCreatable())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetCreatable())
+                && !isSameAs(oldTypeDefinition.isCreatable(), newTypeDefinition.isCreatable()))
             throw new CmisConstraintException("isCreatable is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in isCreatable");
-        if (!newTypeSettableAttributes.canSetDescription()
-                && !oldTypeDefinition.getDescription().equals(newTypeDefinition.getDescription()))
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetDescription())
+                && !isSameAs(oldTypeDefinition.getDescription(), newTypeDefinition.getDescription()))
             throw new CmisConstraintException("description is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their description");
-        if (!newTypeSettableAttributes.canSetDisplayName()
-                && !oldTypeDefinition.getDisplayName().equals(newTypeDefinition.getDisplayName()))
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetDisplayName())
+                && !isSameAs(oldTypeDefinition.getDisplayName(), newTypeDefinition.getDisplayName()))
             throw new CmisConstraintException("displayName is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their displayName");
-        if (!newTypeSettableAttributes.canSetFileable()
-                && oldTypeDefinition.isFileable() != newTypeDefinition.isFileable())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetFileable())
+                && !isSameAs(oldTypeDefinition.isFileable(), newTypeDefinition.isFileable()))
             throw new CmisConstraintException("fileable is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in isFileable");
-        if (!newTypeSettableAttributes.canSetFulltextIndexed()
-                && oldTypeDefinition.isFulltextIndexed() != newTypeDefinition.isFulltextIndexed())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetFulltextIndexed())
+                && !isSameAs(oldTypeDefinition.isFulltextIndexed(), newTypeDefinition.isFulltextIndexed()))
             throw new CmisConstraintException("fulltextIndexed is not settable in repository " + repositoryId
                     + ", but " + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId()
                     + " differ in isFulltextIndexed");
-        // TODO how can the ids differ?
-        if (!newTypeSettableAttributes.canSetId() && oldTypeDefinition.getId() != newTypeDefinition.getId())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetId()) && !isSameAs(oldTypeDefinition.getId(), newTypeDefinition.getId()))
             throw new CmisConstraintException("id is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their id");
-        if (!newTypeSettableAttributes.canSetIncludedInSupertypeQuery()
-                && oldTypeDefinition.isIncludedInSupertypeQuery() != newTypeDefinition.isIncludedInSupertypeQuery())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetIncludedInSupertypeQuery())
+                && !isSameAs(oldTypeDefinition.isIncludedInSupertypeQuery(), newTypeDefinition.isIncludedInSupertypeQuery()))
             throw new CmisConstraintException("includedInSupertypeQuery is not settable in repository " + repositoryId
                     + ", but " + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId()
                     + " differ in their isIncludedInSupertypeQuery");
-        if (!newTypeSettableAttributes.canSetLocalName()
-                && !oldTypeDefinition.getLocalName().equals(newTypeDefinition.getLocalName()))
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetLocalName())
+                && !isSameAs(oldTypeDefinition.getLocalName(), newTypeDefinition.getLocalName()))
             throw new CmisConstraintException("localName is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their localName");
-        if (!newTypeSettableAttributes.canSetLocalNamespace()
-                && !oldTypeDefinition.getLocalNamespace().equals(newTypeDefinition.getLocalNamespace()))
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetLocalNamespace())
+                && !isSameAs(oldTypeDefinition.getLocalNamespace(), newTypeDefinition.getLocalNamespace()))
             throw new CmisConstraintException("localNamespace is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId()
                     + " differ in their localNamespace");
-        if (!newTypeSettableAttributes.canSetQueryable()
-                && oldTypeDefinition.isQueryable() != newTypeDefinition.isQueryable())
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetQueryable())
+                && !isSameAs(oldTypeDefinition.isQueryable(), newTypeDefinition.isQueryable()))
             throw new CmisConstraintException("queryable is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their isQueryable");
-        if (!newTypeSettableAttributes.canSetQueryName()
-                && !oldTypeDefinition.getQueryName().equals(newTypeDefinition.getQueryName()))
+        if (Boolean.FALSE.equals(newTypeSettableAttributes.canSetQueryName())
+                && !isSameAs(oldTypeDefinition.getQueryName(), newTypeDefinition.getQueryName()))
             throw new CmisConstraintException("queryName is not settable in repository " + repositoryId + ", but "
                     + oldTypeDefinition.getId() + " and " + newTypeDefinition.getId() + " differ in their queryName");
     }
 
+    // returns true if both are null or equal, avoid NPE
+    public static boolean isSameAs(Object object1, Object object2) {
+        if (object1 == object2) {
+            return true;
+        }
+        if ((object1 == null) || (object2 == null)) {
+            return false;
+        }
+        return object1.equals(object2);
+    }
+  
     protected void checkUpdatePropertyDefinitions(Map<String, PropertyDefinition<?>> oldPropertyDefinitions,
             Map<String, PropertyDefinition<?>> newPropertyDefinitions) {
         for (PropertyDefinition<?> newPropertyDefinition : newPropertyDefinitions.values()) {
             PropertyDefinition<?> oldPropertyDefinition = oldPropertyDefinitions.get(newPropertyDefinition.getId());
 
-            if (oldPropertyDefinition.isInherited())
+            if (Boolean.TRUE.equals(oldPropertyDefinition.isInherited()))
                 throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
                         + " update of inherited properties is not allowed");
-            if (!(oldPropertyDefinition.isRequired()) && newPropertyDefinition.isRequired())
+            if (!(Boolean.TRUE.equals(oldPropertyDefinition.isRequired())) && Boolean.TRUE.equals(newPropertyDefinition.isRequired()))
                 throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
                         + " optional properties must not be changed to required");
-            if (oldPropertyDefinition.getPropertyType() != newPropertyDefinition.getPropertyType())
+            if (!isSameAs(oldPropertyDefinition.getPropertyType(), newPropertyDefinition.getPropertyType()))
                 throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
                         + " cannot update the propertyType (" + oldPropertyDefinition.getPropertyType() + ")");
-            if (oldPropertyDefinition.getCardinality() != newPropertyDefinition.getCardinality())
+            if (!isSameAs(oldPropertyDefinition.getCardinality(), newPropertyDefinition.getCardinality()))
                 throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
                         + " cannot update the cardinality (" + oldPropertyDefinition.getCardinality() + ")");
 
-            if (oldPropertyDefinition.isOpenChoice() && !newPropertyDefinition.isOpenChoice())
+            if (!isSameAs(oldPropertyDefinition.isOpenChoice(), newPropertyDefinition.isOpenChoice()))
                 throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
                         + " open choice cannot change from true to false");
 
             // check choices
-            if (!oldPropertyDefinition.isOpenChoice()) {
+            if (Boolean.FALSE.equals(oldPropertyDefinition.isOpenChoice())) {
                 List<?> oldChoices = oldPropertyDefinition.getChoices();
                 if (null == oldChoices)
                     throw new CmisConstraintException("property: " + oldPropertyDefinition.getId()
@@ -409,6 +435,14 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     protected void checkUpdateType(TypeDefinition updateType, TypeDefinition type) {
+    	if (updateType.getId() == null) {
+            throw new CmisConstraintException("type id cannot be null: " + updateType.getDisplayName() + ", "
+                    + type.getId());
+    	}
+    	if (updateType.getBaseTypeId() == null) {
+            throw new CmisConstraintException("type base id cannot be null: " + updateType.getDisplayName() + ", "
+                    + type.getId());
+    	}
         if (!updateType.getId().equals(type.getId()))
             throw new CmisConstraintException("type to update must be of the same id: " + updateType.getId() + ", "
                     + type.getId());
@@ -433,6 +467,10 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
     }
 
     protected void checkBasicType(TypeDefinition type) {
+    	if (type.getId() == null) {
+            throw new CmisConstraintException("type id cannot be null: " + type.getDisplayName() + ", "
+                    + type.getId());
+    	}
         if (type.getId().equals(type.getBaseTypeId().value()))
             throw new CmisInvalidArgumentException("type " + type.getId()
                     + " is a basic type, basic types are read-only");
