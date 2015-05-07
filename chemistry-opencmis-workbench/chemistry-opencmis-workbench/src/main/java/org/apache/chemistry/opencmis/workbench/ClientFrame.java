@@ -359,8 +359,8 @@ public class ClientFrame extends JFrame implements WindowListener {
             try {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                model.loadFolder(clientSession.getSession().getRepositoryInfo().getRootFolderId(), false);
-                model.loadObject(clientSession.getSession().getRepositoryInfo().getRootFolderId());
+                model.loadFolder(clientSession.getStartFolderId(), false);
+                model.loadObject(clientSession.getStartFolderId());
 
                 toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(true);
                 toolbarButton[BUTTON_TYPES].setEnabled(true);

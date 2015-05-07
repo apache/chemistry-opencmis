@@ -20,9 +20,7 @@ package org.apache.chemistry.opencmis.workbench.checks;
 
 import java.util.Map;
 
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
@@ -30,36 +28,28 @@ import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 /**
  * This class checks an object for CMIS specification compliance.
  */
-public class ObjectComplianceCheck extends AbstractSessionTest {
+public class TypeComplianceCheck extends AbstractSessionTest {
 
-    private String objectId;
+    private String typeId;
 
-    public ObjectComplianceCheck(String objectId) {
-        this.objectId = objectId;
+    public TypeComplianceCheck(String typeId) {
+        this.typeId = typeId;
     }
 
     @Override
     public final void init(Map<String, String> parameters) {
         super.init(parameters);
-        setName("Object Compliance Check");
+        setName("Type Definition Compliance Check");
     }
 
     @Override
     public final void run(Session session) {
-        CmisObject object = session.getObject(objectId, SELECT_ALL_NO_CACHE_OC);
-        String[] propertiesToCheck = getAllProperties(object);
+        ObjectType type = session.getTypeDefinition(typeId);
 
-        addResult(checkObject(session, object, propertiesToCheck, "Object check: " + object.getId()));
-
-        if (object instanceof Document) {
-            addResult(checkVersionHistory(session, object, propertiesToCheck,
-                    "Version history check: " + object.getId()));
-        } else if (object instanceof Folder) {
-            addResult(checkChildren(session, (Folder) object, "Folder children check: " + object.getId()));
-        }
+        addResult(checkTypeDefinition(session, type, "Type check:" + type.getId()));
 
         if (getResults().isEmpty()) {
-            addResult(createResult(CmisTestResultStatus.OK, "Object seems to be compliant! ID: " + object.getId()));
+            addResult(createResult(CmisTestResultStatus.OK, "Type seems to be compliant! ID: " + type.getId()));
         }
     }
 }

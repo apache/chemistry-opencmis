@@ -179,6 +179,8 @@ public class LoginDialog extends JDialog {
 
                     currentTab.afterLogin(clientSession.getSession());
 
+                    clientSession.setStartFolderId(currentTab.getStartFolderId());
+
                     canceled = false;
                     hideDialog();
                 } catch (Exception ex) {

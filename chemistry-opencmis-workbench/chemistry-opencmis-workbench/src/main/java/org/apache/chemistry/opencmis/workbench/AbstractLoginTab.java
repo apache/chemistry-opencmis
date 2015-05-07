@@ -115,4 +115,14 @@ public abstract class AbstractLoginTab extends JPanel {
      */
     public void afterLogin(Session session) {
     }
+
+    /**
+     * Returns the ID of the folder that the Workbench should load after login.
+     * 
+     * @return a valid folder ID or {@code null} for the repositories root
+     *         folder.
+     */
+    public String getStartFolderId() {
+        return null;
+    }
 }

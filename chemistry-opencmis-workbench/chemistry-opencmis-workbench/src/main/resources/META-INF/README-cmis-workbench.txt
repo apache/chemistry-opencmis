@@ -25,6 +25,8 @@ cmis.workbench.authentication    - preset authentication method (none/standard/n
 cmis.workbench.compression       - preset compression (on/off)
 cmis.workbench.clientcompression - preset client compression (on/off)
 cmis.workbench.cookies           - preset cookies (on/off)
+cmis.workbench.connecttimeout    - preset the connect timeout (in seconds)
+cmis.workbench.readtimeout       - preset the read timeout (in seconds)
 
 
 Folder operation context:

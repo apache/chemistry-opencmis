@@ -108,6 +108,7 @@ public class ClientSession {
     private OperationContext folderOperationContext;
     private OperationContext versionOperationContext;
     private int maxChildren;
+    private String startFolderId;
 
     public ClientSession(Map<String, String> sessionParameters, ObjectFactory objectFactory,
             AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {
@@ -120,7 +121,7 @@ public class ClientSession {
 
     public static SessionParameterMap createSessionParameters(String url, BindingType binding, String username,
             String password, Authentication authentication, boolean compression, boolean clientCompression,
-            boolean cookies) {
+            boolean cookies, long connectionTimeout, long readTimeout) {
         SessionParameterMap parameters = new SessionParameterMap();
 
         switch (binding) {
@@ -155,6 +156,18 @@ public class ClientSession {
         parameters.setClientCompression(clientCompression);
 
         parameters.setCookies(cookies);
+
+        if (connectionTimeout > 0) {
+            parameters.setConnectionTimeout(connectionTimeout);
+        } else {
+            parameters.setConnectionTimeout(0);
+        }
+
+        if (readTimeout > 0) {
+            parameters.setReadTimeout(readTimeout);
+        } else {
+            parameters.setReadTimeout(0);
+        }
 
         // get additional workbench properties from system properties
         Properties sysProps = System.getProperties();
@@ -231,6 +244,18 @@ public class ClientSession {
 
     public Map<String, String> getSessionParameters() {
         return Collections.unmodifiableMap(sessionParameters);
+    }
+
+    public void setStartFolderId(String startFolderId) {
+        this.startFolderId = startFolderId;
+    }
+
+    public String getStartFolderId() {
+        if (startFolderId != null) {
+            return startFolderId;
+        } else {
+            return getSession().getRepositoryInfo().getRootFolderId();
+        }
     }
 
     public int getMaxChildren() {

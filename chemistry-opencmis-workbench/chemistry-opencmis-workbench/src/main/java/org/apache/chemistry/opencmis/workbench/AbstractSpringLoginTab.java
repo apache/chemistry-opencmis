@@ -20,7 +20,9 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.text.NumberFormat;
 
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -43,6 +45,18 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
         pane.add(textField);
 
         return textField;
+    }
+
+    protected JFormattedTextField createIntegerField(Container pane, String label) {
+        NumberFormat format = NumberFormat.getIntegerInstance();
+        JFormattedTextField intField = new JFormattedTextField(format);
+        JLabel intLabel = new JLabel(label, JLabel.TRAILING);
+        intLabel.setLabelFor(intField);
+
+        pane.add(intLabel);
+        pane.add(intField);
+
+        return intField;
     }
 
     protected JPasswordField createPasswordField(Container pane, String label) {

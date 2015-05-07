@@ -18,16 +18,21 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -38,9 +43,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.tck.CmisTestGroup;
+import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
+import org.apache.chemistry.opencmis.workbench.checks.TypeComplianceTestGroup;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CollectionRenderer;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
@@ -109,6 +118,7 @@ public class TypeSplitPane extends JSplitPane {
         private JTextField allowedSourceTypesField;
         private JTextField allowedTargetTypesField;
         private JTextField typeMutabilityField;
+        private JButton checkButton;
 
         public TypeInfoPanel(ClientModel model) {
             super(model);
@@ -182,6 +192,8 @@ public class TypeSplitPane extends JSplitPane {
                     allowedSourceTypesField.setVisible(false);
                     allowedTargetTypesField.setVisible(false);
                 }
+
+                checkButton.setEnabled(true);
             } else {
                 nameField.setText("");
                 descriptionField.setText("");
@@ -202,6 +214,7 @@ public class TypeSplitPane extends JSplitPane {
                 allowedSourceTypesField.setVisible(false);
                 allowedTargetTypesField.setVisible(false);
                 typeMutabilityField.setText("");
+                checkButton.setEnabled(false);
             }
 
             revalidate();
@@ -229,6 +242,32 @@ public class TypeSplitPane extends JSplitPane {
             contentStreamAllowedField = addLine("Content stream allowed:");
             allowedSourceTypesField = addLine("Allowed source types:");
             allowedTargetTypesField = addLine("Allowed target types:");
+
+            checkButton = addComponent("", new JButton("Check specification compliance"));
+
+            checkButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                        Map<String, String> parameters = new HashMap<String, String>(getClientModel()
+                                .getClientSession().getSessionParameters());
+                        parameters.put(SessionParameter.REPOSITORY_ID, getClientModel().getRepositoryInfo().getId());
+
+                        TypeComplianceTestGroup tctg = new TypeComplianceTestGroup(parameters, idField.getText());
+                        tctg.run();
+
+                        List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
+                        groups.add(tctg);
+                        SwingReport report = new SwingReport(null, 700, 500);
+                        report.createReport(parameters, groups, (Writer) null);
+                    } catch (Exception ex) {
+                        ClientHelper.showError(null, ex);
+                    } finally {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
+            });
         }
 
         private boolean is(Boolean b) {

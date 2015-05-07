@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -46,6 +47,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     public static final String SYSPROP_COMPRESSION = ClientSession.WORKBENCH_PREFIX + "compression";
     public static final String SYSPROP_CLIENTCOMPRESSION = ClientSession.WORKBENCH_PREFIX + "clientcompression";
     public static final String SYSPROP_COOKIES = ClientSession.WORKBENCH_PREFIX + "cookies";
+    public static final String SYSPROP_CONN_TIMEOUT = ClientSession.WORKBENCH_PREFIX + "connecttimeout";
+    public static final String SYSPROP_READ_TIMEOUT = ClientSession.WORKBENCH_PREFIX + "readtimeout";
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
 
@@ -65,6 +68,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private JRadioButton clientCompressionOffButton;
     private JRadioButton cookiesOnButton;
     private JRadioButton cookiesOffButton;
+    private JFormattedTextField connectTimeoutField;
+    private JFormattedTextField readTimeoutField;
 
     public BasicLoginTab() {
         super();
@@ -93,7 +98,21 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         createCookieButtons(this);
 
-        makeCompactGrid(this, 8, 2, 5, 10, 5, 5);
+        connectTimeoutField = createIntegerField(this, "Connect timeout (secs):");
+        try {
+            connectTimeoutField.setValue(Long.parseLong(System.getProperty(SYSPROP_CONN_TIMEOUT, "30")));
+        } catch (NumberFormatException e) {
+            connectTimeoutField.setValue(30);
+        }
+
+        readTimeoutField = createIntegerField(this, "Read timeout (secs):");
+        try {
+            readTimeoutField.setValue(Long.parseLong(System.getProperty(SYSPROP_READ_TIMEOUT, "600")));
+        } catch (NumberFormatException e) {
+            readTimeoutField.setValue(600);
+        }
+
+        makeCompactGrid(this, 10, 2, 5, 10, 5, 5);
     }
 
     private void createBindingButtons(Container pane) {
@@ -232,8 +251,28 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         } else if (authenticationOAuthButton.isSelected()) {
             authentication = ClientSession.Authentication.OAUTH_BEARER;
         }
+
+        long connectTimeout = 0;
+        if (connectTimeoutField.getValue() instanceof Number) {
+            connectTimeout = ((Number) connectTimeoutField.getValue()).longValue() * 1000;
+            if (connectTimeout < 0) {
+                connectTimeoutField.setValue(0);
+                connectTimeout = 0;
+            }
+        }
+
+        long readTimeout = 0;
+        if (readTimeoutField.getValue() instanceof Number) {
+            readTimeout = ((Number) readTimeoutField.getValue()).longValue() * 1000;
+            if (readTimeout < 0) {
+                readTimeoutField.setValue(0);
+                readTimeout = 0;
+            }
+        }
+
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
-                compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected());
+                compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected(),
+                connectTimeout, readTimeout);
     }
 
     @Override
