@@ -95,10 +95,22 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             throw new IllegalArgumentException("Object type must be set!");
         }
 
-        if ((objectType.getPropertyDefinitions() == null) || objectType.getPropertyDefinitions().size() < 9) {
+        if (objectType.getPropertyDefinitions() == null || objectType.getPropertyDefinitions().size() < 9) {
             // there must be at least the 9 standard properties that all objects
             // have
             throw new IllegalArgumentException("Object type must have property definitions!");
+        }
+
+        if (objectData == null) {
+            throw new IllegalArgumentException("Object data must be set!");
+        }
+
+        if (objectData.getProperties() == null) {
+            throw new IllegalArgumentException("Properties must be set!");
+        }
+
+        if (objectData.getId() == null) {
+            throw new IllegalArgumentException("Object ID must be set!");
         }
 
         this.session = session;
@@ -110,108 +122,100 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
         ObjectFactory of = getObjectFactory();
 
-        if (objectData != null) {
-
-            // handle properties
-            if (objectData.getProperties() != null) {
-
-                // get secondary types
-                if (objectData.getProperties().getProperties() != null
-                        && objectData.getProperties().getProperties()
-                                .containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
-                    @SuppressWarnings("unchecked")
-                    List<String> stids = (List<String>) objectData.getProperties().getProperties()
-                            .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
-                    if (isNotEmpty(stids)) {
-                        secondaryTypes = new ArrayList<SecondaryType>();
-                        for (String stid : stids) {
-                            if (stid != null) {
-                                ObjectType type = session.getTypeDefinition(stid);
-                                if (type instanceof SecondaryType) {
-                                    secondaryTypes.add((SecondaryType) type);
-                                }
-                            }
+        // get secondary types
+        if (objectData.getProperties().getProperties() != null
+                && objectData.getProperties().getProperties().containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+            @SuppressWarnings("unchecked")
+            List<String> stids = (List<String>) objectData.getProperties().getProperties()
+                    .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
+            if (isNotEmpty(stids)) {
+                secondaryTypes = new ArrayList<SecondaryType>();
+                for (String stid : stids) {
+                    if (stid != null) {
+                        ObjectType type = session.getTypeDefinition(stid);
+                        if (type instanceof SecondaryType) {
+                            secondaryTypes.add((SecondaryType) type);
                         }
                     }
                 }
-
-                this.properties = of.convertProperties(objectType, secondaryTypes, objectData.getProperties());
-                extensions.put(ExtensionLevel.PROPERTIES, objectData.getProperties().getExtensions());
             }
-
-            // handle allowable actions
-            if (objectData.getAllowableActions() != null) {
-                this.allowableActions = objectData.getAllowableActions();
-                extensions.put(ExtensionLevel.ALLOWABLE_ACTIONS, objectData.getAllowableActions().getExtensions());
-            }
-
-            // handle renditions
-            if (objectData.getRenditions() != null) {
-                this.renditions = new ArrayList<Rendition>();
-                for (RenditionData rd : objectData.getRenditions()) {
-                    this.renditions.add(of.convertRendition(getId(), rd));
-                }
-            }
-
-            // handle ACL
-            if (objectData.getAcl() != null) {
-                acl = objectData.getAcl();
-                extensions.put(ExtensionLevel.ACL, objectData.getAcl().getExtensions());
-
-                if (objectData.isExactAcl() != null) {
-                    final Acl objectAcl = objectData.getAcl();
-                    final Boolean isExact = objectData.isExactAcl();
-                    acl = new Acl() {
-
-                        @Override
-                        public void setExtensions(List<CmisExtensionElement> extensions) {
-                            objectAcl.setExtensions(extensions);
-                        }
-
-                        @Override
-                        public List<CmisExtensionElement> getExtensions() {
-                            return objectAcl.getExtensions();
-                        }
-
-                        @Override
-                        public Boolean isExact() {
-                            return isExact;
-                        }
-
-                        @Override
-                        public List<Ace> getAces() {
-                            return objectAcl.getAces();
-                        }
-                    };
-                }
-            }
-
-            // handle policies
-            if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
-                policies = new ArrayList<Policy>();
-                for (String pid : objectData.getPolicyIds().getPolicyIds()) {
-                    CmisObject policy = session.getObject(pid);
-                    if (policy instanceof Policy) {
-                        policies.add((Policy) policy);
-                    }
-                }
-                extensions.put(ExtensionLevel.POLICIES, objectData.getPolicyIds().getExtensions());
-            }
-
-            // handle relationships
-            if (objectData.getRelationships() != null) {
-                relationships = new ArrayList<Relationship>();
-                for (ObjectData rod : objectData.getRelationships()) {
-                    CmisObject relationship = of.convertObject(rod, this.creationContext);
-                    if (relationship instanceof Relationship) {
-                        relationships.add((Relationship) relationship);
-                    }
-                }
-            }
-
-            extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
         }
 
+        // handle properties
+        this.properties = of.convertProperties(objectType, secondaryTypes, objectData.getProperties());
+        extensions.put(ExtensionLevel.PROPERTIES, objectData.getProperties().getExtensions());
+
+        // handle allowable actions
+        if (objectData.getAllowableActions() != null) {
+            this.allowableActions = objectData.getAllowableActions();
+            extensions.put(ExtensionLevel.ALLOWABLE_ACTIONS, objectData.getAllowableActions().getExtensions());
+        }
+
+        // handle renditions
+        if (objectData.getRenditions() != null) {
+            this.renditions = new ArrayList<Rendition>();
+            for (RenditionData rd : objectData.getRenditions()) {
+                this.renditions.add(of.convertRendition(getId(), rd));
+            }
+        }
+
+        // handle ACL
+        if (objectData.getAcl() != null) {
+            acl = objectData.getAcl();
+            extensions.put(ExtensionLevel.ACL, objectData.getAcl().getExtensions());
+
+            if (objectData.isExactAcl() != null) {
+                final Acl objectAcl = objectData.getAcl();
+                final Boolean isExact = objectData.isExactAcl();
+                acl = new Acl() {
+
+                    @Override
+                    public void setExtensions(List<CmisExtensionElement> extensions) {
+                        objectAcl.setExtensions(extensions);
+                    }
+
+                    @Override
+                    public List<CmisExtensionElement> getExtensions() {
+                        return objectAcl.getExtensions();
+                    }
+
+                    @Override
+                    public Boolean isExact() {
+                        return isExact;
+                    }
+
+                    @Override
+                    public List<Ace> getAces() {
+                        return objectAcl.getAces();
+                    }
+                };
+            }
+        }
+
+        // handle policies
+        if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
+            policies = new ArrayList<Policy>();
+            for (String pid : objectData.getPolicyIds().getPolicyIds()) {
+                CmisObject policy = session.getObject(pid);
+                if (policy instanceof Policy) {
+                    policies.add((Policy) policy);
+                }
+            }
+            extensions.put(ExtensionLevel.POLICIES, objectData.getPolicyIds().getExtensions());
+        }
+
+        // handle relationships
+        if (objectData.getRelationships() != null) {
+            relationships = new ArrayList<Relationship>();
+            for (ObjectData rod : objectData.getRelationships()) {
+                CmisObject relationship = of.convertObject(rod, this.creationContext);
+                if (relationship instanceof Relationship) {
+                    relationships.add((Relationship) relationship);
+                }
+            }
+        }
+
+        extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
     }
 
     /**
@@ -476,7 +480,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public List<Property<?>> getProperties() {
         readLock();
         try {
-            return Collections.unmodifiableList(new ArrayList<Property<?>>(this.properties.values()));
+            return Collections.unmodifiableList(new ArrayList<Property<?>>(properties.values()));
         } finally {
             readUnlock();
         }
@@ -486,7 +490,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public <T> Property<T> getProperty(String id) {
         readLock();
         try {
-            return (Property<T>) this.properties.get(id);
+            return (Property<T>) properties.get(id);
         } finally {
             readUnlock();
         }

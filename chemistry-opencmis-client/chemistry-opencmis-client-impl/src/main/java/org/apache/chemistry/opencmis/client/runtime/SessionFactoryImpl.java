@@ -50,7 +50,7 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * <p>
  * <code>
  * Context ctx = new DefaultContext();<br>
- * SessionFactory = ctx.lookup(jndi_key);
+ * SessionFactory sf = ctx.lookup(jndi_key);
  * </code>
  */
 public class SessionFactoryImpl implements SessionFactory, Serializable {

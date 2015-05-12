@@ -18,7 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.repository;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -590,6 +591,10 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             throw new IllegalArgumentException("Object data is null!");
         }
 
+        if (objectData.getId() == null) {
+            throw new IllegalArgumentException("Object ID property not set!");
+        }
+
         if (objectData.getBaseTypeId() == null) {
             throw new IllegalArgumentException("Base type ID property not set!");
         }
@@ -599,15 +604,15 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         /* determine type */
         switch (objectData.getBaseTypeId()) {
         case CMIS_DOCUMENT:
-            return new DocumentImpl((SessionImpl) this.session, type, objectData, context);
+            return new DocumentImpl((SessionImpl) session, type, objectData, context);
         case CMIS_FOLDER:
-            return new FolderImpl((SessionImpl) this.session, type, objectData, context);
+            return new FolderImpl((SessionImpl) session, type, objectData, context);
         case CMIS_POLICY:
-            return new PolicyImpl((SessionImpl) this.session, type, objectData, context);
+            return new PolicyImpl((SessionImpl) session, type, objectData, context);
         case CMIS_RELATIONSHIP:
-            return new RelationshipImpl((SessionImpl) this.session, type, objectData, context);
+            return new RelationshipImpl((SessionImpl) session, type, objectData, context);
         case CMIS_ITEM:
-            return new ItemImpl((SessionImpl) this.session, type, objectData, context);
+            return new ItemImpl((SessionImpl) session, type, objectData, context);
         case CMIS_SECONDARY:
             throw new CmisRuntimeException("Secondary type is used as object type: " + objectData.getBaseTypeId());
         default:

@@ -46,7 +46,7 @@ public class TypeComplianceCheck extends AbstractSessionTest {
     public final void run(Session session) {
         ObjectType type = session.getTypeDefinition(typeId);
 
-        addResult(checkTypeDefinition(session, type, "Type check:" + type.getId()));
+        addResult(checkTypeDefinition(session, type, "Type check: " + type.getId()));
 
         if (getResults().isEmpty()) {
             addResult(createResult(CmisTestResultStatus.OK, "Type seems to be compliant! ID: " + type.getId()));
