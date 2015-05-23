@@ -34,7 +34,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
 /**
- * This interface provides
+ * This interface provides asynchronous CMIS operations.
  */
 public interface AsyncSession {
 
