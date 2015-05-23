@@ -40,22 +40,23 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
-public class CreateItemDialog extends CreateDialog {
+public class CreatePolicyDialog extends CreateDialog {
 
     private static final long serialVersionUID = 1L;
 
     private JRadioButton unfiledButton;
     private JRadioButton currentPathButton;
     private JTextField nameField;
+    private JTextField policyTextField;
     private JComboBox<ObjectTypeItem> typeBox;
 
-    public CreateItemDialog(Frame owner, ClientModel model) {
-        super(owner, "Create Item", model);
+    public CreatePolicyDialog(Frame owner, ClientModel model) {
+        super(owner, "Create Policy", model);
         createGUI();
     }
 
     private void createGUI() {
-        final CreateItemDialog thisDialog = this;
+        final CreatePolicyDialog thisDialog = this;
 
         unfiledButton = new JRadioButton("create unfiled");
         unfiledButton.setSelected(false);
@@ -77,7 +78,7 @@ public class CreateItemDialog extends CreateDialog {
         nameField = new JTextField(60);
         createRow("Name:", nameField, 1);
 
-        ObjectTypeItem[] types = getTypes(BaseTypeId.CMIS_ITEM.value());
+        ObjectTypeItem[] types = getTypes(BaseTypeId.CMIS_POLICY.value());
         if (types.length == 0) {
             JOptionPane.showMessageDialog(this, "No creatable type!", "Creatable Types", JOptionPane.ERROR_MESSAGE);
             thisDialog.dispose();
@@ -98,17 +99,21 @@ public class CreateItemDialog extends CreateDialog {
 
         createRow("Type:", typeBox, 2);
 
-        JButton createButton = new JButton("Create Item", ClientHelper.getIcon("newfolder.png"));
+        policyTextField = new JTextField(60);
+        createRow("Policy Text:", policyTextField, 3);
+
+        JButton createButton = new JButton("Create Policy", ClientHelper.getIcon("newpolicy.png"));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
+                String policyText = policyTextField.getText();
                 String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    ObjectId objectId = getClientModel().createItem(name, type, getMandatoryPropertyValues(),
-                            unfiledButton.isSelected());
+                    ObjectId objectId = getClientModel().createPolicy(name, type, policyText,
+                            getMandatoryPropertyValues(), unfiledButton.isSelected());
 
                     if (objectId != null) {
                         getClientModel().loadObject(objectId.getId());
@@ -129,7 +134,7 @@ public class CreateItemDialog extends CreateDialog {
                 }
             }
         });
-        createActionRow("", createButton, 3);
+        createActionRow("", createButton, 4);
 
         getRootPane().setDefaultButton(createButton);
 

@@ -97,6 +97,7 @@ public class ClientFrame extends JFrame implements WindowListener {
     private JMenuItem itemMenuItem;
     private JMenuItem folderMenuItem;
     private JMenuItem relationshipMenuItem;
+    private JMenuItem policyMenuItem;
 
     private JSplitPane split;
     private FolderPanel folderPanel;
@@ -289,6 +290,16 @@ public class ClientFrame extends JFrame implements WindowListener {
             }
         });
 
+        policyMenuItem = new JMenuItem("Policy");
+        policyMenuItem.setEnabled(false);
+        toolbarCreatePopup.add(policyMenuItem);
+        policyMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                new CreatePolicyDialog(thisFrame, model);
+            }
+        });
+
         toolbarButton[BUTTON_CREATE] = new JButton("Create Object", ClientHelper.getIcon("newdocument.png"));
         toolbarButton[BUTTON_CREATE].setEnabled(false);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
@@ -372,6 +383,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
                 itemMenuItem.setEnabled(model.supportsItems());
                 relationshipMenuItem.setEnabled(model.supportsRelationships());
+                policyMenuItem.setEnabled(model.supportsPolicies());
 
                 String user = clientSession.getSessionParameters().get(SessionParameter.USER);
                 if (user != null) {

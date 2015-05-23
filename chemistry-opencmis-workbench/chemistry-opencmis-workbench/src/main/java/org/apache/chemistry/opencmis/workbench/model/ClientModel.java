@@ -71,6 +71,7 @@ public class ClientModel {
     private Folder currentFolder = null;
     private List<CmisObject> currentChildren = Collections.emptyList();
     private CmisObject currentObject = null;
+    private List<ObjectType> baseTypes = null;
 
     private final EventListenerList listenerList = new EventListenerList();
 
@@ -95,6 +96,10 @@ public class ClientModel {
 
     public synchronized void setClientSession(ClientSession clientSession) {
         this.clientSession = clientSession;
+        this.currentFolder = null;
+        this.currentChildren = Collections.emptyList();
+        this.currentObject = null;
+        this.baseTypes = null;
     }
 
     public synchronized ClientSession getClientSession() {
@@ -140,8 +145,21 @@ public class ClientModel {
         }
     }
 
-    public synchronized boolean supportsItems() {
+    private synchronized void loadBaseTypes() {
+        if (baseTypes != null) {
+            return;
+        }
+
+        baseTypes = new ArrayList<ObjectType>();
         for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
+            baseTypes.add(type);
+        }
+    }
+
+    public synchronized boolean supportsItems() {
+        loadBaseTypes();
+
+        for (ObjectType type : baseTypes) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
                 return true;
             }
@@ -151,8 +169,22 @@ public class ClientModel {
     }
 
     public synchronized boolean supportsRelationships() {
-        for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
+        loadBaseTypes();
+
+        for (ObjectType type : baseTypes) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public synchronized boolean supportsPolicies() {
+        loadBaseTypes();
+
+        for (ObjectType type : baseTypes) {
+            if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
                 return true;
             }
         }
@@ -327,7 +359,8 @@ public class ClientModel {
         }
     }
 
-    public synchronized ObjectId createItem(String name, String type, Map<String, Object> additionalProperties) {
+    public synchronized ObjectId createItem(String name, String type, Map<String, Object> additionalProperties,
+            boolean unfiled) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
@@ -336,7 +369,7 @@ public class ClientModel {
             properties.putAll(additionalProperties);
         }
 
-        return clientSession.getSession().createItem(properties, currentFolder, null, null, null);
+        return clientSession.getSession().createItem(properties, (unfiled ? null : currentFolder), null, null, null);
     }
 
     public synchronized ObjectId createFolder(String name, String type, Map<String, Object> additionalProperties) {
@@ -364,6 +397,22 @@ public class ClientModel {
         }
 
         return clientSession.getSession().createRelationship(properties, null, null, null);
+    }
+
+    public synchronized ObjectId createPolicy(String name, String type, String policyText,
+            Map<String, Object> additionalProperties, boolean unfiled) {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, type);
+        if (policyText != null && policyText.length() > 0) {
+            properties.put(PropertyIds.POLICY_TEXT, policyText);
+        }
+
+        if (additionalProperties != null) {
+            properties.putAll(additionalProperties);
+        }
+
+        return clientSession.getSession().createPolicy(properties, (unfiled ? null : currentFolder), null, null, null);
     }
 
     public synchronized List<ObjectType> getTypesAsList(String rootTypeId, boolean creatableOnly) {

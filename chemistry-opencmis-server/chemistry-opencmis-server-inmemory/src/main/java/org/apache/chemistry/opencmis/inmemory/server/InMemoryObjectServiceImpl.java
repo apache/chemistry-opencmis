@@ -1028,7 +1028,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         PropertyData<?> pd = propMap.get(PropertyIds.NAME);
         String name = (String) pd.getFirstValue();
         pd = propMap.get(PropertyIds.POLICY_TEXT);
-        String policyText = (String) pd.getFirstValue();
+        String policyText = (pd == null ? null : (String) pd.getFirstValue());
 
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
         StoredObject storedObject = objStore.createPolicy(name, policyText, propMap, user, aclAdd, aclRemove);
