@@ -35,6 +35,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -1041,6 +1042,27 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     void delete(ObjectId objectId, boolean allVersions);
+
+    /**
+     * Deletes a folder and all subfolders.
+     * 
+     * @param folderId
+     *            the ID of the folder
+     * @param allVersions
+     *            if this object is a document this parameter defines if only
+     *            this version or all versions should be deleted
+     * @param unfile
+     *            defines how objects should be unfiled
+     * @param continueOnFailure
+     *            if {@code true} the repository tries to delete as many objects
+     *            as possible; if {@code false} the repository stops at the
+     *            first object that could not be deleted
+     * 
+     * @return a list of object IDs which failed to be deleted
+     * 
+     * @cmis 1.0
+     */
+    List<String> deleteTree(ObjectId folderId, boolean allVersions, UnfileObject unfile, boolean continueOnFailure);
 
     /**
      * Retrieves the main content stream of a document.

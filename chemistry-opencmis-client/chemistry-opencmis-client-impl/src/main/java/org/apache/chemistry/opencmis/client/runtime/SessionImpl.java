@@ -65,6 +65,7 @@ import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -78,6 +79,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
@@ -268,6 +270,7 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public void clear() {
         lock.writeLock().lock();
         try {
@@ -284,19 +287,20 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public ObjectFactory getObjectFactory() {
         assert objectFactory != null;
         return objectFactory;
     }
 
+    @Override
     public ItemIterable<Document> getCheckedOutDocs() {
         return getCheckedOutDocs(getDefaultContext());
     }
 
+    @Override
     public ItemIterable<Document> getCheckedOutDocs(OperationContext context) {
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         final NavigationService navigationService = getBinding().getNavigationService();
         final ObjectFactory of = getObjectFactory();
@@ -333,15 +337,15 @@ public class SessionImpl implements Session {
         });
     }
 
+    @Override
     public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems) {
         return getContentChanges(changeLogToken, includeProperties, maxNumItems, getDefaultContext());
     }
 
+    @Override
     public ChangeEvents getContentChanges(String changeLogToken, boolean includeProperties, long maxNumItems,
             OperationContext context) {
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         Holder<String> changeLogTokenHolder = new Holder<String>(changeLogToken);
         ObjectList objectList = null;
@@ -358,15 +362,15 @@ public class SessionImpl implements Session {
         return objectFactory.convertChangeEvents(changeLogTokenHolder.getValue(), objectList);
     }
 
+    @Override
     public ItemIterable<ChangeEvent> getContentChanges(String changeLogToken, final boolean includeProperties) {
         return getContentChanges(changeLogToken, includeProperties, getDefaultContext());
     }
 
+    @Override
     public ItemIterable<ChangeEvent> getContentChanges(final String changeLogToken, final boolean includeProperties,
             OperationContext context) {
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
         final ObjectFactory of = getObjectFactory();
@@ -442,6 +446,7 @@ public class SessionImpl implements Session {
         return getBinding().getRepositoryService().getRepositoryInfo(getRepositoryId(), null).getLatestChangeLogToken();
     }
 
+    @Override
     public OperationContext getDefaultContext() {
         lock.readLock().lock();
         try {
@@ -451,6 +456,7 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public void setDefaultContext(OperationContext context) {
         lock.writeLock().lock();
         try {
@@ -460,6 +466,7 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
             boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
             Set<String> renditionFilter, boolean includePathSegments, String orderBy, boolean cacheEnabled,
@@ -469,10 +476,12 @@ public class SessionImpl implements Session {
                 maxItemsPerPage);
     }
 
+    @Override
     public OperationContext createOperationContext() {
         return OperationContextUtils.createOperationContext();
     }
 
+    @Override
     public ObjectId createObjectId(String id) {
         return new ObjectIdImpl(id);
     }
@@ -481,29 +490,26 @@ public class SessionImpl implements Session {
         return locale;
     }
 
+    @Override
     public CmisObject getObject(ObjectId objectId) {
         return getObject(objectId, getDefaultContext());
     }
 
+    @Override
     public CmisObject getObject(ObjectId objectId, OperationContext context) {
-        if (objectId == null || objectId.getId() == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-
+        checkObjectId(objectId);
         return getObject(objectId.getId(), context);
     }
 
+    @Override
     public CmisObject getObject(String objectId) {
         return getObject(objectId, getDefaultContext());
     }
 
+    @Override
     public CmisObject getObject(String objectId, OperationContext context) {
-        if (objectId == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkObjectId(objectId);
+        checkContext(context);
 
         CmisObject result = null;
 
@@ -530,17 +536,17 @@ public class SessionImpl implements Session {
         return result;
     }
 
+    @Override
     public CmisObject getObjectByPath(String path) {
         return getObjectByPath(path, getDefaultContext());
     }
 
+    @Override
     public CmisObject getObjectByPath(String path, OperationContext context) {
         if (path == null) {
             throw new IllegalArgumentException("Path must be set!");
         }
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         CmisObject result = null;
 
@@ -567,10 +573,12 @@ public class SessionImpl implements Session {
         return result;
     }
 
+    @Override
     public CmisObject getObjectByPath(String parentPath, String name) {
         return getObjectByPath(parentPath, name, getDefaultContext());
     }
 
+    @Override
     public CmisObject getObjectByPath(String parentPath, String name, OperationContext context) {
         if (parentPath == null || parentPath.length() < 1) {
             throw new IllegalArgumentException("Parent path must be set!");
@@ -592,46 +600,38 @@ public class SessionImpl implements Session {
         return getObjectByPath(path.toString(), context);
     }
 
+    @Override
     public Document getLatestDocumentVersion(ObjectId objectId) {
         return getLatestDocumentVersion(objectId, false, getDefaultContext());
     }
 
+    @Override
     public Document getLatestDocumentVersion(String objectId, OperationContext context) {
-        if (objectId == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-
+        checkDocumentId(objectId);
         return getLatestDocumentVersion(createObjectId(objectId), false, context);
     }
 
+    @Override
     public Document getLatestDocumentVersion(String objectId, boolean major, OperationContext context) {
-        if (objectId == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-
+        checkDocumentId(objectId);
         return getLatestDocumentVersion(createObjectId(objectId), major, context);
     }
 
+    @Override
     public Document getLatestDocumentVersion(String objectId) {
-        if (objectId == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-
+        checkDocumentId(objectId);
         return getLatestDocumentVersion(createObjectId(objectId), false, getDefaultContext());
     }
 
+    @Override
     public Document getLatestDocumentVersion(ObjectId objectId, OperationContext context) {
         return getLatestDocumentVersion(objectId, false, context);
     }
 
+    @Override
     public Document getLatestDocumentVersion(ObjectId objectId, boolean major, OperationContext context) {
-        if (objectId == null || objectId.getId() == null) {
-            throw new IllegalArgumentException("Object ID must be set!");
-        }
-
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkDocumentId(objectId);
+        checkContext(context);
 
         CmisObject result = null;
 
@@ -704,18 +704,18 @@ public class SessionImpl implements Session {
         return (Document) result;
     }
 
+    @Override
     public void removeObjectFromCache(ObjectId objectId) {
-        if (objectId == null || objectId.getId() == null) {
-            return;
-        }
-
+        checkObjectId(objectId);
         removeObjectFromCache(objectId.getId());
     }
 
+    @Override
     public void removeObjectFromCache(String objectId) {
         cache.remove(objectId);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo() {
         lock.readLock().lock();
         try {
@@ -725,10 +725,12 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public Folder getRootFolder() {
         return getRootFolder(getDefaultContext());
     }
 
+    @Override
     public Folder getRootFolder(OperationContext context) {
         String rootFolderId = getRepositoryInfo().getRootFolderId();
 
@@ -740,6 +742,7 @@ public class SessionImpl implements Session {
         return (Folder) rootFolder;
     }
 
+    @Override
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
 
@@ -766,6 +769,7 @@ public class SessionImpl implements Session {
         });
     }
 
+    @Override
     public ObjectType getTypeDefinition(String typeId) {
         TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
                 typeId, null);
@@ -773,6 +777,7 @@ public class SessionImpl implements Session {
         return convertAndCacheTypeDefinition(typeDefinition, true);
     }
 
+    @Override
     public ObjectType getTypeDefinition(String typeId, boolean useCache) {
         RepositoryService service = getBinding().getRepositoryService();
         if (!(service instanceof ExtendedRepositoryService)) {
@@ -786,6 +791,7 @@ public class SessionImpl implements Session {
         return convertAndCacheTypeDefinition(typeDefinition, useCache);
     }
 
+    @Override
     public List<Tree<ObjectType>> getTypeDescendants(String typeId, int depth, boolean includePropertyDefinitions) {
         List<TypeDefinitionContainer> descendants = getBinding().getRepositoryService().getTypeDescendants(
                 getRepositoryId(), typeId, BigInteger.valueOf(depth), includePropertyDefinitions, null);
@@ -882,19 +888,17 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public ObjectType createType(TypeDefinition type) {
-        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
-            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
-        }
+        checkCmisVersion();
 
         TypeDefinition newType = getBinding().getRepositoryService().createType(getRepositoryId(), type, null);
         return convertTypeDefinition(newType);
     }
 
+    @Override
     public ObjectType updateType(TypeDefinition type) {
-        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
-            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
-        }
+        checkCmisVersion();
 
         TypeDefinition updatedType = getBinding().getRepositoryService().updateType(getRepositoryId(), type, null);
 
@@ -903,24 +907,23 @@ public class SessionImpl implements Session {
         return convertTypeDefinition(updatedType);
     }
 
+    @Override
     public void deleteType(String typeId) {
-        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
-            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
-        }
+        checkCmisVersion();
 
         getBinding().getRepositoryService().deleteType(getRepositoryId(), typeId, null);
         removeFromObjectTypeCache(typeId);
     }
 
+    @Override
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions) {
         return query(statement, searchAllVersions, getDefaultContext());
     }
 
+    @Override
     public ItemIterable<QueryResult> query(final String statement, final boolean searchAllVersions,
             OperationContext context) {
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
         final ObjectFactory of = getObjectFactory();
@@ -955,15 +958,14 @@ public class SessionImpl implements Session {
         });
     }
 
+    @Override
     public ItemIterable<CmisObject> queryObjects(String typeId, String where, final boolean searchAllVersions,
             OperationContext context) {
         if (typeId == null || typeId.trim().length() == 0) {
             throw new IllegalArgumentException("Type ID must be set!");
         }
 
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkContext(context);
 
         final DiscoveryService discoveryService = getBinding().getDiscoveryService();
         final ObjectFactory of = getObjectFactory();
@@ -1023,10 +1025,12 @@ public class SessionImpl implements Session {
         });
     }
 
+    @Override
     public QueryStatement createQueryStatement(final String statement) {
         return new QueryStatementImpl(this, statement);
     }
 
+    @Override
     public QueryStatement createQueryStatement(final Collection<String> selectPropertyIds,
             final Map<String, String> fromTypes, final String whereClause, final List<String> orderByPropertyIds) {
         return new QueryStatementImpl(this, selectPropertyIds, fromTypes, whereClause, orderByPropertyIds);
@@ -1084,11 +1088,10 @@ public class SessionImpl implements Session {
 
     // --- creates ---
 
+    @Override
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
+        checkProperties(properties);
 
         String newId = getBinding().getObjectService().createDocument(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, null, CREATE_AND_CHECKOUT_UPDATABILITY),
@@ -1103,9 +1106,10 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
-        if ((source == null) || (source.getId() == null)) {
+        if (source == null || source.getId() == null) {
             throw new IllegalArgumentException("Source must be set!");
         }
 
@@ -1137,14 +1141,11 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
-        if ((folderId == null) || (folderId.getId() == null)) {
-            throw new IllegalArgumentException("Folder ID must be set!");
-        }
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
+        checkFolderId(folderId);
+        checkProperties(properties);
 
         String newId = getBinding().getObjectService().createFolder(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY), folderId.getId(),
@@ -1158,11 +1159,10 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
+        checkProperties(properties);
 
         String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
@@ -1176,11 +1176,10 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createItem(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces) {
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
+        checkProperties(properties);
 
         String newId = getBinding().getObjectService().createItem(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
@@ -1194,11 +1193,10 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createRelationship(Map<String, ?> properties, List<Policy> policies, List<Ace> addAces,
             List<Ace> removeAces) {
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Properties must not be empty!");
-        }
+        checkProperties(properties);
 
         String newId = getBinding().getObjectService().createRelationship(getRepositoryId(),
                 objectFactory.convertProperties(properties, null, null, CREATE_UPDATABILITY),
@@ -1212,42 +1210,45 @@ public class SessionImpl implements Session {
         return createObjectId(newId);
     }
 
+    @Override
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState) {
         return createDocument(properties, folderId, contentStream, versioningState, null, null, null);
     }
 
+    @Override
     public ObjectId createDocumentFromSource(ObjectId source, Map<String, ?> properties, ObjectId folderId,
             VersioningState versioningState) {
         return createDocumentFromSource(source, properties, folderId, versioningState, null, null, null);
     }
 
+    @Override
     public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId) {
         return createFolder(properties, folderId, null, null, null);
     }
 
+    @Override
     public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId) {
         return createPolicy(properties, folderId, null, null, null);
     }
 
+    @Override
     public ObjectId createItem(Map<String, ?> properties, ObjectId folderId) {
         return createItem(properties, folderId, null, null, null);
     }
 
     // --- relationships ---
 
+    @Override
     public ObjectId createRelationship(Map<String, ?> properties) {
         return createRelationship(properties, null, null, null);
     }
 
+    @Override
     public ItemIterable<Relationship> getRelationships(ObjectId objectId, final boolean includeSubRelationshipTypes,
             final RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
-        if (context == null) {
-            throw new IllegalArgumentException("Operation context must be set!");
-        }
+        checkObjectId(objectId);
+        checkContext(context);
 
         final String id = objectId.getId();
         final String typeId = (type == null ? null : type.getId());
@@ -1285,15 +1286,11 @@ public class SessionImpl implements Session {
 
     // --- bulk update ---
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(List<CmisObject> objects,
             Map<String, ?> properties, List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
-        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
-            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
-        }
-
-        if (isNullOrEmpty(properties)) {
-            throw new IllegalArgumentException("Objects must be set!");
-        }
+        checkCmisVersion();
+        checkProperties(properties);
 
         ObjectType objectType = null;
         Map<String, SecondaryType> secondaryTypes = new HashMap<String, SecondaryType>();
@@ -1312,7 +1309,7 @@ public class SessionImpl implements Session {
             }
         }
 
-        // gather ids and change tokens
+        // gather IDs and change tokens
         List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens = new ArrayList<BulkUpdateObjectIdAndChangeToken>();
         for (CmisObject object : objects) {
             if (object == null) {
@@ -1343,29 +1340,44 @@ public class SessionImpl implements Session {
 
     // --- delete ---
 
+    @Override
     public void delete(ObjectId objectId) {
         delete(objectId, true);
     }
 
+    @Override
     public void delete(ObjectId objectId, boolean allVersions) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
+        checkObjectId(objectId);
 
         getBinding().getObjectService().deleteObject(getRepositoryId(), objectId.getId(), allVersions, null);
         removeObjectFromCache(objectId);
     }
 
+    @Override
+    public List<String> deleteTree(ObjectId folderId, boolean allVersions, UnfileObject unfile,
+            boolean continueOnFailure) {
+        checkFolderId(folderId);
+
+        FailedToDeleteData failed = getBinding().getObjectService().deleteTree(getRepositoryId(), folderId.getId(),
+                allVersions, unfile, continueOnFailure, null);
+
+        if (failed == null || isNullOrEmpty(failed.getIds())) {
+            removeObjectFromCache(folderId);
+        }
+
+        return (failed != null ? failed.getIds() : null);
+    }
+
     // --- content stream ---
 
+    @Override
     public ContentStream getContentStream(ObjectId docId) {
         return getContentStream(docId, null, null, null);
     }
 
+    @Override
     public ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length) {
-        if ((docId == null) || (docId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid document ID!");
-        }
+        checkDocumentId(docId);
 
         // get the stream
         ContentStream contentStream = null;
@@ -1382,20 +1394,15 @@ public class SessionImpl implements Session {
 
     // --- ACL ---
 
+    @Override
     public Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
-
-        String id = objectId.getId();
-
-        return getBinding().getAclService().getAcl(getRepositoryId(), id, onlyBasicPermissions, null);
+        checkObjectId(objectId);
+        return getBinding().getAclService().getAcl(getRepositoryId(), objectId.getId(), onlyBasicPermissions, null);
     }
 
+    @Override
     public Acl applyAcl(ObjectId objectId, List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
+        checkObjectId(objectId);
 
         ObjectFactory of = getObjectFactory();
 
@@ -1403,10 +1410,10 @@ public class SessionImpl implements Session {
                 of.convertAces(removeAces), aclPropagation, null);
     }
 
+    @Override
     public Acl setAcl(ObjectId objectId, List<Ace> aces) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
+        checkObjectId(objectId);
+
         if (aces == null) {
             aces = Collections.emptyList();
         }
@@ -1423,12 +1430,11 @@ public class SessionImpl implements Session {
 
     // --- Policies ---
 
+    @Override
     public void applyPolicy(ObjectId objectId, ObjectId... policyIds) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
+        checkObjectId(objectId);
 
-        if ((policyIds == null) || (policyIds.length == 0)) {
+        if (policyIds == null || policyIds.length == 0) {
             throw new IllegalArgumentException("No Policies provided!");
         }
 
@@ -1446,12 +1452,11 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public void removePolicy(ObjectId objectId, ObjectId... policyIds) {
-        if ((objectId == null) || (objectId.getId() == null)) {
-            throw new IllegalArgumentException("Invalid object ID!");
-        }
+        checkObjectId(objectId);
 
-        if ((policyIds == null) || (policyIds.length == 0)) {
+        if (policyIds == null || policyIds.length == 0) {
             throw new IllegalArgumentException("No Policies provided!");
         }
 
@@ -1466,6 +1471,56 @@ public class SessionImpl implements Session {
 
         for (String id : ids) {
             getBinding().getPolicyService().removePolicy(getRepositoryId(), id, objectId.getId(), null);
+        }
+    }
+
+    // ----
+
+    protected final void checkObjectId(ObjectId objectId) {
+        if (objectId == null || objectId.getId() == null) {
+            throw new IllegalArgumentException("Invalid object ID!");
+        }
+    }
+
+    protected final void checkObjectId(String objectId) {
+        if (objectId == null) {
+            throw new IllegalArgumentException("Invalid object ID!");
+        }
+    }
+
+    protected final void checkDocumentId(ObjectId docId) {
+        if (docId == null || docId.getId() == null) {
+            throw new IllegalArgumentException("Invalid document ID!");
+        }
+    }
+
+    protected final void checkDocumentId(String docId) {
+        if (docId == null) {
+            throw new IllegalArgumentException("Invalid document ID!");
+        }
+    }
+
+    protected final void checkFolderId(ObjectId folderId) {
+        if (folderId == null || folderId.getId() == null) {
+            throw new IllegalArgumentException("Invalid folder ID!");
+        }
+    }
+
+    protected final void checkContext(OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Invalid Operation Context!");
+        }
+    }
+
+    protected final void checkProperties(Map<String, ?> properties) {
+        if (isNullOrEmpty(properties)) {
+            throw new IllegalArgumentException("Properties must not be empty!");
+        }
+    }
+
+    protected final void checkCmisVersion() {
+        if (repositoryInfo.getCmisVersion() == CmisVersion.CMIS_1_0) {
+            throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
         }
     }
 

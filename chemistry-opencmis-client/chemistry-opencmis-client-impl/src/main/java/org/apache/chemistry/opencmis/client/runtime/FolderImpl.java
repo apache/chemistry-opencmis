@@ -44,7 +44,6 @@ import org.apache.chemistry.opencmis.client.runtime.util.TreeImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
@@ -170,17 +169,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
     }
 
     public List<String> deleteTree(boolean allVersions, UnfileObject unfile, boolean continueOnFailure) {
-        String repositoryId = getRepositoryId();
-        String objectId = getObjectId();
-
-        FailedToDeleteData failed = getBinding().getObjectService().deleteTree(repositoryId, objectId, allVersions,
-                unfile, continueOnFailure, null);
-
-        if (failed == null || isNullOrEmpty(failed.getIds())) {
-            getSession().removeObjectFromCache(this);
-        }
-
-        return (failed != null ? failed.getIds() : null);
+        return getSession().deleteTree(this, allVersions, unfile, continueOnFailure);
     }
 
     public String getParentId() {

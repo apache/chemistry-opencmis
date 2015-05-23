@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.tck.impl;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -320,6 +321,50 @@ public abstract class AbstractCmisTest implements CmisTest {
                         createResult(CmisTestResultStatus.INFO, "expected list item[" + i + "]: "
                                 + formatValue(expected.get(i)) + " / actual list item[" + i + "]: "
                                 + formatValue(actual.get(i))));
+            }
+        }
+
+        return success;
+    }
+
+    protected CmisTestResult assertEqualArray(Object expected, Object actual, CmisTestResult success,
+            CmisTestResult failure) {
+        if (expected == null && actual == null) {
+            return success;
+        }
+
+        if (expected == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Expected array is null!"));
+        }
+
+        if (!expected.getClass().isArray()) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Expected array is not an array!"));
+        }
+
+        if (actual == null) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Actual array is null!"));
+        }
+
+        if (!actual.getClass().isArray()) {
+            return addResultChild(failure, createResult(CmisTestResultStatus.INFO, "Actual array is not an array!"));
+        }
+
+        if (Array.getLength(expected) != Array.getLength(actual)) {
+            return addResultChild(
+                    failure,
+                    createResult(
+                            CmisTestResultStatus.INFO,
+                            "Array sizes don't match! expected: " + Array.getLength(expected) + " / actual: "
+                                    + Array.getLength(actual)));
+        }
+
+        for (int i = 0; i < Array.getLength(expected); i++) {
+            if (!isEqual(Array.get(expected, i), Array.get(actual, i))) {
+                return addResultChild(
+                        failure,
+                        createResult(CmisTestResultStatus.INFO,
+                                "expected array item[" + i + "]: " + formatValue(Array.get(expected, i))
+                                        + " / actual array item[" + i + "]: " + formatValue(Array.get(actual, i))));
             }
         }
 
