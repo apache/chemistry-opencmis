@@ -21,14 +21,16 @@ package org.apache.chemistry.opencmis.workbench.swing;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
+import org.apache.chemistry.opencmis.workbench.icons.NoIcon;
+import org.apache.chemistry.opencmis.workbench.icons.YesIcon;
 
 public class YesNoLabel extends JLabel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Icon TRUE_ICON = ClientHelper.getIcon("yes.png");
-    public static final Icon FALSE_ICON = ClientHelper.getIcon("no.png");
+    public static final Icon TRUE_ICON = new YesIcon(18, 18);
+    public static final Icon FALSE_ICON = new NoIcon(18, 18);
 
     public static final String YES_TEXT = "Yes";
     public static final String NO_TEXT = "No";

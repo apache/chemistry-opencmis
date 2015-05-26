@@ -93,8 +93,15 @@ public final class ClientHelper {
     public static final Color LINK_COLOR = new Color(105, 29, 21);
     public static final Color LINK_SELECTED_COLOR = new Color(255, 255, 255);
 
+    public static final int TOOLBAR_ICON_SIZE = 20;
+    public static final int BUTTON_ICON_SIZE = 11;
+    public static final int OBJECT_ICON_SIZE = 16;
+    public static final int ICON_BUTTON_ICON_SIZE = 16;
+
     private static final Logger LOG = LoggerFactory.getLogger(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;
+
+    private static final ImageIcon CMIS_ICON = getIcon("icon.png");
 
     private ClientHelper() {
     }
@@ -213,6 +220,10 @@ public final class ClientHelper {
         }
 
         return null;
+    }
+
+    public static ImageIcon getCmisIcon() {
+        return CMIS_ICON;
     }
 
     public static String getDateString(GregorianCalendar cal) {

@@ -65,7 +65,7 @@ public class RepositoryInfoFrame extends JFrame {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 2)));
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(200, 60));
 
         RepositoryInfo repInfo = null;

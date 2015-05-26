@@ -51,6 +51,7 @@ public class LogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
+        setIconImage(ClientHelper.getCmisIcon().getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));

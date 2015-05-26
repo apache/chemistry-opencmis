@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.workbench.icons.NewItemIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
@@ -98,7 +99,8 @@ public class CreateItemDialog extends CreateDialog {
 
         createRow("Type:", typeBox, 2);
 
-        JButton createButton = new JButton("Create Item", ClientHelper.getIcon("newfolder.png"));
+        JButton createButton = new JButton("Create Item", new NewItemIcon(ClientHelper.BUTTON_ICON_SIZE,
+                ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

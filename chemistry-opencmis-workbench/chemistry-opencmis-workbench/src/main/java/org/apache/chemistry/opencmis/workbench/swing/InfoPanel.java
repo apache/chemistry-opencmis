@@ -60,6 +60,7 @@ import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
+import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 import com.google.zxing.BarcodeFormat;
@@ -164,6 +165,25 @@ public abstract class InfoPanel extends JPanel {
         gridPanel.add(ynl, gbc);
 
         return ynl;
+    }
+
+    protected BaseTypeLabel addBaseTypeLabel(String label) {
+        BaseTypeLabel btl = new BaseTypeLabel();
+
+        JLabel textLable = new JLabel(label);
+        textLable.setLabelFor(btl);
+
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gridPanel.add(textLable, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gridPanel.add(btl, gbc);
+
+        return btl;
     }
 
     protected <T extends JComponent> T addComponent(String label, T comp) {

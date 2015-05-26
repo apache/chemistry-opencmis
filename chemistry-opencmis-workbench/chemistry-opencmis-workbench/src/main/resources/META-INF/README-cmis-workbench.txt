@@ -6,6 +6,7 @@ Apache Chemistry OpenCMIS (http://chemistry.apache.org/java/opencmis.html).
 This CMIS client is distributed under the Apache License, version 2.0.
 Please see the NOTICE and LICENSE files for details.
 
+Original icons by Piotr Kwiatkowski. Converted and modified for the CMIS Workbench.
 
 Get the latest released CMIS Workbench from here:
 http://chemistry.apache.org/java/download.html

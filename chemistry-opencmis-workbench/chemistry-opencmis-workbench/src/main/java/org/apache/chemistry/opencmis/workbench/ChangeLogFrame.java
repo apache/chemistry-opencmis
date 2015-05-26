@@ -49,7 +49,7 @@ public class ChangeLogFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String WINDOW_TITLE = "CMIS Change Logger";
+    private static final String WINDOW_TITLE = "CMIS Change Log";
 
     private final ClientModel model;
 
@@ -65,9 +65,10 @@ public class ChangeLogFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
+        setIconImage(ClientHelper.getCmisIcon().getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 4), (int) (screenSize.getHeight() / 2)));
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(200, 60));
 
         setLayout(new BorderLayout());

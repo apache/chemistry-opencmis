@@ -58,7 +58,7 @@ public class InfoDialog extends JDialog {
 
         JPanel topPanel = new JPanel(new FlowLayout());
 
-        JLabel cmisLogo = new JLabel(ClientHelper.getIcon("icon.png"));
+        JLabel cmisLogo = new JLabel(ClientHelper.getCmisIcon());
         topPanel.add(cmisLogo);
 
         Font labelFont = UIManager.getFont("Label.font");

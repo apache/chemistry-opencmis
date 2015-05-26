@@ -54,6 +54,7 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.workbench.icons.NewDocumentIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
@@ -228,7 +229,8 @@ public class CreateDocumentDialog extends CreateDialog {
         verifyAfterUploadButton = new JCheckBox("Verify content after upload");
         createRow("", verifyAfterUploadButton, 7);
 
-        JButton createButton = new JButton("Create Document", ClientHelper.getIcon("newdocument.png"));
+        JButton createButton = new JButton("Create Document", new NewDocumentIcon(ClientHelper.BUTTON_ICON_SIZE,
+                ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

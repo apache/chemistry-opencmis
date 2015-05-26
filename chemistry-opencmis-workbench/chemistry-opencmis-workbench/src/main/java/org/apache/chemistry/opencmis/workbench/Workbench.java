@@ -18,13 +18,21 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import java.net.Authenticator;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.plaf.FontUIResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +89,57 @@ public class Workbench {
                 new ClientFrame();
             }
         });
+    }
+
+    private static class Nimbus extends javax.swing.plaf.nimbus.NimbusLookAndFeel {
+
+        private double factor = 3.0;
+
+        @Override
+        public UIDefaults getDefaults() {
+            UIDefaults ret = super.getDefaults();
+
+            Map<String, Object> newFonts = new HashMap<String, Object>();
+
+            Enumeration<Object> e = (Enumeration<Object>) ret.keys();
+            while (e.hasMoreElements()) {
+                String key = e.nextElement().toString();
+
+                Font font = ret.getFont(key);
+                if (font != null) {
+                    Font newFont = font.deriveFont((float) (font.getSize() * factor));
+                    newFonts.put(key, newFont);
+                }
+
+                Insets insets = ret.getInsets(key);
+                if (insets != null) {
+                    Insets newInsets = new Insets((int) (insets.top * factor), (int) (insets.left * factor),
+                            (int) (insets.bottom * factor), (int) (insets.right * factor));
+                    newFonts.put(key, newInsets);
+                }
+
+                Dimension dimension = ret.getDimension(key);
+                if (dimension != null) {
+                    Dimension newdimension = new Dimension((int) (dimension.width * factor),
+                            (int) (dimension.height * factor));
+                    newFonts.put(key, newdimension);
+                }
+
+            }
+
+            for (Map.Entry<String, Object> nf : newFonts.entrySet()) {
+                ret.put(nf.getKey(), nf.getValue());
+            }
+
+            return ret;
+        }
+
+        private void scaleFont(UIDefaults defs, String fontName) {
+            Font font = (Font) defs.get(fontName);
+            Font newFont = font.deriveFont((float) (font.getSize() * factor));
+            defs.put(fontName, newFont);
+        }
+
     }
 
     public static void main(String[] args) {

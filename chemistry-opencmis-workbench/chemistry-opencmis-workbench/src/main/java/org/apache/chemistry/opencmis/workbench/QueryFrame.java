@@ -59,6 +59,8 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.workbench.icons.CopyIcon;
+import org.apache.chemistry.opencmis.workbench.icons.QueryIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.IdRenderer;
 
@@ -102,6 +104,7 @@ public class QueryFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
+        setIconImage(ClientHelper.getCmisIcon().getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2)));
@@ -138,7 +141,8 @@ public class QueryFrame extends JFrame {
         searchAllVersionsCheckBox = new JCheckBox("search all versions", false);
         buttonPanel.add(searchAllVersionsCheckBox);
 
-        JButton queryButton = new JButton("Query", ClientHelper.getIcon("query.png"));
+        JButton queryButton = new JButton("Query", new QueryIcon(ClientHelper.BUTTON_ICON_SIZE,
+                ClientHelper.BUTTON_ICON_SIZE));
         queryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 doQuery();
@@ -162,7 +166,7 @@ public class QueryFrame extends JFrame {
             snippetsPopup.add(menuItem);
         }
 
-        final JButton snippetButton = new JButton("Query Snippets", ClientHelper.getIcon("paste.png"));
+        final JButton snippetButton = new JButton("Query Snippets", new CopyIcon(20, 20));
         snippetButton.setFocusPainted(true);
         snippetButton.setBorderPainted(false);
         snippetButton.setContentAreaFilled(false);

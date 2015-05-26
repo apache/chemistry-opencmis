@@ -31,8 +31,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +54,13 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.workbench.icons.CheckedOutIcon;
+import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
+import org.apache.chemistry.opencmis.workbench.icons.FolderIcon;
+import org.apache.chemistry.opencmis.workbench.icons.ItemIcon;
+import org.apache.chemistry.opencmis.workbench.icons.PolicyIcon;
+import org.apache.chemistry.opencmis.workbench.icons.PwcIcon;
+import org.apache.chemistry.opencmis.workbench.icons.RelationshipIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
@@ -173,15 +180,17 @@ public class FolderTable extends JTable implements FolderListener {
     }
 
     private void loadIcons() {
-        icons = new HashMap<BaseTypeId, ImageIcon>();
-        icons.put(BaseTypeId.CMIS_DOCUMENT, ClientHelper.getIcon("document.png"));
-        icons.put(BaseTypeId.CMIS_FOLDER, ClientHelper.getIcon("folder.png"));
-        icons.put(BaseTypeId.CMIS_RELATIONSHIP, ClientHelper.getIcon("relationship.png"));
-        icons.put(BaseTypeId.CMIS_POLICY, ClientHelper.getIcon("policy.png"));
-        icons.put(BaseTypeId.CMIS_ITEM, ClientHelper.getIcon("item.png"));
+        icons = new EnumMap<BaseTypeId, ImageIcon>(BaseTypeId.class);
+        icons.put(BaseTypeId.CMIS_DOCUMENT, new DocumentIcon(ClientHelper.OBJECT_ICON_SIZE,
+                ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_FOLDER, new FolderIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_RELATIONSHIP, new RelationshipIcon(ClientHelper.OBJECT_ICON_SIZE,
+                ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_POLICY, new PolicyIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_ITEM, new ItemIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
 
-        checkedOutIcon = ClientHelper.getIcon("checkedout.png");
-        pwcIcon = ClientHelper.getIcon("pwc.png");
+        checkedOutIcon = new CheckedOutIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE);
+        pwcIcon = new PwcIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE);
     }
 
     public void folderLoaded(final ClientModelEvent event) {

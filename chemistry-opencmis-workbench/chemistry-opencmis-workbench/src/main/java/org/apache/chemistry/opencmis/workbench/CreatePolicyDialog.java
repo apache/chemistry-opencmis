@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.workbench.icons.NewPolicyIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
@@ -102,7 +103,8 @@ public class CreatePolicyDialog extends CreateDialog {
         policyTextField = new JTextField(60);
         createRow("Policy Text:", policyTextField, 3);
 
-        JButton createButton = new JButton("Create Policy", ClientHelper.getIcon("newpolicy.png"));
+        JButton createButton = new JButton("Create Policy", new NewPolicyIcon(ClientHelper.BUTTON_ICON_SIZE,
+                ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

@@ -62,6 +62,8 @@ import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlEntryImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
+import org.apache.chemistry.opencmis.workbench.icons.AddIcon;
+import org.apache.chemistry.opencmis.workbench.icons.RemoveIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class AclEditorFrame extends JFrame {
@@ -69,7 +71,8 @@ public class AclEditorFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String WINDOW_TITLE = "ACL Editor";
-    private static final ImageIcon ICON_ADD = ClientHelper.getIcon("add.png");
+    private static final ImageIcon ICON_ADD = new AddIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
+            ClientHelper.ICON_BUTTON_ICON_SIZE);
 
     private final ClientModel model;
     private final CmisObject object;
@@ -364,7 +367,8 @@ public class AclEditorFrame extends JFrame {
         private static final Color BACKGROUND2 = UIManager.getColor("Table.alternateRowColor");
         private static final Color LINE = new Color(0xB8, 0xB8, 0xB8);
 
-        private static final ImageIcon ICON_REMOVE = ClientHelper.getIcon("remove.png");
+        private static final ImageIcon ICON_REMOVE = new RemoveIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
+                ClientHelper.ICON_BUTTON_ICON_SIZE);
 
         private final List<String> permissions;
 

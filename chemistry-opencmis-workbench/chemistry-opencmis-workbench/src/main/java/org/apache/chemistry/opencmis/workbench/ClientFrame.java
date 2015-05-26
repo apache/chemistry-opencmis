@@ -48,6 +48,16 @@ import javax.swing.JToolBar;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.details.DetailsTabs;
+import org.apache.chemistry.opencmis.workbench.icons.ChangeLogIcon;
+import org.apache.chemistry.opencmis.workbench.icons.ConnectIcon;
+import org.apache.chemistry.opencmis.workbench.icons.ConsoleIcon;
+import org.apache.chemistry.opencmis.workbench.icons.CreateObjectIcon;
+import org.apache.chemistry.opencmis.workbench.icons.InfoIcon;
+import org.apache.chemistry.opencmis.workbench.icons.LogIcon;
+import org.apache.chemistry.opencmis.workbench.icons.QueryIcon;
+import org.apache.chemistry.opencmis.workbench.icons.RepositoryInfoIcon;
+import org.apache.chemistry.opencmis.workbench.icons.TckIcon;
+import org.apache.chemistry.opencmis.workbench.icons.TypesIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 import org.slf4j.Logger;
@@ -59,7 +69,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientFrame.class);
 
-    public static final String SYSPROP_SCRIPTS = ClientSession.WORKBENCH_PREFIX + "scripts";
+    private static final String SYSPROP_SCRIPTS = ClientSession.WORKBENCH_PREFIX + "scripts";
 
     private static final String WINDOW_TITLE = "CMIS Workbench";
 
@@ -74,6 +84,7 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final int BUTTON_LOG = 8;
     private static final int BUTTON_INFO = 9;
 
+ 
     private static final String PREFS_X = "x";
     private static final String PREFS_Y = "y";
     private static final String PREFS_WIDTH = "width";
@@ -116,10 +127,8 @@ public class ClientFrame extends JFrame implements WindowListener {
     private void createGUI() {
         setTitle(WINDOW_TITLE);
 
-        ImageIcon icon = ClientHelper.getIcon("icon.png");
-        if (icon != null) {
-            setIconImage(icon.getImage());
-        }
+        ImageIcon icon = ClientHelper.getCmisIcon();
+        setIconImage(icon.getImage());
 
         // Mac OS X goodies
         if (ClientHelper.isMacOSX()) {
@@ -162,7 +171,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolbarButton = new JButton[10];
 
-        toolbarButton[BUTTON_CONNECT] = new JButton("Connection", ClientHelper.getIcon("connect.png"));
+        toolbarButton[BUTTON_CONNECT] = new JButton("Connection", new ConnectIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showLoginForm();
@@ -173,8 +182,8 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.addSeparator();
 
-        toolbarButton[BUTTON_REPOSITORY_INFO] = new JButton("Repository Info",
-                ClientHelper.getIcon("repository-info.png"));
+        toolbarButton[BUTTON_REPOSITORY_INFO] = new JButton("Repository Info", new RepositoryInfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(false);
         toolbarButton[BUTTON_REPOSITORY_INFO].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -184,7 +193,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_REPOSITORY_INFO]);
 
-        toolbarButton[BUTTON_TYPES] = new JButton("Types", ClientHelper.getIcon("types.png"));
+        toolbarButton[BUTTON_TYPES] = new JButton("Types", new TypesIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_TYPES].setEnabled(false);
         toolbarButton[BUTTON_TYPES].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -194,7 +203,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_TYPES]);
 
-        toolbarButton[BUTTON_QUERY] = new JButton("Query", ClientHelper.getIcon("query.png"));
+        toolbarButton[BUTTON_QUERY] = new JButton("Query", new QueryIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_QUERY].setEnabled(false);
         toolbarButton[BUTTON_QUERY].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -204,7 +213,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_QUERY]);
 
-        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Log", ClientHelper.getIcon("changelog.png"));
+        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Log", new ChangeLogIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
         toolbarButton[BUTTON_CHANGELOG].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -214,7 +223,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_CHANGELOG]);
 
-        toolbarButton[BUTTON_CONSOLE] = new JButton("Console", ClientHelper.getIcon("console.png"));
+        toolbarButton[BUTTON_CONSOLE] = new JButton("Console", new ConsoleIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_CONSOLE].setEnabled(false);
         toolbarButton[BUTTON_CONSOLE].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -237,7 +246,7 @@ public class ClientFrame extends JFrame implements WindowListener {
             toolbarConsolePopup.add(menuItem);
         }
 
-        toolbarButton[BUTTON_TCK] = new JButton("TCK", ClientHelper.getIcon("tck.png"));
+        toolbarButton[BUTTON_TCK] = new JButton("TCK", new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_TCK].setEnabled(false);
         toolbarButton[BUTTON_TCK].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -300,7 +309,7 @@ public class ClientFrame extends JFrame implements WindowListener {
             }
         });
 
-        toolbarButton[BUTTON_CREATE] = new JButton("Create Object", ClientHelper.getIcon("newdocument.png"));
+        toolbarButton[BUTTON_CREATE] = new JButton("Create Object", new CreateObjectIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_CREATE].setEnabled(false);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -312,7 +321,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.addSeparator();
 
-        toolbarButton[BUTTON_LOG] = new JButton("Log", ClientHelper.getIcon("log.png"));
+        toolbarButton[BUTTON_LOG] = new JButton("Log", new LogIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_LOG].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logFrame.showFrame();
@@ -321,7 +330,8 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_LOG]);
 
-        toolbarButton[BUTTON_INFO] = new JButton("Info", ClientHelper.getIcon("info.png"));
+        toolbarButton[BUTTON_INFO] = new JButton("Info", new InfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_INFO].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 infoDialog.showDialog();

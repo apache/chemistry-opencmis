@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.details;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 import groovy.ui.Console;
 
 import java.awt.BorderLayout;
@@ -54,7 +54,6 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.SecondaryType;
 import org.apache.chemistry.opencmis.client.api.Session;
-import org.apache.chemistry.opencmis.client.bindings.spi.LinkAccess;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
@@ -64,6 +63,7 @@ import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
+import org.apache.chemistry.opencmis.workbench.swing.BaseTypeLabel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 
 public class ObjectPanel extends InfoPanel implements ObjectListener {
@@ -75,7 +75,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JTextField nameField;
     private JTextField idField;
     private JTextField typeField;
-    private JTextField basetypeField;
+    private BaseTypeLabel basetypeField;
     private InfoList secondaryTypesList;
     private JTextField versionLabelField;
     private JTextField pwcField;
@@ -116,7 +116,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     nameField.setText("");
                     idField.setText("");
                     typeField.setText("");
-                    basetypeField.setText("");
+                    basetypeField.setValue(null);
                     secondaryTypesList.removeAll();
                     versionLabelField.setText("");
                     pwcField.setText("");
@@ -132,7 +132,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         nameField.setText(object.getName());
                         idField.setText(object.getId());
                         typeField.setText(object.getType().getId());
-                        basetypeField.setText(object.getBaseTypeId().toString());
+                        basetypeField.setValue(object.getBaseTypeId());
 
                         if (object.getSecondaryTypes() != null) {
                             List<String> secTypeIds = new ArrayList<String>();
@@ -247,7 +247,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         nameField = addLine("Name:", true);
         idField = addId("Id:");
         typeField = addLine("Type:");
-        basetypeField = addLine("Base Type:");
+        basetypeField = addBaseTypeLabel("Base Type:");
         secondaryTypesList = addComponent("Secondary Types:", new InfoList());
         pathsList = addComponent("Paths:", new InfoList());
         versionLabelField = addLine("Version Label:");
@@ -378,12 +378,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             return null;
         }
 
-        if (session.getBinding().getObjectService() instanceof LinkAccess) {
-            return ((LinkAccess) session.getBinding().getObjectService()).loadContentLink(session.getRepositoryInfo()
-                    .getId(), document.getId());
-        }
-
-        return null;
+        return ((Document) document).getContentUrl();
     }
 
     private static class JTextAreaWriter extends Writer {

@@ -76,6 +76,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
+import org.apache.chemistry.opencmis.workbench.icons.TckIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 /**
@@ -233,7 +234,8 @@ public class TckDialog {
             mainPanel.add(configPanel, BorderLayout.LINE_END);
             add(mainPanel, BorderLayout.CENTER);
 
-            final JButton runButton = new JButton("Run TCK", ClientHelper.getIcon("tck.png"));
+            final JButton runButton = new JButton("Run TCK", new TckIcon(ClientHelper.BUTTON_ICON_SIZE,
+                    ClientHelper.BUTTON_ICON_SIZE));
             runButton.setDefaultCapable(true);
             runButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {

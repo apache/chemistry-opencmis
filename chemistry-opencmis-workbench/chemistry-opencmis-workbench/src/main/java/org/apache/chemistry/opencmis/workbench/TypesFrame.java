@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.workbench;
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -35,7 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -50,6 +51,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -62,6 +64,12 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.workbench.icons.BaseTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.CreateTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.DeleteTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.SaveTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.TypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.UpdateTypeIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class TypesFrame extends JFrame {
@@ -96,11 +104,7 @@ public class TypesFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-
-        ImageIcon icon = ClientHelper.getIcon("icon.png");
-        if (icon != null) {
-            setIconImage(icon.getImage());
-        }
+        setIconImage(ClientHelper.getCmisIcon().getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
@@ -164,7 +168,8 @@ public class TypesFrame extends JFrame {
             }
         });
 
-        toolbarButton[BUTTON_SAVE] = new JButton("Save Type Definition", ClientHelper.getIcon("savetype.png"));
+        toolbarButton[BUTTON_SAVE] = new JButton("Save Type Definition", new SaveTypeIcon(
+                ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_SAVE].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -233,7 +238,8 @@ public class TypesFrame extends JFrame {
             }
         });
 
-        toolbarButton[BUTTON_UPDATE] = new JButton("Update Type", ClientHelper.getIcon("updatetype.png"));
+        toolbarButton[BUTTON_UPDATE] = new JButton("Update Type", new UpdateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_UPDATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_UPDATE].addActionListener(new ActionListener() {
             @Override
@@ -244,7 +250,8 @@ public class TypesFrame extends JFrame {
         toolBar.add(toolbarButton[BUTTON_UPDATE]);
 
         // -- delete --
-        toolbarButton[BUTTON_DELETE] = new JButton("Delete Type", ClientHelper.getIcon("deletetype.png"));
+        toolbarButton[BUTTON_DELETE] = new JButton("Delete Type", new DeleteTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_DELETE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_DELETE].addActionListener(new ActionListener() {
             @Override
@@ -324,7 +331,8 @@ public class TypesFrame extends JFrame {
             }
         });
 
-        toolbarButton[BUTTON_CREATE] = new JButton("Create Type", ClientHelper.getIcon("newtype.png"));
+        toolbarButton[BUTTON_CREATE] = new JButton("Create Type", new CreateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
         toolbarButton[BUTTON_CREATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
             @Override
@@ -339,6 +347,7 @@ public class TypesFrame extends JFrame {
         typesTree = new JTree();
         typesTree.setRootVisible(false);
         typesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        typesTree.setCellRenderer(new TreeCellRenderer());
 
         typesTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -504,7 +513,7 @@ public class TypesFrame extends JFrame {
         }
     }
 
-    static class TypeNode {
+    private static class TypeNode {
         private final ObjectType type;
 
         public TypeNode(ObjectType type) {
@@ -518,6 +527,32 @@ public class TypesFrame extends JFrame {
         @Override
         public String toString() {
             return type.getDisplayName() + " (" + type.getId() + ")";
+        }
+    }
+
+    private static class TreeCellRenderer extends DefaultTreeCellRenderer {
+
+        private static final long serialVersionUID = 1L;
+
+        private static final Icon BASETYPE_ICON = new BaseTypeIcon(ClientHelper.OBJECT_ICON_SIZE,
+                ClientHelper.OBJECT_ICON_SIZE);
+        private static final Icon TYPE_ICON = new TypeIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE);
+
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                boolean leaf, int row, boolean hasFocus) {
+            Component comp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+            Object node = ((DefaultMutableTreeNode) value).getUserObject();
+            if (node instanceof TypeNode) {
+                if (((TypeNode) node).getType().isBaseType()) {
+                    setIcon(BASETYPE_ICON);
+                } else {
+                    setIcon(TYPE_ICON);
+                }
+            }
+
+            return comp;
         }
     }
 }

@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.workbench.icons.NewRelationshipIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
 
@@ -86,7 +87,8 @@ public class CreateRelationshipDialog extends CreateDialog {
         targetIdField = new JTextField(60);
         createRow("Target Id:", targetIdField, 3);
 
-        JButton createButton = new JButton("Create Relationship", ClientHelper.getIcon("newrelationship.png"));
+        JButton createButton = new JButton("Create Relationship", new NewRelationshipIcon(
+                ClientHelper.BUTTON_ICON_SIZE, ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();

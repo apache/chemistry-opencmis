@@ -51,6 +51,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
 import org.apache.chemistry.opencmis.workbench.checks.TypeComplianceTestGroup;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.swing.BaseTypeLabel;
 import org.apache.chemistry.opencmis.workbench.swing.CollectionRenderer;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 import org.apache.chemistry.opencmis.workbench.swing.YesNoLabel;
@@ -105,7 +106,7 @@ public class TypeSplitPane extends JSplitPane {
         private JTextField localNamespaceField;
         private JTextField localNameField;
         private JTextField queryNameField;
-        private JTextField baseTypeField;
+        private BaseTypeLabel baseTypeField;
         private YesNoLabel creatableLabel;
         private YesNoLabel fileableLabel;
         private YesNoLabel queryableLabel;
@@ -133,7 +134,7 @@ public class TypeSplitPane extends JSplitPane {
                 localNamespaceField.setText(type.getLocalNamespace());
                 localNameField.setText(type.getLocalName());
                 queryNameField.setText(type.getQueryName());
-                baseTypeField.setText(type.getBaseTypeId().value());
+                baseTypeField.setValue(type.getBaseTypeId());
                 creatableLabel.setValue(is(type.isCreatable()));
                 fileableLabel.setValue(is(type.isFileable()));
                 queryableLabel.setValue(is(type.isQueryable()));
@@ -201,7 +202,7 @@ public class TypeSplitPane extends JSplitPane {
                 localNamespaceField.setText("");
                 localNameField.setText("");
                 queryNameField.setText("");
-                baseTypeField.setText("");
+                baseTypeField.setValue(null);
                 creatableLabel.setValue(false);
                 fileableLabel.setValue(false);
                 queryableLabel.setValue(false);
@@ -229,7 +230,7 @@ public class TypeSplitPane extends JSplitPane {
             localNamespaceField = addLine("Local Namespace:");
             localNameField = addLine("Local Name:");
             queryNameField = addLine("Query Name:");
-            baseTypeField = addLine("Base Type:");
+            baseTypeField = addBaseTypeLabel("Base Type:");
             creatableLabel = addYesNoLabel("Creatable:");
             fileableLabel = addYesNoLabel("Fileable:");
             queryableLabel = addYesNoLabel("Queryable:");
