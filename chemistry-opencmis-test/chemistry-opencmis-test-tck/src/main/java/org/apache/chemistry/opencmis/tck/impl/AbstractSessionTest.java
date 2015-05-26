@@ -1327,10 +1327,9 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
 
-            if (checkExact) {
-                f = createResult(FAILURE, "ACL is provided but the isExact flag is not set!");
-                addResult(results, assertNotNull(acl.isExact(), null, f));
-            }
+            CmisTestResultStatus status = checkExact ? WARNING : INFO;
+            f = createResult(status, "ACL is provided but the isExact flag is not set!");
+            addResult(results, assertNotNull(acl.isExact(), null, f));
         }
 
         CmisTestResultImpl result = createResult(getWorst(results), message);
