@@ -63,7 +63,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         UrlBuilder url = new UrlBuilder(link);
 
         // set up object and writer
-        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(objectId), getCmisVersion(repositoryId));
+        final AtomEntryWriter entryWriter = new AtomEntryWriter(createIdObject(policyId), getCmisVersion(repositoryId));
 
         // post applyPolicy request
         postAndConsume(url, Constants.MEDIATYPE_ENTRY, new Output() {
