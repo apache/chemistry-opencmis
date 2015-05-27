@@ -22,8 +22,6 @@ import java.awt.Color;
 
 public class CheckedOutIcon extends DocumentIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public CheckedOutIcon() {
         super();
     }

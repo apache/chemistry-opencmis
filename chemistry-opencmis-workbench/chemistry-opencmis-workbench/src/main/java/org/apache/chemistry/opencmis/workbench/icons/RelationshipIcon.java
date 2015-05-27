@@ -24,8 +24,6 @@ import java.awt.geom.GeneralPath;
 
 public class RelationshipIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public RelationshipIcon() {
         super();
     }

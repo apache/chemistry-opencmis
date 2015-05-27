@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class DownIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public DownIcon() {
         super();
     }
 
     public DownIcon(int width, int height) {
         super(width, height);
+    }
+
+    public DownIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

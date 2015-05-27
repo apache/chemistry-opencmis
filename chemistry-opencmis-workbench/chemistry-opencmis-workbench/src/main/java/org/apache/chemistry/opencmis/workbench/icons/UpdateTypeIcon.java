@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class UpdateTypeIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public UpdateTypeIcon() {
         super();
     }
 
     public UpdateTypeIcon(int width, int height) {
         super(width, height);
+    }
+
+    public UpdateTypeIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class UpdateTypeIcon extends AbstractWorkbenchIcon {
         shape.lineTo(58.0, 6.0);
         shape.lineTo(58.0, 58.0);
         shape.closePath();
-        
+
         shape.moveTo(12.938, 42.498);
         shape.lineTo(21.383999, 50.927002);
         shape.lineTo(46.723, 25.639002);

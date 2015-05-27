@@ -22,8 +22,6 @@ import java.awt.Color;
 
 public class BaseTypeIcon extends TypeIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public BaseTypeIcon() {
         super();
     }

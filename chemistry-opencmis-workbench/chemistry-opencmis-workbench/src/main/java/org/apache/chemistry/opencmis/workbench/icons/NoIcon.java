@@ -24,8 +24,6 @@ import java.awt.geom.GeneralPath;
 
 public class NoIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NoIcon() {
         super();
     }

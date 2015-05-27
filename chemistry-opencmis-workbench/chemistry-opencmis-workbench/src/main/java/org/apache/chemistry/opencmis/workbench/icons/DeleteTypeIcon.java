@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class DeleteTypeIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public DeleteTypeIcon() {
         super();
     }
 
     public DeleteTypeIcon(int width, int height) {
         super(width, height);
+    }
+
+    public DeleteTypeIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

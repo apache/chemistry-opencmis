@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 
 public class NewItemIcon extends ItemIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NewItemIcon() {
         super();
     }

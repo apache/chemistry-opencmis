@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 
 public class NewFolderIcon extends FolderIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NewFolderIcon() {
         super();
     }
@@ -37,7 +35,7 @@ public class NewFolderIcon extends FolderIcon {
     protected Color getColor() {
         return DEFAULT_COLOR;
     }
-    
+
     @Override
     protected void paint(Graphics2D g) {
         super.paint(g);

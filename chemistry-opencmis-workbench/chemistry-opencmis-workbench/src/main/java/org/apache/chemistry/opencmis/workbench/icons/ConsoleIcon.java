@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class ConsoleIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public ConsoleIcon() {
         super();
     }
 
     public ConsoleIcon(int width, int height) {
         super(width, height);
+    }
+
+    public ConsoleIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

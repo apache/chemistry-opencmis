@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class TckIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public TckIcon() {
         super();
     }
 
     public TckIcon(int width, int height) {
         super(width, height);
+    }
+
+    public TckIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

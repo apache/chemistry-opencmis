@@ -170,6 +170,8 @@ public class TypesFrame extends JFrame {
 
         toolbarButton[BUTTON_SAVE] = new JButton("Save Type Definition", new SaveTypeIcon(
                 ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_SAVE].setDisabledIcon(new SaveTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_SAVE].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -240,6 +242,8 @@ public class TypesFrame extends JFrame {
 
         toolbarButton[BUTTON_UPDATE] = new JButton("Update Type", new UpdateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_UPDATE].setDisabledIcon(new UpdateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_UPDATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_UPDATE].addActionListener(new ActionListener() {
             @Override
@@ -252,6 +256,8 @@ public class TypesFrame extends JFrame {
         // -- delete --
         toolbarButton[BUTTON_DELETE] = new JButton("Delete Type", new DeleteTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_DELETE].setDisabledIcon(new DeleteTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_DELETE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_DELETE].addActionListener(new ActionListener() {
             @Override
@@ -333,6 +339,8 @@ public class TypesFrame extends JFrame {
 
         toolbarButton[BUTTON_CREATE] = new JButton("Create Type", new CreateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CREATE].setDisabledIcon(new CreateTypeIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CREATE].setEnabled(repInfo.getCmisVersion() != CmisVersion.CMIS_1_0);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
             @Override

@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 
 public class NewPolicyIcon extends PolicyIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NewPolicyIcon() {
         super();
     }

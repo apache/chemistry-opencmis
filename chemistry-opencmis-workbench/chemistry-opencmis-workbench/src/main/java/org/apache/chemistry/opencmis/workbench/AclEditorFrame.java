@@ -41,7 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -71,7 +71,7 @@ public class AclEditorFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final String WINDOW_TITLE = "ACL Editor";
-    private static final ImageIcon ICON_ADD = new AddIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
+    private static final Icon ICON_ADD = new AddIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
             ClientHelper.ICON_BUTTON_ICON_SIZE);
 
     private final ClientModel model;
@@ -367,8 +367,10 @@ public class AclEditorFrame extends JFrame {
         private static final Color BACKGROUND2 = UIManager.getColor("Table.alternateRowColor");
         private static final Color LINE = new Color(0xB8, 0xB8, 0xB8);
 
-        private static final ImageIcon ICON_REMOVE = new RemoveIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
+        private static final Icon ICON_REMOVE = new RemoveIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
                 ClientHelper.ICON_BUTTON_ICON_SIZE);
+        private static final Icon ICON_REMOVE_DISABLED = new RemoveIcon(ClientHelper.ICON_BUTTON_ICON_SIZE,
+                ClientHelper.ICON_BUTTON_ICON_SIZE, false);
 
         private final List<String> permissions;
 
@@ -444,6 +446,7 @@ public class AclEditorFrame extends JFrame {
 
             c.gridy = 0;
             JButton removeButton = new JButton(ICON_REMOVE);
+            removeButton.setDisabledIcon(ICON_REMOVE_DISABLED);
             removeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     list.removeAce(getPosition());

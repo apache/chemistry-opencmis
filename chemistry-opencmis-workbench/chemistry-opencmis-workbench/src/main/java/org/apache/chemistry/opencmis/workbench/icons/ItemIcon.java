@@ -24,8 +24,6 @@ import java.awt.geom.GeneralPath;
 
 public class ItemIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public ItemIcon() {
         super();
     }

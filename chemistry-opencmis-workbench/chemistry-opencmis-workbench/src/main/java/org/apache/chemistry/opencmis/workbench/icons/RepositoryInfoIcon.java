@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class RepositoryInfoIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public RepositoryInfoIcon() {
         super();
     }
 
     public RepositoryInfoIcon(int width, int height) {
         super(width, height);
+    }
+
+    public RepositoryInfoIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

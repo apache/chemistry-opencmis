@@ -19,66 +19,96 @@
 package org.apache.chemistry.opencmis.workbench.icons;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 
-public abstract class AbstractWorkbenchIcon extends ImageIcon {
-
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractWorkbenchIcon implements Icon {
 
     protected final static Color DEFAULT_COLOR = new Color(0x33628c);
+    protected final static Color DISABLED_COLOR = new Color(0x8e8f91);
 
     protected int width;
     protected int height;
-    protected BufferedImage image = null;
+    protected boolean enabled = true;
+    protected Map<Integer, BufferedImage> images = new HashMap<Integer, BufferedImage>();
 
     public AbstractWorkbenchIcon() {
+        this(true);
+    }
+
+    public AbstractWorkbenchIcon(boolean enabled) {
+        this.enabled = enabled;
         this.width = WorkbenchScale.isScaling() ? (int) ((float) getOrginalWidth() * WorkbenchScale.getScaleFactor())
                 : getOrginalWidth();
         this.height = WorkbenchScale.isScaling() ? (int) ((float) getOrginalHeight() * WorkbenchScale.getScaleFactor())
                 : getOrginalHeight();
-        renderIcon();
     }
 
     public AbstractWorkbenchIcon(int width, int height) {
-        this.width = WorkbenchScale.isScaling() ? (int) ((float) width * WorkbenchScale.getScaleFactor()) : width;
-        this.height = WorkbenchScale.isScaling() ? (int) ((float) height * WorkbenchScale.getScaleFactor()) : height;
-        renderIcon();
+        this(width, height, true);
     }
 
-    private final void renderIcon() {
-        BufferedImage image = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-        double coef = Math.min((double) width / (double) getOrginalWidth(), (double) height
-                / (double) getOrginalHeight());
+    public AbstractWorkbenchIcon(int width, int height, boolean enabled) {
+        this.enabled = enabled;
+        this.width = WorkbenchScale.isScaling() ? (int) ((float) width * WorkbenchScale.getScaleFactor()) : width;
+        this.height = WorkbenchScale.isScaling() ? (int) ((float) height * WorkbenchScale.getScaleFactor()) : height;
+    }
 
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.scale(coef, coef);
-        paint(g2d);
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-        setImage(image);
-
-        g2d.dispose();
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
-    public int getIconHeight() {
+    public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
+        Graphics2D g2d = (Graphics2D) g.create();
+
+        double scaleD = g2d.getFontRenderContext().getTransform().getScaleX();
+        int scaleP = (int) (scaleD * 100); // scale factor in percent
+
+        BufferedImage image = null;
+
+        synchronized (this) {
+            image = images.get(scaleP);
+            if (image == null) {
+                image = renderIcon(scaleD);
+                images.put(scaleP, image);
+            }
+        }
+
+        if (scaleP != 100) {
+            g2d.scale(1d / scaleD, 1d / scaleD);
+            g2d.drawImage(image, (int) ((double) x * scaleD), (int) ((double) y * scaleD), c);
+        } else {
+            g2d.drawImage(image, x, y, c);
+        }
+    }
+
+    @Override
+    public final int getIconHeight() {
         return height;
     }
 
     @Override
-    public int getIconWidth() {
+    public final int getIconWidth() {
         return width;
     }
 
     protected Color getColor() {
-        return DEFAULT_COLOR;
+        return enabled ? DEFAULT_COLOR : DISABLED_COLOR;
     }
 
     protected abstract int getOrginalHeight();
@@ -111,5 +141,24 @@ public abstract class AbstractWorkbenchIcon extends ImageIcon {
 
         g.setPaint(color);
         g.fill(shape);
+    }
+
+    private final BufferedImage renderIcon(double factor) {
+        BufferedImage img = new BufferedImage((int) Math.round(getIconWidth() * factor),
+                (int) Math.round(getIconHeight() * factor), BufferedImage.TYPE_INT_ARGB);
+
+        double coef = Math.min((double) (getIconWidth() * factor) / (double) getOrginalWidth(),
+                (double) (getIconHeight() * factor) / (double) getOrginalHeight());
+
+        Graphics2D g2d = img.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
+        g2d.scale(coef, coef);
+        paint(g2d);
+        g2d.dispose();
+
+        return img;
     }
 }

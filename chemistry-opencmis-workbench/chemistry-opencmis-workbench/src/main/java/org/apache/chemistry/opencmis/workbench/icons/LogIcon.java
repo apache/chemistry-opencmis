@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class LogIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public LogIcon() {
         super();
     }
 
     public LogIcon(int width, int height) {
         super(width, height);
+    }
+
+    public LogIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

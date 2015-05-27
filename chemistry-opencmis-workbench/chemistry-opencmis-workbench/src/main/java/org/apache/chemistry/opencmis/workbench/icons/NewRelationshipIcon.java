@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 
 public class NewRelationshipIcon extends RelationshipIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NewRelationshipIcon() {
         super();
     }

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.DropMode;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -72,14 +73,15 @@ public class FolderTable extends JTable implements FolderListener {
 
     private static final String[] COLUMN_NAMES = { "", "Name", "Type", "Content Type", "Size", "Creation Date",
             "Created by", "Modification Date", "Modified by", "Id" };
-    private static final int[] COLUMN_WIDTHS = { 24, 200, 150, 150, 80, 180, 100, 180, 100, 300 };
+    private static final int[] COLUMN_WIDTHS = { ClientHelper.OBJECT_ICON_SIZE + 4, 200, 150, 150, 80, 180, 100, 180,
+            100, 300 };
     public static final int ID_COLUMN = 9;
 
     private final ClientModel model;
 
-    private Map<BaseTypeId, ImageIcon> icons;
-    private ImageIcon checkedOutIcon;
-    private ImageIcon pwcIcon;
+    private Map<BaseTypeId, Icon> icons;
+    private Icon checkedOutIcon;
+    private Icon pwcIcon;
 
     public FolderTable(final ClientModel model) {
         super();
@@ -180,7 +182,7 @@ public class FolderTable extends JTable implements FolderListener {
     }
 
     private void loadIcons() {
-        icons = new EnumMap<BaseTypeId, ImageIcon>(BaseTypeId.class);
+        icons = new EnumMap<BaseTypeId, Icon>(BaseTypeId.class);
         icons.put(BaseTypeId.CMIS_DOCUMENT, new DocumentIcon(ClientHelper.OBJECT_ICON_SIZE,
                 ClientHelper.OBJECT_ICON_SIZE));
         icons.put(BaseTypeId.CMIS_FOLDER, new FolderIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));

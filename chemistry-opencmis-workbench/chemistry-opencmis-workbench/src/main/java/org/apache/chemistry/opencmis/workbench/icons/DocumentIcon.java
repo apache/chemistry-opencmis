@@ -24,8 +24,6 @@ import java.awt.geom.GeneralPath;
 
 public class DocumentIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public DocumentIcon() {
         super();
     }
@@ -43,7 +41,7 @@ public class DocumentIcon extends AbstractWorkbenchIcon {
     protected int getOrginalWidth() {
         return 64;
     }
-    
+
     @Override
     protected Color getColor() {
         return new Color(0x73a4d1);

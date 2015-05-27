@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class TypesIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public TypesIcon() {
         super();
     }
 
     public TypesIcon(int width, int height) {
         super(width, height);
+    }
+
+    public TypesIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

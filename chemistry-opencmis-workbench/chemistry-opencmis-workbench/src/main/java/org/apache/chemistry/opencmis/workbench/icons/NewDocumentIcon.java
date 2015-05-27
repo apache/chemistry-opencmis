@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 
 public class NewDocumentIcon extends DocumentIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public NewDocumentIcon() {
         super();
     }

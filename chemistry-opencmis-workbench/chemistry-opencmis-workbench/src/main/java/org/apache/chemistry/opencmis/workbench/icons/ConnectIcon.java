@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class ConnectIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public ConnectIcon() {
         super();
     }
 
     public ConnectIcon(int width, int height) {
         super(width, height);
+    }
+
+    public ConnectIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

@@ -23,8 +23,6 @@ import java.awt.geom.GeneralPath;
 
 public class AddIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public AddIcon() {
         super();
     }

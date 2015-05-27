@@ -84,7 +84,6 @@ public class ClientFrame extends JFrame implements WindowListener {
     private static final int BUTTON_LOG = 8;
     private static final int BUTTON_INFO = 9;
 
- 
     private static final String PREFS_X = "x";
     private static final String PREFS_Y = "y";
     private static final String PREFS_WIDTH = "width";
@@ -171,7 +170,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolbarButton = new JButton[10];
 
-        toolbarButton[BUTTON_CONNECT] = new JButton("Connection", new ConnectIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CONNECT] = new JButton("Connection", new ConnectIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CONNECT].setDisabledIcon(new ConnectIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showLoginForm();
@@ -182,8 +184,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.addSeparator();
 
-        toolbarButton[BUTTON_REPOSITORY_INFO] = new JButton("Repository Info", new RepositoryInfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
-                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_REPOSITORY_INFO] = new JButton("Repository Info", new RepositoryInfoIcon(
+                ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_REPOSITORY_INFO].setDisabledIcon(new RepositoryInfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(false);
         toolbarButton[BUTTON_REPOSITORY_INFO].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -193,7 +197,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_REPOSITORY_INFO]);
 
-        toolbarButton[BUTTON_TYPES] = new JButton("Types", new TypesIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_TYPES] = new JButton("Types", new TypesIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_TYPES].setDisabledIcon(new TypesIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_TYPES].setEnabled(false);
         toolbarButton[BUTTON_TYPES].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -203,7 +210,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_TYPES]);
 
-        toolbarButton[BUTTON_QUERY] = new JButton("Query", new QueryIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_QUERY] = new JButton("Query", new QueryIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_QUERY].setDisabledIcon(new QueryIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_QUERY].setEnabled(false);
         toolbarButton[BUTTON_QUERY].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -213,7 +223,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_QUERY]);
 
-        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Log", new ChangeLogIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CHANGELOG] = new JButton("Change Log", new ChangeLogIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CHANGELOG].setDisabledIcon(new ChangeLogIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
         toolbarButton[BUTTON_CHANGELOG].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -223,7 +236,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.add(toolbarButton[BUTTON_CHANGELOG]);
 
-        toolbarButton[BUTTON_CONSOLE] = new JButton("Console", new ConsoleIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CONSOLE] = new JButton("Console", new ConsoleIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CONSOLE].setDisabledIcon(new ConsoleIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CONSOLE].setEnabled(false);
         toolbarButton[BUTTON_CONSOLE].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -246,7 +262,10 @@ public class ClientFrame extends JFrame implements WindowListener {
             toolbarConsolePopup.add(menuItem);
         }
 
-        toolbarButton[BUTTON_TCK] = new JButton("TCK", new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_TCK] = new JButton("TCK", new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_TCK].setDisabledIcon(new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_TCK].setEnabled(false);
         toolbarButton[BUTTON_TCK].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -309,7 +328,10 @@ public class ClientFrame extends JFrame implements WindowListener {
             }
         });
 
-        toolbarButton[BUTTON_CREATE] = new JButton("Create Object", new CreateObjectIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CREATE] = new JButton("Create Object", new CreateObjectIcon(
+                ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CREATE].setDisabledIcon(new CreateObjectIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CREATE].setEnabled(false);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -321,7 +343,10 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolBar.addSeparator();
 
-        toolbarButton[BUTTON_LOG] = new JButton("Log", new LogIcon(ClientHelper.TOOLBAR_ICON_SIZE, ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_LOG] = new JButton("Log", new LogIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_LOG].setDisabledIcon(new LogIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_LOG].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logFrame.showFrame();
@@ -332,6 +357,8 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         toolbarButton[BUTTON_INFO] = new JButton("Info", new InfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_INFO].setDisabledIcon(new InfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_INFO].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 infoDialog.showDialog();

@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.workbench.swing;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.icons.NoIcon;
 import org.apache.chemistry.opencmis.workbench.icons.YesIcon;
 

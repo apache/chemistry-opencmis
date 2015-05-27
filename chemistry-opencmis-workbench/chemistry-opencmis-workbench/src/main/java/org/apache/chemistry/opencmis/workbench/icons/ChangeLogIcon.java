@@ -23,14 +23,16 @@ import java.awt.geom.GeneralPath;
 
 public class ChangeLogIcon extends AbstractWorkbenchIcon {
 
-    private static final long serialVersionUID = 1L;
-
     public ChangeLogIcon() {
         super();
     }
 
     public ChangeLogIcon(int width, int height) {
         super(width, height);
+    }
+
+    public ChangeLogIcon(int width, int height, boolean enabled) {
+        super(width, height, enabled);
     }
 
     @Override

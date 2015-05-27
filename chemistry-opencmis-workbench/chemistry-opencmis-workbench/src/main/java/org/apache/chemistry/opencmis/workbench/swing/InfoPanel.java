@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
+< * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.workbench.swing;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -60,7 +60,6 @@ import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
-import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 import com.google.zxing.BarcodeFormat;
