@@ -104,7 +104,7 @@ public class TypesFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
-        setIconImage(ClientHelper.getCmisIcon().getImage());
+        setIconImages(ClientHelper.getCmisIconImages());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));

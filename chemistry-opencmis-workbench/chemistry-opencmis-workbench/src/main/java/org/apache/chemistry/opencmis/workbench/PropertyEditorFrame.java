@@ -101,7 +101,7 @@ public class PropertyEditorFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE);
-        setIconImage(ClientHelper.getCmisIcon().getImage());
+        setIconImages(ClientHelper.getCmisIconImages());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 1.5)));

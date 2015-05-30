@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -34,6 +35,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,6 +56,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.AbstractAction;
@@ -101,7 +104,21 @@ public final class ClientHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ClientHelper.class);
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private static final ImageIcon CMIS_ICON = getIcon("icon.png");
+    private static final ImageIcon CMIS_ICON = getIcon("icon256.png");
+    private static final List<BufferedImage> CMIS_ICON_LIST = new ArrayList<BufferedImage>();
+
+    static {
+        try {
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon256.png")));
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon128.png")));
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon64.png")));
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon48.png")));
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon32.png")));
+            CMIS_ICON_LIST.add(ImageIO.read(ClientHelper.class.getResource("/images/icon16.png")));
+        } catch (Exception e) {
+            LOG.error("Icons cannot be loaded!", e);
+        }
+    }
 
     private ClientHelper() {
     }
@@ -222,8 +239,12 @@ public final class ClientHelper {
         return null;
     }
 
-    public static ImageIcon getCmisIcon() {
+    public static ImageIcon getCmisIconImage() {
         return CMIS_ICON;
+    }
+
+    public static List<? extends Image> getCmisIconImages() {
+        return CMIS_ICON_LIST;
     }
 
     public static String getDateString(GregorianCalendar cal) {

@@ -39,6 +39,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.workbench.icons.CmisLogoIcon;
 
 public class InfoDialog extends JDialog {
 
@@ -58,7 +59,7 @@ public class InfoDialog extends JDialog {
 
         JPanel topPanel = new JPanel(new FlowLayout());
 
-        JLabel cmisLogo = new JLabel(ClientHelper.getCmisIcon());
+        JLabel cmisLogo = new JLabel(new CmisLogoIcon(128, 128));
         topPanel.add(cmisLogo);
 
         Font labelFont = UIManager.getFont("Label.font");

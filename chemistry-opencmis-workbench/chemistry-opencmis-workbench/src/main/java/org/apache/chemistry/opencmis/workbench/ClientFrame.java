@@ -126,8 +126,7 @@ public class ClientFrame extends JFrame implements WindowListener {
     private void createGUI() {
         setTitle(WINDOW_TITLE);
 
-        ImageIcon icon = ClientHelper.getCmisIcon();
-        setIconImage(icon.getImage());
+        setIconImages(ClientHelper.getCmisIconImages());
 
         // Mac OS X goodies
         if (ClientHelper.isMacOSX()) {
@@ -136,6 +135,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 Method macAppGetApp = macAppClass.getMethod("getApplication", (Class<?>[]) null);
                 Object macApp = macAppGetApp.invoke(null, (Object[]) null);
 
+                ImageIcon icon = ClientHelper.getCmisIconImage();
                 if (icon != null) {
                     try {
                         macAppClass.getMethod("setDockIconImage", new Class<?>[] { Image.class }).invoke(macApp,
