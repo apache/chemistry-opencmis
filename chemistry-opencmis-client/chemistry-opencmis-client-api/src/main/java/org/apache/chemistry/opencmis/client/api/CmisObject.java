@@ -41,6 +41,10 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     /**
      * Returns the allowable actions if they have been fetched for this object.
      * 
+     * @return the allowable actions or {@code null} if the allowable actions
+     *         have not been requested or no allowable actions are returned by
+     *         the repository
+     * 
      * @cmis 1.0
      */
     AllowableActions getAllowableActions();
@@ -63,6 +67,10 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
 
     /**
      * Returns the relationships if they have been fetched for this object.
+     * 
+     * @return the relationships to or from this object or {@code null} if the
+     *         relationships have not been requested or no relationships are
+     *         returned by the repository
      * 
      * @cmis 1.0
      */
@@ -186,6 +194,9 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     /**
      * Returns the renditions if they have been fetched for this object.
      * 
+     * @return the renditions of this object or {@code null} if the renditions
+     *         have not been requested or no renditions exist for this object
+     * 
      * @cmis 1.0
      */
     List<Rendition> getRenditions();
@@ -203,6 +214,19 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     void applyPolicy(ObjectId... policyIds);
 
     /**
+     * Applies the provided policy.
+     * 
+     * @param policyId
+     *            the ID of the policy to be applied
+     * @param refresh
+     *            {@code true} if this object should be refreshed after the
+     *            update, {@code false} if not
+     * 
+     * @cmis 1.0
+     */
+    void applyPolicy(ObjectId policyId, boolean refresh);
+
+    /**
      * Removes the provided policies and refreshes this object afterwards.
      * 
      * @param policyIds
@@ -213,7 +237,24 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     void removePolicy(ObjectId... policyIds);
 
     /**
+     * Removes the provided policy.
+     * 
+     * @param policyId
+     *            the ID of the policy to be removed
+     * @param refresh
+     *            {@code true} if this object should be refreshed after the
+     *            update, {@code false} if not
+     * 
+     * @cmis 1.0
+     */
+    void removePolicy(ObjectId policyId, boolean refresh);
+
+    /**
      * Returns the applied policies if they have been fetched for this object.
+     * 
+     * @return the list of policies applied to this object or {@code null} if
+     *         the policies have not been requested or no policies are applied
+     *         to this object
      * 
      * @cmis 1.0
      */

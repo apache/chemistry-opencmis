@@ -148,6 +148,7 @@ public final class Constants {
     public static final String CONTROL_PROP_ID = "propertyId";
     public static final String CONTROL_PROP_VALUE = "propertyValue";
     public static final String CONTROL_POLICY = "policy";
+    public static final String CONTROL_POLICY_ID = "policyId";
     public static final String CONTROL_ADD_ACE_PRINCIPAL = "addACEPrincipal";
     public static final String CONTROL_ADD_ACE_PERMISSION = "addACEPermission";
     public static final String CONTROL_REMOVE_ACE_PRINCIPAL = "removeACEPrincipal";

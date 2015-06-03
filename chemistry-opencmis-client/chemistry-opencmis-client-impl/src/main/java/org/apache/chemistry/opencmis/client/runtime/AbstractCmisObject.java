@@ -139,6 +139,8 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     }
                 }
             }
+        } else {
+            secondaryTypes = null;
         }
 
         // handle properties
@@ -147,16 +149,20 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
         // handle allowable actions
         if (objectData.getAllowableActions() != null) {
-            this.allowableActions = objectData.getAllowableActions();
+            allowableActions = objectData.getAllowableActions();
             extensions.put(ExtensionLevel.ALLOWABLE_ACTIONS, objectData.getAllowableActions().getExtensions());
+        } else {
+            allowableActions = null;
         }
 
         // handle renditions
-        if (objectData.getRenditions() != null) {
-            this.renditions = new ArrayList<Rendition>();
+        if (objectData.getRenditions() != null && !objectData.getRenditions().isEmpty()) {
+            renditions = new ArrayList<Rendition>();
             for (RenditionData rd : objectData.getRenditions()) {
-                this.renditions.add(of.convertRendition(getId(), rd));
+                renditions.add(of.convertRendition(getId(), rd));
             }
+        } else {
+            renditions = null;
         }
 
         // handle ACL
@@ -190,22 +196,30 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     }
                 };
             }
+        } else {
+            acl = null;
         }
 
         // handle policies
-        if ((objectData.getPolicyIds() != null) && (objectData.getPolicyIds().getPolicyIds() != null)) {
-            policies = new ArrayList<Policy>();
-            for (String pid : objectData.getPolicyIds().getPolicyIds()) {
-                CmisObject policy = session.getObject(pid);
-                if (policy instanceof Policy) {
-                    policies.add((Policy) policy);
+        if (objectData.getPolicyIds() != null && objectData.getPolicyIds().getPolicyIds() != null) {
+            if (objectData.getPolicyIds().getPolicyIds().isEmpty()) {
+                policies = null;
+            } else {
+                policies = new ArrayList<Policy>();
+                for (String pid : objectData.getPolicyIds().getPolicyIds()) {
+                    CmisObject policy = session.getObject(pid);
+                    if (policy instanceof Policy) {
+                        policies.add((Policy) policy);
+                    }
                 }
             }
             extensions.put(ExtensionLevel.POLICIES, objectData.getPolicyIds().getExtensions());
+        } else {
+            policies = null;
         }
 
         // handle relationships
-        if (objectData.getRelationships() != null) {
+        if (objectData.getRelationships() != null && !objectData.getRelationships().isEmpty()) {
             relationships = new ArrayList<Relationship>();
             for (ObjectData rod : objectData.getRelationships()) {
                 CmisObject relationship = of.convertObject(rod, this.creationContext);
@@ -213,6 +227,8 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                     relationships.add((Relationship) relationship);
                 }
             }
+        } else {
+            relationships = null;
         }
 
         extensions.put(ExtensionLevel.OBJECT, objectData.getExtensions());
@@ -518,7 +534,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public List<SecondaryType> getSecondaryTypes() {
         readLock();
         try {
-            return this.secondaryTypes;
+            return secondaryTypes;
         } finally {
             readUnlock();
         }
@@ -621,7 +637,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public Acl getAcl() {
         readLock();
         try {
-            return this.acl;
+            return acl;
         } finally {
             readUnlock();
         }
@@ -670,6 +686,19 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         refresh();
     }
 
+    public void applyPolicy(ObjectId policyId, boolean refresh) {
+        readLock();
+        try {
+            getSession().applyPolicy(this, policyId);
+        } finally {
+            readUnlock();
+        }
+
+        if (refresh) {
+            refresh();
+        }
+    }
+
     public void removePolicy(ObjectId... policyIds) {
         readLock();
         try {
@@ -681,10 +710,23 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         refresh();
     }
 
+    public void removePolicy(ObjectId policyId, boolean refresh) {
+        readLock();
+        try {
+            getSession().removePolicy(this, policyId);
+        } finally {
+            readUnlock();
+        }
+
+        if (refresh) {
+            refresh();
+        }
+    }
+
     public List<Policy> getPolicies() {
         readLock();
         try {
-            return this.policies;
+            return policies;
         } finally {
             readUnlock();
         }

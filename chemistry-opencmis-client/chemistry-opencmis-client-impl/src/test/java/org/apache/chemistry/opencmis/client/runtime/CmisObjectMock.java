@@ -220,10 +220,15 @@ public class CmisObjectMock implements CmisObject, Serializable {
     }
 
     public void applyPolicy(ObjectId... policyIds) {
+    }
 
+    public void applyPolicy(ObjectId policyId, boolean refresh) {
     }
 
     public void removePolicy(ObjectId... policyIds) {
+    }
+
+    public void removePolicy(ObjectId policyId, boolean refresh) {
     }
 
     public String getId() {

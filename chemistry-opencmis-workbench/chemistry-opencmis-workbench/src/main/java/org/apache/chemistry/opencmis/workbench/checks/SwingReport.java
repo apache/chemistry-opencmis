@@ -52,6 +52,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestReport;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
 import org.apache.chemistry.opencmis.tck.report.AbstractCmisTestReport;
 import org.apache.chemistry.opencmis.tck.report.HtmlReport;
+import org.apache.chemistry.opencmis.tck.report.JsonReport;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.report.XmlReport;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
@@ -138,7 +139,7 @@ public class SwingReport extends AbstractCmisTestReport {
 
             final JPanel reportPanel = new JPanel();
             reportPanel.add(new JLabel("Open report as "));
-            final JComboBox<String> reportType = new JComboBox<String>(new String[] { "HTML", "Text", "XML" });
+            final JComboBox<String> reportType = new JComboBox<String>(new String[] { "HTML", "Text", "XML", "JSON" });
             reportPanel.add(reportType);
             final JButton reportButton = new JButton("go");
             reportPanel.add(reportButton);
@@ -158,6 +159,10 @@ public class SwingReport extends AbstractCmisTestReport {
                         case 2:
                             tempReportFile = File.createTempFile("cmistck", ".xml");
                             report = new XmlReport();
+                            break;
+                        case 3:
+                            tempReportFile = File.createTempFile("cmistck", ".json");
+                            report = new JsonReport();
                             break;
                         default:
                             tempReportFile = File.createTempFile("cmistck", ".html");

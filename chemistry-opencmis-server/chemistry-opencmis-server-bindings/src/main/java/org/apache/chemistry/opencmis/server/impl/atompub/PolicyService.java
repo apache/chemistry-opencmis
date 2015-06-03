@@ -173,30 +173,28 @@ public class PolicyService {
                 parser.release();
             }
 
-            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, parser.getId());
+            ObjectInfo objectInfo = service.getObjectInfo(repositoryId, objectId);
             if (objectInfo == null) {
                 throw new CmisRuntimeException("Object Info is missing!");
             }
 
-            ObjectData policy = objectInfo.getObject();
-            if (policy == null) {
-                throw new CmisRuntimeException("Policy is null!");
+            ObjectData object = objectInfo.getObject();
+            if (object == null) {
+                throw new CmisRuntimeException("Object is null!");
             }
 
             // set headers
             UrlBuilder baseUrl = compileBaseUrl(request, repositoryId);
-            UrlBuilder location = compileUrlBuilder(baseUrl, RESOURCE_POLICIES, objectId);
-            location.addParameter(Constants.PARAM_POLICY_ID, policy.getId());
 
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType(Constants.MEDIATYPE_ENTRY);
-            response.setHeader("Content-Location", location.toString());
-            response.setHeader("Location", location.toString());
+            response.setHeader("Location", compileUrl(baseUrl, RESOURCE_ENTRY, object.getId()));
 
             // write XML
             AtomEntry entry = new AtomEntry();
             entry.startDocument(response.getOutputStream(), getNamespaces(service));
-            writePolicyEntry(service, entry, objectId, policy, repositoryId, baseUrl, context.getCmisVersion());
+            writeObjectEntry(service, entry, object, null, repositoryId, null, null, baseUrl, true,
+                    context.getCmisVersion());
             entry.endDocument();
         }
     }

@@ -114,7 +114,7 @@ public class XmlReport extends AbstractCmisTestReport {
 
         xml.writeStartElement(TAG_TEST);
         xml.writeAttribute(ATTR_NAME, test.getName());
-        xml.writeAttribute(ATTR_TIME, "" + test.getTime());
+        xml.writeAttribute(ATTR_TIME, String.valueOf(test.getTime()));
 
         if (test.getResults() != null) {
             for (CmisTestResult result : test.getResults()) {

@@ -74,7 +74,7 @@ public class AppendContentStreamPanel extends ActionPanel {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
 
         try {
-            ((Document) getObject()).appendContentStream(content, isLastChunkBox.isSelected());
+            ((Document) getObject()).appendContentStream(content, isLastChunkBox.isSelected(), false);
         } finally {
             IOUtils.closeQuietly(content);
         }

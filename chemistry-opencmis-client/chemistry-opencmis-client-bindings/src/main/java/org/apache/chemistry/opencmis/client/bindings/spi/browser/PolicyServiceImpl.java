@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
@@ -52,7 +51,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_APPLY_POLICY);
-        formData.addPoliciesParameters(Collections.singletonList(policyId));
+        formData.addPolicyIdParameter(policyId);
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
@@ -68,7 +67,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_REMOVE_POLICY);
-        formData.addPoliciesParameters(Collections.singletonList(policyId));
+        formData.addPolicyIdParameter(policyId);
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {

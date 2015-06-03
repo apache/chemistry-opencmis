@@ -29,6 +29,9 @@ public final class TestParameters {
     public static final String DEFAULT_RELATIONSHIP_TYPE = "org.apache.chemistry.opencmis.tck.default.relationshipType";
     public static final String DEFAULT_RELATIONSHIP_TYPE_VALUE = "cmis:relationship";
 
+    public static final String DEFAULT_POLICY_TYPE = "org.apache.chemistry.opencmis.tck.default.policyType";
+    public static final String DEFAULT_POLICY_TYPE_VALUE = "cmis:policy";
+
     public static final String DEFAULT_ITEM_TYPE = "org.apache.chemistry.opencmis.tck.default.itemType";
     public static final String DEFAULT_ITEM_TYPE_VALUE = "cmis:item";
 

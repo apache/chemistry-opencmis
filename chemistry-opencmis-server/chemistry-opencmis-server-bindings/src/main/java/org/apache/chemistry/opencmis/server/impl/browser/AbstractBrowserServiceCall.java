@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.server.impl.browser;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -466,5 +466,9 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
         }
 
         return result;
+    }
+
+    public String getPolicyId(ControlParser controlParser) {
+        return controlParser.getValue(Constants.CONTROL_POLICY_ID);
     }
 }

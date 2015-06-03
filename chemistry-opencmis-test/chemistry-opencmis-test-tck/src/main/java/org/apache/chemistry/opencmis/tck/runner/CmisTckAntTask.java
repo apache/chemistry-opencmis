@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestProgressMonitor;
 import org.apache.chemistry.opencmis.tck.CmisTestReport;
 import org.apache.chemistry.opencmis.tck.report.HtmlReport;
+import org.apache.chemistry.opencmis.tck.report.JsonReport;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.report.XmlReport;
 import org.apache.tools.ant.BuildException;
@@ -39,6 +40,7 @@ public class CmisTckAntTask extends Task {
     private static final String REPORT_TEXT = "text";
     private static final String REPORT_XML = "xml";
     private static final String REPORT_HTML = "html";
+    private static final String REPORT_JSON = "json";
 
     private static final String DEFAULT_REPORT_NAME = "cmis-tck-report";
 
@@ -107,6 +109,11 @@ public class CmisTckAntTask extends Task {
                     report = new XmlReport();
                     if (output == null) {
                         output = new File(DEFAULT_REPORT_NAME + ".xml");
+                    }
+                } else if (REPORT_JSON.equals(format)) {
+                    report = new JsonReport();
+                    if (output == null) {
+                        output = new File(DEFAULT_REPORT_NAME + ".json");
                     }
                 } else if (REPORT_HTML.equals(format)) {
                     report = new HtmlReport();

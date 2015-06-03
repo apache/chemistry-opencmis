@@ -44,7 +44,7 @@ public class CreateAndDeleteItemTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Create and Delete Item Test");
-        setDescription("Creates a few items, checks the newly created itens and their parent and finally deletes the created item.");
+        setDescription("Creates a few items, checks the newly created items and their parent and finally deletes the created items.");
     }
 
     @Override

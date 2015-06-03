@@ -69,7 +69,7 @@ public class SetContentStreamPanel extends ActionPanel {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
 
         try {
-            ((Document) getObject()).setContentStream(content, overwriteBox.isSelected());
+            ((Document) getObject()).setContentStream(content, overwriteBox.isSelected(), false);
         } finally {
             if (content != null) {
                 IOUtils.closeQuietly(content);

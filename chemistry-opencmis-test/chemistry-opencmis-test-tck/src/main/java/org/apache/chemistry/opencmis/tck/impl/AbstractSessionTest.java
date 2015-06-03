@@ -205,6 +205,24 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         return objectTypeId;
     }
 
+    protected String getRelationshipTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_RELATIONSHIP_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
+    protected String getPolicyTestTypeId() {
+        String objectTypeId = getParameters().get(TestParameters.DEFAULT_POLICY_TYPE);
+        if (objectTypeId == null) {
+            objectTypeId = TestParameters.DEFAULT_POLICY_TYPE_VALUE;
+        }
+
+        return objectTypeId;
+    }
+
     protected String getItemTestTypeId() {
         String objectTypeId = getParameters().get(TestParameters.DEFAULT_ITEM_TYPE);
         if (objectTypeId == null) {
@@ -534,11 +552,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
      * Creates a relationship.
      */
     protected Relationship createRelationship(Session session, String name, ObjectId source, ObjectId target) {
-        String objectTypeId = getParameters().get(TestParameters.DEFAULT_RELATIONSHIP_TYPE);
-        if (objectTypeId == null) {
-            objectTypeId = TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE;
-        }
-
+        String objectTypeId = getRelationshipTestTypeId();
         return createRelationship(session, name, source, target, objectTypeId);
     }
 
@@ -595,6 +609,105 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 addResult(createResult(UNEXPECTED_EXCEPTION,
                         "Newly created document is invalid! Exception: " + e.getMessage(), e, true));
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates a policy.
+     */
+    protected Policy createPolicy(Session session, Folder parent, String name, String policyText) {
+        return createPolicy(session, parent, name, policyText, getPolicyTestTypeId());
+    }
+
+    /**
+     * Creates a policy.
+     */
+    protected Policy createPolicy(Session session, Folder parent, String name, String policyText, String objectTypeId) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Parent is not set!");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name is not set!");
+        }
+        if (objectTypeId == null) {
+            throw new IllegalArgumentException("Object Type ID is not set!");
+        }
+
+        // check type
+        ObjectType type;
+        try {
+            type = session.getTypeDefinition(objectTypeId);
+        } catch (CmisObjectNotFoundException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Policy type '" + objectTypeId + "' is not available: " + e.getMessage(), e, true));
+            return null;
+        }
+
+        if (Boolean.FALSE.equals(type.isCreatable())) {
+            addResult(createResult(SKIPPED, "Policy type '" + objectTypeId + "' is not creatable!", true));
+            return null;
+        }
+
+        boolean isFilable = Boolean.TRUE.equals(type.isFileable());
+
+        addResult(createResult(INFO, "Policy type '" + objectTypeId + "' is " + (isFilable ? "" : "not ") + "filable."));
+
+        // create
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
+        if (policyText != null) {
+            properties.put(PropertyIds.POLICY_TEXT, policyText);
+        }
+
+        Policy result = null;
+        try {
+            // create the item
+            if (isFilable) {
+                result = parent.createPolicy(properties, null, null, null, SELECT_ALL_NO_CACHE_OC);
+            } else {
+                ObjectId policyId = session.createPolicy(properties, null, null, null, null);
+                result = (Policy) session.getObject(policyId, SELECT_ALL_NO_CACHE_OC);
+            }
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Policy could not be created! Exception: " + e.getMessage(),
+                    e, true));
+            return null;
+        }
+
+        CmisTestResult f;
+        try {
+            // check item name
+            f = createResult(FAILURE, "Policy name does not match!", false);
+            addResult(assertEquals(name, result.getName(), null, f));
+
+            addResult(checkObject(session, result, getAllProperties(result), "New policy object spec compliance"));
+        } catch (CmisBaseException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION,
+                    "Newly created policy is invalid! Exception: " + e.getMessage(), e, true));
+        }
+
+        // check parents
+        List<Folder> parents = result.getParents(SELECT_ALL_NO_CACHE_OC);
+
+        if (isFilable) {
+            boolean found = false;
+            for (Folder folder : parents) {
+                if (parent.getId().equals(folder.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                addResult(createResult(FAILURE,
+                        "The folder the item has been created in is not in the list of the item parents!"));
+            }
+        } else {
+            f = createResult(FAILURE, "Policy is not filable but has a parent!", false);
+            addResult(assertIsTrue(parents.isEmpty(), null, f));
         }
 
         return result;
@@ -660,7 +773,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
             addResult(checkObject(session, result, getAllProperties(result), "New item object spec compliance"));
         } catch (CmisBaseException e) {
-            addResult(createResult(UNEXPECTED_EXCEPTION, "Newly created Item is invalid! Exception: " + e.getMessage(),
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Newly created item is invalid! Exception: " + e.getMessage(),
                     e, true));
         }
 

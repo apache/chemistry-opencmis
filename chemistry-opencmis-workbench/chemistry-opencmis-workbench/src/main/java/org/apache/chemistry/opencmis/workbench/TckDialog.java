@@ -210,6 +210,10 @@ public class TckDialog {
                     BaseTypeId.CMIS_RELATIONSHIP.value(), TestParameters.DEFAULT_RELATIONSHIP_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
 
+            final JComboBox<String> policyComboBox = addComboBox(configPanel, "Test policy type:",
+                    BaseTypeId.CMIS_POLICY.value(), TestParameters.DEFAULT_POLICY_TYPE_VALUE, true);
+            configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
+
             final JComboBox<String> itemComboBox = addComboBox(configPanel, "Test item type:",
                     BaseTypeId.CMIS_ITEM.value(), TestParameters.DEFAULT_ITEM_TYPE_VALUE, true);
             configPanel.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(1, 10))));
@@ -255,6 +259,10 @@ public class TckDialog {
                         if (relationshipComboBox.isEnabled()) {
                             parameters.put(TestParameters.DEFAULT_RELATIONSHIP_TYPE,
                                     (String) relationshipComboBox.getSelectedItem());
+                        }
+                        if (policyComboBox.isEnabled()) {
+                            parameters.put(TestParameters.DEFAULT_POLICY_TYPE,
+                                    (String) policyComboBox.getSelectedItem());
                         }
                         if (itemComboBox.isEnabled()) {
                             parameters.put(TestParameters.DEFAULT_ITEM_TYPE, (String) itemComboBox.getSelectedItem());

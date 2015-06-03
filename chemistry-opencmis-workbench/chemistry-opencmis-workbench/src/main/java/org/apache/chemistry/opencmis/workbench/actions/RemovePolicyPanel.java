@@ -69,7 +69,7 @@ public class RemovePolicyPanel extends ActionPanel {
 
     @Override
     public boolean doAction() {
-        getObject().removePolicy(new ObjectIdImpl(policyField.getText()));
+        getObject().removePolicy(new ObjectIdImpl(policyField.getText()), false);
         return true;
     }
 }

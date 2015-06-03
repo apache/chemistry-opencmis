@@ -69,7 +69,7 @@ public class ApplyPolicyPanel extends ActionPanel {
 
     @Override
     public boolean doAction() {
-        getObject().applyPolicy(new ObjectIdImpl(policyField.getText()));
+        getObject().applyPolicy(new ObjectIdImpl(policyField.getText()), false);
         return true;
     }
 }

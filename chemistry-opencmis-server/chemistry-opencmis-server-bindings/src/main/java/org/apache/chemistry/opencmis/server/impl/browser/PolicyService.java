@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.server.impl.browser;
 
 import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_FILTER;
-import static org.apache.chemistry.opencmis.commons.impl.Constants.PARAM_POLICY_ID;
 
 import java.util.List;
 
@@ -99,11 +98,13 @@ public class PolicyService {
 
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
-            String policyId = getStringParameter(request, PARAM_POLICY_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            ControlParser cp = new ControlParser(request);
+            String policyId = getPolicyId(cp);
+
             if (stopBeforeService(service)) {
                 return;
             }
@@ -144,12 +145,22 @@ public class PolicyService {
 
             // get parameters
             String objectId = ((BrowserCallContextImpl) context).getObjectId();
-            String policyId = getStringParameter(request, PARAM_POLICY_ID);
             boolean succinct = getBooleanParameter(request, Constants.CONTROL_SUCCINCT, false);
             DateTimeFormat dateTimeFormat = getDateTimeFormatParameter(request);
 
             // execute
+            ControlParser cp = new ControlParser(request);
+            String policyId = getPolicyId(cp);
+
+            if (stopBeforeService(service)) {
+                return;
+            }
+
             service.removePolicy(repositoryId, policyId, objectId, null);
+
+            if (stopAfterService(service)) {
+                return;
+            }
 
             ObjectData object = getSimpleObject(service, repositoryId, objectId);
             if (object == null) {

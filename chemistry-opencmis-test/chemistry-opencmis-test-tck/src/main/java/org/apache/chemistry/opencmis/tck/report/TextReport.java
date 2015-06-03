@@ -39,7 +39,6 @@ public class TextReport extends AbstractCmisTestReport {
     public static final String NL = System.getProperty("line.separator");
 
     public TextReport() {
-
     }
 
     @Override
@@ -104,7 +103,7 @@ public class TextReport extends AbstractCmisTestReport {
         printIntend(level, writer);
         writer.write(result.getStatus() + ": " + result.getMessage());
 
-        if ((result.getStackTrace() != null) && (result.getStackTrace().length > 0)) {
+        if (result.getStackTrace() != null && result.getStackTrace().length > 0) {
             writer.write(" (" + result.getStackTrace()[0].getFileName() + ":"
                     + result.getStackTrace()[0].getLineNumber() + ")");
         }
@@ -134,9 +133,9 @@ public class TextReport extends AbstractCmisTestReport {
             writer.write("Request: " + result.getRequest() + NL);
         }
 
-        if (result.getRequest() != null) {
+        if (result.getResponse() != null) {
             printIntend(level, writer);
-            writer.write("Response: " + result.getRequest() + NL);
+            writer.write("Response: " + result.getResponse() + NL);
         }
 
         for (CmisTestResult child : result.getChildren()) {

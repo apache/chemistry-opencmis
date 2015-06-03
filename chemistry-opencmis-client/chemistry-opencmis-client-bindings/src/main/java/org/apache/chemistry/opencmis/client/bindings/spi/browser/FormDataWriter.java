@@ -127,6 +127,14 @@ public final class FormDataWriter {
         }
     }
 
+    public void addPolicyIdParameter(String policyId) {
+        if (policyId == null) {
+            return;
+        }
+
+        addParameter(Constants.CONTROL_POLICY_ID, policyId);
+    }
+
     public void addAddAcesParameters(Acl acl) {
         addAcesParameters(acl, Constants.CONTROL_ADD_ACE_PRINCIPAL, Constants.CONTROL_ADD_ACE_PERMISSION);
     }
