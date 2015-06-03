@@ -183,11 +183,19 @@ public class BaseTypesTest extends AbstractSessionTest {
                         BigInteger.valueOf(6), null);
         if (typeDefinitionList == null) {
             addResult(createResult(FAILURE, "getTypeChildren() returned nothing!"));
-        } else if (typeDefinitionList.getList() != null && !typeDefinitionList.getList().isEmpty()) {
-            addResult(createResult(
-                    FAILURE,
-                    "A getTypeChildren() call on the base types must retrun an empty list if skipCount is >= 6! The repository returned a list of "
-                            + typeDefinitionList.getList().size() + " elements."));
+        } else {
+            if (typeDefinitionList.getList() != null && !typeDefinitionList.getList().isEmpty()) {
+                addResult(createResult(
+                        FAILURE,
+                        "A getTypeChildren() call on the base types must retrun an empty list if skipCount is >= 6! The repository returned a list of "
+                                + typeDefinitionList.getList().size() + " elements."));
+            }
+
+            if (Boolean.TRUE.equals(typeDefinitionList.hasMoreItems())) {
+                addResult(createResult(
+                        FAILURE,
+                        "A getTypeChildren() call on the base types must retrun an empty list if skipCount is >= 6! The repository returned hasMoreItems == true."));
+            }
         }
 
         // test getTypeDescendants()

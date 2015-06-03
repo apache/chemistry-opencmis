@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -85,8 +86,17 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         } else {
             children = getTypeDescendants(context, repositoryId, typeId, BigInteger.valueOf(1), inclPropDefs, null);
         }
+
+        if (skip >= children.size()) {
+            result.setHasMoreItems(false);
+            result.setNumItems(BigInteger.valueOf(children.size()));
+            result.setList(Collections.<TypeDefinition> emptyList());
+            return result;
+        }
+
         result.setNumItems(BigInteger.valueOf(children.size()));
         result.setHasMoreItems(children.size() > max - skip);
+
         List<TypeDefinition> childrenTypes = new ArrayList<TypeDefinition>();
         ListIterator<TypeDefinitionContainer> it = children.listIterator(skip);
         if (max < 0) {
@@ -143,9 +153,10 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         return result;
     }
 
-    public TypeDefinition createType(CallContext context, String repositoryId, TypeDefinition type, ExtensionsData extension) {
+    public TypeDefinition createType(CallContext context, String repositoryId, TypeDefinition type,
+            ExtensionsData extension) {
 
-        validator.createType(context, repositoryId, type, extension);        
+        validator.createType(context, repositoryId, type, extension);
         TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         AbstractTypeDefinition newType = TypeValidator.completeType(type);
         TypeValidator.adjustTypeNamesAndId(newType);
@@ -154,8 +165,9 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
         return newType;
     }
 
-    public TypeDefinition updateType(CallContext context, String repositoryId, TypeDefinition type, ExtensionsData extension) {
-        validator.updateType(context, repositoryId, type, extension);        
+    public TypeDefinition updateType(CallContext context, String repositoryId, TypeDefinition type,
+            ExtensionsData extension) {
+        validator.updateType(context, repositoryId, type, extension);
         String typeId = type.getId();
         TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
         if (null == typeManager) {
@@ -173,7 +185,7 @@ public class InMemoryRepositoryServiceImpl extends InMemoryAbstractServiceImpl {
 
     public void deleteType(CallContext context, String repositoryId, String typeId, ExtensionsData extension) {
 
-        validator.deleteType(context, repositoryId, typeId, extension);        
+        validator.deleteType(context, repositoryId, typeId, extension);
         TypeManager typeManager = fStoreManager.getTypeManager(repositoryId);
 
         ObjectStore objectStore = fStoreManager.getObjectStore(repositoryId);
