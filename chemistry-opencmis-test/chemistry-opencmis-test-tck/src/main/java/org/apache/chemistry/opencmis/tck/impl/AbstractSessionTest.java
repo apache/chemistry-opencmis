@@ -1135,9 +1135,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
 
                 // catch creationDate and lastModificationDate
                 if (PropertyIds.CREATION_DATE.equals(propId)) {
-                    creationDate = (GregorianCalendar) prop.getFirstValue();
+                    if (prop != null) {
+                        creationDate = (GregorianCalendar) prop.getFirstValue();
+                    }
                 } else if (PropertyIds.LAST_MODIFICATION_DATE.equals(propId)) {
-                    lastModificationDate = (GregorianCalendar) prop.getFirstValue();
+                    if (prop != null) {
+                        lastModificationDate = (GregorianCalendar) prop.getFirstValue();
+                    }
                 }
             }
 
