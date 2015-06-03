@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tck.tests.types;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
@@ -172,6 +174,23 @@ public class BaseTypesTest extends AbstractSessionTest {
             }
         }
 
+        // simple getTypeChildren paging test - skipping over all base types mut
+        // return an empty list
+        TypeDefinitionList typeDefinitionList = session
+                .getBinding()
+                .getRepositoryService()
+                .getTypeChildren(session.getRepositoryInfo().getId(), null, false, BigInteger.valueOf(100),
+                        BigInteger.valueOf(6), null);
+        if (typeDefinitionList == null) {
+            addResult(createResult(FAILURE, "getTypeChildren() returned nothing!"));
+        } else if (typeDefinitionList.getList() != null && !typeDefinitionList.getList().isEmpty()) {
+            addResult(createResult(
+                    FAILURE,
+                    "A getTypeChildren() call on the base types must retrun an empty list if skipCount is >= 6! The repository returned a list of "
+                            + typeDefinitionList.getList().size() + " elements."));
+        }
+
+        // test getTypeDescendants()
         int numOfTypes = runTypeChecks(session, session.getTypeDescendants(null, -1, true));
 
         addResult(createInfoResult("Checked " + numOfTypes + " type definitions."));
