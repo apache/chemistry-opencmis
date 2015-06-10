@@ -848,6 +848,12 @@ public final class TypeDefinitionFactory {
             }
         }
 
+        if (skipCountInt >= targetList.size()) {
+            result.setHasMoreItems(false);
+            result.setNumItems(BigInteger.valueOf(targetList.size()));
+            return result;
+        }
+
         Collections.sort(targetList, new Comparator<TypeDefinition>() {
             public int compare(TypeDefinition td1, TypeDefinition td2) {
                 String pid1 = td1.getParentTypeId();
