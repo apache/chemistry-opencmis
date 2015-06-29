@@ -18,12 +18,18 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 public class WhitespaceInNameTest extends AbstractSessionTest {
@@ -55,7 +61,7 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
         String name = "leading.txt";
 
         try {
-            Document doc = createDocument(session, testFolder, " " + name, "");
+            Document doc = createDocumentWithoutChecks(testFolder, " " + name);
 
             if (doc.getName().equals(" " + name)) {
                 addResult(createInfoResult("Repository does supports document names with a leading space."));
@@ -76,7 +82,7 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
         String name = "trailing.txt";
 
         try {
-            Document doc = createDocument(session, testFolder, name + " ", "");
+            Document doc = createDocumentWithoutChecks(testFolder, name + " ");
 
             if (doc.getName().equals(name + " ")) {
                 addResult(createInfoResult("Repository does supports document names with a trailing space."));
@@ -97,7 +103,7 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
         String name = "center space.txt";
 
         try {
-            Document doc = createDocument(session, testFolder, name, "");
+            Document doc = createDocumentWithoutChecks(testFolder, name);
 
             if (doc.getName().equals(name)) {
                 addResult(createInfoResult("Repository does supports document names with a space."));
@@ -118,7 +124,7 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
         String name = "twocenter  spaces.txt";
 
         try {
-            Document doc = createDocument(session, testFolder, name, "");
+            Document doc = createDocumentWithoutChecks(testFolder, name);
 
             if (doc.getName().equals(name)) {
                 addResult(createInfoResult("Repository does supports document names with more than one successive spaces."));
@@ -135,5 +141,20 @@ public class WhitespaceInNameTest extends AbstractSessionTest {
             addResult(createInfoResult("Repository does not support document names with a space. Exception: "
                     + e.toString()));
         }
+    }
+
+    private Document createDocumentWithoutChecks(Folder parent, String name) {
+        // prepare properties
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.NAME, name);
+        properties.put(PropertyIds.OBJECT_TYPE_ID, getDocumentTestTypeId());
+
+        // prepare empty content
+        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.ZERO, "text/plain",
+                new ByteArrayInputStream(new byte[0]));
+
+        // create the document
+        return parent.createDocument(properties, contentStream, null, null, null, null, SELECT_ALL_NO_CACHE_OC);
+
     }
 }
