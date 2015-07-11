@@ -174,7 +174,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
         }
 
-        ObjectServicePort port = portProvider.getObjectServicePort(CmisVersion.CMIS_1_1, "createItem");
+        ObjectServicePort port = portProvider.getObjectServicePort(CmisVersion.CMIS_1_1, "");
 
         try {
             javax.xml.ws.Holder<String> objectId = new javax.xml.ws.Holder<String>();

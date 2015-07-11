@@ -61,6 +61,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>junit:junit</exclude>
+                <exclude>org.apache.cxf:*</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -85,7 +86,7 @@
             <excludes>
                 <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
                 <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>org.apache.cxf:*</exclude>
+                <exclude>org.jvnet.mimepull:mimepull</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

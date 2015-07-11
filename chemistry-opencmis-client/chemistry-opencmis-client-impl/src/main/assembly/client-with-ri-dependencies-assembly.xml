@@ -35,6 +35,10 @@
             <useProjectArtifact></useProjectArtifact>
             <unpack>false</unpack>
             <scope>runtime</scope>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes>
+                <exclude>org.apache.cxf</exclude>
+            </excludes>
         </dependencySet>
         <dependencySet>
             <useProjectArtifact></useProjectArtifact>
@@ -42,7 +46,7 @@
             <scope>provided</scope>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>org.apache.cxf</exclude>
+                <exclude>org.osgi:org.osgi.core</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

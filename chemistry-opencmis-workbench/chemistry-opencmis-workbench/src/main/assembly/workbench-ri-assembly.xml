@@ -61,6 +61,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>junit:junit</exclude>
+                <exclude>org.apache.cxf:*</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
@@ -82,7 +83,6 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
-                <exclude>org.apache.cxf:*</exclude>
                 <exclude>org.apache.axis2:*</exclude>
             </excludes>
         </dependencySet>

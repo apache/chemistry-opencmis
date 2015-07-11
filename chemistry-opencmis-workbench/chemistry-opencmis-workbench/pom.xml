@@ -173,7 +173,7 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/workbench-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/workbench-ri-assembly.xml</descriptor>
-                                <descriptor>src/main/assembly/workbench-cxf-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/workbench-jre-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/workbench-axis2-assembly.xml</descriptor>  
                             </descriptors>
                         </configuration>
@@ -311,19 +311,16 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
             <version>${cxf.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-policy</artifactId>
             <version>${cxf.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Axis2 -->
         <dependency>

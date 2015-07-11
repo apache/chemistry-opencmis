@@ -18,37 +18,13 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisAccessControlListType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisBulkUpdateType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisContentStreamType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectIdAndChangeTokenType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisPropertiesType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectServicePort;
 
 @WebService(name = "ObjectServicePort", targetNamespace = "http://docs.oasis-open.org/ns/cmis/ws/200908/")
 @XmlSeeAlso({ ObjectFactory.class })
 public interface ObjectServicePort10 extends ObjectServicePort {
-
-    @WebMethod(action = "createItem", exclude = true)
-    void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
-            CmisAccessControlListType addACEs, CmisAccessControlListType removeACEs,
-            Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException;
-
-    @WebMethod(action = "bulkUpdateProperties", exclude = true)
-    void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
-            Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
-            throws CmisException;
-
-    @WebMethod(action = "appendContentStream", exclude = true)
-    void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
-            Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
-            throws CmisException;
 }

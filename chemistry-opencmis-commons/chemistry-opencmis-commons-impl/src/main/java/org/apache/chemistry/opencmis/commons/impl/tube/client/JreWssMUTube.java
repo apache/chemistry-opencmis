@@ -30,6 +30,7 @@ import com.sun.xml.internal.ws.api.SOAPVersion;
 import com.sun.xml.internal.ws.api.WSBinding;
 import com.sun.xml.internal.ws.api.message.Header;
 import com.sun.xml.internal.ws.api.message.HeaderList;
+import com.sun.xml.internal.ws.api.message.Message;
 import com.sun.xml.internal.ws.api.message.Packet;
 import com.sun.xml.internal.ws.api.pipe.NextAction;
 import com.sun.xml.internal.ws.api.pipe.Tube;
@@ -59,7 +60,15 @@ public class JreWssMUTube extends AbstractJreWssTube {
             return super.processResponse(response);
         }
 
-        Object headersObject = response.getMessage().getHeaders();
+        Object headersObject = null;
+        Message message = response.getMessage();
+
+        try {
+            Method m = message.getClass().getMethod("getHeaders");
+            headersObject = m.invoke(new Object[0]);
+        } catch (Exception e) {
+            throw new CmisRuntimeException("Could not mark WSSE header as understood.", e);
+        }
 
         if (headersObject instanceof HeaderList) {
             HeaderList headers = (HeaderList) headersObject;

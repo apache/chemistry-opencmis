@@ -113,29 +113,32 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jvnet.jax-ws-commons</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf.version}</version>
                 <executions>
                     <execution>
+                        <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>wsimport</goal>
+                            <goal>wsdl2java</goal>
                         </goals>
                         <configuration>
-                            <wsdlDirectory>${project.basedir}/src/main/resources/wsdl/cmis11</wsdlDirectory>
-                            <wsdlFiles>
-                                <wsdlFile>CMISWS-Service.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <packageName>org.apache.chemistry.opencmis.commons.impl.jaxb</packageName>
-                            <destdir />
-                            <sourceDestDir>${project.basedir}/target/generated</sourceDestDir>
-                            <extension>true</extension>
-                            <target>2.1</target>
+                            <sourceRoot>${project.basedir}/target/generated</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${project.basedir}/src/main/resources/wsdl/cmis11/CMISWS-Service.wsdl</wsdl>
+                                    <extraargs>
+                        	            <extraarg>-verbose</extraarg>
+                        	            <extraarg>-p</extraarg>
+                        	            <extraarg>org.apache.chemistry.opencmis.commons.impl.jaxb</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>

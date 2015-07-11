@@ -18,29 +18,13 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
 
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisExtensionType;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisTypeDefinitionType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.ObjectFactory;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.RepositoryServicePort;
 
 @WebService(name = "RepositoryServicePort", targetNamespace = "http://docs.oasis-open.org/ns/cmis/ws/200908/")
 @XmlSeeAlso({ ObjectFactory.class })
 public interface RepositoryServicePort10 extends RepositoryServicePort {
-
-    @WebMethod(action = "createType", exclude = true)
-    void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
-            throws CmisException;
-
-    @WebMethod(action = "updateType", exclude = true)
-    void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
-            throws CmisException;
-
-    @WebMethod(action = "deleteType", exclude = true)
-    void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension) throws CmisException;
 }

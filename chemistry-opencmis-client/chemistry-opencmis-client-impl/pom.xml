@@ -84,7 +84,7 @@
                            <descriptors>
                                <descriptor>src/main/assembly/client-with-dependencies-assembly.xml</descriptor>
                                <descriptor>src/main/assembly/client-with-ri-dependencies-assembly.xml</descriptor>
-                               <descriptor>src/main/assembly/client-with-cxf-dependencies-assembly.xml</descriptor>
+                               <descriptor>src/main/assembly/client-with-jre-dependencies-assembly.xml</descriptor>
                            </descriptors>
                        </configuration>
                    </execution>
@@ -120,6 +120,22 @@
             <version>${osgi.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- CXF -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-policy</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
         <!-- Sun RI -->
         <dependency>
             <groupId>org.jvnet.mimepull</groupId>
@@ -154,25 +170,6 @@
                     <artifactId>mimepull</artifactId>	 
                 </exclusion>	 
             </exclusions>
-        </dependency>
-        <!-- CXF -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${cxf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>${cxf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-policy</artifactId>
-            <version>${cxf.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Test -->
         <dependency>

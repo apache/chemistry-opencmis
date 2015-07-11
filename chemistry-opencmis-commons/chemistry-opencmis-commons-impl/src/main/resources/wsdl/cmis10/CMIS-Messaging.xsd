@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-	<!--
-		Licensed under the Apache License, Version 2.0 (the "License"); you
-		may not use this file except in compliance with the License. You may
-		obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-		applicable law or agreed to in writing, software distributed under the
-		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-		CONDITIONS OF ANY KIND, either express or implied. See the License for
-		the specific language governing permissions and limitations under the
-		License.
-	-->
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you 
+	may not use this file except in compliance with the License. You may obtain 
+	a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
+	required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://docs.oasis-open.org/ns/cmis/messaging/200908/"
@@ -60,11 +55,11 @@
 			<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<!-- types for WS -->
 	<xs:complexType name="cmisTypeContainer">
 		<xs:sequence>
-			<xs:element name="type" type="cmis:cmisTypeDefinitionType" 
+			<xs:element name="type" type="cmis:cmisTypeDefinitionType"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element name="children" type="cmism:cmisTypeContainer"
 				minOccurs="0" maxOccurs="unbounded" />
@@ -87,7 +82,7 @@
 		</xs:sequence>
 		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="cmisObjectInFolderContainerType">
 		<xs:sequence>
 			<xs:element name="objectInFolder" type="cmism:cmisObjectInFolderType"
@@ -97,7 +92,7 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />	
+		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
 
 	<xs:complexType name="cmisObjectListType">
@@ -111,33 +106,33 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />		
+		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="cmisObjectInFolderType">
 		<xs:sequence>
-			<xs:element name="object" type="cmis:cmisObjectType" 
-				minOccurs="1" maxOccurs="1"/>
+			<xs:element name="object" type="cmis:cmisObjectType"
+				minOccurs="1" maxOccurs="1" />
 			<xs:element name="pathSegment" type="xs:string" minOccurs="0"
 				maxOccurs="1" />
 			<xs:any namespace="##other" processContents="lax" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />		
+		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
 
 	<xs:complexType name="cmisObjectParentsType">
 		<xs:sequence>
-			<xs:element name="object" type="cmis:cmisObjectType" 
-				minOccurs="1" maxOccurs="1"/>
-			<xs:element name="relativePathSegment" type="xs:string" minOccurs="0"
-				maxOccurs="1" />
+			<xs:element name="object" type="cmis:cmisObjectType"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="relativePathSegment" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
 			<xs:any namespace="##other" processContents="lax" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
-		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" /> 
+		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="cmisObjectInFolderListType">
 		<xs:sequence>
 			<xs:element name="objects" type="cmism:cmisObjectInFolderType"
@@ -151,13 +146,13 @@
 		</xs:sequence>
 		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="cmisRepositoryEntryType">
 		<xs:sequence>
-			<xs:element name="repositoryId" type="xs:string" minOccurs="1"
-				maxOccurs="1" />
-			<xs:element name="repositoryName" type="xs:string" minOccurs="1"
-				maxOccurs="1" />
+			<xs:element name="repositoryId" type="xs:string"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="repositoryName" type="xs:string"
+				minOccurs="1" maxOccurs="1" />
 			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
 				processContents="lax" />
 		</xs:sequence>
@@ -181,17 +176,17 @@
 		<xs:sequence>
 			<xs:element name="ACL" type="cmis:cmisAccessControlListType"
 				minOccurs="1" maxOccurs="1" />
-			<xs:element name="exact" type="xs:boolean" 
-				minOccurs="0" maxOccurs="1"/>
+			<xs:element name="exact" type="xs:boolean" minOccurs="0"
+				maxOccurs="1" />
 			<xs:any namespace="##other" processContents="lax" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 	</xs:complexType>
-	
+
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- [Repository Services] -->
-	
+
 	<!-- getRepositories Operation -->
 	<xs:element name="getRepositories">
 		<xs:complexType>
@@ -242,8 +237,8 @@
 	<xs:element name="getRepositoryInfoResponse">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="repositoryInfo" type="cmis:cmisRepositoryInfoType" 
-					minOccurs="1" maxOccurs="1"/>
+				<xs:element name="repositoryInfo" type="cmis:cmisRepositoryInfoType"
+					minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -352,10 +347,10 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- [Navigation Services] -->
-	
+
 	<!-- getDescendants Operation -->
 	<xs:element name="getDescendants">
 		<xs:complexType>
@@ -410,7 +405,7 @@
 					maxOccurs="1" />
 				<xs:element name="depth" type="xs:integer" minOccurs="0"
 					maxOccurs="1" nillable="true" />
-					
+
 				<xs:element name="filter" type="xs:string" minOccurs="0"
 					maxOccurs="1" nillable="true" />
 				<xs:element name="includeAllowableActions" type="xs:boolean"
@@ -528,7 +523,7 @@
 		</xs:complexType>
 	</xs:element>
 
-	<!-- getObjectParents Operation-->
+	<!-- getObjectParents Operation -->
 	<xs:element name="getObjectParents">
 		<xs:complexType>
 			<xs:sequence>
@@ -657,7 +652,7 @@
 
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- [Object Services] -->
-	
+
 	<!-- createDocument Operation -->
 	<xs:element name="createDocument">
 		<xs:complexType>
@@ -672,8 +667,8 @@
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="versioningState" type="cmis:enumVersioningState"
 					minOccurs="0" maxOccurs="1" nillable="true" />
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
@@ -723,18 +718,18 @@
 				<xs:element name="sourceId" type="xs:string" minOccurs="1"
 					maxOccurs="1" />
 				<xs:element name="properties" type="cmis:cmisPropertiesType"
-					minOccurs="1" maxOccurs="1" />					
+					minOccurs="1" maxOccurs="1" />
 				<xs:element name="folderId" type="xs:string" minOccurs="0"
 					maxOccurs="1" nillable="true" />
 				<xs:element name="versioningState" type="cmis:enumVersioningState"
 					minOccurs="0" maxOccurs="1" nillable="true" />
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
-					
+
 				<xs:element name="extension" type="cmism:cmisExtensionType"
 					minOccurs="0" maxOccurs="1" nillable="true">
 					<xs:annotation>
@@ -780,8 +775,8 @@
 					minOccurs="1" maxOccurs="1" />
 				<xs:element name="folderId" type="xs:string" minOccurs="1"
 					maxOccurs="1" />
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
@@ -831,8 +826,8 @@
 				<xs:element name="properties" type="cmis:cmisPropertiesType"
 					minOccurs="1" maxOccurs="1" />
 
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
@@ -882,8 +877,8 @@
 					minOccurs="1" maxOccurs="1" />
 				<xs:element name="folderId" type="xs:string" minOccurs="0"
 					maxOccurs="1" nillable="true" />
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
@@ -922,7 +917,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<!-- getAllowableActions Operation -->
 	<xs:element name="getAllowableActions">
 		<xs:complexType>
@@ -996,8 +991,8 @@
 				<xs:element name="objectId" type="xs:string" minOccurs="1"
 					maxOccurs="1" />
 
-				<xs:element name="filter" type="xs:string" 
-					minOccurs="0" maxOccurs="1" nillable="true" />
+				<xs:element name="filter" type="xs:string" minOccurs="0"
+					maxOccurs="1" nillable="true" />
 				<xs:element name="includeAllowableActions" type="xs:boolean"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="includeRelationships" type="cmis:enumIncludeRelationships"
@@ -1040,8 +1035,8 @@
 				<xs:element name="path" type="xs:string" minOccurs="1"
 					maxOccurs="1" />
 
-				<xs:element name="filter" type="xs:string" 
-					minOccurs="0" maxOccurs="1" nillable="true" />
+				<xs:element name="filter" type="xs:string" minOccurs="0"
+					maxOccurs="1" nillable="true" />
 				<xs:element name="includeAllowableActions" type="xs:boolean"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="includeRelationships" type="cmis:enumIncludeRelationships"
@@ -1052,7 +1047,7 @@
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="includeACL" type="xs:boolean"
 					minOccurs="0" maxOccurs="1" nillable="true" />
-					
+
 				<xs:element name="extension" type="cmism:cmisExtensionType"
 					minOccurs="0" maxOccurs="1" nillable="true">
 					<xs:annotation>
@@ -1060,7 +1055,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -1089,7 +1084,7 @@
 					maxOccurs="1" nillable="true" />
 				<xs:element name="length" type="xs:integer" minOccurs="0"
 					maxOccurs="1" nillable="true" />
-					
+
 				<xs:element name="extension" type="cmism:cmisExtensionType"
 					minOccurs="0" maxOccurs="1" nillable="true">
 					<xs:annotation>
@@ -1097,7 +1092,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -1120,15 +1115,13 @@
 					minOccurs="1" maxOccurs="1" />
 				<xs:element name="objectId" type="xs:string" minOccurs="1"
 					maxOccurs="1" />
-				<!--
-					if objectId is present in the properties the value must match this
-					objectId
-				-->
+				<!-- if objectId is present in the properties the value must match this 
+					objectId -->
 				<xs:element name="changeToken" type="xs:string"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="properties" type="cmis:cmisPropertiesType"
 					minOccurs="1" maxOccurs="1" />
-					
+
 				<xs:element name="extension" type="cmism:cmisExtensionType"
 					minOccurs="0" maxOccurs="1" nillable="true">
 					<xs:annotation>
@@ -1136,7 +1129,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -1157,7 +1150,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -1378,7 +1371,7 @@
 					maxOccurs="1" />
 				<xs:element name="changeToken" type="xs:string"
 					minOccurs="0" maxOccurs="1" />
-				
+
 				<xs:element name="extension" type="cmism:cmisExtensionType"
 					minOccurs="0" maxOccurs="1" nillable="true">
 					<xs:annotation>
@@ -1392,9 +1385,9 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!--[Multi-filing Services]-->
+	<!--[Multi-filing Services] -->
 
 	<!-- addObjectToFolder Operation -->
 	<xs:element name="addObjectToFolder">
@@ -1432,7 +1425,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -1479,10 +1472,10 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	<!-- [Discovery Services] -->
-	
+
 	<!-- query Operation -->
 	<xs:element name="query">
 		<xs:complexType>
@@ -1516,7 +1509,6 @@
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
-			<xs:attributeGroup ref="cmis:cmisUndefinedAttribute" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="queryResponse">
@@ -1674,8 +1666,8 @@
 				<xs:element name="checkinComment" type="xs:string"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 
-				<xs:element name="policies" type="xs:string"
-					minOccurs="0" maxOccurs="unbounded" nillable="true" />
+				<xs:element name="policies" type="xs:string" minOccurs="0"
+					maxOccurs="unbounded" nillable="true" />
 				<xs:element name="addACEs" type="cmis:cmisAccessControlListType"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="removeACEs" type="cmis:cmisAccessControlListType"
@@ -1720,8 +1712,8 @@
 			<xs:sequence>
 				<xs:element name="repositoryId" type="xs:string"
 					minOccurs="1" maxOccurs="1" />
-				<xs:element name="objectId" type="xs:string"
-					minOccurs="1" maxOccurs="1" />
+				<xs:element name="objectId" type="xs:string" minOccurs="1"
+					maxOccurs="1" />
 				<xs:element name="major" type="xs:boolean" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element name="filter" type="xs:string" minOccurs="0"
@@ -1759,8 +1751,8 @@
 					maxOccurs="1" />
 				<xs:element name="major" type="xs:boolean" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="filter" type="xs:string" 
-					minOccurs="0" maxOccurs="1" nillable="true" />
+				<xs:element name="filter" type="xs:string" minOccurs="0"
+					maxOccurs="1" nillable="true" />
 				<xs:element name="includeAllowableActions" type="xs:boolean"
 					minOccurs="0" maxOccurs="1" nillable="true" />
 				<xs:element name="includeRelationships" type="cmis:enumIncludeRelationships"
@@ -1800,8 +1792,8 @@
 			<xs:sequence>
 				<xs:element name="repositoryId" type="xs:string"
 					minOccurs="1" maxOccurs="1" />
-				<xs:element name="objectId" type="xs:string"
-					minOccurs="1" maxOccurs="1" />
+				<xs:element name="objectId" type="xs:string" minOccurs="1"
+					maxOccurs="1" />
 
 				<xs:element name="filter" type="xs:string" minOccurs="0"
 					maxOccurs="1" nillable="true" />
@@ -1831,7 +1823,7 @@
 	</xs:element>
 
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!--[Relationship Services]-->
+	<!--[Relationship Services] -->
 
 	<!-- getRelationships Operation -->
 	<xs:element name="getObjectRelationships">
@@ -1881,7 +1873,7 @@
 	</xs:element>
 
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	<!--[Policy Services]-->
+	<!--[Policy Services] -->
 
 	<!-- applyPolicy Operation -->
 	<xs:element name="applyPolicy">
@@ -2029,9 +2021,9 @@
 				<xs:element name="ACL" type="cmism:cmisACLType"
 					minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
-		</xs:complexType>	
+		</xs:complexType>
 	</xs:element>
-	
+
 	<!-- applyACL Operation -->
 	<xs:element name="applyACL">
 		<xs:complexType>
@@ -2054,7 +2046,7 @@
 							This is an extension element to hold any
 							repository or
 							vendor-specific extensions
-					</xs:documentation>
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>

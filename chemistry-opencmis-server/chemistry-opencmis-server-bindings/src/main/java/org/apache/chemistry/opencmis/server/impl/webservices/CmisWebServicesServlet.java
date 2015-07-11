@@ -21,7 +21,6 @@ package org.apache.chemistry.opencmis.server.impl.webservices;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,7 +30,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -41,16 +41,13 @@ import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.transport.servlet.CXFServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.xml.ws.api.WSFeatureList;
-import com.sun.xml.ws.developer.StreamingAttachmentFeature;
-import com.sun.xml.ws.transport.http.servlet.ServletAdapter;
-import com.sun.xml.ws.transport.http.servlet.WSServlet;
-import com.sun.xml.ws.transport.http.servlet.WSServletDelegate;
-
-public class CmisWebServicesServlet extends WSServlet {
+public class CmisWebServicesServlet extends CXFServlet {
 
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
     public static final String CMIS_VERSION = "org.apache.chemistry.opencmis.cmisVersion";
@@ -117,43 +114,47 @@ public class CmisWebServicesServlet extends WSServlet {
     }
 
     @Override
-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         // set CMIS version
         request.setAttribute(CMIS_VERSION, cmisVersion);
 
-        // handle GET requests
-        if (request.getMethod().equals("GET")) {
-            UrlBuilder baseUrl = compileBaseUrl(request, response);
+        try {
+            // handle GET requests
+            if (request.getMethod().equals("GET")) {
+                UrlBuilder baseUrl = compileBaseUrl(request, response);
 
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                String doc = docs.get(queryString.toLowerCase(Locale.ENGLISH));
-                if (doc != null) {
-                    printXml(request, response, doc, baseUrl);
-                    return;
+                String queryString = request.getQueryString();
+                if (queryString != null) {
+                    String doc = docs.get(queryString.toLowerCase(Locale.ENGLISH));
+                    if (doc != null) {
+                        printXml(request, response, doc, baseUrl);
+                        return;
+                    }
                 }
+
+                printPage(request, response, baseUrl);
+                return;
             }
 
-            printPage(request, response, baseUrl);
-            return;
-        }
+            // handle other non-POST requests
+            if (!request.getMethod().equals("POST")) {
+                printError(request, response, "Not a HTTP POST request.");
+                return;
+            }
 
-        // handle other non-POST requests
-        if (!request.getMethod().equals("POST")) {
-            printError(request, response, "Not a HTTP POST request.");
-            return;
-        }
+            // handle POST requests
+            ProtectionRequestWrapper requestWrapper = null;
+            try {
+                requestWrapper = new ProtectionRequestWrapper(request, MAX_SOAP_SIZE);
+            } catch (ServletException e) {
+                printError(request, response, "The request is not MTOM encoded.");
+                return;
+            }
 
-        // handle POST requests
-        ProtectionRequestWrapper requestWrapper = null;
-        try {
-            requestWrapper = new ProtectionRequestWrapper(request, MAX_SOAP_SIZE);
-        } catch (ServletException e) {
-            printError(request, response, "The request is not MTOM encoded.");
-            return;
+            super.handleRequest(requestWrapper, response);
+        } catch (IOException ioe) {
+            throw new ServletException(ioe);
         }
-
-        super.service(requestWrapper, response);
     }
 
     private void printXml(HttpServletRequest request, HttpServletResponse response, String doc, UrlBuilder baseUrl)
@@ -244,48 +245,53 @@ public class CmisWebServicesServlet extends WSServlet {
     }
 
     @Override
-    protected WSServletDelegate getDelegate(ServletConfig servletConfig) {
-        WSServletDelegate delegate = super.getDelegate(servletConfig);
+    public void loadBus(ServletConfig servletConfig) {
+        super.loadBus(servletConfig);
 
-        // set temp directory and the threshold for all services with a
-        // StreamingAttachment annotation
-        if (delegate.adapters != null) {
-            // get the CmisService factory
-            CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
-                    CmisRepositoryContextListener.SERVICES_FACTORY);
+        CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
+                CmisRepositoryContextListener.SERVICES_FACTORY);
 
-            if (factory == null) {
-                throw new CmisRuntimeException("Service factory not available! Configuration problem?");
-            }
-
-            // iterate of all adapters
-            for (ServletAdapter adapter : delegate.adapters) {
-                WSFeatureList wsfl = adapter.getEndpoint().getBinding().getFeatures();
-                for (WebServiceFeature ft : wsfl) {
-                    if (ft instanceof StreamingAttachmentFeature) {
-                        ((StreamingAttachmentFeature) ft).setDir(factory.getTempDirectory().getAbsolutePath());
-                        setMemoryThreshold(factory, (StreamingAttachmentFeature) ft);
-                    }
-                }
-            }
+        if (factory == null) {
+            throw new CmisRuntimeException("Service factory not available! Configuration problem?");
         }
 
-        return delegate;
+        Bus bus = getBus();
+        BusFactory.setDefaultBus(bus);
+        bus.setProperty("bus.io.CachedOutputStream.OutputDirectory", factory.getTempDirectory().getAbsolutePath());
+        bus.setProperty("bus.io.CachedOutputStream.Threshold", String.valueOf(factory.getMemoryThreshold()));
+        bus.setProperty("bus.io.CachedOutputStream.MaxSize", "-1");
+        if (factory.encryptTempFiles()) {
+            bus.setProperty("bus.io.CachedOutputStream.CipherTransformation", "AES/CTR/PKCS5Padding");
+        }
+
+        if (cmisVersion == CmisVersion.CMIS_1_0) {
+            publish("/RepositoryService", new RepositoryService10());
+            publish("/NavigationService", new NavigationService());
+            publish("/ObjectService", new ObjectService10());
+            publish("/VersioningService", new VersioningService());
+            publish("/RelationshipService", new RelationshipService());
+            publish("/DiscoveryService", new DiscoveryService());
+            publish("/MultiFilingService", new MultiFilingService());
+            publish("/ACLService", new AclService());
+            publish("/PolicyService", new PolicyService());
+        } else {
+            publish("/RepositoryService", new RepositoryService());
+            publish("/NavigationService", new NavigationService());
+            publish("/ObjectService", new ObjectService());
+            publish("/VersioningService", new VersioningService());
+            publish("/RelationshipService", new RelationshipService());
+            publish("/DiscoveryService", new DiscoveryService());
+            publish("/MultiFilingService", new MultiFilingService());
+            publish("/ACLService", new AclService());
+            publish("/PolicyService", new PolicyService());
+        }
     }
 
-    private void setMemoryThreshold(CmisServiceFactory factory, StreamingAttachmentFeature ft) {
-        try {
-            // JAX-WS RI 2.1
-            ft.setMemoryThreshold(factory.getMemoryThreshold());
-        } catch (NoSuchMethodError e) {
-            // JAX-WS RI 2.2
-            // see CMIS-626
-            try {
-                Method m = ft.getClass().getMethod("setMemoryThreshold", long.class);
-                m.invoke(ft, (long) factory.getMemoryThreshold());
-            } catch (Exception e2) {
-                LOG.warn("Could not set memory threshold for streaming");
-            }
-        }
+    private Endpoint publish(String adress, Object implementor) {
+        Endpoint endpoint = Endpoint.publish(adress, implementor);
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        binding.setMTOMEnabled(true);
+
+        return endpoint;
     }
 }
