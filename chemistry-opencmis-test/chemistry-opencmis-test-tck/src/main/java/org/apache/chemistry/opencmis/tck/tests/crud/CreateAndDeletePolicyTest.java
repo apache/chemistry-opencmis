@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
 import java.util.List;
@@ -59,58 +60,68 @@ public class CreateAndDeletePolicyTest extends AbstractSessionTest {
 
                 // create document and apply policy
                 Document doc = createDocument(session, testFolder, "testDocument", "Policy Test");
-                doc.applyPolicy(policy);
 
-                // check if policy has been applied
-                List<Policy> policies1 = doc.getPolicies();
-                boolean found1 = false;
-                for (Policy p : policies1) {
-                    if (p.getId().equals(policy.getId())) {
-                        found1 = true;
-                        break;
-                    }
-                }
+                if (Boolean.TRUE.equals(doc.getType().isControllablePolicy())) {
+                    doc.applyPolicy(policy);
 
-                f = createResult(FAILURE, "Policy has not been applied to document! Policy Id: " + policy.getId()
-                        + ", Doc Id: " + doc.getId());
-                addResult(assertIsTrue(found1, null, f));
-
-                // get the policies
-                List<ObjectData> policiesData2 = session.getBinding().getPolicyService()
-                        .getAppliedPolicies(session.getRepositoryInfo().getId(), doc.getId(), "*", null);
-
-                boolean found2 = false;
-                if (policiesData2 != null && !policiesData2.isEmpty()) {
-                    for (ObjectData p : policiesData2) {
+                    // check if policy has been applied
+                    List<Policy> policies1 = doc.getPolicies();
+                    boolean found1 = false;
+                    for (Policy p : policies1) {
                         if (p.getId().equals(policy.getId())) {
-                            found2 = true;
-                            break;
-                        }
-                    }
-                }
-
-                f = createResult(FAILURE,
-                        "Applied policy is not returned by the repository! Policy Id: " + policy.getId() + ", Doc Id: "
-                                + doc.getId());
-                addResult(assertIsTrue(found2, null, f));
-
-                // remove policy
-                doc.removePolicy(policy);
-
-                // check if policy has been applied
-                List<Policy> policies3 = doc.getPolicies();
-                if (policies3 != null) {
-                    boolean found3 = false;
-                    for (Policy p : policies3) {
-                        if (p.getId().equals(policy.getId())) {
-                            found3 = true;
+                            found1 = true;
                             break;
                         }
                     }
 
-                    f = createResult(FAILURE, "Policy has not been removed from document! Policy Id: " + policy.getId()
+                    f = createResult(FAILURE, "Policy has not been applied to document! Policy Id: " + policy.getId()
                             + ", Doc Id: " + doc.getId());
-                    addResult(assertIsFalse(found3, null, f));
+                    addResult(assertIsTrue(found1, null, f));
+
+                    // get the policies
+                    List<ObjectData> policiesData2 = session.getBinding().getPolicyService()
+                            .getAppliedPolicies(session.getRepositoryInfo().getId(), doc.getId(), "*", null);
+
+                    boolean found2 = false;
+                    if (policiesData2 != null && !policiesData2.isEmpty()) {
+                        for (ObjectData p : policiesData2) {
+                            if (p.getId().equals(policy.getId())) {
+                                found2 = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    f = createResult(FAILURE,
+                            "Applied policy is not returned by the repository! Policy Id: " + policy.getId()
+                                    + ", Doc Id: " + doc.getId());
+                    addResult(assertIsTrue(found2, null, f));
+
+                    // remove policy
+                    doc.removePolicy(policy);
+
+                    // check if policy has been applied
+                    List<Policy> policies3 = doc.getPolicies();
+                    if (policies3 != null) {
+                        boolean found3 = false;
+                        for (Policy p : policies3) {
+                            if (p.getId().equals(policy.getId())) {
+                                found3 = true;
+                                break;
+                            }
+                        }
+
+                        f = createResult(FAILURE,
+                                "Policy has not been removed from document! Policy Id: " + policy.getId()
+                                        + ", Doc Id: " + doc.getId());
+                        addResult(assertIsFalse(found3, null, f));
+                    }
+                } else {
+                    addResult(createResult(
+                            INFO,
+                            "Document type "
+                                    + doc.getType().getId()
+                                    + " does not allow applying and removing policies. Choose a different document type for this test."));
                 }
 
                 // delete document
