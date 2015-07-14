@@ -68,6 +68,7 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.icons.BaseTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.CreateTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.DeleteTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.ReloadIcon;
 import org.apache.chemistry.opencmis.workbench.icons.SaveTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.TypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.UpdateTypeIcon;
@@ -120,8 +121,10 @@ public class TypesFrame extends JFrame {
         JMenuItem menuItem;
 
         // -- reload -.
-        toolbarButton[BUTTON_RELOAD] = new JButton("Reload");
-
+        toolbarButton[BUTTON_RELOAD] = new JButton("Reload", new ReloadIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_RELOAD].setDisabledIcon(new ReloadIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_RELOAD].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -518,13 +521,13 @@ public class TypesFrame extends JFrame {
 
             typesTree.setSelectionRow(0);
         } catch (Exception ex) {
-            ClientHelper.showError(null, ex);
-
             // clear tree
             TreeModel model = typesTree.getModel();
             if (model instanceof DefaultTreeModel) {
                 ((DefaultTreeModel) model).setRoot(null);
             }
+
+            ClientHelper.showError(null, ex);
 
             return;
         } finally {
