@@ -152,7 +152,7 @@ public abstract class CreateDialog extends JDialog {
         if (propertyDefinitions != null) {
             int row = 0;
             for (PropertyDefinition<?> definition : propertyDefinitions.values()) {
-                if (definition.isRequired()
+                if (Boolean.TRUE.equals(definition.isRequired())
                         && !(PropertyIds.NAME.equals(definition.getId())
                                 || PropertyIds.OBJECT_TYPE_ID.equals(definition.getId())
                                 || PropertyIds.SOURCE_ID.equals(definition.getId()) || PropertyIds.TARGET_ID
