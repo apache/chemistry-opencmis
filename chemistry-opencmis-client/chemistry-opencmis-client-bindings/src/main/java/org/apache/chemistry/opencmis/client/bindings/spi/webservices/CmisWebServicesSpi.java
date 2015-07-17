@@ -87,7 +87,8 @@ public class CmisWebServicesSpi implements CmisSpi {
                 String providerPackage = provider.getClass().getPackage().getName();
 
                 if (providerPackage.startsWith("com.sun.xml.internal.ws.spi")) {
-                    portProvider = new SunJREPortProvider();
+                    throw new CmisRuntimeException(
+                            "JRE JAX-WS implementation not supported anymore. Please use Apache CXF.");
                 } else if (providerPackage.startsWith("com.sun.xml.ws.spi")) {
                     portProvider = new SunRIPortProvider();
                 } else if (providerPackage.startsWith("org.apache.cxf.jaxws")) {
@@ -99,7 +100,8 @@ public class CmisWebServicesSpi implements CmisSpi {
                             + SessionParameter.WEBSERVICES_JAXWS_IMPL + " to specify one.");
                 }
             } else if (JAXWS_IMPL_JRE.equals(jaxwsImpl)) {
-                portProvider = new SunJREPortProvider();
+                throw new CmisRuntimeException(
+                        "JRE JAX-WS implementation not supported anymore. Please use Apache CXF.");
             } else if (JAXWS_IMPL_RI.equals(jaxwsImpl)) {
                 portProvider = new SunRIPortProvider();
             } else if (JAXWS_IMPL_CXF.equals(jaxwsImpl)) {

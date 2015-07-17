@@ -19,17 +19,15 @@
 package org.apache.chemistry.opencmis.commons.impl.tube;
 
 import org.apache.chemistry.opencmis.commons.impl.tube.client.WssMUTube;
-import org.apache.chemistry.opencmis.commons.impl.tube.server.WssTube;
 
 import com.sun.xml.ws.api.pipe.ClientTubeAssemblerContext;
-import com.sun.xml.ws.api.pipe.ServerTubeAssemblerContext;
 import com.sun.xml.ws.api.pipe.Tube;
-import com.sun.xml.ws.api.pipe.TubelineAssembler;
+import com.sun.xml.ws.util.pipe.StandaloneTubeAssembler;
 
 /**
  * Assembler for OpenCMIS client and server tubelines.
  */
-public class OpenCMISTubeAssembler implements TubelineAssembler {
+public class OpenCMISTubeAssembler extends StandaloneTubeAssembler {
 
     public Tube createClient(ClientTubeAssemblerContext context) {
         Tube head = context.createTransportTube();
@@ -40,15 +38,4 @@ public class OpenCMISTubeAssembler implements TubelineAssembler {
         return context.createHandlerTube(head);
     }
 
-    public Tube createServer(ServerTubeAssemblerContext context) {
-        Tube head = context.getTerminalTube();
-        head = new WssTube(head);
-        head = context.createHandlerTube(head);
-        head = context.createMonitoringTube(head);
-        head = context.createServerMUTube(head);
-        head = context.createWsaTube(head);
-        head = context.createSecurityTube(head);
-
-        return head;
-    }
 }
