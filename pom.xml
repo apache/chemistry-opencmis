@@ -226,7 +226,7 @@
         <site.staging.url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</site.staging.url>
         <parentBasedir>${project.basedir}</parentBasedir>
 
-        <woodstox.version>4.4.0</woodstox.version>
+        <woodstox.version>4.4.1</woodstox.version>
         <osgi.version>5.0.0</osgi.version>
         <felix.plugin.version>2.3.7</felix.plugin.version>
         <junit.version>4.11</junit.version>

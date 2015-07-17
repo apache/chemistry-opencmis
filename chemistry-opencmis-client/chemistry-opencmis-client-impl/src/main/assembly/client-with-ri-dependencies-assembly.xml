@@ -47,6 +47,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.osgi:org.osgi.core</exclude>
+                <exclude>org.apache.axis2:axis2-jaxws</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>
