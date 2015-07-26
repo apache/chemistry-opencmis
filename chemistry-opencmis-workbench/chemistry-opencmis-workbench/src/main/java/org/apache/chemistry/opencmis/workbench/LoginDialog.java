@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import javax.swing.BorderFactory;
@@ -64,6 +65,7 @@ public class LoginDialog extends JDialog {
     private JTabbedPane loginTabs;
     private BasicLoginTab basicLoginTab;
     private ExpertLoginTab expertLoginTab;
+    private DiscoverLoginTab discoverLoginTab;
     private JButton loadRepositoryButton;
     private JButton loginButton;
     private JComboBox<Repository> repositoryBox;
@@ -112,6 +114,18 @@ public class LoginDialog extends JDialog {
         loadRepositoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 repositoryBox.removeAllItems();
+
+                if (currentTab == discoverLoginTab) {
+                    Map<String, String> paramters = currentTab.getSessionParameters();
+                    if (paramters == null) {
+                        JOptionPane.showMessageDialog(LoginDialog.this, "Select an endpoint.", "No endpoint selected",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        expertLoginTab.setSessionParameters(paramters);
+                        loginTabs.setSelectedComponent(expertLoginTab);
+                    }
+                    return;
+                }
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -214,6 +228,9 @@ public class LoginDialog extends JDialog {
 
         expertLoginTab = new ExpertLoginTab();
         loginTabs.addTab(expertLoginTab.getTabTitle(), expertLoginTab);
+
+        discoverLoginTab = new DiscoverLoginTab();
+        loginTabs.addTab(discoverLoginTab.getTabTitle(), discoverLoginTab);
 
         loginTabs.setSelectedIndex(0);
 

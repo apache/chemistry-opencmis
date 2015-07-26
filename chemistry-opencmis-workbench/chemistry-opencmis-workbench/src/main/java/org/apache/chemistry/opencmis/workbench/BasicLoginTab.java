@@ -51,6 +51,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     public static final String SYSPROP_READ_TIMEOUT = ClientSession.WORKBENCH_PREFIX + "readtimeout";
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
+    public static final String SYSPROP_CSRF_HEADER = ClientSession.WORKBENCH_PREFIX + "csrfheader";
 
     private JTextField urlField;
     private JRadioButton bindingAtomButton;
@@ -68,6 +69,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private JRadioButton clientCompressionOffButton;
     private JRadioButton cookiesOnButton;
     private JRadioButton cookiesOffButton;
+    private JTextField csrfHeaderField;
     private JFormattedTextField connectTimeoutField;
     private JFormattedTextField readTimeoutField;
 
@@ -98,6 +100,9 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         createCookieButtons(this);
 
+        csrfHeaderField = createTextField(this, "CSRF Header:");
+        csrfHeaderField.setText(System.getProperty(SYSPROP_CSRF_HEADER, ""));
+
         connectTimeoutField = createIntegerField(this, "Connect timeout (secs):");
         try {
             connectTimeoutField.setValue(Long.parseLong(System.getProperty(SYSPROP_CONN_TIMEOUT, "30")));
@@ -112,7 +117,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
             readTimeoutField.setValue(600);
         }
 
-        makeCompactGrid(this, 10, 2, 5, 10, 5, 5);
+        makeCompactGrid(this, 11, 2, 5, 10, 5, 5);
     }
 
     private void createBindingButtons(Container pane) {
@@ -272,7 +277,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
                 compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected(),
-                connectTimeout, readTimeout);
+                csrfHeaderField.getText(), connectTimeout, readTimeout);
     }
 
     @Override

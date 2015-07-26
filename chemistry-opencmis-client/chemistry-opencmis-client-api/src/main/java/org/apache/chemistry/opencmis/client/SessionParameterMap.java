@@ -289,7 +289,14 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         }
 
         setUserAndPassword(user, password);
+        setBasicAuthentication();
+    }
 
+    /**
+     * Turns basic authentication on and UsernameToken authentication off if the
+     * standard authentication provider is used.
+     */
+    public void setBasicAuthentication() {
         put(SessionParameter.AUTH_HTTP_BASIC, true);
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
         put(SessionParameter.AUTH_OAUTH_BEARER, false);
@@ -316,7 +323,19 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         }
 
         setUserAndPassword(user, password);
+        setUsernameTokenAuthentication(basicAuth);
+    }
 
+    /**
+     * Turns UsernameToken authentication on for the Web Services binding if the
+     * standard authentication provider is used.
+     * 
+     * @param basicAuth
+     *            {@code true} if basic authentication should be used in
+     *            addition to the UsernameToken authentication (required by some
+     *            servers), {@code false} otherwise
+     */
+    public void setUsernameTokenAuthentication(boolean basicAuth) {
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, true);
         put(SessionParameter.AUTH_HTTP_BASIC, basicAuth);
         put(SessionParameter.AUTH_OAUTH_BEARER, false);
@@ -341,10 +360,20 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         }
 
         setUserAndPassword(user, password);
+        setNtlmAuthentication();
+    }
 
+    /**
+     * Turns NTLM authentication on and basic authentication and UsernameToken
+     * authentication off.
+     * <p>
+     * <em>Works only in single user environments and only with NTLMv1!</em>
+     */
+    public void setNtlmAuthentication() {
         put(SessionParameter.AUTH_HTTP_BASIC, false);
         put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
         put(SessionParameter.AUTH_OAUTH_BEARER, false);
+
         put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                 "org.apache.chemistry.opencmis.client.bindings.spi.NTLMAuthenticationProvider");
     }
@@ -401,10 +430,6 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
             throw new IllegalArgumentException("Client ID must be set!");
         }
 
-        put(SessionParameter.AUTH_HTTP_BASIC, false);
-        put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
-        put(SessionParameter.AUTH_OAUTH_BEARER, false);
-
         put(SessionParameter.OAUTH_TOKEN_ENDPOINT, tokenEntpoint);
         put(SessionParameter.OAUTH_CLIENT_ID, clientId);
 
@@ -426,8 +451,7 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
             put(SessionParameter.OAUTH_REDIRECT_URI, redirectUri);
         }
 
-        put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-                "org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider");
+        setOAuthAuthentication();
     }
 
     /**
@@ -460,10 +484,6 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
             throw new IllegalArgumentException("Client ID must be set!");
         }
 
-        put(SessionParameter.AUTH_HTTP_BASIC, false);
-        put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
-        put(SessionParameter.AUTH_OAUTH_BEARER, false);
-
         put(SessionParameter.OAUTH_TOKEN_ENDPOINT, tokenEntpoint);
         put(SessionParameter.OAUTH_CLIENT_ID, clientId);
 
@@ -490,6 +510,18 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
         } else {
             put(SessionParameter.OAUTH_EXPIRATION_TIMESTAMP, expirationTimestamp);
         }
+
+        setOAuthAuthentication();
+    }
+
+    /**
+     * Turns OAuth 2.0 authentication on and basic authentication and
+     * UsernameToken authentication off.
+     */
+    public void setOAuthAuthentication() {
+        put(SessionParameter.AUTH_HTTP_BASIC, false);
+        put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
 
         put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
                 "org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider");
@@ -578,6 +610,20 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
      */
     public void setClientCompression(boolean compression) {
         put(SessionParameter.CLIENT_COMPRESSION, compression);
+    }
+
+    /**
+     * Sets the CSRF HTTP header
+     * 
+     * @param csrfHeader
+     *            name of the CSRF header
+     */
+    public void setCsrfHeader(String csrfHeader) {
+        if (csrfHeader != null) {
+            put(SessionParameter.CSRF_HEADER, csrfHeader);
+        } else {
+            remove(SessionParameter.CSRF_HEADER);
+        }
     }
 
     /**

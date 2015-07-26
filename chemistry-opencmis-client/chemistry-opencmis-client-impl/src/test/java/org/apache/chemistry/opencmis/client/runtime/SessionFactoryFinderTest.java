@@ -28,6 +28,7 @@ import org.apache.chemistry.opencmis.client.SessionFactoryFinder;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.commons.endpoints.CmisAuthentication;
 import org.junit.Test;
 
 public class SessionFactoryFinderTest {
@@ -78,6 +79,10 @@ public class SessionFactoryFinderTest {
     public static class MockSessionFactory1 implements SessionFactory {
 
         public MockSessionFactory1() {
+        }
+
+        public Map<String, String> pepareSessionParameters(CmisAuthentication authentication) {
+            return null;
         }
 
         public Session createSession(Map<String, String> parameters) {

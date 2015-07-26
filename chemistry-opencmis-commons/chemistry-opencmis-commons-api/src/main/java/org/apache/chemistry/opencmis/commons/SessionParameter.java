@@ -198,6 +198,14 @@ package org.apache.chemistry.opencmis.commons;
  * <td>-</td>
  * </tr>
  * <tr>
+ * <td>{@link #CSRF_HEADER}</td>
+ * <td>CSRF Header</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>header name</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
+ * <tr>
  * <td>{@link #CONNECT_TIMEOUT}</td>
  * <td>HTTP connect timeout</td>
  * <td>AtomPub, Web Services, Browser</td>
@@ -681,6 +689,8 @@ public final class SessionParameter {
 
     public static final String PROXY_USER = "org.apache.chemistry.opencmis.binding.proxyuser";
     public static final String PROXY_PASSWORD = "org.apache.chemistry.opencmis.binding.proxypassword";
+
+    public static final String CSRF_HEADER = "org.apache.chemistry.opencmis.binding.csrfheader";
 
     // --- cache ---
 

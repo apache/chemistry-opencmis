@@ -138,9 +138,9 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
                         }
                     }
                 }
+            } else {
+                secondaryTypes = null;
             }
-        } else {
-            secondaryTypes = null;
         }
 
         // handle properties

@@ -64,6 +64,7 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
         return new SessionFactoryImpl();
     }
 
+    @Override
     public Session createSession(Map<String, String> parameters) {
         return createSession(parameters, null, null, null, null);
     }
@@ -108,6 +109,7 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
         return session;
     }
 
+    @Override
     public List<Repository> getRepositories(Map<String, String> parameters) {
         return getRepositories(parameters, null, null, null, null);
     }

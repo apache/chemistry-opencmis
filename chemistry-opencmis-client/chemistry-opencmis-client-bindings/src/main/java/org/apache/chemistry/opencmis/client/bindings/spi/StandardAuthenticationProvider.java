@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.chemistry.opencmis.client.bindings.spi.cookies.CmisCookieManager;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -48,18 +49,22 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     protected static final String WSSE_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     protected static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
     private CmisCookieManager cookieManager;
     private Map<String, List<String>> fixedHeaders = new HashMap<String, List<String>>();
+    private String csrfHeader;
+    private String csrfValue = "fetch";
 
     @Override
     public void setSession(BindingSession session) {
         super.setSession(session);
 
-        boolean sendBasicAuth = getSendBasicAuth();
-
         if (getHandleCookies() && cookieManager == null) {
             cookieManager = new CmisCookieManager(session.getSessionId());
         }
+
+        boolean sendBasicAuth = getSendBasicAuth();
 
         // basic authentication
         if (sendBasicAuth) {
@@ -94,6 +99,9 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
             fixedHeaders.put("Proxy-Authorization", createBasicAuthHeaderValue(proxyUser, proxyPassword));
         }
 
+        // CSRF header
+        csrfHeader = getCsrfHeader();
+
         // other headers
         addSessionParameterHeadersToFixedHeaders();
     }
@@ -102,12 +110,22 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     public Map<String, List<String>> getHTTPHeaders(String url) {
         Map<String, List<String>> result = new HashMap<String, List<String>>(fixedHeaders);
 
-        // cookies
-        if (cookieManager != null) {
-            Map<String, List<String>> cookies = cookieManager.get(url, result);
-            if (!cookies.isEmpty()) {
-                result.putAll(cookies);
+        lock.readLock().lock();
+        try {
+            // cookies
+            if (cookieManager != null) {
+                Map<String, List<String>> cookies = cookieManager.get(url, result);
+                if (!cookies.isEmpty()) {
+                    result.putAll(cookies);
+                }
             }
+
+            // CSRF header
+            if (csrfHeader != null && csrfValue != null) {
+                result.put(csrfHeader, Collections.singletonList(csrfValue));
+            }
+        } finally {
+            lock.readLock().unlock();
         }
 
         return result.isEmpty() ? null : result;
@@ -115,8 +133,27 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
 
     @Override
     public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
-        if (cookieManager != null) {
-            cookieManager.put(url, headers);
+        lock.writeLock().lock();
+        try {
+            // cookies
+            if (cookieManager != null) {
+                cookieManager.put(url, headers);
+            }
+
+            // CSRF header
+            if (csrfHeader != null) {
+                for (Map.Entry<String, List<String>> header : headers.entrySet()) {
+                    if (csrfHeader.equalsIgnoreCase(header.getKey())) {
+                        List<String> values = header.getValue();
+                        if (values != null && values.size() > 0) {
+                            csrfValue = values.get(0);
+                        }
+                        break;
+                    }
+                }
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -274,6 +311,16 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
      * Returns if the authentication provider should handle cookies.
      */
     protected boolean getHandleCookies() {
-        return getSession().get(SessionParameter.COOKIES, false);
+        Object value = getSession().get(SessionParameter.COOKIES);
+
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
+        } else if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        } else if (value == null) {
+            return getCsrfHeader() != null;
+        }
+
+        return false;
     }
 }

@@ -72,7 +72,8 @@ public interface SessionFactory {
      *            for parameters supported by OpenCMIS
      * 
      * 
-     * @return a {@link Session} connected to the CMIS repository
+     * @return a {@link Session} connected to the CMIS repository, never
+     *         {@code null}
      * 
      * @see org.apache.chemistry.opencmis.commons.SessionParameter
      */
@@ -89,7 +90,7 @@ public interface SessionFactory {
      *            {@link org.apache.chemistry.opencmis.commons.SessionParameter.REPOSITORY_ID}
      *            should not be set
      * 
-     * @return a list of all available repositories
+     * @return a list of all available repositories, never {@code null}
      * 
      * @see org.apache.chemistry.opencmis.commons.SessionParameter
      */

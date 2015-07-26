@@ -143,4 +143,19 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
 
         return null;
     }
+
+    /**
+     * Gets the CSRF header name.
+     * 
+     * @return the CSRF header name or {@code null} if the CSRF header name is
+     *         not set
+     */
+    protected String getCsrfHeader() {
+        Object csrfHeaderObject = getSession().get(SessionParameter.CSRF_HEADER);
+        if (csrfHeaderObject instanceof String) {
+            return (String) csrfHeaderObject;
+        }
+
+        return null;
+    }
 }
