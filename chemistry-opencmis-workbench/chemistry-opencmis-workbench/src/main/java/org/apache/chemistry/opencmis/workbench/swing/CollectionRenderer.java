@@ -35,6 +35,8 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
 
     private static final String NOT_SET_COLOR;
 
+    private boolean bold = false;
+
     static {
         Color notSetColor = UIManager.getColor("Label.disabledText");
         if (notSetColor != null) {
@@ -47,6 +49,11 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
 
     public CollectionRenderer() {
         super();
+    }
+
+    public CollectionRenderer(boolean bold) {
+        super();
+        this.bold = bold;
     }
 
     @Override
@@ -69,7 +76,8 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
         Collection<?> col = (Collection<?>) value;
 
         if (col == null || col.isEmpty()) {
-            super.setValue("<html><span><font color=" + NOT_SET_COLOR + "><i>not set</i></font></span>");
+            super.setValue("<html><span><font color=" + NOT_SET_COLOR + "><i>" + (bold ? "<b>" : "") + "not set</i>"
+                    + (bold ? "</b>" : "") + "</font></span>");
             return;
         }
 
@@ -80,6 +88,9 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
 
         for (Object o : col) {
             sb.append("<span>"); // workaround for a bug in Swing
+            if (bold) {
+                sb.append("<b>");
+            }
             if (o == null) {
                 sb.append("<i>null</i>");
             } else if (o instanceof GregorianCalendar) {
@@ -95,6 +106,9 @@ public class CollectionRenderer extends DefaultTableCellRenderer {
                 }
             } else {
                 ClientHelper.encodeHtml(sb, o.toString());
+            }
+            if (bold) {
+                sb.append("</b>");
             }
             sb.append("</span><br/>");
         }

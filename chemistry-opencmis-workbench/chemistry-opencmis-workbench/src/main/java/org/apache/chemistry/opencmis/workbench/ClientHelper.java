@@ -642,6 +642,15 @@ public final class ClientHelper {
     }
 
     public static Console openConsole(final Component parent, final ClientModel model, final URI file) {
+        return openConsole(parent, model, file, null);
+    }
+
+    public static Console openConsole(final Component parent, final ClientModel model, final String soureCode) {
+        return openConsole(parent, model, null, soureCode);
+    }
+
+    public static Console openConsole(final Component parent, final ClientModel model, final URI file,
+            final String soureCode) {
         try {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -694,7 +703,11 @@ public final class ClientHelper {
             });
             cmisMenu.add(menuItem);
 
-            console.getInputArea().setText(readFileAndRemoveHeader(file));
+            if (file != null) {
+                console.getInputArea().setText(readFileAndRemoveHeader(file));
+            } else if (soureCode != null) {
+                console.getInputArea().setText(soureCode);
+            }
 
             return console;
         } catch (Exception ex) {

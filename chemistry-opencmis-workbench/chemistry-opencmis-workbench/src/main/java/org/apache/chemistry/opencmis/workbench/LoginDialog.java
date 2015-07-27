@@ -31,7 +31,6 @@ import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 
 import javax.swing.BorderFactory;
@@ -114,18 +113,6 @@ public class LoginDialog extends JDialog {
         loadRepositoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 repositoryBox.removeAllItems();
-
-                if (currentTab == discoverLoginTab) {
-                    Map<String, String> paramters = currentTab.getSessionParameters();
-                    if (paramters == null) {
-                        JOptionPane.showMessageDialog(LoginDialog.this, "Select an endpoint.", "No endpoint selected",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        expertLoginTab.setSessionParameters(paramters);
-                        loginTabs.setSelectedComponent(expertLoginTab);
-                    }
-                    return;
-                }
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -254,6 +241,12 @@ public class LoginDialog extends JDialog {
                     }
                 }
 
+                if (loginTabs.getSelectedComponent() == discoverLoginTab) {
+                    loadRepositoryButton.setEnabled(false);
+                } else {
+                    loadRepositoryButton.setEnabled(true);
+                }
+
                 currentTab = (AbstractLoginTab) loginTabs.getSelectedComponent();
             }
         });
@@ -316,6 +309,21 @@ public class LoginDialog extends JDialog {
 
     public ClientSession getClientSession() {
         return clientSession;
+    }
+
+    public void switchToBasicTab() {
+        loginTabs.setSelectedComponent(basicLoginTab);
+    }
+
+    public void switchToExpertTab() {
+        if (currentTab.transferSessionParametersToExpertTab()) {
+            expertLoginTab.setSessionParameters(currentTab.getSessionParameters());
+        }
+        loginTabs.setSelectedComponent(expertLoginTab);
+    }
+
+    public void switchToDiscoverTab() {
+        loginTabs.setSelectedComponent(discoverLoginTab);
     }
 
     public boolean isCanceled() {

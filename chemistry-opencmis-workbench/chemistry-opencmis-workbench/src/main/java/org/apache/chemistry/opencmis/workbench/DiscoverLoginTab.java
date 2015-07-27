@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -130,10 +131,15 @@ public class DiscoverLoginTab extends AbstractLoginTab {
     }
 
     @Override
+    public boolean transferSessionParametersToExpertTab() {
+        return true;
+    }
+
+    @Override
     public Map<String, String> getSessionParameters() {
         int row = authTable.getSelectedRow();
         if (row < 0) {
-            return null;
+            return Collections.emptyMap();
         }
 
         // compile session parameters
@@ -183,6 +189,19 @@ public class DiscoverLoginTab extends AbstractLoginTab {
             }
 
             final JPopupMenu popup = new JPopupMenu();
+
+            // copy to expert login
+            JMenuItem expertLoginMenuItem = new JMenuItem("Transfer to expert login tab");
+            popup.add(expertLoginMenuItem);
+
+            expertLoginMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ((LoginDialog) SwingUtilities.getRoot(CmisAuthenticationTable.this)).switchToExpertTab();
+                }
+            });
+
+            popup.addSeparator();
 
             // copy all endpoints to clipboard
             JMenuItem allEnpointsMenuItem = new JMenuItem("Copy all endpoints to clipboard");

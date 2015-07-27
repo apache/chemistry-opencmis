@@ -86,6 +86,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private JPanel buttonPanel;
     private JButton refreshButton;
     private JButton checkButton;
+    private JButton consoleButton;
     private JPanel scriptPanel;
     private JButton scriptOpenButton;
     private JButton scriptRunButton;
@@ -126,6 +127,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     aclExactField.setText("");
                     refreshButton.setEnabled(false);
                     checkButton.setEnabled(false);
+                    consoleButton.setEnabled(false);
                     scriptPanel.setVisible(false);
                 } else {
                     try {
@@ -220,6 +222,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                         refreshButton.setEnabled(true);
                         checkButton.setEnabled(true);
+                        consoleButton.setEnabled(true);
 
                         if (object instanceof Document) {
                             String name = object.getName().toLowerCase(Locale.ENGLISH);
@@ -266,6 +269,9 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         checkButton = new JButton("Check specification compliance");
         checkButton.setEnabled(false);
         buttonPanel.add(checkButton);
+        consoleButton = new JButton("Open console");
+        consoleButton.setEnabled(false);
+        buttonPanel.add(consoleButton);
 
         scriptPanel = addComponent("", new JPanel(new BorderLayout()));
         scriptPanel.setOpaque(false);
@@ -325,6 +331,21 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
             }
         });
 
+        consoleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                    ClientHelper.openConsole(ObjectPanel.this, getClientModel(),
+                            createGroovySourceCode(getClientModel().getCurrentObject()));
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+
         scriptOpenButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -334,7 +355,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     String name = doc.getName().toLowerCase(Locale.ENGLISH);
                     if (name.endsWith(".groovy")) {
                         File file = ClientHelper.createTempFileFromDocument(doc, null);
-                        Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), null);
+                        Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), (String) null);
                         if (console != null) {
                             console.loadScriptFile(file);
                         }
@@ -379,6 +400,46 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         }
 
         return ((Document) document).getContentUrl();
+    }
+
+    private String createGroovySourceCode(CmisObject object) {
+        StringBuilder sb = new StringBuilder(512);
+
+        sb.append("import org.apache.chemistry.opencmis.commons.*\n");
+        sb.append("import org.apache.chemistry.opencmis.commons.data.*\n");
+        sb.append("import org.apache.chemistry.opencmis.commons.enums.*\n");
+        sb.append("import org.apache.chemistry.opencmis.client.api.*\n\n");
+
+        sb.append("// ");
+        sb.append(object.getName());
+        sb.append('\n');
+
+        switch (object.getBaseTypeId()) {
+        case CMIS_DOCUMENT:
+            sb.append("Document doc = (Document)");
+            break;
+        case CMIS_FOLDER:
+            sb.append("Folder folder = (Folder)");
+            break;
+        case CMIS_POLICY:
+            sb.append("Policy policy = (Policy)");
+            break;
+        case CMIS_RELATIONSHIP:
+            sb.append("Relationship rel = (Relationship)");
+            break;
+        case CMIS_ITEM:
+            sb.append("Item item = (Item)");
+            break;
+        default:
+            sb.append("CmisObject obj =");
+            break;
+        }
+
+        sb.append(" session.getObject(\"");
+        sb.append(object.getId().replaceAll("\"", "\\\""));
+        sb.append("\");\n\n");
+
+        return sb.toString();
     }
 
     private static class JTextAreaWriter extends Writer {
