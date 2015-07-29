@@ -186,6 +186,18 @@ public class CmisCookieManager implements Serializable {
         }
     }
 
+    /**
+     * Removes all cookies.
+     */
+    public void clear() {
+        lock.writeLock().lock();
+        try {
+            store.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     private static List<CmisHttpCookie> parseCookie(Map<String, List<String>> responseHeaders) {
         List<CmisHttpCookie> cookies = new ArrayList<CmisHttpCookie>();
         for (Map.Entry<String, List<String>> entry : responseHeaders.entrySet()) {

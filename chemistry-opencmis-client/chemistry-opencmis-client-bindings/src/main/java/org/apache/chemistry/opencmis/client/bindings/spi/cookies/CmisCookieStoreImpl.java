@@ -124,6 +124,10 @@ public class CmisCookieStoreImpl implements Serializable {
         return cookies;
     }
 
+    public void clear() {
+        storeList.clear();
+    }
+
     private boolean isIPAddress(String s) {
         if (s.charAt(0) == '[') {
             // IPv6
