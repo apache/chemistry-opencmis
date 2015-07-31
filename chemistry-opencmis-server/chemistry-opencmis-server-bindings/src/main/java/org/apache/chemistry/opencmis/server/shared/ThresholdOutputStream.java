@@ -661,7 +661,8 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
 
         @Override
         public boolean markSupported() {
-            return stream.markSupported();
+            // always supported for a BufferedInputStream
+            return true;
         }
 
         @Override
