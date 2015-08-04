@@ -2266,12 +2266,12 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
                 }
             }
 
-            f = createResult(WARNING, "Child has no CAN_GET_OBJECT_PARENTS allowable action! ID: " + child.getId());
-            addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
-
             if (child instanceof Folder) {
                 f = createResult(WARNING, "Child has no CAN_GET_FOLDER_PARENT allowable action! ID: " + child.getId());
                 addResult(results, assertAllowableAction(child, Action.CAN_GET_FOLDER_PARENT, null, f));
+            } else {
+                f = createResult(WARNING, "Child has no CAN_GET_OBJECT_PARENTS allowable action! ID: " + child.getId());
+                addResult(results, assertAllowableAction(child, Action.CAN_GET_OBJECT_PARENTS, null, f));
             }
         }
     }
