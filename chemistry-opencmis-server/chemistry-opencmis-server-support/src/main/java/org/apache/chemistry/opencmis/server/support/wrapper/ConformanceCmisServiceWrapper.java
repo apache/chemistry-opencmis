@@ -317,6 +317,34 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
+     * Throws an exception if the given list is {@code null} or empty or
+     * invalid.
+     */
+    protected void checkBulkUpdateList(List<BulkUpdateObjectIdAndChangeToken> list) {
+        if (list == null) {
+            throw new CmisInvalidArgumentException("Object Id list must be set!");
+        }
+
+        if (list.isEmpty()) {
+            throw new CmisInvalidArgumentException("Object Id list must not be empty!");
+        }
+
+        for (BulkUpdateObjectIdAndChangeToken entry : list) {
+            if (entry == null) {
+                throw new CmisInvalidArgumentException("Object Id list has gaps!");
+            }
+
+            if (entry.getId() == null) {
+                throw new CmisInvalidArgumentException("Object Id list contains an entry without ID!");
+            }
+
+            if (entry.getId().length() == 0) {
+                throw new CmisInvalidArgumentException("Object Id list contains an entry with an empty ID!");
+            }
+        }
+    }
+
+    /**
      * Returns <code>true</code> if <code>value</code> is {@code null}.
      */
     protected Boolean getDefaultTrue(Boolean value) {
@@ -1008,7 +1036,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
-        checkList("Object Id list", objectIdAndChangeToken);
+        checkBulkUpdateList(objectIdAndChangeToken);
         checkProperties(properties);
 
         try {
