@@ -64,6 +64,11 @@ public class RootFolderTest extends AbstractSessionTest {
             return;
         }
 
+        // check existence
+        failure = createResult(FAILURE, "Root folder doesn't exist?!");
+        addResult(assertIsTrue(session.exists(ri.getRootFolderId()), null, failure));
+
+        // check folder object
         addResult(checkObject(session, rootFolder, getAllProperties(rootFolder), "Root folder object spec compliance"));
 
         // folder and path

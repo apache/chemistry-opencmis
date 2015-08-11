@@ -84,6 +84,7 @@ import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
@@ -702,6 +703,24 @@ public class SessionImpl implements Session {
         }
 
         return (Document) result;
+    }
+
+    @Override
+    public boolean exists(ObjectId objectId) {
+        checkObjectId(objectId);
+        return exists(objectId.getId());
+    }
+
+    @Override
+    public boolean exists(String objectId) {
+        try {
+            binding.getObjectService().getObject(getRepositoryId(), objectId, "cmis:objectId", Boolean.FALSE,
+                    IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
+            return true;
+        } catch (CmisObjectNotFoundException onf) {
+            removeObjectFromCache(objectId);
+            return false;
+        }
     }
 
     @Override

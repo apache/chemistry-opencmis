@@ -620,6 +620,36 @@ public interface Session extends Serializable {
     Document getLatestDocumentVersion(String objectId, boolean major, OperationContext context);
 
     /**
+     * Checks if an object with given object ID exists in the repository and is
+     * visible for the current user.
+     * 
+     * If the object doesn't exist (anymore), it is removed from the cache.
+     * 
+     * @param objectId
+     *            object ID
+     * @return {@code true} if the object exists in the repository,
+     *         {@code false} otherwise
+     * 
+     * @cmis 1.0
+     */
+    boolean exists(ObjectId objectId);
+
+    /**
+     * Checks if an object with given object ID exists in the repository and is
+     * visible for the current user.
+     * 
+     * If the object doesn't exist (anymore), it is removed from the cache.
+     * 
+     * @param objectId
+     *            object ID
+     * @return {@code true} if the object exists in the repository,
+     *         {@code false} otherwise
+     * 
+     * @cmis 1.0
+     */
+    boolean exists(String objectId);
+
+    /**
      * Removes the given object from the cache.
      * 
      * @param objectId
