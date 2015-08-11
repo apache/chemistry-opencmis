@@ -67,10 +67,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
@@ -148,33 +148,9 @@ public final class ClientHelper {
     public static void showError(Component parent, Exception ex) {
         logError(ex);
 
-        String exceptionName = ex.getClass().getSimpleName();
-        if (ex instanceof CmisBaseException) {
-            exceptionName = ((CmisBaseException) ex).getExceptionName();
-        }
+        JFrame frame = (parent == null ? null : (JFrame) SwingUtilities.getRoot(parent));
 
-        StringBuilder sb = new StringBuilder(ex.getMessage() == null ? "null" : ex.getMessage());
-
-        int width = 80;
-        while (sb.length() > width) {
-            int p = width;
-
-            int x = sb.indexOf(" ", p);
-            if (x < 0 || x > p + 10) {
-                x = sb.indexOf("/", p);
-            }
-            if (x < 0 || x > p + 10) {
-                x = sb.indexOf(":", p);
-            }
-            if (x < 0 || x > p + 10) {
-                x = p;
-            }
-
-            sb.insert(x, '\n');
-            width = x + 80;
-        }
-
-        JOptionPane.showMessageDialog(parent, exceptionName + ":\n" + sb, "Error", JOptionPane.ERROR_MESSAGE);
+        new ExceptionDialog(frame, ex);
     }
 
     public static boolean isMacOSX() {
@@ -206,6 +182,12 @@ public final class ClientHelper {
             textAreaMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
             textAreaMap.put(cutKeyStroke, DefaultEditorKit.cutAction);
             textAreaMap.put(allKeyStroke, DefaultEditorKit.selectAllAction);
+
+            InputMap editorPaneMap = (InputMap) UIManager.get("EditorPane.focusInputMap");
+            editorPaneMap.put(copyKeyStroke, DefaultEditorKit.copyAction);
+            editorPaneMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
+            editorPaneMap.put(cutKeyStroke, DefaultEditorKit.cutAction);
+            editorPaneMap.put(allKeyStroke, DefaultEditorKit.selectAllAction);
 
             InputMap passwordFieldMap = (InputMap) UIManager.get("PasswordField.focusInputMap");
             passwordFieldMap.put(pasteKeyStroke, DefaultEditorKit.pasteAction);
@@ -463,7 +445,7 @@ public final class ClientHelper {
             } else if (c == '"') {
                 sb.append("&quot;");
             } else if (c == '\'') {
-                sb.append("&apos;");
+                sb.append("&#39;");
             } else if (c > 127) {
                 sb.append("&#" + (int) c + ";");
             } else {

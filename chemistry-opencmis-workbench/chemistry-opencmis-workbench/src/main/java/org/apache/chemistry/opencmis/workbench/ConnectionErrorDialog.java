@@ -72,17 +72,21 @@ public class ConnectionErrorDialog extends JDialog {
     }
 
     private void createGUI() {
-        setMinimumSize(new Dimension(600, 400));
-        setPreferredSize(new Dimension(600, 450));
+        setMinimumSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(400)));
+        setPreferredSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(450)));
 
         setLayout(new BorderLayout());
 
         StringBuilder hint = new StringBuilder(1024);
         hint.append("<h2><font color=\"red\">Exception: <em>" + exception.getClass().getSimpleName()
-                + "</em></font><br>" + exception.getMessage() + "</h2>");
+                + "</em></font><br>");
+        ClientHelper.encodeHtml(hint, exception.getMessage());
+        hint.append("</h2>");
         if (exception.getCause() != null) {
             hint.append("<h3><font color=\"red\">Cause: <em>" + exception.getCause().getClass().getSimpleName()
-                    + "</em></font><br>" + exception.getCause().getMessage() + "</h3>");
+                    + "</em></font><br>");
+            ClientHelper.encodeHtml(hint, exception.getCause().getMessage());
+            hint.append("</h3>");
         }
         hint.append("<hr><br>");
         hint.append(getHint());
@@ -95,6 +99,7 @@ public class ConnectionErrorDialog extends JDialog {
 
         JEditorPane hints = new JEditorPane("text/html", hint.toString());
         hints.setEditable(false);
+        hints.setCaretPosition(0);
 
         hintsPanel.add(new JScrollPane(hints, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
