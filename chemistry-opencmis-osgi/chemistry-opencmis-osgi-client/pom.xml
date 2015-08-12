@@ -73,7 +73,6 @@
                         </_exportcontents>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>
                         <Bundle-Activator>org.apache.chemistry.opencmis.client.osgi.Activator</Bundle-Activator>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                     </instructions>
                 </configuration>
             </plugin>
