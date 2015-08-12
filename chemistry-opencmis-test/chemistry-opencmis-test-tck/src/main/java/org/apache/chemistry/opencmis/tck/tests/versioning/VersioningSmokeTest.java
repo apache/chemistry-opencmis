@@ -150,7 +150,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             addResult(checkVersionSeries(session, versions, propertiesToCheck, "Test version series after check in"));
 
             // check out again
-            pwcId = doc.checkOut();
+            pwcId = newVersion.checkOut();
             pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
 
             addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 3"));
@@ -164,7 +164,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             addResult(checkObject(session, thirdVersion, getAllProperties(thirdVersion), "New version compliance"));
 
             // check out again
-            pwcId = doc.checkOut();
+            pwcId = thirdVersion.checkOut();
             pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
 
             addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 4"));
@@ -186,13 +186,13 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             checkCheckedIn(fourthVersion);
 
             // check out again
-            pwcId = doc.checkOut();
+            pwcId = fourthVersion.checkOut();
             pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
 
             addResult(checkObject(session, pwc, getAllProperties(pwc), "PWC spec compliance - test 5"));
 
             checkCheckedOut(pwc);
-            
+
             // check in giving properties and a new content stream
             String fifthContent = "brand-new content";
             byte[] fifthContentBytes = IOUtils.toUTF8Bytes(fifthContent);
