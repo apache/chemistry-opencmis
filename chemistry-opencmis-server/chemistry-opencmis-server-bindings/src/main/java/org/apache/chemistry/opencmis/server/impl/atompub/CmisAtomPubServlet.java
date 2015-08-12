@@ -208,7 +208,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                     response.sendError(getErrorCode((CmisPermissionDeniedException) e), e.getMessage());
                 }
             } else {
-                printError(e, response);
+                printError(e, request, response);
             }
         } finally {
             // we are done.
@@ -309,14 +309,15 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
     /**
      * Prints the error HTML page.
      */
-    protected void printError(Exception ex, HttpServletResponse response) {
+    protected void printError(Exception ex, HttpServletRequest request, HttpServletResponse response) {
         int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         String exceptionName = "runtime";
 
         if (ex instanceof CmisRuntimeException) {
-            LOG.error(ex.getMessage(), ex);
+            LOG.error(createLogMessage(ex, request), ex);
+            statusCode = getErrorCode((CmisRuntimeException) ex);
         } else if (ex instanceof CmisStorageException) {
-            LOG.error(ex.getMessage(), ex);
+            LOG.error(createLogMessage(ex, request), ex);
             statusCode = getErrorCode((CmisStorageException) ex);
             exceptionName = ((CmisStorageException) ex).getExceptionName();
         } else if (ex instanceof CmisBaseException) {
@@ -324,12 +325,12 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             exceptionName = ((CmisBaseException) ex).getExceptionName();
 
             if (statusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-                LOG.error(ex.getMessage(), ex);
+                LOG.error(createLogMessage(ex, request), ex);
             }
         } else if (ex instanceof IOException) {
-            LOG.warn(ex.getMessage(), ex);
+            LOG.warn(createLogMessage(ex, request), ex);
         } else {
-            LOG.error(ex.getMessage(), ex);
+            LOG.error(createLogMessage(ex, request), ex);
         }
 
         if (response.isCommitted()) {
@@ -367,7 +368,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
             pw.print("</body></html>");
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(createLogMessage(ex, request), e);
             try {
                 response.sendError(statusCode, message);
             } catch (Exception en) {

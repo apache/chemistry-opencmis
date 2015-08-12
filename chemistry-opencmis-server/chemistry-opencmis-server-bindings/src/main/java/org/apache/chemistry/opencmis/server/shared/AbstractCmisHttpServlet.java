@@ -164,4 +164,22 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
 
         return context;
     }
+
+    protected static String createLogMessage(Exception ex, HttpServletRequest request) {
+        StringBuilder sb = new StringBuilder(256);
+
+        sb.append(ex.getMessage());
+
+        sb.append(" (");
+        sb.append(request.getMethod());
+        sb.append(' ');
+        sb.append(request.getRequestURL().toString());
+        if (request.getQueryString() != null) {
+            sb.append('?');
+            sb.append(request.getQueryString());
+        }
+        sb.append(')');
+
+        return sb.toString();
+    }
 }

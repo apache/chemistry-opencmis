@@ -478,9 +478,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             String exceptionName = CmisRuntimeException.EXCEPTION_NAME;
 
             if (ex instanceof CmisRuntimeException) {
-                LOG.error(ex.getMessage(), ex);
+                LOG.error(createLogMessage(ex, request), ex);
+                statusCode = getErrorCode((CmisRuntimeException) ex);
             } else if (ex instanceof CmisStorageException) {
-                LOG.error(ex.getMessage(), ex);
+                LOG.error(createLogMessage(ex, request), ex);
                 statusCode = getErrorCode((CmisStorageException) ex);
                 exceptionName = ((CmisStorageException) ex).getExceptionName();
             } else if (ex instanceof CmisBaseException) {
@@ -488,12 +489,12 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 exceptionName = ((CmisBaseException) ex).getExceptionName();
 
                 if (statusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-                    LOG.error(ex.getMessage(), ex);
+                    LOG.error(createLogMessage(ex, request), ex);
                 }
             } else if (ex instanceof IOException) {
-                LOG.warn(ex.getMessage(), ex);
+                LOG.warn(createLogMessage(ex, request), ex);
             } else {
-                LOG.error(ex.getMessage(), ex);
+                LOG.error(createLogMessage(ex, request), ex);
             }
 
             if (response.isCommitted()) {
@@ -504,14 +505,14 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             String token = (context instanceof BrowserCallContextImpl ? ((BrowserCallContextImpl) context).getToken()
                     : null);
 
+            String message = ex.getMessage();
+            if (!(ex instanceof CmisBaseException)) {
+                message = "An error occurred!";
+            }
+
             if (token == null) {
                 response.resetBuffer();
                 setStatus(request, response, statusCode);
-
-                String message = ex.getMessage();
-                if (!(ex instanceof CmisBaseException)) {
-                    message = "An error occurred!";
-                }
 
                 JSONObject jsonResponse = new JSONObject();
                 jsonResponse.put(ERROR_EXCEPTION, exceptionName);
@@ -525,7 +526,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 try {
                     writeJSON(jsonResponse, request, response);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.error(createLogMessage(ex, request), e);
                     try {
                         response.sendError(statusCode, message);
                     } catch (Exception en) {
@@ -539,7 +540,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
                 if (context != null) {
                     setCookie(request, response, context.getRepositoryId(), token,
-                            createCookieValue(statusCode, null, exceptionName, ex.getMessage()));
+                            createCookieValue(statusCode, null, exceptionName, message));
                 }
             }
         }
