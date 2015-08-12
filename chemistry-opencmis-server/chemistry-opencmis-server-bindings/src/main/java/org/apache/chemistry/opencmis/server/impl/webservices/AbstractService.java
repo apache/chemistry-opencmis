@@ -55,6 +55,7 @@ import org.apache.chemistry.opencmis.commons.server.ProgressControlCmisService.P
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
+import org.apache.chemistry.opencmis.server.shared.CsrfManager;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.slf4j.Logger;
@@ -78,8 +79,7 @@ public abstract class AbstractService {
                 MessageContext.SERVLET_CONTEXT);
 
         // get services factory
-        CmisServiceFactory factory = (CmisServiceFactory) servletContext
-                .getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+        CmisServiceFactory factory = CmisRepositoryContextListener.getServiceFactory(servletContext);
 
         if (factory == null) {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");
@@ -146,9 +146,35 @@ public abstract class AbstractService {
     }
 
     /**
+     * Checks the CSRF token.
+     */
+    protected void checkCsrfToken(WebServiceContext wsContext, boolean isRepositoryInfoRequest) {
+        HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_REQUEST);
+        HttpServletResponse response = (HttpServletResponse) wsContext.getMessageContext().get(
+                MessageContext.SERVLET_RESPONSE);
+
+        CsrfManager cm = (CsrfManager) request.getAttribute(CmisWebServicesServlet.CSRF_MANAGER);
+
+        cm.check(request, response, isRepositoryInfoRequest, false);
+    }
+
+    /**
      * Returns the {@link CmisService} object.
      */
     protected CmisService getService(WebServiceContext wsContext, String repositoryId) {
+        checkCsrfToken(wsContext, false);
+        CmisServiceFactory factory = getServiceFactory(wsContext);
+        CallContext context = createContext(wsContext, factory, repositoryId);
+        return factory.getService(context);
+    }
+
+    /**
+     * Returns the {@link CmisService} object for getRepositories() and
+     * getRepositoryInfo() calls.
+     */
+    protected CmisService getServiceForRepositoryInfo(WebServiceContext wsContext, String repositoryId) {
+        checkCsrfToken(wsContext, true);
         CmisServiceFactory factory = getServiceFactory(wsContext);
         CallContext context = createContext(wsContext, factory, repositoryId);
         return factory.getService(context);

@@ -61,7 +61,7 @@ public class RepositoryService extends AbstractService implements RepositoryServ
     public List<CmisRepositoryEntryType> getRepositories(CmisExtensionType extension) throws CmisException {
         CmisService service = null;
         try {
-            service = getService(wsContext, null);
+            service = getServiceForRepositoryInfo(wsContext, null);
 
             if (stopBeforeService(service)) {
                 return null;
@@ -99,7 +99,7 @@ public class RepositoryService extends AbstractService implements RepositoryServ
         CmisService service = null;
         CmisVersion cmisVersion = null;
         try {
-            service = getService(wsContext, repositoryId);
+            service = getServiceForRepositoryInfo(wsContext, repositoryId);
             cmisVersion = getCmisVersion(wsContext);
 
             if (stopBeforeService(service)) {

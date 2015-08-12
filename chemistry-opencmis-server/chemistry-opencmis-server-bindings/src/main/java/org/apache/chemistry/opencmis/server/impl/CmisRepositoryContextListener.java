@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -47,6 +48,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
     private static final String CONFIG_FILENAME = "/repository.properties";
     private static final String PROPERTY_CLASS = "class";
 
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
         // get config file name or use default
         String configFilename = sce.getServletContext().getInitParameter(CONFIG_INIT_PARAM);
@@ -67,6 +69,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         sce.getServletContext().setAttribute(SERVICES_FACTORY, factory);
     }
 
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         // destroy services factory
         CmisServiceFactory factory = (CmisServiceFactory) sce.getServletContext().getAttribute(SERVICES_FACTORY);
@@ -78,6 +81,13 @@ public class CmisRepositoryContextListener implements ServletContextListener {
                 return;
             }
         }
+    }
+
+    /**
+     * Gets the service factory from the servlet context.
+     */
+    public static CmisServiceFactory getServiceFactory(final ServletContext servletContext) {
+        return (CmisServiceFactory) servletContext.getAttribute(SERVICES_FACTORY);
     }
 
     /**

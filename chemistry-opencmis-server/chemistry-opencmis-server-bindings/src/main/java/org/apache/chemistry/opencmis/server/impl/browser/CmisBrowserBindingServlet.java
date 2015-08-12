@@ -215,6 +215,12 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
         CallContext context = null;
 
         try {
+            // CSRF token check
+            String method = request.getMethod();
+            if (!METHOD_GET.equals(method) && !METHOD_HEAD.equals(method)) {
+                checkCsrfToken(request, response, false, false);
+            }
+
             // set default headers
             response.addHeader("Cache-Control", "private, max-age=0");
             response.addHeader("Server", ServerVersion.OPENCMIS_SERVER);
@@ -227,8 +233,6 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                     pathFragments.length > 0 ? pathFragments[0] : null);
 
             // check HTTP method
-            String method = request.getMethod();
-
             if (METHOD_GET.equals(method)) {
                 request = new QueryStringHttpServletRequestWrapper(request);
             } else if (METHOD_POST.equals(method)) {
@@ -310,6 +314,9 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
             // analyze the path
             if (pathFragments.length < 1) {
+                // CSRF check
+                checkCsrfToken(request, response, true, false);
+
                 // root -> repository infos
                 repositoryDispatcher.dispatch("", METHOD_GET, context, service, null, request, response);
                 return;
@@ -341,6 +348,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                         throw new CmisNotSupportedException("No selector");
                     }
 
+                    // CSRF check
+                    checkCsrfToken(request, response, SELECTOR_REPOSITORY_INFO.equalsIgnoreCase(selector), false);
+
+                    // dispatch
                     browserContext.setCallDetails(service, objectId, null, null);
                     callServiceFound = repositoryDispatcher.dispatch(selector, method, browserContext, service,
                             repositoryId, request, response);
@@ -367,6 +378,10 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                         }
                     }
 
+                    // CSRF check
+                    checkCsrfToken(request, response, false, SELECTOR_CONTENT.equalsIgnoreCase(selector));
+
+                    // dispatch
                     callServiceFound = rootDispatcher.dispatch(selector, method, browserContext, service, repositoryId,
                             request, response);
                 }

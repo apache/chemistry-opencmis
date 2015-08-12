@@ -331,8 +331,7 @@ public abstract class AbstractSimpleTokenHandler implements TokenHandler, Serial
     }
 
     protected CmisServiceFactory getCmisServiceFactory(final ServletContext servletContext) {
-        CmisServiceFactory factory = (CmisServiceFactory) servletContext
-                .getAttribute(CmisRepositoryContextListener.SERVICES_FACTORY);
+        CmisServiceFactory factory = CmisRepositoryContextListener.getServiceFactory(servletContext);
 
         if (factory == null) {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");

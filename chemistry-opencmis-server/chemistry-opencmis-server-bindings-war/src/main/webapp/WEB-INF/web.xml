@@ -112,7 +112,7 @@
     <!--
         Uncomment the following filter to enable CORS support for the browser binding.
         See http://software.dzhuvinov.com/cors-filter.html for details.
-        Put the CORS libraries into the WEB-INF/lib directory or uncomment the CORS depenedency in the pom.xml.
+        Put the CORS libraries into the WEB-INF/lib directory or uncomment the CORS dependency in the pom.xml.
     -->
     <!--
     <filter>
@@ -219,6 +219,16 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    
+    <servlet>
+        <servlet-name>cmisendpoints</servlet-name>
+        <servlet-class>org.apache.chemistry.opencmis.server.impl.endpoints.SimpleCmisEndpointsDocumentServlet</servlet-class>
+        <init-param>
+            <param-name>template</param-name>
+            <param-value>/WEB-INF/cmis-endpoints.json</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>cmisws10</servlet-name>
@@ -243,5 +253,10 @@
     <servlet-mapping>
         <servlet-name>cmisbrowser</servlet-name>
         <url-pattern>/browser/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>cmisendpoints</servlet-name>
+        <url-pattern>/cmis-endpoints.json</url-pattern>
     </servlet-mapping>
 </web-app>

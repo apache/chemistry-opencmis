@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
@@ -47,6 +48,7 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
     private String binding;
     private CmisVersion cmisVersion;
     private CallContextHandler callContextHandler;
+    private CsrfManager csrfManager;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -65,12 +67,14 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         }
 
         // get service factory
-        factory = (CmisServiceFactory) config.getServletContext().getAttribute(
-                CmisRepositoryContextListener.SERVICES_FACTORY);
+        factory = CmisRepositoryContextListener.getServiceFactory(config.getServletContext());
 
         if (factory == null) {
             throw new ServletException("Service factory not available! Configuration problem?");
         }
+
+        // set up CSRF manager
+        csrfManager = new CsrfManager(config);
     }
 
     /**
@@ -103,6 +107,15 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
      */
     protected CallContextHandler getCallContextHandler() {
         return callContextHandler;
+    }
+
+    /**
+     * Checks the CSRF if configured. Throws an
+     * {@link CmisPermissionDeniedException} if something is wrong.
+     */
+    protected void checkCsrfToken(HttpServletRequest req, HttpServletResponse resp, boolean isRepositoryInfoRequest,
+            boolean isContentRequest) {
+        csrfManager.check(req, resp, isRepositoryInfoRequest, isContentRequest);
     }
 
     /**

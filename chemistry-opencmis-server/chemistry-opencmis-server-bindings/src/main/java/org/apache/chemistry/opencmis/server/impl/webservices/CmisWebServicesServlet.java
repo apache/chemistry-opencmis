@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.shared.CsrfManager;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.cxf.Bus;
@@ -51,6 +52,7 @@ public class CmisWebServicesServlet extends CXFServlet {
 
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
     public static final String CMIS_VERSION = "org.apache.chemistry.opencmis.cmisVersion";
+    public static final String CSRF_MANAGER = "org.apache.chemistry.opencmis.csrfManager";
 
     private static final long serialVersionUID = 1L;
 
@@ -68,6 +70,8 @@ public class CmisWebServicesServlet extends CXFServlet {
     private CmisVersion cmisVersion;
 
     private Map<String, String> docs;
+
+    private CsrfManager csrfManager;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -95,6 +99,9 @@ public class CmisWebServicesServlet extends CXFServlet {
         docs.put("core", readFile(config, path + "CMIS-Core.xsd.template"));
         docs.put("msg", readFile(config, path + "CMIS-Messaging.xsd.template"));
 
+        // set up CSRF manager
+        csrfManager = new CsrfManager(config);
+
         super.init(config);
     }
 
@@ -115,8 +122,9 @@ public class CmisWebServicesServlet extends CXFServlet {
 
     @Override
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        // set CMIS version
+        // set CMIS version and CSRF Manager
         request.setAttribute(CMIS_VERSION, cmisVersion);
+        request.setAttribute(CSRF_MANAGER, csrfManager);
 
         try {
             // handle GET requests
@@ -248,8 +256,7 @@ public class CmisWebServicesServlet extends CXFServlet {
     public void loadBus(ServletConfig servletConfig) {
         super.loadBus(servletConfig);
 
-        CmisServiceFactory factory = (CmisServiceFactory) getServletContext().getAttribute(
-                CmisRepositoryContextListener.SERVICES_FACTORY);
+        CmisServiceFactory factory = CmisRepositoryContextListener.getServiceFactory(servletConfig.getServletContext());
 
         if (factory == null) {
             throw new CmisRuntimeException("Service factory not available! Configuration problem?");
