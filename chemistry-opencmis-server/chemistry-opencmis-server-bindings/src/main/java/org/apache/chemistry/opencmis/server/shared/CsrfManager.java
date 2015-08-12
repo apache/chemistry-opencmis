@@ -32,8 +32,8 @@ public class CsrfManager {
 
     public static final String CSRF_ATTR = "org.apache.chemistry.opencmis.csrftoken";
 
-    private static final String CSRF_HEADER = "header";
-    private static final String CSRF_PARAMETER = "parameter";
+    private static final String CSRF_HEADER = "csrfHeader";
+    private static final String CSRF_PARAMETER = "csrfParameter";
     private static final String FETCH_VALUE = "fetch";
 
     private static char[][] hexArrays = new char[][] { "0123456789ABCDEF".toCharArray(), //
