@@ -53,6 +53,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         setSession(session);
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         // we need an object id
@@ -69,6 +70,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -83,6 +85,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId);
@@ -92,12 +95,14 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -121,6 +126,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -135,6 +141,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -160,6 +167,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertObject(json, typeCache);
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         // build URL
@@ -182,6 +190,7 @@ public class VersioningServiceImpl extends AbstractBrowserBindingService impleme
         }
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         // build URL

@@ -49,6 +49,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public void getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems,
             CmisExtensionType extension, Holder<CmisObjectListType> objects) throws CmisException {
@@ -83,6 +84,7 @@ public class DiscoveryService extends AbstractService implements DiscoveryServic
         }
     }
 
+    @Override
     public CmisObjectListType query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {

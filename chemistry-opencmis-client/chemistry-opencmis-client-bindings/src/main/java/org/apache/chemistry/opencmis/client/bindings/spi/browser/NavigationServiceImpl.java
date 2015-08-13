@@ -49,6 +49,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         setSession(session);
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -74,6 +75,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertObjectInFolderList(json, typeCache);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -97,6 +99,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertDescendants(json, typeCache);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -120,6 +123,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertDescendants(json, typeCache);
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -142,6 +146,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertObjectParents(json, typeCache);
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, folderId, Constants.SELECTOR_PARENT);
@@ -158,6 +163,7 @@ public class NavigationServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertObject(json, typeCache);
     }
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

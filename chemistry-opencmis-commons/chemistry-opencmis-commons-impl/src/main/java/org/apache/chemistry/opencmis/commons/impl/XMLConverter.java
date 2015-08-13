@@ -2052,6 +2052,7 @@ public final class XMLConverter {
             target.setValue(addToList(target.getValue(), readText(parser)));
         }
 
+        @Override
         protected void addChoice(XMLStreamReader parser, ChoiceImpl<String> target) throws XMLStreamException {
             target.setChoice(addToList(target.getChoice(), CHOICE_STRING_PARSER.walk(parser)));
         }
@@ -2068,6 +2069,7 @@ public final class XMLConverter {
             target.setValue(addToList(target.getValue(), readBoolean(parser)));
         }
 
+        @Override
         protected void addChoice(XMLStreamReader parser, ChoiceImpl<Boolean> target) throws XMLStreamException {
             target.setChoice(addToList(target.getChoice(), CHOICE_BOOLEAN_PARSER.walk(parser)));
         }
@@ -2084,6 +2086,7 @@ public final class XMLConverter {
             target.setValue(addToList(target.getValue(), readInteger(parser)));
         }
 
+        @Override
         protected void addChoice(XMLStreamReader parser, ChoiceImpl<BigInteger> target) throws XMLStreamException {
             target.setChoice(addToList(target.getChoice(), CHOICE_INTEGER_PARSER.walk(parser)));
         }
@@ -2100,6 +2103,7 @@ public final class XMLConverter {
             target.setValue(addToList(target.getValue(), readDateTime(parser)));
         }
 
+        @Override
         protected void addChoice(XMLStreamReader parser, ChoiceImpl<GregorianCalendar> target)
                 throws XMLStreamException {
             target.setChoice(addToList(target.getChoice(), CHOICE_DATETIME_PARSER.walk(parser)));
@@ -2117,6 +2121,7 @@ public final class XMLConverter {
             target.setValue(addToList(target.getValue(), readDecimal(parser)));
         }
 
+        @Override
         protected void addChoice(XMLStreamReader parser, ChoiceImpl<BigDecimal> target) throws XMLStreamException {
             target.setChoice(addToList(target.getChoice(), CHOICE_DECIMAL_PARSER.walk(parser)));
         }

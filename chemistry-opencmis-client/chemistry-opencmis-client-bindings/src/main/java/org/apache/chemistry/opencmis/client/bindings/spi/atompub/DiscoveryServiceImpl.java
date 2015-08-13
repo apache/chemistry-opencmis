@@ -59,6 +59,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         setSession(session);
     }
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
         ObjectListImpl result = new ObjectListImpl();
@@ -149,6 +150,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
         return result;
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -177,6 +179,7 @@ public class DiscoveryServiceImpl extends AbstractAtomPubService implements Disc
 
         // post the query and parse results
         Response resp = post(url, Constants.MEDIATYPE_QUERY, new Output() {
+            @Override
             public void write(OutputStream out) throws Exception {
                 XMLStreamWriter writer = XMLUtils.createWriter(out);
                 XMLUtils.startXmlDocument(writer);

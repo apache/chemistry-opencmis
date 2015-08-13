@@ -60,6 +60,7 @@ public class RepositoryService {
      * getRepositories.
      */
     public static class GetRepositories extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -95,6 +96,7 @@ public class RepositoryService {
      * getRepositoryInfo.
      */
     public static class GetRepositoryInfo extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -129,6 +131,7 @@ public class RepositoryService {
      * getLastResult.
      */
     public static class GetLastResult extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -172,6 +175,7 @@ public class RepositoryService {
      * getTypeChildren.
      */
     public static class GetTypeChildren extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -207,6 +211,7 @@ public class RepositoryService {
     }
 
     public static class GetTypeDescendants extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -251,6 +256,7 @@ public class RepositoryService {
      * getTypeDefinition.
      */
     public static class GetTypeDefinition extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -285,6 +291,7 @@ public class RepositoryService {
      * createType.
      */
     public static class CreateType extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -336,6 +343,7 @@ public class RepositoryService {
      * updateType.
      */
     public static class UpdateType extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -384,6 +392,7 @@ public class RepositoryService {
      * deleteType.
      */
     public static class DeleteType extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

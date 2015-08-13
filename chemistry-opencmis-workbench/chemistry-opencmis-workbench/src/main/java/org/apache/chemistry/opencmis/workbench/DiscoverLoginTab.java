@@ -99,6 +99,7 @@ public class DiscoverLoginTab extends AbstractLoginTab {
         add(new JScrollPane(authTable), BorderLayout.CENTER);
 
         ActionListener loadActionListener = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -341,11 +342,11 @@ public class DiscoverLoginTab extends AbstractLoginTab {
             case 0:
                 return auth.getPreference();
             case 1:
-                return (auth.getEndpoint().getCmisVersion() == null ? "?" : auth.getEndpoint().getCmisVersion());
+                return auth.getEndpoint().getCmisVersion() == null ? "?" : auth.getEndpoint().getCmisVersion();
             case 2:
-                return (auth.getEndpoint().getBinding() == null ? "?" : auth.getEndpoint().getBinding());
+                return auth.getEndpoint().getBinding() == null ? "?" : auth.getEndpoint().getBinding();
             case 3:
-                return (auth.getType() == null ? "?" : auth.getType());
+                return auth.getType() == null ? "?" : auth.getType();
             case 4:
                 return auth;
             default:
@@ -389,6 +390,7 @@ public class DiscoverLoginTab extends AbstractLoginTab {
             return comp;
         }
 
+        @Override
         public void setValue(Object value) {
             StringBuilder text = new StringBuilder(128);
 

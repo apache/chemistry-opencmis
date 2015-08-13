@@ -111,12 +111,14 @@ public class FolderTable extends JTable implements FolderListener {
         popup.add(menuItem);
 
         menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ClientHelper.copyTableToClipboard(FolderTable.this);
             }
         });
 
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
                     return;
@@ -140,16 +142,19 @@ public class FolderTable extends JTable implements FolderListener {
         });
 
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     doAction(e.isShiftDown());
                 }
             }
 
+            @Override
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
@@ -162,15 +167,18 @@ public class FolderTable extends JTable implements FolderListener {
         });
 
         addKeyListener(new KeyListener() {
+            @Override
             public void keyTyped(KeyEvent e) {
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     doAction(e.isShiftDown());
                 }
             }
 
+            @Override
             public void keyPressed(KeyEvent e) {
             }
         });
@@ -195,8 +203,10 @@ public class FolderTable extends JTable implements FolderListener {
         pwcIcon = new PwcIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE);
     }
 
+    @Override
     public void folderLoaded(final ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 event.getClientModel().getCurrentChildren();
                 ((FolderTableModel) getModel()).fireTableDataChanged();
@@ -212,9 +222,9 @@ public class FolderTable extends JTable implements FolderListener {
 
             if (object instanceof Document) {
                 if (alternate) {
-                    ClientHelper.download(this.getParent(), (Document) object, null);
+                    ClientHelper.download(this.getParent(), object, null);
                 } else {
-                    ClientHelper.open(this.getParent(), (Document) object, null);
+                    ClientHelper.open(this.getParent(), object, null);
                 }
             } else if (object instanceof Folder) {
                 try {
@@ -234,18 +244,22 @@ public class FolderTable extends JTable implements FolderListener {
 
         private static final long serialVersionUID = 1L;
 
+        @Override
         public String getColumnName(int columnIndex) {
             return COLUMN_NAMES[columnIndex];
         }
 
+        @Override
         public int getColumnCount() {
             return COLUMN_NAMES.length;
         }
 
+        @Override
         public int getRowCount() {
             return model.getCurrentChildren().size();
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             CmisObject obj = model.getCurrentChildren().get(rowIndex);
 
@@ -387,14 +401,17 @@ public class FolderTable extends JTable implements FolderListener {
                     final File tempTransFile = tempFile;
 
                     return new Transferable() {
+                        @Override
                         public boolean isDataFlavorSupported(DataFlavor flavor) {
                             return flavor == DataFlavor.javaFileListFlavor;
                         }
 
+                        @Override
                         public DataFlavor[] getTransferDataFlavors() {
                             return new DataFlavor[] { DataFlavor.javaFileListFlavor };
                         }
 
+                        @Override
                         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
                             return Collections.singletonList(tempTransFile);
                         }

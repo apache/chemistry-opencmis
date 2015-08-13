@@ -39,6 +39,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
     private boolean isEnabled = true;
     private CmisTestProgressMonitor progressMonitor;
 
+    @Override
     public void init(Map<String, String> parameters) throws Exception {
         this.parameters = parameters;
     }
@@ -47,6 +48,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         return parameters;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -55,6 +57,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -63,6 +66,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         this.description = description;
     }
 
+    @Override
     public List<CmisTest> getTests() {
         return tests;
     }
@@ -77,6 +81,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         }
     }
 
+    @Override
     public void setProgressMonitor(CmisTestProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
     }
@@ -85,6 +90,7 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
         return this.progressMonitor;
     }
 
+    @Override
     public void run() throws Exception {
         if (progressMonitor != null) {
             progressMonitor.startGroup(this);
@@ -150,10 +156,12 @@ public abstract class AbstractCmisTestGroup implements CmisTestGroup {
     protected void postTest(CmisTest test) {
     }
 
+    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.isEnabled = enabled;
     }

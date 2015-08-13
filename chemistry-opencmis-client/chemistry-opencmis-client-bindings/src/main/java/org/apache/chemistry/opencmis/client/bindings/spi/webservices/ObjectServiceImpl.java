@@ -71,6 +71,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         this.portProvider = portProvider;
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
@@ -96,6 +97,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addACEs, Acl removeACEs,
             ExtensionsData extension) {
@@ -122,6 +124,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "createFolder");
@@ -145,6 +148,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "createPolicy");
@@ -168,6 +172,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addACEs, Acl removeACEs, ExtensionsData extension) {
         if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
@@ -195,6 +200,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addACEs,
             Acl removeACEs, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "createRelationship");
@@ -218,14 +224,15 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "updateProperties");
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
-                    : convertHolder(changeToken));
+            javax.xml.ws.Holder<String> portChangeToken = getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.updateProperties(repositoryId, portObjectId, portChangeToken, convert(properties), portExtension);
@@ -242,6 +249,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -276,6 +284,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "deleteObject");
 
@@ -294,6 +303,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "deleteTree");
@@ -310,6 +320,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "getAllowableActions");
 
@@ -324,6 +335,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "getContentStream");
@@ -345,6 +357,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
@@ -363,6 +376,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeACL, ExtensionsData extension) {
@@ -381,6 +395,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "getProperties");
 
@@ -395,6 +410,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "getRenditions");
@@ -424,6 +440,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "moveObject");
@@ -445,14 +462,15 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "setContentStream");
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
-                    : convertHolder(changeToken));
+            javax.xml.ws.Holder<String> portChangeToken = getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.setContentStream(repositoryId, portObjectId, overwriteFlag, portChangeToken,
@@ -470,14 +488,15 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         ObjectServicePort port = portProvider.getObjectServicePort(getCmisVersion(repositoryId), "deleteContentStream");
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
-                    : convertHolder(changeToken));
+            javax.xml.ws.Holder<String> portChangeToken = getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.deleteContentStream(repositoryId, portObjectId, portChangeToken, portExtension);
@@ -494,6 +513,7 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
         }
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
@@ -504,8 +524,8 @@ public class ObjectServiceImpl extends AbstractWebServicesService implements Obj
 
         try {
             javax.xml.ws.Holder<String> portObjectId = convertHolder(objectId);
-            javax.xml.ws.Holder<String> portChangeToken = (getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
-                    : convertHolder(changeToken));
+            javax.xml.ws.Holder<String> portChangeToken = getSession().get(SessionParameter.OMIT_CHANGE_TOKENS, false) ? null
+                    : convertHolder(changeToken);
             javax.xml.ws.Holder<CmisExtensionType> portExtension = convertExtensionHolder(extension);
 
             port.appendContentStream(repositoryId, portObjectId, isLastChunk, portChangeToken,

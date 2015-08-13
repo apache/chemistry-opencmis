@@ -31,18 +31,22 @@ public class DocumentTypeDefinitionImpl extends AbstractTypeDefinition implement
     private ContentStreamAllowed contentStreamAllowed = ContentStreamAllowed.NOTALLOWED;
     private Boolean isVersionable = Boolean.FALSE;
 
+    @Override
     public ContentStreamAllowed getContentStreamAllowed() {
         return contentStreamAllowed;
     }
 
+    @Override
     public void setContentStreamAllowed(ContentStreamAllowed contentStreamAllowed) {
         this.contentStreamAllowed = contentStreamAllowed;
     }
 
+    @Override
     public Boolean isVersionable() {
         return isVersionable;
     }
 
+    @Override
     public void setIsVersionable(Boolean isVersionable) {
         this.isVersionable = isVersionable;
     }

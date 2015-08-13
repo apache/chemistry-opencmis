@@ -42,6 +42,7 @@ public class RelationshipService {
      * Get object relationships.
      */
     public static class GetObjectRelationships extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

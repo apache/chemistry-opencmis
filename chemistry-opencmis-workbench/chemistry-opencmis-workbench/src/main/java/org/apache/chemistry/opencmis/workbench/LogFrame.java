@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -71,6 +72,7 @@ public class LogFrame extends JFrame {
 
         JButton clearButton = new JButton("Clear");
         clearButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 logTextArea.setText("");
             }
@@ -84,6 +86,7 @@ public class LogFrame extends JFrame {
         final JComboBox<String> levelBox = new JComboBox<String>(levels);
         levelBox.setSelectedItem(Logger.getRootLogger().getLevel().toString());
         levelBox.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Logger.getRootLogger().setLevel(Level.toLevel(levelBox.getSelectedItem().toString()));
             }
@@ -92,7 +95,7 @@ public class LogFrame extends JFrame {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), false);
 
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         pack();
 
         setLocationRelativeTo(null);

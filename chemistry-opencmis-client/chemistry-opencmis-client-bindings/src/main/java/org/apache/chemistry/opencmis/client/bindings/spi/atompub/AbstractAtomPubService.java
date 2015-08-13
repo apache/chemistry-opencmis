@@ -160,7 +160,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             }
         }
 
-        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
+        return info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion();
     }
 
     // ---- link cache ----
@@ -204,6 +204,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Gets a link from the cache if it is there or loads it into the cache if
      * it is not there.
      */
+    @Override
     public String loadLink(String repositoryId, String id, String rel, String type) {
         String link = getLink(repositoryId, id, rel, type);
         if (link == null) {
@@ -219,6 +220,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Gets the content link from the cache if it is there or loads it into the
      * cache if it is not there.
      */
+    @Override
     public String loadContentLink(String repositoryId, String id) {
         return loadLink(repositoryId, id, AtomPubParser.LINK_REL_CONTENT, null);
     }
@@ -227,6 +229,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
      * Gets a rendition content link from the cache if it is there or loads it
      * into the cache if it is not there.
      */
+    @Override
     public String loadRenditionContentLink(String repositoryId, String id, String streamId) {
         return loadLink(repositoryId, id, Constants.REL_ALTERNATE, streamId);
     }
@@ -989,6 +992,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
 
         // update
         Response resp = put(aclUrl, Constants.MEDIATYPE_ACL, new Output() {
+            @Override
             public void write(OutputStream out) throws Exception {
                 XMLStreamWriter writer = XMLUtils.createWriter(out);
                 XMLUtils.startXmlDocument(writer);

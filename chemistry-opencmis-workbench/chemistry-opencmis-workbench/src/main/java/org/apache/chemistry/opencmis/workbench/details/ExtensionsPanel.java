@@ -62,6 +62,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
     @Override
     public void objectLoaded(ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 CmisObject object = model.getCurrentObject();
 

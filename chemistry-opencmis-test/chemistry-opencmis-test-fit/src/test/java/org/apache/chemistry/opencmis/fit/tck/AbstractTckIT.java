@@ -174,24 +174,29 @@ public abstract class AbstractTckIT extends AbstractRunner {
     }
 
     private static class TestProgressMonitor implements CmisTestProgressMonitor {
+        @Override
         public void startGroup(CmisTestGroup group) {
             System.out.println();
             System.out.println(group.getName() + " (" + group.getTests().size() + " tests)");
         }
 
+        @Override
         public void endGroup(CmisTestGroup group) {
             System.out.println();
         }
 
+        @Override
         public void startTest(CmisTest test) {
             System.out.print("  " + test.getName());
         }
 
+        @Override
         public void endTest(CmisTest test) {
             System.out.print(" (" + test.getTime() + "ms): ");
             System.out.println(getWorst(test.getResults()));
         }
 
+        @Override
         public void message(String msg) {
             System.out.println(msg);
         }

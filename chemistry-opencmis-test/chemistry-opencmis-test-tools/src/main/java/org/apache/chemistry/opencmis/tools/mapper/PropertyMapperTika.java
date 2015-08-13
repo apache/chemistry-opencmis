@@ -55,14 +55,17 @@ public class PropertyMapperTika extends AbstractPropertyMapper {
         return true;
     }
     
+    @Override
     public void reset() {
     }
     
+    @Override
     public String getMappedPropertyId(String key) {
         String propId = propMapTags.get(key);
         return propId;
     }
 
+    @Override
     public Object convertValue(String key, PropertyDefinition<?> propDef, String strValueParam) {
         String strValue = strValueParam; 
         Object value = null;

@@ -45,10 +45,12 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public List<Folder> getParents() {
         return getParents(getSession().getDefaultContext());
     }
 
+    @Override
     public List<Folder> getParents(OperationContext context) {
         String objectId = getObjectId();
 
@@ -85,12 +87,13 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         return parents;
     }
 
+    @Override
     public List<String> getPaths() {
         String objectId = getObjectId();
 
         ObjectType folderType = getSession().getTypeDefinition(BaseTypeId.CMIS_FOLDER.value());
         PropertyDefinition<?> propDef = folderType.getPropertyDefinitions().get(PropertyIds.PATH);
-        String pathQueryName = (propDef == null ? null : propDef.getQueryName());
+        String pathQueryName = propDef == null ? null : propDef.getQueryName();
 
         // get object paths of the parent folders
         List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(getRepositoryId(),
@@ -127,10 +130,12 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         return paths;
     }
 
+    @Override
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId) {
         return move(sourceFolderId, targetFolderId, getSession().getDefaultContext());
     }
 
+    @Override
     public FileableCmisObject move(ObjectId sourceFolderId, ObjectId targetFolderId, OperationContext context) {
         String objectId = getObjectId();
         Holder<String> objectIdHolder = new Holder<String>(objectId);
@@ -161,6 +166,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         return (FileableCmisObject) movedObject;
     }
 
+    @Override
     public void addToFolder(ObjectId folderId, boolean allVersions) {
         String objectId = getObjectId();
 
@@ -175,6 +181,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         getSession().removeObjectFromCache(objectId);
     }
 
+    @Override
     public void removeFromFolder(ObjectId folderId) {
         String objectId = getObjectId();
 

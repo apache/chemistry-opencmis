@@ -57,8 +57,8 @@ public class Response {
         this.responseCode = responseCode;
         this.responseMessage = responseMessage;
         this.stream = responseStream;
-        this.hasResponseStream = (stream != null);
-        boolean isGZIP = (responseStream instanceof GZIPInputStream);
+        this.hasResponseStream = stream != null;
+        boolean isGZIP = responseStream instanceof GZIPInputStream;
 
         this.headers = new HashMap<String, List<String>>();
         if (headers != null) {

@@ -31,6 +31,7 @@ public class GregorianCalendarRenderer extends DefaultTableCellRenderer {
         super();
     }
 
+    @Override
     public void setValue(Object value) {
         setText(ClientHelper.getDateString((GregorianCalendar) value));
     }

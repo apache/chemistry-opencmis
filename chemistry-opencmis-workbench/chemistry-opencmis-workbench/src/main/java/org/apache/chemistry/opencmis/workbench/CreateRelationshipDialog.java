@@ -67,6 +67,7 @@ public class CreateRelationshipDialog extends CreateDialog {
         typeBox = new JComboBox<ObjectTypeItem>(types);
         typeBox.setSelectedIndex(0);
         typeBox.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 TypeDefinition type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType();
                 updateMandatoryFields(type);
@@ -90,6 +91,7 @@ public class CreateRelationshipDialog extends CreateDialog {
         JButton createButton = new JButton("Create Relationship", new NewRelationshipIcon(
                 ClientHelper.BUTTON_ICON_SIZE, ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();

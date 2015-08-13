@@ -28,7 +28,6 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.headers.Header;
-import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.phase.Phase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -54,7 +53,7 @@ public class UsernameTokenInterceptor extends AbstractSoapInterceptor {
     protected static final String WSSE_PASSWORD_TYPE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
 
     @Override
-    public void handleMessage(SoapMessage message) throws Fault {
+    public void handleMessage(SoapMessage message) {
         Header securityHeader = message.getHeader(WSSE_SECURITY);
         if (securityHeader != null) {
             if (!(securityHeader.getObject() instanceof Node)) {

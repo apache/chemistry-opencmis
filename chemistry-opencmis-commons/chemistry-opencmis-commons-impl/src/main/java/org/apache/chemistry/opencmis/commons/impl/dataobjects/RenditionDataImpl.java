@@ -53,6 +53,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.renditionDocumentId = renditionDocumentId;
     }
 
+    @Override
     public String getStreamId() {
         return streamId;
     }
@@ -61,6 +62,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.streamId = streamId;
     }
 
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -69,6 +71,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.mimeType = mimeType;
     }
 
+    @Override
     public BigInteger getBigLength() {
         return length;
     }
@@ -77,6 +80,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.length = length;
     }
 
+    @Override
     public String getKind() {
         return kind;
     }
@@ -85,6 +89,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.kind = kind;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
@@ -93,6 +98,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.title = title;
     }
 
+    @Override
     public BigInteger getBigHeight() {
         return height;
     }
@@ -101,6 +107,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.height = height;
     }
 
+    @Override
     public BigInteger getBigWidth() {
         return width;
     }
@@ -109,6 +116,7 @@ public class RenditionDataImpl extends AbstractExtensionData implements Renditio
         this.width = width;
     }
 
+    @Override
     public String getRenditionDocumentId() {
         return renditionDocumentId;
     }

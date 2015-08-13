@@ -43,6 +43,7 @@ public class Workbench {
         // set up Swing
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         boolean nimbus = false;
@@ -77,6 +78,7 @@ public class Workbench {
 
         // show client frame
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new ClientFrame();
             }

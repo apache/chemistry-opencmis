@@ -44,6 +44,7 @@ public class TokenCallContextHandler extends BasicAuthCallContextHandler impleme
         tokenHandler = new SimpleTokenHandler();
     }
 
+    @Override
     public Map<String, String> getCallContextMap(HttpServletRequest request) {
         Map<String, String> result = new HashMap<String, String>();
 
@@ -80,6 +81,7 @@ public class TokenCallContextHandler extends BasicAuthCallContextHandler impleme
         return result;
     }
 
+    @Override
     public void service(ServletContext servletContext, HttpServletRequest request, HttpServletResponse response) {
         tokenHandler.service(servletContext, request, response);
     }

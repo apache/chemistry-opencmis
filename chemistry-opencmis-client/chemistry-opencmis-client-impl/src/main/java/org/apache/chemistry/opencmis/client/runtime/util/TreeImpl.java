@@ -35,10 +35,12 @@ public class TreeImpl<T> implements Tree<T> {
         this.children = children;
     }
 
+    @Override
     public T getItem() {
         return item;
     }
 
+    @Override
     public List<Tree<T>> getChildren() {
         return this.children;
     }

@@ -55,6 +55,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         this.session = session;
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         RepositoryInfo result = null;
         boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
@@ -81,6 +82,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         List<RepositoryInfo> result = null;
         boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
@@ -100,6 +102,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         TypeDefinitionList result = null;
@@ -123,10 +126,12 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         return getTypeDefinition(repositoryId, typeId, extension, true);
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension,
             boolean useCache) {
         TypeDefinition result = null;
@@ -155,11 +160,12 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         List<TypeDefinitionContainer> result = null;
         boolean hasExtension = (extension != null) && isNotEmpty(extension.getExtensions());
-        boolean propDefs = (includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue());
+        boolean propDefs = includePropertyDefinitions == null ? false : includePropertyDefinitions.booleanValue();
 
         // get the SPI and fetch the type definitions
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
@@ -186,6 +192,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         }
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         // get the SPI and create the type definitions
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
@@ -198,6 +205,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         // get the SPI and update the type definitions
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
@@ -210,6 +218,7 @@ public class RepositoryServiceImpl implements RepositoryService, ExtendedReposit
         return result;
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         // get the SPI and delete the type definitions
         CmisSpi spi = CmisBindingsHelper.getSPI(session);

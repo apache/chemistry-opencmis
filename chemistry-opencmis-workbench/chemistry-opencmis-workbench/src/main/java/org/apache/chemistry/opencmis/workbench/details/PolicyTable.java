@@ -52,6 +52,7 @@ public class PolicyTable extends AbstractDetailsTable {
         }
     }
 
+    @Override
     public int getDetailRowCount() {
         if (getObject().getPolicies() == null) {
             return 0;
@@ -60,6 +61,7 @@ public class PolicyTable extends AbstractDetailsTable {
         return getObject().getPolicies().size();
     }
 
+    @Override
     public Object getDetailValueAt(int rowIndex, int columnIndex) {
         Policy policy = getObject().getPolicies().get(rowIndex);
 

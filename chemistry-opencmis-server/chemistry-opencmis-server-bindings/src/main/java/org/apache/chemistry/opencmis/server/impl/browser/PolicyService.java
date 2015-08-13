@@ -45,6 +45,7 @@ public class PolicyService {
      * getAppliedPolicies.
      */
     public static class GetAppliedPolicies extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -88,6 +89,7 @@ public class PolicyService {
      * applyPolicy.
      */
     public static class ApplyPolicy extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -135,6 +137,7 @@ public class PolicyService {
      * removePolicy.
      */
     public static class RemovePolicy extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

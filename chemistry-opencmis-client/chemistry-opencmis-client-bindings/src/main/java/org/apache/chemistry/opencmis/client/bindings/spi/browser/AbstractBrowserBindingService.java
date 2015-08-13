@@ -76,10 +76,12 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     protected static final ContainerFactory SIMPLE_CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
         public Map<String, Object> createObjectContainer() {
             return new LinkedHashMap<String, Object>();
         }
 
+        @Override
         public List<Object> creatArrayContainer() {
             return new ArrayList<Object>();
         }
@@ -96,11 +98,11 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
         this.session = session;
 
         Object succintObj = session.get(SessionParameter.BROWSER_SUCCINCT);
-        this.succint = (succintObj == null ? true : Boolean.parseBoolean(succintObj.toString()));
+        this.succint = succintObj == null ? true : Boolean.parseBoolean(succintObj.toString());
 
         Object dateTimeFormatObj = session.get(SessionParameter.BROWSER_DATETIME_FORMAT);
-        this.dateTimeFormat = (dateTimeFormatObj == null ? DateTimeFormat.SIMPLE : DateTimeFormat
-                .fromValue(dateTimeFormatObj.toString().toLowerCase(Locale.ENGLISH)));
+        this.dateTimeFormat = dateTimeFormatObj == null ? DateTimeFormat.SIMPLE : DateTimeFormat
+                .fromValue(dateTimeFormatObj.toString().toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -501,16 +503,19 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
 
     // ---- LinkAccess interface ----
 
+    @Override
     public String loadLink(String repositoryId, String objectId, String rel, String type) {
         // AtomPub specific -> return null
         return null;
     }
 
+    @Override
     public String loadContentLink(String repositoryId, String documentId) {
         UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
         return result == null ? null : result.toString();
     }
 
+    @Override
     public String loadRenditionContentLink(String repositoryId, String documentId, String streamId) {
         UrlBuilder result = getRepositoryUrlCache().getObjectUrl(repositoryId, documentId, Constants.SELECTOR_CONTENT);
         if (result != null) {

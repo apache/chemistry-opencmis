@@ -35,6 +35,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
     private String description;
     private Map<String, String> featureData;
 
+    @Override
     public String getId() {
         return id;
     }
@@ -43,6 +44,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
         this.id = id;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
@@ -51,6 +53,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
         this.url = url;
     }
 
+    @Override
     public String getCommonName() {
         return commonName;
     }
@@ -59,6 +62,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
         this.commonName = commonName;
     }
 
+    @Override
     public String getVersionLabel() {
         return versionLabel;
     }
@@ -67,6 +71,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
         this.versionLabel = versionLabel;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -75,6 +80,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
         this.description = description;
     }
 
+    @Override
     public Map<String, String> getFeatureData() {
         if (featureData == null) {
             featureData = new HashMap<String, String>();

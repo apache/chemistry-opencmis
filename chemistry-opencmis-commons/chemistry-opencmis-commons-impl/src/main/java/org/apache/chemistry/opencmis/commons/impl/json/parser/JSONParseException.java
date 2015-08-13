@@ -89,6 +89,7 @@ public class JSONParseException extends Exception {
         this.unexpectedObject = unexpectedObject;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(128);
 

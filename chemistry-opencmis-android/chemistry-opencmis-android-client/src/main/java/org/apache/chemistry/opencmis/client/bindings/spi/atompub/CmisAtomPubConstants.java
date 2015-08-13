@@ -26,9 +26,6 @@ import java.util.Set;
  */
 public final class CmisAtomPubConstants {
 
-    private CmisAtomPubConstants() {
-    }
-
     // service doc
     public static final String TAG_SERVICE = "service";
     public static final String TAG_WORKSPACE = "workspace";
@@ -239,4 +236,6 @@ public final class CmisAtomPubConstants {
         OBJECT_KEYS.add(TAG_OBJECT_RENDITION);
     }
 
+    private CmisAtomPubConstants() {
+    }
 }

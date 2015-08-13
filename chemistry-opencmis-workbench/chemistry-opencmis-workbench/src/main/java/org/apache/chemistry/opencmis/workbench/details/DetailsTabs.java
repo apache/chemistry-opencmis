@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench.details;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
@@ -41,7 +42,7 @@ public class DetailsTabs extends JTabbedPane {
     private ExtensionsPanel extensionsPanel;
 
     public DetailsTabs(ClientModel model) {
-        super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+        super(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
         this.model = model;
         createGUI();

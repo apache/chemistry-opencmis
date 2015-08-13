@@ -287,10 +287,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         this.statement = stmt.toString();
     }
 
+    @Override
     public void setType(int parameterIndex, String typeId) {
         setType(parameterIndex, session.getTypeDefinition(typeId));
     }
 
+    @Override
     public void setType(int parameterIndex, ObjectType type) {
         if (type == null) {
             throw new IllegalArgumentException("Type must be set!");
@@ -304,6 +306,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, queryName);
     }
 
+    @Override
     public void setProperty(int parameterIndex, String typeId, String propertyId) {
         ObjectType type = session.getTypeDefinition(typeId);
 
@@ -315,6 +318,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         setProperty(parameterIndex, propertyDefinition);
     }
 
+    @Override
     public void setProperty(int parameterIndex, PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition == null) {
             throw new IllegalArgumentException("Property must be set!");
@@ -328,6 +332,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, queryName);
     }
 
+    @Override
     public void setNumber(int parameterIndex, Number... num) {
         if (num == null || num.length == 0) {
             throw new IllegalArgumentException("Number must be set!");
@@ -345,6 +350,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setString(int parameterIndex, String... str) {
         if (str == null || str.length == 0) {
             throw new IllegalArgumentException("String must be set!");
@@ -362,6 +368,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setStringContains(int parameterIndex, String str) {
         if (str == null) {
             throw new IllegalArgumentException("String must be set!");
@@ -370,6 +377,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, escapeContains(str));
     }
 
+    @Override
     public void setStringLike(int parameterIndex, String str) {
         if (str == null) {
             throw new IllegalArgumentException("String must be set!");
@@ -378,6 +386,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, escapeLike(str));
     }
 
+    @Override
     public void setId(int parameterIndex, ObjectId... id) {
         if (id == null || id.length == 0) {
             throw new IllegalArgumentException("Id must be set!");
@@ -395,6 +404,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setUri(int parameterIndex, URI... uri) {
         if (uri == null) {
             throw new IllegalArgumentException("URI must be set!");
@@ -412,6 +422,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setUrl(int parameterIndex, URL... url) {
         if (url == null) {
             throw new IllegalArgumentException("URL must be set!");
@@ -429,6 +440,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setBoolean(int parameterIndex, boolean... bool) {
         if (bool == null || bool.length == 0) {
             throw new IllegalArgumentException("Boolean must not be set!");
@@ -442,10 +454,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setDateTime(int parameterIndex, Calendar... cal) {
         setDateTime(parameterIndex, false, cal);
     }
 
+    @Override
     public void setDateTimeTimestamp(int parameterIndex, Calendar... cal) {
         setDateTime(parameterIndex, true, cal);
     }
@@ -475,10 +489,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, sb.toString());
     }
 
+    @Override
     public void setDateTime(int parameterIndex, Date... date) {
         setDateTime(parameterIndex, false, date);
     }
 
+    @Override
     public void setDateTimeTimestamp(int parameterIndex, Date... date) {
         setDateTime(parameterIndex, true, date);
     }
@@ -500,10 +516,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public void setDateTime(int parameterIndex, long... ms) {
         setDateTime(parameterIndex, false, ms);
     }
 
+    @Override
     public void setDateTimeTimestamp(int parameterIndex, long... ms) {
         setDateTime(parameterIndex, true, ms);
     }
@@ -521,6 +539,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         parametersMap.put(parameterIndex, slb.toString());
     }
 
+    @Override
     public String toQueryString() {
         boolean inStr = false;
         int parameterIndex = 0;
@@ -552,10 +571,12 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
         return sb.toString();
     }
 
+    @Override
     public ItemIterable<QueryResult> query(boolean searchAllVersions) {
         return session.query(toQueryString(), searchAllVersions);
     }
 
+    @Override
     public ItemIterable<QueryResult> query(boolean searchAllVersions, OperationContext context) {
         return session.query(toQueryString(), searchAllVersions, context);
     }

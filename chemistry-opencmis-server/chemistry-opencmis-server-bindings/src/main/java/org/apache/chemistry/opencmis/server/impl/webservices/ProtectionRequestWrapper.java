@@ -234,7 +234,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
                 expandBuffer(1);
             }
 
-            linebuffer[pos++] = (byte) b;
+            linebuffer[pos++] = b;
 
             if (b == LF) {
                 checkBoundary(pos - 1);

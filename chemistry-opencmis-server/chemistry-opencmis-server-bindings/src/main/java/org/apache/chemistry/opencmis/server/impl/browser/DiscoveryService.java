@@ -51,6 +51,7 @@ public class DiscoveryService {
      * query.
      */
     public static class Query extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -103,6 +104,7 @@ public class DiscoveryService {
      * getContentChanges.
      */
     public static class GetContentChanges extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

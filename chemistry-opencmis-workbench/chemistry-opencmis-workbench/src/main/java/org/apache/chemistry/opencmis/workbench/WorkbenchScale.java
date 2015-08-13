@@ -60,7 +60,7 @@ public class WorkbenchScale {
     }
 
     public static float getScaleFactor() {
-        return (scaleFactor == null ? 1.0f : (float) scaleFactor);
+        return scaleFactor == null ? 1.0f : (float) scaleFactor;
     }
 
     public static int scaleInt(int x) {

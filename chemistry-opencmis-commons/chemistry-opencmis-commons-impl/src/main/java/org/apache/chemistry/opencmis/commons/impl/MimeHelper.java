@@ -523,7 +523,7 @@ public final class MimeHelper {
                     // self-defining token type.
                 } else if (c < 32 || c >= 127 || delimiters.indexOf(c) != -1) {
                     pos++;
-                    return new Token((int) c, String.valueOf(c));
+                    return new Token(c, String.valueOf(c));
                 } else {
                     // start of an atom, parse it off.
                     return readAtomicToken();

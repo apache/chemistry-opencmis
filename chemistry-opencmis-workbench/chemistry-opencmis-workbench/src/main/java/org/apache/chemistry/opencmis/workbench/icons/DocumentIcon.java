@@ -47,6 +47,7 @@ public class DocumentIcon extends AbstractWorkbenchIcon {
         return new Color(0x73a4d1);
     }
 
+    @Override
     protected void paint(Graphics2D g) {
         GeneralPath shape = new GeneralPath();
 

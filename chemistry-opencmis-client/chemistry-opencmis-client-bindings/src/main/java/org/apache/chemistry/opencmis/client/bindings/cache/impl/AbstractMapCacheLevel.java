@@ -34,8 +34,10 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
     private String fFallbackKey;
     private boolean fSingleValueEnabled = false;
 
+    @Override
     public abstract void initialize(Map<String, String> parameters);
 
+    @Override
     public Object get(String key) {
         Object value = fMap.get(key);
 
@@ -52,10 +54,12 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
         return value;
     }
 
+    @Override
     public void put(Object value, String key) {
         fMap.put(key, value);
     }
 
+    @Override
     public void remove(String key) {
         fMap.remove(key);
     }
@@ -187,6 +191,6 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
      */
     @Override
     public String toString() {
-        return (fMap == null ? "[no map]" : fMap.toString());
+        return fMap == null ? "[no map]" : fMap.toString();
     }
 }

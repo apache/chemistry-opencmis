@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -122,7 +123,7 @@ public class ChangeLogFrame extends JFrame {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
 
         setLocationRelativeTo(null);
@@ -175,14 +176,17 @@ public class ChangeLogFrame extends JFrame {
                 this.table = table;
             }
 
+            @Override
             public String getColumnName(int columnIndex) {
                 return COLUMN_NAMES[columnIndex];
             }
 
+            @Override
             public int getColumnCount() {
                 return COLUMN_NAMES.length;
             }
 
+            @Override
             public int getRowCount() {
                 if (table.getChangeEvents() == null) {
                     return 0;
@@ -191,14 +195,15 @@ public class ChangeLogFrame extends JFrame {
                 return table.getChangeEvents().size();
             }
 
+            @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 ChangeEvent event = table.getChangeEvents().get(rowIndex);
 
                 switch (columnIndex) {
                 case 0:
-                    return (event.getChangeType() == null ? "?" : event.getChangeType().value());
+                    return event.getChangeType() == null ? "?" : event.getChangeType().value();
                 case 1:
-                    return (event.getObjectId() == null ? "?" : event.getObjectId());
+                    return event.getObjectId() == null ? "?" : event.getObjectId();
                 case 2:
                     return event.getChangeTime();
                 case 3:

@@ -62,6 +62,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         this.portProvider = portProvider;
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         CmisVersion cmisVersion = CmisBindingsHelper.getForcedCmisVersion(getSession());
         if (cmisVersion == null) {
@@ -115,6 +116,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         return infos;
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         CmisVersion cmisVersion = CmisBindingsHelper.getForcedCmisVersion(getSession());
         if (cmisVersion == null) {
@@ -134,6 +136,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
                 "getTypeDefinition");
@@ -149,6 +152,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
@@ -166,6 +170,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         RepositoryServicePort port = portProvider.getRepositoryServicePort(getCmisVersion(repositoryId),
@@ -183,6 +188,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
@@ -206,6 +212,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");
@@ -229,6 +236,7 @@ public class RepositoryServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         if (getCmisVersion(repositoryId) == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("Repository is a CMIS 1.0 repository!");

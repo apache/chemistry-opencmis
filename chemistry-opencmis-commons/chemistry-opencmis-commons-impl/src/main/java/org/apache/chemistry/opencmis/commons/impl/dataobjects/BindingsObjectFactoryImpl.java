@@ -63,23 +63,28 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
     public BindingsObjectFactoryImpl() {
     }
 
+    @Override
     public MutableAce createAccessControlEntry(String principal, List<String> permissions) {
         return new AccessControlEntryImpl(new AccessControlPrincipalDataImpl(principal), permissions);
     }
 
+    @Override
     public MutableAcl createAccessControlList(List<Ace> aces) {
         return new AccessControlListImpl(aces);
     }
 
+    @Override
     public MutableContentStream createContentStream(String filename, BigInteger length, String mimetype,
             InputStream stream) {
         return new ContentStreamImpl(filename, length, mimetype, stream);
     }
 
+    @Override
     public MutableProperties createPropertiesData(List<PropertyData<?>> properties) {
         return new PropertiesImpl(properties);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> MutablePropertyData<T> createPropertyData(PropertyDefinition<T> pd, Object value) {
         String id = pd.getId();
@@ -136,66 +141,82 @@ public class BindingsObjectFactoryImpl implements BindingsObjectFactory, Seriali
         throw new CmisRuntimeException("Unknown property definition: " + pd);
     }
 
+    @Override
     public MutablePropertyBoolean createPropertyBooleanData(String id, List<Boolean> values) {
         return new PropertyBooleanImpl(id, values);
     }
 
+    @Override
     public MutablePropertyBoolean createPropertyBooleanData(String id, Boolean value) {
         return new PropertyBooleanImpl(id, value);
     }
 
+    @Override
     public MutablePropertyDateTime createPropertyDateTimeData(String id, List<GregorianCalendar> values) {
         return new PropertyDateTimeImpl(id, values);
     }
 
+    @Override
     public MutablePropertyDateTime createPropertyDateTimeData(String id, GregorianCalendar value) {
         return new PropertyDateTimeImpl(id, value);
     }
 
+    @Override
     public MutablePropertyDecimal createPropertyDecimalData(String id, List<BigDecimal> values) {
         return new PropertyDecimalImpl(id, values);
     }
 
+    @Override
     public MutablePropertyDecimal createPropertyDecimalData(String id, BigDecimal value) {
         return new PropertyDecimalImpl(id, value);
     }
 
+    @Override
     public MutablePropertyHtml createPropertyHtmlData(String id, List<String> values) {
         return new PropertyHtmlImpl(id, values);
     }
 
+    @Override
     public MutablePropertyHtml createPropertyHtmlData(String id, String value) {
         return new PropertyHtmlImpl(id, value);
     }
 
+    @Override
     public MutablePropertyId createPropertyIdData(String id, List<String> values) {
         return new PropertyIdImpl(id, values);
     }
 
+    @Override
     public MutablePropertyId createPropertyIdData(String id, String value) {
         return new PropertyIdImpl(id, value);
     }
 
+    @Override
     public MutablePropertyInteger createPropertyIntegerData(String id, List<BigInteger> values) {
         return new PropertyIntegerImpl(id, values);
     }
 
+    @Override
     public MutablePropertyInteger createPropertyIntegerData(String id, BigInteger value) {
         return new PropertyIntegerImpl(id, value);
     }
 
+    @Override
     public MutablePropertyString createPropertyStringData(String id, List<String> values) {
         return new PropertyStringImpl(id, values);
     }
 
+    @Override
     public MutablePropertyString createPropertyStringData(String id, String value) {
         return new PropertyStringImpl(id, value);
     }
 
+    @Override
     public MutablePropertyUri createPropertyUriData(String id, List<String> values) {
         return new PropertyUriImpl(id, values);
     }
 
+    @Override
     public MutablePropertyUri createPropertyUriData(String id, String value) {
         return new PropertyUriImpl(id, value);
     }

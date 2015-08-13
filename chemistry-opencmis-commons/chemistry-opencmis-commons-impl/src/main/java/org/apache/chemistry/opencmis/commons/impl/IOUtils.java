@@ -358,6 +358,7 @@ public final class IOUtils {
         final StringBuilder result = new StringBuilder(128);
 
         readLinesFromStream(stream, new LineHandler() {
+            @Override
             public boolean handle(String line) {
                 result.append(line);
                 return false;
@@ -381,6 +382,7 @@ public final class IOUtils {
         final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new LineHandler() {
+            @Override
             public boolean handle(String line) {
                 result.append(line);
                 result.append('\n');
@@ -405,6 +407,7 @@ public final class IOUtils {
         final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new SkipHeaderLineHandler() {
+            @Override
             public boolean handle(String line) {
                 if (!isHeaderLine(line)) {
                     result.append(line);
@@ -432,6 +435,7 @@ public final class IOUtils {
         final StringBuilder result = new StringBuilder(1024);
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
+            @Override
             public boolean handle(String line) {
                 if (!isComment(line)) {
                     result.append(line);
@@ -459,6 +463,7 @@ public final class IOUtils {
         final List<String> result = new ArrayList<String>();
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
+            @Override
             public boolean handle(String line) {
                 if (!isComment(line)) {
                     result.add(line);
@@ -485,6 +490,7 @@ public final class IOUtils {
         final Map<String, String> result = new HashMap<String, String>();
 
         readLinesFromStream(stream, new IgnoreCommentsLineHandler() {
+            @Override
             public boolean handle(String line) {
                 if (!isComment(line)) {
                     int x = line.indexOf('=');

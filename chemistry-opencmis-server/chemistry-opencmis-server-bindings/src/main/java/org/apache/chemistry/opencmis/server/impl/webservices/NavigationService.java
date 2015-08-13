@@ -56,6 +56,7 @@ public class NavigationService extends AbstractService implements NavigationServ
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public CmisObjectListType getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
@@ -85,6 +86,7 @@ public class NavigationService extends AbstractService implements NavigationServ
         }
     }
 
+    @Override
     public CmisObjectInFolderListType getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension)
@@ -115,6 +117,7 @@ public class NavigationService extends AbstractService implements NavigationServ
         }
     }
 
+    @Override
     public List<CmisObjectInFolderContainerType> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
@@ -152,6 +155,7 @@ public class NavigationService extends AbstractService implements NavigationServ
         }
     }
 
+    @Override
     public CmisObjectType getFolderParent(String repositoryId, String folderId, String filter,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -178,6 +182,7 @@ public class NavigationService extends AbstractService implements NavigationServ
         }
     }
 
+    @Override
     public List<CmisObjectInFolderContainerType> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, CmisExtensionType extension) throws CmisException {
@@ -215,6 +220,7 @@ public class NavigationService extends AbstractService implements NavigationServ
         }
     }
 
+    @Override
     public List<CmisObjectParentsType> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, CmisExtensionType extension) throws CmisException {

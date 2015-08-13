@@ -77,8 +77,10 @@ public class ActionsPanel extends JPanel implements ObjectListener {
         createGUI();
     }
 
+    @Override
     public void objectLoaded(ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 CmisObject object = model.getCurrentObject();
 

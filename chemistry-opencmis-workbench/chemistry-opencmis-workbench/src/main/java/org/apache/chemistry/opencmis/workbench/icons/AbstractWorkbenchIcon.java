@@ -48,9 +48,9 @@ public abstract class AbstractWorkbenchIcon implements Icon {
 
     public AbstractWorkbenchIcon(boolean enabled) {
         this.enabled = enabled;
-        this.width = WorkbenchScale.isScaling() ? (int) ((float) getOrginalWidth() * WorkbenchScale.getScaleFactor())
+        this.width = WorkbenchScale.isScaling() ? (int) (getOrginalWidth() * WorkbenchScale.getScaleFactor())
                 : getOrginalWidth();
-        this.height = WorkbenchScale.isScaling() ? (int) ((float) getOrginalHeight() * WorkbenchScale.getScaleFactor())
+        this.height = WorkbenchScale.isScaling() ? (int) (getOrginalHeight() * WorkbenchScale.getScaleFactor())
                 : getOrginalHeight();
     }
 
@@ -60,8 +60,8 @@ public abstract class AbstractWorkbenchIcon implements Icon {
 
     public AbstractWorkbenchIcon(int width, int height, boolean enabled) {
         this.enabled = enabled;
-        this.width = WorkbenchScale.isScaling() ? (int) ((float) width * WorkbenchScale.getScaleFactor()) : width;
-        this.height = WorkbenchScale.isScaling() ? (int) ((float) height * WorkbenchScale.getScaleFactor()) : height;
+        this.width = WorkbenchScale.isScaling() ? (int) (width * WorkbenchScale.getScaleFactor()) : width;
+        this.height = WorkbenchScale.isScaling() ? (int) (height * WorkbenchScale.getScaleFactor()) : height;
     }
 
     public void setEnabled(boolean enabled) {
@@ -91,7 +91,7 @@ public abstract class AbstractWorkbenchIcon implements Icon {
 
         if (scaleP != 100) {
             g2d.scale(1d / scaleD, 1d / scaleD);
-            g2d.drawImage(image, (int) ((double) x * scaleD), (int) ((double) y * scaleD), c);
+            g2d.drawImage(image, (int) (x * scaleD), (int) (y * scaleD), c);
         } else {
             g2d.drawImage(image, x, y, c);
         }
@@ -147,8 +147,8 @@ public abstract class AbstractWorkbenchIcon implements Icon {
         BufferedImage img = new BufferedImage((int) Math.round(getIconWidth() * factor),
                 (int) Math.round(getIconHeight() * factor), BufferedImage.TYPE_INT_ARGB);
 
-        double coef = Math.min((double) (getIconWidth() * factor) / (double) getOrginalWidth(),
-                (double) (getIconHeight() * factor) / (double) getOrginalHeight());
+        double coef = Math.min(getIconWidth() * factor / getOrginalWidth(),
+                getIconHeight() * factor / getOrginalHeight());
 
         Graphics2D g2d = img.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

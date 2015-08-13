@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -50,7 +51,7 @@ public abstract class XMLWalker<T> {
         // walk through all tags
         while (true) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 QName name = parser.getName();
                 if (!read(parser, name, result)) {
                     if (result instanceof ExtensionsData) {
@@ -59,7 +60,7 @@ public abstract class XMLWalker<T> {
                         skip(parser);
                     }
                 }
-            } else if (event == XMLStreamReader.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
             } else {
                 if (!next(parser)) {
@@ -131,9 +132,9 @@ public abstract class XMLWalker<T> {
 
         while (true) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.END_ELEMENT) {
+            if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
-            } else if (event == XMLStreamReader.CHARACTERS) {
+            } else if (event == XMLStreamConstants.CHARACTERS) {
                 String s = parser.getText();
                 if (s != null) {
                     if (sb.length() + s.length() > XMLConstraints.MAX_STRING_LENGTH) {
@@ -141,7 +142,7 @@ public abstract class XMLWalker<T> {
                     }
                     sb.append(s);
                 }
-            } else if (event == XMLStreamReader.START_ELEMENT) {
+            } else if (event == XMLStreamConstants.START_ELEMENT) {
                 if (level + 1 > XMLConstraints.MAX_EXTENSIONS_DEPTH) {
                     throw new CmisInvalidArgumentException("Extensions tree too deep!");
                 }

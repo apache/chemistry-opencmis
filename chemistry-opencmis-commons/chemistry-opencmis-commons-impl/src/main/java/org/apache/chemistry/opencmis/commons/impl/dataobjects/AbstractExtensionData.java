@@ -33,10 +33,12 @@ public abstract class AbstractExtensionData implements ExtensionsData, Serializa
 
     private List<CmisExtensionElement> extensions;
 
+    @Override
     public List<CmisExtensionElement> getExtensions() {
         return extensions;
     }
 
+    @Override
     public void setExtensions(List<CmisExtensionElement> extensions) {
         this.extensions = extensions;
     }

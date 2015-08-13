@@ -55,6 +55,7 @@ public class AclService {
      * Get ACL.
      */
     public static class GetAcl extends AclServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -95,6 +96,7 @@ public class AclService {
      * Apply ACL.
      */
     public static class ApplyAcl extends AclServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
 

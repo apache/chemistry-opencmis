@@ -213,7 +213,7 @@ public final class DateTimeHelper {
             if (year < 100) {
                 final int thisYear = (new GregorianCalendar(GMT)).get(Calendar.YEAR);
                 final int testYear = year + thisYear - thisYear % 100;
-                year = (testYear < thisYear + 20 ? testYear : testYear - 100);
+                year = testYear < thisYear + 20 ? testYear : testYear - 100;
             }
             cal.set(Calendar.YEAR, year);
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));

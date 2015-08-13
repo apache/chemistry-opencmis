@@ -43,6 +43,7 @@ public class CmisLogoIcon extends AbstractWorkbenchIcon {
         return 1334;
     }
 
+    @Override
     protected void paint(Graphics2D g) {
         GeneralPath shape = null;
 

@@ -50,26 +50,32 @@ public class CmisTestResultImpl implements CmisTestResult {
         this.isFatal = isFatal;
     }
 
+    @Override
     public String getGroupName() {
         return groupName;
     }
 
+    @Override
     public String getTestName() {
         return testName;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
 
+    @Override
     public CmisTestResultStatus getStatus() {
         return status;
     }
 
+    @Override
     public Throwable getException() {
         return exception;
     }
 
+    @Override
     public StackTraceElement[] getStackTrace() {
         return stackTrace;
     }
@@ -79,6 +85,7 @@ public class CmisTestResultImpl implements CmisTestResult {
         this.stackTrace = stackTrace;
     }
 
+    @Override
     public String getRequest() {
         return request;
     }
@@ -87,6 +94,7 @@ public class CmisTestResultImpl implements CmisTestResult {
         this.request = request;
     }
 
+    @Override
     public String getResponse() {
         return response;
     }
@@ -95,6 +103,7 @@ public class CmisTestResultImpl implements CmisTestResult {
         this.response = response;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
@@ -103,10 +112,12 @@ public class CmisTestResultImpl implements CmisTestResult {
         this.url = url;
     }
 
+    @Override
     public List<CmisTestResult> getChildren() {
         return children;
     }
 
+    @Override
     public boolean isFatal() {
         return isFatal;
     }

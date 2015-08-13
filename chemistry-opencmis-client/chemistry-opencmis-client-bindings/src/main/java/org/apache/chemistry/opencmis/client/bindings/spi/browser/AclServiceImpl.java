@@ -50,6 +50,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         setSession(session);
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ACL);
@@ -62,6 +63,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         return JSONConverter.convertAcl(json);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         // build URL
@@ -75,6 +77,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -84,6 +87,7 @@ public class AclServiceImpl extends AbstractBrowserBindingService implements Acl
         return JSONConverter.convertAcl(json);
     }
 
+    @Override
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
         Acl currentAcl = getAcl(repositoryId, objectId, false, null);
 

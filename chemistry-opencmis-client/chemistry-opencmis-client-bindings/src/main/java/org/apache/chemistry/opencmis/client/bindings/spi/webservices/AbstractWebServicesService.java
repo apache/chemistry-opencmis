@@ -166,6 +166,6 @@ public abstract class AbstractWebServicesService {
         }
 
         // if the version is unknown try CMIS 1.0
-        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
+        return info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion();
     }
 }

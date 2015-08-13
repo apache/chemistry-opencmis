@@ -45,10 +45,12 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
         this.principalId = principalId;
     }
 
+    @Override
     public String getId() {
         return principalId;
     }
 
+    @Override
     public void setId(String principalId) {
         this.principalId = principalId;
     }

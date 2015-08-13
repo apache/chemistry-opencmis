@@ -212,6 +212,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
         }
     }
 
+    @Override
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -220,6 +221,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
         return mimeType;
     }
 
+    @Override
     public void setFileName(String filename) {
         this.filename = filename;
     }
@@ -228,6 +230,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
         return filename;
     }
 
+    @Override
     public long getLength() {
         return length;
     }

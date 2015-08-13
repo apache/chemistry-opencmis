@@ -503,8 +503,6 @@ public final class TypeValidator {
                 return true;
             } else if (propertyId.equals(PropertyIds.VERSION_LABEL)) {
                 return true;
-            } else if (propertyId.equals(PropertyIds.VERSION_SERIES_ID)) {
-                return true;
             } else if (propertyId.equals(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT)) {
                 return true;
             } else if (propertyId.equals(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY)) {

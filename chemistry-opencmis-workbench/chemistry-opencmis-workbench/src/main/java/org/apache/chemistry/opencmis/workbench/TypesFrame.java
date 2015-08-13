@@ -47,6 +47,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -114,7 +116,7 @@ public class TypesFrame extends JFrame {
         setMinimumSize(new Dimension(200, 60));
         setLayout(new BorderLayout());
 
-        toolBar = new JToolBar("CMIS Types Toolbar", JToolBar.HORIZONTAL);
+        toolBar = new JToolBar("CMIS Types Toolbar", SwingConstants.HORIZONTAL);
 
         toolbarButton = new JButton[5];
 
@@ -376,6 +378,7 @@ public class TypesFrame extends JFrame {
         typesTree.setCellRenderer(new TreeCellRenderer());
 
         typesTree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
             public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) ((JTree) e.getSource())
                         .getLastSelectedPathComponent();
@@ -406,7 +409,7 @@ public class TypesFrame extends JFrame {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
 
         setLocationRelativeTo(null);

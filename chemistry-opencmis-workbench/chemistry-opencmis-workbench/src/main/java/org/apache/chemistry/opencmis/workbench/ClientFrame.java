@@ -44,6 +44,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
@@ -166,7 +167,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
         Container pane = getContentPane();
 
-        toolBar = new JToolBar("CMIS Toolbar", JToolBar.HORIZONTAL);
+        toolBar = new JToolBar("CMIS Toolbar", SwingConstants.HORIZONTAL);
 
         toolbarButton = new JButton[10];
 
@@ -175,6 +176,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         toolbarButton[BUTTON_CONNECT].setDisabledIcon(new ConnectIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CONNECT].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 showLoginForm();
             }
@@ -190,6 +192,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(false);
         toolbarButton[BUTTON_REPOSITORY_INFO].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new RepositoryInfoFrame(model);
             }
@@ -203,6 +206,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_TYPES].setEnabled(false);
         toolbarButton[BUTTON_TYPES].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new TypesFrame(model);
             }
@@ -216,6 +220,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_QUERY].setEnabled(false);
         toolbarButton[BUTTON_QUERY].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new QueryFrame(model);
             }
@@ -229,6 +234,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CHANGELOG].setEnabled(false);
         toolbarButton[BUTTON_CHANGELOG].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new ChangeLogFrame(model);
             }
@@ -242,6 +248,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CONSOLE].setEnabled(false);
         toolbarButton[BUTTON_CONSOLE].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 toolbarConsolePopup.show(toolbarButton[BUTTON_CONSOLE], 0, toolbarButton[BUTTON_CONSOLE].getHeight());
             }
@@ -268,6 +275,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_TCK].setEnabled(false);
         toolbarButton[BUTTON_TCK].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 new TckDialog(thisFrame, model);
             }
@@ -334,6 +342,7 @@ public class ClientFrame extends JFrame implements WindowListener {
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_CREATE].setEnabled(false);
         toolbarButton[BUTTON_CREATE].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 toolbarCreatePopup.show(toolbarButton[BUTTON_CREATE], 0, toolbarButton[BUTTON_CREATE].getHeight());
             }
@@ -348,6 +357,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         toolbarButton[BUTTON_LOG].setDisabledIcon(new LogIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_LOG].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 logFrame.showFrame();
             }
@@ -360,6 +370,7 @@ public class ClientFrame extends JFrame implements WindowListener {
         toolbarButton[BUTTON_INFO].setDisabledIcon(new InfoIcon(ClientHelper.TOOLBAR_ICON_SIZE,
                 ClientHelper.TOOLBAR_ICON_SIZE, false));
         toolbarButton[BUTTON_INFO].addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 infoDialog.showDialog();
             }
@@ -468,9 +479,11 @@ public class ClientFrame extends JFrame implements WindowListener {
         return result;
     }
 
+    @Override
     public void windowOpened(WindowEvent e) {
     }
 
+    @Override
     public void windowClosing(WindowEvent e) {
         Point p = getLocation();
         prefs.putInt(PREFS_X, p.x);
@@ -480,18 +493,23 @@ public class ClientFrame extends JFrame implements WindowListener {
         prefs.putInt(PREFS_DIV, split.getDividerLocation());
     }
 
+    @Override
     public void windowClosed(WindowEvent e) {
     }
 
+    @Override
     public void windowIconified(WindowEvent e) {
     }
 
+    @Override
     public void windowDeiconified(WindowEvent e) {
     }
 
+    @Override
     public void windowActivated(WindowEvent e) {
     }
 
+    @Override
     public void windowDeactivated(WindowEvent e) {
     }
 }

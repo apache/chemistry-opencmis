@@ -50,6 +50,7 @@ public class NavigationService {
      * Children Collection GET.
      */
     public static class GetChildren extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -198,6 +199,7 @@ public class NavigationService {
      * Descendants feed GET.
      */
     public static class GetDescendants extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -298,6 +300,7 @@ public class NavigationService {
      * Folder tree feed GET.
      */
     public static class GetFolderTree extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -399,6 +402,7 @@ public class NavigationService {
      * Object parents feed GET.
      */
     public static class GetFolderParent extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -450,6 +454,7 @@ public class NavigationService {
      * Object parents feed GET.
      */
     public static class GetObjectParents extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -534,6 +539,7 @@ public class NavigationService {
      * Checked Out Collection GET.
      */
     public static class GetCheckedOutDocs extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

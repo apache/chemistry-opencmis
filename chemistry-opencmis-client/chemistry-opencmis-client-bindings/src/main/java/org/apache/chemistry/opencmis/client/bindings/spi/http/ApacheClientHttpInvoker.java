@@ -52,6 +52,7 @@ import org.apache.http.params.HttpParams;
  */
 public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
 
+    @Override
     protected DefaultHttpClient createHttpClient(UrlBuilder url, BindingSession session) {
         // set params
         HttpParams params = createDefaultHttpParams(session);
@@ -114,18 +115,21 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
         // build new socket factory
         return new SchemeLayeredSocketFactory() {
 
+            @Override
             public boolean isSecure(Socket sock) {
                 return true;
             }
 
+            @Override
             public Socket createSocket(HttpParams params) throws IOException {
                 return sf.createSocket();
             }
 
+            @Override
             public Socket connectSocket(final Socket socket, final InetSocketAddress remoteAddress,
                     final InetSocketAddress localAddress, final HttpParams params) throws IOException {
 
-                Socket sock = (socket != null ? socket : createSocket(params));
+                Socket sock = socket != null ? socket : createSocket(params);
                 if (localAddress != null) {
                     sock.setReuseAddress(HttpConnectionParams.getSoReuseaddr(params));
                     sock.bind(localAddress);
@@ -161,6 +165,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
                 return sslSocket;
             }
 
+            @Override
             public Socket createLayeredSocket(final Socket socket, final String host, final int port,
                     final HttpParams params) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) sf.createSocket(socket, host, port, true);

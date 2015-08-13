@@ -575,10 +575,6 @@ package org.apache.chemistry.opencmis.commons;
  */
 public final class SessionParameter {
 
-    // utility class
-    private SessionParameter() {
-    }
-
     // ---- general parameter ----
     public static final String USER = "org.apache.chemistry.opencmis.user";
     public static final String PASSWORD = "org.apache.chemistry.opencmis.password";
@@ -722,4 +718,8 @@ public final class SessionParameter {
     public static final String INCLUDE_OBJECTID_URL_PARAM_ON_MOVE = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnMove";
     public static final String OMIT_CHANGE_TOKENS = "org.apache.chemistry.opencmis.workaround.omitChangeTokens";
     public static final String ADD_NAME_ON_CHECK_IN = "org.apache.chemistry.opencmis.workaround.addNameOnCheckIn";
+
+    // utility class
+    private SessionParameter() {
+    }
 }

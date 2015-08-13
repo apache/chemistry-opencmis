@@ -35,6 +35,7 @@ public class EmptyItemIterable<T> implements ItemIterable<T> {
         return (EmptyItemIterable<U>) INSTANCE;
     }
 
+    @Override
     public ItemIterable<T> skipTo(long position) {
         if (position != 0) {
             throw new IllegalArgumentException(String.valueOf(position));
@@ -42,27 +43,33 @@ public class EmptyItemIterable<T> implements ItemIterable<T> {
         return this;
     }
 
+    @Override
     public ItemIterable<T> getPage() {
         return this;
     }
 
+    @Override
     public ItemIterable<T> getPage(int maxNumItems) {
         return this;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Iterator<T> iterator() {
         return (Iterator<T>) EmptyIterator.INSTANCE;
     }
 
+    @Override
     public long getPageNumItems() {
         return 0;
     }
 
+    @Override
     public boolean getHasMoreItems() {
         return false;
     }
 
+    @Override
     public long getTotalNumItems() {
         return 0;
     }
@@ -73,14 +80,17 @@ public class EmptyItemIterable<T> implements ItemIterable<T> {
     public static class EmptyIterator<V> implements Iterator<V> {
         public static final Iterator<?> INSTANCE = new EmptyIterator<Object>();
 
+        @Override
         public boolean hasNext() {
             return false;
         }
 
+        @Override
         public V next() {
             throw new NoSuchElementException();
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

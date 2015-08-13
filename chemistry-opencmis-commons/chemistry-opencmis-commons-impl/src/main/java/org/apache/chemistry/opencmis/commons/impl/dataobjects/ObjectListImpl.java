@@ -36,6 +36,7 @@ public class ObjectListImpl extends AbstractExtensionData implements ObjectList 
     private Boolean hasMoreItems = Boolean.FALSE;
     private BigInteger numItems;
 
+    @Override
     public List<ObjectData> getObjects() {
         if (objects == null) {
             objects = new ArrayList<ObjectData>();
@@ -48,6 +49,7 @@ public class ObjectListImpl extends AbstractExtensionData implements ObjectList 
         this.objects = objects;
     }
 
+    @Override
     public Boolean hasMoreItems() {
         return hasMoreItems;
     }
@@ -56,6 +58,7 @@ public class ObjectListImpl extends AbstractExtensionData implements ObjectList 
         this.hasMoreItems = hasMoreItems;
     }
 
+    @Override
     public BigInteger getNumItems() {
         return numItems;
     }

@@ -42,6 +42,7 @@ public class BasicAuthCallContextHandler implements CallContextHandler, Serializ
     public BasicAuthCallContextHandler() {
     }
 
+    @Override
     public Map<String, String> getCallContextMap(HttpServletRequest request) {
         assert request != null;
 

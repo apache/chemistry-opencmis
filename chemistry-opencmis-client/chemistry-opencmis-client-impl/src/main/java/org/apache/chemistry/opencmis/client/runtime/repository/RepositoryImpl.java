@@ -63,6 +63,7 @@ public class RepositoryImpl extends RepositoryInfoImpl implements Repository {
         this.typeDefCache = typeDefCache;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends Session> T createSession() {
         return (T) sessionFactory.createSession(parameters, objectFactory, authenticationProvider, cache, typeDefCache);

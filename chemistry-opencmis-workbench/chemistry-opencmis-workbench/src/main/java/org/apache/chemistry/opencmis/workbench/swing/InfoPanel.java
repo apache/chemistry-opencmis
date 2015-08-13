@@ -45,7 +45,6 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -55,6 +54,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -249,6 +249,7 @@ public abstract class InfoPanel extends JPanel {
             popup.add(menuItem);
 
             menuItem.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     Transferable transferable = new StringSelection(link);
@@ -388,8 +389,8 @@ public abstract class InfoPanel extends JPanel {
             super();
 
             qrCodeItem = new JMenuItem();
-            qrCodeItem.setVerticalTextPosition(AbstractButton.BOTTOM);
-            qrCodeItem.setHorizontalTextPosition(AbstractButton.CENTER);
+            qrCodeItem.setVerticalTextPosition(SwingConstants.BOTTOM);
+            qrCodeItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
             getPopupMenu().addSeparator();
             getPopupMenu().add(qrCodeItem);

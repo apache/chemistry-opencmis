@@ -78,7 +78,7 @@ public class SessionImpl implements BindingSession {
     @Override
     public Object get(String key, Object defValue) {
         Object value = get(key);
-        return (value == null ? defValue : value);
+        return value == null ? defValue : value;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SessionImpl implements BindingSession {
 
     @Override
     public void put(String key, Object obj, boolean isTransient) {
-        Object value = (isTransient ? new TransientWrapper(obj) : obj);
+        Object value = isTransient ? new TransientWrapper(obj) : obj;
         if (!(value instanceof Serializable)) {
             throw new IllegalArgumentException("Object must be serializable!");
         }
@@ -139,6 +139,7 @@ public class SessionImpl implements BindingSession {
         }
     }
 
+    @Override
     public void remove(String key) {
         lock.writeLock().lock();
         try {
@@ -148,18 +149,22 @@ public class SessionImpl implements BindingSession {
         }
     }
 
+    @Override
     public void readLock() {
         lock.readLock().lock();
     }
 
+    @Override
     public void readUnlock() {
         lock.readLock().unlock();
     }
 
+    @Override
     public void writeLock() {
         lock.writeLock().lock();
     }
 
+    @Override
     public void writeUnlock() {
         lock.writeLock().unlock();
     }

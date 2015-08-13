@@ -49,6 +49,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
     private Acl acl;
     private Boolean isExactAcl;
 
+    @Override
     public String getId() {
         Object value = getFirstValue(PropertyIds.OBJECT_ID);
         if (value instanceof String) {
@@ -58,6 +59,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
         return null;
     }
 
+    @Override
     public BaseTypeId getBaseTypeId() {
         Object value = getFirstValue(PropertyIds.BASE_TYPE_ID);
         if (value instanceof String) {
@@ -71,22 +73,27 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
         return null;
     }
 
+    @Override
     public Properties getProperties() {
         return properties;
     }
 
+    @Override
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
+    @Override
     public ChangeEventInfo getChangeEventInfo() {
         return changeEventInfo;
     }
 
+    @Override
     public void setChangeEventInfo(ChangeEventInfo changeEventInfo) {
         this.changeEventInfo = changeEventInfo;
     }
 
+    @Override
     public List<ObjectData> getRelationships() {
         if (relationships == null) {
             relationships = new ArrayList<ObjectData>();
@@ -95,10 +102,12 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
         return relationships;
     }
 
+    @Override
     public void setRelationships(List<ObjectData> relationships) {
         this.relationships = relationships;
     }
 
+    @Override
     public List<RenditionData> getRenditions() {
         if (renditions == null) {
             renditions = new ArrayList<RenditionData>();
@@ -107,38 +116,47 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
         return renditions;
     }
 
+    @Override
     public void setRenditions(List<RenditionData> renditions) {
         this.renditions = renditions;
     }
 
+    @Override
     public PolicyIdList getPolicyIds() {
         return policyIds;
     }
 
+    @Override
     public void setPolicyIds(PolicyIdList policyIds) {
         this.policyIds = policyIds;
     }
 
+    @Override
     public AllowableActions getAllowableActions() {
         return allowableActions;
     }
 
+    @Override
     public void setAllowableActions(AllowableActions allowableActions) {
         this.allowableActions = allowableActions;
     }
 
+    @Override
     public Acl getAcl() {
         return acl;
     }
 
+    @Override
     public void setAcl(Acl acl) {
         this.acl = acl;
     }
 
+    @Override
     public Boolean isExactAcl() {
         return isExactAcl;
     }
 
+    @Override
     public void setIsExactAcl(Boolean isExactACL) {
         this.isExactAcl = isExactACL;
     }

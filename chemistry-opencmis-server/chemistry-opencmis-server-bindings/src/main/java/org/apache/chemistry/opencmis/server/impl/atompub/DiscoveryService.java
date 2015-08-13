@@ -53,6 +53,7 @@ public class DiscoveryService {
      * Query.
      */
     public static class Query extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -225,6 +226,7 @@ public class DiscoveryService {
      * Get content changes.
      */
     public static class GetContentChanges extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

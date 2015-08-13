@@ -23,13 +23,13 @@ package org.apache.chemistry.opencmis.commons;
  */
 public final class BasicPermissions {
 
-    private BasicPermissions() {
-    }
-
     /** CMIS read permission {@code cmis:read}. */
     public static final String READ = "cmis:read";
     /** CMIS write permission {@code cmis:write}. */
     public static final String WRITE = "cmis:write";
     /** CMIS all permission {@code cmis:all}. */
     public static final String ALL = "cmis:all";
+
+    private BasicPermissions() {
+    }
 }

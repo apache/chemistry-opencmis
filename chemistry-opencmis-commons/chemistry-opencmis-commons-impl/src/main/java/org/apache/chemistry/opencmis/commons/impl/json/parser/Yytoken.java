@@ -43,6 +43,7 @@ public class Yytoken {
         this.value = value;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
         switch (type) {

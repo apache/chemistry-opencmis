@@ -42,7 +42,7 @@ class Yylex {
      * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l at the
      * beginning of a line l is of the form l = 2*k, k a non negative integer
      */
-    private static final int ZZ_LEXSTATE[] = { 0, 0, 1, 1 };
+    private static final int[] ZZ_LEXSTATE = { 0, 0, 1, 1 };
 
     /**
      * Translates characters to character classes
@@ -116,7 +116,7 @@ class Yylex {
     /**
      * The transition table of the DFA
      */
-    private static final int ZZ_TRANS[] = { 2, 2, 3, 4, 2, 2, 2, 5, 2, 6, 2, 2, 7, 8, 2, 9, 2, 2, 2, 2, 2, 10, 11, 12,
+    private static final int[] ZZ_TRANS = { 2, 2, 3, 4, 2, 2, 2, 5, 2, 6, 2, 2, 7, 8, 2, 9, 2, 2, 2, 2, 2, 10, 11, 12,
             13, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 17, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
             16, 16, 16, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -149,7 +149,7 @@ class Yylex {
     private static final int ZZ_PUSHBACK_2BIG = 2;
 
     /* error messages for the codes above */
-    private static final String ZZ_ERROR_MSG[] = { "Unkown internal scanner error", "Error: could not match input",
+    private static final String[] ZZ_ERROR_MSG = { "Unkown internal scanner error", "Error: could not match input",
             "Error: pushback value was too large" };
 
     /**
@@ -193,7 +193,7 @@ class Yylex {
      * this buffer contains the current text to be matched and is the source of
      * the yytext() string
      */
-    private char zzBuffer[] = new char[ZZ_BUFFERSIZE];
+    private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
     /** the textposition at the last accepting state */
     private int zzMarkedPos;
@@ -279,7 +279,7 @@ class Yylex {
         /* is the buffer big enough? */
         if (zzCurrentPos >= zzBuffer.length) {
             /* if not: blow it up */
-            char newBuffer[] = new char[zzCurrentPos * 2];
+            char[] newBuffer = new char[zzCurrentPos * 2];
             System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
             zzBuffer = newBuffer;
         }

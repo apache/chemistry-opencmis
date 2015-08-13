@@ -58,7 +58,7 @@ public final class CalendarHelper {
             throw new IllegalArgumentException("Invalid datetime format: " + datetime);
         }
         String tz = m.group(8);
-        GregorianCalendar cal = (GregorianCalendar) GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"
+        GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance(TimeZone.getTimeZone("GMT"
                 + (tz == null ? "" : tz)));
         cal.set(Calendar.YEAR, Integer.parseInt(m.group(1)));
         cal.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1);

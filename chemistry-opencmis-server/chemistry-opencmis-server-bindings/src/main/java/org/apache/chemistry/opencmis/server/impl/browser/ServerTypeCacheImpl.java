@@ -48,6 +48,7 @@ public class ServerTypeCacheImpl implements TypeCache {
         objectToTypeDefinitions = new HashMap<String, TypeDefinition>();
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String typeId) {
         TypeDefinition type = typeDefinitions.get(typeId);
         if (type == null) {
@@ -60,6 +61,7 @@ public class ServerTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    @Override
     public TypeDefinition reloadTypeDefinition(String typeId) {
         TypeDefinition type = service.getTypeDefinition(repositoryId, typeId, null);
         if (type != null) {
@@ -69,6 +71,7 @@ public class ServerTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    @Override
     public TypeDefinition getTypeDefinitionForObject(String objectId) {
         TypeDefinition type = objectToTypeDefinitions.get(objectId);
         if (type == null) {
@@ -102,6 +105,7 @@ public class ServerTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    @Override
     public PropertyDefinition<?> getPropertyDefinition(String propId) {
         for (TypeDefinition typeDef : typeDefinitions.values()) {
             PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(propId);

@@ -341,10 +341,12 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- delete ---
 
+    @Override
     public void delete() {
         delete(true);
     }
 
+    @Override
     public void delete(boolean allVersions) {
         readLock();
         try {
@@ -356,6 +358,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- update properties ---
 
+    @Override
     public CmisObject updateProperties(Map<String, ?> properties) {
         ObjectId objectId = updateProperties(properties, true);
         if (objectId == null) {
@@ -369,6 +372,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return this;
     }
 
+    @Override
     public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
         if (isNullOrEmpty(properties)) {
             throw new IllegalArgumentException("Properties must not be empty!");
@@ -419,6 +423,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public CmisObject rename(String newName) {
         if (newName == null || newName.length() == 0) {
             throw new IllegalArgumentException("New name must not be empty!");
@@ -430,6 +435,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return updateProperties(prop);
     }
 
+    @Override
     public ObjectId rename(String newName, boolean refresh) {
         if (newName == null || newName.length() == 0) {
             throw new IllegalArgumentException("New name must not be empty!");
@@ -443,6 +449,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- properties ---
 
+    @Override
     public ObjectType getBaseType() {
         BaseTypeId baseTypeId = getBaseTypeId();
         if (baseTypeId == null) {
@@ -452,6 +459,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return getSession().getTypeDefinition(baseTypeId.value());
     }
 
+    @Override
     public BaseTypeId getBaseTypeId() {
         String baseType = getPropertyValue(PropertyIds.BASE_TYPE_ID);
         if (baseType == null) {
@@ -461,38 +469,47 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return BaseTypeId.fromValue(baseType);
     }
 
+    @Override
     public String getChangeToken() {
         return getPropertyValue(PropertyIds.CHANGE_TOKEN);
     }
 
+    @Override
     public String getCreatedBy() {
         return getPropertyValue(PropertyIds.CREATED_BY);
     }
 
+    @Override
     public GregorianCalendar getCreationDate() {
         return getPropertyValue(PropertyIds.CREATION_DATE);
     }
 
+    @Override
     public String getId() {
         return getPropertyValue(PropertyIds.OBJECT_ID);
     }
 
+    @Override
     public GregorianCalendar getLastModificationDate() {
         return getPropertyValue(PropertyIds.LAST_MODIFICATION_DATE);
     }
 
+    @Override
     public String getLastModifiedBy() {
         return getPropertyValue(PropertyIds.LAST_MODIFIED_BY);
     }
 
+    @Override
     public String getName() {
         return getPropertyValue(PropertyIds.NAME);
     }
 
+    @Override
     public String getDescription() {
         return getPropertyValue(PropertyIds.DESCRIPTION);
     }
 
+    @Override
     public List<Property<?>> getProperties() {
         readLock();
         try {
@@ -502,6 +519,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Property<T> getProperty(String id) {
         readLock();
@@ -512,6 +530,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getPropertyValue(String id) {
         Property<T> property = getProperty(id);
@@ -522,6 +541,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return (T) property.getValue();
     }
 
+    @Override
     public ObjectType getType() {
         readLock();
         try {
@@ -531,6 +551,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public List<SecondaryType> getSecondaryTypes() {
         readLock();
         try {
@@ -540,6 +561,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public List<ObjectType> findObjectType(String id) {
         List<ObjectType> result = null;
 
@@ -570,6 +592,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- allowable actions ---
 
+    @Override
     public AllowableActions getAllowableActions() {
         readLock();
         try {
@@ -579,6 +602,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public boolean hasAllowableAction(Action action) {
         if (action == null) {
             throw new IllegalArgumentException("Action must be set!");
@@ -594,6 +618,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- renditions ---
 
+    @Override
     public List<Rendition> getRenditions() {
         readLock();
         try {
@@ -610,6 +635,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return getBinding().getAclService().getAcl(getRepositoryId(), objectId, onlyBasicPermissions, null);
     }
 
+    @Override
     public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
         Acl result = getSession().applyAcl(this, addAces, removeAces, aclPropagation);
 
@@ -618,14 +644,17 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return result;
     }
 
+    @Override
     public Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
         return applyAcl(addAces, null, aclPropagation);
     }
 
+    @Override
     public Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
         return applyAcl(null, removeAces, aclPropagation);
     }
 
+    @Override
     public Acl setAcl(List<Ace> aces) {
         Acl result = getSession().setAcl(this, aces);
 
@@ -634,6 +663,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return result;
     }
 
+    @Override
     public Acl getAcl() {
         readLock();
         try {
@@ -643,6 +673,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public Set<String> getPermissionsForPrincipal(String principalId) {
         if (principalId == null) {
             throw new IllegalArgumentException("Principal must be set!");
@@ -669,12 +700,14 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return result;
     }
 
+    @Override
     public Set<String> getPermissonsForPrincipal(String principalId) {
         return getPermissionsForPrincipal(principalId);
     }
 
     // --- policies ---
 
+    @Override
     public void applyPolicy(ObjectId... policyIds) {
         readLock();
         try {
@@ -686,6 +719,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         refresh();
     }
 
+    @Override
     public void applyPolicy(ObjectId policyId, boolean refresh) {
         readLock();
         try {
@@ -699,6 +733,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public void removePolicy(ObjectId... policyIds) {
         readLock();
         try {
@@ -710,6 +745,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         refresh();
     }
 
+    @Override
     public void removePolicy(ObjectId policyId, boolean refresh) {
         readLock();
         try {
@@ -723,6 +759,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public List<Policy> getPolicies() {
         readLock();
         try {
@@ -734,6 +771,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- relationships ---
 
+    @Override
     public List<Relationship> getRelationships() {
         readLock();
         try {
@@ -745,6 +783,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- extensions ---
 
+    @Override
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         List<CmisExtensionElement> ext = extensions.get(level);
         if (ext == null) {
@@ -756,12 +795,14 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
     // --- adapters ---
 
+    @Override
     public <T> T getAdapter(Class<T> adapterInterface) {
         return null;
     }
 
     // --- other ---
 
+    @Override
     public long getRefreshTimestamp() {
         readLock();
         try {
@@ -771,6 +812,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public void refresh() {
         writeLock();
         try {
@@ -793,6 +835,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    @Override
     public void refreshIfOld(long durationInMillis) {
         writeLock();
         try {

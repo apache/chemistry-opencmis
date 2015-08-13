@@ -43,6 +43,7 @@ public class MetadataParserExif extends AbstractMetadataParser  {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataParserExif.class.getName());
     
+    @Override
     public void extractMetadata(File f, TypeDefinition td, Session session) throws MapperException {
         
         reset();

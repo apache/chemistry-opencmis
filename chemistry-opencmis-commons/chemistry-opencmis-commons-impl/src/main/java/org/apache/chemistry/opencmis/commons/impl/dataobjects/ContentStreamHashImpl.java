@@ -112,14 +112,17 @@ public class ContentStreamHashImpl implements ContentStreamHash {
         this.propertyValue = "{" + this.algorithm + "}" + this.hash;
     }
 
+    @Override
     public String getPropertyValue() {
         return propertyValue;
     }
 
+    @Override
     public String getAlgorithm() {
         return algorithm;
     }
 
+    @Override
     public String getHash() {
         return hash;
     }

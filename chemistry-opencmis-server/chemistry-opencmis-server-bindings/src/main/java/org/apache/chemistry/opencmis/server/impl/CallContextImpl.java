@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.server.impl;
 
 import java.io.File;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,7 +38,9 @@ import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 /**
  * Implementation of the {@link CallContext} interface.
  */
-public class CallContextImpl implements MutableCallContext {
+public class CallContextImpl implements MutableCallContext, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String binding;
     private final boolean objectInfoRequired;
@@ -183,66 +186,82 @@ public class CallContextImpl implements MutableCallContext {
         }
     }
 
+    @Override
     public String getBinding() {
         return binding;
     }
 
+    @Override
     public boolean isObjectInfoRequired() {
         return objectInfoRequired;
     }
 
+    @Override
     public Object get(String key) {
         return parameter.get(key);
     }
 
+    @Override
     public CmisVersion getCmisVersion() {
         return (CmisVersion) get(CMIS_VERSION);
     }
 
+    @Override
     public String getRepositoryId() {
         return (String) get(REPOSITORY_ID);
     }
 
+    @Override
     public String getUsername() {
         return (String) get(USERNAME);
     }
 
+    @Override
     public String getPassword() {
         return (String) get(PASSWORD);
     }
 
+    @Override
     public String getLocale() {
         return (String) get(LOCALE);
     }
 
+    @Override
     public BigInteger getOffset() {
         return (BigInteger) get(OFFSET);
     }
 
+    @Override
     public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
 
+    @Override
     public File getTempDirectory() {
         return (File) get(TEMP_DIR);
     }
 
+    @Override
     public boolean encryptTempFiles() {
         return Boolean.TRUE.equals(get(ENCRYPT_TEMP_FILE));
     }
 
+    @Override
     public int getMemoryThreshold() {
         return (Integer) get(MEMORY_THRESHOLD);
     }
 
+    @Override
     public long getMaxContentSize() {
         return (Long) get(MAX_CONTENT_SIZE);
     }
 
+    @Override
     public final void put(String key, Object value) {
         parameter.put(key, value);
     }
 
+    @Override
     public final Object remove(String key) {
         return parameter.remove(key);
     }

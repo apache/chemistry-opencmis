@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base test case for CMIS tests.
-  */
+ */
 public abstract class AbstractCmisTestCase extends TestCase {
 
     public static final String DEFAULT_TESTS_ENABLED = "true";
@@ -553,7 +553,7 @@ public abstract class AbstractCmisTestCase extends TestCase {
             assertNotNull(children);
             assertTrue(isNotEmpty(children.getObjects()));
 
-            hasMore = (children.hasMoreItems() == null ? false : children.hasMoreItems().booleanValue());
+            hasMore = children.hasMoreItems() == null ? false : children.hasMoreItems().booleanValue();
 
             for (ObjectInFolderData object : children.getObjects()) {
                 assertNotNull(object);

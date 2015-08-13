@@ -45,6 +45,7 @@ public class MetadataParserTika extends AbstractMetadataParser {
     public MetadataParserTika() {
     }
     
+    @Override
     public void extractMetadata(File f, TypeDefinition td, Session session) throws MapperException {
         try {
             InputStream stream = new FileInputStream(f);

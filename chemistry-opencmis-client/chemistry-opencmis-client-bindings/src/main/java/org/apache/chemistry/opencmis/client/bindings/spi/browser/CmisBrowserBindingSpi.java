@@ -69,46 +69,57 @@ public class CmisBrowserBindingSpi implements CmisSpi {
         aclService = new AclServiceImpl(session);
     }
 
+    @Override
     public RepositoryService getRepositoryService() {
         return repositoryService;
     }
 
+    @Override
     public NavigationService getNavigationService() {
         return navigationService;
     }
 
+    @Override
     public ObjectService getObjectService() {
         return objectService;
     }
 
+    @Override
     public VersioningService getVersioningService() {
         return versioningService;
     }
 
+    @Override
     public RelationshipService getRelationshipService() {
         return relationshipService;
     }
 
+    @Override
     public DiscoveryService getDiscoveryService() {
         return discoveryService;
     }
 
+    @Override
     public MultiFilingService getMultiFilingService() {
         return multiFilingService;
     }
 
+    @Override
     public AclService getAclService() {
         return aclService;
     }
 
+    @Override
     public PolicyService getPolicyService() {
         return policyService;
     }
 
+    @Override
     public void clearAllCaches() {
         session.remove(SpiSessionParameter.REPOSITORY_URL_CACHE);
     }
 
+    @Override
     public void clearRepositoryCache(String repositoryId) {
         RepositoryUrlCache repUrlCache = (RepositoryUrlCache) session.get(SpiSessionParameter.REPOSITORY_URL_CACHE);
         if (repUrlCache != null) {
@@ -116,6 +127,7 @@ public class CmisBrowserBindingSpi implements CmisSpi {
         }
     }
 
+    @Override
     public void close() {
         // no-op for Browser Binding
     }

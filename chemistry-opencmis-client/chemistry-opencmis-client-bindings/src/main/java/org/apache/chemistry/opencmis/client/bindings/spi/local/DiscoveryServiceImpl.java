@@ -41,6 +41,7 @@ public class DiscoveryServiceImpl extends AbstractLocalService implements Discov
         setServiceFactory(factory);
     }
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -63,6 +64,7 @@ public class DiscoveryServiceImpl extends AbstractLocalService implements Discov
         }
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

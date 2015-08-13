@@ -35,26 +35,32 @@ public class PropertyDecimalDefinitionImpl extends AbstractPropertyDefinition<Bi
     private BigDecimal maxValue;
     private DecimalPrecision precision;
 
+    @Override
     public BigDecimal getMinValue() {
         return minValue;
     }
 
+    @Override
     public void setMinValue(BigDecimal minValue) {
         this.minValue = minValue;
     }
 
+    @Override
     public BigDecimal getMaxValue() {
         return maxValue;
     }
 
+    @Override
     public void setMaxValue(BigDecimal maxValue) {
         this.maxValue = maxValue;
     }
 
+    @Override
     public DecimalPrecision getPrecision() {
         return precision;
     }
 
+    @Override
     public void setPrecision(DecimalPrecision precision) {
         this.precision = precision;
     }

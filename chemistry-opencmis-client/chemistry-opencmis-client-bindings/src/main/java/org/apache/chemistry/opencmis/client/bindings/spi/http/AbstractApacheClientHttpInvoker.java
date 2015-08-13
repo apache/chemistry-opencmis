@@ -77,23 +77,28 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
     protected static final String HTTP_CLIENT = "org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker.httpClient";
     protected static final int BUFFER_SIZE = 2 * 1024 * 1024;
 
+    @Override
     public Response invokeGET(UrlBuilder url, BindingSession session) {
         return invoke(url, "GET", null, null, null, session, null, null);
     }
 
+    @Override
     public Response invokeGET(UrlBuilder url, BindingSession session, BigInteger offset, BigInteger length) {
         return invoke(url, "GET", null, null, null, session, offset, length);
     }
 
+    @Override
     public Response invokePOST(UrlBuilder url, String contentType, Output writer, BindingSession session) {
         return invoke(url, "POST", contentType, null, writer, session, null, null);
     }
 
+    @Override
     public Response invokePUT(UrlBuilder url, String contentType, Map<String, String> headers, Output writer,
             BindingSession session) {
         return invoke(url, "PUT", contentType, headers, writer, session, null, null);
     }
 
+    @Override
     public Response invokeDELETE(UrlBuilder url, BindingSession session) {
         return invoke(url, "DELETE", null, null, null, session, null, null);
     }
@@ -214,22 +219,27 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
                         return true;
                     }
 
+                    @Override
                     public boolean isRepeatable() {
                         return false;
                     }
 
+                    @Override
                     public long getContentLength() {
                         return -1;
                     }
 
+                    @Override
                     public boolean isStreaming() {
                         return false;
                     }
 
+                    @Override
                     public InputStream getContent() throws IOException {
                         throw new UnsupportedOperationException();
                     }
 
+                    @Override
                     public void writeTo(final OutputStream outstream) throws IOException {
                         OutputStream connOut = null;
 

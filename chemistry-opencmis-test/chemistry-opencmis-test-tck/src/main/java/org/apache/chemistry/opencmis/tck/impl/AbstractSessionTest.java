@@ -1411,7 +1411,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult checkACL(Session session, Acl acl, boolean checkExact, String message) {
@@ -1452,7 +1452,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     private void checkRelationships(Session session, List<CmisTestResult> results, CmisObject object) {
@@ -1683,7 +1683,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult checkVersionHistory(Session session, CmisObject object, String[] properties, String message) {
@@ -1924,7 +1924,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult assertAllowableAction(CmisObject object, Action action, CmisTestResult success,
@@ -2021,7 +2021,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult checkChildren(Session session, Folder folder, String message) {
@@ -2155,7 +2155,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     private void checkChild(Session session, List<CmisTestResult> results, Folder folder, CmisObject child) {
@@ -2372,7 +2372,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult checkTypeDefinition(Session session, TypeDefinition type, String message) {
@@ -2719,7 +2719,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult checkPropertyDefinition(PropertyDefinition<?> propDef, String message) {
@@ -2775,7 +2775,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 
     protected CmisTestResult assertEquals(TypeDefinition expected, TypeDefinition actual, CmisTestResult success,
@@ -3698,7 +3698,7 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             CmisTestResultImpl result = createResult(getWorst(results), "Property definition: " + id);
             result.getChildren().addAll(results);
 
-            return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+            return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
         }
     }
 }

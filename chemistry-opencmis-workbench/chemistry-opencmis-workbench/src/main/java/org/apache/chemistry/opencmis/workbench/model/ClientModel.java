@@ -438,6 +438,7 @@ public class ClientModel {
         }
 
         Collections.sort(result, new Comparator<ObjectType>() {
+            @Override
             public int compare(ObjectType ot1, ObjectType ot2) {
                 return ot1.getDisplayName().compareTo(ot2.getDisplayName());
             }

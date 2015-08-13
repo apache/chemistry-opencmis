@@ -28,6 +28,7 @@ public class TypeMutabilityImpl extends ExtensionDataImpl implements TypeMutabil
     private Boolean canUpdate;
     private Boolean canDelete;
 
+    @Override
     public Boolean canCreate() {
         return canCreate;
     }
@@ -36,6 +37,7 @@ public class TypeMutabilityImpl extends ExtensionDataImpl implements TypeMutabil
         this.canCreate = canCreate;
     }
 
+    @Override
     public Boolean canUpdate() {
         return canUpdate;
     }
@@ -44,6 +46,7 @@ public class TypeMutabilityImpl extends ExtensionDataImpl implements TypeMutabil
         this.canUpdate = canUpdate;
     }
 
+    @Override
     public Boolean canDelete() {
         return canDelete;
     }

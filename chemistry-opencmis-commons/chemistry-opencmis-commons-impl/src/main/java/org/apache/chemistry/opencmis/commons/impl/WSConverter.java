@@ -2690,14 +2690,17 @@ public final class WSConverter {
 
         result.setStream(new DataHandler(new DataSource() {
 
+            @Override
             public OutputStream getOutputStream() throws IOException {
                 return null;
             }
 
+            @Override
             public String getName() {
                 return contentStream.getFileName();
             }
 
+            @Override
             public InputStream getInputStream() throws IOException {
                 if (allowClose) {
                     return stream;
@@ -2711,6 +2714,7 @@ public final class WSConverter {
                 }
             }
 
+            @Override
             public String getContentType() {
                 return contentStream.getMimeType();
             }

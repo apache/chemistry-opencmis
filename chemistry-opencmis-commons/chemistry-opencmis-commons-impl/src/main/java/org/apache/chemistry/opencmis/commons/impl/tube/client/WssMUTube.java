@@ -46,6 +46,7 @@ public class WssMUTube extends AbstractWssTube {
         soapVersion = that.soapVersion;
     }
 
+    @Override
     public WssMUTube copy(TubeCloner cloner) {
         return new WssMUTube(this, cloner);
     }

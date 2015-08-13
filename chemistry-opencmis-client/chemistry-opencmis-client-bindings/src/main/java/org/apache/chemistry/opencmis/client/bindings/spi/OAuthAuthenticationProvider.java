@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -146,6 +147,7 @@ import org.slf4j.LoggerFactory;
 public class OAuthAuthenticationProvider extends StandardAuthenticationProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(OAuthAuthenticationProvider.class);
+    private static final String TOKEN_TYPE_BEARER = "bearer";
 
     private static final long serialVersionUID = 1L;
 
@@ -210,7 +212,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             headers = new HashMap<String, List<String>>();
         }
 
-        headers.put("Authorization", Collections.singletonList("Bearer " + getAccessToken()));
+        headers.put("Authorization", Collections.singletonList(TOKEN_TYPE_BEARER + " " + getAccessToken()));
 
         return headers;
     }
@@ -411,13 +413,13 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             JSONObject jsonResponse = parseResponse(conn);
 
             Object error = jsonResponse.get("error");
-            String errorStr = (error == null ? null : error.toString());
+            String errorStr = error == null ? null : error.toString();
 
             Object description = jsonResponse.get("error_description");
-            String descriptionStr = (description == null ? null : description.toString());
+            String descriptionStr = description == null ? null : description.toString();
 
             Object uri = jsonResponse.get("error_uri");
-            String uriStr = (uri == null ? null : uri.toString());
+            String uriStr = uri == null ? null : uri.toString();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("OAuth token request failed: {}", jsonResponse.toJSONString());
@@ -431,7 +433,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
         JSONObject jsonResponse = parseResponse(conn);
 
         Object tokenType = jsonResponse.get("token_type");
-        if (!(tokenType instanceof String) || !"bearer".equalsIgnoreCase((String) tokenType)) {
+        if (!(tokenType instanceof String) || !TOKEN_TYPE_BEARER.equalsIgnoreCase((String) tokenType)) {
             throw new CmisOAuthException("Unsupported OAuth token type: " + tokenType);
         }
 
@@ -479,8 +481,8 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
                 Map<String, Map<String, String>> challenges = MimeHelper.getChallengesFromAuthenticateHeader(conn
                         .getHeaderField("WWW-Authenticate"));
 
-                if (challenges != null && challenges.containsKey("bearer")) {
-                    Map<String, String> params = challenges.get("bearer");
+                if (challenges != null && challenges.containsKey(TOKEN_TYPE_BEARER)) {
+                    Map<String, String> params = challenges.get(TOKEN_TYPE_BEARER);
 
                     String errorStr = params.get("error");
                     String descriptionStr = params.get("error_description");
@@ -549,7 +551,10 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
     /**
      * Token holder class.
      */
-    public static class Token {
+    public static class Token implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         private String accessToken;
         private String refreshToken;
         private long expirationTimestamp;

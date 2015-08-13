@@ -30,6 +30,7 @@ public class PermissionDefinitionDataImpl extends AbstractExtensionData implemen
     private String permission;
     private String description;
 
+    @Override
     public String getId() {
         return permission;
     }
@@ -38,6 +39,7 @@ public class PermissionDefinitionDataImpl extends AbstractExtensionData implemen
         this.permission = permission;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }

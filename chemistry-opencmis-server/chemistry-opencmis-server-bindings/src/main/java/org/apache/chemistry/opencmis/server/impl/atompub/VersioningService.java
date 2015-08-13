@@ -44,6 +44,7 @@ public class VersioningService {
      * Check Out.
      */
     public static class CheckOut extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -111,6 +112,7 @@ public class VersioningService {
      * Get all versions.
      */
     public static class GetAllVersions extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -186,6 +188,7 @@ public class VersioningService {
      * Delete object.
      */
     public static class DeleteAllVersions extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

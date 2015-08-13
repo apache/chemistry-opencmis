@@ -78,22 +78,27 @@ public final class JUnitHelper {
 
     private static class JUnitProgressMonitor implements CmisTestProgressMonitor {
 
+        @Override
         @SuppressWarnings("PMD.SystemPrintln")
         public void startGroup(CmisTestGroup group) {
             System.out.println(group.getName() + " (" + group.getTests().size() + " tests)");
         }
 
+        @Override
         public void endGroup(CmisTestGroup group) {
         }
 
+        @Override
         @SuppressWarnings("PMD.SystemPrintln")
         public void startTest(CmisTest test) {
             System.out.println("  " + test.getName());
         }
 
+        @Override
         public void endTest(CmisTest test) {
         }
 
+        @Override
         @SuppressWarnings("PMD.SystemPrintln")
         public void message(String msg) {
             System.out.println(msg);

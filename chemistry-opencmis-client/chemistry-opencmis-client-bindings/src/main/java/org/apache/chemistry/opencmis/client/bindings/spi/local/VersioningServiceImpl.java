@@ -44,6 +44,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         setServiceFactory(factory);
     }
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -63,6 +64,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         }
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -84,6 +86,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         }
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         CmisService service = getService(repositoryId);
@@ -103,6 +106,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         }
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -125,6 +129,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         }
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -149,6 +154,7 @@ public class VersioningServiceImpl extends AbstractLocalService implements Versi
         }
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         CmisService service = getService(repositoryId);

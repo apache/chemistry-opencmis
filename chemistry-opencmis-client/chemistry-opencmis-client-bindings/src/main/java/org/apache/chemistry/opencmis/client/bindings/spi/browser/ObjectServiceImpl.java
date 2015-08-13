@@ -69,11 +69,12 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         setSession(session);
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         // build URL
-        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+        UrlBuilder url = folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId);
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT, contentStream);
@@ -86,6 +87,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -97,14 +99,15 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
         // build URL
-        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+        UrlBuilder url = folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId);
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_DOCUMENT_FROM_SOURCE);
@@ -118,6 +121,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -129,9 +133,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         // build URL
@@ -147,6 +152,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -158,9 +164,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         // build URL
@@ -176,6 +183,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -187,13 +195,14 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         // build URL
-        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+        UrlBuilder url = folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId);
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_POLICY);
@@ -205,6 +214,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -216,13 +226,14 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         // build URL
-        UrlBuilder url = (folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId));
+        UrlBuilder url = folderId != null ? getObjectUrl(repositoryId, folderId) : getRepositoryUrl(repositoryId);
 
         // prepare form data
         final FormDataWriter formData = new FormDataWriter(Constants.CMISACTION_CREATE_ITEM);
@@ -234,6 +245,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -245,9 +257,10 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         ObjectData newObj = JSONConverter.convertObject(json, typeCache);
 
-        return (newObj == null ? null : newObj.getId());
+        return newObj == null ? null : newObj.getId();
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_ALLOWABLEACTIONS);
@@ -259,6 +272,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return JSONConverter.convertAllowableActions(json);
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -282,6 +296,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return JSONConverter.convertObject(json, typeCache);
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -305,6 +320,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return JSONConverter.convertObject(json, typeCache);
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId, Constants.SELECTOR_PROPERTIES);
@@ -324,6 +340,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         }
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         // build URL
@@ -339,6 +356,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return JSONConverter.convertRenditions(json);
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
 
@@ -377,6 +395,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return result;
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         // we need an object ID
@@ -397,6 +416,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -413,6 +433,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         setChangeToken(changeToken, newObj);
     }
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -433,6 +454,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -443,6 +465,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return JSONConverter.convertBulkUpdate(json);
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         // we need an object id
@@ -461,6 +484,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -475,6 +499,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         objectId.setValue(newObj == null ? null : newObj.getId());
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId);
@@ -485,12 +510,14 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         // build URL
@@ -504,6 +531,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -524,6 +552,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         return new FailedToDeleteDataImpl();
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         // we need an object id
@@ -544,6 +573,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -560,6 +590,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         setChangeToken(changeToken, newObj);
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         // we need an object id
@@ -580,6 +611,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -596,6 +628,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
         setChangeToken(changeToken, newObj);
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         // we need an object id
@@ -615,6 +648,7 @@ public class ObjectServiceImpl extends AbstractBrowserBindingService implements 
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }

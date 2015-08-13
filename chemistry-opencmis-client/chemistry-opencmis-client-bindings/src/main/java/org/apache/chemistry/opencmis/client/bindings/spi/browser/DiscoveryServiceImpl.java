@@ -49,6 +49,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
         setSession(session);
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -69,6 +70,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
 
         // send and parse
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -80,6 +82,7 @@ public class DiscoveryServiceImpl extends AbstractBrowserBindingService implemen
         return JSONConverter.convertObjectList(json, typeCache, true);
     }
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         // build URL

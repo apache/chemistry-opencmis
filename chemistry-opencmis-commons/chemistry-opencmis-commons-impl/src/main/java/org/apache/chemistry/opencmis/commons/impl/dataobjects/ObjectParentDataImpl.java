@@ -44,6 +44,7 @@ public class ObjectParentDataImpl extends AbstractExtensionData implements Objec
         this.object = object;
     }
 
+    @Override
     public ObjectData getObject() {
         return object;
     }
@@ -52,6 +53,7 @@ public class ObjectParentDataImpl extends AbstractExtensionData implements Objec
         this.object = object;
     }
 
+    @Override
     public String getRelativePathSegment() {
         return relativePathSegment;
     }

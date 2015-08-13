@@ -262,7 +262,7 @@ public class TypeManagerImpl implements TypeManager {
     }
 
     private static boolean isRootType(TypeDefinitionContainer c) {
-        return (c.getTypeDefinition().getId().equals(c.getTypeDefinition().getBaseTypeId().value()));
+        return c.getTypeDefinition().getId().equals(c.getTypeDefinition().getBaseTypeId().value());
     }
 
     private static PropertyDefinition<?> clonePropertyDefinition(PropertyDefinition<?> src) {

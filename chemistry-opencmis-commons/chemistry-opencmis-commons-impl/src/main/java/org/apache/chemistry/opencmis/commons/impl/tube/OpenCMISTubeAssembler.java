@@ -29,6 +29,7 @@ import com.sun.xml.ws.util.pipe.StandaloneTubeAssembler;
  */
 public class OpenCMISTubeAssembler extends StandaloneTubeAssembler {
 
+    @Override
     public Tube createClient(ClientTubeAssemblerContext context) {
         Tube head = context.createTransportTube();
         head = context.createSecurityTube(head);

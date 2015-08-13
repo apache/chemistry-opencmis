@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.server.impl.webservices.ObjectServicePort10")
 public class ObjectService10 extends ObjectService implements ObjectServicePort10 {
 
+    @Override
     @WebMethod(exclude = true)
     public void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
             CmisAccessControlListType addACEs, CmisAccessControlListType removeACEs,
@@ -54,6 +55,7 @@ public class ObjectService10 extends ObjectService implements ObjectServicePort1
         throw new CmisException(fault.getMessage(), fault);
     }
 
+    @Override
     @WebMethod(exclude = true)
     public void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
             Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
@@ -66,6 +68,7 @@ public class ObjectService10 extends ObjectService implements ObjectServicePort1
         throw new CmisException(fault.getMessage(), fault);
     }
 
+    @Override
     @WebMethod(exclude = true)
     public void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)

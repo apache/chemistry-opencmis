@@ -79,7 +79,7 @@ public class CmisBindingCache implements Serializable {
         String repositoryId = context.getRepositoryId();
         String user = context.getUsername();
 
-        String key = (repositoryId == null ? "" : repositoryId);
+        String key = repositoryId == null ? "" : repositoryId;
         if (user != null) {
             key = key + "\n" + user;
         }

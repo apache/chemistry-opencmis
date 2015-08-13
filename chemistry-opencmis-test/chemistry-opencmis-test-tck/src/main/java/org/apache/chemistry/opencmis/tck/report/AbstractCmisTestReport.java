@@ -34,9 +34,11 @@ import org.apache.chemistry.opencmis.tck.CmisTestReport;
  */
 public abstract class AbstractCmisTestReport implements CmisTestReport {
 
+    @Override
     public abstract void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, Writer writer)
             throws Exception;
 
+    @Override
     public void createReport(Map<String, String> parameters, List<CmisTestGroup> groups, File file) throws Exception {
         Writer writer = new OutputStreamWriter(new FileOutputStream(file), IOUtils.UTF8);
         try {

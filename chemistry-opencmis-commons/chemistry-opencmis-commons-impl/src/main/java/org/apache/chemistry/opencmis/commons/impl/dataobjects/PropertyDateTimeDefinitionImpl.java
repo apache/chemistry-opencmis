@@ -33,10 +33,12 @@ public class PropertyDateTimeDefinitionImpl extends AbstractPropertyDefinition<G
 
     private DateTimeResolution dateTimeResolution;
 
+    @Override
     public DateTimeResolution getDateTimeResolution() {
         return dateTimeResolution;
     }
 
+    @Override
     public void setDateTimeResolution(DateTimeResolution dateTimeResolution) {
         this.dateTimeResolution = dateTimeResolution;
     }

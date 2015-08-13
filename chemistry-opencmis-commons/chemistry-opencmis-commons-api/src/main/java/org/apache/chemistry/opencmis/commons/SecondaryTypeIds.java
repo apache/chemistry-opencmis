@@ -25,9 +25,6 @@ package org.apache.chemistry.opencmis.commons;
  */
 public final class SecondaryTypeIds {
 
-    private SecondaryTypeIds() {
-    }
-
     /** Repository managed retention type. */
     public static final String REPOSITORY_MANAGED_RETENTION = "cmis:rm_repMgtRetention";
     /** Client managed retention type. */
@@ -36,4 +33,7 @@ public final class SecondaryTypeIds {
     public static final String DESTRUCTION_CLIENT_MANAGED_RETENTION = "cmis:rm_destructionRetention";
     /** Legal hold type. */
     public static final String HOLD = "cmis:rm_hold";
+
+    private SecondaryTypeIds() {
+    }
 }

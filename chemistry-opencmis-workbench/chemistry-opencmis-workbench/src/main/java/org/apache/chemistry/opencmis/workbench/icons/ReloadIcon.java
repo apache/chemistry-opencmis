@@ -45,6 +45,7 @@ public class ReloadIcon extends AbstractWorkbenchIcon {
         return 64;
     }
 
+    @Override
     protected void paint(Graphics2D g) {
         GeneralPath shape = new GeneralPath();
 

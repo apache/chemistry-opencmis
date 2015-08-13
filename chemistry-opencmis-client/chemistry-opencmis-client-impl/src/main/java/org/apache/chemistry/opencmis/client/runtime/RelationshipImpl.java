@@ -37,10 +37,12 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         initialize(session, objectType, objectData, context);
     }
 
+    @Override
     public CmisObject getSource() {
         return getSource(getSession().getDefaultContext());
     }
 
+    @Override
     public CmisObject getSource(OperationContext context) {
         readLock();
         try {
@@ -55,6 +57,7 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         }
     }
 
+    @Override
     public ObjectId getSourceId() {
         String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
         if ((sourceId == null) || (sourceId.length() == 0)) {
@@ -64,10 +67,12 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         return getSession().createObjectId(sourceId);
     }
 
+    @Override
     public CmisObject getTarget() {
         return getTarget(getSession().getDefaultContext());
     }
 
+    @Override
     public CmisObject getTarget(OperationContext context) {
         readLock();
         try {
@@ -82,6 +87,7 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
         }
     }
 
+    @Override
     public ObjectId getTargetId() {
         String targetId = getPropertyValue(PropertyIds.TARGET_ID);
         if ((targetId == null) || (targetId.length() == 0)) {

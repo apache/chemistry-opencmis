@@ -51,6 +51,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
         this.portProvider = portProvider;
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addACEs, Acl removeACEs,
             AclPropagation aclPropagation, ExtensionsData extension) {
         ACLServicePort port = portProvider.getACLServicePort(getCmisVersion(repositoryId), "applyACL");
@@ -67,6 +68,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
         }
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         ACLServicePort port = portProvider.getACLServicePort(getCmisVersion(repositoryId), "getACL");
 
@@ -81,6 +83,7 @@ public class AclServiceImpl extends AbstractWebServicesService implements AclSer
         }
     }
 
+    @Override
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
         Acl currentAcl = getAcl(repositoryId, objectId, false, null);
 

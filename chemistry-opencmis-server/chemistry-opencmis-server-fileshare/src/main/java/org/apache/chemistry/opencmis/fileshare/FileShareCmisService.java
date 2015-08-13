@@ -69,6 +69,7 @@ public class FileShareCmisService extends AbstractCmisService implements CallCon
      * 
      * This method should only be called by the service factory.
      */
+    @Override
     public void setCallContext(CallContext context) {
         this.context = context;
     }
@@ -76,6 +77,7 @@ public class FileShareCmisService extends AbstractCmisService implements CallCon
     /**
      * Gets the call context.
      */
+    @Override
     public CallContext getCallContext() {
         return context;
     }

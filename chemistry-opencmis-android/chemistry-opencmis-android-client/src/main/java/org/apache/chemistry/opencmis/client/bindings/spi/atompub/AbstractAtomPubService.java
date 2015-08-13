@@ -157,7 +157,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             }
         }
 
-        return (info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion());
+        return info == null ? CmisVersion.CMIS_1_0 : info.getCmisVersion();
     }
 
     // ---- link cache ----

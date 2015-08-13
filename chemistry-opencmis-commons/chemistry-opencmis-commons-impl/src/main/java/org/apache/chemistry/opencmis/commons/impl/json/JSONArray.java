@@ -70,6 +70,7 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
         out.write(']');
     }
 
+    @Override
     public void writeJSONString(Writer out) throws IOException {
         writeJSONString(this, out);
     }
@@ -110,10 +111,12 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
         return sb.toString();
     }
 
+    @Override
     public String toJSONString() {
         return toJSONString(this);
     }
 
+    @Override
     public String toString() {
         return toJSONString();
     }

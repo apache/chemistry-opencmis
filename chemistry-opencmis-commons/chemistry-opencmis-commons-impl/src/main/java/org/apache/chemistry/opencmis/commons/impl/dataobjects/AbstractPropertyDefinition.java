@@ -52,70 +52,87 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
     private Boolean isRequired;
     private Boolean isOpenChoice;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getLocalName() {
         return localName;
     }
 
+    @Override
     public void setLocalName(String localName) {
         this.localName = localName;
     }
 
+    @Override
     public String getLocalNamespace() {
         return localNamespace;
     }
 
+    @Override
     public void setLocalNamespace(String localNamespace) {
         this.localNamespace = localNamespace;
     }
 
+    @Override
     public String getQueryName() {
         return queryName;
     }
 
+    @Override
     public void setQueryName(String queryName) {
         this.queryName = queryName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public PropertyType getPropertyType() {
         return propertyType;
     }
 
+    @Override
     public void setPropertyType(PropertyType propertyType) {
         this.propertyType = propertyType;
     }
 
+    @Override
     public Cardinality getCardinality() {
         return cardinality;
     }
 
+    @Override
     public void setCardinality(Cardinality cardinality) {
         this.cardinality = cardinality;
     }
 
+    @Override
     public List<Choice<T>> getChoices() {
         if (choiceList == null) {
             choiceList = new ArrayList<Choice<T>>();
@@ -124,10 +141,12 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
         return choiceList;
     }
 
+    @Override
     public void setChoices(List<Choice<T>> choiceList) {
         this.choiceList = choiceList;
     }
 
+    @Override
     public List<T> getDefaultValue() {
         if (defaultValue == null) {
             defaultValue = new ArrayList<T>();
@@ -136,54 +155,67 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
         return defaultValue;
     }
 
+    @Override
     public void setDefaultValue(List<T> defaultValue) {
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public Updatability getUpdatability() {
         return updatability;
     }
 
+    @Override
     public void setUpdatability(Updatability updatability) {
         this.updatability = updatability;
     }
 
+    @Override
     public Boolean isInherited() {
         return isInherited;
     }
 
+    @Override
     public void setIsInherited(Boolean isInherited) {
         this.isInherited = isInherited;
     }
 
+    @Override
     public Boolean isQueryable() {
         return isQueryable;
     }
 
+    @Override
     public void setIsQueryable(Boolean isQueryable) {
         this.isQueryable = isQueryable;
     }
 
+    @Override
     public Boolean isOrderable() {
         return isOrderable;
     }
 
+    @Override
     public void setIsOrderable(Boolean isOrderable) {
         this.isOrderable = isOrderable;
     }
 
+    @Override
     public Boolean isRequired() {
         return isRequired;
     }
 
+    @Override
     public void setIsRequired(Boolean isRequired) {
         this.isRequired = isRequired;
     }
 
+    @Override
     public Boolean isOpenChoice() {
         return isOpenChoice;
     }
 
+    @Override
     public void setIsOpenChoice(Boolean isOpenChoice) {
         this.isOpenChoice = isOpenChoice;
     }

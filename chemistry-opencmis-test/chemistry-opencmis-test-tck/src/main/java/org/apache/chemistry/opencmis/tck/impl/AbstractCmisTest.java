@@ -45,6 +45,7 @@ public abstract class AbstractCmisTest implements CmisTest {
     private List<CmisTestResult> results;
     private long time;
 
+    @Override
     public void init(Map<String, String> parameters) {
         this.parameters = parameters;
         results = new ArrayList<CmisTestResult>();
@@ -54,6 +55,7 @@ public abstract class AbstractCmisTest implements CmisTest {
         return parameters;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -62,6 +64,7 @@ public abstract class AbstractCmisTest implements CmisTest {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -78,6 +81,7 @@ public abstract class AbstractCmisTest implements CmisTest {
         return group;
     }
 
+    @Override
     public abstract void run() throws Exception;
 
     @Test
@@ -85,18 +89,22 @@ public abstract class AbstractCmisTest implements CmisTest {
         JUnitHelper.run(this);
     }
 
+    @Override
     public List<CmisTestResult> getResults() {
         return results;
     }
 
+    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.isEnabled = enabled;
     }
 
+    @Override
     public long getTime() {
         return time;
     }

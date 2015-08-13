@@ -35,9 +35,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
@@ -101,8 +102,8 @@ public class ConnectionErrorDialog extends JDialog {
         hints.setEditable(false);
         hints.setCaretPosition(0);
 
-        hintsPanel.add(new JScrollPane(hints, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        hintsPanel.add(new JScrollPane(hints, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
 
         // close button
         JPanel buttonPanel = new JPanel();
@@ -116,6 +117,7 @@ public class ConnectionErrorDialog extends JDialog {
         closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         closeButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ConnectionErrorDialog.this.dispose();
             }
@@ -127,7 +129,7 @@ public class ConnectionErrorDialog extends JDialog {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(getOwner());
 

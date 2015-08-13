@@ -60,6 +60,7 @@ public class CacheImpl implements Cache {
     public CacheImpl() {
     }
 
+    @Override
     public void initialize(Session session, Map<String, String> parameters) {
         assert parameters != null;
 
@@ -152,10 +153,12 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void clear() {
         initializeInternals();
     }
 
+    @Override
     public boolean containsId(String objectId, String cacheKey) {
         lock.writeLock().lock();
         try {
@@ -175,6 +178,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public boolean containsPath(String path, String cacheKey) {
         lock.writeLock().lock();
         try {
@@ -194,6 +198,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public CmisObject getById(String objectId, String cacheKey) {
         lock.writeLock().lock();
         try {
@@ -202,12 +207,13 @@ public class CacheImpl implements Cache {
             }
 
             Map<String, CmisObject> item = objectMap.get(objectId).getItem();
-            return (item == null ? null : item.get(cacheKey));
+            return item == null ? null : item.get(cacheKey);
         } finally {
             lock.writeLock().unlock();
         }
     }
 
+    @Override
     public CmisObject getByPath(String path, String cacheKey) {
         lock.writeLock().lock();
         try {
@@ -222,6 +228,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void put(CmisObject object, String cacheKey) {
         // no object, no cache key - no cache
         if ((object == null) || (cacheKey == null)) {
@@ -258,6 +265,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void putPath(String path, CmisObject object, String cacheKey) {
         if (path == null) {
             return;
@@ -275,6 +283,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void remove(String objectId) {
         if (objectId == null) {
             return;
@@ -288,6 +297,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public int getCacheSize() {
         return this.cacheSize;
     }
@@ -313,7 +323,7 @@ public class CacheImpl implements Cache {
                 return true;
             }
 
-            return (timestamp + ttl < System.currentTimeMillis());
+            return timestamp + ttl < System.currentTimeMillis();
         }
 
         public synchronized T getItem() {

@@ -77,6 +77,7 @@ public class ObjectService {
      * Create.
      */
     public static class Create extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -160,6 +161,7 @@ public class ObjectService {
      * Create relationship.
      */
     public static class CreateRelationship extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -220,6 +222,7 @@ public class ObjectService {
      * Delete object.
      */
     public static class DeleteObject extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -252,6 +255,7 @@ public class ObjectService {
      * Delete content stream.
      */
     public static class DeleteContentStream extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -285,6 +289,7 @@ public class ObjectService {
      * Set or append content stream.
      */
     public static class SetOrAppendContentStream extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -336,7 +341,7 @@ public class ObjectService {
             }
 
             // set headers
-            String newObjectId = (objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue());
+            String newObjectId = objectIdHolder.getValue() == null ? objectId : objectIdHolder.getValue();
             String contentLocation = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_CONTENT, newObjectId);
             String location = compileUrl(compileBaseUrl(request, repositoryId), RESOURCE_OBJECTBYID, newObjectId);
 
@@ -373,6 +378,7 @@ public class ObjectService {
      * Delete tree.
      */
     public static class DeleteTree extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -425,6 +431,7 @@ public class ObjectService {
      * getObject.
      */
     public static class GetObject extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -491,6 +498,7 @@ public class ObjectService {
      * objectByPath URI template.
      */
     public static class GetObjectByPath extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -549,6 +557,7 @@ public class ObjectService {
      * Allowable Actions.
      */
     public static class GetAllowableActions extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -591,6 +600,7 @@ public class ObjectService {
      * getContentStream.
      */
     public static class GetContentStream extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -668,6 +678,7 @@ public class ObjectService {
      * UpdateProperties.
      */
     public static class UpdateProperties extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -789,6 +800,7 @@ public class ObjectService {
      * BulkUpdateProperties.
      */
     public static class BulkUpdateProperties extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

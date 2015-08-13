@@ -139,20 +139,25 @@ public class CmisTckAntTask extends Task {
     }
 
     private class AntProgressMonitor implements CmisTestProgressMonitor {
+        @Override
         public void startGroup(CmisTestGroup group) {
             log(group.getName() + " (" + group.getTests().size() + " tests)");
         }
 
+        @Override
         public void endGroup(CmisTestGroup group) {
         }
 
+        @Override
         public void startTest(CmisTest test) {
             log("  " + test.getName());
         }
 
+        @Override
         public void endTest(CmisTest test) {
         }
 
+        @Override
         public void message(String msg) {
             log(msg);
         }

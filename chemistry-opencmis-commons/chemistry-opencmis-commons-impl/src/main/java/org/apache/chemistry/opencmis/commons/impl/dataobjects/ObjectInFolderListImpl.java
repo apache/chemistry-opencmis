@@ -36,6 +36,7 @@ public class ObjectInFolderListImpl extends AbstractExtensionData implements Obj
     private Boolean hasMoreItems = Boolean.FALSE;
     private BigInteger numItems;
 
+    @Override
     public List<ObjectInFolderData> getObjects() {
         if (objects == null) {
             objects = new ArrayList<ObjectInFolderData>();
@@ -48,6 +49,7 @@ public class ObjectInFolderListImpl extends AbstractExtensionData implements Obj
         this.objects = objects;
     }
 
+    @Override
     public Boolean hasMoreItems() {
         return hasMoreItems;
     }
@@ -56,6 +58,7 @@ public class ObjectInFolderListImpl extends AbstractExtensionData implements Obj
         this.hasMoreItems = hasMoreItems;
     }
 
+    @Override
     public BigInteger getNumItems() {
         return numItems;
     }

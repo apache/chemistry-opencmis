@@ -36,6 +36,7 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param addInheritedProperties
      *            add properties from supertype to type definition
      */
+    @Override
     void addTypeDefinition(TypeDefinition typeDefinition, boolean addInheritedProperties);
 
     /**
@@ -44,6 +45,7 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param typeDefinition
      *            type to be modified
      */
+    @Override
     void updateTypeDefinition(TypeDefinition typeDefinition);
 
     /**
@@ -53,5 +55,6 @@ public interface TypeManagerCreatable extends TypeManager {
      * @param typeId
      *            id of type to be deleted
      */
+    @Override
     void deleteTypeDefinition(String typeId);
 }

@@ -46,6 +46,7 @@ public class RelationshipService extends AbstractService implements Relationship
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public CmisObjectListType getObjectRelationships(String repositoryId, String objectId,
             Boolean includeSubRelationshipTypes, EnumRelationshipDirection relationshipDirection, String typeId,
             String filter, Boolean includeAllowableActions, BigInteger maxItems, BigInteger skipCount,

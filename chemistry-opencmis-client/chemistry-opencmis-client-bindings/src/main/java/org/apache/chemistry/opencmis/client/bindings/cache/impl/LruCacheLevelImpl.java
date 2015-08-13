@@ -30,6 +30,7 @@ public class LruCacheLevelImpl extends AbstractMapCacheLevel {
 
     public static final String MAX_ENTRIES = "maxEntries";
 
+    @Override
     public void initialize(Map<String, String> parameters) {
         final int maxEntries = getIntParameter(parameters, MAX_ENTRIES, 100);
 

@@ -75,38 +75,47 @@ public class ContentStreamImpl extends AbstractExtensionData implements MutableC
         this.stream = new ByteArrayInputStream(bytes);
     }
 
+    @Override
     public String getFileName() {
         return filename;
     }
 
+    @Override
     public void setFileName(String filename) {
         this.filename = filename;
     }
 
+    @Override
     public long getLength() {
         return length == null ? -1 : length.longValue();
     }
 
+    @Override
     public BigInteger getBigLength() {
         return length;
     }
 
+    @Override
     public void setLength(BigInteger length) {
         this.length = length;
     }
 
+    @Override
     public String getMimeType() {
         return mimetype;
     }
 
+    @Override
     public void setMimeType(String mimeType) {
         this.mimetype = mimeType;
     }
 
+    @Override
     public InputStream getStream() {
         return stream;
     }
 
+    @Override
     public void setStream(InputStream stream) {
         this.stream = stream;
     }

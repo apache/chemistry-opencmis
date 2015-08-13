@@ -2795,7 +2795,7 @@ public final class JSONConverter {
             } else if (element.getValue() instanceof List) {
                 extensions.addAll(convertExtension(element.getKey(), (List<Object>) element.getValue()));
             } else {
-                String value = (element.getValue() == null ? null : element.getValue().toString());
+                String value = element.getValue() == null ? null : element.getValue().toString();
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
             }
         }
@@ -2818,7 +2818,7 @@ public final class JSONConverter {
             } else if (element.getValue() instanceof List) {
                 extensions.addAll(convertExtension(element.getKey(), (List<Object>) element.getValue()));
             } else {
-                String value = (element.getValue() == null ? null : element.getValue().toString());
+                String value = element.getValue() == null ? null : element.getValue().toString();
                 extensions.add(new CmisExtensionElementImpl(null, element.getKey(), null, value));
             }
         }
@@ -2841,7 +2841,7 @@ public final class JSONConverter {
             } else if (element instanceof List) {
                 extensions.addAll(convertExtension(name, (List<Object>) element));
             } else {
-                String value = (element == null ? null : element.toString());
+                String value = element == null ? null : element.toString();
                 extensions.add(new CmisExtensionElementImpl(null, name, null, value));
             }
         }

@@ -49,7 +49,7 @@ public class InMemoryAcl implements Cloneable {
             int res = o1.getPrincipalId().compareTo(o2.getPrincipalId());
             return res;
         }
-    };
+    }
 
     private static final Comparator<? super InMemoryAce> COMP = new AceComparator<InMemoryAce>();
     private static final InMemoryAcl DEFAULT_ACL = new InMemoryAcl(new ArrayList<InMemoryAce>() {

@@ -41,6 +41,7 @@ public class MultiFilingService {
      * Remove object from folder.
      */
     public static class RemoveObjectFromFolder extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

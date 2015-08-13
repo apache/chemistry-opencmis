@@ -48,6 +48,7 @@ public class RelationshipService {
      * getObjectRelationships.
      */
     public static class GetObjectRelationships extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

@@ -30,10 +30,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -114,7 +114,7 @@ public abstract class CreateDialog extends JDialog {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -128,6 +128,7 @@ public abstract class CreateDialog extends JDialog {
         int i = 0;
         for (final ObjectType type : types) {
             result[i] = new ObjectTypeItem() {
+                @Override
                 public ObjectType getObjectType() {
                     return type;
                 }

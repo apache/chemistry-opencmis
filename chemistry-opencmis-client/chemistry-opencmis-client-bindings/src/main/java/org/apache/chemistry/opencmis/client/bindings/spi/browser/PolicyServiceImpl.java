@@ -45,6 +45,7 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
         setSession(session);
     }
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId);
@@ -55,12 +56,14 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId);
@@ -71,12 +74,14 @@ public class PolicyServiceImpl extends AbstractBrowserBindingService implements 
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         // build URL

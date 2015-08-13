@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.server.support.query;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -34,39 +33,38 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.server.support.query.CmisQlStrictParser_CmisBaseGrammar.query_return;
 
 /**
- * Support class to assist in parsing and processing CMIS queries.
- * This class inherits from QueryUtilBase to use the error handling
- * methods. It does not follow its design and is only maintained for
- * backwards compatibility.
+ * Support class to assist in parsing and processing CMIS queries. This class
+ * inherits from QueryUtilBase to use the error handling methods. It does not
+ * follow its design and is only maintained for backwards compatibility.
  * 
  * @deprecated Use {@link QueryUtilBase} instead.
  */
 @Deprecated
 public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
-    
+
     public QueryUtil() {
         super(null, null, null);
     }
-    
+
     @Override
     public CommonTree parseStatement() throws RecognitionException {
-        throw new CmisRuntimeException("Not supported, use getWalker to parse a query using this legacy class.");        
+        throw new CmisRuntimeException("Not supported, use getWalker to parse a query using this legacy class.");
     }
 
     @Override
-    public void walkStatement() throws CmisQueryException, RecognitionException {
+    public void walkStatement() throws RecognitionException {
         throw new CmisRuntimeException("Not supported, use getWalker to parse a query using this legacy class.");
     }
 
     /**
-     * Parse a CMISQL statement and return a tree that can be walked to evaluate the expression
-     * of the query (usually not used directly but through traverseStatement)
+     * Parse a CMISQL statement and return a tree that can be walked to evaluate
+     * the expression of the query (usually not used directly but through
+     * traverseStatement)
      * 
      * @param statement
-     *      CMISQL statement
-     * @return
-     *      an AntLR tree grammar that can be traversed to evaluate the query
-     *      
+     *            CMISQL statement
+     * @return an AntLR tree grammar that can be traversed to evaluate the query
+     * 
      * @throws RecognitionException
      */
     public static CmisQueryWalker getWalker(String statement) throws RecognitionException {
@@ -81,40 +79,41 @@ public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
             throw new CmisInvalidArgumentException(lexer.getErrorMessages());
         } else if (parser.hasErrors()) {
             throw new CmisInvalidArgumentException(parser.getErrorMessages());
-        } else if ( tokens.index()!=tokens.size() ) {
-            throw new  CmisInvalidArgumentException("Query String has illegal tokens after end of statement: " + tokens.get(tokens.index()));
+        } else if (tokens.index() != tokens.size()) {
+            throw new CmisInvalidArgumentException("Query String has illegal tokens after end of statement: "
+                    + tokens.get(tokens.index()));
         }
-        
+
         parserTree = (CommonTree) parsedStatement.getTree();
 
         CommonTreeNodeStream nodes = new CommonTreeNodeStream(parserTree);
         nodes.setTokenStream(tokens);
         CmisQueryWalker walker = new CmisQueryWalker(nodes);
-        return walker;               
+        return walker;
     }
-    
+
     /**
-     * Parse and process a CMISQL statement using the higher level support classes
+     * Parse and process a CMISQL statement using the higher level support
+     * classes
      * 
      * @param statement
-     *      CMISQL statement
+     *            CMISQL statement
      * @param queryObj
-     *      CMIS query object filled with information what data need to be retrieved
+     *            CMIS query object filled with information what data need to be
+     *            retrieved
      * @param pw
-     *      predicate walker that evaluates the where clause
-     * @return
-     *      AntLR tree grammar created by this statement
-     *      
-     * @throws UnsupportedEncodingException
+     *            predicate walker that evaluates the where clause
+     * @return AntLR tree grammar created by this statement
+     * 
      * @throws IOException
      * @throws RecognitionException
      */
     public CmisQueryWalker traverseStatement(String statement, QueryObject queryObj, PredicateWalkerBase pw)
-            throws UnsupportedEncodingException, IOException, RecognitionException {
+            throws IOException, RecognitionException {
         walker = getWalker(statement);
         walker.query(queryObj, pw);
         walker.getWherePredicateTree();
-        return walker;        
+        return walker;
     }
 
     public CmisQueryWalker traverseStatementAndCatchExc(String statement, QueryObject queryObj, PredicateWalkerBase pw) {
@@ -122,7 +121,8 @@ public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
             return traverseStatement(statement, queryObj, pw);
         } catch (RecognitionException e) {
             String errorMsg = queryObj.getErrorMessage();
-            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   " + errorMsg, e);
+            throw new CmisInvalidArgumentException("Walking of statement failed with RecognitionException error: \n   "
+                    + errorMsg, e);
         } catch (CmisBaseException e) {
             throw e;
         } catch (Exception e) {

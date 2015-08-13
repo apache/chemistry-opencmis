@@ -48,6 +48,7 @@ public class LinkInfoImpl implements LinkInfo {
         this.id = id;
     }
 
+    @Override
     public String getRel() {
         return rel;
     }
@@ -56,6 +57,7 @@ public class LinkInfoImpl implements LinkInfo {
         this.rel = rel;
     }
 
+    @Override
     public String getHref() {
         return href;
     }
@@ -64,6 +66,7 @@ public class LinkInfoImpl implements LinkInfo {
         this.href = href;
     }
 
+    @Override
     public String getType() {
         return type;
     }
@@ -72,6 +75,7 @@ public class LinkInfoImpl implements LinkInfo {
         this.type = type;
     }
 
+    @Override
     public String getId() {
         return id;
     }

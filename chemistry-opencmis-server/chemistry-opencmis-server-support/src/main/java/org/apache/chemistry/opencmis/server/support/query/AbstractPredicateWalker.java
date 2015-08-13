@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
  */
 public abstract class AbstractPredicateWalker implements PredicateWalker {
 
+    @Override
     public Boolean walkPredicate(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.NOT:
@@ -124,23 +125,27 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
+    @Override
     public Boolean walkNot(Tree opNode, Tree node) {
         walkPredicate(node);
         return false;
     }
 
+    @Override
     public Boolean walkAnd(Tree opNode, Tree leftNode, Tree rightNode) {
         walkPredicate(leftNode);
         walkPredicate(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkOr(Tree opNode, Tree leftNode, Tree rightNode) {
         walkPredicate(leftNode);
         walkPredicate(rightNode);
         return false;
     }
 
+    @Override
     public Object walkExpr(Tree node) {
         switch (node.getType()) {
         case CmisQlStrictLexer.BOOL_LIT:
@@ -185,94 +190,110 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         throw new CmisRuntimeException("Unknown node type: " + node.getType() + " (" + node.getText() + ")");
     }
 
+    @Override
     public Boolean walkEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkNotEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkGreaterThan(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkGreaterOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkLessThan(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkLessOrEquals(Tree opNode, Tree leftNode, Tree rightNode) {
         walkExpr(leftNode);
         walkExpr(rightNode);
         return false;
     }
 
+    @Override
     public Boolean walkIn(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
+    @Override
     public Boolean walkNotIn(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
+    @Override
     public Boolean walkInAny(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
+    @Override
     public Boolean walkNotInAny(Tree opNode, Tree colNode, Tree listNode) {
         walkExpr(colNode);
         walkExpr(listNode);
         return false;
     }
 
+    @Override
     public Boolean walkEqAny(Tree opNode, Tree literalNode, Tree colNode) {
         walkExpr(literalNode);
         walkExpr(colNode);
         return false;
     }
 
+    @Override
     public Boolean walkIsNull(Tree opNode, Tree colNode) {
         walkExpr(colNode);
         return false;
     }
 
+    @Override
     public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
         walkExpr(colNode);
         return false;
     }
 
+    @Override
     public Boolean walkLike(Tree opNode, Tree colNode, Tree stringNode) {
         walkExpr(colNode);
         walkExpr(stringNode);
         return false;
     }
 
+    @Override
     public Boolean walkNotLike(Tree opNode, Tree colNode, Tree stringNode) {
         walkExpr(colNode);
         walkExpr(stringNode);
         return false;
     }
 
+    @Override
     public Boolean walkContains(Tree opNode, Tree qualNode, Tree queryNode) {
         if (qualNode != null) {
             return walkSearchExpr(qualNode);
@@ -280,6 +301,7 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         return walkSearchExpr(queryNode);
     }
 
+    @Override
     public Boolean walkInFolder(Tree opNode, Tree qualNode, Tree paramNode) {
         if (qualNode != null) {
             walkExpr(qualNode);
@@ -288,6 +310,7 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         return false;
     }
 
+    @Override
     public Boolean walkInTree(Tree opNode, Tree qualNode, Tree paramNode) {
         if (qualNode != null) {
             walkExpr(qualNode);
@@ -296,6 +319,7 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         return false;
     }
 
+    @Override
     public Object walkList(Tree node) {
         int n = node.getChildCount();
         List<Object> res = new ArrayList<Object>(n);
@@ -305,11 +329,13 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         return res;
     }
 
+    @Override
     public Object walkBoolean(Tree node) {
         String s = node.getText();
         return Boolean.valueOf(s);
     }
 
+    @Override
     public Object walkNumber(Tree node) {
         String s = node.getText();
         if (s.contains(".") || s.contains("e") || s.contains("E")) {
@@ -319,6 +345,7 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         }
     }
 
+    @Override
     public Object walkString(Tree node) {
         String s = node.getText();
         s = s.substring(1, s.length() - 1);
@@ -326,16 +353,19 @@ public abstract class AbstractPredicateWalker implements PredicateWalker {
         return s;
     }
 
+    @Override
     public Object walkTimestamp(Tree node) {
         String s = node.getText();
         s = s.substring(s.indexOf('\'') + 1, s.length() - 1);
         return CalendarHelper.fromString(s);
     }
 
+    @Override
     public Object walkCol(Tree node) {
         return null;
     }
 
+    @Override
     public Object walkId(Tree node) {
         return null;
     }

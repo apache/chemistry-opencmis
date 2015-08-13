@@ -93,6 +93,7 @@ public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletR
         return filename;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -113,12 +114,12 @@ public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletR
      * @return {@code true} if the body contained data, {@code false} otherwise
      */
     protected boolean parseFormUrlEncodedData(HttpServletRequest request) throws IOException {
-        byte data[] = new byte[BUFFER_SIZE];
+        byte[] data = new byte[BUFFER_SIZE];
         int dataPos = 0;
 
         InputStream stream = request.getInputStream();
         int b;
-        byte buffer[] = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         // read stream
         while ((b = stream.read(buffer)) != -1) {

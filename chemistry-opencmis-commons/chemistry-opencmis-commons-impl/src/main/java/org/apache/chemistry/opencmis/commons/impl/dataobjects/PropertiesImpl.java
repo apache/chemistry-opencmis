@@ -71,10 +71,12 @@ public class PropertiesImpl extends AbstractExtensionData implements MutableProp
         setExtensions(properties.getExtensions());
     }
 
+    @Override
     public Map<String, PropertyData<?>> getProperties() {
         return Collections.unmodifiableMap(properties);
     }
 
+    @Override
     public List<PropertyData<?>> getPropertyList() {
         return Collections.unmodifiableList(propertyList);
     }
@@ -87,6 +89,7 @@ public class PropertiesImpl extends AbstractExtensionData implements MutableProp
         }
     }
 
+    @Override
     public void addProperty(PropertyData<?> property) {
         if (property == null) {
             return;
@@ -96,6 +99,7 @@ public class PropertiesImpl extends AbstractExtensionData implements MutableProp
         properties.put(property.getId(), property);
     }
 
+    @Override
     public void replaceProperty(PropertyData<?> property) {
         if (property == null || property.getId() == null) {
             return;
@@ -107,6 +111,7 @@ public class PropertiesImpl extends AbstractExtensionData implements MutableProp
         properties.put(property.getId(), property);
     }
 
+    @Override
     public void removeProperty(String id) {
         if (id == null) {
             return;

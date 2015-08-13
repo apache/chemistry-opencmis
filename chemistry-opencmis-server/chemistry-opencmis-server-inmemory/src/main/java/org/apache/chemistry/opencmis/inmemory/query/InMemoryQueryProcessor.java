@@ -118,8 +118,7 @@ public class InMemoryQueryProcessor {
      */
     public ObjectList query(TypeManager tm, ObjectStore objectStore, String user, String repositoryId,
             String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
-            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, 
-            BigInteger skipCount) {
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
         processQueryAndCatchExc(statement, tm); // calls query processor
 
@@ -137,10 +136,11 @@ public class InMemoryQueryProcessor {
 
     /**
      * Process a query.
+     * 
      * @param statement
-     *      CMISQL statement to execute
+     *            CMISQL statement to execute
      * @param tm
-     *      type manager for the repository
+     *            type manager for the repository
      */
     public void processQueryAndCatchExc(String statement, TypeManager tm) {
         QueryUtilStrict queryUtil = new QueryUtilStrict(statement, tm, null);
@@ -153,27 +153,26 @@ public class InMemoryQueryProcessor {
     }
 
     /**
-     * Create the list of matching objects for this query. 
+     * Create the list of matching objects for this query.
+     * 
      * @param tm
-     *  type manager for the given repository
+     *            type manager for the given repository
      * @param user
-     *  user execuing the query
+     *            user execuing the query
      * @param includeAllowableActions
-     *   include allowable actions
+     *            include allowable actions
      * @param includeRelationships
-     *  include relationships
+     *            include relationships
      * @param renditionFilter
-     *  include renditions
+     *            include renditions
      * @param maxItems
-     *  max number of items to return
+     *            max number of items to return
      * @param skipCount
-     *  items to skip
-     * @return
-     *  list of objects matching the query
+     *            items to skip
+     * @return list of objects matching the query
      */
     public ObjectList buildResultList(TypeManager tm, String user, Boolean includeAllowableActions,
-            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, 
-            BigInteger skipCount) {
+            IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
 
         sortMatches();
 
@@ -763,7 +762,7 @@ public class InMemoryQueryProcessor {
             break;
         case STRING:
             if (rVal instanceof String) {
-            	String unesc = StringUtil.unescape((String) rVal, null);
+                String unesc = StringUtil.unescape((String) rVal, null);
                 LOG.debug("compare strings: " + lValue + " with " + unesc);
                 return ((String) lValue).compareTo(unesc);
             } else {
@@ -816,9 +815,8 @@ public class InMemoryQueryProcessor {
      * Translate SQL wildcards %, _ to Java regex syntax.
      * 
      * @param wildcardString
-     *     string to process
-     * @return
-     *      string with replaced characters
+     *            string to process
+     * @return string with replaced characters
      */
     public static String translatePattern(String wildcardString) {
         int index = 0;

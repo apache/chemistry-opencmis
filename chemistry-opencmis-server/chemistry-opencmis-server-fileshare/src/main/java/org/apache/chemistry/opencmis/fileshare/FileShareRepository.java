@@ -890,7 +890,7 @@ public class FileShareRepository {
         // get the type id
         String typeId = FileShareUtils.getIdProperty(oldProperties, PropertyIds.OBJECT_TYPE_ID);
         if (typeId == null) {
-            typeId = (file.isDirectory() ? BaseTypeId.CMIS_FOLDER.value() : BaseTypeId.CMIS_DOCUMENT.value());
+            typeId = file.isDirectory() ? BaseTypeId.CMIS_FOLDER.value() : BaseTypeId.CMIS_DOCUMENT.value();
         }
 
         // get the creator
@@ -1165,12 +1165,12 @@ public class FileShareRepository {
         boolean ips = FileShareUtils.getBooleanParameter(includePathSegment, false);
 
         // skip and max
-        int skip = (skipCount == null ? 0 : skipCount.intValue());
+        int skip = skipCount == null ? 0 : skipCount.intValue();
         if (skip < 0) {
             skip = 0;
         }
 
-        int max = (maxItems == null ? Integer.MAX_VALUE : maxItems.intValue());
+        int max = maxItems == null ? Integer.MAX_VALUE : maxItems.intValue();
         if (max < 0) {
             max = Integer.MAX_VALUE;
         }
@@ -1237,7 +1237,7 @@ public class FileShareRepository {
         boolean userReadOnly = checkUser(context, false);
 
         // check depth
-        int d = (depth == null ? 2 : depth.intValue());
+        int d = depth == null ? 2 : depth.intValue();
         if (d == 0) {
             throw new CmisInvalidArgumentException("Depth must not be 0!");
         }
@@ -1445,7 +1445,7 @@ public class FileShareRepository {
         }
 
         // copy filter
-        Set<String> filter = (orgfilter == null ? null : new HashSet<String>(orgfilter));
+        Set<String> filter = orgfilter == null ? null : new HashSet<String>(orgfilter);
 
         // find base type
         String typeId = null;

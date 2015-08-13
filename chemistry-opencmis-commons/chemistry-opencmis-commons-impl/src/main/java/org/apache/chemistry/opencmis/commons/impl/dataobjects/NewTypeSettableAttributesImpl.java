@@ -40,6 +40,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
     private Boolean controllablePolicy;
     private Boolean controllableACL;
 
+    @Override
     public Boolean canSetId() {
         return id;
     }
@@ -48,6 +49,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.id = id;
     }
 
+    @Override
     public Boolean canSetLocalName() {
         return localName;
     }
@@ -56,6 +58,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.localName = localName;
     }
 
+    @Override
     public Boolean canSetLocalNamespace() {
         return localNamespace;
     }
@@ -64,6 +67,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.localNamespace = localNamespace;
     }
 
+    @Override
     public Boolean canSetDisplayName() {
         return displayName;
     }
@@ -72,6 +76,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.displayName = displayName;
     }
 
+    @Override
     public Boolean canSetQueryName() {
         return queryName;
     }
@@ -80,6 +85,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.queryName = queryName;
     }
 
+    @Override
     public Boolean canSetDescription() {
         return description;
     }
@@ -88,6 +94,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.description = description;
     }
 
+    @Override
     public Boolean canSetCreatable() {
         return creatable;
     }
@@ -96,6 +103,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.creatable = creatable;
     }
 
+    @Override
     public Boolean canSetFileable() {
         return fileable;
     }
@@ -104,6 +112,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.fileable = fileable;
     }
 
+    @Override
     public Boolean canSetQueryable() {
         return queryable;
     }
@@ -112,6 +121,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.queryable = queryable;
     }
 
+    @Override
     public Boolean canSetFulltextIndexed() {
         return fulltextIndexed;
     }
@@ -120,6 +130,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.fulltextIndexed = fulltextIndexed;
     }
 
+    @Override
     public Boolean canSetIncludedInSupertypeQuery() {
         return includedInSupertypeQuery;
     }
@@ -128,6 +139,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.includedInSupertypeQuery = includedInSupertypeQuery;
     }
 
+    @Override
     public Boolean canSetControllablePolicy() {
         return controllablePolicy;
     }
@@ -136,6 +148,7 @@ public class NewTypeSettableAttributesImpl extends ExtensionDataImpl implements 
         this.controllablePolicy = controllablePolicy;
     }
 
+    @Override
     public Boolean canSetControllableAcl() {
         return controllableACL;
     }

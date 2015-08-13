@@ -188,9 +188,9 @@ public class SessionImpl implements Session {
         this.parameters = parameters;
         this.locale = determineLocale(parameters);
 
-        this.objectFactory = (objectFactory == null ? createObjectFactory() : objectFactory);
+        this.objectFactory = objectFactory == null ? createObjectFactory() : objectFactory;
         this.authenticationProvider = authenticationProvider;
-        this.cache = (cache == null ? createCache() : cache);
+        this.cache = cache == null ? createCache() : cache;
         this.typeDefCache = typeDefCache;
 
         cachePathOmit = Boolean.parseBoolean(parameters.get(SessionParameter.CACHE_PATH_OMIT));
@@ -443,6 +443,7 @@ public class SessionImpl implements Session {
         };
     }
 
+    @Override
     public String getLatestChangeLogToken() {
         return getBinding().getRepositoryService().getRepositoryInfo(getRepositoryId(), null).getLatestChangeLogToken();
     }
@@ -461,7 +462,7 @@ public class SessionImpl implements Session {
     public void setDefaultContext(OperationContext context) {
         lock.writeLock().lock();
         try {
-            this.defaultContext = (context == null ? DEFAULT_CONTEXT : context);
+            this.defaultContext = context == null ? DEFAULT_CONTEXT : context;
         } finally {
             lock.writeLock().unlock();
         }
@@ -487,6 +488,7 @@ public class SessionImpl implements Session {
         return new ObjectIdImpl(id);
     }
 
+    @Override
     public Locale getLocale() {
         return locale;
     }
@@ -1080,6 +1082,7 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
     public CmisBinding getBinding() {
         lock.readLock().lock();
         try {
@@ -1270,7 +1273,7 @@ public class SessionImpl implements Session {
         checkContext(context);
 
         final String id = objectId.getId();
-        final String typeId = (type == null ? null : type.getId());
+        final String typeId = type == null ? null : type.getId();
         final RelationshipService relationshipService = getBinding().getRelationshipService();
         final OperationContext ctxt = new OperationContextImpl(context);
 

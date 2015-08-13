@@ -58,6 +58,7 @@ public class VersioningService extends AbstractService implements VersioningServ
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, Holder<CmisExtensionType> extension)
             throws CmisException {
         CmisService service = null;
@@ -84,6 +85,7 @@ public class VersioningService extends AbstractService implements VersioningServ
         }
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, CmisPropertiesType properties,
             CmisContentStreamType contentStream, String checkinComment, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces, Holder<CmisExtensionType> extension)
@@ -117,6 +119,7 @@ public class VersioningService extends AbstractService implements VersioningServ
         }
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, Holder<CmisExtensionType> extension,
             Holder<Boolean> contentCopied) throws CmisException {
         CmisService service = null;
@@ -150,6 +153,7 @@ public class VersioningService extends AbstractService implements VersioningServ
         }
     }
 
+    @Override
     public List<CmisObjectType> getAllVersions(String repositoryId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -186,6 +190,7 @@ public class VersioningService extends AbstractService implements VersioningServ
         }
     }
 
+    @Override
     public CmisObjectType getObjectOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
             String filter, Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension)
@@ -216,6 +221,7 @@ public class VersioningService extends AbstractService implements VersioningServ
         }
     }
 
+    @Override
     public CmisPropertiesType getPropertiesOfLatestVersion(String repositoryId, String versionSeriesId, Boolean major,
             String filter, CmisExtensionType extension) throws CmisException {
         CmisService service = null;

@@ -71,6 +71,7 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         return true;
     }
 
+    @Override
     public void reset() {
         propMap = new HashMap<String, Object>();
     }
@@ -100,10 +101,12 @@ public class PropertyMapperExif extends AbstractPropertyMapper {
         return cmisTypeId;
     }
 
+    @Override
     public String getMappedPropertyId(String key) {
         return null;
     }
 
+    @Override
     public Object convertValue(String id, PropertyDefinition<?> propDef, String strValue) {
         return null;
     }

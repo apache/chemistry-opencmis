@@ -38,6 +38,7 @@ public class MapCacheLevelImpl extends AbstractMapCacheLevel {
     public MapCacheLevelImpl() {
     }
 
+    @Override
     public void initialize(Map<String, String> parameters) {
         int initialCapacity = getIntParameter(parameters, CAPACITY, 32);
         float loadFactor = getFloatParameter(parameters, LOAD_FACTOR, 0.75f);

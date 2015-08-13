@@ -99,22 +99,27 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
         this.children = element.getChildren();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getNamespace() {
         return namespace;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public List<CmisExtensionElement> getChildren() {
         return children;
     }
 
+    @Override
     public Map<String, String> getAttributes() {
         return attributes;
     }

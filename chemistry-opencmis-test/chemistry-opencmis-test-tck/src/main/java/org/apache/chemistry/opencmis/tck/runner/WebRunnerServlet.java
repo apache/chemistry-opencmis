@@ -74,7 +74,7 @@ public class WebRunnerServlet extends HttpServlet {
         printHeader(pw);
 
         Map<String, String> parameters = new HashMap<String, String>();
-        Map<String, String[]> parameterMap = (Map<String, String[]>) req.getParameterMap();
+        Map<String, String[]> parameterMap = req.getParameterMap();
 
         if (parameterMap != null) {
             for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
@@ -136,26 +136,31 @@ public class WebRunnerServlet extends HttpServlet {
             this.pw = pw;
         }
 
+        @Override
         public void startGroup(CmisTestGroup group) {
             pw.println("<h3>" + group.getName() + " (" + group.getTests().size() + " tests)</h3>");
             pw.flush();
         }
 
+        @Override
         public void endGroup(CmisTestGroup group) {
             pw.println("<br>");
             pw.flush();
         }
 
+        @Override
         public void startTest(CmisTest test) {
             pw.print("&nbsp;&nbsp;&nbsp;" + test.getName() + " ... ");
             pw.flush();
         }
 
+        @Override
         public void endTest(CmisTest test) {
             pw.println("completed<br>");
             pw.flush();
         }
 
+        @Override
         public void message(String msg) {
             pw.println(msg);
             pw.flush();

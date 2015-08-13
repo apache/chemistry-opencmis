@@ -48,6 +48,7 @@ public class ObjectInFolderDataImpl extends AbstractExtensionData implements Obj
         this.object = object;
     }
 
+    @Override
     public ObjectData getObject() {
         return object;
     }
@@ -60,6 +61,7 @@ public class ObjectInFolderDataImpl extends AbstractExtensionData implements Obj
         this.object = object;
     }
 
+    @Override
     public String getPathSegment() {
         return pathSegment;
     }

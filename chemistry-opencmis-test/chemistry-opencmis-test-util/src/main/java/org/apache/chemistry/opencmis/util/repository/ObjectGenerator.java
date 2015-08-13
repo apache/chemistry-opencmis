@@ -82,7 +82,7 @@ public class ObjectGenerator {
      */
     public enum ContentKind {
         STATIC_TEXT, LOREM_IPSUM_TEXT, LOREM_IPSUM_HTML, IMAGE_FRACTAL_JPEG
-    };
+    }
 
     /**
      * Indicates if / how many documents are created in each folder

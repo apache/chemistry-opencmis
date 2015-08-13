@@ -30,6 +30,7 @@ public class CheckedOutIcon extends DocumentIcon {
         super(width, height);
     }
 
+    @Override
     protected Color getColor() {
         return new Color(0x8c5c32);
     }

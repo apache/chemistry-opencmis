@@ -125,7 +125,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
 
     private List<String> getOpenCmisSpiHeader(final Bundle bundle) {
-        String spiHeader = (String) bundle.getHeaders().get(OPENCMIS_SPI_HEADER);
+        String spiHeader = bundle.getHeaders().get(OPENCMIS_SPI_HEADER);
         if (spiHeader == null) {
             return null;
         }

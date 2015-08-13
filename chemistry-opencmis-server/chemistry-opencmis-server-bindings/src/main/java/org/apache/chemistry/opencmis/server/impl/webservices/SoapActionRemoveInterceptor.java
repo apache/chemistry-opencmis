@@ -23,7 +23,6 @@ import java.util.Iterator;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
-import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
@@ -40,7 +39,7 @@ public class SoapActionRemoveInterceptor extends AbstractSoapInterceptor {
     }
 
     @Override
-    public void handleMessage(SoapMessage message) throws Fault {
+    public void handleMessage(SoapMessage message) {
         Interceptor<? extends Message> soapActionInInterceptor = null;
         Iterator<Interceptor<? extends Message>> iterator = message.getInterceptorChain().getIterator();
         while (iterator.hasNext()) {

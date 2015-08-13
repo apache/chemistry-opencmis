@@ -45,7 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -58,6 +57,7 @@ import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -162,6 +162,7 @@ public class TckDialog {
 
             final JMenuItem selectItem = new JMenuItem("Select all");
             selectItem.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     selectAll(groupTree, true);
                 }
@@ -170,6 +171,7 @@ public class TckDialog {
 
             final JMenuItem deselectItem = new JMenuItem("Deselect all");
             deselectItem.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     selectAll(groupTree, false);
                 }
@@ -177,10 +179,12 @@ public class TckDialog {
             treePopup.add(deselectItem);
 
             groupTree.addMouseListener(new MouseAdapter() {
+                @Override
                 public void mousePressed(MouseEvent e) {
                     maybeShowPopup(e);
                 }
 
+                @Override
                 public void mouseReleased(MouseEvent e) {
                     maybeShowPopup(e);
                 }
@@ -242,6 +246,7 @@ public class TckDialog {
                     ClientHelper.BUTTON_ICON_SIZE));
             runButton.setDefaultCapable(true);
             runButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     int answer = JOptionPane
                             .showConfirmDialog(
@@ -297,7 +302,7 @@ public class TckDialog {
 
             ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
@@ -432,6 +437,7 @@ public class TckDialog {
             }
         }
 
+        @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
                 boolean leaf, int row, boolean hasFocus) {
 
@@ -456,21 +462,27 @@ public class TckDialog {
             return this;
         }
 
+        @Override
         public void validate() {
         }
 
+        @Override
         public void invalidate() {
         }
 
+        @Override
         public void revalidate() {
         }
 
+        @Override
         public void repaint(long tm, int x, int y, int width, int height) {
         }
 
+        @Override
         public void repaint(Rectangle r) {
         }
 
+        @Override
         public void repaint() {
         }
     }
@@ -492,6 +504,7 @@ public class TckDialog {
             lastObject = new TestTreeNodeRender();
             lastObject.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, false);
             lastObject.addItemListener(new ItemListener() {
+                @Override
                 public void itemStateChanged(ItemEvent itemEvent) {
                     ((TestTreeNode) value).setEnabled(((JCheckBox) itemEvent.getItem()).isSelected());
                     fireEditingStopped();
@@ -564,6 +577,7 @@ public class TckDialog {
             JButton cancelButton = new JButton("Cancel");
             cancelButton.setDefaultCapable(true);
             cancelButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     task.cancel(true);
                 }
@@ -579,7 +593,7 @@ public class TckDialog {
 
             getRootPane().setDefaultButton(cancelButton);
 
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
@@ -606,6 +620,7 @@ public class TckDialog {
             groupsProgressBar.setValue(0);
         }
 
+        @Override
         public void startGroup(CmisTestGroup group) {
             groupsProgressBar.setString(group.getName());
 
@@ -615,15 +630,18 @@ public class TckDialog {
             testsProgressBar.setValue(0);
         }
 
+        @Override
         public void endGroup(CmisTestGroup group) {
             groupsProgressBar.setString("");
             groupsProgressBar.setValue(groupsProgressBar.getValue() + 1);
         }
 
+        @Override
         public void startTest(CmisTest test) {
             testsProgressBar.setString(test.getName());
         }
 
+        @Override
         public void endTest(CmisTest test) {
             testsProgressBar.setString("");
             testsProgressBar.setValue(testsProgressBar.getValue() + 1);
@@ -673,6 +691,7 @@ public class TckDialog {
             statusLabel.setText(sb.toString());
         }
 
+        @Override
         public void message(String msg) {
         }
     }

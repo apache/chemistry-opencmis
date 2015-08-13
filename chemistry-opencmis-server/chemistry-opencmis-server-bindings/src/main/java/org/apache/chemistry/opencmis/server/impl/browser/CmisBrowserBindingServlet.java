@@ -435,6 +435,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
     static class ErrorServiceCall extends AbstractBrowserServiceCall {
 
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             // no implementation

@@ -41,6 +41,7 @@ public class ChangeEventInfoDataImpl extends AbstractExtensionData implements Ch
         this.changeTime = changeTime;
     }
 
+    @Override
     public GregorianCalendar getChangeTime() {
         return changeTime;
     }
@@ -49,6 +50,7 @@ public class ChangeEventInfoDataImpl extends AbstractExtensionData implements Ch
         this.changeTime = changeTime;
     }
 
+    @Override
     public ChangeType getChangeType() {
         return changeType;
     }

@@ -42,10 +42,12 @@ public class RelationshipIcon extends AbstractWorkbenchIcon {
         return 64;
     }
 
+    @Override
     protected Color getColor() {
         return new Color(0x73a4d1);
     }
 
+    @Override
     protected void paint(Graphics2D g) {
         GeneralPath shape = new GeneralPath();
 

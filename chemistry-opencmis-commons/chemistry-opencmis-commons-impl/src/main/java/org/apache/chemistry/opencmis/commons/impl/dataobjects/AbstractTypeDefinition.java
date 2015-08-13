@@ -75,66 +75,82 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         setExtensions(typeDefinition.getExtensions());
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getLocalName() {
         return localName;
     }
 
+    @Override
     public void setLocalName(String localName) {
         this.localName = localName;
     }
 
+    @Override
     public String getLocalNamespace() {
         return localNamespace;
     }
 
+    @Override
     public void setLocalNamespace(String localNamespace) {
         this.localNamespace = localNamespace;
     }
 
+    @Override
     public String getQueryName() {
         return queryName;
     }
 
+    @Override
     public void setQueryName(String queryName) {
         this.queryName = queryName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public BaseTypeId getBaseTypeId() {
         return baseId;
     }
 
+    @Override
     public void setBaseTypeId(BaseTypeId baseId) {
         this.baseId = baseId;
     }
 
+    @Override
     public String getParentTypeId() {
         return parentId;
     }
 
+    @Override
     public void setParentTypeId(String parentId) {
         if (parentId == null || parentId.length() == 0) {
             this.parentId = null;
@@ -143,62 +159,77 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         }
     }
 
+    @Override
     public Boolean isCreatable() {
         return isCreatable;
     }
 
+    @Override
     public void setIsCreatable(Boolean isCreatable) {
         this.isCreatable = isCreatable;
     }
 
+    @Override
     public Boolean isFileable() {
         return isFileable;
     }
 
+    @Override
     public void setIsFileable(Boolean isFileable) {
         this.isFileable = isFileable;
     }
 
+    @Override
     public Boolean isQueryable() {
         return isQueryable;
     }
 
+    @Override
     public void setIsQueryable(Boolean isQueryable) {
         this.isQueryable = isQueryable;
     }
 
+    @Override
     public Boolean isIncludedInSupertypeQuery() {
         return isIncludedInSupertypeQuery;
     }
 
+    @Override
     public void setIsIncludedInSupertypeQuery(Boolean isIncludedInSupertypeQuery) {
         this.isIncludedInSupertypeQuery = isIncludedInSupertypeQuery;
     }
 
+    @Override
     public Boolean isFulltextIndexed() {
         return isFulltextIndexed;
     }
 
+    @Override
     public void setIsFulltextIndexed(Boolean isFulltextIndexed) {
         this.isFulltextIndexed = isFulltextIndexed;
     }
 
+    @Override
     public Boolean isControllableAcl() {
         return isControllableACL;
     }
 
+    @Override
     public void setIsControllableAcl(Boolean isControllableACL) {
         this.isControllableACL = isControllableACL;
     }
 
+    @Override
     public Boolean isControllablePolicy() {
         return isControllablePolicy;
     }
 
+    @Override
     public void setIsControllablePolicy(Boolean isControllablePolicy) {
         this.isControllablePolicy = isControllablePolicy;
     }
 
+    @Override
     public Map<String, PropertyDefinition<?>> getPropertyDefinitions() {
         return propertyDefinitions;
     }
@@ -213,6 +244,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         }
     }
 
+    @Override
     public void addPropertyDefinition(PropertyDefinition<?> propertyDefinition) {
         if (propertyDefinition == null) {
             return;
@@ -221,6 +253,7 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         propertyDefinitions.put(propertyDefinition.getId(), propertyDefinition);
     }
 
+    @Override
     public void removePropertyDefinition(String propertyId) {
         if (propertyId == null) {
             return;
@@ -229,14 +262,17 @@ public abstract class AbstractTypeDefinition extends AbstractExtensionData imple
         propertyDefinitions.remove(propertyId);
     }
 
+    @Override
     public void removeAllPropertyDefinitions() {
         propertyDefinitions = new LinkedHashMap<String, PropertyDefinition<?>>();
     }
 
+    @Override
     public TypeMutability getTypeMutability() {
         return typeMutability;
     }
 
+    @Override
     public void setTypeMutability(TypeMutability typeMutability) {
         this.typeMutability = typeMutability;
     }

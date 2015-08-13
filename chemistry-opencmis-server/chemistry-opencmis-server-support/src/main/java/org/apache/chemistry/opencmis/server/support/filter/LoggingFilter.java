@@ -67,6 +67,7 @@ public class LoggingFilter implements Filter {
     private boolean logHeaders = true;
     private int indent = -1;
 
+    @Override
     public void init(FilterConfig cfg) throws ServletException {
 
         String val;
@@ -101,9 +102,11 @@ public class LoggingFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
             ServletException {
         LOG.debug("Logging filter doFilter");

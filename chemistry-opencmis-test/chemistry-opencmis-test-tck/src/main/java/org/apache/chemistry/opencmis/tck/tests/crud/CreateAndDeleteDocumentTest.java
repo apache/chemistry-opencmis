@@ -61,8 +61,8 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
 
         int numOfDocuments = 20;
 
-        OperationContext orderContext = (isOrderByNameSupported(session) ? SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME
-                : SELECT_ALL_NO_CACHE_OC);
+        OperationContext orderContext = isOrderByNameSupported(session) ? SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME
+                : SELECT_ALL_NO_CACHE_OC;
 
         // create a test folder
         Folder testFolder = createTestFolder(session);

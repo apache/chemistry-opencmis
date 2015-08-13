@@ -62,18 +62,19 @@ public class CacheImpl implements Cache {
         this.name = name;
     }
 
+    @Override
     public void initialize(String[] cacheLevelConfig) {
         if (levels != null) {
             throw new IllegalStateException("Cache already initialize!");
         }
 
-        if ((cacheLevelConfig == null) || (cacheLevelConfig.length == 0)) {
+        if (cacheLevelConfig == null || cacheLevelConfig.length == 0) {
             throw new IllegalArgumentException("Cache config must not be empty!");
         }
 
         lock.writeLock().lock();
         try {
-            levels = new ArrayList<Class<?>>();
+            levels = new ArrayList<Class<?>>(cacheLevelConfig.length);
             levelParameters = new ArrayList<Map<String, String>>();
 
             // build level lists
@@ -127,6 +128,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public Object get(String... keys) {
         // check keys
         if (keys == null) {
@@ -166,6 +168,7 @@ public class CacheImpl implements Cache {
         return result;
     }
 
+    @Override
     public void put(Object value, String... keys) {
         // check keys
         if (keys == null) {
@@ -205,6 +208,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void remove(String... keys) {
         if (keys == null) {
             return;
@@ -237,6 +241,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public void removeAll() {
         lock.writeLock().lock();
         try {
@@ -250,6 +255,7 @@ public class CacheImpl implements Cache {
         }
     }
 
+    @Override
     public int check(String... keys) {
         if (keys == null) {
             return -1;
@@ -278,10 +284,12 @@ public class CacheImpl implements Cache {
         return keys.length;
     }
 
+    @Override
     public void writeLock() {
         lock.writeLock().lock();
     }
 
+    @Override
     public void writeUnlock() {
         lock.writeLock().unlock();
     }
@@ -313,7 +321,7 @@ public class CacheImpl implements Cache {
 
     @Override
     public String toString() {
-        return (root == null ? "(no cache root)" : root.toString());
+        return root == null ? "(no cache root)" : root.toString();
     }
 
     // ---- internal ----

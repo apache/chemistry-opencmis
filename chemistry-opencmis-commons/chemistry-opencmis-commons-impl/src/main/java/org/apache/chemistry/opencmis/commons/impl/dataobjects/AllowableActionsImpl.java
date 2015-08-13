@@ -33,6 +33,7 @@ public class AllowableActionsImpl extends AbstractExtensionData implements Allow
 
     private Set<Action> allowableActions;
 
+    @Override
     public Set<Action> getAllowableActions() {
         if (allowableActions == null) {
             allowableActions = EnumSet.noneOf(Action.class);

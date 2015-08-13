@@ -96,110 +96,137 @@ public final class OperationContextUtils {
 
             private static final long serialVersionUID = 1L;
 
+            @Override
             public Set<String> getFilter() {
                 return Collections.unmodifiableSet(context.getFilter());
             }
 
+            @Override
             public void setFilter(Set<String> propertyFilter) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public void setFilterString(String propertyFilter) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public String getFilterString() {
                 return context.getFilterString();
             }
 
+            @Override
             public void setLoadSecondaryTypeProperties(boolean load) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean loadSecondaryTypeProperties() {
                 return context.loadSecondaryTypeProperties();
             }
 
+            @Override
             public boolean isIncludeAllowableActions() {
                 return context.isIncludeAllowableActions();
             }
 
+            @Override
             public void setIncludeAllowableActions(boolean include) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean isIncludeAcls() {
                 return context.isIncludeAcls();
             }
 
+            @Override
             public void setIncludeAcls(boolean include) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public IncludeRelationships getIncludeRelationships() {
                 return context.getIncludeRelationships();
             }
 
+            @Override
             public void setIncludeRelationships(IncludeRelationships include) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean isIncludePolicies() {
                 return context.isIncludePolicies();
             }
 
+            @Override
             public void setIncludePolicies(boolean include) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public Set<String> getRenditionFilter() {
                 return Collections.unmodifiableSet(context.getRenditionFilter());
             }
 
+            @Override
             public void setRenditionFilter(Set<String> renditionFilter) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public void setRenditionFilterString(String renditionFilter) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public String getRenditionFilterString() {
                 return context.getRenditionFilterString();
             }
 
+            @Override
             public boolean isIncludePathSegments() {
                 return context.isIncludePathSegments();
             }
 
+            @Override
             public void setIncludePathSegments(boolean include) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public String getOrderBy() {
                 return context.getOrderBy();
             }
 
+            @Override
             public void setOrderBy(String orderBy) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean isCacheEnabled() {
                 return context.isCacheEnabled();
             }
 
+            @Override
             public void setCacheEnabled(boolean cacheEnabled) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public String getCacheKey() {
                 return context.getCacheKey();
             }
 
+            @Override
             public void setMaxItemsPerPage(int maxItemsPerPage) {
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public int getMaxItemsPerPage() {
                 return context.getMaxItemsPerPage();
             }

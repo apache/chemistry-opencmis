@@ -58,6 +58,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         this.portProvider = portProvider;
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId), "checkOut");
@@ -81,6 +82,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
                 "cancelCheckOut");
@@ -100,6 +102,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addACEs, Acl removeACEs,
             ExtensionsData extension) {
@@ -123,6 +126,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),
@@ -153,6 +157,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
@@ -172,6 +177,7 @@ public class VersioningServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         VersioningServicePort port = portProvider.getVersioningServicePort(getCmisVersion(repositoryId),

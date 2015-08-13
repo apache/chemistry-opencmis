@@ -34,6 +34,7 @@ public class ClientTypeCacheImpl implements TypeCache {
         this.service = service;
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String typeId) {
 
         TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(service.getSession());
@@ -49,6 +50,7 @@ public class ClientTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    @Override
     public TypeDefinition reloadTypeDefinition(String typeId) {
 
         TypeDefinitionCache cache = CmisBindingsHelper.getTypeDefinitionCache(service.getSession());
@@ -61,12 +63,14 @@ public class ClientTypeCacheImpl implements TypeCache {
         return type;
     }
 
+    @Override
     public TypeDefinition getTypeDefinitionForObject(String objectId) {
         // not used
         assert false;
         return null;
     }
 
+    @Override
     public PropertyDefinition<?> getPropertyDefinition(String propId) {
         assert false;
         return null;

@@ -42,6 +42,7 @@ public class NoBodyHttpServletResponseWrapper extends HttpServletResponseWrapper
         return noBodyStream;
     }
 
+    @Override
     public PrintWriter getWriter() throws UnsupportedEncodingException {
         if (writer == null) {
             writer = new PrintWriter(new OutputStreamWriter(noBodyStream, getCharacterEncoding()));

@@ -42,22 +42,27 @@ public class ItemTypeImpl extends ItemTypeDefinitionImpl implements ItemType {
         helper = new ObjectTypeHelper(session, this);
     }
 
+    @Override
     public ObjectType getBaseType() {
         return helper.getBaseType();
     }
 
+    @Override
     public ItemIterable<ObjectType> getChildren() {
         return helper.getChildren();
     }
 
+    @Override
     public List<Tree<ObjectType>> getDescendants(int depth) {
         return helper.getDescendants(depth);
     }
 
+    @Override
     public ObjectType getParentType() {
         return helper.getParentType();
     }
 
+    @Override
     public boolean isBaseType() {
         return helper.isBaseType();
     }

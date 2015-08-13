@@ -39,6 +39,7 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         setServiceFactory(factory);
     }
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -57,6 +58,7 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         }
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -77,6 +79,7 @@ public class PolicyServiceImpl extends AbstractLocalService implements PolicySer
         }
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 

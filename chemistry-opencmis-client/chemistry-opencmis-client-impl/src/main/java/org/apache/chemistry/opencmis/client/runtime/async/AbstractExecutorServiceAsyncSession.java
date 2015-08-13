@@ -63,7 +63,7 @@ public abstract class AbstractExecutorServiceAsyncSession<E extends ExecutorServ
     /**
      * A {@link Callable} that has a {@link Session} object.
      */
-    public static abstract class SessionCallable<V> implements Callable<V> {
+    public abstract static class SessionCallable<V> implements Callable<V> {
 
         protected Session session;
 

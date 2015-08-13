@@ -33,6 +33,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
@@ -139,7 +140,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         bindingContainer.add(bindingWebServicesButton);
         bindingContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         bindingContainer.add(bindingBrowserButton);
-        JLabel bindingLabel = new JLabel("Binding:", JLabel.TRAILING);
+        JLabel bindingLabel = new JLabel("Binding:", SwingConstants.TRAILING);
 
         pane.add(bindingLabel);
         pane.add(bindingContainer);
@@ -169,7 +170,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         authenticationContainer.add(authenticationNTLMButton);
         authenticationContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         authenticationContainer.add(authenticationOAuthButton);
-        JLabel authenticatioLabel = new JLabel("Authentication:", JLabel.TRAILING);
+        JLabel authenticatioLabel = new JLabel("Authentication:", SwingConstants.TRAILING);
 
         pane.add(authenticatioLabel);
         pane.add(authenticationContainer);
@@ -187,7 +188,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         compressionContainer.add(compressionOnButton);
         compressionContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         compressionContainer.add(compressionOffButton);
-        JLabel compressionLabel = new JLabel("Compression:", JLabel.TRAILING);
+        JLabel compressionLabel = new JLabel("Compression:", SwingConstants.TRAILING);
 
         pane.add(compressionLabel);
         pane.add(compressionContainer);
@@ -205,7 +206,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         clientCompressionContainer.add(clientCompressionOnButton);
         clientCompressionContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         clientCompressionContainer.add(clientCompressionOffButton);
-        JLabel clientCompressionLabel = new JLabel("Client Compression:", JLabel.TRAILING);
+        JLabel clientCompressionLabel = new JLabel("Client Compression:", SwingConstants.TRAILING);
 
         pane.add(clientCompressionLabel);
         pane.add(clientCompressionContainer);
@@ -223,7 +224,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         cookiesContainer.add(cookiesOnButton);
         cookiesContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         cookiesContainer.add(cookiesOffButton);
-        JLabel cookiesLabel = new JLabel("Cookies:", JLabel.TRAILING);
+        JLabel cookiesLabel = new JLabel("Cookies:", SwingConstants.TRAILING);
 
         pane.add(cookiesLabel);
         pane.add(cookiesContainer);

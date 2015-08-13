@@ -42,6 +42,7 @@ public class IdRenderer extends DefaultTableCellRenderer {
         return comp;
     }
 
+    @Override
     public void setValue(Object value) {
         String text = "";
         if (value instanceof ObjectId) {

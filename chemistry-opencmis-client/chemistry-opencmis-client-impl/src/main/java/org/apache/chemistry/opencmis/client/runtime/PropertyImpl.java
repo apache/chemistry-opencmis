@@ -37,13 +37,6 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
     private static final long serialVersionUID = 1L;
     private final PropertyDefinition<T> propertyDefinition;
 
-    protected void initialize(PropertyDefinition<?> pd) {
-        setId(pd.getId());
-        setDisplayName(pd.getDisplayName());
-        setLocalName(pd.getLocalName());
-        setQueryName(pd.getQueryName());
-    }
-
     /**
      * Constructs a property from a list of values.
      */
@@ -72,14 +65,24 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
         setValues(new ArrayList<T>(property.getValues()));
     }
 
+    protected void initialize(PropertyDefinition<?> pd) {
+        setId(pd.getId());
+        setDisplayName(pd.getDisplayName());
+        setLocalName(pd.getLocalName());
+        setQueryName(pd.getQueryName());
+    }
+
+    @Override
     public PropertyDefinition<T> getDefinition() {
         return propertyDefinition;
     }
 
+    @Override
     public PropertyType getType() {
         return propertyDefinition.getPropertyType();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <U> U getValue() {
         List<T> values = getValues();
@@ -90,6 +93,7 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
         }
     }
 
+    @Override
     public String getValueAsString() {
         List<T> values = getValues();
         if (values.isEmpty()) {
@@ -99,6 +103,7 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
         return formatValue(values.get(0));
     }
 
+    @Override
     public String getValuesAsString() {
         List<T> values = getValues();
 
@@ -130,6 +135,7 @@ public class PropertyImpl<T> extends AbstractPropertyData<T> implements Property
         return result;
     }
 
+    @Override
     public boolean isMultiValued() {
         return propertyDefinition.getCardinality() == Cardinality.MULTI;
     }

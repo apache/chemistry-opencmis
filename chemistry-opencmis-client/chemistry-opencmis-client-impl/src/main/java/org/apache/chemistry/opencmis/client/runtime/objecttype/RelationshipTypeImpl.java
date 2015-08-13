@@ -51,26 +51,32 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
         helper = new ObjectTypeHelper(session, this);
     }
 
+    @Override
     public ObjectType getBaseType() {
         return helper.getBaseType();
     }
 
+    @Override
     public ItemIterable<ObjectType> getChildren() {
         return helper.getChildren();
     }
 
+    @Override
     public List<Tree<ObjectType>> getDescendants(int depth) {
         return helper.getDescendants(depth);
     }
 
+    @Override
     public ObjectType getParentType() {
         return helper.getParentType();
     }
 
+    @Override
     public boolean isBaseType() {
         return helper.isBaseType();
     }
 
+    @Override
     public List<ObjectType> getAllowedSourceTypes() {
         if (allowedSourceTypes == null) {
             List<String> ids = getAllowedSourceTypeIds();
@@ -85,6 +91,7 @@ public class RelationshipTypeImpl extends RelationshipTypeDefinitionImpl impleme
         return allowedSourceTypes;
     }
 
+    @Override
     public List<ObjectType> getAllowedTargetTypes() {
         if (allowedTargetTypes == null) {
             List<String> ids = getAllowedTargetTypeIds();

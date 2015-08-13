@@ -40,6 +40,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
     /**
      * Sets the {@link BindingSession} the authentication provider lives in.
      */
+    @Override
     public void setSession(BindingSession session) {
         this.session = session;
     }
@@ -51,25 +52,31 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
         return session;
     }
 
+    @Override
     public Map<String, List<String>> getHTTPHeaders(String url) {
         return null;
     }
 
+    @Override
     public Element getSOAPHeaders(Object portObject) {
         return null;
     }
 
+    @Override
     public HandlerResolver getHandlerResolver() {
         return null;
     }
 
+    @Override
     public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
     }
 
+    @Override
     public SSLSocketFactory getSSLSocketFactory() {
         return null;
     }
 
+    @Override
     public HostnameVerifier getHostnameVerifier() {
         return null;
     }

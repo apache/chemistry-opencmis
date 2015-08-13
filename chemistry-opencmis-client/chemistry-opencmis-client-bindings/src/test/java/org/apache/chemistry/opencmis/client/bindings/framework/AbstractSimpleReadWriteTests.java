@@ -84,7 +84,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
             return;
         }
 
-        VersioningState vs = (isVersionable(getDefaultDocumentType()) ? VersioningState.MAJOR : VersioningState.NONE);
+        VersioningState vs = isVersionable(getDefaultDocumentType()) ? VersioningState.MAJOR : VersioningState.NONE;
 
         // create document
         List<PropertyData<?>> propList = new ArrayList<PropertyData<?>>();
@@ -137,7 +137,7 @@ public abstract class AbstractSimpleReadWriteTests extends AbstractCmisTestCase 
             return;
         }
 
-        VersioningState vs = (isVersionable(getDefaultDocumentType()) ? VersioningState.MAJOR : VersioningState.NONE);
+        VersioningState vs = isVersionable(getDefaultDocumentType()) ? VersioningState.MAJOR : VersioningState.NONE;
 
         String docId = createDefaultDocument(getTestRootFolder(), "testdoc.org.txt", CONTENT_TYPE, CONTENT);
 

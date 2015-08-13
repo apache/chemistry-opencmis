@@ -67,67 +67,83 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     // properties
 
+    @Override
     public String getCheckinComment() {
         return getPropertyValue(PropertyIds.CHECKIN_COMMENT);
     }
 
+    @Override
     public String getVersionLabel() {
         return getPropertyValue(PropertyIds.VERSION_LABEL);
     }
 
+    @Override
     public String getVersionSeriesId() {
         return getPropertyValue(PropertyIds.VERSION_SERIES_ID);
     }
 
+    @Override
     public String getVersionSeriesCheckedOutId() {
         return getPropertyValue(PropertyIds.VERSION_SERIES_CHECKED_OUT_ID);
     }
 
+    @Override
     public String getVersionSeriesCheckedOutBy() {
         return getPropertyValue(PropertyIds.VERSION_SERIES_CHECKED_OUT_BY);
     }
 
+    @Override
     public Boolean isImmutable() {
         return getPropertyValue(PropertyIds.IS_IMMUTABLE);
     }
 
+    @Override
     public Boolean isLatestMajorVersion() {
         return getPropertyValue(PropertyIds.IS_LATEST_MAJOR_VERSION);
     }
 
+    @Override
     public Boolean isLatestVersion() {
         return getPropertyValue(PropertyIds.IS_LATEST_VERSION);
     }
 
+    @Override
     public Boolean isMajorVersion() {
         return getPropertyValue(PropertyIds.IS_MAJOR_VERSION);
     }
 
+    @Override
     public Boolean isPrivateWorkingCopy() {
         return getPropertyValue(PropertyIds.IS_PRIVATE_WORKING_COPY);
     }
 
+    @Override
     public Boolean isVersionSeriesCheckedOut() {
         return getPropertyValue(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT);
     }
 
+    @Override
     public long getContentStreamLength() {
         BigInteger bigInt = getPropertyValue(PropertyIds.CONTENT_STREAM_LENGTH);
-        return (bigInt == null) ? (long) -1 : bigInt.longValue();
+        return bigInt == null ? (long) -1 : bigInt.longValue();
     }
 
+    @Override
     public String getContentStreamMimeType() {
         return getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE);
     }
 
+    @Override
     public String getContentStreamFileName() {
         return getPropertyValue(PropertyIds.CONTENT_STREAM_FILE_NAME);
     }
 
+    @Override
     public String getContentStreamId() {
         return getPropertyValue(PropertyIds.CONTENT_STREAM_ID);
     }
 
+    @Override
     public List<ContentStreamHash> getContentStreamHashes() {
         List<String> hashes = getPropertyValue(PropertyIds.CONTENT_STREAM_HASH);
         if (isNullOrEmpty(hashes)) {
@@ -144,6 +160,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     // operations
 
+    @Override
     public Document copy(ObjectId targetFolderId, Map<String, ?> properties, VersioningState versioningState,
             List<Policy> policies, List<Ace> addAces, List<Ace> removeAces, OperationContext context) {
 
@@ -168,6 +185,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return (Document) object;
     }
 
+    @Override
     public Document copy(ObjectId targetFolderId) {
         return copy(targetFolderId, null, null, null, null, null, getSession().getDefaultContext());
     }
@@ -220,12 +238,14 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         }
     }
 
+    @Override
     public void deleteAllVersions() {
         delete(true);
     }
 
     // versioning
 
+    @Override
     public ObjectId checkOut() {
         String newObjectId = null;
 
@@ -251,6 +271,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public void cancelCheckOut() {
         String objectId = getObjectId();
 
@@ -260,6 +281,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         getSession().removeObjectFromCache(this);
     }
 
+    @Override
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
             String checkinComment, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
         String newObjectId = null;
@@ -294,10 +316,12 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public List<Document> getAllVersions() {
         return getAllVersions(getSession().getDefaultContext());
     }
 
+    @Override
     public List<Document> getAllVersions(OperationContext context) {
         String objectId;
         String versionSeriesId;
@@ -332,28 +356,34 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     }
 
+    @Override
     public Document getObjectOfLatestVersion(boolean major) {
         return getObjectOfLatestVersion(major, getSession().getDefaultContext());
     }
 
+    @Override
     public Document getObjectOfLatestVersion(boolean major, OperationContext context) {
         return getSession().getLatestDocumentVersion(this, major, context);
     }
 
     // content operations
 
+    @Override
     public ContentStream getContentStream() {
         return getContentStream(null, null, null);
     }
 
+    @Override
     public ContentStream getContentStream(BigInteger offset, BigInteger length) {
         return getContentStream(null, offset, length);
     }
 
+    @Override
     public ContentStream getContentStream(String streamId) {
         return getContentStream(streamId, null, null);
     }
 
+    @Override
     public ContentStream getContentStream(String streamId, BigInteger offset, BigInteger length) {
         // get the stream
         ContentStream contentStream = getSession().getContentStream(this, streamId, offset, length);
@@ -376,10 +406,12 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
                 contentStream.getStream(), contentStream instanceof PartialContentStream);
     }
 
+    @Override
     public String getContentUrl() {
         return getContentUrl(null);
     }
 
+    @Override
     public String getContentUrl(String streamId) {
         if (getBinding().getObjectService() instanceof LinkAccess) {
             LinkAccess linkAccess = (LinkAccess) getBinding().getObjectService();
@@ -394,6 +426,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return null;
     }
 
+    @Override
     public Document setContentStream(ContentStream contentStream, boolean overwrite) {
         ObjectId objectId = setContentStream(contentStream, overwrite, true);
         if (objectId == null) {
@@ -407,6 +440,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return this;
     }
 
+    @Override
     public ObjectId setContentStream(ContentStream contentStream, boolean overwrite, boolean refresh) {
         String newObjectId = null;
 
@@ -434,6 +468,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public Document appendContentStream(ContentStream contentStream, boolean isLastChunk) {
         if (getSession().getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
             throw new CmisNotSupportedException("This method is not supported for CMIS 1.0 repositories.");
@@ -451,6 +486,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return this;
     }
 
+    @Override
     public ObjectId appendContentStream(ContentStream contentStream, boolean isLastChunk, boolean refresh) {
         String newObjectId = null;
 
@@ -478,6 +514,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public Document deleteContentStream() {
         ObjectId objectId = deleteContentStream(true);
         if (objectId == null) {
@@ -491,6 +528,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return this;
     }
 
+    @Override
     public ObjectId deleteContentStream(boolean refresh) {
         String newObjectId = null;
 
@@ -518,6 +556,7 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return getSession().createObjectId(newObjectId);
     }
 
+    @Override
     public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment) {
         return this.checkIn(major, properties, contentStream, checkinComment, null, null, null);
     }

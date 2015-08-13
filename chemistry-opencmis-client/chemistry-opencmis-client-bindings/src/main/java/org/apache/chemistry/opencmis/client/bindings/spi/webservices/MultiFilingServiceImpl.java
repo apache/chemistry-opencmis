@@ -46,6 +46,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
         this.portProvider = portProvider;
     }
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort(getCmisVersion(repositoryId),
@@ -66,6 +67,7 @@ public class MultiFilingServiceImpl extends AbstractWebServicesService implement
         }
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         MultiFilingServicePort port = portProvider.getMultiFilingServicePort(getCmisVersion(repositoryId),
                 "removeObjectFromFolder");

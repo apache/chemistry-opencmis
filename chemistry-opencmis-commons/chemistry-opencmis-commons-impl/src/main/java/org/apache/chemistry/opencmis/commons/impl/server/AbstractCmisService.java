@@ -91,6 +91,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is required. Convenience implementation is present.</li>
      * </ul>
      */
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         RepositoryInfo result = null;
 
@@ -121,6 +122,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is required.</li>
      * </ul>
      */
+    @Override
     public abstract List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
     /**
@@ -133,6 +135,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is required.</li>
      * </ul>
      */
+    @Override
     public abstract TypeDefinitionList getTypeChildren(String repositoryId, String typeId,
             Boolean includePropertyDefinitions, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
 
@@ -146,6 +149,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         // check depth
@@ -210,6 +214,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is required.</li>
      * </ul>
      */
+    @Override
     public abstract TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
 
     /**
@@ -223,6 +228,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Introduced in CMIS 1.1</li>
      * </ul>
      */
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -238,6 +244,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Introduced in CMIS 1.1</li>
      * </ul>
      */
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -253,6 +260,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Introduced in CMIS 1.1</li>
      * </ul>
      */
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -270,6 +278,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the folder and all returned children.</li>
      * </ul>
      */
+    @Override
     public abstract ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
@@ -285,6 +294,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the folder and all returned descendants.</li>
      * </ul>
      */
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -302,6 +312,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the folder and all returned descendants.</li>
      * </ul>
      */
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -319,6 +330,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the object and all returned parents.</li>
      * </ul>
      */
+    @Override
     public abstract List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension);
@@ -334,6 +346,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned parent folder.</li>
      * </ul>
      */
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -349,6 +362,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the folder and the returned objects.</li>
      * </ul>
      */
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -368,6 +382,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the newly created object.</li>
      * </ul>
      */
+    @Override
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         // check properties
@@ -424,6 +439,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -440,6 +456,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -456,6 +473,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -472,6 +490,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the newly created object.</li>
      * </ul>
      */
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -487,6 +506,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -502,6 +522,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -517,6 +538,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         return getObject(repositoryId, objectId, "cmis:objectId", true, IncludeRelationships.NONE, "cmis:none", false,
                 false, extension).getAllowableActions();
@@ -533,6 +555,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned object.</li>
      * </ul>
      */
+    @Override
     public abstract ObjectData getObject(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension);
@@ -547,6 +570,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional. Convenience implementation is present.</li>
      * </ul>
      */
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         return getObject(repositoryId, objectId, filter, false, IncludeRelationships.NONE, "cmis:none", false, false,
                 extension).getProperties();
@@ -562,6 +586,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -578,6 +603,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned object.</li>
      * </ul>
      */
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -594,6 +620,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -610,6 +637,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the updated object.</li>
      * </ul>
      */
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -626,6 +654,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Introduced in CMIS 1.1</li>
      * </ul>
      */
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -643,6 +672,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the moved object.</li>
      * </ul>
      */
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -661,6 +691,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * ).</li>
      * </ul>
      */
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extension);
     }
@@ -675,6 +706,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -690,6 +722,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -705,6 +738,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -721,6 +755,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Introduced in CMIS 1.1</li>
      * </ul>
      */
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -736,6 +771,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -754,6 +790,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the checked out object.</li>
      * </ul>
      */
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         throw new CmisNotSupportedException("Not supported!");
@@ -769,6 +806,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -784,6 +822,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the checked in object.</li>
      * </ul>
      */
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -801,6 +840,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned object.</li>
      * </ul>
      */
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -819,6 +859,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * is implemented.</li>
      * </ul>
      */
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         return getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, false,
@@ -836,6 +877,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned objects.</li>
      * </ul>
      */
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -854,6 +896,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned objects.</li>
      * </ul>
      */
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -869,6 +912,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -888,6 +932,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the added object.</li>
      * </ul>
      */
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -904,6 +949,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the removed object.</li>
      * </ul>
      */
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -922,6 +968,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * objects.</li>
      * </ul>
      */
+    @Override
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -940,6 +987,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -955,6 +1003,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -969,6 +1018,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -986,6 +1036,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the applied policy object.</li>
      * </ul>
      */
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -1001,6 +1052,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Object infos should contain the returned policy objects.</li>
      * </ul>
      */
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
@@ -1016,6 +1068,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * <li>Implementation is optional.</li>
      * </ul>
      */
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         throw new CmisNotSupportedException("Not supported!");
     }
@@ -1046,6 +1099,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      * change this behavior, override this method.</li>
      * </ul>
      */
+    @Override
     public ObjectInfo getObjectInfo(String repositoryId, String objectId) {
         Map<String, ObjectInfo> oim = getObjectInfoMap();
         ObjectInfo info = oim.get(objectId);
@@ -1266,6 +1320,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
     /**
      * Adds an object info.
      */
+    @Override
     public void addObjectInfo(ObjectInfo objectInfo) {
         if (!addObjectInfos) {
             return;
@@ -1283,6 +1338,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         objectInfoMap = null;
     }
 
+    @Override
     public void close() {
         clearObjectInfos();
     }

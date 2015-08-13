@@ -18,14 +18,10 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.atompub;
 
-
 /**
  * Constants for AtomPub.
  */
 public final class CmisAtomPubConstants {
-
-    private CmisAtomPubConstants() {
-    }
 
     // service doc
     public static final String TAG_SERVICE = "service";
@@ -81,4 +77,6 @@ public final class CmisAtomPubConstants {
     public static final String LINK_TYPE = "type";
     public static final String CONTENT_SRC = "src";
 
+    private CmisAtomPubConstants() {
+    }
 }

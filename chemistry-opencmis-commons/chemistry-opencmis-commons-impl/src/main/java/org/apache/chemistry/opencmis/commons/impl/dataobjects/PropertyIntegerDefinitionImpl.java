@@ -33,18 +33,22 @@ public class PropertyIntegerDefinitionImpl extends AbstractPropertyDefinition<Bi
     private BigInteger minValue;
     private BigInteger maxValue;
 
+    @Override
     public BigInteger getMinValue() {
         return minValue;
     }
 
+    @Override
     public void setMinValue(BigInteger minValue) {
         this.minValue = minValue;
     }
 
+    @Override
     public BigInteger getMaxValue() {
         return maxValue;
     }
 
+    @Override
     public void setMaxValue(BigInteger maxValue) {
         this.maxValue = maxValue;
     }

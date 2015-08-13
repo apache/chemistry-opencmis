@@ -81,6 +81,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         setExtensions(data.getExtensions());
     }
 
+    @Override
     public Boolean isAllVersionsSearchableSupported() {
         return allVersionsSearchable;
     }
@@ -89,6 +90,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.allVersionsSearchable = allVersionsSearchable;
     }
 
+    @Override
     public CapabilityAcl getAclCapability() {
         return capabilityAcl;
     }
@@ -97,6 +99,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityAcl = capabilityAcl;
     }
 
+    @Override
     public CapabilityChanges getChangesCapability() {
         return capabilityChanges;
     }
@@ -105,6 +108,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityChanges = capabilityChanges;
     }
 
+    @Override
     public CapabilityContentStreamUpdates getContentStreamUpdatesCapability() {
         return capabilityContentStreamUpdates;
     }
@@ -113,6 +117,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityContentStreamUpdates = capabilityContentStreamUpdates;
     }
 
+    @Override
     public CapabilityJoin getJoinCapability() {
         return capabilityJoin;
     }
@@ -121,6 +126,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityJoin = capabilityJoin;
     }
 
+    @Override
     public CapabilityQuery getQueryCapability() {
         return capabilityQuery;
     }
@@ -129,6 +135,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityQuery = capabilityQuery;
     }
 
+    @Override
     public CapabilityRenditions getRenditionsCapability() {
         return capabilityRendition;
     }
@@ -137,6 +144,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.capabilityRendition = capabilityRendition;
     }
 
+    @Override
     public Boolean isPwcSearchableSupported() {
         return isPwcSearchable;
     }
@@ -145,6 +153,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.isPwcSearchable = isPwcSearchable;
     }
 
+    @Override
     public Boolean isPwcUpdatableSupported() {
         return isPwcUpdatable;
     }
@@ -153,6 +162,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.isPwcUpdatable = isPwcUpdatable;
     }
 
+    @Override
     public Boolean isGetDescendantsSupported() {
         return supportsGetDescendants;
     }
@@ -161,6 +171,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.supportsGetDescendants = supportsGetDescendants;
     }
 
+    @Override
     public Boolean isGetFolderTreeSupported() {
         return supportsGetFolderTree;
     }
@@ -169,6 +180,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.supportsGetFolderTree = supportsGetFolderTree;
     }
 
+    @Override
     public CapabilityOrderBy getOrderByCapability() {
         return capabilityOrderBy;
     }
@@ -185,6 +197,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         setCapabilityOrderBy(capabilityOrderBy);
     }
 
+    @Override
     public Boolean isMultifilingSupported() {
         return supportsMultifiling;
     }
@@ -193,6 +206,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.supportsMultifiling = supportsMultifiling;
     }
 
+    @Override
     public Boolean isUnfilingSupported() {
         return supportsUnfiling;
     }
@@ -201,6 +215,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.supportsUnfiling = supportsUnfiling;
     }
 
+    @Override
     public Boolean isVersionSpecificFilingSupported() {
         return supportsVersionSpecificFiling;
     }
@@ -209,6 +224,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.supportsVersionSpecificFiling = supportsVersionSpecificFiling;
     }
 
+    @Override
     public CreatablePropertyTypes getCreatablePropertyTypes() {
         return creatablePropertyTypes;
     }
@@ -217,6 +233,7 @@ public class RepositoryCapabilitiesImpl extends AbstractExtensionData implements
         this.creatablePropertyTypes = creatablePropertyTypes;
     }
 
+    @Override
     public NewTypeSettableAttributes getNewTypeSettableAttributes() {
         return newTypeSettableAttributes;
     }

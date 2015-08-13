@@ -52,6 +52,7 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
         this.acl = acl;
     }
 
+    @Override
     public String getObjectId() {
         return objectId;
     }
@@ -60,6 +61,7 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
         this.objectId = objectId;
     }
 
+    @Override
     public Map<String, List<?>> getProperties() {
         return properties;
     }
@@ -68,6 +70,7 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
         this.properties = properties;
     }
 
+    @Override
     public List<String> getPolicyIds() {
         return policyIds;
     }
@@ -76,6 +79,7 @@ public class ChangeEventImpl extends ChangeEventInfoDataImpl implements ChangeEv
         this.policyIds = policyIds;
     }
 
+    @Override
     public Acl getAcl() {
         return acl;
     }

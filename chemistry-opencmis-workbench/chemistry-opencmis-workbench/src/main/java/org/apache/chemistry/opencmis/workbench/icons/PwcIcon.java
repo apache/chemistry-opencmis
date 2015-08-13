@@ -30,6 +30,7 @@ public class PwcIcon extends DocumentIcon {
         super(width, height);
     }
 
+    @Override
     protected Color getColor() {
         return new Color(0x358c32);
     }

@@ -36,6 +36,7 @@ public class RenditionInfoImpl implements RenditionInfo, Serializable {
     private String title;
     private BigInteger length;
 
+    @Override
     public String getId() {
         return id;
     }
@@ -44,6 +45,7 @@ public class RenditionInfoImpl implements RenditionInfo, Serializable {
         this.id = id;
     }
 
+    @Override
     public String getContenType() {
         return contentType;
     }
@@ -52,6 +54,7 @@ public class RenditionInfoImpl implements RenditionInfo, Serializable {
         this.contentType = contentType;
     }
 
+    @Override
     public String getKind() {
         return kind;
     }
@@ -60,6 +63,7 @@ public class RenditionInfoImpl implements RenditionInfo, Serializable {
         this.kind = kind;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
@@ -68,6 +72,7 @@ public class RenditionInfoImpl implements RenditionInfo, Serializable {
         this.title = title;
     }
 
+    @Override
     public BigInteger getLength() {
         return length;
     }

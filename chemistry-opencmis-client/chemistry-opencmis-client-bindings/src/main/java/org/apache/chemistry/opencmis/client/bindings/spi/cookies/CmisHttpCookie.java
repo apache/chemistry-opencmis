@@ -82,6 +82,18 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
 
     private Map<String, Setter> attributeSet = new HashMap<String, Setter>();
 
+    private String comment;
+    private String commentURL;
+    private boolean discard;
+    private String domain;
+    private long maxAge = -1L;
+    private String name;
+    private String path;
+    private String portList;
+    private boolean secure;
+    private String value;
+    private int version = 1;
+
     /**
      * A utility method used to check whether the host name is in a domain or
      * not.
@@ -253,18 +265,6 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
 
         return list;
     }
-
-    private String comment;
-    private String commentURL;
-    private boolean discard;
-    private String domain;
-    private long maxAge = -1L;
-    private String name;
-    private String path;
-    private String portList;
-    private boolean secure;
-    private String value;
-    private int version = 1;
 
     {
         attributeSet.put("comment", new Setter() {

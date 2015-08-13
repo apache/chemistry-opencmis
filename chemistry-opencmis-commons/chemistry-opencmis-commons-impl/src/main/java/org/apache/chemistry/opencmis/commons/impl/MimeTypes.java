@@ -257,6 +257,6 @@ public final class MimeTypes {
         mimeType = mimeType.trim().toLowerCase(Locale.ENGLISH);
 
         String extension = MIME2EXT.get(mimeType);
-        return ((extension == null || extension.length() == 0) ? "" : "." + extension);
+        return (extension == null || extension.length() == 0) ? "" : "." + extension;
     }
 }

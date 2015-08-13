@@ -33,6 +33,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
     private List<String> allowedSourceTypes;
     private List<String> allowedTargetTypes;
 
+    @Override
     public List<String> getAllowedSourceTypeIds() {
         if (allowedSourceTypes == null) {
             allowedSourceTypes = new ArrayList<String>();
@@ -41,10 +42,12 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
         return allowedSourceTypes;
     }
 
+    @Override
     public void setAllowedSourceTypes(List<String> allowedSourceTypes) {
         this.allowedSourceTypes = allowedSourceTypes;
     }
 
+    @Override
     public List<String> getAllowedTargetTypeIds() {
         if (allowedTargetTypes == null) {
             allowedTargetTypes = new ArrayList<String>();
@@ -53,6 +56,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
         return allowedTargetTypes;
     }
 
+    @Override
     public void setAllowedTargetTypes(List<String> allowedTargetTypes) {
         this.allowedTargetTypes = allowedTargetTypes;
     }

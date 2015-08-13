@@ -60,6 +60,7 @@ public class NavigationService {
      * getChildren.
      */
     public static class GetChildren extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -111,6 +112,7 @@ public class NavigationService {
      * getDescendants.
      */
     public static class GetDescendants extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -162,6 +164,7 @@ public class NavigationService {
      * getFolderTree.
      */
     public static class GetFolderTree extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -213,6 +216,7 @@ public class NavigationService {
      * getFolderParent.
      */
     public static class GetFolderParent extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -255,6 +259,7 @@ public class NavigationService {
      * getObjectParents.
      */
     public static class GetObjectParents extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -305,6 +310,7 @@ public class NavigationService {
      * getCheckedOutDocs.
      */
     public static class GetCheckedOutDocs extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

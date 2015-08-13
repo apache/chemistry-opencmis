@@ -55,7 +55,7 @@ public final class ClientOperationContext extends OperationContextImpl {
     }
 
     private boolean parseBoolean(String s, boolean defaultValue) {
-        return (s == null ? defaultValue : Boolean.parseBoolean(s));
+        return s == null ? defaultValue : Boolean.parseBoolean(s);
     }
 
     private IncludeRelationships parseIncludeRelationships(String s, IncludeRelationships defaultValue) {

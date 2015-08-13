@@ -70,6 +70,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         baseTypeId = baseObjectTypeId;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -78,6 +79,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.id = id;
     }
 
+    @Override
     public String getAtomId() {
         return atomId;
     }
@@ -86,6 +88,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.atomId = atomId;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -94,6 +97,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getCreatedBy() {
         return createdBy;
     }
@@ -102,6 +106,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.createdBy = createdBy;
     }
 
+    @Override
     public GregorianCalendar getCreationDate() {
         return creationDate;
     }
@@ -110,6 +115,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.creationDate = creationDate;
     }
 
+    @Override
     public GregorianCalendar getLastModificationDate() {
         return lastModificationDate;
     }
@@ -118,6 +124,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.lastModificationDate = lastModificationDate;
     }
 
+    @Override
     public String getTypeId() {
         return typeId;
     }
@@ -126,6 +133,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.typeId = typeId;
     }
 
+    @Override
     public BaseTypeId getBaseType() {
         return baseTypeId;
     }
@@ -134,6 +142,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.baseTypeId = baseObjectTypeId;
     }
 
+    @Override
     public boolean isCurrentVersion() {
         return isCurrentVersion;
     }
@@ -142,6 +151,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.isCurrentVersion = currentVersion;
     }
 
+    @Override
     public String getVersionSeriesId() {
         return versionSeriesId;
     }
@@ -150,6 +160,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.versionSeriesId = versionSeriesId;
     }
 
+    @Override
     public String getWorkingCopyId() {
         return workingCopyId;
     }
@@ -158,6 +169,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.workingCopyId = workingCopyId;
     }
 
+    @Override
     public String getWorkingCopyOriginalId() {
         return workingCopyOriginalId;
     }
@@ -166,6 +178,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.workingCopyOriginalId = workingCopyOriginalId;
     }
 
+    @Override
     public boolean hasContent() {
         return hasContent;
     }
@@ -174,6 +187,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.hasContent = hasContent;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -182,6 +196,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.contentType = contentType;
     }
 
+    @Override
     public String getFileName() {
         return fileName;
     }
@@ -190,6 +205,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.fileName = fileName;
     }
 
+    @Override
     public List<RenditionInfo> getRenditionInfos() {
         return renditionInfos;
     }
@@ -198,6 +214,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.renditionInfos = renditions;
     }
 
+    @Override
     public boolean supportsRelationships() {
         return supportsRelationships;
     }
@@ -206,6 +223,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.supportsRelationships = supportsRelationships;
     }
 
+    @Override
     public boolean supportsPolicies() {
         return supportsPolicies;
     }
@@ -214,6 +232,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.supportsPolicies = supportsPolicies;
     }
 
+    @Override
     public boolean hasAcl() {
         return hasAcl;
     }
@@ -222,6 +241,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.hasAcl = hasAcl;
     }
 
+    @Override
     public boolean hasParent() {
         return hasParent;
     }
@@ -230,6 +250,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.hasParent = hasParent;
     }
 
+    @Override
     public boolean supportsDescendants() {
         return supportsDescendants;
     }
@@ -238,6 +259,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.supportsDescendants = supportsDescendants;
     }
 
+    @Override
     public boolean supportsFolderTree() {
         return supportsFolderTree;
     }
@@ -246,6 +268,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.supportsFolderTree = supportsFolderTree;
     }
 
+    @Override
     public List<String> getRelationshipSourceIds() {
         return relationshipSourceIds;
     }
@@ -254,6 +277,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.relationshipSourceIds = relationshipSourceIds;
     }
 
+    @Override
     public List<String> getRelationshipTargetIds() {
         return relationshipTargetIds;
     }
@@ -262,6 +286,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.relationshipTargetIds = relationshipTargetIds;
     }
 
+    @Override
     public List<LinkInfo> getAdditionalLinks() {
         return additionalLinks;
     }
@@ -270,6 +295,7 @@ public class ObjectInfoImpl implements ObjectInfo, Serializable {
         this.additionalLinks = additionalLinks;
     }
 
+    @Override
     public ObjectData getObject() {
         return object;
     }

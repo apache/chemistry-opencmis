@@ -82,16 +82,19 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 userAgent);
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         log("getRepositoryInfos", null);
         return getWrappedService().getRepositoryInfos(extension);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         log("getRepositoryInfo", repositoryId);
         return getWrappedService().getRepositoryInfo(repositoryId, extension);
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         log("getTypeChildren", repositoryId);
@@ -99,6 +102,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 skipCount, extension);
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         log("getTypeDescendants", repositoryId);
@@ -106,26 +110,31 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         log("getTypeDefinition", repositoryId);
         return getWrappedService().getTypeDefinition(repositoryId, typeId, extension);
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         log("createType", repositoryId);
         return getWrappedService().createType(repositoryId, type, extension);
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         log("updateType", repositoryId);
         return getWrappedService().updateType(repositoryId, type, extension);
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         log("deleteType", repositoryId);
         getWrappedService().deleteType(repositoryId, typeId, extension);
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -134,6 +143,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includePathSegment, maxItems, skipCount, extension);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -142,6 +152,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includePathSegment, extension);
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -150,6 +161,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includePathSegment, extension);
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -158,11 +170,13 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includeRelativePathSegment, extension);
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         log("getFolderParent", repositoryId);
         return getWrappedService().getFolderParent(repositoryId, folderId, filter, extension);
     }
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -171,6 +185,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, maxItems, skipCount, extension);
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -179,6 +194,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 policies, addAces, removeAces, extension);
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -187,6 +203,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 versioningState, policies, addAces, removeAces, extension);
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         log("createFolder", repositoryId);
@@ -194,6 +211,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         log("createRelationship", repositoryId);
@@ -201,6 +219,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         log("createPolicy", repositoryId);
@@ -208,6 +227,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         log("createItem", repositoryId);
@@ -215,11 +235,13 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         log("getAllowableActions", repositoryId);
         return getWrappedService().getAllowableActions(repositoryId, objectId, extension);
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -228,11 +250,13 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         log("getProperties", repositoryId);
         return getWrappedService().getProperties(repositoryId, objectId, filter, extension);
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         log("getRenditions", repositoryId);
@@ -240,6 +264,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -248,18 +273,21 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension);
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         log("getContentStream", repositoryId);
         return getWrappedService().getContentStream(repositoryId, objectId, streamId, offset, length, extension);
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         log("updateProperties", repositoryId);
         getWrappedService().updateProperties(repositoryId, objectId, changeToken, properties, extension);
     }
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -268,17 +296,20 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 addSecondaryTypeIds, removeSecondaryTypeIds, extension);
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         log("moveObject", repositoryId);
         getWrappedService().moveObject(repositoryId, objectId, targetFolderId, sourceFolderId, extension);
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         log("deleteObject", repositoryId);
         getWrappedService().deleteObject(repositoryId, objectId, allVersions, extension);
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         log("deleteTree", repositoryId);
@@ -286,6 +317,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         log("setContentStream", repositoryId);
@@ -293,12 +325,14 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         log("deleteContentStream", repositoryId);
         getWrappedService().deleteContentStream(repositoryId, objectId, changeToken, extension);
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         log("appendContentStream", repositoryId);
@@ -306,17 +340,20 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         log("checkOut", repositoryId);
         getWrappedService().checkOut(repositoryId, objectId, extension, contentCopied);
     }
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         log("cancelCheckOut", repositoryId);
         getWrappedService().cancelCheckOut(repositoryId, objectId, extension);
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -325,6 +362,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 addAces, removeAces, extension);
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -335,6 +373,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                         extension);
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         log("getPropertiesOfLatestVersion", repositoryId);
@@ -342,6 +381,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         log("getAllVersions", repositoryId);
@@ -349,6 +389,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeAllowableActions, extension);
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -357,6 +398,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includeRelationships, renditionFilter, maxItems, skipCount, extension);
     }
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         log("getContentChanges", repositoryId);
@@ -364,17 +406,20 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 includePolicyIds, includeAcl, maxItems, extension);
     }
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         log("addObjectToFolder", repositoryId);
         getWrappedService().addObjectToFolder(repositoryId, objectId, folderId, allVersions, extension);
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         log("removeObjectFromFolder", repositoryId);
         getWrappedService().removeObjectFromFolder(repositoryId, objectId, folderId, extension);
     }
 
+    @Override
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -383,33 +428,39 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 relationshipDirection, typeId, filter, includeAllowableActions, maxItems, skipCount, extension);
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         log("getAcl", repositoryId);
         return getWrappedService().getAcl(repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         log("applyAcl", repositoryId);
         return getWrappedService().applyAcl(repositoryId, objectId, addAces, removeAces, aclPropagation, extension);
     }
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         log("applyPolicy", repositoryId);
         getWrappedService().applyPolicy(repositoryId, policyId, objectId, extension);
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         log("removePolicy", repositoryId);
         getWrappedService().removePolicy(repositoryId, policyId, objectId, extension);
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         log("getRepositoryInfos", repositoryId);
         return getWrappedService().getAppliedPolicies(repositoryId, objectId, filter, extension);
     }
 
+    @Override
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         log("create", repositoryId);
@@ -417,12 +468,14 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
                 extension);
     }
 
+    @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         log("deleteObjectOrCancelCheckOut", repositoryId);
         getWrappedService().deleteObjectOrCancelCheckOut(repositoryId, objectId, allVersions, extension);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
         log("applyAcl", repositoryId);
         return getWrappedService().applyAcl(repositoryId, objectId, aces, aclPropagation);

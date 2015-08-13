@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.util.repository.ObjectGenerator.ContentKind
 public class MultiThreadedObjectGenerator {
 
     public static enum Action {
-        CreateDocument, CreateTree, CreateFolders, CreateTypes
+        CREATE_DOCUMENT, CREATE_TREE, CREATE_FOLDERS, CREATE_TYPES
     }
 
     private MultiThreadedObjectGenerator() {
@@ -50,14 +50,15 @@ public class MultiThreadedObjectGenerator {
             fAction = action;
         }
 
+        @Override
         public void run() {
-            if (fAction == Action.CreateDocument) {
+            if (fAction == Action.CREATE_DOCUMENT) {
                 doCreateDocument();
-            } else if (fAction == Action.CreateTree) {
+            } else if (fAction == Action.CREATE_TREE) {
                 doCreateTree();
-            } else if (fAction == Action.CreateFolders) {
+            } else if (fAction == Action.CREATE_FOLDERS) {
                 doCreateFolder();
-            } else if (fAction == Action.CreateTypes) {
+            } else if (fAction == Action.CREATE_TYPES) {
                 doCreateTypes();
             }
         }
@@ -74,7 +75,7 @@ public class MultiThreadedObjectGenerator {
         public String[] doCreateFolder() {
             return fObjGen.createFolders(fRootFolderId, fCount);
         }
-        
+
         public void doCreateTypes() {
             fObjGen.createTypes(fTypeDefList);
         }
@@ -93,7 +94,7 @@ public class MultiThreadedObjectGenerator {
         NavigationService navSvc = binding.getNavigationService();
         ObjectService objSvc = binding.getObjectService();
         RepositoryService repSvc = binding.getRepositoryService();
-        
+
         ObjectGenerator gen = new ObjectGenerator(objectFactory, navSvc, objSvc, repSvc, repoId, contentKind);
         gen.setUseUuidsForNames(true);
         gen.setNumberOfDocumentsToCreatePerFolder(docsPerFolder);
@@ -126,7 +127,7 @@ public class MultiThreadedObjectGenerator {
         ObjectGenerator objGen = createObjectGenerator(binding, repoId, docsPerFolder, foldersPerFolders, depth,
                 documentType, folderType, contentSizeInKB, rootFolderId, contentKind, doCleanup);
 
-        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateTree);
+        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_TREE);
         gen.fFoldersPerFolders = foldersPerFolders;
         gen.fDepth = depth;
         gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
@@ -140,10 +141,9 @@ public class MultiThreadedObjectGenerator {
         ObjectGeneratorRunner[] runners = new ObjectGeneratorRunner[rootFolderIds.length];
         for (int i = 0; i < rootFolderIds.length; i++) {
             ObjectGenerator objGen = createObjectGenerator(provider, repoId, docsPerFolder, foldersPerFolders, depth,
-                    documentType, folderType, contentSizeInKB, rootFolderIds[i], contentKind,
-                    doCleanup);
+                    documentType, folderType, contentSizeInKB, rootFolderIds[i], contentKind, doCleanup);
 
-            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateTree);
+            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_TREE);
             gen.fFoldersPerFolders = foldersPerFolders;
             gen.fDepth = depth;
             gen.fRootFolderId = rootFolderIds[i];
@@ -153,13 +153,13 @@ public class MultiThreadedObjectGenerator {
     }
 
     public static ObjectGeneratorRunner prepareForCreateDocument(CmisBinding provider, String repoId,
-            String documentType, int contentSizeInKB, String rootFolderId, int noDocuments, 
-            ContentKind contentKind, boolean doCleanup) {
+            String documentType, int contentSizeInKB, String rootFolderId, int noDocuments, ContentKind contentKind,
+            boolean doCleanup) {
 
         ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, documentType, null, contentSizeInKB,
                 rootFolderId, contentKind, doCleanup);
 
-        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateDocument);
+        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_DOCUMENT);
         gen.fRootFolderId = getRootFolderId(provider, repoId, rootFolderId);
         gen.fCount = noDocuments;
         return gen;
@@ -174,7 +174,7 @@ public class MultiThreadedObjectGenerator {
             ObjectGenerator objGen = createObjectGenerator(binding, repoId, 0, 0, 0, documentType, null,
                     contentSizeInKB, rootFolderId, contentKind, doCleanup);
 
-            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateDocument);
+            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_DOCUMENT);
             gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
             gen.fCount = noDocuments;
             runners[i] = gen;
@@ -188,7 +188,7 @@ public class MultiThreadedObjectGenerator {
         ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, folderType, 0, rootFolderId,
                 null, doCleanup);
 
-        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateFolders);
+        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_FOLDERS);
         gen.fRootFolderId = getRootFolderId(provider, repoId, rootFolderId);
         gen.fCount = noFolders;
         return gen;
@@ -202,7 +202,7 @@ public class MultiThreadedObjectGenerator {
             ObjectGenerator objGen = createObjectGenerator(binding, repoId, 0, 0, 0, null, folderType, 0, rootFolderId,
                     null, doCleanup);
 
-            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateFolders);
+            ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_FOLDERS);
             gen.fRootFolderId = getRootFolderId(binding, repoId, rootFolderId);
             gen.fCount = noFolders;
             runners[i] = gen;
@@ -210,12 +210,12 @@ public class MultiThreadedObjectGenerator {
         return runners;
     }
 
-    public static ObjectGeneratorRunner prepareForCreateTypes(CmisBinding provider, String repoId, TypeDefinitionList typeDefList) {
+    public static ObjectGeneratorRunner prepareForCreateTypes(CmisBinding provider, String repoId,
+            TypeDefinitionList typeDefList) {
 
-        ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, null, 0, null,
-                null, false);
+        ObjectGenerator objGen = createObjectGenerator(provider, repoId, 0, 0, 0, null, null, 0, null, null, false);
 
-        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CreateTypes);
+        ObjectGeneratorRunner gen = new ObjectGeneratorRunner(objGen, Action.CREATE_TYPES);
         gen.fTypeDefList = typeDefList;
         return gen;
     }

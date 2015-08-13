@@ -29,6 +29,7 @@ public abstract class AbstractPropertyMapper implements PropertyMapper {
     protected String propPrefix;
     protected String dateFormat = DEFAULT_DATE_FORMAT;
 
+    @Override
     public boolean initialize(String cfgPrefix, String typeKey, Properties properties) {
         propPrefix = cfgPrefix + "." + typeKey;
         cmisTypeId = properties.getProperty(propPrefix + ".typeId");
@@ -51,10 +52,12 @@ public abstract class AbstractPropertyMapper implements PropertyMapper {
         return true;
     }
 
+    @Override
     public String getMappedTypeId() {
         return cmisTypeId;
     }
 
+    @Override
     public String[] getContentTypes() {
         return contentTypes;
     }

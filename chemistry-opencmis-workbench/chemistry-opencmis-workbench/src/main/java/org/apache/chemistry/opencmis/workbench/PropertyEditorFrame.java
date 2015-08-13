@@ -57,7 +57,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -171,6 +173,7 @@ public class PropertyEditorFrame extends JFrame {
         updateButton.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         updateButton.setDefaultCapable(true);
         updateButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 if (doUpdate()) {
                     dispose();
@@ -180,7 +183,7 @@ public class PropertyEditorFrame extends JFrame {
 
         add(updateButton, BorderLayout.PAGE_END);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -362,6 +365,7 @@ public class PropertyEditorFrame extends JFrame {
             }
         }
 
+        @Override
         public void addNewValue() {
             JComponent valueField = new MultiValuePropertyInputField(createInputField(null), this, bgColor);
             valueComponents.add(valueField);
@@ -373,6 +377,7 @@ public class PropertyEditorFrame extends JFrame {
             revalidate();
         }
 
+        @Override
         public void removeValue(int pos) {
             remove(valueComponents.remove(pos));
 
@@ -382,6 +387,7 @@ public class PropertyEditorFrame extends JFrame {
             revalidate();
         }
 
+        @Override
         public void moveUp(int pos) {
             JComponent comp = valueComponents.get(pos);
             Collections.swap(valueComponents, pos, pos - 1);
@@ -395,6 +401,7 @@ public class PropertyEditorFrame extends JFrame {
             revalidate();
         }
 
+        @Override
         public void moveDown(int pos) {
             JComponent comp = valueComponents.get(pos);
             Collections.swap(valueComponents, pos, pos + 1);
@@ -438,6 +445,7 @@ public class PropertyEditorFrame extends JFrame {
             return getStatus() != StatusFlag.DONT_CHANGE;
         }
 
+        @Override
         public void setStatus(StatusFlag status) {
             switch (status) {
             case UPDATE:
@@ -451,6 +459,7 @@ public class PropertyEditorFrame extends JFrame {
             }
         }
 
+        @Override
         public StatusFlag getStatus() {
             switch (changeBox.getSelectedIndex()) {
             case 1:
@@ -462,6 +471,7 @@ public class PropertyEditorFrame extends JFrame {
             }
         }
 
+        @Override
         public Dimension getMaximumSize() {
             Dimension size = getPreferredSize();
             size.width = Short.MAX_VALUE;
@@ -501,6 +511,7 @@ public class PropertyEditorFrame extends JFrame {
             });
         }
 
+        @Override
         public Object getPropertyValue() {
             return getText();
         }
@@ -535,6 +546,7 @@ public class PropertyEditorFrame extends JFrame {
             });
         }
 
+        @Override
         public Object getPropertyValue() throws ParseException {
             commitEdit();
             return getValue();
@@ -549,7 +561,7 @@ public class PropertyEditorFrame extends JFrame {
 
         public IntegerPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
             super(value, createFormat(), status, bgColor);
-            setHorizontalAlignment(JTextField.RIGHT);
+            setHorizontalAlignment(SwingConstants.RIGHT);
         }
 
         private static DecimalFormat createFormat() {
@@ -559,6 +571,7 @@ public class PropertyEditorFrame extends JFrame {
             return result;
         }
 
+        @Override
         public Object getPropertyValue() {
             return ((BigDecimal) super.getValue()).toBigIntegerExact();
         }
@@ -572,7 +585,7 @@ public class PropertyEditorFrame extends JFrame {
 
         public DecimalPropertyInputField(final Object value, final UpdateStatus status, final Color bgColor) {
             super(value, createFormat(), status, bgColor);
-            setHorizontalAlignment(JTextField.RIGHT);
+            setHorizontalAlignment(SwingConstants.RIGHT);
         }
 
         private static DecimalFormat createFormat() {
@@ -600,6 +613,7 @@ public class PropertyEditorFrame extends JFrame {
             });
         }
 
+        @Override
         public Boolean getPropertyValue() {
             return (Boolean) getSelectedItem();
         }
@@ -651,7 +665,7 @@ public class PropertyEditorFrame extends JFrame {
             if (editor instanceof JSpinner.DefaultEditor) {
                 JFormattedTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
                 tf.setColumns(6);
-                tf.setHorizontalAlignment(JTextField.RIGHT);
+                tf.setHorizontalAlignment(SwingConstants.RIGHT);
             }
             addSpinner(monthSpinner, status);
 
@@ -693,6 +707,7 @@ public class PropertyEditorFrame extends JFrame {
             add(spinner);
         }
 
+        @Override
         public Object getPropertyValue() {
             GregorianCalendar result = new GregorianCalendar();
 
@@ -794,6 +809,7 @@ public class PropertyEditorFrame extends JFrame {
             downButton.setEnabled(!isLast);
         }
 
+        @Override
         public Object getPropertyValue() throws Exception {
             return ((PropertyValue) component).getPropertyValue();
         }

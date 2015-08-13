@@ -42,6 +42,7 @@ public class ObjectIdImpl implements ObjectId, Serializable {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }

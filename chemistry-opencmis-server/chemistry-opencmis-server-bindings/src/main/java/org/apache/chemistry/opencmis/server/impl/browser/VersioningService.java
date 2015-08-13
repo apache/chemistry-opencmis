@@ -52,6 +52,7 @@ public class VersioningService {
      * checkOut.
      */
     public static class CheckOut extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -103,6 +104,7 @@ public class VersioningService {
      * checkOut.
      */
     public static class CancelCheckOut extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -134,6 +136,7 @@ public class VersioningService {
      * checkIn.
      */
     public static class CheckIn extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -195,6 +198,7 @@ public class VersioningService {
      * getAllVersions.
      */
     public static class GetAllVersions extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

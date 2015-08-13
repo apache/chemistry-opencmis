@@ -827,12 +827,12 @@ public final class TypeDefinitionFactory {
             return result;
         }
 
-        int maxItemsInt = (maxItems == null ? Integer.MAX_VALUE : maxItems.intValue());
+        int maxItemsInt = maxItems == null ? Integer.MAX_VALUE : maxItems.intValue();
         if (maxItemsInt < 0) {
             maxItemsInt = 0;
         }
 
-        int skipCountInt = (skipCount == null ? 0 : skipCount.intValue());
+        int skipCountInt = skipCount == null ? 0 : skipCount.intValue();
         if (skipCountInt < 0) {
             skipCountInt = 0;
         }
@@ -855,6 +855,7 @@ public final class TypeDefinitionFactory {
         }
 
         Collections.sort(targetList, new Comparator<TypeDefinition>() {
+            @Override
             public int compare(TypeDefinition td1, TypeDefinition td2) {
                 String pid1 = td1.getParentTypeId();
                 String pid2 = td2.getParentTypeId();
@@ -929,7 +930,7 @@ public final class TypeDefinitionFactory {
             throw new IllegalArgumentException("Types map must be set!");
         }
 
-        int depthInt = (depth == null ? -1 : depth.intValue());
+        int depthInt = depth == null ? -1 : depth.intValue();
         if (depthInt == 0) {
             throw new IllegalArgumentException("Depth must not be 0!");
         }
@@ -945,8 +946,8 @@ public final class TypeDefinitionFactory {
             return Collections.<TypeDefinitionContainer> emptyList();
         }
 
-        boolean includePropertyDefinitionsBool = (includePropertyDefinitions == null ? false
-                : includePropertyDefinitions.booleanValue());
+        boolean includePropertyDefinitionsBool = includePropertyDefinitions == null ? false
+                : includePropertyDefinitions.booleanValue();
 
         // gather parent ids
         Map<String, Set<String>> typeDefChildren = new HashMap<String, Set<String>>();

@@ -41,6 +41,7 @@ public class ClientWriterAppender extends WriterAppender {
         final String message = layout.format(loggingEvent);
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 logTextArea.append(message);
             }

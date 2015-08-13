@@ -37,7 +37,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 public class ImageThumbnailGenerator {
 
     private static final int DEFAULT_LENGTH = 100;
-    private static final String RENDITION_MIME_TYPE = "image/jpeg";;
+    private static final String RENDITION_MIME_TYPE = "image/jpeg";
     private InputStream image;
     private int thumbWidth;
     private int thumbHeight;

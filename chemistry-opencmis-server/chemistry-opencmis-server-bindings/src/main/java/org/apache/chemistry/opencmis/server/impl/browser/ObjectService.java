@@ -86,6 +86,7 @@ public class ObjectService {
      * Create document.
      */
     public static class CreateDocument extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -139,6 +140,7 @@ public class ObjectService {
      * Create document from source.
      */
     public static class CreateDocumentFromSource extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -201,6 +203,7 @@ public class ObjectService {
      * Create folder.
      */
     public static class CreateFolder extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -251,6 +254,7 @@ public class ObjectService {
      * Create policy.
      */
     public static class CreatePolicy extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -301,6 +305,7 @@ public class ObjectService {
      * Create Item.
      */
     public static class CreateItem extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -351,6 +356,7 @@ public class ObjectService {
      * Create relationship.
      */
     public static class CreateRelationship extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -400,6 +406,7 @@ public class ObjectService {
      * updateProperties.
      */
     public static class UpdateProperties extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -460,6 +467,7 @@ public class ObjectService {
      * bulkUpdateProperties.
      */
     public static class BulkUpdateProperties extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -530,6 +538,7 @@ public class ObjectService {
      * getProperties.
      */
     public static class GetProperties extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -581,6 +590,7 @@ public class ObjectService {
      * getObject.
      */
     public static class GetObject extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -640,6 +650,7 @@ public class ObjectService {
      * getAllowableActions.
      */
     public static class GetAllowableActions extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -673,6 +684,7 @@ public class ObjectService {
      * getRenditions.
      */
     public static class GetRenditions extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -715,6 +727,7 @@ public class ObjectService {
      * getContentStream.
      */
     public static class GetContentStream extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -813,6 +826,7 @@ public class ObjectService {
      * deleteObject.
      */
     public static class DeleteObject extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -845,6 +859,7 @@ public class ObjectService {
      * deleteTree.
      */
     public static class DeleteTree extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -887,6 +902,7 @@ public class ObjectService {
      * Delete content stream.
      */
     public static class DeleteContentStream extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -937,6 +953,7 @@ public class ObjectService {
      * setContentStream.
      */
     public static class SetContentStream extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -992,6 +1009,7 @@ public class ObjectService {
      * appendContentStream.
      */
     public static class AppendContentStream extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -1047,6 +1065,7 @@ public class ObjectService {
      * moveObject.
      */
     public static class MoveObject extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

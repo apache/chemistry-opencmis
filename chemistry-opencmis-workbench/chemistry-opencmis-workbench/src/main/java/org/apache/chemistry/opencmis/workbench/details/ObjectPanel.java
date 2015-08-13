@@ -108,8 +108,10 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         createGUI();
     }
 
+    @Override
     public void objectLoaded(ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 CmisObject object = getClientModel().getCurrentObject();
 
@@ -294,6 +296,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         scriptPanel.add(scriptOutput, BorderLayout.CENTER);
 
         refreshButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -307,6 +310,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         });
 
         checkButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -332,6 +336,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         });
 
         consoleButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -347,6 +352,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         });
 
         scriptOpenButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -371,6 +377,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         });
 
         scriptRunButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -453,6 +460,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         public void write(final char[] cbuf, final int off, final int len) throws IOException {
             final String s = new String(cbuf, off, len);
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     textArea.append(s);
                 }

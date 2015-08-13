@@ -51,6 +51,7 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
         this.object = object;
     }
 
+    @Override
     public ObjectInFolderData getObject() {
         return object;
     }
@@ -63,6 +64,7 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
         this.object = object;
     }
 
+    @Override
     public List<ObjectInFolderContainer> getChildren() {
         if (children == null) {
             children = new ArrayList<ObjectInFolderContainer>();

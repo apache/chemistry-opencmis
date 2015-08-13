@@ -178,9 +178,9 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // send data
             if (writer != null) {
-                
-                //Not supported with All server.
-                //conn.setChunkedStreamingMode((64 * 1024) - 1);
+
+                // Not supported with All server.
+                // conn.setChunkedStreamingMode((64 * 1024) - 1);
 
                 OutputStream connOut = null;
 
@@ -226,7 +226,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
                     conn.getErrorStream());
         } catch (Exception e) {
-            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
+            String status = respCode > 0 ? " (HTTP status code " + respCode + ")" : "";
             throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
         }
     }

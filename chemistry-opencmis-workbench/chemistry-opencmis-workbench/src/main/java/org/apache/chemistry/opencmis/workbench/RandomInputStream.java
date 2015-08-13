@@ -85,7 +85,7 @@ public class RandomInputStream extends InputStream {
         for (int i = 0; i < len; i++) {
             int r = read();
             if (r == -1) {
-                return (i == 0 ? -1 : i);
+                return i == 0 ? -1 : i;
             }
             b[off + i] = (byte) r;
         }

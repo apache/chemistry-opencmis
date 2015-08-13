@@ -40,6 +40,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
         setSession(session);
     }
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         // build URL
@@ -52,12 +53,14 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
 
         // send and parse
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
         });
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getObjectUrl(repositoryId, objectId);
@@ -68,6 +71,7 @@ public class MultiFilingServiceImpl extends AbstractBrowserBindingService implem
 
         // send and parse
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }

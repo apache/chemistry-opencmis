@@ -82,12 +82,14 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         popup.add(menuItem);
 
         menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ClientHelper.copyTableToClipboard(AbstractDetailsTable.this);
             }
         });
 
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     int row = rowAtPoint(e.getPoint());
@@ -102,10 +104,12 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
                 }
             }
 
+            @Override
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
@@ -118,6 +122,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         });
 
         addMouseMotionListener(new MouseMotionListener() {
+            @Override
             public void mouseMoved(MouseEvent e) {
                 int row = rowAtPoint(e.getPoint());
                 int column = columnAtPoint(e.getPoint());
@@ -129,13 +134,16 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
 
             }
 
+            @Override
             public void mouseDragged(MouseEvent e) {
             }
         });
     }
 
+    @Override
     public void objectLoaded(ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 ((DetailsTableModel) getModel()).fireTableDataChanged();
             }
@@ -182,14 +190,17 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
 
         private static final long serialVersionUID = 1L;
 
+        @Override
         public String getColumnName(int columnIndex) {
             return table.getColumnNames()[columnIndex];
         }
 
+        @Override
         public int getColumnCount() {
             return table.getColumnNames().length;
         }
 
+        @Override
         public int getRowCount() {
             if (table.getObject() == null) {
                 return 0;
@@ -198,6 +209,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
             return table.getDetailRowCount();
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (table.getObject() == null) {
                 return null;
@@ -206,6 +218,7 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
             return table.getDetailValueAt(rowIndex, columnIndex);
         }
 
+        @Override
         public Class<?> getColumnClass(int columnIndex) {
             return table.getDetailColumClass(columnIndex);
         }

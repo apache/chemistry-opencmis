@@ -90,6 +90,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         this.defaultDepth = defaultDepth;
     }
 
+    @Override
     public void initialize(Object[] params) {
         if (params == null) {
             return;
@@ -532,6 +533,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- repository service ---
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
 
@@ -542,6 +544,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         try {
             return getWrappedService().getRepositoryInfos(extension);
@@ -550,6 +553,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -565,6 +569,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Type Id", typeId);
@@ -576,6 +581,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -590,6 +596,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkTypeDefinition(type);
@@ -601,6 +608,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkTypeDefinition(type);
@@ -612,6 +620,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Type Id", typeId);
@@ -625,6 +634,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- navigation service ---
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -643,6 +653,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -663,6 +674,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -682,6 +694,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Folder Id", folderId);
@@ -693,6 +706,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -712,6 +726,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -732,6 +747,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- object service ---
 
+    @Override
     public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -746,6 +762,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -761,6 +778,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -775,6 +793,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -790,6 +809,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -804,6 +824,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -818,6 +839,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -834,6 +856,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -846,6 +869,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -858,6 +882,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -871,6 +896,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -887,6 +913,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -898,6 +925,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -912,6 +940,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -931,6 +960,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -950,6 +980,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -961,6 +992,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -977,6 +1009,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -990,6 +1023,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1005,6 +1039,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1019,6 +1054,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1032,6 +1068,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
@@ -1049,6 +1086,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- versioning service ---
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -1060,6 +1098,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -1075,6 +1114,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         checkRepositoryId(repositoryId);
@@ -1087,6 +1127,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
@@ -1108,6 +1149,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1122,6 +1164,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1138,6 +1181,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- discovery service ---
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1154,6 +1198,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -1176,6 +1221,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- multi filing service ---
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1190,6 +1236,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -1203,6 +1250,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- relationship service ---
 
+    @Override
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -1224,6 +1272,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- ACL service ---
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -1236,6 +1285,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1249,6 +1299,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Object Id", objectId);
@@ -1263,6 +1314,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     // --- policy service ---
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Policy Id", policyId);
@@ -1275,6 +1327,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
@@ -1287,6 +1340,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
         }
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         checkRepositoryId(repositoryId);
         checkId("Policy Id", policyId);

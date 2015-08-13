@@ -42,6 +42,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
 
     private List<T> values = Collections.emptyList();
 
+    @Override
     public PropertyDefinition<T> getPropertyDefinition() {
         return propDef;
     }
@@ -61,42 +62,52 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+    @Override
     public String getLocalName() {
         return localName;
     }
 
+    @Override
     public void setLocalName(String localName) {
         this.localName = localName;
     }
 
+    @Override
     public String getQueryName() {
         return queryName;
     }
 
+    @Override
     public void setQueryName(String queryName) {
         this.queryName = queryName;
     }
 
+    @Override
     public List<T> getValues() {
         return values;
     }
 
+    @Override
     public void setValues(List<T> values) {
         if (values == null) {
             this.values = Collections.emptyList();
@@ -105,6 +116,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
         }
     }
 
+    @Override
     public void setValue(T value) {
         if (value == null) {
             values = Collections.emptyList();
@@ -114,6 +126,7 @@ public abstract class AbstractPropertyData<T> extends AbstractExtensionData impl
         }
     }
 
+    @Override
     public T getFirstValue() {
         if (values != null && !values.isEmpty()) {
             return values.get(0);

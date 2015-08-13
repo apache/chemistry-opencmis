@@ -44,6 +44,7 @@ public class AclService extends AbstractService implements ACLServicePort {
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public CmisACLType applyACL(String repositoryId, String objectId, CmisAccessControlListType addAces,
             CmisAccessControlListType removeAces, EnumACLPropagation aclPropagation, CmisExtensionType extension)
             throws CmisException {
@@ -78,6 +79,7 @@ public class AclService extends AbstractService implements ACLServicePort {
         }
     }
 
+    @Override
     public CmisACLType getACL(String repositoryId, String objectId, Boolean onlyBasicPermissions,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;

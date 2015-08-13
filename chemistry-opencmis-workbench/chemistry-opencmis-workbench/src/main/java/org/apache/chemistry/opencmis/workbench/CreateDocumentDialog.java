@@ -44,6 +44,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -119,6 +120,7 @@ public class CreateDocumentDialog extends CreateDialog {
         typeBox = new JComboBox<ObjectTypeItem>(types);
         typeBox.setSelectedIndex(0);
         typeBox.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 DocumentTypeDefinition type = (DocumentTypeDefinition) ((ObjectTypeItem) typeBox.getSelectedItem())
                         .getObjectType();
@@ -169,6 +171,7 @@ public class CreateDocumentDialog extends CreateDialog {
 
         JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser fileChooser = new JFileChooser();
                 int chooseResult = fileChooser.showDialog(filenameField, "Select");
@@ -189,7 +192,7 @@ public class CreateDocumentDialog extends CreateDialog {
         generateContentSizeField = new JFormattedTextField(NumberFormat.getIntegerInstance());
         generateContentSizeField.setValue(0L);
         generateContentSizeField.setColumns(8);
-        generateContentSizeField.setHorizontalAlignment(JTextField.RIGHT);
+        generateContentSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
         generateContentSizeField.setMaximumSize(generateContentSizeField.getPreferredSize());
         generateContentPanel.add(generateContentSizeField);
 
@@ -232,6 +235,7 @@ public class CreateDocumentDialog extends CreateDialog {
         JButton createButton = new JButton("Create Document", new NewDocumentIcon(ClientHelper.BUTTON_ICON_SIZE,
                 ClientHelper.BUTTON_ICON_SIZE));
         createButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();

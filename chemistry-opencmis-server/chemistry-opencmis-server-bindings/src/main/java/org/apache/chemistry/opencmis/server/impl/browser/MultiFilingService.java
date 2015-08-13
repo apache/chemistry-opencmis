@@ -43,6 +43,7 @@ public class MultiFilingService {
      * addObjectToFolder.
      */
     public static class AddObjectToFolder extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -94,6 +95,7 @@ public class MultiFilingService {
      * removeObjectFromFolder.
      */
     public static class RemoveObjectFromFolder extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

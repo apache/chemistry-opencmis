@@ -40,6 +40,7 @@ public class RelationshipServiceImpl extends AbstractLocalService implements Rel
         setServiceFactory(factory);
     }
 
+    @Override
     public ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

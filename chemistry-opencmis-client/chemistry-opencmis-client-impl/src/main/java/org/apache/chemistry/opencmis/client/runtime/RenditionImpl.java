@@ -51,22 +51,27 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
         this.objectId = objectId;
     }
 
+    @Override
     public long getLength() {
         return getBigLength() == null ? -1 : getBigLength().longValue();
     }
 
+    @Override
     public long getHeight() {
         return getBigHeight() == null ? -1 : getBigHeight().longValue();
     }
 
+    @Override
     public long getWidth() {
         return getBigWidth() == null ? -1 : getBigWidth().longValue();
     }
 
+    @Override
     public Document getRenditionDocument() {
         return getRenditionDocument(session.getDefaultContext());
     }
 
+    @Override
     public Document getRenditionDocument(OperationContext context) {
         if (getRenditionDocumentId() == null) {
             return null;
@@ -79,6 +84,7 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
         return (Document) rendDoc;
     }
 
+    @Override
     public ContentStream getContentStream() {
         if (objectId == null || getStreamId() == null) {
             return null;
@@ -111,6 +117,7 @@ public class RenditionImpl extends RenditionDataImpl implements Rendition {
                 contentStream.getStream());
     }
 
+    @Override
     public String getContentUrl() {
         if (session.getBinding().getObjectService() instanceof LinkAccess) {
             LinkAccess linkAccess = (LinkAccess) session.getBinding().getObjectService();

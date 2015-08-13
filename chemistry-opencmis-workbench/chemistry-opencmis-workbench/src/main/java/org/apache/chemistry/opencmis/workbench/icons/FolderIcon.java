@@ -42,6 +42,7 @@ public class FolderIcon extends AbstractWorkbenchIcon {
         return 64;
     }
 
+    @Override
     protected Color getColor() {
         return new Color(0x89328c);
     }

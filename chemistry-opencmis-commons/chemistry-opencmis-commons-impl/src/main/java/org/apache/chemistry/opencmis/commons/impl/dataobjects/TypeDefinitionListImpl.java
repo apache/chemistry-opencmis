@@ -53,6 +53,7 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         this.numItems = BigInteger.valueOf(list.size());
     }
 
+    @Override
     public List<TypeDefinition> getList() {
         return list;
     }
@@ -61,6 +62,7 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         this.list = list;
     }
 
+    @Override
     public Boolean hasMoreItems() {
         return hasMoreItems;
     }
@@ -69,6 +71,7 @@ public class TypeDefinitionListImpl extends AbstractExtensionData implements Typ
         this.hasMoreItems = hasMoreItems;
     }
 
+    @Override
     public BigInteger getNumItems() {
         return numItems;
     }

@@ -38,7 +38,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -46,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -111,6 +111,7 @@ public class LoginDialog extends JDialog {
 
         // listeners
         loadRepositoryButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 repositoryBox.removeAllItems();
 
@@ -170,6 +171,7 @@ public class LoginDialog extends JDialog {
         });
 
         loginButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -199,7 +201,7 @@ public class LoginDialog extends JDialog {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), false);
 
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
     }
@@ -234,6 +236,7 @@ public class LoginDialog extends JDialog {
         currentTab = (AbstractLoginTab) loginTabs.getSelectedComponent();
 
         loginTabs.addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 if (loginTabs.getSelectedComponent() == expertLoginTab) {
                     if (currentTab.transferSessionParametersToExpertTab()) {

@@ -73,6 +73,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public void createDocument(String repositoryId, CmisPropertiesType properties, String folderId,
             CmisContentStreamType contentStream, EnumVersioningState versioningState, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
@@ -109,6 +110,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void createDocumentFromSource(String repositoryId, String sourceId, CmisPropertiesType properties,
             String folderId, EnumVersioningState versioningState, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
@@ -143,6 +145,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void createFolder(String repositoryId, CmisPropertiesType properties, String folderId,
             List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
@@ -175,6 +178,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void createPolicy(String repositoryId, CmisPropertiesType properties, String folderId,
             List<String> policies, CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
@@ -207,6 +211,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void createRelationship(String repositoryId, CmisPropertiesType properties, List<String> policies,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
@@ -239,6 +244,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void createItem(String repositoryId, CmisPropertiesType properties, String folderId,
             CmisAccessControlListType addAces, CmisAccessControlListType removeAces,
             Holder<CmisExtensionType> extension, Holder<String> objectId) throws CmisException {
@@ -271,6 +277,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -301,6 +308,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions,
             Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -327,6 +335,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public FailedToDelete deleteTree(String repositoryId, String folderId, Boolean allVersions,
             EnumUnfileObject unfileObjects, Boolean continueOnFailure, CmisExtensionType extension)
             throws CmisException {
@@ -353,6 +362,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public CmisAllowableActionsType getAllowableActions(String repositoryId, String objectId,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -379,6 +389,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public CmisContentStreamType getContentStream(String repositoryId, String objectId, String streamId,
             BigInteger offset, BigInteger length, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -404,6 +415,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public CmisObjectType getObject(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
@@ -433,6 +445,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public CmisObjectType getObjectByPath(String repositoryId, String path, String filter,
             Boolean includeAllowableActions, EnumIncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePolicyIds, Boolean includeAcl, CmisExtensionType extension) throws CmisException {
@@ -462,6 +475,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public CmisPropertiesType getProperties(String repositoryId, String objectId, String filter,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -486,6 +500,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public List<CmisRenditionType> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -519,6 +534,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -547,6 +563,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
             throws CmisException {
@@ -581,6 +598,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Boolean isLastChunk,
             Holder<String> changeToken, CmisContentStreamType contentStream, Holder<CmisExtensionType> extension)
             throws CmisException {
@@ -615,6 +633,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             CmisPropertiesType properties, Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -645,6 +664,7 @@ public class ObjectService extends AbstractService implements ObjectServicePort 
         }
     }
 
+    @Override
     public void bulkUpdateProperties(String repositoryId, CmisBulkUpdateType bulkUpdateData,
             Holder<CmisExtensionType> extension, Holder<CmisObjectIdAndChangeTokenType> objectIdAndChangeToken)
             throws CmisException {

@@ -32,6 +32,7 @@ public class FailedToDeleteDataImpl extends AbstractExtensionData implements Fai
 
     private List<String> ids;
 
+    @Override
     public List<String> getIds() {
         if (ids == null) {
             ids = new ArrayList<String>();

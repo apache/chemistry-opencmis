@@ -41,7 +41,7 @@ public class TransientWrapper implements Serializable {
 
     @Override
     public String toString() {
-        return (object == null ? "(no object)" : "(transient) " + object.toString());
+        return object == null ? "(no object)" : "(transient) " + object.toString();
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

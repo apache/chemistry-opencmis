@@ -27,37 +27,47 @@ public class NoCacheImpl implements Cache {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void initialize(Session session, Map<String, String> parameters) {
     }
 
+    @Override
     public boolean containsId(String objectId, String cacheKey) {
         return false;
     }
 
+    @Override
     public boolean containsPath(String path, String cacheKey) {
         return false;
     }
 
+    @Override
     public void put(CmisObject object, String cacheKey) {
     }
 
+    @Override
     public void putPath(String path, CmisObject object, String cacheKey) {
     }
 
+    @Override
     public CmisObject getById(String objectId, String cacheKey) {
         return null;
     }
 
+    @Override
     public CmisObject getByPath(String path, String cacheKey) {
         return null;
     }
 
+    @Override
     public void remove(String objectId) {
     }
 
+    @Override
     public void clear() {
     }
 
+    @Override
     public int getCacheSize() {
         return 0;
     }

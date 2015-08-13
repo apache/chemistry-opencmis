@@ -52,6 +52,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         this.portProvider = portProvider;
     }
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort(getCmisVersion(repositoryId), "applyPolicy");
 
@@ -70,6 +71,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         }
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort(getCmisVersion(repositoryId), "removePolicy");
 
@@ -88,6 +90,7 @@ public class PolicyServiceImpl extends AbstractWebServicesService implements Pol
         }
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         PolicyServicePort port = portProvider.getPolicyServicePort(getCmisVersion(repositoryId), "getAppliedPolicies");

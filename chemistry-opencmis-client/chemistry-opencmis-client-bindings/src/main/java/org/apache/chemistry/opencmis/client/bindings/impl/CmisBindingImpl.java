@@ -167,10 +167,12 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         }
     }
 
+    @Override
     public String getSessionId() {
         return session.getSessionId();
     }
 
+    @Override
     public BindingType getBindingType() {
         Object bindingType = session.get(SessionParameter.BINDING_TYPE);
         if (!(bindingType instanceof String)) {
@@ -184,67 +186,79 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         }
     }
 
+    @Override
     public RepositoryService getRepositoryService() {
         checkSession();
         return repositoryServiceWrapper;
     }
 
+    @Override
     public NavigationService getNavigationService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getNavigationService();
     }
 
+    @Override
     public ObjectService getObjectService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getObjectService();
     }
 
+    @Override
     public DiscoveryService getDiscoveryService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getDiscoveryService();
     }
 
+    @Override
     public RelationshipService getRelationshipService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getRelationshipService();
     }
 
+    @Override
     public VersioningService getVersioningService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getVersioningService();
     }
 
+    @Override
     public AclService getAclService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getAclService();
     }
 
+    @Override
     public MultiFilingService getMultiFilingService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getMultiFilingService();
     }
 
+    @Override
     public PolicyService getPolicyService() {
         checkSession();
         CmisSpi spi = CmisBindingsHelper.getSPI(session);
         return spi.getPolicyService();
     }
 
+    @Override
     public BindingsObjectFactory getObjectFactory() {
         return objectFactory;
     }
 
+    @Override
     public AuthenticationProvider getAuthenticationProvider() {
         return CmisBindingsHelper.getAuthenticationProvider(session);
     }
 
+    @Override
     public void clearAllCaches() {
         checkSession();
 
@@ -261,6 +275,7 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         }
     }
 
+    @Override
     public void clearRepositoryCache(String repositoryId) {
         checkSession();
 
@@ -284,6 +299,7 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
         }
     }
 
+    @Override
     public void close() {
         checkSession();
 

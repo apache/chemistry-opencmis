@@ -28,6 +28,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 /**
  * Convenience methods for spring layout tabs.
@@ -38,7 +39,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
 
     protected JTextField createTextField(Container pane, String label) {
         JTextField textField = new JTextField(60);
-        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
+        JLabel textLabel = new JLabel(label, SwingConstants.TRAILING);
         textLabel.setLabelFor(textField);
 
         pane.add(textLabel);
@@ -50,7 +51,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
     protected JFormattedTextField createIntegerField(Container pane, String label) {
         NumberFormat format = NumberFormat.getIntegerInstance();
         JFormattedTextField intField = new JFormattedTextField(format);
-        JLabel intLabel = new JLabel(label, JLabel.TRAILING);
+        JLabel intLabel = new JLabel(label, SwingConstants.TRAILING);
         intLabel.setLabelFor(intField);
 
         pane.add(intLabel);
@@ -61,7 +62,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
 
     protected JPasswordField createPasswordField(Container pane, String label) {
         JPasswordField textField = new JPasswordField(60);
-        JLabel textLabel = new JLabel(label, JLabel.TRAILING);
+        JLabel textLabel = new JLabel(label, SwingConstants.TRAILING);
         textLabel.setLabelFor(textField);
 
         pane.add(textLabel);

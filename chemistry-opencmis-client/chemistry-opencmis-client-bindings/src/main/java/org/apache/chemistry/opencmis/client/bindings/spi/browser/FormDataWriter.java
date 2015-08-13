@@ -230,11 +230,11 @@ public final class FormDataWriter {
     }
 
     public String getContentType() {
-        return (contentStream == null ? CONTENT_TYPE_URLENCODED : CONTENT_TYPE_FORMDATA + boundary);
+        return contentStream == null ? CONTENT_TYPE_URLENCODED : CONTENT_TYPE_FORMDATA + boundary;
     }
 
     public void write(OutputStream out) throws IOException {
-        InputStream stream = (contentStream == null ? null : contentStream.getStream());
+        InputStream stream = contentStream == null ? null : contentStream.getStream();
 
         if (stream == null) {
             boolean first = true;
@@ -294,7 +294,6 @@ public final class FormDataWriter {
     }
 
     private void writeLine(OutputStream out, String s) throws IOException {
-        s = (s == null ? CRLF : s + CRLF);
-        out.write(IOUtils.toUTF8Bytes(s));
+        out.write(IOUtils.toUTF8Bytes(s == null ? CRLF : s + CRLF));
     }
 }

@@ -72,46 +72,57 @@ public class CmisAtomPubSpi implements CmisSpi {
         aclService = new AclServiceImpl(session);
     }
 
+    @Override
     public RepositoryService getRepositoryService() {
         return repositoryService;
     }
 
+    @Override
     public NavigationService getNavigationService() {
         return navigationService;
     }
 
+    @Override
     public ObjectService getObjectService() {
         return objectService;
     }
 
+    @Override
     public DiscoveryService getDiscoveryService() {
         return discoveryService;
     }
 
+    @Override
     public VersioningService getVersioningService() {
         return versioningService;
     }
 
+    @Override
     public MultiFilingService getMultiFilingService() {
         return multiFilingService;
     }
 
+    @Override
     public RelationshipService getRelationshipService() {
         return relationshipService;
     }
 
+    @Override
     public PolicyService getPolicyService() {
         return policyService;
     }
 
+    @Override
     public AclService getAclService() {
         return aclService;
     }
 
+    @Override
     public void clearAllCaches() {
         session.remove(SpiSessionParameter.LINK_CACHE);
     }
 
+    @Override
     public void clearRepositoryCache(String repositoryId) {
         LinkCache linkCache = (LinkCache) session.get(SpiSessionParameter.LINK_CACHE);
         if (linkCache != null) {
@@ -119,6 +130,7 @@ public class CmisAtomPubSpi implements CmisSpi {
         }
     }
 
+    @Override
     public void close() {
         // no-op for AtomPub
     }

@@ -80,6 +80,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         setExtensions(data.getExtensions());
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -88,6 +89,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -96,6 +98,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -104,6 +107,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.description = description;
     }
 
+    @Override
     public String getCmisVersionSupported() {
         if (versionSupported == null) {
             return "1.0";
@@ -116,6 +120,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.versionSupported = versionSupported;
     }
 
+    @Override
     public CmisVersion getCmisVersion() {
         if (versionSupported == null) {
             return CmisVersion.CMIS_1_0;
@@ -136,6 +141,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         }
     }
 
+    @Override
     public RepositoryCapabilities getCapabilities() {
         return capabilities;
     }
@@ -144,6 +150,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.capabilities = capabilities;
     }
 
+    @Override
     public String getRootFolderId() {
         return rootFolderId;
     }
@@ -152,6 +159,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.rootFolderId = rootFolderId;
     }
 
+    @Override
     public AclCapabilities getAclCapabilities() {
         return aclCapabilities;
     }
@@ -160,6 +168,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.aclCapabilities = aclCapabilities;
     }
 
+    @Override
     public String getPrincipalIdAnonymous() {
         return principalAnonymous;
     }
@@ -168,6 +177,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.principalAnonymous = principalAnonymous;
     }
 
+    @Override
     public String getPrincipalIdAnyone() {
         return principalAnyone;
     }
@@ -176,6 +186,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.principalAnyone = principalAnyone;
     }
 
+    @Override
     public String getThinClientUri() {
         return thinClientUri;
     }
@@ -184,6 +195,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.thinClientUri = thinClientUri;
     }
 
+    @Override
     public Boolean getChangesIncomplete() {
         return changesIncomplete;
     }
@@ -192,6 +204,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.changesIncomplete = changesIncomplete;
     }
 
+    @Override
     public List<BaseTypeId> getChangesOnType() {
         if (changesOnType == null) {
             changesOnType = new ArrayList<BaseTypeId>();
@@ -204,6 +217,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.changesOnType = changesOnType;
     }
 
+    @Override
     public String getLatestChangeLogToken() {
         return latestChangeLogToken;
     }
@@ -212,6 +226,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.latestChangeLogToken = latestChangeLogToken;
     }
 
+    @Override
     public String getVendorName() {
         return vendorName;
     }
@@ -220,6 +235,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.vendorName = vendorName;
     }
 
+    @Override
     public String getProductName() {
         return productName;
     }
@@ -228,6 +244,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.productName = productName;
     }
 
+    @Override
     public String getProductVersion() {
         return productVersion;
     }
@@ -236,6 +253,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
         this.productVersion = productVersion;
     }
 
+    @Override
     public List<ExtensionFeature> getExtensionFeatures() {
         return extensionFeatures;
     }

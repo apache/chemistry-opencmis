@@ -42,66 +42,82 @@ public class LocalCallContext implements MutableCallContext {
         contextMap.put(PASSWORD, password);
     }
 
+    @Override
     public String getBinding() {
         return BINDING_LOCAL;
     }
 
+    @Override
     public Object get(String key) {
         return contextMap.get(key);
     }
 
+    @Override
     public CmisVersion getCmisVersion() {
         return CmisVersion.CMIS_1_1;
     }
 
+    @Override
     public String getRepositoryId() {
         return (String) get(REPOSITORY_ID);
     }
 
+    @Override
     public String getUsername() {
         return (String) get(USERNAME);
     }
 
+    @Override
     public String getPassword() {
         return (String) get(PASSWORD);
     }
 
+    @Override
     public String getLocale() {
         return null;
     }
 
+    @Override
     public BigInteger getOffset() {
         return (BigInteger) get(OFFSET);
     }
 
+    @Override
     public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
 
+    @Override
     public boolean isObjectInfoRequired() {
         return false;
     }
 
+    @Override
     public File getTempDirectory() {
         return null;
     }
 
+    @Override
     public boolean encryptTempFiles() {
         return false;
     }
 
+    @Override
     public int getMemoryThreshold() {
         return 0;
     }
 
+    @Override
     public long getMaxContentSize() {
         return -1;
     }
 
+    @Override
     public void put(String key, Object value) {
         contextMap.put(key, value);
     }
 
+    @Override
     public Object remove(String key) {
         return contextMap.remove(key);
     }

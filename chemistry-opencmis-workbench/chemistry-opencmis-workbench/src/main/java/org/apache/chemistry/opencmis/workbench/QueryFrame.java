@@ -48,6 +48,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -144,6 +145,7 @@ public class QueryFrame extends JFrame {
         JButton queryButton = new JButton("Query", new QueryIcon(ClientHelper.BUTTON_ICON_SIZE,
                 ClientHelper.BUTTON_ICON_SIZE));
         queryButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 doQuery();
             }
@@ -195,12 +197,14 @@ public class QueryFrame extends JFrame {
         popup.add(menuItem);
 
         menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ClientHelper.copyTableToClipboard(resultsTable);
             }
         });
 
         resultsTable.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int column = resultsTable.columnAtPoint(e.getPoint());
@@ -213,10 +217,12 @@ public class QueryFrame extends JFrame {
                 }
             }
 
+            @Override
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
@@ -229,6 +235,7 @@ public class QueryFrame extends JFrame {
         });
 
         resultsTable.addMouseMotionListener(new MouseMotionListener() {
+            @Override
             public void mouseMoved(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int column = resultsTable.columnAtPoint(e.getPoint());
@@ -239,6 +246,7 @@ public class QueryFrame extends JFrame {
                 }
             }
 
+            @Override
             public void mouseDragged(MouseEvent e) {
             }
         });
@@ -249,7 +257,7 @@ public class QueryFrame extends JFrame {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
 
         setLocationRelativeTo(null);
@@ -301,7 +309,7 @@ public class QueryFrame extends JFrame {
             rtm.setRowCount(row);
 
             long stopTime = System.currentTimeMillis();
-            float time = ((float) (stopTime - startTime)) / 1000f;
+            float time = (stopTime - startTime) / 1000f;
             String total = "<unknown>";
             if (page.getTotalNumItems() >= 0) {
                 total = String.valueOf(page.getTotalNumItems());
@@ -336,6 +344,7 @@ public class QueryFrame extends JFrame {
             this.columnCount = columnCount;
         }
 
+        @Override
         public int getColumnCount() {
             return columnCount;
         }
@@ -344,6 +353,7 @@ public class QueryFrame extends JFrame {
             this.rowCount = rowCount;
         }
 
+        @Override
         public int getRowCount() {
             return rowCount;
         }
@@ -392,6 +402,7 @@ public class QueryFrame extends JFrame {
             row.put(col, value);
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             Map<Integer, Object> row = data.get(rowIndex);
             if (row == null) {

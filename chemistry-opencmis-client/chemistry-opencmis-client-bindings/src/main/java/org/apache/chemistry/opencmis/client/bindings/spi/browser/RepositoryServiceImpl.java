@@ -50,10 +50,12 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         setSession(session);
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         return getRepositoriesInternal(null);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
@@ -79,10 +81,12 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         return getTypeDefinitionInternal(repositoryId, typeId);
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         // build URL
@@ -100,6 +104,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertTypeChildren(json);
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         // build URL
@@ -116,6 +121,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertTypeDescendants(json);
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getRepositoryUrl(repositoryId);
@@ -129,6 +135,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -139,6 +146,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertTypeDefinition(json);
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getRepositoryUrl(repositoryId);
@@ -152,6 +160,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         Response resp = post(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }
@@ -162,6 +171,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         return JSONConverter.convertTypeDefinition(json);
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         // build URL
         UrlBuilder url = getRepositoryUrl(repositoryId);
@@ -172,6 +182,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
 
         // send
         postAndConsume(url, formData.getContentType(), new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 formData.write(out);
             }

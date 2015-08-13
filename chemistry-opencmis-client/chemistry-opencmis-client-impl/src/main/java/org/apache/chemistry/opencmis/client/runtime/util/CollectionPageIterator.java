@@ -44,6 +44,7 @@ public class CollectionPageIterator<T> extends AbstractIterator<T> {
      *
      * @see java.util.Iterator#hasNext()
      */
+    @Override
     public boolean hasNext() {
         Page<T> page = getCurrentPage();
         if (page == null) {
@@ -63,6 +64,7 @@ public class CollectionPageIterator<T> extends AbstractIterator<T> {
      *
      * @see java.util.Iterator#next()
      */
+    @Override
     public T next() {
         Page<T> page = getCurrentPage();
         if (page == null) {

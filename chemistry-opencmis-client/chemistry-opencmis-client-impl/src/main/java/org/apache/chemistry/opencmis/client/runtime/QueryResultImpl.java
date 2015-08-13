@@ -95,20 +95,24 @@ public class QueryResultImpl implements QueryResult, Serializable {
         }
     }
 
+    @Override
     public List<PropertyData<?>> getProperties() {
         return new ArrayList<PropertyData<?>>(propertiesByQueryName.values());
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> PropertyData<T> getPropertyById(String id) {
         return (PropertyData<T>) propertiesById.get(id);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> PropertyData<T> getPropertyByQueryName(String queryName) {
         return (PropertyData<T>) propertiesByQueryName.get(queryName);
     }
 
+    @Override
     public <T> T getPropertyValueById(String id) {
         PropertyData<T> property = getPropertyById(id);
         if (property == null) {
@@ -118,6 +122,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getFirstValue();
     }
 
+    @Override
     public <T> T getPropertyValueByQueryName(String queryName) {
         PropertyData<T> property = getPropertyByQueryName(queryName);
         if (property == null) {
@@ -127,6 +132,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getFirstValue();
     }
 
+    @Override
     public <T> List<T> getPropertyMultivalueById(String id) {
         PropertyData<T> property = getPropertyById(id);
         if (property == null) {
@@ -136,6 +142,7 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getValues();
     }
 
+    @Override
     public <T> List<T> getPropertyMultivalueByQueryName(String queryName) {
         PropertyData<T> property = getPropertyByQueryName(queryName);
         if (property == null) {
@@ -145,14 +152,17 @@ public class QueryResultImpl implements QueryResult, Serializable {
         return property.getValues();
     }
 
+    @Override
     public AllowableActions getAllowableActions() {
         return allowableActions;
     }
 
+    @Override
     public List<Relationship> getRelationships() {
         return relationships;
     }
 
+    @Override
     public List<Rendition> getRenditions() {
         return renditions;
     }

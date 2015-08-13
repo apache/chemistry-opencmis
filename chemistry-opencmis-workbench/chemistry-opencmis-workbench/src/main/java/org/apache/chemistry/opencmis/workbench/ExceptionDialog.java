@@ -30,9 +30,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 
@@ -92,8 +93,8 @@ public class ExceptionDialog extends JDialog {
         exceptionTextPane.setEditable(false);
         exceptionTextPane.setCaretPosition(0);
 
-        exceptionPanel.add(new JScrollPane(exceptionTextPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        exceptionPanel.add(new JScrollPane(exceptionTextPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
         // close button
         JPanel buttonPanel = new JPanel();
@@ -107,6 +108,7 @@ public class ExceptionDialog extends JDialog {
         closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         closeButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ExceptionDialog.this.dispose();
             }
@@ -118,7 +120,7 @@ public class ExceptionDialog extends JDialog {
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(getOwner());
 

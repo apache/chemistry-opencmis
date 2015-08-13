@@ -32,10 +32,12 @@ public class PropertyStringDefinitionImpl extends AbstractPropertyDefinition<Str
 
     private BigInteger maxLength;
 
+    @Override
     public BigInteger getMaxLength() {
         return maxLength;
     }
 
+    @Override
     public void setMaxLength(BigInteger maxLength) {
         this.maxLength = maxLength;
     }

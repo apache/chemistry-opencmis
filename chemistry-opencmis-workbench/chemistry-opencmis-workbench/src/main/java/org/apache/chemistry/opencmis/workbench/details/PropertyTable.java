@@ -50,10 +50,12 @@ public class PropertyTable extends AbstractDetailsTable {
         }
     }
 
+    @Override
     public int getDetailRowCount() {
         return getObject().getProperties().size();
     }
 
+    @Override
     public Object getDetailValueAt(int rowIndex, int columnIndex) {
         CmisObject obj = getObject();
         Property<?> property = obj.getProperties().get(rowIndex);

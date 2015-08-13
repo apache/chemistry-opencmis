@@ -145,48 +145,60 @@ public class CmisWebServicesSpi implements CmisSpi {
         aclService = new AclServiceImpl(session, portProvider);
     }
 
+    @Override
     public RepositoryService getRepositoryService() {
         return repositoryService;
     }
 
+    @Override
     public NavigationService getNavigationService() {
         return navigationService;
     }
 
+    @Override
     public ObjectService getObjectService() {
         return objectService;
     }
 
+    @Override
     public DiscoveryService getDiscoveryService() {
         return discoveryService;
     }
 
+    @Override
     public VersioningService getVersioningService() {
         return versioningService;
     }
 
+    @Override
     public MultiFilingService getMultiFilingService() {
         return multiFilingService;
     }
 
+    @Override
     public RelationshipService getRelationshipService() {
         return relationshipService;
     }
 
+    @Override
     public PolicyService getPolicyService() {
         return policyService;
     }
 
+    @Override
     public AclService getAclService() {
         return aclService;
     }
 
+    @Override
     public void clearAllCaches() {
     }
 
+    @Override
     public void clearRepositoryCache(String repositoryId) {
     }
 
+    @Override
     public void close() {
         // no-op for Web Services
     }

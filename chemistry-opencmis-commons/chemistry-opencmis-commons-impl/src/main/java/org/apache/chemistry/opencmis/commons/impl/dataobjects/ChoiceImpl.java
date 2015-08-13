@@ -34,6 +34,7 @@ public class ChoiceImpl<T> implements Choice<T> {
     private List<T> value;
     private List<Choice<T>> choice;
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
@@ -42,6 +43,7 @@ public class ChoiceImpl<T> implements Choice<T> {
         this.displayName = displayName;
     }
 
+    @Override
     public List<T> getValue() {
         if (value == null) {
             value = new ArrayList<T>();
@@ -59,6 +61,7 @@ public class ChoiceImpl<T> implements Choice<T> {
         this.value.add(value);
     }
 
+    @Override
     public List<Choice<T>> getChoice() {
         if (choice == null) {
             choice = new ArrayList<Choice<T>>();

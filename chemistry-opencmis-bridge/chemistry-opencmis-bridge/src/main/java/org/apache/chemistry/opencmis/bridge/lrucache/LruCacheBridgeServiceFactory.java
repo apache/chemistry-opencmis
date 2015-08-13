@@ -40,8 +40,8 @@ public class LruCacheBridgeServiceFactory extends AbstractBridgeServiceFactory {
         int size = 0;
         try {
             String sizeStr = parameters.get(CACHE_SIZE);
-            size = (sizeStr == null || sizeStr.trim().length() == 0 ? DEFAULT_CACHE_SIZE : Integer.parseInt(sizeStr
-                    .trim()));
+            size = sizeStr == null || sizeStr.trim().length() == 0 ? DEFAULT_CACHE_SIZE : Integer.parseInt(sizeStr
+                    .trim());
         } catch (NumberFormatException e) {
             throw new RuntimeException("Could not parse cache configuration values: " + e.getMessage(), e);
         }

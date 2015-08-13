@@ -39,58 +39,72 @@ public class CallContextWrapper implements CallContext {
         this.context = context;
     }
 
+    @Override
     public String getBinding() {
         return context.getBinding();
     }
 
+    @Override
     public boolean isObjectInfoRequired() {
         return context.isObjectInfoRequired();
     }
 
+    @Override
     public Object get(String key) {
         return context.get(key);
     }
 
+    @Override
     public CmisVersion getCmisVersion() {
         return context.getCmisVersion();
     }
 
+    @Override
     public String getRepositoryId() {
         return context.getRepositoryId();
     }
 
+    @Override
     public String getUsername() {
         return context.getUsername();
     }
 
+    @Override
     public String getPassword() {
         return context.getPassword();
     }
 
+    @Override
     public String getLocale() {
         return context.getLocale();
     }
 
+    @Override
     public BigInteger getOffset() {
         return context.getOffset();
     }
 
+    @Override
     public BigInteger getLength() {
         return context.getLength();
     }
 
+    @Override
     public File getTempDirectory() {
         return context.getTempDirectory();
     }
 
+    @Override
     public boolean encryptTempFiles() {
         return context.encryptTempFiles();
     }
 
+    @Override
     public int getMemoryThreshold() {
         return context.getMemoryThreshold();
     }
 
+    @Override
     public long getMaxContentSize() {
         return context.getMaxContentSize();
     }

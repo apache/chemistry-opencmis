@@ -51,6 +51,7 @@ public class CXFPortProvider extends AbstractPortProvider {
     /**
      * Creates a port object.
      */
+    @Override
     protected BindingProvider createPortObject(CmisServiceHolder serviceHolder) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Session {}: Creating Web Service port object of {} ...", getSession().getSessionId(),

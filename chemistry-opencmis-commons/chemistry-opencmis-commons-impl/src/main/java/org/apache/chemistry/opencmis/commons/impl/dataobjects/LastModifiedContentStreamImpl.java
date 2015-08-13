@@ -48,6 +48,7 @@ public class LastModifiedContentStreamImpl extends ContentStreamImpl implements 
         this.lastModified = lastModified;
     }
 
+    @Override
     public GregorianCalendar getLastModified() {
         return lastModified;
     }

@@ -160,6 +160,6 @@ public class QuerySmokeTest extends AbstractQueryTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 }

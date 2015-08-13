@@ -38,6 +38,7 @@ public class TypesPanel extends TypeSplitPane implements ObjectListener {
     @Override
     public void objectLoaded(ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 CmisObject object = getClientModel().getCurrentObject();
 

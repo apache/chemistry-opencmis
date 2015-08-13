@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -207,7 +208,7 @@ public final class AtomEntryParser {
         try {
             while (true) {
                 int event = parser.getEventType();
-                if (event == XMLStreamReader.START_ELEMENT) {
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     QName name = parser.getName();
 
                     if (XMLConstants.NAMESPACE_ATOM.equals(name.getNamespaceURI())
@@ -281,7 +282,7 @@ public final class AtomEntryParser {
         // walk through all tags in entry
         while (true) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 QName name = parser.getName();
 
                 if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -307,7 +308,7 @@ public final class AtomEntryParser {
                 } else {
                     XMLUtils.skip(parser);
                 }
-            } else if (event == XMLStreamReader.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
             } else {
                 if (!XMLUtils.next(parser)) {
@@ -434,7 +435,7 @@ public final class AtomEntryParser {
         // walk through all tags in content
         while (true) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 QName name = parser.getName();
 
                 if (XMLConstants.NAMESPACE_RESTATOM.equals(name.getNamespaceURI())) {
@@ -462,7 +463,7 @@ public final class AtomEntryParser {
                 } else {
                     XMLUtils.skip(parser);
                 }
-            } else if (event == XMLStreamReader.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
             } else {
                 if (!XMLUtils.next(parser)) {
@@ -487,16 +488,16 @@ public final class AtomEntryParser {
         try {
             while (true) {
                 int event = parser.getEventType();
-                if (event == XMLStreamReader.END_ELEMENT) {
+                if (event == XMLStreamConstants.END_ELEMENT) {
                     break;
-                } else if (event == XMLStreamReader.CHARACTERS) {
+                } else if (event == XMLStreamConstants.CHARACTERS) {
                     String s = parser.getText();
                     if (s != null) {
                         byte[] bytes = IOUtils.toUTF8Bytes(s);
                         bufferStream.write(bytes);
                         cappedStream.deductBytes(bytes.length);
                     }
-                } else if (event == XMLStreamReader.START_ELEMENT) {
+                } else if (event == XMLStreamConstants.START_ELEMENT) {
                     bufferStream.destroy(null);
                     throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
                 }
@@ -535,9 +536,9 @@ public final class AtomEntryParser {
         try {
             while (true) {
                 int event = parser.getEventType();
-                if (event == XMLStreamReader.END_ELEMENT) {
+                if (event == XMLStreamConstants.END_ELEMENT) {
                     break;
-                } else if (event == XMLStreamReader.CHARACTERS) {
+                } else if (event == XMLStreamConstants.CHARACTERS) {
                     int len = parser.getTextLength();
                     if (len > 0) {
                         char[] chars = parser.getTextCharacters();
@@ -548,7 +549,7 @@ public final class AtomEntryParser {
                         }
                         cappedStream.deductBytes(len);
                     }
-                } else if (event == XMLStreamReader.START_ELEMENT) {
+                } else if (event == XMLStreamConstants.START_ELEMENT) {
                     b64stream.close();
                     bufferStream.destroy(null);
                     throw new CmisInvalidArgumentException("Unexpected tag: " + parser.getName());
@@ -592,16 +593,16 @@ public final class AtomEntryParser {
             int level = 1;
             while (XMLUtils.next(parser)) {
                 int event = parser.getEventType();
-                if (event == XMLStreamReader.START_ELEMENT) {
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     copyStartElement(parser, writer);
                     level++;
-                } else if (event == XMLStreamReader.CHARACTERS) {
+                } else if (event == XMLStreamConstants.CHARACTERS) {
                     writer.writeCharacters(parser.getText());
-                } else if (event == XMLStreamReader.COMMENT) {
+                } else if (event == XMLStreamConstants.COMMENT) {
                     writer.writeComment(parser.getText());
-                } else if (event == XMLStreamReader.CDATA) {
+                } else if (event == XMLStreamConstants.CDATA) {
                     writer.writeCData(parser.getText());
-                } else if (event == XMLStreamReader.END_ELEMENT) {
+                } else if (event == XMLStreamConstants.END_ELEMENT) {
                     level--;
                     if (level == 0) {
                         break;

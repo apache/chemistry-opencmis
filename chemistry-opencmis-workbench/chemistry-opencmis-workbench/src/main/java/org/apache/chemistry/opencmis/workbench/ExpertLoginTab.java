@@ -80,6 +80,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
         }
 
         configs.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     FileEntry fe = (FileEntry) e.getItem();

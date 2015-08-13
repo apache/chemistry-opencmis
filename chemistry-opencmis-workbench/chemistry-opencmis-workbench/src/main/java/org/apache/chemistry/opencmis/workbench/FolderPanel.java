@@ -62,8 +62,10 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         createGUI();
     }
 
+    @Override
     public void folderLoaded(final ClientModelEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 Folder currentFolder = event.getClientModel().getCurrentFolder();
 
@@ -88,6 +90,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         });
     }
 
+    @Override
     public void objectLoaded(ClientModelEvent event) {
         int selectedRow = folderTable.getSelectedRow();
         if (selectedRow > -1 && event.getClientModel().getCurrentObject() != null) {
@@ -115,6 +118,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         upButton = new JButton("up");
         upButton.setEnabled(false);
         upButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -132,15 +136,18 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
 
         pathField = new JTextField("");
         pathField.addKeyListener(new KeyListener() {
+            @Override
             public void keyTyped(KeyEvent e) {
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     loadFolder();
                 }
             }
 
+            @Override
             public void keyPressed(KeyEvent e) {
             }
         });
@@ -148,6 +155,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
 
         goButton = new JButton("go");
         goButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 loadFolder();
             }
@@ -165,6 +173,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
 
     private void loadFolder() {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

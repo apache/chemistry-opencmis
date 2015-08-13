@@ -115,6 +115,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     public ObjectFactoryImpl() {
     }
 
+    @Override
     public void initialize(Session session, Map<String, String> parameters) {
         assert session != null;
 
@@ -130,12 +131,14 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // repository info
 
+    @Override
     public RepositoryInfo convertRepositoryInfo(RepositoryInfo repositoryInfo) {
         return repositoryInfo;
     }
 
     // ACL and ACE
 
+    @Override
     public Acl convertAces(List<Ace> aces) {
         if (aces == null) {
             return null;
@@ -151,6 +154,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return bof.createAccessControlList(bindingAces);
     }
 
+    @Override
     public Ace createAce(String principal, List<String> permissions) {
         BindingsObjectFactory bof = getBindingsObjectFactory();
 
@@ -159,6 +163,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return ace;
     }
 
+    @Override
     public Acl createAcl(List<Ace> aces) {
         BindingsObjectFactory bof = getBindingsObjectFactory();
 
@@ -169,6 +174,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // policies
 
+    @Override
     public List<String> convertPolicies(List<Policy> policies) {
         if (policies == null) {
             return null;
@@ -187,6 +193,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // renditions
 
+    @Override
     public Rendition convertRendition(String objectId, RenditionData rendition) {
         if (rendition == null) {
             throw new IllegalArgumentException("Rendition must be set!");
@@ -202,10 +209,12 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // content stream
 
+    @Override
     public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream) {
         return createContentStream(filename, length, mimetype, stream, false);
     }
 
+    @Override
     public ContentStream createContentStream(String filename, long length, String mimetype, InputStream stream,
             boolean partial) {
         if (partial) {
@@ -216,6 +225,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         }
     }
 
+    @Override
     public ContentStream convertContentStream(ContentStream contentStream) {
         if (contentStream == null) {
             return null;
@@ -229,6 +239,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // types
 
+    @Override
     public ObjectType convertTypeDefinition(TypeDefinition typeDefinition) {
         if (typeDefinition instanceof DocumentTypeDefinition) {
             return new DocumentTypeImpl(this.session, (DocumentTypeDefinition) typeDefinition);
@@ -249,6 +260,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         }
     }
 
+    @Override
     public ObjectType getTypeFromObjectData(ObjectData objectData) {
         if ((objectData == null) || (objectData.getProperties() == null)
                 || (objectData.getProperties().getProperties() == null)) {
@@ -265,6 +277,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // properties
 
+    @Override
     public <T> Property<T> createProperty(PropertyDefinition<T> type, List<T> values) {
         return new PropertyImpl<T>(type, values);
     }
@@ -315,6 +328,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return createProperty(definition, pd.getValues());
     }
 
+    @Override
     public Map<String, Property<?>> convertProperties(ObjectType objectType, Collection<SecondaryType> secondaryTypes,
             Properties properties) {
         // check input
@@ -341,6 +355,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return result;
     }
 
+    @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Properties convertProperties(Map<String, ?> properties, ObjectType type,
             Collection<SecondaryType> secondaryTypes, Set<Updatability> updatabilityFilter) {
@@ -415,7 +430,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             if (definition == null && allSecondaryTypes != null) {
                 for (SecondaryType secondaryType : allSecondaryTypes) {
                     if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
-                        definition = (PropertyDefinition<?>) secondaryType.getPropertyDefinitions().get(id);
+                        definition = secondaryType.getPropertyDefinitions().get(id);
                         if (definition != null) {
                             break;
                         }
@@ -576,6 +591,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return bof.createPropertiesData(propertyList);
     }
 
+    @Override
     public List<PropertyData<?>> convertQueryProperties(Properties properties) {
         // check input
         if ((properties == null) || (properties.getProperties() == null)) {
@@ -586,6 +602,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     // objects
 
+    @Override
     public CmisObject convertObject(ObjectData objectData, OperationContext context) {
         if (objectData == null) {
             throw new IllegalArgumentException("Object data is null!");
@@ -620,6 +637,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         }
     }
 
+    @Override
     public QueryResult convertQueryResult(ObjectData objectData) {
         if (objectData == null) {
             throw new IllegalArgumentException("Object data is null!");
@@ -628,6 +646,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return new QueryResultImpl(session, objectData);
     }
 
+    @Override
     public ChangeEvent convertChangeEvent(ObjectData objectData) {
         ChangeType changeType = null;
         GregorianCalendar changeTime = null;
@@ -667,6 +686,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         return new ChangeEventImpl(changeType, changeTime, objectId, properties, policyIds, acl);
     }
 
+    @Override
     public ChangeEvents convertChangeEvents(String changeLogToken, ObjectList objectList) {
         if (objectList == null) {
             return null;
@@ -683,8 +703,8 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             }
         }
 
-        boolean hasMoreItems = (objectList.hasMoreItems() == null ? false : objectList.hasMoreItems().booleanValue());
-        long totalNumItems = (objectList.getNumItems() == null ? -1 : objectList.getNumItems().longValue());
+        boolean hasMoreItems = objectList.hasMoreItems() == null ? false : objectList.hasMoreItems().booleanValue();
+        long totalNumItems = objectList.getNumItems() == null ? -1 : objectList.getNumItems().longValue();
 
         return new ChangeEventsImpl(changeLogToken, events, hasMoreItems, totalNumItems);
     }

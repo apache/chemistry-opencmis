@@ -55,14 +55,17 @@ public class BulkUpdateObjectIdAndChangeTokenImpl extends AbstractExtensionData 
         setExtensions(extensions);
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getNewId() {
         return newId;
     }
 
+    @Override
     public String getChangeToken() {
         return changeToken;
     }

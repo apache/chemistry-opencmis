@@ -65,31 +65,38 @@ public abstract class AbstractIterable<T> implements ItemIterable<T> {
      */
     protected abstract AbstractIterator<T> createIterator();
 
+    @Override
     public AbstractIterator<T> iterator() {
         return getIterator();
     }
 
+    @Override
     public ItemIterable<T> skipTo(long position) {
         return new CollectionIterable<T>(position, pageFetcher);
     }
 
+    @Override
     public ItemIterable<T> getPage() {
         return new CollectionPageIterable<T>(skipCount, pageFetcher);
     }
 
+    @Override
     public ItemIterable<T> getPage(int maxNumItems) {
         this.pageFetcher.setMaxNumItems(maxNumItems);
         return new CollectionPageIterable<T>(skipCount, pageFetcher);
     }
 
+    @Override
     public long getPageNumItems() {
         return getIterator().getPageNumItems();
     }
 
+    @Override
     public boolean getHasMoreItems() {
         return getIterator().getHasMoreItems();
     }
 
+    @Override
     public long getTotalNumItems() {
         return getIterator().getTotalNumItems();
     }

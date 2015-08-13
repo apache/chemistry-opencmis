@@ -36,13 +36,13 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -145,6 +145,7 @@ public class SwingReport extends AbstractCmisTestReport {
             reportPanel.add(reportButton);
 
             reportButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     try {
                         // create report
@@ -192,7 +193,7 @@ public class SwingReport extends AbstractCmisTestReport {
 
             ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
@@ -217,6 +218,7 @@ public class SwingReport extends AbstractCmisTestReport {
             public ReportTreeCellRenderer() {
             }
 
+            @Override
             public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
                     boolean leaf, int row, boolean hasFocus) {
                 super.getTreeCellRendererComponent(tree, "", sel, expanded, leaf, row, hasFocus);
@@ -273,15 +275,18 @@ public class SwingReport extends AbstractCmisTestReport {
             this.color = color;
         }
 
+        @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
             g.setColor(color);
             g.fillRect(0, 0, getIconWidth(), getIconHeight());
         }
 
+        @Override
         public int getIconWidth() {
             return WorkbenchScale.scaleInt(8);
         }
 
+        @Override
         public int getIconHeight() {
             return WorkbenchScale.scaleInt(18);
         }

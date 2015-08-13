@@ -33,15 +33,18 @@ public abstract class AbstractMetadataParser implements MetadataParser {
     protected AbstractMetadataParser() {
     }
 
+    @Override
     public void initialize(PropertyMapper mapper, String contentType) {
         this.mapper = mapper;
         reset();
     }
 
+    @Override
     public Map<String, Object> getCmisProperties() {
         return cmisProperties;
     }
     
+    @Override
     public void reset() {
         String typeId = mapper.getMappedTypeId();
         cmisProperties = new HashMap<String, Object>();
@@ -53,14 +56,17 @@ public abstract class AbstractMetadataParser implements MetadataParser {
         cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
     }
     
+    @Override
     public String[] getContentTypes() {
         return mapper.getContentTypes();
     }
     
+    @Override
     public String getMappedTypeId() {
         return mapper.getMappedTypeId();
     }
     
+    @Override
     public PropertyMapper getMapper() {
         return mapper;
     }

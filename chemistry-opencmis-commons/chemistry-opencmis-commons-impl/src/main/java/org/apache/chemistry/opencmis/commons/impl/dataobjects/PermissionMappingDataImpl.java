@@ -33,6 +33,7 @@ public class PermissionMappingDataImpl extends AbstractExtensionData implements 
     private String key;
     private List<String> permissions;
 
+    @Override
     public String getKey() {
         return key;
     }
@@ -41,6 +42,7 @@ public class PermissionMappingDataImpl extends AbstractExtensionData implements 
         this.key = key;
     }
 
+    @Override
     public List<String> getPermissions() {
         if (permissions == null) {
             permissions = new ArrayList<String>();

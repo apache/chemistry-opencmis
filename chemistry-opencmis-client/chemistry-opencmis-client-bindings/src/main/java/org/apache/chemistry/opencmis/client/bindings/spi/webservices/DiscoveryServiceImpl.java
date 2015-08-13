@@ -51,6 +51,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
         this.portProvider = portProvider;
     }
 
+    @Override
     public ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeACL, BigInteger maxItems, ExtensionsData extension) {
         DiscoveryServicePort port = portProvider.getDiscoveryServicePort(getCmisVersion(repositoryId),
@@ -75,6 +76,7 @@ public class DiscoveryServiceImpl extends AbstractWebServicesService implements 
         }
     }
 
+    @Override
     public ObjectList query(String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

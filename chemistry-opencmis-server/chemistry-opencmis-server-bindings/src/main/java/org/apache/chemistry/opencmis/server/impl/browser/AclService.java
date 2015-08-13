@@ -38,6 +38,7 @@ public class AclService {
      * getACL.
      */
     public static class GetACL extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -77,6 +78,7 @@ public class AclService {
      * applyACL.
      */
     public static class ApplyACL extends AbstractBrowserServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

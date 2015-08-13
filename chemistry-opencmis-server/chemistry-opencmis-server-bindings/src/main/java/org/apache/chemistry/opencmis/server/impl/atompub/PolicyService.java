@@ -69,6 +69,7 @@ public class PolicyService {
      * Get applied policies.
      */
     public static class GetAppliedPolicies extends AbstractPoliciesServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -143,6 +144,7 @@ public class PolicyService {
      * Apply policy.
      */
     public static class ApplyPolicy extends AbstractPoliciesServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;
@@ -203,6 +205,7 @@ public class PolicyService {
      * Remove policy.
      */
     public static class RemovePolicy extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             assert context != null;

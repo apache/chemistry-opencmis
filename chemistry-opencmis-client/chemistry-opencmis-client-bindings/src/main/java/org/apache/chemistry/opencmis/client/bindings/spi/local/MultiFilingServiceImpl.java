@@ -36,6 +36,7 @@ public class MultiFilingServiceImpl extends AbstractLocalService implements Mult
         setServiceFactory(factory);
     }
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -55,6 +56,7 @@ public class MultiFilingServiceImpl extends AbstractLocalService implements Mult
         }
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 

@@ -39,6 +39,7 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         setServiceFactory(factory);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -61,6 +62,7 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         }
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -81,6 +83,7 @@ public class AclServiceImpl extends AbstractLocalService implements AclService, 
         }
     }
 
+    @Override
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
         CmisService service = getService(repositoryId);
 

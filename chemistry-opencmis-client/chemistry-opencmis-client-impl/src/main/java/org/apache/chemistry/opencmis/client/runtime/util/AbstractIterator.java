@@ -91,6 +91,7 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
         return hasMoreItems.booleanValue();
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

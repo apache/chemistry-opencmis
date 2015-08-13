@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
 @WebService(endpointInterface = "org.apache.chemistry.opencmis.server.impl.webservices.RepositoryServicePort10")
 public class RepositoryService10 extends RepositoryService implements RepositoryServicePort10 {
 
+    @Override
     @WebMethod(exclude = true)
     public void createType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException {
@@ -49,6 +50,7 @@ public class RepositoryService10 extends RepositoryService implements Repository
         throw new CmisException(fault.getMessage(), fault);
     }
 
+    @Override
     @WebMethod(exclude = true)
     public void updateType(String repositoryId, Holder<CmisTypeDefinitionType> type, CmisExtensionType extension)
             throws CmisException {
@@ -60,6 +62,7 @@ public class RepositoryService10 extends RepositoryService implements Repository
         throw new CmisException(fault.getMessage(), fault);
     }
 
+    @Override
     @WebMethod(exclude = true)
     public void deleteType(String repositoryId, String typeId, Holder<CmisExtensionType> extension)
             throws CmisException {

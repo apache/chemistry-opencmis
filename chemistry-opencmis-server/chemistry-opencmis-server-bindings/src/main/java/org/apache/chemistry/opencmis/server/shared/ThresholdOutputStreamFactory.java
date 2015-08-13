@@ -25,6 +25,7 @@ import java.io.File;
  * 
  * @deprecated use {@link TempStoreOutputStreamFactory}
  */
+@Deprecated
 public final class ThresholdOutputStreamFactory extends TempStoreOutputStreamFactory {
 
     private ThresholdOutputStreamFactory(File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {

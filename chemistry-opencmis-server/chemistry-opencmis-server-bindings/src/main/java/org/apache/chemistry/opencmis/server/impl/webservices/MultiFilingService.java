@@ -42,6 +42,7 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;
@@ -68,6 +69,7 @@ public class MultiFilingService extends AbstractService implements MultiFilingSe
         }
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId,
             Holder<CmisExtensionType> extension) throws CmisException {
         CmisService service = null;

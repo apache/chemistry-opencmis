@@ -109,6 +109,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setMaxItemsPerPage(maxItemsPerPage);
     }
 
+    @Override
     public final Set<String> getFilter() {
         if (filter == null) {
             return null;
@@ -117,6 +118,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return Collections.unmodifiableSet(filter);
     }
 
+    @Override
     public final void setFilter(Set<String> propertyFilter) {
         if (propertyFilter != null) {
             TreeSet<String> tempSet = new TreeSet<String>();
@@ -154,6 +156,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
     }
 
+    @Override
     public final void setFilterString(String propertyFilter) {
         if ((propertyFilter == null) || (propertyFilter.trim().length() == 0)) {
             setFilter(null);
@@ -169,6 +172,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setFilter(tempSet);
     }
 
+    @Override
     public final String getFilterString() {
         if (filter == null) {
             return null;
@@ -198,50 +202,61 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
+    @Override
     public final void setLoadSecondaryTypeProperties(boolean load) {
         loadSecondaryTypeProperties = load;
     }
 
+    @Override
     public final boolean loadSecondaryTypeProperties() {
         return loadSecondaryTypeProperties;
     }
 
+    @Override
     public final boolean isIncludeAcls() {
         return includeAcls;
     }
 
+    @Override
     public final void setIncludeAcls(boolean include) {
         includeAcls = include;
         generateCacheKey();
     }
 
+    @Override
     public final boolean isIncludeAllowableActions() {
         return includeAllowableActions;
     }
 
+    @Override
     public final void setIncludeAllowableActions(boolean include) {
         includeAllowableActions = include;
         generateCacheKey();
     }
 
+    @Override
     public final boolean isIncludePolicies() {
         return includePolicies;
     }
 
+    @Override
     public final void setIncludePolicies(boolean include) {
         includePolicies = include;
         generateCacheKey();
     }
 
+    @Override
     public final IncludeRelationships getIncludeRelationships() {
         return includeRelationships;
     }
 
+    @Override
     public final void setIncludeRelationships(IncludeRelationships include) {
         includeRelationships = include;
         generateCacheKey();
     }
 
+    @Override
     public final Set<String> getRenditionFilter() {
         if (renditionFilter == null) {
             return null;
@@ -250,6 +265,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return Collections.unmodifiableSet(renditionFilter);
     }
 
+    @Override
     public final void setRenditionFilter(Set<String> renditionFilter) {
         TreeSet<String> tempSet = new TreeSet<String>();
 
@@ -281,6 +297,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         generateCacheKey();
     }
 
+    @Override
     public final void setRenditionFilterString(String renditionFilter) {
         if (renditionFilter == null || renditionFilter.trim().length() == 0) {
             setRenditionFilter(null);
@@ -296,6 +313,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
         setRenditionFilter(tempSet);
     }
 
+    @Override
     public final String getRenditionFilterString() {
         if (renditionFilter == null) {
             return null;
@@ -314,30 +332,37 @@ public class OperationContextImpl implements OperationContext, Serializable {
         return sb.toString();
     }
 
+    @Override
     public final boolean isIncludePathSegments() {
         return includePathSegments;
     }
 
+    @Override
     public final void setIncludePathSegments(boolean include) {
         includePathSegments = include;
     }
 
+    @Override
     public final String getOrderBy() {
         return orderBy;
     }
 
+    @Override
     public final void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
     }
 
+    @Override
     public final boolean isCacheEnabled() {
         return cacheEnabled;
     }
 
+    @Override
     public final void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
     }
 
+    @Override
     public final String getCacheKey() {
         return cacheKey;
     }
@@ -367,10 +392,12 @@ public class OperationContextImpl implements OperationContext, Serializable {
         cacheKey = sb.toString();
     }
 
+    @Override
     public final int getMaxItemsPerPage() {
         return maxItemsPerPage;
     }
 
+    @Override
     public final void setMaxItemsPerPage(int maxItemsPerPage) {
         if (maxItemsPerPage < 1) {
             throw new IllegalArgumentException("itemsPerPage must be > 0!");

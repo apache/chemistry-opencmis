@@ -50,18 +50,22 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Mut
         this.permissions = permissions;
     }
 
+    @Override
     public Principal getPrincipal() {
         return principal;
     }
 
+    @Override
     public String getPrincipalId() {
         return principal == null ? null : principal.getId();
     }
 
+    @Override
     public void setPrincipal(Principal principal) {
         this.principal = principal;
     }
 
+    @Override
     public List<String> getPermissions() {
         if (permissions == null) {
             permissions = new ArrayList<String>();
@@ -70,14 +74,17 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Mut
         return permissions;
     }
 
+    @Override
     public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }
 
+    @Override
     public boolean isDirect() {
         return isDirect;
     }
 
+    @Override
     public void setDirect(boolean direct) {
         this.isDirect = direct;
     }

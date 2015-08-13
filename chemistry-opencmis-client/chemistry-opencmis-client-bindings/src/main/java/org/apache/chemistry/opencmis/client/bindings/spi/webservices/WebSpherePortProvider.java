@@ -51,6 +51,7 @@ public class WebSpherePortProvider extends AbstractPortProvider {
     /**
      * Creates a port object.
      */
+    @Override
     protected BindingProvider createPortObject(CmisServiceHolder serviceHolder) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating Web Service port object of " + serviceHolder.getServiceName() + "...");

@@ -211,7 +211,7 @@ public class VersioningSmokeTest extends AbstractSessionTest {
             // test the latest version
             Document latest = session.getLatestDocumentVersion(doc, SELECT_ALL_NO_CACHE_OC);
 
-            f = createResult(FAILURE, "getObjectOfLatestVersion() did not returned the expected version!");
+            f = createResult(FAILURE, "getObjectOfLatestVersion() did not return the expected version!");
             addResult(assertEquals(fifthVersion.getId(), latest.getId(), null, f));
 
             // test if checking out a non-latest version works for this
@@ -336,6 +336,6 @@ public class VersioningSmokeTest extends AbstractSessionTest {
         CmisTestResultImpl result = createResult(getWorst(results), message);
         result.getChildren().addAll(results);
 
-        return (result.getStatus().getLevel() <= OK.getLevel() ? null : result);
+        return result.getStatus().getLevel() <= OK.getLevel() ? null : result;
     }
 }

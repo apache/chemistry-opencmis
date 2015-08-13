@@ -61,6 +61,7 @@ public class ACLTable extends AbstractDetailsTable {
         }
     }
 
+    @Override
     public int getDetailRowCount() {
         if ((getObject().getAcl() == null) || (getObject().getAcl().getAces() == null)) {
             return 0;
@@ -69,6 +70,7 @@ public class ACLTable extends AbstractDetailsTable {
         return getObject().getAcl().getAces().size();
     }
 
+    @Override
     public Object getDetailValueAt(int rowIndex, int columnIndex) {
         Ace ace = getObject().getAcl().getAces().get(rowIndex);
 

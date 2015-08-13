@@ -58,6 +58,7 @@ public interface ItemIterable<T> extends Iterable<T> {
      */
     ItemIterable<T> getPage(int maxNumItems);
 
+    @Override
     Iterator<T> iterator();
 
     /**

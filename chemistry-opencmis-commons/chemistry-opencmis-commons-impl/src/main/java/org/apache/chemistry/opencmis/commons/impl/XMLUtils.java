@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -288,9 +289,9 @@ public final class XMLUtils {
         int level = 1;
         while (next(parser)) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 level++;
-            } else if (event == XMLStreamReader.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
                 level--;
                 if (level == 0) {
                     break;
@@ -313,7 +314,7 @@ public final class XMLUtils {
         while (true) {
             int event = parser.getEventType();
 
-            if (event == XMLStreamReader.START_ELEMENT) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
                 return true;
             }
 
@@ -338,9 +339,9 @@ public final class XMLUtils {
 
         while (true) {
             int event = parser.getEventType();
-            if (event == XMLStreamReader.END_ELEMENT) {
+            if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
-            } else if (event == XMLStreamReader.CHARACTERS || event == XMLStreamReader.CDATA) {
+            } else if (event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.CDATA) {
                 int len = parser.getTextLength();
                 if (len > 0) {
                     if (sb.length() + len > maxLength) {
@@ -352,7 +353,7 @@ public final class XMLUtils {
 
                     sb.append(chars, offset, len);
                 }
-            } else if (event == XMLStreamReader.START_ELEMENT) {
+            } else if (event == XMLStreamConstants.START_ELEMENT) {
                 throw new XMLStreamException("Unexpected tag: " + parser.getName());
             }
 

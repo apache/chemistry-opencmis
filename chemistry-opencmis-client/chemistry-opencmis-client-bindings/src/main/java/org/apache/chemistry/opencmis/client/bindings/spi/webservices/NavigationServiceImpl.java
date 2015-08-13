@@ -55,6 +55,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         this.portProvider = portProvider;
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -73,6 +74,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -105,6 +107,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         NavigationServicePort port = portProvider.getNavigationServicePort(getCmisVersion(repositoryId),
                 "getFolderParent");
@@ -120,6 +123,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -152,6 +156,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -184,6 +189,7 @@ public class NavigationServiceImpl extends AbstractWebServicesService implements
         }
     }
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {

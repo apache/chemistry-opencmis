@@ -86,6 +86,7 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     /**
      * Called at the beginning of a request.
      */
+    @Override
     public void setCallContext(CallContext context) {
         this.context = context;
     }
@@ -93,6 +94,7 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     /**
      * Returns the current call context.
      */
+    @Override
     public CallContext getCallContext() {
         return context;
     }

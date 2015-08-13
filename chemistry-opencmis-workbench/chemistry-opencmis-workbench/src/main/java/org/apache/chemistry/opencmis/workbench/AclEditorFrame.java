@@ -53,6 +53,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.text.JTextComponent;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -220,6 +221,7 @@ public class AclEditorFrame extends JFrame {
         updateButton.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         updateButton.setDefaultCapable(true);
         updateButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 if (doApply()) {
                     dispose();
@@ -229,7 +231,7 @@ public class AclEditorFrame extends JFrame {
 
         add(updateButton, BorderLayout.PAGE_END);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -256,6 +258,7 @@ public class AclEditorFrame extends JFrame {
 
         final JButton addButton = new JButton(ICON_ADD);
         addButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 list.addNewAce();
             }
@@ -448,6 +451,7 @@ public class AclEditorFrame extends JFrame {
             JButton removeButton = new JButton(ICON_REMOVE);
             removeButton.setDisabledIcon(ICON_REMOVE_DISABLED);
             removeButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     list.removeAce(getPosition());
                 }
@@ -470,6 +474,7 @@ public class AclEditorFrame extends JFrame {
             });
 
             editor.addKeyListener(new KeyAdapter() {
+                @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
                         updatePermissionsPanel(true);

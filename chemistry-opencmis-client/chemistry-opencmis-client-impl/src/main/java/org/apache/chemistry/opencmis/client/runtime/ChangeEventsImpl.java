@@ -42,6 +42,7 @@ public class ChangeEventsImpl implements ChangeEvents {
         this.totalNumItems = totalNumItems;
     }
 
+    @Override
     public String getLatestChangeLogToken() {
         return latestChangeLogToken;
     }
@@ -50,6 +51,7 @@ public class ChangeEventsImpl implements ChangeEvents {
         this.latestChangeLogToken = latestChangeLogToken;
     }
 
+    @Override
     public List<ChangeEvent> getChangeEvents() {
         if (events == null) {
             events = new ArrayList<ChangeEvent>();
@@ -62,6 +64,7 @@ public class ChangeEventsImpl implements ChangeEvents {
         this.events = events;
     }
 
+    @Override
     public boolean getHasMoreItems() {
         return hasMoreItems;
     }
@@ -74,6 +77,7 @@ public class ChangeEventsImpl implements ChangeEvents {
         this.totalNumItems = totalNumItems;
     }
 
+    @Override
     public long getTotalNumItems() {
         return totalNumItems;
     }

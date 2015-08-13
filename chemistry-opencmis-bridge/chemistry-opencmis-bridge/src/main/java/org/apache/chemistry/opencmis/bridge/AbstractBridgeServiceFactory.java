@@ -67,17 +67,17 @@ public abstract class AbstractBridgeServiceFactory extends AbstractServiceFactor
 
         // get bridge configuration
         String tempDirectoryStr = parameters.get(BRIDGE_TEMP_DIRECTORY);
-        tempDirectory = (tempDirectoryStr == null || tempDirectoryStr.trim().length() == 0 ? super.getTempDirectory()
-                : new File(tempDirectoryStr.trim()));
+        tempDirectory = tempDirectoryStr == null || tempDirectoryStr.trim().length() == 0 ? super.getTempDirectory()
+                : new File(tempDirectoryStr.trim());
 
         try {
             String memoryThresholdStr = parameters.get(BRIDGE_MEMORY_THERESHOLD);
-            memoryThreshold = (memoryThresholdStr == null || memoryThresholdStr.trim().length() == 0 ? super
-                    .getMemoryThreshold() : Integer.parseInt(memoryThresholdStr.trim()));
+            memoryThreshold = memoryThresholdStr == null || memoryThresholdStr.trim().length() == 0 ? super
+                    .getMemoryThreshold() : Integer.parseInt(memoryThresholdStr.trim());
 
             String maxContentSizeStr = parameters.get(BRIDGE_MAX_CONTENT_SIZE);
-            maxContentSize = (maxContentSizeStr == null || maxContentSizeStr.trim().length() == 0 ? super
-                    .getMaxContentSize() : Long.parseLong(maxContentSizeStr.trim()));
+            maxContentSize = maxContentSizeStr == null || maxContentSizeStr.trim().length() == 0 ? super
+                    .getMaxContentSize() : Long.parseLong(maxContentSizeStr.trim());
         } catch (NumberFormatException e) {
             throw new RuntimeException("Could not parse bride configuration values: " + e.getMessage(), e);
         }

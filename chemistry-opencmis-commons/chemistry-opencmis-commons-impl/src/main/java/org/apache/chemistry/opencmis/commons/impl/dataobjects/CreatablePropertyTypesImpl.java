@@ -30,6 +30,7 @@ public class CreatablePropertyTypesImpl extends ExtensionDataImpl implements Cre
 
     private Set<PropertyType> propertyTypeSet;
 
+    @Override
     public Set<PropertyType> canCreate() {
         if (propertyTypeSet == null) {
             propertyTypeSet = EnumSet.noneOf(PropertyType.class);

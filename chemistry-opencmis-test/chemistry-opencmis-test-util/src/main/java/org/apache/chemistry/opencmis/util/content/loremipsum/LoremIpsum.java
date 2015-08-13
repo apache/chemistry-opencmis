@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -61,7 +60,7 @@ public class LoremIpsum {
                 return false;
             }
 
-            return (len1 == ((WordLengthPair) other).len1 && len2 == ((WordLengthPair) other).len2);
+            return len1 == ((WordLengthPair) other).len1 && len2 == ((WordLengthPair) other).len2;
         }
 
         @Override
@@ -184,11 +183,11 @@ public class LoremIpsum {
      */
     private WordInfo randomChoice(WordInfo[] array) {
         return array[randomInt(array.length)];
-    };
+    }
 
     private String randomChoice(String[] array) {
         return array[randomInt(array.length)];
-    };
+    }
 
     private int randomInt(int length) {
         return randomGenerator.nextInt(length);
@@ -211,7 +210,7 @@ public class LoremIpsum {
         generateChains(this.sample);
         generateStatistics(this.sample);
         initializeDictionary(this.dictionary);
-    };
+    }
 
     public LoremIpsum(String sample, String dictionary) {
         this.sample = sample;
@@ -219,7 +218,7 @@ public class LoremIpsum {
         generateChains(this.sample);
         generateStatistics(this.sample);
         initializeDictionary(this.dictionary);
-    };
+    }
 
     public LoremIpsum(String sample, String[] newDictionary) {
         this.sample = sample;
@@ -227,7 +226,7 @@ public class LoremIpsum {
         generateChains(this.sample);
         generateStatistics(this.sample);
         initializeDictionary(newDictionary);
-    };
+    }
 
     public LoremIpsum(String sample) {
         this.sample = sample;
@@ -239,7 +238,7 @@ public class LoremIpsum {
         generateChains(this.sample);
         generateStatistics(this.sample);
         initializeDictionary(dictWords);
-    };
+    }
 
     /**
      * Generates a single lorem ipsum paragraph, of random length.
@@ -1172,5 +1171,4 @@ public class LoremIpsum {
             }
         }
     }
-
 }

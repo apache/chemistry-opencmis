@@ -226,6 +226,7 @@ public class ProxyRequestTest {
     }
 
     static class UrlSerivceCall extends AbstractAtomPubServiceCall {
+        @Override
         public void serve(CallContext context, CmisService service, String repositoryId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
             // no implementation

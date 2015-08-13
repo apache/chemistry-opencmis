@@ -247,6 +247,7 @@ public class TypeSplitPane extends JSplitPane {
             checkButton = addComponent("", new JButton("Check specification compliance"));
 
             checkButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -311,16 +312,19 @@ public class TypeSplitPane extends JSplitPane {
             popup.add(menuItem);
 
             menuItem.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     ClientHelper.copyTableToClipboard(PropertyDefinitionTable.this);
                 }
             });
 
             addMouseListener(new MouseAdapter() {
+                @Override
                 public void mousePressed(MouseEvent e) {
                     maybeShowPopup(e);
                 }
 
+                @Override
                 public void mouseReleased(MouseEvent e) {
                     maybeShowPopup(e);
                 }
@@ -345,6 +349,7 @@ public class TypeSplitPane extends JSplitPane {
                 }
 
                 Collections.sort(propertyDefintions, new Comparator<PropertyDefinition<?>>() {
+                    @Override
                     public int compare(PropertyDefinition<?> pd1, PropertyDefinition<?> pd2) {
                         return pd1.getId().compareTo(pd2.getId());
                     }
@@ -374,14 +379,17 @@ public class TypeSplitPane extends JSplitPane {
                 this.table = table;
             }
 
+            @Override
             public String getColumnName(int columnIndex) {
                 return COLUMN_NAMES[columnIndex];
             }
 
+            @Override
             public int getColumnCount() {
                 return COLUMN_NAMES.length;
             }
 
+            @Override
             public int getRowCount() {
                 if (table.getPropertyDefinitions() == null) {
                     return 0;
@@ -390,6 +398,7 @@ public class TypeSplitPane extends JSplitPane {
                 return table.getPropertyDefinitions().size();
             }
 
+            @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 PropertyDefinition<?> propDef = table.getPropertyDefinitions().get(rowIndex);
 

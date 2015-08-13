@@ -51,6 +51,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         setServiceFactory(factory);
     }
 
+    @Override
     public String createDocument(String repositoryId, Properties properties, String folderId,
             ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
@@ -74,6 +75,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
             String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -97,6 +99,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -119,6 +122,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -141,6 +145,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -162,6 +167,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -184,6 +190,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -204,6 +211,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -223,6 +231,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -245,6 +254,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -265,6 +275,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -287,6 +298,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -310,6 +322,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
@@ -333,6 +346,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -353,6 +367,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -375,6 +390,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -394,6 +410,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -413,6 +430,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -432,6 +450,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -451,6 +470,7 @@ public class ObjectServiceImpl extends AbstractLocalService implements ObjectSer
         }
     }
 
+    @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
             List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {

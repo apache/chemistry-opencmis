@@ -55,6 +55,7 @@ public class MutableCallContextWrapper implements MutableCallContext {
         }
     }
 
+    @Override
     public Object get(String key) {
         if (values == null) {
             return context.get(key);
@@ -67,6 +68,7 @@ public class MutableCallContextWrapper implements MutableCallContext {
         }
     }
 
+    @Override
     public void put(String key, Object value) {
         if (values == null) {
             ((MutableCallContext) context).put(key, value);
@@ -75,6 +77,7 @@ public class MutableCallContextWrapper implements MutableCallContext {
         }
     }
 
+    @Override
     public Object remove(String key) {
         if (values == null) {
             return ((MutableCallContext) context).remove(key);
@@ -90,54 +93,67 @@ public class MutableCallContextWrapper implements MutableCallContext {
         }
     }
 
+    @Override
     public String getBinding() {
         return context.getBinding();
     }
 
+    @Override
     public boolean isObjectInfoRequired() {
         return context.isObjectInfoRequired();
     }
 
+    @Override
     public CmisVersion getCmisVersion() {
         return (CmisVersion) get(CMIS_VERSION);
     }
 
+    @Override
     public String getRepositoryId() {
         return (String) get(REPOSITORY_ID);
     }
 
+    @Override
     public String getUsername() {
         return (String) get(USERNAME);
     }
 
+    @Override
     public String getPassword() {
         return (String) get(PASSWORD);
     }
 
+    @Override
     public String getLocale() {
         return (String) get(LOCALE);
     }
 
+    @Override
     public BigInteger getOffset() {
         return (BigInteger) get(OFFSET);
     }
 
+    @Override
     public BigInteger getLength() {
         return (BigInteger) get(LENGTH);
     }
 
+    @Override
     public File getTempDirectory() {
         return (File) get(TEMP_DIR);
     }
 
+    @Override
     public boolean encryptTempFiles() {
         return Boolean.TRUE.equals(get(ENCRYPT_TEMP_FILE));
     }
 
+    @Override
     public int getMemoryThreshold() {
         return (Integer) get(MEMORY_THRESHOLD);
     }
 
+    @Override
     public long getMaxContentSize() {
         return (Long) get(MAX_CONTENT_SIZE);
     }

@@ -46,6 +46,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         setServiceFactory(factory);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -66,6 +67,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         CmisService service = getService(null);
 
@@ -86,6 +88,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -106,6 +109,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -128,6 +132,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
@@ -150,6 +155,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -170,6 +176,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 
@@ -190,6 +197,7 @@ public class RepositoryServiceImpl extends AbstractLocalService implements Repos
         }
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         CmisService service = getService(repositoryId);
 

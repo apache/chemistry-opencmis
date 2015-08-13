@@ -49,6 +49,7 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
     @Resource
     public WebServiceContext wsContext;
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
             throws CmisException {
         CmisService service = null;
@@ -75,6 +76,7 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
         }
     }
 
+    @Override
     public List<CmisObjectType> getAppliedPolicies(String repositoryId, String objectId, String filter,
             CmisExtensionType extension) throws CmisException {
         CmisService service = null;
@@ -110,6 +112,7 @@ public class PolicyService extends AbstractService implements PolicyServicePort 
         }
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, Holder<CmisExtensionType> extension)
             throws CmisException {
         CmisService service = null;

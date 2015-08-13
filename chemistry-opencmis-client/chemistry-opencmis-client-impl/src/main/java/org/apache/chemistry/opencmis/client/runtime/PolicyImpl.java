@@ -35,6 +35,7 @@ public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
         initialize(session, objectType, objectData, context);
     }
 
+    @Override
     public String getPolicyText() {
         return getPropertyValue(PropertyIds.POLICY_TEXT);
     }

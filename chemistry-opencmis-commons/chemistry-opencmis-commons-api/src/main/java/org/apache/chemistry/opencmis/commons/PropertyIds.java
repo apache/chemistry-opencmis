@@ -23,9 +23,6 @@ package org.apache.chemistry.opencmis.commons;
  */
 public final class PropertyIds {
 
-    private PropertyIds() {
-    }
-
     // ---- base ----
     /**
      * CMIS property {@code cmis:name}: name of the object.
@@ -405,4 +402,7 @@ public final class PropertyIds {
      * @cmis Extension
      */
     public static final String LATEST_ACCESSIBLE_STATE_ID = "cmis:latestAccessibleStateId";
+
+    private PropertyIds() {
+    }
 }

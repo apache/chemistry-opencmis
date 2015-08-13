@@ -41,6 +41,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
     private Map<String, PermissionMapping> permissionMapping;
     private List<PermissionDefinition> permissionDefinitionList;
 
+    @Override
     public SupportedPermissions getSupportedPermissions() {
         return supportedPermissions;
     }
@@ -49,6 +50,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
         this.supportedPermissions = supportedPermissions;
     }
 
+    @Override
     public AclPropagation getAclPropagation() {
         return aclPropagation;
     }
@@ -57,6 +59,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
         this.aclPropagation = aclPropagation;
     }
 
+    @Override
     public Map<String, PermissionMapping> getPermissionMapping() {
         if (permissionMapping == null) {
             permissionMapping = new HashMap<String, PermissionMapping>();
@@ -69,6 +72,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
         this.permissionMapping = permissionMapping;
     }
 
+    @Override
     public List<PermissionDefinition> getPermissions() {
         if (permissionDefinitionList == null) {
             permissionDefinitionList = new ArrayList<PermissionDefinition>();
