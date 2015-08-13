@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -207,8 +208,39 @@ public class VersioningSmokeTest extends AbstractSessionTest {
 
             checkCheckedIn(fifthVersion);
 
+            // test the latest version
+            Document latest = session.getLatestDocumentVersion(doc, SELECT_ALL_NO_CACHE_OC);
+
+            f = createResult(FAILURE, "getObjectOfLatestVersion() did not returned the expected version!");
+            addResult(assertEquals(fifthVersion.getId(), latest.getId(), null, f));
+
+            // test if checking out a non-latest version works for this
+            // repository
+            try {
+                pwcId = doc.checkOut();
+                pwc = (Document) session.getObject(pwcId, SELECT_ALL_NO_CACHE_OC);
+                pwc.cancelCheckOut();
+
+                addResult(createInfoResult("Repository allows check out on a version that is not the latest version."));
+            } catch (CmisBaseException e) {
+                addResult(createInfoResult("Repository only support check out on the latest version."));
+            }
+
             // remove the document
             deleteObject(doc);
+
+            // test if all versions have been deleted
+            f = createResult(FAILURE, "Version 2 has not been deleted!");
+            addResult(assertIsFalse(session.exists(newVersion), null, f));
+
+            f = createResult(FAILURE, "Version 3 has not been deleted!");
+            addResult(assertIsFalse(session.exists(thirdVersion), null, f));
+
+            f = createResult(FAILURE, "Version 4 has not been deleted!");
+            addResult(assertIsFalse(session.exists(fourthVersion), null, f));
+
+            f = createResult(FAILURE, "Version 5 has not been deleted!");
+            addResult(assertIsFalse(session.exists(fifthVersion), null, f));
         } finally {
             deleteTestFolder();
         }
