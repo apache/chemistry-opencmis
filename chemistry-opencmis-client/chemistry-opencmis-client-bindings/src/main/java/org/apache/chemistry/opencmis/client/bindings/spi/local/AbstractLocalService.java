@@ -38,6 +38,8 @@ public abstract class AbstractLocalService {
 
     private String user;
     private String password;
+    private String language;
+    private String country;
 
     /**
      * Sets the current session.
@@ -50,6 +52,12 @@ public abstract class AbstractLocalService {
 
         Object passwordObj = session.get(SessionParameter.PASSWORD);
         password = passwordObj instanceof String ? passwordObj.toString() : null;
+
+        Object localeLanguageObj = session.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
+        language = localeLanguageObj instanceof String ? localeLanguageObj.toString() : null;
+
+        Object localeCountryObj = session.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
+        country = localeCountryObj instanceof String ? localeCountryObj.toString() : null;
     }
 
     /**
@@ -107,7 +115,7 @@ public abstract class AbstractLocalService {
      * creates a local call context.
      */
     protected CallContext createCallContext(String repositoryId) {
-        return new LocalCallContext(repositoryId, user, password);
+        return new LocalCallContext(repositoryId, user, password, language, country);
     }
 
     protected CmisService getService(String repositoryId) {

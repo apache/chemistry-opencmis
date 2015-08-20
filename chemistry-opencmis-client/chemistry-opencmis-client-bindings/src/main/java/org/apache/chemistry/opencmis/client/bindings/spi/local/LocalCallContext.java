@@ -42,6 +42,20 @@ public class LocalCallContext implements MutableCallContext {
         contextMap.put(PASSWORD, password);
     }
 
+    public LocalCallContext(String repositoryId, String user, String password, String language, String country) {
+        this(repositoryId, user, password);
+
+        if (language != null) {
+            put(LOCALE_ISO639_LANGUAGE, language);
+            put(LOCALE, language);
+        }
+
+        if (country != null) {
+            put(LOCALE_ISO3166_COUNTRY, country);
+            put(LOCALE, language + "-" + country);
+        }
+    }
+
     @Override
     public String getBinding() {
         return BINDING_LOCAL;
@@ -74,7 +88,7 @@ public class LocalCallContext implements MutableCallContext {
 
     @Override
     public String getLocale() {
-        return null;
+        return (String) get(LOCALE);
     }
 
     @Override
