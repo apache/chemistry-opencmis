@@ -137,7 +137,7 @@ public class FileShareCmisService extends AbstractCmisService implements CallCon
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-        return getRepository().getChildren(getCallContext(), folderId, filter, includeAllowableActions,
+        return getRepository().getChildren(getCallContext(), folderId, filter, orderBy, includeAllowableActions,
                 includePathSegment, maxItems, skipCount, this);
     }
 

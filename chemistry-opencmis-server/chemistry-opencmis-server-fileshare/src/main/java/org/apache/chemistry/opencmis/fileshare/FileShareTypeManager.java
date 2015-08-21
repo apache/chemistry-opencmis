@@ -31,9 +31,11 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableFolderTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyIdDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -77,13 +79,19 @@ public class FileShareTypeManager {
         // add base folder type
         MutableFolderTypeDefinition folderType = typeDefinitionFactory
                 .createBaseFolderTypeDefinition(CmisVersion.CMIS_1_1);
-        removeQueryableAndOrderableFlags(folderType);
+        ((MutablePropertyIdDefinition) folderType.getPropertyDefinitions().get(PropertyIds.OBJECT_ID))
+                .setIsOrderable(Boolean.TRUE);
+        ((MutablePropertyIdDefinition) folderType.getPropertyDefinitions().get(PropertyIds.BASE_TYPE_ID))
+                .setIsOrderable(Boolean.TRUE);
         typeDefinitions.put(folderType.getId(), folderType);
 
         // add base document type
         MutableDocumentTypeDefinition documentType = typeDefinitionFactory
                 .createBaseDocumentTypeDefinition(CmisVersion.CMIS_1_1);
-        removeQueryableAndOrderableFlags(documentType);
+        ((MutablePropertyIdDefinition) documentType.getPropertyDefinitions().get(PropertyIds.OBJECT_ID))
+                .setIsOrderable(Boolean.TRUE);
+        ((MutablePropertyIdDefinition) documentType.getPropertyDefinitions().get(PropertyIds.BASE_TYPE_ID))
+                .setIsOrderable(Boolean.TRUE);
         typeDefinitions.put(documentType.getId(), documentType);
     }
 
@@ -121,19 +129,6 @@ public class FileShareTypeManager {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Added type '{}'.", type.getId());
-        }
-    }
-
-    /**
-     * Removes the queryable and orderable flags from the property definitions
-     * of a type definition because this implementations does neither support
-     * queries nor can order objects.
-     */
-    private void removeQueryableAndOrderableFlags(MutableTypeDefinition type) {
-        for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
-            MutablePropertyDefinition<?> mutablePropDef = (MutablePropertyDefinition<?>) propDef;
-            mutablePropDef.setIsQueryable(false);
-            mutablePropDef.setIsOrderable(false);
         }
     }
 

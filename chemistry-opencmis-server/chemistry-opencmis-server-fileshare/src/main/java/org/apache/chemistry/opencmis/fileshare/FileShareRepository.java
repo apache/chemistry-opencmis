@@ -31,12 +31,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -230,7 +232,7 @@ public class FileShareRepository {
         capabilities.setCapabilityRendition(CapabilityRenditions.NONE);
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
-            capabilities.setCapabilityOrderBy(CapabilityOrderBy.NONE);
+            capabilities.setCapabilityOrderBy(CapabilityOrderBy.COMMON);
 
             NewTypeSettableAttributesImpl typeSetAttributes = new NewTypeSettableAttributesImpl();
             typeSetAttributes.setCanSetControllableAcl(false);
@@ -416,6 +418,10 @@ public class FileShareRepository {
         if (type.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
             objectId = createDocument(context, properties, folderId, contentStream, versioningState);
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+            if (contentStream != null || versioningState != null) {
+                throw new CmisInvalidArgumentException("Cannot create a folder with content or a versioning state!");
+            }
+
             objectId = createFolder(context, properties, folderId);
         } else {
             throw new CmisObjectNotFoundException("Cannot create object of type '" + typeId + "'!");
@@ -1151,7 +1157,7 @@ public class FileShareRepository {
     /**
      * CMIS getChildren.
      */
-    public ObjectInFolderList getChildren(CallContext context, String folderId, String filter,
+    public ObjectInFolderList getChildren(CallContext context, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount,
             ObjectInfoHandler objectInfos) {
         debug("getChildren");
@@ -1181,6 +1187,92 @@ public class FileShareRepository {
             throw new CmisObjectNotFoundException("Not a folder!");
         }
 
+        // get the children
+        List<File> children = new ArrayList<File>();
+        for (File child : folder.listFiles()) {
+            // skip hidden and shadow files
+            if (child.isHidden() || child.getName().equals(SHADOW_FOLDER) || child.getPath().endsWith(SHADOW_EXT)) {
+                continue;
+            }
+
+            children.add(child);
+        }
+
+        // very basic sorting
+        if (orderBy != null) {
+            boolean desc = false;
+            String queryName = orderBy;
+
+            int commaIdx = orderBy.indexOf(',');
+            if (commaIdx > -1) {
+                queryName = orderBy.substring(0, commaIdx);
+            }
+
+            queryName = queryName.trim();
+            if (queryName.toLowerCase(Locale.ENGLISH).endsWith(" desc")) {
+                desc = true;
+                queryName = queryName.substring(0, queryName.length() - 5).trim();
+            }
+
+            Comparator<File> comparator = null;
+
+            if ("cmis:name".equals(queryName)) {
+                comparator = new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return f1.getName().toLowerCase(Locale.ENGLISH)
+                                .compareTo(f2.getName().toLowerCase(Locale.ENGLISH));
+                    }
+                };
+            } else if ("cmis:creationDate".equals(queryName) || "cmis:lastModificationDate".equals(queryName)) {
+                comparator = new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.compare(f1.lastModified(), f2.lastModified());
+                    }
+                };
+            } else if ("cmis:contentStreamLength".equals(queryName)) {
+                comparator = new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.compare(f1.length(), f2.length());
+                    }
+                };
+            } else if ("cmis:objectId".equals(queryName)) {
+                comparator = new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        try {
+                            return fileToId(f1).compareTo(fileToId(f2));
+                        } catch (IOException e) {
+                            return 0;
+                        }
+                    }
+                };
+            } else if ("cmis:baseTypeId".equals(queryName)) {
+                comparator = new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        if (f1.isDirectory() == f2.isDirectory()) {
+                            return 0;
+                        }
+                        return f1.isDirectory() ? -1 : 1;
+                    }
+                };
+            } else if ("cmis:createdBy".equals(queryName) || "cmis:lastModifiedBy".equals(queryName)) {
+                // do nothing
+            } else {
+                throw new CmisInvalidArgumentException("Cannot sort by " + queryName + ".");
+            }
+
+            if (comparator != null) {
+                Collections.sort(children, comparator);
+                if (desc) {
+                    Collections.reverse(children);
+                }
+            }
+        }
+
         // set object info of the the folder
         if (context.isObjectInfoRequired()) {
             compileObjectData(context, folder, null, false, false, userReadOnly, objectInfos);
@@ -1193,12 +1285,7 @@ public class FileShareRepository {
         int count = 0;
 
         // iterate through children
-        for (File child : folder.listFiles()) {
-            // skip hidden and shadow files
-            if (child.isHidden() || child.getName().equals(SHADOW_FOLDER) || child.getPath().endsWith(SHADOW_EXT)) {
-                continue;
-            }
-
+        for (File child : children) {
             count++;
 
             if (skip > 0) {
