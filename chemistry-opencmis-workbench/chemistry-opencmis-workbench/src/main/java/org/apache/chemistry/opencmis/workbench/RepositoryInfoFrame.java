@@ -21,17 +21,20 @@ package org.apache.chemistry.opencmis.workbench;
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -44,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PermissionDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.workbench.icons.ExtensionIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 
@@ -259,17 +263,13 @@ public class RepositoryInfoFrame extends JFrame {
             if (isNotEmpty(repInfo.getExtensionFeatures())) {
                 JTree extensionFeaturesTree = new JTree();
                 extensionFeaturesTree.setRootVisible(false);
+                extensionFeaturesTree.setCellRenderer(new ExtensionFeatureCellRenderer());
                 extensionFeaturesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
                 DefaultMutableTreeNode extFeatRootNode = new DefaultMutableTreeNode("Extensions");
 
                 for (ExtensionFeature ef : repInfo.getExtensionFeatures()) {
-                    String efId = ef.getId();
-                    if (efId == null) {
-                        efId = "???";
-                    }
-
-                    DefaultMutableTreeNode efNode = new DefaultMutableTreeNode(efId);
+                    DefaultMutableTreeNode efNode = new DefaultMutableTreeNode(ef);
                     extFeatRootNode.add(efNode);
 
                     if (ef.getCommonName() != null) {
@@ -306,6 +306,7 @@ public class RepositoryInfoFrame extends JFrame {
             if (isNotEmpty(repInfo.getExtensions())) {
                 JTree extensionsTree = new JTree();
                 extensionsTree.setRootVisible(false);
+                extensionsTree.setCellRenderer(new ExtensionTreeCellRenderer());
                 extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
                 DefaultMutableTreeNode extRootNode = new DefaultMutableTreeNode("Extensions");
@@ -369,6 +370,47 @@ public class RepositoryInfoFrame extends JFrame {
                         + extension.getName()
                         + (!extension.getAttributes().isEmpty() ? " " + extension.getAttributes() : "")
                         + (extension.getChildren().isEmpty() ? ": " + extension.getValue() : "");
+            }
+        }
+
+        static class ExtensionFeatureCellRenderer extends DefaultTreeCellRenderer {
+
+            private static final long serialVersionUID = 1L;
+
+            private static final Icon EXTENSION_ICON = new ExtensionIcon(ClientHelper.OBJECT_ICON_SIZE,
+                    ClientHelper.OBJECT_ICON_SIZE);
+
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                    boolean leaf, int row, boolean hasFocus) {
+                Component comp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+                Object node = ((DefaultMutableTreeNode) value).getUserObject();
+                if (node instanceof ExtensionFeature) {
+                    setText(((ExtensionFeature) node).getId());
+                    setIcon(EXTENSION_ICON);
+                } else {
+                    setIcon(null);
+                }
+
+                return comp;
+            }
+        }
+
+        static class ExtensionTreeCellRenderer extends DefaultTreeCellRenderer {
+
+            private static final long serialVersionUID = 1L;
+
+            private static final Icon EXTENSION_ICON = new ExtensionIcon(ClientHelper.OBJECT_ICON_SIZE,
+                    ClientHelper.OBJECT_ICON_SIZE);
+
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                    boolean leaf, int row, boolean hasFocus) {
+                Component comp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                setIcon(EXTENSION_ICON);
+
+                return comp;
             }
         }
     }

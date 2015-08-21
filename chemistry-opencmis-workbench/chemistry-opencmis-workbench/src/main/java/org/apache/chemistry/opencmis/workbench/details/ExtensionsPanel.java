@@ -22,22 +22,27 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
+import org.apache.chemistry.opencmis.workbench.icons.ExtensionIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
@@ -142,6 +147,7 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
 
         extensionsTree = new JTree();
         extensionsTree.setRootVisible(false);
+        extensionsTree.setCellRenderer(new ExtensionTreeCellRenderer());
         extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         extensionsTree.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
@@ -165,6 +171,23 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
             return (extension.getNamespace() == null ? "" : "{" + extension.getNamespace() + "}") + extension.getName()
                     + (!extension.getAttributes().isEmpty() ? " " + extension.getAttributes() : "")
                     + (extension.getChildren().isEmpty() ? ": " + extension.getValue() : "");
+        }
+    }
+
+    static class ExtensionTreeCellRenderer extends DefaultTreeCellRenderer {
+
+        private static final long serialVersionUID = 1L;
+
+        private static final Icon EXTENSION_ICON = new ExtensionIcon(ClientHelper.OBJECT_ICON_SIZE,
+                ClientHelper.OBJECT_ICON_SIZE);
+
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                boolean leaf, int row, boolean hasFocus) {
+            Component comp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            setIcon(EXTENSION_ICON);
+
+            return comp;
         }
     }
 }
