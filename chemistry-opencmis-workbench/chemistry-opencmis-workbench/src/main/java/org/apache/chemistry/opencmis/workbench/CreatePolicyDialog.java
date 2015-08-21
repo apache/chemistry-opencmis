@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.icons.NewPolicyIcon;
@@ -92,12 +93,12 @@ public class CreatePolicyDialog extends CreateDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 TypeDefinition type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType();
-                updateMandatoryFields(type);
+                updateMandatoryOrOnCreateFields(type);
             }
         });
 
         ObjectTypeItem type = (ObjectTypeItem) typeBox.getSelectedItem();
-        updateMandatoryFields(type.getObjectType());
+        updateMandatoryOrOnCreateFields(type.getObjectType());
 
         createRow("Type:", typeBox, 2);
 
@@ -111,13 +112,13 @@ public class CreatePolicyDialog extends CreateDialog {
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
                 String policyText = policyTextField.getText();
-                String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
+                ObjectType type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType();
 
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    ObjectId objectId = getClientModel().createPolicy(name, type, policyText,
-                            getMandatoryPropertyValues(), unfiledButton.isSelected());
+                    ObjectId objectId = getClientModel().createPolicy(name, type.getId(), policyText,
+                            getMandatoryOrOnCreatePropertyValues(type), unfiledButton.isSelected());
 
                     if (objectId != null) {
                         getClientModel().loadObject(objectId.getId());

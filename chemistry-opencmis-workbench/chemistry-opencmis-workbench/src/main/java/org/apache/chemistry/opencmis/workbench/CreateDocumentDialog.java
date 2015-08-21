@@ -50,6 +50,7 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
@@ -129,12 +130,12 @@ public class CreateDocumentDialog extends CreateDialog {
                 } else {
                     versioningStateNoneButton.setSelected(true);
                 }
-                updateMandatoryFields(type);
+                updateMandatoryOrOnCreateFields(type);
             }
         });
 
         ObjectTypeItem type = (ObjectTypeItem) typeBox.getSelectedItem();
-        updateMandatoryFields(type.getObjectType());
+        updateMandatoryOrOnCreateFields(type.getObjectType());
 
         createRow("Type:", typeBox, 2);
 
@@ -238,7 +239,7 @@ public class CreateDocumentDialog extends CreateDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
                 String name = nameField.getText();
-                String type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType().getId();
+                ObjectType type = ((ObjectTypeItem) typeBox.getSelectedItem()).getObjectType();
                 String filename = filenameField.getText();
 
                 try {
@@ -256,8 +257,10 @@ public class CreateDocumentDialog extends CreateDialog {
                     ObjectId objectId = null;
                     if (filename.length() > 0) {
                         // create a document from a file
-                        objectId = getClientModel().createDocument(name, type, filename, getMandatoryPropertyValues(),
-                                versioningState, unfiledButton.isSelected());
+                        objectId = getClientModel()
+                                .createDocument(name, type.getId(), filename,
+                                        getMandatoryOrOnCreatePropertyValues(type), versioningState,
+                                        unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream(filename);
@@ -275,8 +278,9 @@ public class CreateDocumentDialog extends CreateDialog {
                             }
                         }
 
-                        objectId = getClientModel().createDocument(name, type, getMandatoryPropertyValues(), length,
-                                seed, versioningState, unfiledButton.isSelected());
+                        objectId = getClientModel().createDocument(name, type.getId(),
+                                getMandatoryOrOnCreatePropertyValues(type), length, seed, versioningState,
+                                unfiledButton.isSelected());
 
                         if (verifyAfterUploadButton.isSelected()) {
                             ContentStream contentStream = getClientModel().createContentStream("", length, seed);

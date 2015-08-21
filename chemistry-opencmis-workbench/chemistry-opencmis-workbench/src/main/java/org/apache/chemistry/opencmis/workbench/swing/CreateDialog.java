@@ -22,6 +22,9 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -40,6 +44,7 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -50,9 +55,9 @@ public abstract class CreateDialog extends JDialog {
 
     private final ClientModel model;
     private final JPanel panel;
-    private final JPanel mandatoryPropertiesPanel;
+    private final JPanel mandatoryOrOnCreatePropertiesPanel;
     private final JPanel actionPanel;
-    private final Map<String, JComponent> mandatoryProperties;
+    private final Map<String, JComponent> mandatoryOrOnCreateProperties;
 
     public CreateDialog(Frame owner, String title, ClientModel model) {
         super(owner, title, true);
@@ -63,11 +68,11 @@ public abstract class CreateDialog extends JDialog {
         panel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         add(panel, BorderLayout.CENTER);
 
-        mandatoryProperties = new HashMap<String, JComponent>();
-        mandatoryPropertiesPanel = new JPanel(new GridBagLayout());
-        mandatoryPropertiesPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+        mandatoryOrOnCreateProperties = new HashMap<String, JComponent>();
+        mandatoryOrOnCreatePropertiesPanel = new JPanel(new GridBagLayout());
+        mandatoryOrOnCreatePropertiesPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
                 WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)),
-                WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("Mandatory properties")))));
+                WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("Mandatory or OnCreate properties")))));
 
         actionPanel = new JPanel();
         createRow(actionPanel, 10);
@@ -145,31 +150,32 @@ public abstract class CreateDialog extends JDialog {
         return result;
     }
 
-    protected final void updateMandatoryFields(TypeDefinition type) {
-        mandatoryProperties.clear();
-        mandatoryPropertiesPanel.removeAll();
+    protected final void updateMandatoryOrOnCreateFields(TypeDefinition type) {
+        mandatoryOrOnCreateProperties.clear();
+        mandatoryOrOnCreatePropertiesPanel.removeAll();
 
         final Map<String, PropertyDefinition<?>> propertyDefinitions = type.getPropertyDefinitions();
         if (propertyDefinitions != null) {
             int row = 0;
             for (PropertyDefinition<?> definition : propertyDefinitions.values()) {
-                if (Boolean.TRUE.equals(definition.isRequired())
+                if ((Boolean.TRUE.equals(definition.isRequired()) || Updatability.ONCREATE.equals(definition
+                        .getUpdatability()))
                         && !(PropertyIds.NAME.equals(definition.getId())
                                 || PropertyIds.OBJECT_TYPE_ID.equals(definition.getId())
                                 || PropertyIds.SOURCE_ID.equals(definition.getId()) || PropertyIds.TARGET_ID
                                     .equals(definition.getId()))) {
                     JComponent child = createPropertyComponent(definition);
-                    mandatoryProperties.put(definition.getId(), child);
-                    createRow(mandatoryPropertiesPanel, definition.getDisplayName() + ":", child, row);
+                    mandatoryOrOnCreateProperties.put(definition.getId(), child);
+                    createRow(mandatoryOrOnCreatePropertiesPanel, definition.getDisplayName() + ":", child, row);
                     row++;
                 }
             }
         }
 
-        if (mandatoryPropertiesPanel.getComponents().length > 0) {
-            createRow(mandatoryPropertiesPanel, 9);
+        if (mandatoryOrOnCreatePropertiesPanel.getComponents().length > 0) {
+            createRow(mandatoryOrOnCreatePropertiesPanel, 9);
         } else {
-            panel.remove(mandatoryPropertiesPanel);
+            panel.remove(mandatoryOrOnCreatePropertiesPanel);
         }
 
         pack();
@@ -183,6 +189,23 @@ public abstract class CreateDialog extends JDialog {
         case BOOLEAN:
             result = new JCheckBox();
             break;
+        case INTEGER:
+            DecimalFormat intFormat = new DecimalFormat("#,##0");
+            intFormat.setParseBigDecimal(true);
+            intFormat.setParseIntegerOnly(true);
+            result = new JFormattedTextField(intFormat);
+            ((JFormattedTextField) result).setColumns(50);
+            break;
+        case DECIMAL:
+            DecimalFormat decFormat = new DecimalFormat("#,##0.#############################");
+            decFormat.setParseBigDecimal(true);
+            result = new JFormattedTextField(decFormat);
+            ((JFormattedTextField) result).setColumns(50);
+            break;
+        case DATETIME:
+            result = new JFormattedTextField(DateFormat.getDateTimeInstance());
+            ((JFormattedTextField) result).setColumns(50);
+            break;
         default:
             result = new JTextField("", 50);
             break;
@@ -191,22 +214,34 @@ public abstract class CreateDialog extends JDialog {
         return result;
     }
 
-    protected Map<String, Object> getMandatoryPropertyValues() {
-        if (mandatoryProperties.isEmpty()) {
+    protected Map<String, Object> getMandatoryOrOnCreatePropertyValues(TypeDefinition type) {
+        if (mandatoryOrOnCreateProperties.isEmpty()) {
             return null;
         }
 
         Map<String, Object> result = new HashMap<String, Object>();
 
-        for (Map.Entry<String, JComponent> component : mandatoryProperties.entrySet()) {
+        for (Map.Entry<String, JComponent> component : mandatoryOrOnCreateProperties.entrySet()) {
+            PropertyDefinition<?> propDef = type.getPropertyDefinitions().get(component.getKey());
+
             Object value = null;
-            if (component.getValue() instanceof JTextField) {
+            if (component.getValue() instanceof JFormattedTextField) {
+                value = ((JFormattedTextField) component.getValue()).getValue();
+
+                if (value != null) {
+                    if (propDef.getPropertyType() == PropertyType.INTEGER) {
+                        value = ((BigDecimal) value).toBigIntegerExact();
+                    }
+                }
+            } else if (component.getValue() instanceof JTextField) {
                 value = ((JTextField) component.getValue()).getText();
             } else if (component.getValue() instanceof JCheckBox) {
                 value = ((JCheckBox) component.getValue()).isSelected();
             }
 
-            result.put(component.getKey(), value);
+            if (value != null) {
+                result.put(component.getKey(), value);
+            }
         }
 
         return result;
