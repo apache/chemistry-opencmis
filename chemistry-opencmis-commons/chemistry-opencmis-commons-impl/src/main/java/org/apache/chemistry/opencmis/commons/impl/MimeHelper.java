@@ -288,7 +288,7 @@ public final class MimeHelper {
                     }
                     authMap.put(paramName, sb.toString());
                 }
-                sb = new StringBuilder(32);
+                sb.setLength(0);
                 inQuotes = !inQuotes;
             } else if (c == '=') {
                 if (inName) {
@@ -301,7 +301,7 @@ public final class MimeHelper {
                         paramName = paramName.substring(spcIdx).trim();
                     }
 
-                    sb = new StringBuilder(32);
+                    sb.setLength(0);
                     inName = false;
                 } else if (!inQuotes) {
                     return null;
@@ -310,7 +310,7 @@ public final class MimeHelper {
                 if (inName) {
                     challenge = sb.toString().trim().toLowerCase(Locale.ENGLISH);
                     result.put(challenge, new HashMap<String, String>());
-                    sb = new StringBuilder(32);
+                    sb.setLength(0);
                 } else {
                     if (inQuotes) {
                         sb.append(c);
@@ -322,7 +322,7 @@ public final class MimeHelper {
                         if (!authMap.containsKey(paramName)) {
                             authMap.put(paramName, sb.toString().trim());
                         }
-                        sb = new StringBuilder(32);
+                        sb.setLength(0);
                         inName = true;
                     }
                 }

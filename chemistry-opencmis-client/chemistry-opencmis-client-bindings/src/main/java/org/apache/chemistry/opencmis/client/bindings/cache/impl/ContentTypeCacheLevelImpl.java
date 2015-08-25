@@ -81,8 +81,8 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
         // if parameters have been found, gather them
         if (parameterStart > 0) {
             SortedMap<String, String> parameter = new TreeMap<String, String>();
-            StringBuilder ksb = new StringBuilder();
-            StringBuilder vsb = new StringBuilder();
+            StringBuilder ksb = new StringBuilder(32);
+            StringBuilder vsb = new StringBuilder(32);
             boolean isKey = true;
 
             for (int i = parameterStart + 1; i < key.length(); i++) {
@@ -106,8 +106,8 @@ public class ContentTypeCacheLevelImpl extends MapCacheLevelImpl {
 
                         parameter.put(ksb.toString(), vsb.toString());
 
-                        ksb = new StringBuilder();
-                        vsb = new StringBuilder();
+                        ksb.setLength(0);
+                        vsb.setLength(0);
 
                         continue;
                     } else if (c == '"') {

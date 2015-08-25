@@ -145,7 +145,7 @@ public class LoggingFilter implements Filter {
             }
             writeTextToFile(requestFileName, xmlRequest);
 
-            sb = new StringBuilder();
+            sb.setLength(0);
             cType = logResponse.getContentType();
             String xmlResponse = logResponse.getPayload();
             String responseFileName = getResponseFileName(reqNo);

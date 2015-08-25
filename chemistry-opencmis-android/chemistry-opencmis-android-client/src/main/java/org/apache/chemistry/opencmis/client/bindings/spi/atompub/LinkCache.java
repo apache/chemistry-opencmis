@@ -283,7 +283,7 @@ public class LinkCache implements Serializable {
                         result.append(IOUtils.encodeURL(paramValue));
                     }
 
-                    param = new StringBuilder(32);
+                    param.setLength(0);
                 } else {
                     param.append(c);
                 }

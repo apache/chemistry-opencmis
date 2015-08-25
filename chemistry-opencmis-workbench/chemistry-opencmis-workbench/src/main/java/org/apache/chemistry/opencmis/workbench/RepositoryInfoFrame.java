@@ -209,7 +209,7 @@ public class RepositoryInfoFrame extends JFrame {
 
                 addLine("New type settable attributes:").setText(sb.toString());
 
-                sb = new StringBuilder();
+                sb = new StringBuilder(64);
                 if (cap.getCreatablePropertyTypes() != null && cap.getCreatablePropertyTypes().canCreate() != null) {
                     for (PropertyType pt : cap.getCreatablePropertyTypes().canCreate()) {
                         appendToString(sb, pt.value());
