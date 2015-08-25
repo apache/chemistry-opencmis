@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
  * Implements a session cache providing following capabilities:
  * <p>
  * <ul>
- * <li>access CmisObject by object id</li>
+ * <li>access CmisObject by object object ID</li>
  * <li>access CmisObject by object path</li>
  * </ul>
  */
@@ -48,7 +48,11 @@ public interface Cache extends Serializable {
 
     CmisObject getByPath(String path, String cacheKey);
 
+    String getObjectIdByPath(String path);
+
     void remove(String objectId);
+
+    void removePath(String path);
 
     void clear();
 

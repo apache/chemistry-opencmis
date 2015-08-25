@@ -60,7 +60,16 @@ public class NoCacheImpl implements Cache {
     }
 
     @Override
+    public String getObjectIdByPath(String path) {
+        return null;
+    }
+
+    @Override
     public void remove(String objectId) {
+    }
+
+    @Override
+    public void removePath(String path) {
     }
 
     @Override

@@ -626,7 +626,7 @@ public interface Session extends Serializable {
      * If the object doesn't exist (anymore), it is removed from the cache.
      * 
      * @param objectId
-     *            object ID
+     *            the object ID
      * @return {@code true} if the object exists in the repository,
      *         {@code false} otherwise
      * 
@@ -641,13 +641,48 @@ public interface Session extends Serializable {
      * If the object doesn't exist (anymore), it is removed from the cache.
      * 
      * @param objectId
-     *            object ID
+     *            the object ID
      * @return {@code true} if the object exists in the repository,
      *         {@code false} otherwise
      * 
      * @cmis 1.0
      */
     boolean exists(String objectId);
+
+    /**
+     * Checks if an object with given path exists in the repository and is
+     * visible for the current user.
+     * 
+     * If the object doesn't exist (anymore), it is removed from the cache.
+     * 
+     * @param path
+     *            the path
+     * @return {@code true} if the object exists in the repository,
+     *         {@code false} otherwise
+     * 
+     * @cmis 1.0
+     */
+    boolean existsPath(String path);
+
+    /**
+     * Checks if an object with given path exists in the repository and is
+     * visible for the current user.
+     * 
+     * If the object doesn't exist (anymore), it is removed from the cache.
+     * 
+     * @param parentPath
+     *            the path of the parent folder
+     * @param name
+     *            the (path segment) name of the object in the folder
+     * 
+     * @return the requested object
+     * 
+     * @throws CmisObjectNotFoundException
+     *             if an object with the given ID doesn't exist
+     * 
+     * @cmis 1.0
+     */
+    boolean existsPath(String parentPath, String name);
 
     /**
      * Removes the given object from the cache.

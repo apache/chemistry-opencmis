@@ -229,6 +229,25 @@ public class CacheImpl implements Cache {
     }
 
     @Override
+    public String getObjectIdByPath(String path) {
+        lock.writeLock().lock();
+        try {
+            CacheItem<String> item = pathToIdMap.get(path);
+            if (item == null) {
+                return null;
+            }
+            if (item.isExpired()) {
+                pathToIdMap.remove(path);
+                return null;
+            }
+
+            return item.getItem();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
     public void put(CmisObject object, String cacheKey) {
         // no object, no cache key - no cache
         if ((object == null) || (cacheKey == null)) {
@@ -292,6 +311,20 @@ public class CacheImpl implements Cache {
         lock.writeLock().lock();
         try {
             objectMap.remove(objectId);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void removePath(String path) {
+        if (path == null) {
+            return;
+        }
+
+        lock.writeLock().lock();
+        try {
+            pathToIdMap.remove(path);
         } finally {
             lock.writeLock().unlock();
         }

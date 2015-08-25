@@ -75,6 +75,49 @@ public class CacheTest {
     }
 
     @Test
+    public void cachePathObjectTest() {
+        Cache cache = createCache(100, 3600 * 1000);
+
+        String id = "1";
+        String path = "/1";
+        String cacheKey = "key";
+
+        // add object
+        CmisObject obj1 = createCmisObject(id);
+        cache.putPath(path, obj1, cacheKey);
+
+        // access object
+        assertTrue(cache.containsPath(path, cacheKey));
+
+        // access object
+        CmisObject obj2 = cache.getById(id, cacheKey);
+        assertEquals(obj1, obj2);
+
+        // access object
+        CmisObject obj3 = cache.getByPath(path, cacheKey);
+        assertEquals(obj1, obj3);
+
+        // access ID
+        String chachedId = cache.getObjectIdByPath(path);
+        assertEquals(obj1.getId(), chachedId);
+
+        // remove
+        cache.removePath(path);
+        assertNull(cache.getObjectIdByPath(path));
+        assertFalse(cache.containsPath(path, cacheKey));
+
+        // clear cache
+        cache.clear();
+
+        // access object (not found)
+        assertFalse(cache.containsId(id, cacheKey));
+
+        // access object (not found)
+        CmisObject obj4 = cache.getById(id, cacheKey);
+        assertNull(obj4);
+    }
+
+    @Test
     public void cacheSizeTest() {
         int cacheSize = 50000;
         Cache cache = createCache(cacheSize, 3600 * 1000);

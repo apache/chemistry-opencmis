@@ -546,9 +546,7 @@ public class SessionImpl implements Session {
 
     @Override
     public CmisObject getObjectByPath(String path, OperationContext context) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path must be set!");
-        }
+        checkPath(path);
         checkContext(context);
 
         CmisObject result = null;
@@ -715,6 +713,8 @@ public class SessionImpl implements Session {
 
     @Override
     public boolean exists(String objectId) {
+        checkObjectId(objectId);
+
         try {
             binding.getObjectService().getObject(getRepositoryId(), objectId, "cmis:objectId", Boolean.FALSE,
                     IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
@@ -723,6 +723,48 @@ public class SessionImpl implements Session {
             removeObjectFromCache(objectId);
             return false;
         }
+    }
+
+    @Override
+    public boolean existsPath(String path) {
+        checkPath(path);
+
+        try {
+            ObjectData object = binding.getObjectService().getObjectByPath(getRepositoryId(), path, "cmis:objectId",
+                    Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
+
+            String cacheObjectId = cache.getObjectIdByPath(path);
+            if (cacheObjectId != null && !cacheObjectId.equals(object.getId())) {
+                cache.removePath(path);
+            }
+
+            return true;
+        } catch (CmisObjectNotFoundException onf) {
+            cache.removePath(path);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean existsPath(String parentPath, String name) {
+        if (parentPath == null || parentPath.length() < 1) {
+            throw new IllegalArgumentException("Parent path must be set!");
+        }
+        if (parentPath.charAt(0) != '/') {
+            throw new IllegalArgumentException("Parent path must start with a '/'!");
+        }
+        if (name == null || name.length() < 1) {
+            throw new IllegalArgumentException("Name must be set!");
+        }
+
+        StringBuilder path = new StringBuilder(parentPath.length() + name.length() + 2);
+        path.append(parentPath);
+        if (!parentPath.endsWith("/")) {
+            path.append('/');
+        }
+        path.append(name);
+
+        return existsPath(path.toString());
     }
 
     @Override
@@ -1525,6 +1567,15 @@ public class SessionImpl implements Session {
     protected final void checkFolderId(ObjectId folderId) {
         if (folderId == null || folderId.getId() == null) {
             throw new IllegalArgumentException("Invalid folder ID!");
+        }
+    }
+
+    protected final void checkPath(String path) {
+        if (path == null || path.length() < 1) {
+            throw new IllegalArgumentException("Invalid path!");
+        }
+        if (path.charAt(0) != '/') {
+            throw new IllegalArgumentException("Path must start with a '/'!");
         }
     }
 
