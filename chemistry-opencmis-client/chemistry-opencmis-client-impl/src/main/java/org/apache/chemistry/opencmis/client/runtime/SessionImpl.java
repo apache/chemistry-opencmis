@@ -1509,7 +1509,7 @@ public class SessionImpl implements Session {
 
         String[] ids = new String[policyIds.length];
         for (int i = 0; i < policyIds.length; i++) {
-            if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
+            if (policyIds[i] == null || policyIds[i].getId() == null) {
                 throw new IllegalArgumentException("A Policy ID is not set!");
             }
 
@@ -1531,7 +1531,7 @@ public class SessionImpl implements Session {
 
         String[] ids = new String[policyIds.length];
         for (int i = 0; i < policyIds.length; i++) {
-            if ((policyIds[i] == null) || (policyIds[i].getId() == null)) {
+            if (policyIds[i] == null || policyIds[i].getId() == null) {
                 throw new IllegalArgumentException("A Policy ID is not set!");
             }
 

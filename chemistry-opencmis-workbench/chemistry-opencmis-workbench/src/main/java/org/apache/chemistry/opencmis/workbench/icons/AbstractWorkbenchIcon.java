@@ -34,8 +34,8 @@ import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 
 public abstract class AbstractWorkbenchIcon implements Icon {
 
-    protected final static Color DEFAULT_COLOR = new Color(0x33628c);
-    protected final static Color DISABLED_COLOR = new Color(0x8e8f91);
+    protected static final Color DEFAULT_COLOR = new Color(0x33628c);
+    protected static final Color DISABLED_COLOR = new Color(0x8e8f91);
 
     protected int width;
     protected int height;
@@ -147,8 +147,8 @@ public abstract class AbstractWorkbenchIcon implements Icon {
         BufferedImage img = new BufferedImage((int) Math.round(getIconWidth() * factor),
                 (int) Math.round(getIconHeight() * factor), BufferedImage.TYPE_INT_ARGB);
 
-        double coef = Math.min(getIconWidth() * factor / getOrginalWidth(),
-                getIconHeight() * factor / getOrginalHeight());
+        double coef = Math.min(getIconWidth() * factor / getOrginalWidth(), getIconHeight() * factor
+                / getOrginalHeight());
 
         Graphics2D g2d = img.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -24,12 +24,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
 
-    /**
-     * Private constructor.
-     */
-    private Constants() {
-    }
-
     // media types
     public static final String MEDIATYPE_SERVICE = "application/atomsvc+xml";
     public static final String MEDIATYPE_FEED = "application/atom+xml;type=feed";
@@ -222,4 +216,10 @@ public final class Constants {
 
     // rendition filter
     public static final String RENDITION_NONE = "cmis:none";
+
+    /**
+     * Private constructor.
+     */
+    private Constants() {
+    }
 }

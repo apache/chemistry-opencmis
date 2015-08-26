@@ -42,6 +42,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
         setSession(session);
     }
 
+    @Override
     public void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension) {
         if (objectId == null) {
@@ -63,12 +64,14 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
 
         // post addObjectToFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
     }
 
+    @Override
     public void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension) {
         if (objectId == null) {
             throw new CmisInvalidArgumentException("Object id must be set!");
@@ -89,6 +92,7 @@ public class MultiFilingServiceImpl extends AbstractAtomPubService implements Mu
 
         // post removeObjectFromFolder request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }

@@ -1146,13 +1146,13 @@ public final class JSONConverter {
         }
 
         // ACL
-        if ((object.getAcl() != null) && (object.getAcl().getAces() != null) && propertyMode != PropertyMode.QUERY) {
+        if (object.getAcl() != null && object.getAcl().getAces() != null && propertyMode != PropertyMode.QUERY) {
             result.put(JSON_OBJECT_ACL, convert(object.getAcl()));
         }
         setIfNotNull(JSON_OBJECT_EXACT_ACL, object.isExactAcl(), result);
 
         // policy ids
-        if ((object.getPolicyIds() != null) && (object.getPolicyIds().getPolicyIds() != null)
+        if (object.getPolicyIds() != null && object.getPolicyIds().getPolicyIds() != null
                 && propertyMode != PropertyMode.QUERY) {
             JSONObject policyIds = new JSONObject();
             JSONArray ids = new JSONArray();
@@ -1347,7 +1347,7 @@ public final class JSONConverter {
      * Converts an ACL.
      */
     public static JSONObject convert(final Acl acl) {
-        if ((acl == null) || (acl.getAces() == null)) {
+        if (acl == null || acl.getAces() == null) {
             return null;
         }
 

@@ -68,7 +68,7 @@ public class TypeDefinitionCacheImpl implements TypeDefinitionCache {
 
     @Override
     public void put(String repositoryId, TypeDefinition typeDefinition) {
-        if ((typeDefinition == null) || (typeDefinition.getId() == null)) {
+        if (typeDefinition == null || typeDefinition.getId() == null) {
             return;
         }
 

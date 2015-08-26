@@ -20,10 +20,6 @@ package org.apache.chemistry.opencmis.commons;
 
 public final class SessionParameterDefaults {
 
-    // utility class
-    private SessionParameterDefaults() {
-    }
-
     public static final int CACHE_SIZE_OBJECTS = 1000;
     public static final int CACHE_TTL_OBJECTS = 2 * 60 * 60 * 1000;
     public static final int CACHE_SIZE_PATHTOID = 1000;
@@ -32,4 +28,8 @@ public final class SessionParameterDefaults {
     public static final int CACHE_SIZE_REPOSITORIES = 10;
     public static final int CACHE_SIZE_TYPES = 100;
     public static final int CACHE_SIZE_LINKS = 400;
+
+    // utility class
+    private SessionParameterDefaults() {
+    }
 }

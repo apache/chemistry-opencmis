@@ -76,11 +76,11 @@ public class AtomEntryWriter {
      * Constructor for objects.
      */
     public AtomEntryWriter(ObjectData object, CmisVersion cmisVersion, ContentStream contentStream) {
-        if ((object == null) || (object.getProperties() == null)) {
+        if (object == null || object.getProperties() == null) {
             throw new CmisInvalidArgumentException("Object and properties must not be null!");
         }
 
-        if ((contentStream != null) && (contentStream.getMimeType() == null)) {
+        if (contentStream != null && contentStream.getMimeType() == null) {
             throw new CmisInvalidArgumentException("Media type must be set if a stream is present!");
         }
 
@@ -143,7 +143,7 @@ public class AtomEntryWriter {
      * @throws IllegalArgumentException
      */
     public void write(OutputStream out) throws IOException {
-        XmlSerializer  writer = XMLUtils.createWriter(out);
+        XmlSerializer writer = XMLUtils.createWriter(out);
 
         // start doc
         XMLUtils.startXmlDocument(writer);
@@ -154,11 +154,10 @@ public class AtomEntryWriter {
         writer.attribute("", XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM);
         writer.attribute("", XMLConstants.PREFIX_CMIS, XMLConstants.NAMESPACE_CMIS);
         writer.attribute("", XMLConstants.PREFIX_RESTATOM, XMLConstants.NAMESPACE_RESTATOM);
-        
+
         if (contentStream != null && contentStream.getFileName() != null) {
-          writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY,XMLConstants.NAMESPACE_APACHE_CHEMISTRY); 
+            writer.attribute("", XMLConstants.PREFIX_APACHE_CHEMISTY, XMLConstants.NAMESPACE_APACHE_CHEMISTRY);
         }
-        
 
         // atom:id
         writeTag(writer, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_ID, "urn:uuid:00000000-0000-0000-0000-00000000000");

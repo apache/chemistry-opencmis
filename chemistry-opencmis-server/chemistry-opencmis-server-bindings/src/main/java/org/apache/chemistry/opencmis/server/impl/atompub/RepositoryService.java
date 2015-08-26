@@ -327,7 +327,7 @@ public class RepositoryService {
             feed.writeCollection(collectionUrl.toString(), null, "Types Collection", "");
 
             // write type entries
-            if ((typeList != null) && (typeList.getList() != null)) {
+            if (typeList != null && typeList.getList() != null) {
                 AtomEntry entry = new AtomEntry(feed.getWriter());
                 for (TypeDefinition type : typeList.getList()) {
                     writeTypeEntry(entry, type, null, repositoryId, baseUrl, false, context.getCmisVersion());
@@ -423,7 +423,7 @@ public class RepositoryService {
                 AtomEntry entry = new AtomEntry(feed.getWriter());
 
                 for (TypeDefinitionContainer container : typeTree) {
-                    if ((container != null) && (container.getTypeDefinition() != null)) {
+                    if (container != null && container.getTypeDefinition() != null) {
                         writeTypeEntry(entry, container.getTypeDefinition(), container.getChildren(), repositoryId,
                                 baseUrl, false, context.getCmisVersion());
                     }

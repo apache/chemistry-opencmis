@@ -56,7 +56,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
      */
     public boolean getBooleanParameter(HttpServletRequest request, String name, boolean def) {
         String value = getStringParameter(request, name);
-        if ((value == null) || (value.length() == 0)) {
+        if (value == null || value.length() == 0) {
             return def;
         }
 
@@ -68,7 +68,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
      */
     public Boolean getBooleanParameter(HttpServletRequest request, String name) {
         String value = getStringParameter(request, name);
-        if ((value == null) || (value.length() == 0)) {
+        if (value == null || value.length() == 0) {
             return null;
         }
 
@@ -92,7 +92,7 @@ public abstract class AbstractServiceCall implements ServiceCall {
      */
     public BigInteger getBigIntegerParameter(HttpServletRequest request, String name) {
         String value = getStringParameter(request, name);
-        if ((value == null) || (value.length() == 0)) {
+        if (value == null || value.length() == 0) {
             return null;
         }
 

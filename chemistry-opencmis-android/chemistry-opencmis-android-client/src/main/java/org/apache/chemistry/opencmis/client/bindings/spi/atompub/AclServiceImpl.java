@@ -38,6 +38,7 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         setSession(session);
     }
 
+    @Override
     public Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces,
             AclPropagation aclPropagation, ExtensionsData extension) {
 
@@ -59,10 +60,12 @@ public class AclServiceImpl extends AbstractAtomPubService implements AclService
         return result;
     }
 
+    @Override
     public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
         return getAclInternal(repositoryId, objectId, onlyBasicPermissions, extension);
     }
 
+    @Override
     public Acl setAcl(String repositoryId, String objectId, Acl aces) {
         AtomAcl acl = updateAcl(repositoryId, objectId, aces, AclPropagation.OBJECTONLY);
         Acl result = acl.getACL();

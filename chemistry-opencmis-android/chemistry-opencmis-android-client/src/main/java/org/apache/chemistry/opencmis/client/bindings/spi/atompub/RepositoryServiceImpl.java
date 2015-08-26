@@ -59,10 +59,12 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         setSession(session);
     }
 
+    @Override
     public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
         return getRepositoriesInternal(null);
     }
 
+    @Override
     public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
@@ -88,10 +90,12 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
         return getTypeDefinitionInternal(repositoryId, typeId);
     }
 
+    @Override
     public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
         TypeDefinitionListImpl result = new TypeDefinitionListImpl();
@@ -158,6 +162,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         return result;
     }
 
+    @Override
     public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension) {
         List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>();
@@ -192,7 +197,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
      * Adds type descendants level recursively.
      */
     private void addTypeDescendantsLevel(String repositoryId, AtomFeed feed, List<TypeDefinitionContainer> containerList) {
-        if ((feed == null) || (feed.getEntries().isEmpty())) {
+        if (feed == null || feed.getEntries().isEmpty()) {
             return;
         }
 
@@ -224,6 +229,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         }
     }
 
+    @Override
     public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         if (type == null) {
             throw new CmisInvalidArgumentException("Type definition must be set!");
@@ -246,6 +252,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         // post the new type definition
         Response resp = post(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
@@ -280,6 +287,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         return result;
     }
 
+    @Override
     public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
         if (type == null) {
             throw new CmisInvalidArgumentException("Type definition must be set!");
@@ -304,6 +312,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         // post the new type definition
         Response resp = put(new UrlBuilder(link), Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
@@ -338,6 +347,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         return result;
     }
 
+    @Override
     public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(Constants.PARAM_ID, typeId);

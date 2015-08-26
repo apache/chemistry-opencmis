@@ -50,6 +50,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         setSession(session);
     }
 
+    @Override
     public void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         // find the link
         String link = loadLink(repositoryId, objectId, Constants.REL_POLICIES, Constants.MEDIATYPE_FEED);
@@ -65,12 +66,14 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
 
         // post applyPolicy request
         post(url, Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
         });
     }
 
+    @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
         List<ObjectData> result = new ArrayList<ObjectData>();
@@ -110,6 +113,7 @@ public class PolicyServiceImpl extends AbstractAtomPubService implements PolicyS
         return result;
     }
 
+    @Override
     public void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension) {
         // we need a policy id
         if (policyId == null) {

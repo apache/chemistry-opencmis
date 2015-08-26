@@ -58,6 +58,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         setSession(session);
     }
 
+    @Override
     public void checkOut(String repositoryId, Holder<String> objectId, ExtensionsData extension,
             Holder<Boolean> contentCopied) {
         if ((objectId == null) || (objectId.getValue() == null) || (objectId.getValue().length() == 0)) {
@@ -79,6 +80,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
         // post move request
         Response resp = post(url, Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
@@ -109,6 +111,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         }
     }
 
+    @Override
     public void cancelCheckOut(String repositoryId, String objectId, ExtensionsData extension) {
         // find the link
         String link = loadLink(repositoryId, objectId, Constants.REL_SELF, Constants.MEDIATYPE_ENTRY);
@@ -127,6 +130,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         delete(new UrlBuilder(link));
     }
 
+    @Override
     public void checkIn(String repositoryId, Holder<String> objectId, Boolean major, Properties properties,
             ContentStream contentStream, String checkinComment, List<String> policies, Acl addAces, Acl removeAces,
             ExtensionsData extension) {
@@ -160,6 +164,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
 
         // update
         Response resp = put(url, Constants.MEDIATYPE_ENTRY, new Output() {
+            @Override
             public void write(OutputStream out) throws IOException {
                 entryWriter.write(out);
             }
@@ -210,6 +215,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         }
     }
 
+    @Override
     public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
             Boolean includeAllowableActions, ExtensionsData extension) {
         List<ObjectData> result = new ArrayList<ObjectData>();
@@ -260,6 +266,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
         return result;
     }
 
+    @Override
     public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
@@ -273,6 +280,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
     }
 
+    @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
 

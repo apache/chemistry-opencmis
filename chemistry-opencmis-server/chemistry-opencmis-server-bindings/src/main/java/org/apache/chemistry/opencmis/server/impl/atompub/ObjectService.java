@@ -701,7 +701,7 @@ public class ObjectService {
             Holder<String> objectIdHolder = new Holder<String>(objectId);
 
             try {
-                if ((checkin != null) && (checkin.booleanValue())) {
+                if (checkin != null && checkin.booleanValue()) {
                     if (stopBeforeService(service)) {
                         return;
                     }
@@ -862,7 +862,7 @@ public class ObjectService {
             if (result != null) {
                 AtomEntry entry = new AtomEntry(feed.getWriter());
                 for (BulkUpdateObjectIdAndChangeToken idAndToken : result) {
-                    if ((idAndToken == null) || (idAndToken.getId() == null)) {
+                    if (idAndToken == null || idAndToken.getId() == null) {
                         continue;
                     }
 

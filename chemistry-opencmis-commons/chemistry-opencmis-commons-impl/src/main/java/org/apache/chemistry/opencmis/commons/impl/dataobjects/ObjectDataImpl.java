@@ -168,7 +168,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
      * property is not set.
      */
     private Object getFirstValue(String id) {
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             return null;
         }
 

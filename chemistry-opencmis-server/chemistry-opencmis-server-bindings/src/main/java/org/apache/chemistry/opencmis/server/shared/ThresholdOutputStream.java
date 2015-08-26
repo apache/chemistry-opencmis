@@ -247,7 +247,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
                 return;
             }
 
-            if ((maxContentSize > -1) && (length + len > maxContentSize)) {
+            if (maxContentSize > -1 && length + len > maxContentSize) {
                 destroy(null);
                 throw new CmisConstraintException("Content too big!");
             }
@@ -536,7 +536,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
 
         @Override
         public int read(byte[] b, int off, int len) {
-            if ((pos >= bufSize) || (buf == null)) {
+            if (pos >= bufSize || buf == null) {
                 return -1;
             }
 

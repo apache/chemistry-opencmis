@@ -60,6 +60,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         setSession(session);
     }
 
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -135,6 +136,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
+    @Override
     public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -165,6 +167,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
+    @Override
     public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
         ObjectData result = null;
 
@@ -217,6 +220,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
+    @Override
     public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
             String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
@@ -247,6 +251,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
+    @Override
     public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includeRelativePathSegment, ExtensionsData extension) {
@@ -328,6 +333,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
         return result;
     }
 
+    @Override
     public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -404,7 +410,7 @@ public class NavigationServiceImpl extends AbstractAtomPubService implements Nav
      * Adds descendants level recursively.
      */
     private void addDescendantsLevel(String repositoryId, AtomFeed feed, List<ObjectInFolderContainer> containerList) {
-        if ((feed == null) || (feed.getEntries().isEmpty())) {
+        if (feed == null || feed.getEntries().isEmpty()) {
             return;
         }
 

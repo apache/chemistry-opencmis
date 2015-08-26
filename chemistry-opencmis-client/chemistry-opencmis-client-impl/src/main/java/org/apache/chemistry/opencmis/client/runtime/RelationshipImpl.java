@@ -60,7 +60,7 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
     @Override
     public ObjectId getSourceId() {
         String sourceId = getPropertyValue(PropertyIds.SOURCE_ID);
-        if ((sourceId == null) || (sourceId.length() == 0)) {
+        if (sourceId == null || sourceId.length() == 0) {
             return null;
         }
 
@@ -90,7 +90,7 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
     @Override
     public ObjectId getTargetId() {
         String targetId = getPropertyValue(PropertyIds.TARGET_ID);
-        if ((targetId == null) || (targetId.length() == 0)) {
+        if (targetId == null || targetId.length() == 0) {
             return null;
         }
 

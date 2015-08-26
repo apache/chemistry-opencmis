@@ -21,9 +21,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class XMLConstants {
 
-    private XMLConstants() {
-    }
-
     // namespaces
     public static final String NAMESPACE_CMIS = "http://docs.oasis-open.org/ns/cmis/core/200908/";
     public static final String NAMESPACE_ATOM = "http://www.w3.org/2005/Atom";
@@ -252,4 +249,7 @@ public final class XMLConstants {
     public static final String TAG_IDANDTOKEN_ID = "id";
     public static final String TAG_IDANDTOKEN_NEWID = "newId";
     public static final String TAG_IDANDTOKEN_CHANGETOKEN = "changeToken";
+
+    private XMLConstants() {
+    }
 }

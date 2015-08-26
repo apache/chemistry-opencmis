@@ -62,7 +62,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         List<Folder> parents = new ArrayList<Folder>();
 
         for (ObjectParentData p : bindingParents) {
-            if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
+            if (p == null || p.getObject() == null || p.getObject().getProperties() == null) {
                 // should not happen...
                 throw new CmisRuntimeException("Repository sent invalid data!");
             }
@@ -102,7 +102,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         List<String> paths = new ArrayList<String>();
 
         for (ObjectParentData p : bindingParents) {
-            if ((p == null) || (p.getObject() == null) || (p.getObject().getProperties() == null)) {
+            if (p == null || p.getObject() == null || p.getObject().getProperties() == null) {
                 // should not happen...
                 throw new CmisRuntimeException("Repository sent invalid data!");
             }
@@ -140,11 +140,11 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
         String objectId = getObjectId();
         Holder<String> objectIdHolder = new Holder<String>(objectId);
 
-        if ((sourceFolderId == null) || (sourceFolderId.getId() == null)) {
+        if (sourceFolderId == null || sourceFolderId.getId() == null) {
             throw new IllegalArgumentException("Source folder id must be set!");
         }
 
-        if ((targetFolderId == null) || (targetFolderId.getId() == null)) {
+        if (targetFolderId == null || targetFolderId.getId() == null) {
             throw new IllegalArgumentException("Target folder id must be set!");
         }
 
@@ -170,7 +170,7 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
     public void addToFolder(ObjectId folderId, boolean allVersions) {
         String objectId = getObjectId();
 
-        if ((folderId == null) || (folderId.getId() == null)) {
+        if (folderId == null || folderId.getId() == null) {
             throw new IllegalArgumentException("Folder Id must be set!");
         }
 

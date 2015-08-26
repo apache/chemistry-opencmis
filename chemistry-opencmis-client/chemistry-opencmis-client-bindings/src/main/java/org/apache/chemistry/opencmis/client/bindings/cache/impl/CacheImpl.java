@@ -300,7 +300,7 @@ public class CacheImpl implements Cache {
      * Creates a cache level object.
      */
     private CacheLevel createCacheLevel(int level) {
-        if ((level < 0) || (level >= levels.size())) {
+        if (level < 0 || level >= levels.size()) {
             throw new IllegalArgumentException("Cache level doesn't fit the configuration!");
         }
 

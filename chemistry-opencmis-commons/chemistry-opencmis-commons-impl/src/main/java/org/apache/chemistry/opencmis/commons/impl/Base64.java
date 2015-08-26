@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Base64 {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(Base64.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Base64.class);
 
     /* ******** P U B L I C F I E L D S ******** */
 

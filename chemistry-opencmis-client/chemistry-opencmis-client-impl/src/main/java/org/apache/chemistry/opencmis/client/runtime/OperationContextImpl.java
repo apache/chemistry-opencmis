@@ -158,7 +158,7 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
     @Override
     public final void setFilterString(String propertyFilter) {
-        if ((propertyFilter == null) || (propertyFilter.trim().length() == 0)) {
+        if (propertyFilter == null || propertyFilter.trim().length() == 0) {
             setFilter(null);
             return;
         }

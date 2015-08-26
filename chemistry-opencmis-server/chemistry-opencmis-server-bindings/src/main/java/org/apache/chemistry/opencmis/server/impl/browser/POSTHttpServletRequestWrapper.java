@@ -70,12 +70,12 @@ public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletR
             }
 
             String filenameControl = HttpUtils.getStringParameter(this, Constants.CONTROL_FILENAME);
-            if ((filenameControl) != null && (filenameControl.trim().length() > 0)) {
+            if (filenameControl != null && filenameControl.trim().length() > 0) {
                 filename = filenameControl;
             }
 
             String contentTypeControl = HttpUtils.getStringParameter(this, Constants.CONTROL_CONTENT_TYPE);
-            if ((contentTypeControl != null) && (contentTypeControl.trim().length() > 0)) {
+            if (contentTypeControl != null && contentTypeControl.trim().length() > 0) {
                 contentType = contentTypeControl;
             }
         } else if (isFormUrlencodedContent(request)) {

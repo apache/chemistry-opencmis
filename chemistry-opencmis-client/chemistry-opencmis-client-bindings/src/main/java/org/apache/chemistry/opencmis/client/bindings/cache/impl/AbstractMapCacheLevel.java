@@ -41,11 +41,11 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
     public Object get(String key) {
         Object value = fMap.get(key);
 
-        if ((value == null) && fFallbackEnabled) {
+        if (value == null && fFallbackEnabled) {
             value = fMap.get(fFallbackKey);
         }
 
-        if ((value == null) && fSingleValueEnabled) {
+        if (value == null && fSingleValueEnabled) {
             if (fMap.size() == 1) {
                 value = fMap.values().iterator().next();
             }
@@ -123,7 +123,7 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
         }
 
         String value = parameters.get(name);
-        if ((value == null) || (value.trim().length() == 0)) {
+        if (value == null || value.trim().length() == 0) {
             return defValue;
         }
 
@@ -150,7 +150,7 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
         }
 
         String value = parameters.get(name);
-        if ((value == null) || (value.trim().length() == 0)) {
+        if (value == null || value.trim().length() == 0) {
             return defValue;
         }
 
@@ -177,7 +177,7 @@ public abstract class AbstractMapCacheLevel implements CacheLevel {
         }
 
         String value = parameters.get(name);
-        if ((value == null) || (value.trim().length() == 0)) {
+        if (value == null || value.trim().length() == 0) {
             return defValue;
         }
 

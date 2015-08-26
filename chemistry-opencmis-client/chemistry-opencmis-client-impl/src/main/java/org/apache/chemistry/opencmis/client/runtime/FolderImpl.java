@@ -78,7 +78,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                 addAces, removeAces);
 
         // if no context is provided the object will not be fetched
-        if ((context == null) || (newId == null)) {
+        if (context == null || newId == null) {
             return null;
         }
 
@@ -100,7 +100,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                 addAces, removeAces);
 
         // if no context is provided the object will not be fetched
-        if ((context == null) || (newId == null)) {
+        if (context == null || newId == null) {
             return null;
         }
 
@@ -120,7 +120,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         ObjectId newId = getSession().createFolder(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
-        if ((context == null) || (newId == null)) {
+        if (context == null || newId == null) {
             return null;
         }
 
@@ -140,7 +140,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         ObjectId newId = getSession().createPolicy(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
-        if ((context == null) || (newId == null)) {
+        if (context == null || newId == null) {
             return null;
         }
 
@@ -160,7 +160,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
         ObjectId newId = getSession().createItem(properties, this, policies, addAces, removeAces);
 
         // if no context is provided the object will not be fetched
-        if ((context == null) || (newId == null)) {
+        if (context == null || newId == null) {
             return null;
         }
 
@@ -335,7 +335,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
 
         List<Tree<FileableCmisObject>> result = new ArrayList<Tree<FileableCmisObject>>();
         for (ObjectInFolderContainer oifc : bindingContainerList) {
-            if ((oifc.getObject() == null) || (oifc.getObject().getObject() == null)) {
+            if (oifc.getObject() == null || oifc.getObject().getObject() == null) {
                 // shouldn't happen ...
                 continue;
             }
@@ -396,7 +396,7 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
                         getPropertyQueryName(PropertyIds.PATH), false, IncludeRelationships.NONE, "cmis:none", false,
                         false, null);
 
-                if ((objectData.getProperties() != null) && (objectData.getProperties().getProperties() != null)) {
+                if (objectData.getProperties() != null && objectData.getProperties().getProperties() != null) {
                     PropertyData<?> pathProperty = objectData.getProperties().getProperties().get(PropertyIds.PATH);
 
                     if (pathProperty instanceof PropertyString) {

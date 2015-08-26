@@ -63,6 +63,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
 
     private static final String IGNORE_COOKIES = "ignoreCookies";
 
+    @Override
     protected DefaultHttpClient createHttpClient(UrlBuilder url, BindingSession session) {
         // set params
         HttpParams params = createDefaultHttpParams(session);
@@ -119,14 +120,17 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
         // build new socket factory
         return new LayeredSocketFactory() {
 
+            @Override
             public boolean isSecure(Socket sock) {
                 return true;
             }
 
+            @Override
             public Socket createSocket() throws IOException {
-                return (SSLSocket) sf.createSocket();
+                return sf.createSocket();
             }
 
+            @Override
             public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) sf.createSocket(socket, host, port, autoClose);
                 verify(hv, host, sslSocket);
@@ -134,6 +138,7 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
                 return sslSocket;
             }
 
+            @Override
             public Socket connectSocket(Socket sock, String host, int port, InetAddress localAddress, int localPort,
                     HttpParams params) throws IOException {
                 SSLSocket sslSocket = (SSLSocket) (sock != null ? sock : createSocket());
@@ -171,20 +176,25 @@ public class ApacheClientHttpInvoker extends AbstractApacheClientHttpInvoker {
      * A cookies spec factory that ignores cookies.
      */
     private static class IgnoreSpecFactory implements CookieSpecFactory {
+        @Override
         public CookieSpec newInstance(final HttpParams params) {
             return new CookieSpecBase() {
+                @Override
                 public int getVersion() {
                     return 0;
                 }
 
+                @Override
                 public List<Cookie> parse(Header header, CookieOrigin origin) throws MalformedCookieException {
                     return Collections.emptyList();
                 }
 
+                @Override
                 public List<Header> formatCookies(List<Cookie> cookies) {
                     return Collections.emptyList();
                 }
 
+                @Override
                 public Header getVersionHeader() {
                     return null;
                 }
