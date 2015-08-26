@@ -85,6 +85,13 @@ public interface Session extends Serializable {
     CmisBinding getBinding();
 
     /**
+     * Returns the session parameters that were used to create this session.
+     * 
+     * @return the session parameters, a unmodifiable Map, not {@code null}
+     */
+    Map<String, String> getSessionParameters();
+
+    /**
      * Returns the current default operation parameters for filtering, paging
      * and caching.
      * 

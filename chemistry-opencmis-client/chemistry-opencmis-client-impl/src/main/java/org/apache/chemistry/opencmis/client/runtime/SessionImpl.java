@@ -272,6 +272,11 @@ public class SessionImpl implements Session {
     }
 
     @Override
+    public Map<String, String> getSessionParameters() {
+        return Collections.unmodifiableMap(parameters);
+    }
+
+    @Override
     public void clear() {
         lock.writeLock().lock();
         try {
