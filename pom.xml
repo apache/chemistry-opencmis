@@ -40,10 +40,10 @@
     </organization>
 
     <url>http://chemistry.apache.org/java/</url>
-    
+
     <ciManagement>
-        <system>Hudson Zones Apache</system>
-        <url>http://hudson.zones.apache.org/hudson/view/Chemistry/</url>
+        <system>Apache Build Server</system>
+        <url>https://builds.apache.org/view/A-D/view/Chemistry/</url>
     </ciManagement>
     <inceptionYear>2009</inceptionYear>
     <description>
@@ -206,13 +206,13 @@
         <maven.compile.target>1.6</maven.compile.target>
         <docs.start.url>http://chemistry.apache.org/java/opencmis.html</docs.start.url>
         <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
-        <!--  
-            | Here we configure Maven documentation site (incl. Javadocs) deployment 
+        <!--
+            | Here we configure Maven documentation site (incl. Javadocs) deployment
             |
             | By default site is deployed to:
-            | https://svn.apache.org/repos/asf/chemistry/site/trunk/content/java/${site.label}/maven/ 
-            | where site.label = project.version 
-            
+            | https://svn.apache.org/repos/asf/chemistry/site/trunk/content/java/${site.label}/maven/
+            | where site.label = project.version
+
             | For details/changes see http://chemistry.apache.org/java/documentation-lifecycle.html
             |
             | Note: Site label (or any other property like site.staging.url) can be overriden on the command line to deploy to distinct location during site development
@@ -230,6 +230,9 @@
         <osgi.version>5.0.0</osgi.version>
         <felix.plugin.version>2.3.7</felix.plugin.version>
         <junit.version>4.11</junit.version>
+        <surefire.version>2.18.1</surefire.version>
+        <failsafe.version>2.18.1</failsafe.version>
+        <jacoco.version>0.7.5.201505241946</jacoco.version>
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
@@ -313,7 +316,7 @@
                     <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ssZ}</timestampFormat>
                 </configuration>
             </plugin>
-            <!-- Working, but not attached to the deployment. 
+            <!-- Working, but not attached to the deployment.
             Blocked on http://jira.codehaus.org/browse/MINSTALL-82
             <plugin>
                 <groupId>net.ju-n.maven.plugins</groupId>
@@ -436,7 +439,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14.1</version>
+                <version>${surefire.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -638,6 +646,36 @@
     </reporting>
 
     <profiles>
+        <profile>
+            <id>coverage</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!--
             Extending the default -Papache-release profile used *only*
             during releases

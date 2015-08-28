@@ -280,11 +280,11 @@ public abstract class AbstractConverterTest {
 
         LOG.debug(name + ": " + expected + " / " + actual);
 
-        if ((expected == null) && (actual == null)) {
+        if (expected == null && actual == null) {
             return;
         }
 
-        if ((expected == null) || (actual == null)) {
+        if (expected == null || actual == null) {
             fail("Data object is null! name: " + name + " / expected: " + expected + " / actual: " + actual);
         }
 
@@ -363,6 +363,35 @@ public abstract class AbstractConverterTest {
             } catch (Exception e) {
                 fail(e.toString());
             }
+        }
+    }
+
+    /**
+     * Compares two extensions.
+     */
+    protected void assertExtensionsEquals(List<CmisExtensionElement> expected, List<CmisExtensionElement> actual) {
+        if (expected == null && actual == null) {
+            return;
+        }
+
+        if (expected == null || actual == null) {
+            fail("Extension list is null! expected: " + expected + " / actual: " + actual);
+        }
+
+        assertEquals(expected.size(), actual.size());
+
+        int n = expected.size();
+        for (int i = 0; i < n; i++) {
+            CmisExtensionElement expectedElement = expected.get(0);
+            CmisExtensionElement actualElement = actual.get(0);
+
+            if (expectedElement == null || actualElement == null) {
+                fail("Extension element is null! expected: " + expectedElement + " / actual: " + actualElement);
+            }
+
+            assertEquals(expectedElement.getName(), actualElement.getName());
+            assertEquals(expectedElement.getValue(), actualElement.getValue());
+            assertExtensionsEquals(expectedElement.getChildren(), actualElement.getChildren());
         }
     }
 }

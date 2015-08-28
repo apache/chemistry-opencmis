@@ -24,8 +24,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +44,19 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderContainer;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
+import org.apache.chemistry.opencmis.commons.data.PropertyBoolean;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.data.PropertyDateTime;
+import org.apache.chemistry.opencmis.commons.data.PropertyDecimal;
+import org.apache.chemistry.opencmis.commons.data.PropertyHtml;
+import org.apache.chemistry.opencmis.commons.data.PropertyId;
+import org.apache.chemistry.opencmis.commons.data.PropertyInteger;
+import org.apache.chemistry.opencmis.commons.data.PropertyString;
+import org.apache.chemistry.opencmis.commons.data.PropertyUri;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
@@ -57,6 +72,8 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrincipalDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderContainerImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderDataImpl;
@@ -64,6 +81,14 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectInFolderList
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertiesImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyBooleanDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDateTimeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyDecimalDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyHtmlDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIdDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RenditionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderContainerType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisObjectInFolderListType;
@@ -85,8 +110,9 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
             ObjectDataImpl data11 = createObjectData(true, CmisVersion.CMIS_1_1, true, true);
             assertObjectData11(data11, true);
 
-            ObjectDataImpl data11j = createObjectData(true, CmisVersion.CMIS_1_1, true, false);
+            ObjectDataImpl data11j = createObjectData(true, CmisVersion.CMIS_1_1, true, true);
             assertJsonObjectData11(data11j);
+            assertJsonObjectData11Succinct(data11j);
         }
     }
 
@@ -372,7 +398,46 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
         ObjectData result = JSONConverter.convertObject((Map<String, Object>) json, typeCache);
 
         assertNotNull(result);
-        assertDataObjectsEquals("ObjectData", data, result, null);
+        assertDataObjectsEquals("ObjectData", data, result, Collections.singleton("getExtensions"));
+        assertExtensionsEquals(data.getExtensions(), result.getExtensions());
+    }
+
+    protected void assertJsonObjectData11Succinct(ObjectData data) throws Exception {
+        TypeCache typeCache = new TestTypeCache(data);
+
+        StringWriter sw = new StringWriter();
+
+        JSONObject jsonObject = JSONConverter.convert(data, typeCache, JSONConverter.PropertyMode.CHANGE, true,
+                DateTimeFormat.SIMPLE);
+        jsonObject.writeJSONString(sw);
+
+        // test toJSONString()
+        assertEquals(sw.toString(), jsonObject.toJSONString());
+
+        Object json = (new JSONParser()).parse(sw.toString());
+        assertTrue(json instanceof Map<?, ?>);
+        @SuppressWarnings("unchecked")
+        ObjectData result = JSONConverter.convertObject((Map<String, Object>) json, typeCache);
+
+        assertNotNull(result);
+
+        Set<String> ignoreMethods = new HashSet<String>();
+        ignoreMethods.add("getProperties");
+        ignoreMethods.add("getExtensions");
+
+        assertDataObjectsEquals("ObjectData", data, result, ignoreMethods);
+        assertExtensionsEquals(data.getExtensions(), result.getExtensions());
+
+        assertEquals(data.getProperties().getPropertyList().size(), result.getProperties().getPropertyList().size());
+
+        for (PropertyData<?> prop : data.getProperties().getPropertyList()) {
+            assertTrue(result.getProperties().getProperties().containsKey(prop.getId()));
+
+            Object value = data.getProperties().getProperties().get(prop.getId()).getFirstValue();
+            if (value instanceof String) {
+                assertEquals(value, result.getProperties().getProperties().get(prop.getId()).getFirstValue());
+            }
+        }
     }
 
     protected void assertObjectList(ObjectList children1, ObjectInFolderList children2) throws Exception {
@@ -461,5 +526,71 @@ public class ObjectConvertTest extends AbstractXMLConverterTest {
 
         assertNotNull(result);
         assertDataObjectsEquals("ObjectContainer", container, result, null);
+    }
+
+    private static class TestTypeCache implements TypeCache {
+
+        private DocumentTypeDefinitionImpl objectType;
+
+        public TestTypeCache(ObjectData data) {
+            objectType = new DocumentTypeDefinitionImpl();
+
+            for (PropertyData<?> prop : data.getProperties().getPropertyList()) {
+                MutablePropertyDefinition<?> propDef;
+
+                if (prop instanceof PropertyString) {
+                    propDef = new PropertyStringDefinitionImpl();
+                } else if (prop instanceof PropertyId) {
+                    propDef = new PropertyIdDefinitionImpl();
+                } else if (prop instanceof PropertyBoolean) {
+                    propDef = new PropertyBooleanDefinitionImpl();
+                } else if (prop instanceof PropertyInteger) {
+                    propDef = new PropertyIntegerDefinitionImpl();
+                } else if (prop instanceof PropertyDateTime) {
+                    propDef = new PropertyDateTimeDefinitionImpl();
+                } else if (prop instanceof PropertyDecimal) {
+                    propDef = new PropertyDecimalDefinitionImpl();
+                } else if (prop instanceof PropertyHtml) {
+                    propDef = new PropertyHtmlDefinitionImpl();
+                } else if (prop instanceof PropertyUri) {
+                    propDef = new PropertyUriDefinitionImpl();
+                } else {
+                    throw new IllegalArgumentException("Invalid data type!");
+                }
+
+                propDef.setId(prop.getId());
+                propDef.setDisplayName(prop.getDisplayName());
+                propDef.setLocalName(prop.getLocalName());
+                propDef.setQueryName(prop.getQueryName());
+
+                objectType.addPropertyDefinition(propDef);
+            }
+        }
+
+        @Override
+        public TypeDefinition getTypeDefinition(String typeId) {
+            if ("cmis:folder".equals(typeId)) {
+                return new FolderTypeDefinitionImpl();
+            } else if ("cmis:document".equals(typeId)) {
+                return new DocumentTypeDefinitionImpl();
+            } else {
+                return objectType;
+            }
+        }
+
+        @Override
+        public TypeDefinition reloadTypeDefinition(String typeId) {
+            return null;
+        }
+
+        @Override
+        public TypeDefinition getTypeDefinitionForObject(String objectId) {
+            return null;
+        }
+
+        @Override
+        public PropertyDefinition<?> getPropertyDefinition(String propId) {
+            return null;
+        }
     }
 }

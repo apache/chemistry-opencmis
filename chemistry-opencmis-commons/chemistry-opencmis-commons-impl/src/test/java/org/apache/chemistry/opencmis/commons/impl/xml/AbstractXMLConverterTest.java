@@ -103,6 +103,7 @@ public abstract class AbstractXMLConverterTest extends AbstractConverterTest {
     /**
      * Sets up the schema.
      */
+    @Override
     @Before
     public void init() throws Exception {
         super.init();

@@ -19,7 +19,12 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -116,6 +121,26 @@ public class QueryStatementTest {
         st = new QueryStatementImpl(session, query);
         st.setId(1, new ObjectIdImpl("123"));
         assertEquals("SELECT * FROM cmis:document WHERE abc:id = '123'", st.toQueryString());
+
+        // URIs
+        try {
+            query = "SELECT * FROM cmis:document WHERE abc:uri = ?";
+            st = new QueryStatementImpl(session, query);
+            st.setUri(1, new URI("http://apache.org/test"));
+            assertEquals("SELECT * FROM cmis:document WHERE abc:uri = 'http://apache.org/test'", st.toQueryString());
+        } catch (URISyntaxException e) {
+            fail(e.toString());
+        }
+
+        // URLs
+        try {
+            query = "SELECT * FROM cmis:document WHERE abc:url = ?";
+            st = new QueryStatementImpl(session, query);
+            st.setUrl(1, new URL("http://apache.org/test"));
+            assertEquals("SELECT * FROM cmis:document WHERE abc:url = 'http://apache.org/test'", st.toQueryString());
+        } catch (MalformedURLException e) {
+            fail(e.toString());
+        }
 
         // booleans
         query = "SELECT * FROM cmis:document WHERE abc:bool = ?";
