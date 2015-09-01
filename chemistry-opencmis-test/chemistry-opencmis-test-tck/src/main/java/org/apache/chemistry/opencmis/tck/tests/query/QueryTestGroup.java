@@ -38,6 +38,7 @@ public class QueryTestGroup extends AbstractSessionTestGroup {
         addTest(new QueryForObject());
         addTest(new QueryLikeTest());
         addTest(new QueryInFolderTest());
+        addTest(new InvalidQueryTest());
         addTest(new ContentChangesSmokeTest());
     }
 }
