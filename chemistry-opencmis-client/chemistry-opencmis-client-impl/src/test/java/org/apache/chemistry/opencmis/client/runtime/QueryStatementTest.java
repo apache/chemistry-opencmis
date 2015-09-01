@@ -99,6 +99,10 @@ public class QueryStatementTest {
         st = new QueryStatementImpl(session, query);
         st.setStringContains(1, "John's");
         assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('John\\\\\\'s')", st.toQueryString());
+        st.setStringContains(1, "John'sPresentation-Version2");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('John\\\\\\'sPresentation\\\\-Version2')", st.toQueryString());
+        st.setStringContains(1, "search\\'");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('search\\\\\\\\\\\\\\'')", st.toQueryString());
         st.setStringContains(1, "foo -bar");
         assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo -bar')", st.toQueryString());
         st.setStringContains(1, "foo*");
@@ -108,13 +112,13 @@ public class QueryStatementTest {
         st.setStringContains(1, "foo\\-bar");
         assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\-bar')", st.toQueryString());
         st.setStringContains(1, "foo\\*");
-        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\*')", st.toQueryString());
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\\\\\*')", st.toQueryString());
         st.setStringContains(1, "foo\\?");
-        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\?')", st.toQueryString());
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('foo\\\\\\\\?')", st.toQueryString());
         st.setStringContains(1, "\"Cool\"");
-        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('\\\\\\\"Cool\\\\\\\"')", st.toQueryString());
-        st.setStringContains(1, "c:\\MyDcuments");
-        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('c:\\\\MyDcuments')", st.toQueryString());
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('\\\\\"Cool\\\\\"')", st.toQueryString());
+        st.setStringContains(1, "c:\\MyDocuments");
+        assertEquals("SELECT * FROM cmis:document WHERE CONTAINS('c:\\\\\\\\MyDocuments')", st.toQueryString());
 
         // ids
         query = "SELECT * FROM cmis:document WHERE abc:id = ?";

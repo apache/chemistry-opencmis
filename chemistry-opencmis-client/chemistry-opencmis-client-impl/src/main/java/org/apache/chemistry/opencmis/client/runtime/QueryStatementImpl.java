@@ -643,9 +643,7 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     }
 
     private static String escapeContains(String str) {
-        StringBuilder sb = new StringBuilder(str.length() + 16);
-
-        sb.append('\'');
+        StringBuilder sb = new StringBuilder(str.length() + 64);
 
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -653,15 +651,22 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
             if (c == '\\') {
                 sb.append('\\');
             } else if (c == '\'' || c == '\"') {
-                sb.append("\\\\\\");
+                sb.append('\\');
+            } else if (c == '-') {
+                if (i > 0) {
+                    char cb = str.charAt(i - 1);
+                    if (cb == '\\') {
+                        sb.deleteCharAt(sb.length() - 1);
+                    } else if (cb != ' ') {
+                        sb.append('\\');
+                    }
+                }
             }
 
             sb.append(c);
         }
 
-        sb.append('\'');
-
-        return sb.toString();
+        return escape(sb.toString());
     }
 
     private static String convert(Date date) {
