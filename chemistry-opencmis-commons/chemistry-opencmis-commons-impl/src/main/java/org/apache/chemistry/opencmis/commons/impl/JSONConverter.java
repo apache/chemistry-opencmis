@@ -1149,7 +1149,9 @@ public final class JSONConverter {
         if (object.getAcl() != null && object.getAcl().getAces() != null && propertyMode != PropertyMode.QUERY) {
             result.put(JSON_OBJECT_ACL, convert(object.getAcl()));
         }
-        setIfNotNull(JSON_OBJECT_EXACT_ACL, object.isExactAcl(), result);
+        if (propertyMode != PropertyMode.QUERY) {
+            setIfNotNull(JSON_OBJECT_EXACT_ACL, object.isExactAcl(), result);
+        }
 
         // policy ids
         if (object.getPolicyIds() != null && object.getPolicyIds().getPolicyIds() != null
