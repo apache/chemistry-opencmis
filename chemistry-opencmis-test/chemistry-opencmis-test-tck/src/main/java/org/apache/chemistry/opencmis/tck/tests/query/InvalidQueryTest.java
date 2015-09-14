@@ -25,8 +25,10 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 
 public class InvalidQueryTest extends AbstractQueryTest {
 
@@ -50,8 +52,15 @@ public class InvalidQueryTest extends AbstractQueryTest {
             try {
                 doQuery(session, "SELECT * FROM cmis:document");
                 addResult(createResult(WARNING, "Query capability is set to 'none' but calling query() works."));
-            } catch (CmisNotSupportedException e) {
+            } catch (CmisNotSupportedException nse) {
                 // excepted
+            } catch (CmisObjectNotFoundException onfe) {
+                // excepted for AtomPub
+                if (getBinding() != BindingType.ATOMPUB) {
+                    addResult(createResult(FAILURE,
+                            "Query capability is set to 'none' but calling query() throws an exception, which is not a notSupported exception("
+                                    + onfe.toString() + ").", onfe, false));
+                }
             } catch (Exception ex) {
                 addResult(createResult(FAILURE,
                         "Query capability is set to 'none' but calling query() throws an exception, which is not a notSupported exception("
