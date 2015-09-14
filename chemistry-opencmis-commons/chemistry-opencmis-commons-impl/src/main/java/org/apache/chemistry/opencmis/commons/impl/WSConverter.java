@@ -296,6 +296,15 @@ public final class WSConverter {
         }
     }
 
+    private static DatatypeFactory datatypeFactory;
+    static {
+        try {
+            datatypeFactory = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException e) {
+            throw new RuntimeException("Cannot get a DatatypeFactory instance!", e);
+        }
+    }
+
     /**
      * Private constructor.
      */
@@ -2194,16 +2203,9 @@ public final class WSConverter {
             return null;
         }
 
-        DatatypeFactory df;
-        try {
-            df = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            throw new CmisRuntimeException("Convert exception: " + e.getMessage(), e);
-        }
-
         List<XMLGregorianCalendar> result = new ArrayList<XMLGregorianCalendar>();
         for (GregorianCalendar cal : calendar) {
-            result.add(df.newXMLGregorianCalendar(cal));
+            result.add(datatypeFactory.newXMLGregorianCalendar(cal));
         }
 
         return result;
@@ -2217,14 +2219,7 @@ public final class WSConverter {
             return null;
         }
 
-        DatatypeFactory df;
-        try {
-            df = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            throw new CmisRuntimeException("Convert exception: " + e.getMessage(), e);
-        }
-
-        return df.newXMLGregorianCalendar(calendar);
+        return datatypeFactory.newXMLGregorianCalendar(calendar);
     }
 
     /**
@@ -2838,7 +2833,7 @@ public final class WSConverter {
         }
         target.setExtensions(null);
 
-        if ((source == null) || (source.value == null)) {
+        if (source == null || source.value == null) {
             return;
         }
 
