@@ -44,6 +44,8 @@ import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
  */
 public class BrowserCallContextImpl extends CallContextImpl {
 
+    private static final long serialVersionUID = 1L;
+    
     private CmisService service;
     private String objectId;
     private String[] pathFragments;

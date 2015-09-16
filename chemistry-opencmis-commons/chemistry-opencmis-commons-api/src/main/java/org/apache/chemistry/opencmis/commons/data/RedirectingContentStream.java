@@ -22,7 +22,7 @@ package org.apache.chemistry.opencmis.commons.data;
  * Content stream redirecting to another location. (AtomPub binding and Browser
  * binding server only.)
  */
-public interface RedirectingContentStream {
+public interface RedirectingContentStream extends ContentStream {
 
     /**
      * Returns the HTTP status code, for example 301 (moved permanently) or 307
