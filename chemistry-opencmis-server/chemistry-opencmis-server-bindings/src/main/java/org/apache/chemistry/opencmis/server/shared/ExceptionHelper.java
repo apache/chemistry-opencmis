@@ -28,12 +28,27 @@ import org.w3c.dom.Node;
 
 public final class ExceptionHelper {
 
-    public static final String STACK_TRACE_PROPERTY = "org.apache.chemistry.opencmis.stacktrace.disable";
+    /**
+     * System property to enable stack traces in CMIS exceptions.
+     */
+    public static final String ENABLE_STACK_TRACE_PROPERTY = "org.apache.chemistry.opencmis.stacktrace.enable";
+
+    /**
+     * System property to disable stack traces in CMIS exceptions. It's only
+     * here for legacy reasons and should not be used.
+     * 
+     * If this system property is set it takes precedence over
+     * {@link ExceptionHelper#ENABLE_STACK_TRACE_PROPERTY} for backwards
+     * compatibility.
+     */
+    @Deprecated
+    public static final String DISABLE_STACK_TRACE_PROPERTY = "org.apache.chemistry.opencmis.stacktrace.disable";
 
     private static final boolean SEND_STACK_TRACE;
 
     static {
-        SEND_STACK_TRACE = System.getProperty(STACK_TRACE_PROPERTY) == null;
+        SEND_STACK_TRACE = Boolean.parseBoolean(System.getProperty(ENABLE_STACK_TRACE_PROPERTY, "false"))
+                && System.getProperty(DISABLE_STACK_TRACE_PROPERTY) == null;
     }
 
     private ExceptionHelper() {
@@ -47,7 +62,7 @@ public final class ExceptionHelper {
             return null;
         }
 
-        StringWriter sw = new StringWriter();
+        StringWriter sw = new StringWriter(512);
         PrintWriter pw = new PrintWriter(sw);
 
         t.printStackTrace(pw);
