@@ -153,7 +153,7 @@ public class NavigationService {
             }
 
             if (folderInfo.supportsPolicies()) {
-                feed.writeAclLink(compileUrl(baseUrl, RESOURCE_POLICIES, folderInfo.getId()));
+                feed.writePoliciesLink(compileUrl(baseUrl, RESOURCE_POLICIES, folderInfo.getId()));
             }
 
             if (folderInfo.supportsRelationships()) {
