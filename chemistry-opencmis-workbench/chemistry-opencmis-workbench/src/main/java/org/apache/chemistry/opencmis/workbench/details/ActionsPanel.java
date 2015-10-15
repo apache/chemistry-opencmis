@@ -36,6 +36,7 @@ import org.apache.chemistry.opencmis.workbench.actions.CopyPanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteContentStreamPanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeletePanel;
 import org.apache.chemistry.opencmis.workbench.actions.DeleteTreePanel;
+import org.apache.chemistry.opencmis.workbench.actions.DownloadPanel;
 import org.apache.chemistry.opencmis.workbench.actions.MovePanel;
 import org.apache.chemistry.opencmis.workbench.actions.PropertyUpdatePanel;
 import org.apache.chemistry.opencmis.workbench.actions.RemoveObjectFromFolderPanel;
@@ -67,6 +68,7 @@ public class ActionsPanel extends JPanel implements ObjectListener {
     private AclUpdatePanel aclUpdatePanel;
     private ApplyPolicyPanel applyPolicyPanel;
     private RemovePolicyPanel removePolicyPanel;
+    private DownloadPanel downloadPanel;
 
     public ActionsPanel(ClientModel model) {
         super();
@@ -116,6 +118,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
                 deleteContentStreamPanel.setObject(object);
                 deleteContentStreamPanel.setVisible(deleteContentStreamPanel.isAllowed());
+
+                downloadPanel.setObject(object);
+                downloadPanel.setVisible(downloadPanel.isAllowed());
 
                 addObjectToFolderPanel.setObject(object);
                 addObjectToFolderPanel.setVisible(addObjectToFolderPanel.isAllowed());
@@ -171,6 +176,9 @@ public class ActionsPanel extends JPanel implements ObjectListener {
 
         deleteContentStreamPanel = new DeleteContentStreamPanel(model);
         add(deleteContentStreamPanel);
+
+        downloadPanel = new DownloadPanel(model);
+        add(downloadPanel);
 
         addObjectToFolderPanel = new AddObjectToFolderPanel(model);
         add(addObjectToFolderPanel);
