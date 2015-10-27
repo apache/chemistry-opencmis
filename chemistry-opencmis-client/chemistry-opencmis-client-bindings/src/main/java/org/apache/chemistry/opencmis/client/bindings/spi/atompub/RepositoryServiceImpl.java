@@ -74,10 +74,6 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
             throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
         }
 
-        if (repositoryInfos.size() == 1) {
-            return repositoryInfos.get(0);
-        }
-
         // find the repository
         for (RepositoryInfo info : repositoryInfos) {
             if (info.getId() == null) {
