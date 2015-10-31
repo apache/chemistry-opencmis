@@ -230,7 +230,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
             // create stream factory
             TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(getServiceFactory(),
-                    pathFragments.length > 0 ? pathFragments[0] : null);
+                    pathFragments.length > 0 ? pathFragments[0] : null, request);
 
             // check HTTP method
             if (METHOD_GET.equals(method)) {

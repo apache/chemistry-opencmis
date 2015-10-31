@@ -109,7 +109,8 @@ public abstract class AbstractService {
             throw new CmisRuntimeException("Server configuration issue. CMIS version not set!");
         }
 
-        TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(factory, repositoryId);
+        TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(factory, repositoryId,
+                request);
         CallContextImpl context = new CallContextImpl(CallContext.BINDING_WEBSERVICES, cmisVersion, repositoryId,
                 servletContext, request, response, factory, streamFactoy);
 

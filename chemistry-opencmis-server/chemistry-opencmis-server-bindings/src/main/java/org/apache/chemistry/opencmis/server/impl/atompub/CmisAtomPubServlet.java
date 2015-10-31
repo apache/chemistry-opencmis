@@ -180,7 +180,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
             // create stream factory
             TempStoreOutputStreamFactory streamFactoy = TempStoreOutputStreamFactory.newInstance(getServiceFactory(),
-                    pathFragments.length > 0 ? pathFragments[0] : null);
+                    pathFragments.length > 0 ? pathFragments[0] : null, request);
 
             // treat HEAD requests
             if (METHOD_HEAD.equals(request.getMethod())) {

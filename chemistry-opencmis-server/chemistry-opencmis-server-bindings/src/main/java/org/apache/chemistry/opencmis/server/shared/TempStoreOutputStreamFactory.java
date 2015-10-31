@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.server.shared;
 
 import java.io.File;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 
@@ -30,19 +32,21 @@ public class TempStoreOutputStreamFactory {
 
     private CmisServiceFactory factory;
     private String repositoryId;
+    private HttpServletRequest request;
 
     private File tempDir;
     private int memoryThreshold;
     private long maxContentSize;
     private boolean encrypt;
 
-    protected TempStoreOutputStreamFactory(CmisServiceFactory factory, String repositoryId) {
+    protected TempStoreOutputStreamFactory(CmisServiceFactory factory, String repositoryId, HttpServletRequest request) {
         this.factory = factory;
         this.repositoryId = repositoryId;
         this.tempDir = factory.getTempDirectory();
         this.memoryThreshold = factory.getMemoryThreshold();
         this.maxContentSize = factory.getMaxContentSize();
         this.encrypt = factory.encryptTempFiles();
+        this.request = request;
     }
 
     protected TempStoreOutputStreamFactory(File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
@@ -62,9 +66,13 @@ public class TempStoreOutputStreamFactory {
      *            the CmisService object factory
      * @param repositoryId
      *            the repository ID
+     * @param request
+     *            the HTTP request object or {@code null} if such an object is
+     *            not available
      */
-    public static TempStoreOutputStreamFactory newInstance(CmisServiceFactory factory, String repositoryId) {
-        return new TempStoreOutputStreamFactory(factory, repositoryId);
+    public static TempStoreOutputStreamFactory newInstance(CmisServiceFactory factory, String repositoryId,
+            HttpServletRequest request) {
+        return new TempStoreOutputStreamFactory(factory, repositoryId, request);
     }
 
     /**
@@ -97,6 +105,8 @@ public class TempStoreOutputStreamFactory {
 
         if (stream == null) {
             stream = new ThresholdOutputStream(tempDir, memoryThreshold, maxContentSize, encrypt);
+        } else if (stream instanceof RequestAwareTempStoreOutputStream) {
+            ((RequestAwareTempStoreOutputStream) stream).setHttpServletRequest(request);
         }
 
         return stream;

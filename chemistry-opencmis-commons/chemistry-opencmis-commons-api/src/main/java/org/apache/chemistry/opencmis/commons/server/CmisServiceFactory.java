@@ -90,8 +90,8 @@ public interface CmisServiceFactory {
     long getMaxContentSize();
 
     /**
-     * Returns a {@link TempStoreOutputStream} object for the given
-     * {@link CallContext}.
+     * Returns a {@link TempStoreOutputStream} object for the given repository
+     * ID.
      * 
      * This method is only called for the AtomPub and the Browser binding
      * requests. The Web Services binding always used temporary files (see
