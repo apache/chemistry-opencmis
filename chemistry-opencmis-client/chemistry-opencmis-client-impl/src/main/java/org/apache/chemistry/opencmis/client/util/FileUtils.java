@@ -18,15 +18,11 @@
  */
 package org.apache.chemistry.opencmis.client.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,10 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
-import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 
 /**
  * A set of utility methods that simplify file and folder operations.
@@ -126,25 +119,17 @@ public final class FileUtils {
         Folder parentFolder = getFolder(parentIdOrPath, session);
 
         String name = file.getName();
-        String mimetype = MimeTypes.getMIMEType(file);
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
         properties.put(PropertyIds.NAME, name);
 
-        InputStream stream = new FileInputStream(file);
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(file.length()), mimetype, stream);
+        ContentStream contentStream = ContentStreamUtils.createFileContentStream(name, file);
 
         try {
             return parentFolder.createDocument(properties, contentStream, versioningState);
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ioe) {
-                    throw new CmisRuntimeException("Cannot close source stream!", ioe);
-                }
-            }
+            IOUtils.closeQuietly(contentStream);
         }
     }
 
@@ -177,16 +162,13 @@ public final class FileUtils {
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
         properties.put(PropertyIds.NAME, name);
 
-        byte[] contentBytes = new byte[0];
-        if (content != null) {
-            contentBytes = IOUtils.toUTF8Bytes(content);
+        ContentStream contentStream = ContentStreamUtils.createTextContentStream(name, content);
+
+        try {
+            return parentFolder.createDocument(properties, contentStream, versioningState);
+        } finally {
+            IOUtils.closeQuietly(contentStream);
         }
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(contentBytes);
-        ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(contentBytes.length),
-                "text/plain", bais);
-
-        return parentFolder.createDocument(properties, contentStream, versioningState);
     }
 
     /**
