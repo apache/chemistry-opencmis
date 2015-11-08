@@ -203,8 +203,6 @@
 
 
 =======================================================================
-- Groovy (http://groovy.codehaus.org/)
-  License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - ZXing Core (http://nexus.sonatype.org/oss-repository-hosting.html/core)
   License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
 - ZXing Java SE extensions (http://nexus.sonatype.org/oss-repository-hosting.html/javase)
