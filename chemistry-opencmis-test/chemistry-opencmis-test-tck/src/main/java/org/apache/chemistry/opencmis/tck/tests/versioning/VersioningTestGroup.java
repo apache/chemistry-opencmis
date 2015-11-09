@@ -37,5 +37,6 @@ public class VersioningTestGroup extends AbstractSessionTestGroup {
         addTest(new VersionDeleteTest());
         addTest(new VersioningStateCreateTest());
         addTest(new CheckedOutTest());
+        addTest(new LatestAccessibleStateIdTest());
     }
 }

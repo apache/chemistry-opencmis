@@ -158,6 +158,11 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return result;
     }
 
+    @Override
+    public String getLatestAccessibleStateId() {
+        return getPropertyValue(PropertyIds.LATEST_ACCESSIBLE_STATE_ID);
+    }
+
     // operations
 
     @Override

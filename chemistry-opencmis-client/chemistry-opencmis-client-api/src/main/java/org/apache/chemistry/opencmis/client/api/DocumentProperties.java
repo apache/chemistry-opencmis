@@ -220,4 +220,15 @@ public interface DocumentProperties {
      * @cmis Extension
      */
     List<ContentStreamHash> getContentStreamHashes();
+
+    /**
+     * Returns the latest accessible state ID or {@code null} if the repository
+     * does not support the Latest State Identifier feature extension (CMIS
+     * property {@code cmis:latestAccessibleStateId }).
+     * 
+     * @return the latest accessible state ID or {@code null}
+     * 
+     * @cmis Extension
+     */
+    String getLatestAccessibleStateId();
 }

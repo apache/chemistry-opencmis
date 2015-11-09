@@ -74,6 +74,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
     private JTextField nameField;
     private JTextField idField;
+    private JTextField latestAccessibleStateIdField;
     private JTextField typeField;
     private BaseTypeLabel basetypeField;
     private InfoList secondaryTypesList;
@@ -118,6 +119,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 if (object == null) {
                     nameField.setText("");
                     idField.setText("");
+                    latestAccessibleStateIdField.setText("");
                     typeField.setText("");
                     basetypeField.setValue(null);
                     secondaryTypesList.removeAll();
@@ -135,6 +137,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     try {
                         nameField.setText(object.getName());
                         idField.setText(object.getId());
+
                         typeField.setText(object.getType().getId());
                         basetypeField.setValue(object.getBaseTypeId());
 
@@ -151,6 +154,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         if (object instanceof Document) {
                             Document doc = (Document) object;
 
+                            latestAccessibleStateIdField.setText(doc.getLatestAccessibleStateId());
+
                             try {
                                 versionLabelField.setText(doc.getVersionLabel());
                             } catch (Exception e) {
@@ -165,6 +170,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                                 pwcField.setText("(not checked out)");
                             }
                         } else {
+                            latestAccessibleStateIdField.setText("");
                             pwcField.setText("");
                             versionLabelField.setText("");
                         }
@@ -250,7 +256,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         setupGUI();
 
         nameField = addLine("Name:", true);
-        idField = addId("Id:");
+        idField = addId("Object ID:");
+        latestAccessibleStateIdField = addId("Latest State ID:");
         typeField = addLine("Type:");
         basetypeField = addBaseTypeLabel("Base Type:");
         secondaryTypesList = addComponent("Secondary Types:", new InfoList());
