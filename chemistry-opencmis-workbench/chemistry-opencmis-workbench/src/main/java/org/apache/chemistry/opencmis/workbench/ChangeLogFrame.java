@@ -24,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -32,7 +34,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -155,6 +159,36 @@ public class ChangeLogFrame extends JFrame {
             setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
 
             setFillsViewportHeight(true);
+
+            final JPopupMenu popup = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Copy to clipboard");
+            popup.add(menuItem);
+
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ClientHelper.copyTableToClipboard(ChangeLogTable.this);
+                }
+            });
+
+            addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    maybeShowPopup(e);
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    maybeShowPopup(e);
+                }
+
+                private void maybeShowPopup(MouseEvent e) {
+                    if (e.isPopupTrigger()) {
+                        popup.show(e.getComponent(), e.getX(), e.getY());
+                    }
+                }
+            });
         }
 
         public void setChangeEvents(List<ChangeEvent> changeEvents) {
