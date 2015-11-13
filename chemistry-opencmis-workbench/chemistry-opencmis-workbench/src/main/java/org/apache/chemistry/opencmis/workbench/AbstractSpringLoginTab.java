@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.text.NumberFormat;
 
 import javax.swing.JFormattedTextField;
@@ -109,5 +110,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
         }
 
         layout.getConstraints(parent).setConstraint(SpringLayout.EAST, x);
+        layout.getConstraints(parent).setConstraint(SpringLayout.NORTH, y);
+        parent.setPreferredSize(new Dimension(x.getPreferredValue(), y.getPreferredValue()));
     }
 }

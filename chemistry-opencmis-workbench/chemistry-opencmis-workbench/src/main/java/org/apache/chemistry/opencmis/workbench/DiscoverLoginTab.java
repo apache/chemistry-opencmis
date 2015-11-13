@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -104,8 +105,34 @@ public class DiscoverLoginTab extends AbstractLoginTab {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+                    URL url = new URL(urlField.getText());
+
                     // read the endpoint document from URL
-                    CmisEndpointsDocument doc = reader.read(new URL(urlField.getText()));
+                    CmisEndpointsDocument doc = null;
+                    try {
+                        doc = reader.read(url);
+                    } catch (Exception re1) {
+                        // there was no endpoint document at this URL
+                        // try adding "cmis-endpoints.json" to the URL
+                        if (!urlField.getText().endsWith("/cmis-endpoints.json")) {
+                            String newUrl = urlField.getText();
+                            if (newUrl.endsWith("/")) {
+                                newUrl = newUrl + "cmis-endpoints.json";
+                            } else {
+                                newUrl = newUrl + "/cmis-endpoints.json";
+                            }
+
+                            try {
+                                doc = reader.read(new URL(newUrl));
+                                urlField.setText(newUrl);
+                            } catch (Exception re2) {
+                                // ignore second exception
+                                throw re1;
+                            }
+                        } else {
+                            throw re1;
+                        }
+                    }
 
                     // fill the table
                     ((CmisAuthenticationModel) authTable.getModel()).setCmisEndpointDocument(doc);
@@ -115,7 +142,7 @@ public class DiscoverLoginTab extends AbstractLoginTab {
                         authTable.setRowSelectionInterval(0, 0);
                     }
                 } catch (Exception ex) {
-                    ClientHelper.showError(DiscoverLoginTab.this, ex);
+                    ClientHelper.showError(null, ex);
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
@@ -179,8 +206,11 @@ public class DiscoverLoginTab extends AbstractLoginTab {
 
             setModel(new CmisAuthenticationModel());
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            setAutoResizeMode(AUTO_RESIZE_OFF);
             setAutoCreateRowSorter(true);
+
+            setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
+
+            setFillsViewportHeight(true);
 
             setDefaultRenderer(CmisAuthentication.class, new CmisAuthenticationRenderer());
 
@@ -188,6 +218,8 @@ public class DiscoverLoginTab extends AbstractLoginTab {
                 TableColumn column = getColumnModel().getColumn(i);
                 column.setPreferredWidth(WorkbenchScale.scaleInt(COLUMN_WIDTHS[i]));
             }
+
+            setPreferredScrollableViewportSize(new Dimension(Short.MAX_VALUE, getRowHeight() * 4));
 
             final JPopupMenu popup = new JPopupMenu();
 

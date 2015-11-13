@@ -436,6 +436,10 @@ public final class ClientHelper {
     }
 
     public static String encodeHtml(StringBuilder sb, String s) {
+        if (s == null) {
+            return "";
+        }
+
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == '<') {

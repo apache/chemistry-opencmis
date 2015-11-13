@@ -203,6 +203,15 @@ public class LoginDialog extends JDialog {
 
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         pack();
+
+        // if a login tab is too big...
+        if (loginTabs.getPreferredSize().height - loginTabs.getSize().height > 0) {
+            // ... resize the dialog
+            setPreferredSize(new Dimension(getSize().width, getSize().height
+                    + (loginTabs.getPreferredSize().height - loginTabs.getSize().height)));
+            pack();
+        }
+
         setLocationRelativeTo(null);
     }
 
