@@ -492,7 +492,7 @@ public class ObjectService {
             for (int i = 0; i < n; i++) {
                 String id = objectIds.get(i);
                 String changeToken = (changeTokens != null && changeTokens.size() > i ? changeTokens.get(i) : null);
-                if (changeToken.length() == 0) {
+                if (changeToken != null && changeToken.length() == 0) {
                     changeToken = null;
                 }
                 objectIdAndChangeToken.add(new BulkUpdateObjectIdAndChangeTokenImpl(id, changeToken));
