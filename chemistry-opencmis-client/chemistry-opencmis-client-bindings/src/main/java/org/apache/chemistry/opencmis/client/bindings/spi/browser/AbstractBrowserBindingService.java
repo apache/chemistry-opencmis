@@ -365,6 +365,8 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
             reader = new InputStreamReader(stream, charset);
             JSONParser parser = new JSONParser();
             obj = parser.parse(reader, containerFactory);
+        } catch (JSONParseException e) {
+            throw new CmisConnectionException("Parsing exception: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new CmisConnectionException("Parsing exception!", e);
         } finally {

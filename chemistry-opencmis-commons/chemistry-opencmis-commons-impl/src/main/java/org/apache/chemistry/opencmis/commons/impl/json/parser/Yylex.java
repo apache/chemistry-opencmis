@@ -519,7 +519,7 @@ class Yylex {
             case 25:
                 break;
             case 4: {
-                sb.delete(0, sb.length());
+                sb.setLength(0);
                 yybegin(STRING_BEGIN);
                 break;
             }

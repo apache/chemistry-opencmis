@@ -32,14 +32,15 @@ import java.util.Map;
  * 
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
-public class JSONObject extends LinkedHashMap<String, Object> implements Map<String, Object>, JSONAware, JSONStreamAware {
+public class JSONObject extends LinkedHashMap<String, Object> implements Map<String, Object>, JSONAware,
+        JSONStreamAware {
 
     private static final long serialVersionUID = 1;
 
     @Override
     public Object put(String key, Object value) {
         if (key == null) {
-            throw new NullPointerException("JSON key must not be null!");
+            throw new IllegalArgumentException("JSON key must not be null!");
         }
 
         return super.put(key, value);
@@ -105,6 +106,16 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
         }
 
         StringBuilder sb = new StringBuilder(1024);
+        addJSONString(map, sb);
+        return sb.toString();
+    }
+
+    public static void addJSONString(Map<String, Object> map, StringBuilder sb) {
+        if (map == null) {
+            sb.append("null");
+            return;
+        }
+
         boolean first = true;
 
         sb.append('{');
@@ -115,11 +126,9 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
                 sb.append(',');
             }
 
-            toJSONString(entry.getKey(), entry.getValue(), sb);
+            addJSONString(entry.getKey(), entry.getValue(), sb);
         }
         sb.append('}');
-
-        return sb.toString();
     }
 
     @Override
@@ -127,7 +136,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
         return toJSONString(this);
     }
 
-    private static String toJSONString(String key, Object value, StringBuilder sb) {
+    private static void addJSONString(String key, Object value, StringBuilder sb) {
         sb.append('\"');
         if (key == null) {
             sb.append("null");
@@ -138,8 +147,6 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
         sb.append('\"').append(':');
 
         sb.append(JSONValue.toJSONString(value));
-
-        return sb.toString();
     }
 
     @Override
@@ -149,7 +156,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
 
     public static String toString(String key, Object value) {
         StringBuilder sb = new StringBuilder(1024);
-        toJSONString(key, value, sb);
+        addJSONString(key, value, sb);
         return sb.toString();
     }
 

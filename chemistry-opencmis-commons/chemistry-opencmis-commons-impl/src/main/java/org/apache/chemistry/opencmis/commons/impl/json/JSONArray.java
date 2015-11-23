@@ -90,8 +90,18 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
             return "null";
         }
 
-        boolean first = true;
         StringBuilder sb = new StringBuilder(1024);
+        addJSONString(list, sb);
+        return sb.toString();
+    }
+
+    public static void addJSONString(List<Object> list, StringBuilder sb) {
+        if (list == null) {
+            sb.append("null");
+            return;
+        }
+
+        boolean first = true;
 
         sb.append('[');
         for (Object value : list) {
@@ -108,7 +118,6 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
             sb.append(JSONValue.toJSONString(value));
         }
         sb.append(']');
-        return sb.toString();
     }
 
     @Override

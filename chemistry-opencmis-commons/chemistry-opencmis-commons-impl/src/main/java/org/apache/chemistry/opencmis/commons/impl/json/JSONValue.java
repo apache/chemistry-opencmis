@@ -178,7 +178,7 @@ public final class JSONValue {
     }
 
     /**
-     * Convert an object to JSON text.
+     * Converts an object to JSON text.
      * <p>
      * If this object is a Map or a List, and it's also a JSONAware, JSONAware
      * will be considered firstly.
@@ -194,57 +194,81 @@ public final class JSONValue {
      * @return JSON text, or "null" if value is null or it's an NaN or an INF
      *         number.
      */
-    @SuppressWarnings("unchecked")
     public static String toJSONString(Object value) {
+        StringBuilder sb = new StringBuilder(1024);
+        addJSONString(value, sb);
+        return sb.toString();
+    }
+
+    /**
+     * Converts an object to JSON text and attach it the the given
+     * StringBuilder.
+     * 
+     * @see #toJSONString(Object)
+     */
+    @SuppressWarnings("unchecked")
+    public static void addJSONString(Object value, StringBuilder sb) {
         if (value == null) {
-            return "null";
+            sb.append("null");
+            return;
         }
 
         if (value instanceof String) {
-            return "\"" + escape((String) value) + "\"";
+            sb.append('\"');
+            escape((String) value, sb);
+            sb.append('\"');
+            return;
         }
 
         if (value instanceof Double) {
             if (((Double) value).isInfinite() || ((Double) value).isNaN()) {
-                return "null";
+                sb.append("null");
             } else {
-                return value.toString();
+                sb.append(value.toString());
             }
+            return;
         }
 
         if (value instanceof Float) {
             if (((Float) value).isInfinite() || ((Float) value).isNaN()) {
-                return "null";
+                sb.append("null");
             } else {
-                return value.toString();
+                sb.append(value.toString());
             }
+            return;
         }
 
         if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).toPlainString();
+            sb.append(((BigDecimal) value).toPlainString());
+            return;
         }
 
         if (value instanceof Number) {
-            return value.toString();
+            sb.append(value.toString());
+            return;
         }
 
         if (value instanceof Boolean) {
-            return value.toString();
+            sb.append(value.toString());
+            return;
         }
 
         if (value instanceof JSONAware) {
-            return ((JSONAware) value).toJSONString();
+            sb.append(((JSONAware) value).toJSONString());
+            return;
         }
 
         if (value instanceof Map) {
-            return JSONObject.toJSONString((Map<String, Object>) value);
+            JSONObject.addJSONString((Map<String, Object>) value, sb);
+            return;
         }
 
         if (value instanceof List) {
-            return JSONArray.toJSONString((List<Object>) value);
+            JSONArray.addJSONString((List<Object>) value, sb);
+            return;
         }
 
-        return value.toString();
+        sb.append(value.toString());
     }
 
     /**
@@ -270,7 +294,8 @@ public final class JSONValue {
      * @param sb
      */
     static void escape(String s, StringBuilder sb) {
-        for (int i = 0; i < s.length(); i++) {
+        final int n = s.length();
+        for (int i = 0; i < n; i++) {
             char ch = s.charAt(i);
             switch (ch) {
             case '"':

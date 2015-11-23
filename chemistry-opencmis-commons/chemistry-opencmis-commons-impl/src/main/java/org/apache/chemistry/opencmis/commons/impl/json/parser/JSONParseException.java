@@ -46,9 +46,35 @@ public class JSONParseException extends Exception {
     }
 
     public JSONParseException(int position, int errorType, Object unexpectedObject) {
+        super();
+
         this.position = position;
         this.errorType = errorType;
         this.unexpectedObject = unexpectedObject;
+    }
+
+    @Override
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder(128);
+
+        switch (errorType) {
+        case ERROR_UNEXPECTED_CHAR:
+            sb.append("Unexpected character (").append(unexpectedObject).append(") at position ").append(position)
+                    .append('.');
+            break;
+        case ERROR_UNEXPECTED_TOKEN:
+            sb.append("Unexpected token ").append(unexpectedObject).append(" at position ").append(position)
+                    .append('.');
+            break;
+        case ERROR_UNEXPECTED_EXCEPTION:
+            sb.append("Unexpected exception at position ").append(position).append(": ").append(unexpectedObject);
+            break;
+        default:
+            sb.append("Unkown error at position ").append(position).append('.');
+            break;
+        }
+
+        return sb.toString();
     }
 
     public int getErrorType() {
@@ -91,24 +117,6 @@ public class JSONParseException extends Exception {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(128);
-
-        switch (errorType) {
-        case ERROR_UNEXPECTED_CHAR:
-            sb.append("Unexpected character (").append(unexpectedObject).append(") at position ").append(position)
-                    .append('.');
-            break;
-        case ERROR_UNEXPECTED_TOKEN:
-            sb.append("Unexpected token ").append(unexpectedObject).append(" at position ").append(position)
-                    .append('.');
-            break;
-        case ERROR_UNEXPECTED_EXCEPTION:
-            sb.append("Unexpected exception at position ").append(position).append(": ").append(unexpectedObject);
-            break;
-        default:
-            sb.append("Unkown error at position ").append(position).append('.');
-            break;
-        }
-        return sb.toString();
+        return getMessage();
     }
 }
