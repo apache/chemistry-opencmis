@@ -206,19 +206,18 @@ public class ClientModel {
 
             if (selectedObject instanceof Folder) {
                 folderObject = selectedObject;
-            } else {
-                if (selectedObject instanceof FileableCmisObject) {
-                    List<Folder> parents = ((FileableCmisObject) selectedObject).getParents();
-                    if (isNotEmpty(parents)) {
-                        folderObject = parents.get(0);
-                    } else {
-                        setCurrentFolder(null, new ArrayList<CmisObject>(0));
-                        return selectedObject;
-                    }
-                } else {
-                    setCurrentFolder(null, new ArrayList<CmisObject>(0));
-                    return selectedObject;
+            } else if (selectedObject instanceof FileableCmisObject) {
+                List<Folder> parents = ((FileableCmisObject) selectedObject).getParents();
+                if (isNotEmpty(parents)) {
+                    folderObject = parents.get(0);
                 }
+            }
+
+            if (folderObject == null) {
+                // selected object is unfiled, a relationship object, or the
+                // user is not allowed to see the parent folder
+                setCurrentFolder(null, Collections.<CmisObject> emptyList());
+                return selectedObject;
             }
 
             List<CmisObject> children = new ArrayList<CmisObject>();

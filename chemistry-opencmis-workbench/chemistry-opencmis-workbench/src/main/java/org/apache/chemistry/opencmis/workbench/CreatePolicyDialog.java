@@ -60,12 +60,15 @@ public class CreatePolicyDialog extends CreateDialog {
     private void createGUI() {
         final CreatePolicyDialog thisDialog = this;
 
+        boolean hasCurrentFolder = getClientModel().getCurrentFolder() != null;
+
         unfiledButton = new JRadioButton("create unfiled");
-        unfiledButton.setSelected(false);
+        unfiledButton.setSelected(!hasCurrentFolder);
 
         currentPathButton = new JRadioButton("create in the current folder: "
-                + getClientModel().getCurrentFolder().getPath());
-        currentPathButton.setSelected(true);
+                + (hasCurrentFolder ? getClientModel().getCurrentFolder().getPath() : ""));
+        currentPathButton.setSelected(hasCurrentFolder);
+        currentPathButton.setEnabled(hasCurrentFolder);
 
         ButtonGroup filedGroup = new ButtonGroup();
         filedGroup.add(unfiledButton);

@@ -53,6 +53,13 @@ public class CreateFolderDialog extends CreateDialog {
     private void createGUI() {
         final CreateFolderDialog thisDialog = this;
 
+        if (getClientModel().getCurrentFolder() == null) {
+            JOptionPane.showMessageDialog(this, "Please select a folder first.", "No parent folder!",
+                    JOptionPane.ERROR_MESSAGE);
+            thisDialog.dispose();
+            return;
+        }
+
         nameField = new JTextField(60);
         createRow("Name:", nameField, 0);
 

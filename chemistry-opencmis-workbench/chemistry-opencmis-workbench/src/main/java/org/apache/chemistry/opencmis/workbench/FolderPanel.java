@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
@@ -73,7 +74,12 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
                     String path = currentFolder.getPath();
                     pathField.setText(path);
 
-                    Folder parent = currentFolder.getFolderParent();
+                    Folder parent = null;
+                    try {
+                        parent = currentFolder.getFolderParent();
+                    } catch (CmisPermissionDeniedException pde) {
+                        // user is not allowed to the see the parent folder
+                    }
                     if (parent == null) {
                         parentId = null;
                         upButton.setEnabled(false);
