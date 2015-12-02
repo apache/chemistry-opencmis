@@ -33,6 +33,9 @@ class Yylex {
     /** initial size of the lookahead buffer */
     private static final int ZZ_BUFFERSIZE = 16384;
 
+    /** the maximum length of a string */
+    private static final int MAX_STRING_LENGTH = 100 * 1024;
+
     /** lexical states */
     public static final int YYINITIAL = 0;
     public static final int STRING_BEGIN = 2;
@@ -366,6 +369,27 @@ class Yylex {
     }
 
     /**
+     * Adds the text matched by the current regular expression.
+     * 
+     * @throws JSONParseException
+     */
+    public final void appendYytext(StringBuilder sb) throws JSONParseException {
+        if (sb.length() + (zzMarkedPos - zzStartRead) > MAX_STRING_LENGTH) {
+            throw new JSONParseException(JSONParseException.ERROR_STRING_TOO_LONG);
+        }
+
+        sb.append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+    }
+
+    private final void appendChar(StringBuilder sb, char c) throws JSONParseException {
+        if (sb.length() + 1 > MAX_STRING_LENGTH) {
+            throw new JSONParseException(JSONParseException.ERROR_STRING_TOO_LONG);
+        }
+
+        sb.append(c);
+    }
+
+    /**
      * Returns the character at position <tt>pos</tt> from the matched text.
      * 
      * It is equivalent to yytext().charAt(pos), but faster
@@ -513,7 +537,7 @@ class Yylex {
 
             switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
             case 11: {
-                sb.append(yytext());
+                appendYytext(sb);
                 break;
             }
             case 25:
@@ -526,7 +550,7 @@ class Yylex {
             case 26:
                 break;
             case 16: {
-                sb.append('\b');
+                appendChar(sb, '\b');
                 break;
             }
             case 27:
@@ -554,7 +578,7 @@ class Yylex {
             case 31:
                 break;
             case 12: {
-                sb.append('\\');
+                appendChar(sb, '\\');
                 break;
             }
             case 32:
@@ -577,13 +601,13 @@ class Yylex {
             case 35:
                 break;
             case 19: {
-                sb.append('\r');
+                appendChar(sb, '\r');
                 break;
             }
             case 36:
                 break;
             case 15: {
-                sb.append('/');
+                appendChar(sb, '/');
                 break;
             }
             case 37:
@@ -594,7 +618,7 @@ class Yylex {
             case 38:
                 break;
             case 14: {
-                sb.append('"');
+                appendChar(sb, '"');
                 break;
             }
             case 39:
@@ -605,7 +629,7 @@ class Yylex {
             case 40:
                 break;
             case 17: {
-                sb.append('\f');
+                appendChar(sb, '\f');
                 break;
             }
             case 41:
@@ -613,7 +637,7 @@ class Yylex {
             case 24: {
                 try {
                     int ch = Integer.parseInt(yytext().substring(2), 16);
-                    sb.append((char) ch);
+                    appendChar(sb, (char) ch);
                 } catch (Exception e) {
                     throw new JSONParseException(yychar, JSONParseException.ERROR_UNEXPECTED_EXCEPTION, e);
                 }
@@ -621,7 +645,7 @@ class Yylex {
             case 42:
                 break;
             case 20: {
-                sb.append('\t');
+                appendChar(sb, '\t');
                 break;
             }
             case 43:
@@ -637,7 +661,7 @@ class Yylex {
             case 45:
                 break;
             case 18: {
-                sb.append('\n');
+                appendChar(sb, '\n');
                 break;
             }
             case 46:

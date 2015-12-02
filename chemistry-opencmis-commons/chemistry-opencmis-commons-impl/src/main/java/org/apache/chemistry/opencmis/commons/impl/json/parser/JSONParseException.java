@@ -32,6 +32,7 @@ public class JSONParseException extends Exception {
     public static final int ERROR_UNEXPECTED_CHAR = 0;
     public static final int ERROR_UNEXPECTED_TOKEN = 1;
     public static final int ERROR_UNEXPECTED_EXCEPTION = 2;
+    public static final int ERROR_STRING_TOO_LONG = 3;
 
     private int errorType;
     private Object unexpectedObject;
@@ -68,6 +69,9 @@ public class JSONParseException extends Exception {
             break;
         case ERROR_UNEXPECTED_EXCEPTION:
             sb.append("Unexpected exception at position ").append(position).append(": ").append(unexpectedObject);
+            break;
+        case ERROR_STRING_TOO_LONG:
+            sb.append("String too long");
             break;
         default:
             sb.append("Unkown error at position ").append(position).append('.');
