@@ -204,7 +204,9 @@ class CMIS {
 
         def file = new FileOutputStream(destination)
         def out = new BufferedOutputStream(file)
-        out << doc.contentStream.stream
+        if(doc.contentStream != null && doc.contentStream.stream != null) {
+            out << doc.contentStream.stream
+        }
         out.close()
     }
 
