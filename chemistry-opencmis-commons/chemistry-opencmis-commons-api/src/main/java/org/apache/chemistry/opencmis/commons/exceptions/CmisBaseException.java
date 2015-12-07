@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.exceptions;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 /**
  * Base exception class for all CMIS exceptions.
@@ -30,8 +31,14 @@ public abstract class CmisBaseException extends RuntimeException {
     /** Error code used by the Web Services binding. */
     private BigInteger code = BigInteger.ZERO;
 
-    /** Content the of the error page returned by the AtomPub server. */
+    /**
+     * Content the of the error page returned by the AtomPub or Browser Binding
+     * server.
+     */
     private String errorContent;
+
+    /** Additional data of this exception. */
+    private Map<String, String> additionalData;
 
     /**
      * Default constructor.
@@ -62,12 +69,29 @@ public abstract class CmisBaseException extends RuntimeException {
      *            error message
      * @param errorContent
      *            error page content
+     * @param additionalData
+     *            additional data
+     * @param cause
+     *            the cause
+     */
+    protected CmisBaseException(String message, String errorContent, Map<String, String> additionalData, Throwable cause) {
+        super(message, cause);
+        this.errorContent = errorContent;
+        this.additionalData = additionalData;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
      * @param cause
      *            the cause
      */
     protected CmisBaseException(String message, String errorContent, Throwable cause) {
-        super(message, cause);
-        this.errorContent = errorContent;
+        this(message, errorContent, null, cause);
     }
 
     /**
@@ -97,6 +121,23 @@ public abstract class CmisBaseException extends RuntimeException {
         super(message);
         this.code = code;
         this.errorContent = errorContent;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     * @param additionalData
+     *            additional data
+     */
+    protected CmisBaseException(String message, BigInteger code, String errorContent, Map<String, String> additionalData) {
+        this(message, code, errorContent);
+        this.additionalData = additionalData;
     }
 
     /**
@@ -153,6 +194,38 @@ public abstract class CmisBaseException extends RuntimeException {
      */
     public String getErrorContent() {
         return errorContent;
+    }
+
+    /**
+     * Returns additional data, if available.
+     * 
+     * @return additional data, can be {@code null}
+     */
+    public Map<String, String> getAdditionalData() {
+        return additionalData;
+    }
+
+    /**
+     * Returns additional data, if available.
+     * 
+     * @return additional data, can be {@code null}
+     */
+    public String getAdditionalData(String key) {
+        if (additionalData == null) {
+            return null;
+        }
+
+        return additionalData.get(key);
+    }
+
+    /**
+     * Sets additional data.
+     * 
+     * @param data
+     *            the data
+     */
+    public void setAdditionalData(Map<String, String> data) {
+        additionalData = data;
     }
 
     /**

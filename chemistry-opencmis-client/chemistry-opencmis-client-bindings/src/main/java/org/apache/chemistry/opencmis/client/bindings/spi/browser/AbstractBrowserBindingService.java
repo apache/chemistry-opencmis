@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.bindings.spi.browser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -264,32 +265,46 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
                     message = jsonMessage.toString();
                 }
 
+                Map<String, String> additionalData = null;
+                for (Map.Entry<String, Object> e : json.entrySet()) {
+                    if (JSONConstants.ERROR_EXCEPTION.equalsIgnoreCase(e.getKey())
+                            || JSONConstants.ERROR_MESSAGE.equalsIgnoreCase(e.getKey())) {
+                        continue;
+                    }
+
+                    if (additionalData == null) {
+                        additionalData = new HashMap<String, String>();
+                    }
+
+                    additionalData.put(e.getKey(), e.getValue() == null ? null : e.getValue().toString());
+                }
+
                 if (CmisConstraintException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisConstraintException(message, errorContent, t);
+                    return new CmisConstraintException(message, errorContent, additionalData, t);
                 } else if (CmisContentAlreadyExistsException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisContentAlreadyExistsException(message, errorContent, t);
+                    return new CmisContentAlreadyExistsException(message, errorContent, additionalData, t);
                 } else if (CmisFilterNotValidException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisFilterNotValidException(message, errorContent, t);
+                    return new CmisFilterNotValidException(message, errorContent, additionalData, t);
                 } else if (CmisInvalidArgumentException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisInvalidArgumentException(message, errorContent, t);
+                    return new CmisInvalidArgumentException(message, errorContent, additionalData, t);
                 } else if (CmisNameConstraintViolationException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisNameConstraintViolationException(message, errorContent, t);
+                    return new CmisNameConstraintViolationException(message, errorContent, additionalData, t);
                 } else if (CmisNotSupportedException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisNotSupportedException(message, errorContent, t);
+                    return new CmisNotSupportedException(message, errorContent, additionalData, t);
                 } else if (CmisObjectNotFoundException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisObjectNotFoundException(message, errorContent, t);
+                    return new CmisObjectNotFoundException(message, errorContent, additionalData, t);
                 } else if (CmisPermissionDeniedException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisPermissionDeniedException(message, errorContent, t);
+                    return new CmisPermissionDeniedException(message, errorContent, additionalData, t);
                 } else if (CmisStorageException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisStorageException(message, errorContent, t);
+                    return new CmisStorageException(message, errorContent, additionalData, t);
                 } else if (CmisStreamNotSupportedException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisStreamNotSupportedException(message, errorContent, t);
+                    return new CmisStreamNotSupportedException(message, errorContent, additionalData, t);
                 } else if (CmisUpdateConflictException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisUpdateConflictException(message, errorContent, t);
+                    return new CmisUpdateConflictException(message, errorContent, additionalData, t);
                 } else if (CmisVersioningException.EXCEPTION_NAME.equalsIgnoreCase((String) jsonError)) {
-                    return new CmisVersioningException(message, errorContent, t);
+                    return new CmisVersioningException(message, errorContent, additionalData, t);
                 } else if (code == 503) {
-                    return new CmisServiceUnavailableException(message, errorContent, t);
+                    return new CmisServiceUnavailableException(message, errorContent, additionalData, t);
                 }
             }
         }

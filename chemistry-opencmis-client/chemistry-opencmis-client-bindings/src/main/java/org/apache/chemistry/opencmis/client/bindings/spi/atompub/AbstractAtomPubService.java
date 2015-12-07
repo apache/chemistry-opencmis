@@ -106,6 +106,15 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     protected static final String NAME_RELATIVE_PATH_SEGMENT = "relativePathSegment";
     protected static final String NAME_NUM_ITEMS = "numItems";
 
+    private static final String EXCEPTION_EXCEPTION_BEGIN = "<!--exception-->";
+    private static final String EXCEPTION_EXCEPTION_END = "<!--/exception-->";
+    private static final String EXCEPTION_MESSAGE_BEGIN = "<!--message-->";
+    private static final String EXCEPTION_MESSAGE_END = "<!--/message-->";
+    private static final String EXCEPTION_KEY_BEGIN = "<!--key-->";
+    private static final String EXCEPTION_KEY_END = "<!--/key-->";
+    private static final String EXCEPTION_VALUE_BEGIN = "<!--value-->";
+    private static final String EXCEPTION_VALUE_END = "<!--/value-->";
+
     private BindingSession session;
 
     /**
@@ -464,6 +473,7 @@ public abstract class AbstractAtomPubService implements LinkAccess {
     protected CmisBaseException convertStatusCode(int code, String message, String errorContent, Throwable t) {
         String exception = extractException(errorContent);
         message = extractErrorMessage(message, errorContent);
+        Map<String, String> additionalData = extractAddtionalData(errorContent);
 
         switch (code) {
         case 301:
@@ -474,40 +484,40 @@ public abstract class AbstractAtomPubService implements LinkAccess {
                     + message, errorContent, t);
         case 400:
             if (CmisFilterNotValidException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisFilterNotValidException(message, errorContent, t);
+                return new CmisFilterNotValidException(message, errorContent, additionalData, t);
             }
-            return new CmisInvalidArgumentException(message, errorContent, t);
+            return new CmisInvalidArgumentException(message, errorContent, additionalData, t);
         case 401:
-            return new CmisUnauthorizedException(message, errorContent, t);
+            return new CmisUnauthorizedException(message, errorContent, additionalData, t);
         case 403:
             if (CmisStreamNotSupportedException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisStreamNotSupportedException(message, errorContent, t);
+                return new CmisStreamNotSupportedException(message, errorContent, additionalData, t);
             }
-            return new CmisPermissionDeniedException(message, errorContent, t);
+            return new CmisPermissionDeniedException(message, errorContent, additionalData, t);
         case 404:
-            return new CmisObjectNotFoundException(message, errorContent, t);
+            return new CmisObjectNotFoundException(message, errorContent, additionalData, t);
         case 405:
-            return new CmisNotSupportedException(message, errorContent, t);
+            return new CmisNotSupportedException(message, errorContent, additionalData, t);
         case 407:
-            return new CmisProxyAuthenticationException(message, errorContent, t);
+            return new CmisProxyAuthenticationException(message, errorContent, additionalData, t);
         case 409:
             if (CmisContentAlreadyExistsException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisContentAlreadyExistsException(message, errorContent, t);
+                return new CmisContentAlreadyExistsException(message, errorContent, additionalData, t);
             } else if (CmisVersioningException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisVersioningException(message, errorContent, t);
+                return new CmisVersioningException(message, errorContent, additionalData, t);
             } else if (CmisUpdateConflictException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisUpdateConflictException(message, errorContent, t);
+                return new CmisUpdateConflictException(message, errorContent, additionalData, t);
             } else if (CmisNameConstraintViolationException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisNameConstraintViolationException(message, errorContent, t);
+                return new CmisNameConstraintViolationException(message, errorContent, additionalData, t);
             }
-            return new CmisConstraintException(message, errorContent, t);
+            return new CmisConstraintException(message, errorContent, additionalData, t);
         case 503:
-            return new CmisServiceUnavailableException(message, errorContent, t);
+            return new CmisServiceUnavailableException(message, errorContent, additionalData, t);
         default:
             if (CmisStorageException.EXCEPTION_NAME.equals(exception)) {
-                return new CmisStorageException(message, errorContent, t);
+                return new CmisStorageException(message, errorContent, additionalData, t);
             }
-            return new CmisRuntimeException(message, errorContent, t);
+            return new CmisRuntimeException(message, errorContent, additionalData, t);
         }
     }
 
@@ -516,14 +526,14 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             return null;
         }
 
-        int begin = errorContent.indexOf("<!--exception-->");
-        int end = errorContent.indexOf("<!--/exception-->");
+        int begin = errorContent.indexOf(EXCEPTION_EXCEPTION_BEGIN);
+        int end = errorContent.indexOf(EXCEPTION_EXCEPTION_END);
 
         if (begin == -1 || end == -1 || begin > end) {
             return null;
         }
 
-        return errorContent.substring(begin + "<!--exception-->".length(), end);
+        return errorContent.substring(begin + EXCEPTION_EXCEPTION_BEGIN.length(), end);
     }
 
     protected String extractErrorMessage(String message, String errorContent) {
@@ -531,14 +541,53 @@ public abstract class AbstractAtomPubService implements LinkAccess {
             return message;
         }
 
-        int begin = errorContent.indexOf("<!--message-->");
-        int end = errorContent.indexOf("<!--/message-->");
+        int begin = errorContent.indexOf(EXCEPTION_MESSAGE_BEGIN);
+        int end = errorContent.indexOf(EXCEPTION_MESSAGE_END);
 
         if (begin == -1 || end == -1 || begin > end) {
             return message;
         }
 
-        return errorContent.substring(begin + "<!--message-->".length(), end);
+        return errorContent.substring(begin + EXCEPTION_MESSAGE_BEGIN.length(), end);
+    }
+
+    protected Map<String, String> extractAddtionalData(String errorContent) {
+        if (errorContent == null) {
+            return null;
+        }
+
+        Map<String, String> result = null;
+
+        int pos = 0;
+
+        while (true) {
+            int keyBegin = errorContent.indexOf(EXCEPTION_KEY_BEGIN, pos);
+            int keyEnd = errorContent.indexOf(EXCEPTION_KEY_END, pos);
+
+            if (keyBegin == -1 || keyEnd == -1 || keyBegin > keyEnd) {
+                break;
+            }
+
+            pos = keyEnd + EXCEPTION_KEY_END.length();
+
+            int valueBegin = errorContent.indexOf(EXCEPTION_VALUE_BEGIN, pos);
+            int valueEnd = errorContent.indexOf(EXCEPTION_VALUE_END, pos);
+
+            if (valueBegin == -1 || valueEnd == -1 || valueBegin > valueEnd) {
+                break;
+            }
+
+            pos = valueEnd + EXCEPTION_VALUE_END.length();
+
+            if (result == null) {
+                result = new HashMap<String, String>();
+            }
+
+            result.put(errorContent.substring(keyBegin + EXCEPTION_KEY_BEGIN.length(), keyEnd),
+                    errorContent.substring(valueBegin + EXCEPTION_VALUE_BEGIN.length(), valueEnd));
+        }
+
+        return result;
     }
 
     // ---- helpers ----

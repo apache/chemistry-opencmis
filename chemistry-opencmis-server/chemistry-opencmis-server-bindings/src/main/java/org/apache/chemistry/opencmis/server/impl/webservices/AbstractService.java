@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -44,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
+import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.EnumServiceException;
@@ -60,6 +62,8 @@ import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -68,6 +72,8 @@ import org.w3c.dom.Node;
 public abstract class AbstractService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
+    private static final String ADDITIONAL_DATA_NS = "http://chemistry.apache.org/opencmis/exception";
+    private static final String ADDITIONAL_DATA_TAG = "additionalData";
 
     public static final String CALL_CONTEXT_MAP = "org.apache.chemistry.opencmis.callcontext";
 
@@ -261,6 +267,33 @@ public abstract class AbstractService {
                     fault.setType(EnumServiceException.VERSIONING);
                 } else {
                     LOG.error(ex.getMessage(), ex);
+                }
+
+                Map<String, String> additionalData = ((CmisBaseException) ex).getAdditionalData();
+                if (additionalData != null && !additionalData.isEmpty()) {
+                    try {
+                        Document doc = XMLUtils.newDomDocument();
+
+                        Element root = doc.createElementNS(ADDITIONAL_DATA_NS, ADDITIONAL_DATA_TAG);
+                        doc.appendChild(root);
+
+                        for (Map.Entry<String, String> e : additionalData.entrySet()) {
+                            Element entry = doc.createElement("entry");
+                            root.appendChild(entry);
+
+                            Element key = doc.createElement("key");
+                            key.appendChild(doc.createTextNode(e.getKey()));
+                            entry.appendChild(key);
+
+                            Element value = doc.createElement("value");
+                            value.appendChild(doc.createTextNode(e.getValue()));
+                            entry.appendChild(value);
+                        }
+
+                        fault.getAny().add(root);
+                    } catch (ParserConfigurationException e) {
+                        LOG.error("Unable to add additional data to exception!", e);
+                    }
                 }
             } else {
                 fault.setMessage("An error occurred!");

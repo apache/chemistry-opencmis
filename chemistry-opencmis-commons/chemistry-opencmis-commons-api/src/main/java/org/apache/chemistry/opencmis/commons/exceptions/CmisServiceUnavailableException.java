@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.exceptions;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 public class CmisServiceUnavailableException extends CmisRuntimeException {
 
@@ -81,6 +82,40 @@ public class CmisServiceUnavailableException extends CmisRuntimeException {
      */
     public CmisServiceUnavailableException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     * @param additionalData
+     *            additional data
+     */
+    public CmisServiceUnavailableException(String message, BigInteger code, String errorContent,
+            Map<String, String> additionalData) {
+        super(message, code, errorContent, additionalData);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param additionalData
+     *            additional data
+     * @param cause
+     *            the cause
+     */
+    public CmisServiceUnavailableException(String message, String errorContent, Map<String, String> additionalData,
+            Throwable cause) {
+        super(message, errorContent, additionalData, cause);
     }
 
     /**

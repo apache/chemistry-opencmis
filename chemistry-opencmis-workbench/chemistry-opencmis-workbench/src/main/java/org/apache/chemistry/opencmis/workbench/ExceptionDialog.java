@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -52,7 +53,7 @@ public class ExceptionDialog extends JDialog {
 
     private void createGUI() {
         setMinimumSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(150)));
-        setPreferredSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(150)));
+        setPreferredSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(200)));
 
         setLayout(new BorderLayout());
 
@@ -75,6 +76,19 @@ public class ExceptionDialog extends JDialog {
             exceptionText.append("</h3>");
         }
         if (exception instanceof CmisBaseException) {
+            Map<String, String> additionalData = ((CmisBaseException) exception).getAdditionalData();
+            if (additionalData != null && !additionalData.isEmpty()) {
+                exceptionText.append("<hr><br><b>Additional data:</b><br><table>");
+                for (Map.Entry<String, String> e : additionalData.entrySet()) {
+                    exceptionText.append("<tr><td>");
+                    ClientHelper.encodeHtml(exceptionText, e.getKey());
+                    exceptionText.append(":</td><td>");
+                    ClientHelper.encodeHtml(exceptionText, e.getValue());
+                    exceptionText.append("</td></tr>");
+                }
+                exceptionText.append("</table>");
+            }
+
             String errorContent = ((CmisBaseException) exception).getErrorContent();
             if (errorContent != null && errorContent.length() > 0) {
                 exceptionText.append("<hr><br><b>Error Content:</b><br>");

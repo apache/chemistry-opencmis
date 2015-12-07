@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.commons.exceptions;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 /**
  * CMIS Versioning Exception.
@@ -88,6 +89,40 @@ public class CmisVersioningException extends CmisBaseException {
      */
     public CmisVersioningException(String message, BigInteger code, String errorContent) {
         super(message, code, errorContent);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param code
+     *            error code
+     * @param errorContent
+     *            error page content
+     * @param additionalData
+     *            additional data
+     */
+    public CmisVersioningException(String message, BigInteger code, String errorContent,
+            Map<String, String> additionalData) {
+        super(message, code, errorContent, additionalData);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            error message
+     * @param errorContent
+     *            error page content
+     * @param additionalData
+     *            additional data
+     * @param cause
+     *            the cause
+     */
+    public CmisVersioningException(String message, String errorContent, Map<String, String> additionalData,
+            Throwable cause) {
+        super(message, errorContent, additionalData, cause);
     }
 
     /**

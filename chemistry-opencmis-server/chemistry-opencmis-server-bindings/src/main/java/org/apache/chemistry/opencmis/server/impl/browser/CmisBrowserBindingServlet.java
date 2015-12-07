@@ -76,6 +76,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -516,12 +517,26 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 setStatus(request, response, statusCode);
 
                 JSONObject jsonResponse = new JSONObject();
+
                 jsonResponse.put(ERROR_EXCEPTION, exceptionName);
                 jsonResponse.put(ERROR_MESSAGE, message);
 
                 String st = ExceptionHelper.getStacktraceAsString(ex);
                 if (st != null) {
                     jsonResponse.put(ERROR_STACKTRACE, st);
+                }
+
+                if (ex instanceof CmisBaseException) {
+                    Map<String, String> additionalData = ((CmisBaseException) ex).getAdditionalData();
+                    if (additionalData != null && !additionalData.isEmpty()) {
+                        for (Map.Entry<String, String> e : additionalData.entrySet()) {
+                            if (ERROR_EXCEPTION.equalsIgnoreCase(e.getKey())
+                                    || ERROR_MESSAGE.equalsIgnoreCase(e.getKey())) {
+                                continue;
+                            }
+                            jsonResponse.put(e.getKey(), e.getValue());
+                        }
+                    }
                 }
 
                 try {

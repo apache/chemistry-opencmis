@@ -48,6 +48,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_PUT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -362,8 +363,19 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
             String st = ExceptionHelper.getStacktraceAsString(ex);
             if (st != null) {
-                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n" + st
-                        + "\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
+                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n<!--key-->stacktrace<!--/key><!--value-->"
+                        + st + "<!--/value-->\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
+            }
+
+            if (ex instanceof CmisBaseException) {
+                Map<String, String> additionalData = ((CmisBaseException) ex).getAdditionalData();
+                if (additionalData != null && !additionalData.isEmpty()) {
+                    pw.print("<hr noshade='noshade'/>Additional data:<br><br>");
+                    for (Map.Entry<String, String> e : additionalData.entrySet()) {
+                        pw.print("<!--key-->" + StringEscapeUtils.escapeHtml(e.getKey()) + "<!--/key--> = <!--value-->"
+                                + StringEscapeUtils.escapeHtml(e.getValue()) + "<!--/value--><br>");
+                    }
+                }
             }
 
             pw.print("</body></html>");

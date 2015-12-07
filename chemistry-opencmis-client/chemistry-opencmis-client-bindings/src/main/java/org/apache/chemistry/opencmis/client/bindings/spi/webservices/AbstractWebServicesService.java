@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -49,12 +51,15 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class for all Web Services clients.
  */
 public abstract class AbstractWebServicesService {
 
+    private static final String ADDITIONAL_DATA_NS = "http://chemistry.apache.org/opencmis/exception";
+    private static final String ADDITIONAL_DATA_TAG = "additionalData";
     private BindingSession session;
 
     /**
@@ -83,12 +88,52 @@ public abstract class AbstractWebServicesService {
         BigInteger code = ex.getFaultInfo().getCode();
 
         String errorContent = null;
+        Map<String, String> additionalData = null;
         if (!ex.getFaultInfo().getAny().isEmpty()) {
             StringBuilder sb = new StringBuilder(1024);
+
             for (Object o : ex.getFaultInfo().getAny()) {
                 if (o != null) {
                     if (o instanceof Node) {
-                        sb.append(getNodeAsString((Node) o));
+                        Node node = (Node) o;
+
+                        if (ADDITIONAL_DATA_NS.equals(node.getNamespaceURI())
+                                && ADDITIONAL_DATA_TAG.equals(node.getNodeName())) {
+                            NodeList entries = node.getChildNodes();
+                            int n = entries.getLength();
+                            for (int i = 0; i < n; i++) {
+                                Node entry = entries.item(i);
+                                if (!"entry".equals(entry.getNodeName())) {
+                                    continue;
+                                }
+
+                                String key = null;
+                                String value = null;
+
+                                NodeList keyValueList = entry.getChildNodes();
+                                int n2 = keyValueList.getLength();
+                                for (int j = 0; j < n2; j++) {
+                                    Node item = keyValueList.item(j);
+                                    if ("key".equals(item.getNodeName())) {
+                                        key = item.getTextContent();
+                                    } else if ("value".equals(item.getNodeName())) {
+                                        value = item.getTextContent();
+                                    }
+                                }
+
+                                if (key == null || value == null) {
+                                    continue;
+                                }
+
+                                if (additionalData == null) {
+                                    additionalData = new HashMap<String, String>();
+                                }
+
+                                additionalData.put(key, value);
+                            }
+                        }
+
+                        sb.append(getNodeAsString(node));
                     } else {
                         sb.append(o.toString());
                     }
@@ -100,31 +145,31 @@ public abstract class AbstractWebServicesService {
 
         switch (ex.getFaultInfo().getType()) {
         case CONSTRAINT:
-            return new CmisConstraintException(msg, code, errorContent);
+            return new CmisConstraintException(msg, code, errorContent, additionalData);
         case CONTENT_ALREADY_EXISTS:
-            return new CmisContentAlreadyExistsException(msg, code, errorContent);
+            return new CmisContentAlreadyExistsException(msg, code, errorContent, additionalData);
         case FILTER_NOT_VALID:
-            return new CmisFilterNotValidException(msg, code, errorContent);
+            return new CmisFilterNotValidException(msg, code, errorContent, additionalData);
         case INVALID_ARGUMENT:
-            return new CmisInvalidArgumentException(msg, code, errorContent);
+            return new CmisInvalidArgumentException(msg, code, errorContent, additionalData);
         case NAME_CONSTRAINT_VIOLATION:
-            return new CmisNameConstraintViolationException(msg, code, errorContent);
+            return new CmisNameConstraintViolationException(msg, code, errorContent, additionalData);
         case NOT_SUPPORTED:
-            return new CmisNotSupportedException(msg, code, errorContent);
+            return new CmisNotSupportedException(msg, code, errorContent, additionalData);
         case OBJECT_NOT_FOUND:
-            return new CmisObjectNotFoundException(msg, code, errorContent);
+            return new CmisObjectNotFoundException(msg, code, errorContent, additionalData);
         case PERMISSION_DENIED:
-            return new CmisPermissionDeniedException(msg, code, errorContent);
+            return new CmisPermissionDeniedException(msg, code, errorContent, additionalData);
         case RUNTIME:
-            return new CmisRuntimeException(msg, code, errorContent);
+            return new CmisRuntimeException(msg, code, errorContent, additionalData);
         case STORAGE:
-            return new CmisStorageException(msg, code, errorContent);
+            return new CmisStorageException(msg, code, errorContent, additionalData);
         case STREAM_NOT_SUPPORTED:
-            return new CmisStreamNotSupportedException(msg, code, errorContent);
+            return new CmisStreamNotSupportedException(msg, code, errorContent, additionalData);
         case UPDATE_CONFLICT:
-            return new CmisUpdateConflictException(msg, code, errorContent);
+            return new CmisUpdateConflictException(msg, code, errorContent, additionalData);
         case VERSIONING:
-            return new CmisVersioningException(msg, code, errorContent);
+            return new CmisVersioningException(msg, code, errorContent, additionalData);
         default:
         }
 
@@ -137,7 +182,7 @@ public abstract class AbstractWebServicesService {
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-            StringWriter sw = new StringWriter();
+            StringWriter sw = new StringWriter(512);
             transformer.transform(new DOMSource(node), new StreamResult(sw));
             return sw.toString();
         } catch (TransformerException e) {
