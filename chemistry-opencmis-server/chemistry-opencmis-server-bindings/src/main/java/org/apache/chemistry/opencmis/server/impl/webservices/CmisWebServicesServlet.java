@@ -41,7 +41,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
 import org.apache.chemistry.opencmis.server.shared.CsrfManager;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.servlet.CXFServlet;
@@ -189,8 +189,8 @@ public class CmisWebServicesServlet extends CXFServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding(IOUtils.UTF8);
 
-        String urlEscaped = StringEscapeUtils.escapeHtml((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("wsdl")
-                .toString());
+        String urlEscaped = StringEscapeUtils.escapeHtml4((new UrlBuilder(baseUrl)).addPath("cmis")
+                .addParameter("wsdl").toString());
 
         PrintWriter pw = response.getWriter();
 
@@ -215,7 +215,7 @@ public class CmisWebServicesServlet extends CXFServlet {
 
         PrintWriter pw = response.getWriter();
 
-        String messageEscaped = StringEscapeUtils.escapeXml(message);
+        String messageEscaped = StringEscapeUtils.escapeXml10(message);
 
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
         pw.println("<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">");

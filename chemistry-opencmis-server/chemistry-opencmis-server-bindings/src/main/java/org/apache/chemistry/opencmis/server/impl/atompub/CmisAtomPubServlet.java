@@ -85,7 +85,7 @@ import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrap
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -359,7 +359,9 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                     + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
                     + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
             pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
-            pw.print("<p><!--message-->" + StringEscapeUtils.escapeHtml(message) + "<!--/message--></p>");
+            pw.print("<p><!--message-->");
+            StringEscapeUtils.ESCAPE_HTML4.translate(message, pw);
+            pw.print("<!--/message--></p>");
 
             String st = ExceptionHelper.getStacktraceAsString(ex);
             if (st != null) {
@@ -372,8 +374,11 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 if (additionalData != null && !additionalData.isEmpty()) {
                     pw.print("<hr noshade='noshade'/>Additional data:<br><br>");
                     for (Map.Entry<String, String> e : additionalData.entrySet()) {
-                        pw.print("<!--key-->" + StringEscapeUtils.escapeHtml(e.getKey()) + "<!--/key--> = <!--value-->"
-                                + StringEscapeUtils.escapeHtml(e.getValue()) + "<!--/value--><br>");
+                        pw.print("<!--key-->");
+                        StringEscapeUtils.ESCAPE_HTML4.translate(e.getKey(), pw);
+                        pw.print("<!--/key--> = <!--value-->");
+                        StringEscapeUtils.ESCAPE_HTML4.translate(e.getValue(), pw);
+                        pw.print("<!--/value--><br>");
                     }
                 }
             }
