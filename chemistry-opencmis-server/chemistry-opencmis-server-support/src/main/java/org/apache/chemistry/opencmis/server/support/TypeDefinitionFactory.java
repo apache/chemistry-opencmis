@@ -20,6 +20,8 @@
  */
 package org.apache.chemistry.opencmis.server.support;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1314,7 +1316,7 @@ public final class TypeDefinitionFactory {
         Map<String, String> attrs = (element.getAttributes() != null ? new HashMap<String, String>(
                 element.getAttributes()) : null);
 
-        if (element.getChildren() == null) {
+        if (isNotEmpty(element.getChildren())) {
             return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, element.getValue());
         } else {
             List<CmisExtensionElement> children = new ArrayList<CmisExtensionElement>();
