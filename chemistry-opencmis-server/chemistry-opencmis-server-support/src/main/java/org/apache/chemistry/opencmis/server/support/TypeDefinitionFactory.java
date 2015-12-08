@@ -1316,16 +1316,17 @@ public final class TypeDefinitionFactory {
         Map<String, String> attrs = (element.getAttributes() != null ? new HashMap<String, String>(
                 element.getAttributes()) : null);
 
-        if (isNotEmpty(element.getChildren())) {
-            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, element.getValue());
-        } else {
-            List<CmisExtensionElement> children = new ArrayList<CmisExtensionElement>();
+        List<CmisExtensionElement> children = element.getChildren();
+        if (isNotEmpty(children)) {
+            List<CmisExtensionElement> copyChildren = new ArrayList<CmisExtensionElement>(children.size());
 
-            for (CmisExtensionElement child : element.getChildren()) {
-                children.add(copy(child));
+            for (CmisExtensionElement child : children) {
+                copyChildren.add(copy(child));
             }
 
-            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, children);
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, copyChildren);
+        } else {
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, element.getValue());
         }
     }
 
