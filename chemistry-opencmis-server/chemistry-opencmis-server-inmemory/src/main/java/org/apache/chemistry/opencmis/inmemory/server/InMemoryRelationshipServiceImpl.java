@@ -84,13 +84,13 @@ public class InMemoryRelationshipServiceImpl extends InMemoryAbstractServiceImpl
         List<ObjectData> odList = new ArrayList<ObjectData>();
 
         for (StoredObject rel : rels) {
-            ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, rel, filter, user,
+            ObjectData od = PropertyCreationHelper.getObjectData(context, tm, objStore, rel, filter, user,
                     includeAllowableActions, IncludeRelationships.NONE, null, false, false, extension);
             odList.add(od);
         }
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 

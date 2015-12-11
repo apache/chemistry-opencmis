@@ -147,28 +147,19 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     public CmisService getService(CallContext context) {
         LOG.debug("start getService()");
         CallContext contextToUse = context;
-        // Attach the CallContext to a thread local context that can be
-        // accessed from everywhere
         // Some unit tests set their own context. So if we find one then we use
         // this one and ignore the provided one. Otherwise we set a new context.
         if (fUseOverrideCtx && null != overrideCtx) {
             contextToUse = overrideCtx;
         }
 
-        InMemoryService inMemoryService = InMemoryServiceContext.getCmisService();
-        if (inMemoryService == null) {
-            LOG.debug("Creating new InMemoryService instance!");
-            ConformanceCmisServiceWrapper wrapperService;
-            inMemoryService = new InMemoryService(storeManager);
-            wrapperService = new ConformanceCmisServiceWrapper(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
-                    DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
-            InMemoryServiceContext.setWrapperService(wrapperService);
-        }
+        LOG.debug("Creating new InMemoryService instance!");
+        ConformanceCmisServiceWrapper wrapperService;
+        InMemoryService inMemoryService = new InMemoryService(storeManager, contextToUse);
+        wrapperService = new ConformanceCmisServiceWrapper(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
+        		DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
 
-        inMemoryService.setCallContext(contextToUse);
-
-        LOG.debug("stop getService()");
-        return inMemoryService;
+        return inMemoryService; // wrapperService;
     }
 
     @Override
@@ -197,7 +188,6 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (null != cleanManager) {
             cleanManager.stopCleanRepositoryJob();
         }
-        InMemoryServiceContext.setWrapperService(null);
     }
 
     public StoreManager getStoreManger() {
@@ -402,13 +392,17 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         String doFillRepositoryStr = parameters.get(ConfigConstants.USE_REPOSITORY_FILER);
         String contentKindStr = parameters.get(ConfigConstants.CONTENT_KIND);
         boolean doFillRepository = doFillRepositoryStr == null ? false : Boolean.parseBoolean(doFillRepositoryStr);
+        // Simulate a runtime context with configuration parameters
+        // Attach the CallContext to a thread local context that can be
+        // accessed from everywhere
+        DummyCallContext ctx = new DummyCallContext();
 
         if (doFillRepository) {
 
             // create an initial temporary service instance to fill the
             // repository
 
-            InMemoryService svc = new InMemoryService(storeManager);
+            InMemoryService svc = new InMemoryService(storeManager, ctx);
 
             BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
 
@@ -493,10 +487,6 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
                 gen.setFolderPropertiesToGenerate(propsToSet);
             }
 
-            // Simulate a runtime context with configuration parameters
-            // Attach the CallContext to a thread local context that can be
-            // accessed from everywhere
-            DummyCallContext ctx = new DummyCallContext();
             // create thread local storage and attach call context
             getService(ctx);
 

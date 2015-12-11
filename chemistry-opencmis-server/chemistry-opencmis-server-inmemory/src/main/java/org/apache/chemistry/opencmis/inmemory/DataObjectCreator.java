@@ -36,7 +36,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlListI
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AllowableActionsImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ChangeEventInfoDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyIdListImpl;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
@@ -60,7 +60,7 @@ public final class DataObjectCreator {
     private DataObjectCreator() {
     }
 
-    public static AllowableActions fillAllowableActions(StoredObject so, String user) {
+    public static AllowableActions fillAllowableActions(CallContext callContext, StoredObject so, String user) {
 
         boolean isFolder = so instanceof Folder;
         boolean isDocument = so instanceof Content;
@@ -77,7 +77,7 @@ public final class DataObjectCreator {
         boolean hasRendition = so.hasRendition(user);
         boolean canGetAcl = user != null && (isDocument || isFolder || isItem);
         boolean canSetAcl = canGetAcl;
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+        boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Version) {
             isCheckedOut = ((Version) so).isPwc();
@@ -184,9 +184,9 @@ public final class DataObjectCreator {
         return polIds;
     }
 
-    public static List<ObjectData> fillRelationships(TypeManager tm, ObjectStore objStore,
+    public static List<ObjectData> fillRelationships(CallContext context, TypeManager tm, ObjectStore objStore,
             IncludeRelationships includeRelationships, StoredObject so, String user) {
-        return getRelationships(tm, objStore, includeRelationships, so, user);
+        return getRelationships(context, tm, objStore, includeRelationships, so, user);
     }
 
     public static ChangeEventInfo fillChangeEventInfo(StoredObject so) {
@@ -195,7 +195,7 @@ public final class DataObjectCreator {
         return changeEventInfo;
     }
 
-    public static List<ObjectData> getRelationships(TypeManager tm, ObjectStore objStore,
+    public static List<ObjectData> getRelationships(CallContext context, TypeManager tm, ObjectStore objStore,
             IncludeRelationships includeRelationships, StoredObject spo, String user) {
         if (includeRelationships != IncludeRelationships.NONE) {
             RelationshipDirection relationshipDirection = RelationshipDirection.SOURCE;
@@ -209,7 +209,7 @@ public final class DataObjectCreator {
             List<StoredObject> relationships = objStore.getRelationships(spo.getId(), null, relationshipDirection);
             List<ObjectData> res = new ArrayList<ObjectData>(relationships.size());
             for (StoredObject so : relationships) {
-                ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, null, user, false,
+                ObjectData od = PropertyCreationHelper.getObjectData(context, tm, objStore, so, null, user, false,
                         IncludeRelationships.NONE, null, false, false, null);
                 res.add(od);
             }

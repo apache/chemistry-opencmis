@@ -88,9 +88,9 @@ public class AbstractServiceImpl {
         }
     }
 
-    protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
+    protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties, boolean cmis11) {
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
-        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId, cmis11);
         if (typeDefC == null) {
             throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
         }
@@ -98,9 +98,9 @@ public class AbstractServiceImpl {
         return typeDefC.getTypeDefinition();
     }
 
-    protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj) {
+    protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj, boolean cmis11) {
 
-        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId());
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId(), cmis11);
         return typeDefC.getTypeDefinition();
     }
 

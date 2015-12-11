@@ -31,6 +31,7 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
@@ -55,12 +56,10 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
     private InMemoryObjectServiceImpl fObjectService;
-    private AtomLinkInfoProvider fAtomLinkProvider;
 
     public InMemoryVersioningServiceImpl(StoreManager storeManager, InMemoryObjectServiceImpl objectService) {
         super(storeManager);
         fObjectService = objectService;
-        fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
     public void cancelCheckOut(CallContext context, String repositoryId, String objectId, ExtensionsData extension) {
@@ -129,7 +128,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // additional information:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
     }
@@ -139,7 +138,8 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         StoredObject so = validator.checkOut(context, repositoryId, objectId, extension, contentCopied);
 
-        TypeDefinition typeDef = getTypeDefinition(repositoryId, so);
+        boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
+        TypeDefinition typeDef = getTypeDefinition(repositoryId, so, cmis11);
         if (!typeDef.getBaseTypeId().equals(BaseTypeId.CMIS_DOCUMENT)) {
             throw new CmisNotSupportedException("Only documents can be checked-out.");
         } else if (!((DocumentTypeDefinition) typeDef).isVersionable()) {
@@ -180,7 +180,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // additional information:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, pwc, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, pwc, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
     }
@@ -228,7 +228,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // provide information for Atom links for version series:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 
@@ -265,7 +265,7 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
         // provide information for Atom links for version series:
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 

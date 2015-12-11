@@ -56,7 +56,7 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 
@@ -75,7 +75,7 @@ public class InMemoryAclService extends InMemoryAbstractServiceImpl {
 
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
         return acl;

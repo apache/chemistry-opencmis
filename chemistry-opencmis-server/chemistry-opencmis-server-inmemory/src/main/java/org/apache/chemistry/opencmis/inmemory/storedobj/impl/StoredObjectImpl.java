@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
@@ -503,8 +504,8 @@ public class StoredObjectImpl implements StoredObject {
     }
 
     @Override
-    public AllowableActions getAllowableActions(String user) {
-        AllowableActions actions = DataObjectCreator.fillAllowableActions(this, user);
+    public AllowableActions getAllowableActions(CallContext context, String user) {
+        AllowableActions actions = DataObjectCreator.fillAllowableActions(context, this, user);
         return actions;
     }
 

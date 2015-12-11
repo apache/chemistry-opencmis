@@ -61,11 +61,11 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PermissionMappingD
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryCapabilitiesImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.RepositoryInfoImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeDefinitionContainerImpl;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
@@ -163,13 +163,12 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId) {
+    public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean cmis11) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisObjectNotFoundException(UNKNOWN_REPOSITORY + repositoryId);
         }
 
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         TypeDefinitionContainer tdc = typeManager.getTypeById(typeId);
         if (null != tdc && !cmis11) {
             TypeDefinition td = tdc.getTypeDefinition();
@@ -189,7 +188,7 @@ public class StoreManagerImpl implements StoreManager {
 
     @Override
     public TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
-            int depthParam) {
+            int depthParam, boolean cmis11) {
         int depth = depthParam;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -197,7 +196,6 @@ public class StoreManagerImpl implements StoreManager {
         }
 
         TypeDefinitionContainer tc = typeManager.getTypeById(typeId);
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (tc != null) {
             if (depth == -1) {
@@ -218,17 +216,17 @@ public class StoreManagerImpl implements StoreManager {
 
     @Override
     public Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId,
-            boolean includePropertyDefinitions) {
+            boolean includePropertyDefinitions, boolean cmis11) {
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
             throw new CmisInvalidArgumentException(UNKNOWN_REPOSITORY + repositoryId);
         }
-        Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId, includePropertyDefinitions);
+        Collection<TypeDefinitionContainer> typeColl = getRootTypes(repositoryId, includePropertyDefinitions, cmis11);
         return typeColl;
     }
 
     @Override
-    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions) {
+    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions, boolean cmis11) {
         List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -237,7 +235,6 @@ public class StoreManagerImpl implements StoreManager {
         List<TypeDefinitionContainer> rootTypes = typeManager.getRootTypes();
 
         // remove cmis:item and cmis:secondary for CMIS 1.0
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
         if (!cmis11) {
             rootTypes = new ArrayList<TypeDefinitionContainer>(rootTypes);
             TypeDefinitionContainer tcItem = null, tcSecondary = null;
@@ -280,13 +277,13 @@ public class StoreManagerImpl implements StoreManager {
 	}
     
     @Override
-    public RepositoryInfo getRepositoryInfo(String repositoryId) {
+    public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
         if (null == sm) {
             return null;
         }
-
-        RepositoryInfo repoInfo = createRepositoryInfo(repositoryId);
+        boolean cmis11 = context.getCmisVersion().equals(CmisVersion.CMIS_1_1);
+        RepositoryInfo repoInfo = createRepositoryInfo(repositoryId, cmis11);
         return repoInfo;
     }
 
@@ -348,8 +345,7 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @SuppressWarnings("serial")
-    private RepositoryInfo createRepositoryInfo(String repositoryId) {
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
+    private RepositoryInfo createRepositoryInfo(String repositoryId, boolean cmis11) {
         ObjectStore objStore = getObjectStore(repositoryId);
         String rootFolderId = objStore.getRootFolder().getId();
         // repository info
@@ -574,13 +570,13 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-    public ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+    public ObjectList query(CallContext callContext, String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount) {
         TypeManager tm = getTypeManager(repositoryId);
         ObjectStore objectStore = getObjectStore(repositoryId);
 
-        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId));
+        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId), callContext);
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 

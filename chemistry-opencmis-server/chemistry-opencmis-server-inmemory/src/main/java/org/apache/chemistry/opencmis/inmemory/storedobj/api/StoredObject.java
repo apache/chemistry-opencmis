@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 
 /**
@@ -276,11 +277,13 @@ public interface StoredObject {
     /**
      * get the allowable actions of the object.
      * 
+     * @param context
+     *            call context of this call
      * @param user
      *            user requesting allowable actions
      * @return allowable actions of this object for the use
      */
-    AllowableActions getAllowableActions(String user);
+    AllowableActions getAllowableActions(CallContext context, String user);
 
     /**
      * check if the document can generate a renditions and rendition is visible

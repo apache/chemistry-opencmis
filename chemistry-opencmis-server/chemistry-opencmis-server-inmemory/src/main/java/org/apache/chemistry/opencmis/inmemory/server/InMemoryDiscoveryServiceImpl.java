@@ -119,7 +119,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
         // To be able to provide all Atom links in the response we need
         // additional information:
         if (objectInfos != null) {
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, null, objectInfos, objList);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, null, objectInfos, objList);
         }
         return objList;
     }
@@ -150,7 +150,7 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
         String user = context.getUsername();
         ObjectList res;
 
-        res = fStoreManager.query(user, repositoryId, statement, searchAllVersions, includeAllowableActions,
+        res = fStoreManager.query(context, user, repositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount);
         LOG.debug("stop query()");
         return res;

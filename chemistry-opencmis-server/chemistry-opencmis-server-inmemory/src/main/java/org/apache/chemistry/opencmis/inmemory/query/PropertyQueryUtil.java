@@ -23,8 +23,6 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
-import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Document;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
@@ -39,7 +37,7 @@ public final class PropertyQueryUtil {
     private PropertyQueryUtil() {
     }
 
-    public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd) {
+    public static Object getProperty(StoredObject so, String propertyId, PropertyDefinition<?> pd, boolean cmis11) {
         ContentStream content = null;
         DocumentVersion ver = null;
         VersionedDocument verDoc = null;
@@ -47,8 +45,6 @@ public final class PropertyQueryUtil {
         Document doc = null;
         Relationship rel = null;
         Policy pol = null;
-
-        boolean cmis11 = InMemoryServiceContext.getCallContext().getCmisVersion() != CmisVersion.CMIS_1_0;
 
         if (so instanceof Content) {
             content = ((Content) so).getContent();

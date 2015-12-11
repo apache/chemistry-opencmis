@@ -26,6 +26,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
@@ -91,9 +92,11 @@ public interface StoreManager {
      * @param includePropertyDefinitions
      *            indicates whether to include property definitions in returned
      *            type
+     * @param cmis11
+     *            true if for CMIS version 1.1 false if for 1.0
      * @return map with type definition
      */
-    Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions);
+    Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions, boolean cmis11);
 
     /**
      * Retrieve a type definition for a give repository and type id.
@@ -102,9 +105,13 @@ public interface StoreManager {
      *            id of repository
      * @param typeId
      *            id of type definition
+     * @param cmis11
+     *            true if for CMIS version 1.1 false if for 1.0
+     * @param cmis11
+     *            true if for CMIS version 1.1 false if for 1.0
      * @return type definition
      */
-    TypeDefinitionContainer getTypeById(String repositoryId, String typeId);
+    TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean cmis11);
 
     /**
      * Retrieve a type definition for a give repository and type id with or
@@ -119,10 +126,12 @@ public interface StoreManager {
      *            type
      * @param depth
      *            limit depth of type hierarchy in return (-1 means unlimited)
+     * @param cmis11
+     *            true if for CMIS version 1.1 false if for 1.0
      * @return type definition
      */
     TypeDefinitionContainer getTypeById(String repositoryId, String typeId, boolean includePropertyDefinitions,
-            int depth);
+            int depth, boolean cmis11);
 
     /**
      * Retrieve a factory to create CMIS data structures used as containers.
@@ -140,18 +149,22 @@ public interface StoreManager {
      *            id of repository
      * @param inclPropDefs
      *            true to include property definitions, false otherwise
+     * @param cmis11
+     *            true if for CMIS version 1.1 false if for 1.0
      * @return list of root types
      */
-    List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean inclPropDefs);
+    List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean inclPropDefs, boolean cmis11);
 
     /**
      * Retrieve the repository information for a repository.
      * 
+     * @param CallContext
+     *            call context of the corresponding call
      * @param repositoryId
      *            id of repository
      * @return repository information
      */
-    RepositoryInfo getRepositoryInfo(String repositoryId);
+    RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId);
 
     /**
      * Retrieve the type manager for a given repository.
@@ -184,8 +197,10 @@ public interface StoreManager {
      * Execute a query against the repository (same parameter as the discovery
      * service query method.
      * 
+     * @param callContext
+     *            call context of this query
      * @param user
-     *            user execuing the query
+     *            user executing the query
      * @param repositoryId
      *            id of repository
      * @param statement
@@ -204,7 +219,7 @@ public interface StoreManager {
      *            items to skip
      * @return list of objects matching the query
      */
-    ObjectList query(String user, String repositoryId, String statement, Boolean searchAllVersions,
+    ObjectList query(CallContext callContext, String user, String repositoryId, String statement, Boolean searchAllVersions,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount);
 

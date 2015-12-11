@@ -40,11 +40,13 @@ import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.Cardinality;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Content;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
@@ -84,9 +86,11 @@ public class InMemoryQueryProcessor {
     private Tree whereTree;
     private ObjectStoreImpl objStore;
     private List<TypeDefinition> secondaryTypeIds;
+    private CallContext callContext;
 
-    public InMemoryQueryProcessor(ObjectStoreImpl objStore) {
+    public InMemoryQueryProcessor(ObjectStoreImpl objStore, CallContext ctx) {
         this.objStore = objStore;
+        this.callContext = ctx;
     }
 
     /**
@@ -208,7 +212,7 @@ public class InMemoryQueryProcessor {
             String queryName = queryObj.getTypes().values().iterator().next();
             TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);
 
-            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(tm, objStore, td, so, user, props, funcs,
+            ObjectData od = PropertyCreationHelper.getObjectDataQueryResult(callContext,tm, objStore, td, so, user, props, funcs,
                     secondaryTypeIds, includeAllowableActions, includeRelationships, renditionFilter);
             objDataList.add(od);
         }
@@ -257,8 +261,9 @@ public class InMemoryQueryProcessor {
                     String propId = ((ColumnReference) sel).getPropertyId();
                     PropertyDefinition<?> pd = ((ColumnReference) sel).getPropertyDefinition();
 
-                    Object propVal1 = PropertyQueryUtil.getProperty(so1, propId, pd);
-                    Object propVal2 = PropertyQueryUtil.getProperty(so2, propId, pd);
+                    boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+                    Object propVal1 = PropertyQueryUtil.getProperty(so1, propId, pd, cmis11);
+                    Object propVal2 = PropertyQueryUtil.getProperty(so2, propId, pd, cmis11);
 
                     if (propVal1 == null && propVal2 == null) {
                         result = 0;
@@ -402,7 +407,9 @@ public class InMemoryQueryProcessor {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
             List<Object> literals = onLiteralList(listNode);
-            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+
+            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
 
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
@@ -420,7 +427,8 @@ public class InMemoryQueryProcessor {
             // then it evaluates to true for null values (not set properties).
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+            Object prop = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
             List<Object> literals = onLiteralList(listNode);
             if (pd.getCardinality() != Cardinality.SINGLE) {
                 throw new IllegalStateException("Operator IN only is allowed on single-value properties ");
@@ -498,7 +506,8 @@ public class InMemoryQueryProcessor {
         public Boolean walkIsNull(Tree opNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
             return propVal == null;
         }
 
@@ -506,7 +515,8 @@ public class InMemoryQueryProcessor {
         public Boolean walkIsNotNull(Tree opNode, Tree colNode) {
             ColumnReference colRef = getColumnReference(colNode);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+            Object propVal = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
             return propVal != null;
         }
 
@@ -528,7 +538,8 @@ public class InMemoryQueryProcessor {
                 throw new IllegalStateException("LIKE is not allowed for multi-value properties ");
             }
 
-            String propVal = (String) PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+            String propVal = (String) PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
 
             if (null == propVal) {
                 return false;
@@ -593,7 +604,8 @@ public class InMemoryQueryProcessor {
 
             ColumnReference colRef = getColumnReference(leftChild);
             PropertyDefinition<?> pd = colRef.getPropertyDefinition();
-            Object val = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd);
+            boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+            Object val = PropertyQueryUtil.getProperty(so, colRef.getPropertyId(), pd, cmis11);
             if (val == null) {
                 return null;
             } else if (val instanceof List<?>) {

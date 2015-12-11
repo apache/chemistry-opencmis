@@ -44,6 +44,7 @@ public class InMemoryAbstractServiceImpl {
     protected final CmisServiceValidator validator;
     protected final AtomLinkInfoProvider fAtomLinkProvider;
 
+
     protected InMemoryAbstractServiceImpl(StoreManager storeManager, CmisServiceValidator validator) {
         this.fStoreManager = storeManager;
         this.validator = validator;
@@ -56,13 +57,14 @@ public class InMemoryAbstractServiceImpl {
         this.fAtomLinkProvider = new AtomLinkInfoProvider(fStoreManager);
     }
 
-    protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties) {
+    protected TypeDefinition getTypeDefinition(String repositoryId, Properties properties, boolean cmis11) {
         if (null == properties) {
             return null;
         }
 
         String typeId = (String) properties.getProperties().get(PropertyIds.OBJECT_TYPE_ID).getFirstValue();
-        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
+        
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId, cmis11);
         if (typeDefC == null) {
             throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId + " is unknown");
         }
@@ -70,14 +72,14 @@ public class InMemoryAbstractServiceImpl {
         return typeDefC.getTypeDefinition();
     }
 
-    protected List<TypeDefinition> getTypeDefinition(String repositoryId, List<String> typeIds) {
+    protected List<TypeDefinition> getTypeDefinition(String repositoryId, List<String> typeIds, boolean cmis11) {
         if (null == typeIds || typeIds.isEmpty()) {
             return null;
         }
 
         List<TypeDefinition> result = new ArrayList<TypeDefinition>(typeIds.size());
         for (String typeId : typeIds) {
-            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId);
+            TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, typeId, cmis11);
             if (typeDefC == null) {
                 throw new CmisInvalidArgumentException("Cannot create object, a type with id " + typeId
                         + " is unknown");
@@ -88,9 +90,9 @@ public class InMemoryAbstractServiceImpl {
         return result;
     }
 
-    protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj) {
+    protected TypeDefinition getTypeDefinition(String repositoryId, StoredObject obj, boolean cmis11) {
 
-        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId());
+        TypeDefinitionContainer typeDefC = fStoreManager.getTypeById(repositoryId, obj.getTypeId(), cmis11);
         return typeDefC == null ? null : typeDefC.getTypeDefinition();
     }
 

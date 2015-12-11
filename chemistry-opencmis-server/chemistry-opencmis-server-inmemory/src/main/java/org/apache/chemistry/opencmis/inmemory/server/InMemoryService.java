@@ -51,7 +51,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 public class InMemoryService extends AbstractCmisService {
 
     private final StoreManager storeManager; // singleton root of everything
-
+    private final CallContext callContext;
     private final InMemoryRepositoryServiceImpl fRepSvc;
     private final InMemoryObjectServiceImpl fObjSvc;
     private final InMemoryNavigationServiceImpl fNavSvc;
@@ -66,8 +66,9 @@ public class InMemoryService extends AbstractCmisService {
         return storeManager;
     }
 
-    public InMemoryService(StoreManager sm) {
+    public InMemoryService(StoreManager sm, CallContext ctx) {
         storeManager = sm;
+        callContext = ctx;
         fRepSvc = new InMemoryRepositoryServiceImpl(storeManager);
         fNavSvc = new InMemoryNavigationServiceImpl(storeManager);
         fObjSvc = new InMemoryObjectServiceImpl(storeManager);
@@ -80,11 +81,7 @@ public class InMemoryService extends AbstractCmisService {
     }
 
     public CallContext getCallContext() {
-        return InMemoryServiceContext.getCallContext();
-    }
-
-    public void setCallContext(CallContext context) {
-        InMemoryServiceContext.setCallContext(context);
+        return callContext;
     }
 
     // --- repository service ---
@@ -92,7 +89,6 @@ public class InMemoryService extends AbstractCmisService {
     @Override
     public void close() {
         super.close();
-        setCallContext(null);
     }
 
     @Override

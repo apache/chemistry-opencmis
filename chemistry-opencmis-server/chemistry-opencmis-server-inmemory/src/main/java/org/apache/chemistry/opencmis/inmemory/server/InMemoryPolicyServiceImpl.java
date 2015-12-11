@@ -58,7 +58,7 @@ public class InMemoryPolicyServiceImpl extends InMemoryAbstractServiceImpl {
             ObjectStore os = super.fStoreManager.getObjectStore(repositoryId);
             for (String polId : polIds) {
                 StoredObject pol = os.getObjectById(polId);
-                ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, pol, filter, user, false,
+                ObjectData od = PropertyCreationHelper.getObjectData(context, tm, objStore, pol, filter, user, false,
                         IncludeRelationships.NONE, null, false, false, null);
                 res.add(od);
             }

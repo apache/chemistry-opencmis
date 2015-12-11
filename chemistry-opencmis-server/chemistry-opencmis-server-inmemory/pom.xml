@@ -68,6 +68,7 @@
                     </overlays>
                     <archiveClasses>true</archiveClasses>
                     <attachClasses>true</attachClasses>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             <plugin>

@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
@@ -191,10 +192,11 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         return so;
     }
 
-    protected void checkPolicies(String repositoryId, List<String> policyIds) {
+    protected void checkPolicies(CallContext context, String repositoryId, List<String> policyIds) {
         if (policyIds != null && policyIds.size() > 0) {
+        	boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
             for (String policyId : policyIds) {
-                TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, policyId);
+                TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, policyId, cmis11);
                 if (tdc == null) {
                     throw new CmisInvalidArgumentException("Unknown policy type: " + policyId);
                 }
@@ -205,9 +207,9 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         }
     }
 
-    protected void checkCreatablePropertyTypes(String repositoryId,
+    protected void checkCreatablePropertyTypes(CallContext context, String repositoryId,
             Collection<PropertyDefinition<?>> propertyDefinitions) {
-        RepositoryInfo repositoryInfo = fStoreManager.getRepositoryInfo(repositoryId);
+        RepositoryInfo repositoryInfo = fStoreManager.getRepositoryInfo(context, repositoryId);
         RepositoryCapabilities repositoryCapabilities = repositoryInfo.getCapabilities();
         if (null == repositoryCapabilities) {
         	return;
@@ -235,9 +237,9 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         }
     }
 
-    protected void checkSettableAttributes(String repositoryId, TypeDefinition oldTypeDefinition,
+    protected void checkSettableAttributes(CallContext context, String repositoryId, TypeDefinition oldTypeDefinition,
             TypeDefinition newTypeDefinition) {
-        RepositoryInfo repositoryInfo = fStoreManager.getRepositoryInfo(repositoryId);
+        RepositoryInfo repositoryInfo = fStoreManager.getRepositoryInfo(context, repositoryId);
         RepositoryCapabilities repositoryCapabilities = repositoryInfo.getCapabilities();
         NewTypeSettableAttributes newTypeSettableAttributes = repositoryCapabilities.getNewTypeSettableAttributes();
 
@@ -452,13 +454,13 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         // anything else should be ignored
     }
 
-    protected TypeDefinition checkExistingTypeId(String repositoryId, String typeId) {
+    protected TypeDefinition checkExistingTypeId(String repositoryId, String typeId, boolean cmis11) {
 
         if (null == typeId) {
             throw new CmisInvalidArgumentException(TYPE_ID_CANNOT_BE_NULL);
         }
 
-        TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, typeId);
+        TypeDefinitionContainer tdc = fStoreManager.getTypeById(repositoryId, typeId, cmis11);
         if (tdc == null) {
             throw new CmisObjectNotFoundException(UNKNOWN_TYPE_ID + typeId);
         }
@@ -769,7 +771,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         }
 
         if (typeId != null) {
-            TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, typeId).getTypeDefinition();
+        	boolean cmis11 = context.getCmisVersion() != CmisVersion.CMIS_1_0;
+            TypeDefinition typeDef = fStoreManager.getTypeById(repositoryId, typeId, cmis11).getTypeDefinition();
             if (typeDef == null) {
                 throw new CmisInvalidArgumentException("Type Id " + typeId + " is not known in repository "
                         + repositoryId);
@@ -847,7 +850,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             throw new CmisInvalidArgumentException("Type cannot be null.");
         }
         String parentTypeId = type.getParentTypeId();
-        TypeDefinitionContainer parentTypeContainer = fStoreManager.getTypeById(repositoryId, parentTypeId);
+        boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+        TypeDefinitionContainer parentTypeContainer = fStoreManager.getTypeById(repositoryId, parentTypeId, cmis11);
         if (null == parentTypeContainer) {
             throw new CmisInvalidArgumentException(UNKNOWN_TYPE_ID + parentTypeId);
         }
@@ -856,7 +860,7 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
         if (!(parentType.getTypeMutability().canCreate())) {
             throw new CmisConstraintException("parent type: " + parentTypeId + " does not allow mutability create");
         }
-        checkCreatablePropertyTypes(repositoryId, type.getPropertyDefinitions().values());
+        checkCreatablePropertyTypes(callContext, repositoryId, type.getPropertyDefinitions().values());
     }
 
     @Override
@@ -864,15 +868,16 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
 
-        TypeDefinition updateType = checkExistingTypeId(repositoryId, type.getId());
+        boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+        TypeDefinition updateType = checkExistingTypeId(repositoryId, type.getId(), cmis11);
         checkUpdateType(updateType, type);
         checkBasicType(type);
         // check if type can be updated
         if (!(updateType.getTypeMutability().canUpdate())) {
             throw new CmisConstraintException("type: " + type.getId() + " does not allow mutability update");
         }
-        checkCreatablePropertyTypes(repositoryId, type.getPropertyDefinitions().values());
-        checkSettableAttributes(repositoryId, updateType, type);
+        checkCreatablePropertyTypes(callContext, repositoryId, type.getPropertyDefinitions().values());
+        checkSettableAttributes(callContext, repositoryId, updateType, type);
         checkUpdatePropertyDefinitions(updateType.getPropertyDefinitions(), type.getPropertyDefinitions());
         return updateType;
     }
@@ -882,7 +887,8 @@ public class BaseServiceValidatorImpl implements CmisServiceValidator {
             ExtensionsData extension) {
         checkRepositoryId(repositoryId);
 
-        TypeDefinition deleteType = checkExistingTypeId(repositoryId, typeId);
+        boolean cmis11 = callContext.getCmisVersion() != CmisVersion.CMIS_1_0;
+        TypeDefinition deleteType = checkExistingTypeId(repositoryId, typeId, cmis11);
         checkBasicType(deleteType);
         // check if type can be deleted
         if (!(deleteType.getTypeMutability().canDelete())) {

@@ -62,8 +62,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
         objStore.addParent(so, newParent);
         if (context.isObjectInfoRequired()) {
             ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
-            fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
+            fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, folder, objectInfo);
             objectInfos.addObjectInfo(objectInfo);
         }
 
@@ -89,8 +89,8 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             // additional information:
             if (context.isObjectInfoRequired()) {
                 ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
-                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, folder, objectInfo);
+                fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
+                fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, folder, objectInfo);
                 objectInfos.addObjectInfo(objectInfo);
             }
         } else {
@@ -105,7 +105,7 @@ public class InMemoryMultiFilingServiceImpl extends InMemoryAbstractServiceImpl 
             // additional information:
             if (context.isObjectInfoRequired()) {
                 ObjectInfoImpl objectInfo = new ObjectInfoImpl();
-                fAtomLinkProvider.fillInformationForAtomLinks(repositoryId, so, objectInfo);
+                fAtomLinkProvider.fillInformationForAtomLinks(context, repositoryId, so, objectInfo);
                 objectInfos.addObjectInfo(objectInfo);
             }
         }

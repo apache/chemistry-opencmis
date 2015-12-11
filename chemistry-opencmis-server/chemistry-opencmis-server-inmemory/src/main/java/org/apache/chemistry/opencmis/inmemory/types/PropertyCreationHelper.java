@@ -69,6 +69,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefi
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyUriImpl;
+import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.DataObjectCreator;
 import org.apache.chemistry.opencmis.inmemory.FilterParser;
@@ -404,7 +405,7 @@ public final class PropertyCreationHelper {
         }
     }
 
-    public static ObjectData getObjectData(TypeManager tm, ObjectStore objectStore, StoredObject so, String filter,
+    public static ObjectData getObjectData(CallContext context, TypeManager tm, ObjectStore objectStore, StoredObject so, String filter,
             String user, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
             String renditionFilter, Boolean includePolicyIds, Boolean includeACL, ExtensionsData extension) {
 
@@ -420,7 +421,7 @@ public final class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            AllowableActions allowableActions = so.getAllowableActions(user);
+            AllowableActions allowableActions = so.getAllowableActions(context, user);
             od.setAllowableActions(allowableActions);
         }
 
@@ -442,7 +443,7 @@ public final class PropertyCreationHelper {
         }
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(tm, objectStore, includeRelationships, so, user));
+            od.setRelationships(DataObjectCreator.fillRelationships(context, tm, objectStore, includeRelationships, so, user));
         }
 
         if (null != includePolicyIds && includePolicyIds) {
@@ -459,7 +460,7 @@ public final class PropertyCreationHelper {
         return od;
     }
 
-    public static ObjectData getObjectDataQueryResult(TypeManager tm, ObjectStore objectStore,
+    public static ObjectData getObjectDataQueryResult(CallContext context, TypeManager tm, ObjectStore objectStore,
             TypeDefinition primaryType, StoredObject so, String user, Map<String, String> requestedProperties,
             Map<String, String> requestedFuncs, List<TypeDefinition> secondaryTypes, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter) {
@@ -472,7 +473,7 @@ public final class PropertyCreationHelper {
 
         // fill output object
         if (null != includeAllowableActions && includeAllowableActions) {
-            AllowableActions allowableActions = so.getAllowableActions(user);
+            AllowableActions allowableActions = so.getAllowableActions(context, user);
             od.setAllowableActions(allowableActions);
         }
 
@@ -483,7 +484,7 @@ public final class PropertyCreationHelper {
         od.setIsExactAcl(true);
 
         if (null != includeRelationships && includeRelationships != IncludeRelationships.NONE) {
-            od.setRelationships(DataObjectCreator.fillRelationships(tm, objectStore, includeRelationships, so, user));
+            od.setRelationships(DataObjectCreator.fillRelationships(context, tm, objectStore, includeRelationships, so, user));
         }
 
         List<RenditionData> renditions = objectStore.getRenditions(so, renditionFilter, 0, 0);
