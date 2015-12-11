@@ -61,6 +61,7 @@ import org.apache.chemistry.opencmis.workbench.icons.TckIcon;
 import org.apache.chemistry.opencmis.workbench.icons.TypesIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
+import org.apache.chemistry.opencmis.workbench.types.TypesFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

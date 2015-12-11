@@ -19,12 +19,10 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -39,7 +37,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.chemistry.opencmis.commons.data.AclCapabilities;
-import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ExtensionFeature;
 import org.apache.chemistry.opencmis.commons.data.PermissionMapping;
 import org.apache.chemistry.opencmis.commons.data.RepositoryCapabilities;
@@ -49,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.workbench.icons.ExtensionIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.swing.ExtensionsTree;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 
 public class RepositoryInfoFrame extends JFrame {
@@ -70,7 +68,7 @@ public class RepositoryInfoFrame extends JFrame {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 3), (int) (screenSize.getHeight() / 1.5)));
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2.5), (int) (screenSize.getHeight() / 1.5)));
         setMinimumSize(new Dimension(200, 60));
 
         RepositoryInfo repInfo = null;
@@ -304,32 +302,7 @@ public class RepositoryInfoFrame extends JFrame {
             }
 
             if (isNotEmpty(repInfo.getExtensions())) {
-                JTree extensionsTree = new JTree();
-                extensionsTree.setRootVisible(false);
-                extensionsTree.setCellRenderer(new ExtensionTreeCellRenderer());
-                extensionsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-                DefaultMutableTreeNode extRootNode = new DefaultMutableTreeNode("Extensions");
-                addExtension(extRootNode, repInfo.getExtensions());
-
-                extensionsTree.setModel(new DefaultTreeModel(extRootNode));
-
-                addComponent("Extensions:", new JScrollPane(extensionsTree));
-            }
-        }
-
-        private void addExtension(DefaultMutableTreeNode parent, List<CmisExtensionElement> extensions) {
-            if (isNullOrEmpty(extensions)) {
-                return;
-            }
-
-            for (CmisExtensionElement ext : extensions) {
-                DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ExtensionNode(ext));
-                parent.add(node);
-
-                if (isNotEmpty(ext.getChildren())) {
-                    addExtension(node, ext.getChildren());
-                }
+                addComponent("Extensions:", new JScrollPane(new ExtensionsTree(repInfo.getExtensions())));
             }
         }
 
@@ -357,22 +330,6 @@ public class RepositoryInfoFrame extends JFrame {
             return o.toString();
         }
 
-        static class ExtensionNode {
-            private final CmisExtensionElement extension;
-
-            public ExtensionNode(CmisExtensionElement extension) {
-                this.extension = extension;
-            }
-
-            @Override
-            public String toString() {
-                return (extension.getNamespace() == null ? "" : "{" + extension.getNamespace() + "}")
-                        + extension.getName()
-                        + (!extension.getAttributes().isEmpty() ? " " + extension.getAttributes() : "")
-                        + (extension.getChildren().isEmpty() ? ": " + extension.getValue() : "");
-            }
-        }
-
         static class ExtensionFeatureCellRenderer extends DefaultTreeCellRenderer {
 
             private static final long serialVersionUID = 1L;
@@ -392,23 +349,6 @@ public class RepositoryInfoFrame extends JFrame {
                 } else {
                     setIcon(null);
                 }
-
-                return comp;
-            }
-        }
-
-        static class ExtensionTreeCellRenderer extends DefaultTreeCellRenderer {
-
-            private static final long serialVersionUID = 1L;
-
-            private static final Icon EXTENSION_ICON = new ExtensionIcon(ClientHelper.OBJECT_ICON_SIZE,
-                    ClientHelper.OBJECT_ICON_SIZE);
-
-            @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                    boolean leaf, int row, boolean hasFocus) {
-                Component comp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-                setIcon(EXTENSION_ICON);
 
                 return comp;
             }

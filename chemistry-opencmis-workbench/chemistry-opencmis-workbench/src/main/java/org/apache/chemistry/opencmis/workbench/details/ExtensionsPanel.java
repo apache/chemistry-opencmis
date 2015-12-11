@@ -121,6 +121,10 @@ public class ExtensionsPanel extends JPanel implements ObjectListener {
                 DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
                 extensionsTree.setModel(treeModel);
+
+                for (int i = 0; i < extensionsTree.getRowCount(); i++) {
+                    extensionsTree.expandRow(i);
+                }
             }
         });
     }

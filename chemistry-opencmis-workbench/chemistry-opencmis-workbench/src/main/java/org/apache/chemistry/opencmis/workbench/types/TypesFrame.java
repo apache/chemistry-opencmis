@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.workbench;
+package org.apache.chemistry.opencmis.workbench.types;
 
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
 
@@ -34,7 +34,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -62,16 +66,22 @@ import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.util.TypeUtils;
 import org.apache.chemistry.opencmis.client.util.TypeUtils.ValidationError;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.tck.CmisTestGroup;
+import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
+import org.apache.chemistry.opencmis.workbench.checks.TypeComplianceTestGroup;
 import org.apache.chemistry.opencmis.workbench.icons.BaseTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.CreateTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.DeleteTypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.ReloadIcon;
 import org.apache.chemistry.opencmis.workbench.icons.SaveTypeIcon;
+import org.apache.chemistry.opencmis.workbench.icons.TckIcon;
 import org.apache.chemistry.opencmis.workbench.icons.TypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.UpdateTypeIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
@@ -83,10 +93,11 @@ public class TypesFrame extends JFrame {
     private static final String WINDOW_TITLE = "CMIS Types";
 
     private static final int BUTTON_RELOAD = 0;
-    private static final int BUTTON_SAVE = 1;
-    private static final int BUTTON_UPDATE = 2;
-    private static final int BUTTON_DELETE = 3;
-    private static final int BUTTON_CREATE = 4;
+    private static final int BUTTON_CHECK = 1;
+    private static final int BUTTON_SAVE = 2;
+    private static final int BUTTON_UPDATE = 3;
+    private static final int BUTTON_DELETE = 4;
+    private static final int BUTTON_CREATE = 5;
 
     private final ClientModel model;
     private RepositoryInfo repInfo;
@@ -95,7 +106,11 @@ public class TypesFrame extends JFrame {
     private JToolBar toolBar;
     private JButton[] toolbarButton;
     private JTree typesTree;
-    private TypeSplitPane typePanel;
+
+    private JSplitPane typePropSplitPane;
+    private JSplitPane typeSplitPane;
+    private TypeDefinitionInfoPanel typeDefinitionInfoPanel;
+    private PropertyDefinitionsSplitPane propertyDefinitionsSplitPane;
 
     public TypesFrame(ClientModel model) {
         super();
@@ -112,13 +127,13 @@ public class TypesFrame extends JFrame {
         setIconImages(ClientHelper.getCmisIconImages());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 1.5), (int) (screenSize.getHeight() / 1.5)));
+        setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.8), (int) (screenSize.getHeight() * 0.8)));
         setMinimumSize(new Dimension(200, 60));
         setLayout(new BorderLayout());
 
         toolBar = new JToolBar("CMIS Types Toolbar", SwingConstants.HORIZONTAL);
 
-        toolbarButton = new JButton[5];
+        toolbarButton = new JButton[6];
 
         JMenuItem menuItem;
 
@@ -134,6 +149,44 @@ public class TypesFrame extends JFrame {
             }
         });
         toolBar.add(toolbarButton[BUTTON_RELOAD]);
+
+        toolBar.addSeparator();
+
+        // -- check --
+
+        toolbarButton[BUTTON_CHECK] = new JButton("Check Compliance", new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE));
+        toolbarButton[BUTTON_CHECK].setDisabledIcon(new TckIcon(ClientHelper.TOOLBAR_ICON_SIZE,
+                ClientHelper.TOOLBAR_ICON_SIZE, false));
+        toolbarButton[BUTTON_CHECK].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                if (currentType == null) {
+                    return;
+                }
+
+                try {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                    Map<String, String> parameters = new HashMap<String, String>(model.getClientSession()
+                            .getSessionParameters());
+                    parameters.put(SessionParameter.REPOSITORY_ID, model.getRepositoryInfo().getId());
+
+                    TypeComplianceTestGroup tctg = new TypeComplianceTestGroup(parameters, currentType.getId());
+                    tctg.run();
+
+                    List<CmisTestGroup> groups = new ArrayList<CmisTestGroup>();
+                    groups.add(tctg);
+                    SwingReport report = new SwingReport(null, 700, 500);
+                    report.createReport(parameters, groups, (Writer) null);
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                } finally {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+        toolBar.add(toolbarButton[BUTTON_CHECK]);
 
         toolBar.addSeparator();
 
@@ -396,16 +449,27 @@ public class TypesFrame extends JFrame {
                             && Boolean.TRUE.equals(currentType.getTypeMutability().canDelete()));
                 }
 
-                typePanel.setType(currentType);
+                typeDefinitionInfoPanel.setType(currentType);
+                propertyDefinitionsSplitPane.setType(currentType);
             }
         });
 
-        typePanel = new TypeSplitPane(model);
+        // split panes
+        typeDefinitionInfoPanel = new TypeDefinitionInfoPanel(model);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(typesTree), typePanel);
-        splitPane.setDividerLocation(300);
+        typeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(typesTree), new JScrollPane(
+                typeDefinitionInfoPanel));
+        typeSplitPane.setDividerLocation(0.5);
+        typeSplitPane.setOneTouchExpandable(true);
+        typeSplitPane.setResizeWeight(0.5);
 
-        add(splitPane, BorderLayout.CENTER);
+        propertyDefinitionsSplitPane = new PropertyDefinitionsSplitPane(model);
+
+        typePropSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, typeSplitPane, propertyDefinitionsSplitPane);
+        typePropSplitPane.setDividerLocation(0.5);
+        typePropSplitPane.setResizeWeight(0.5);
+
+        add(typePropSplitPane, BorderLayout.CENTER);
 
         ClientHelper.installEscapeBinding(this, getRootPane(), true);
 
@@ -523,6 +587,8 @@ public class TypesFrame extends JFrame {
             typesTree.setModel(treeModel);
 
             typesTree.setSelectionRow(0);
+            typeSplitPane.setDividerLocation(0.5);
+            typePropSplitPane.setDividerLocation(0.5);
         } catch (Exception ex) {
             // clear tree
             TreeModel model = typesTree.getModel();
