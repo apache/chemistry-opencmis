@@ -181,6 +181,14 @@ package org.apache.chemistry.opencmis.commons;
  * <td>no</td>
  * <td>-</td>
  * </tr>
+  * <tr>
+ * <td>{@link #USER_AGENT}</td>
+ * <td>User agent header</td>
+ * <td>AtomPub, Web Services, Browser</td>
+ * <td>user agent string</td>
+ * <td>no</td>
+ * <td>-</td>
+ * </tr>
  * <tr>
  * <td>{@link #PROXY_USER}</td>
  * <td>Proxy user (used by the standard authentication provider)</td>
@@ -687,6 +695,8 @@ public final class SessionParameter {
     public static final String PROXY_PASSWORD = "org.apache.chemistry.opencmis.binding.proxypassword";
 
     public static final String CSRF_HEADER = "org.apache.chemistry.opencmis.binding.csrfheader";
+
+    public static final String USER_AGENT = "org.apache.chemistry.opencmis.binding.useragent";
 
     // --- cache ---
 

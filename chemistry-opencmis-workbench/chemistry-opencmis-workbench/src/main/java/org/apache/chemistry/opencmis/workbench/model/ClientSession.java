@@ -42,6 +42,7 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.bindings.cache.TypeDefinitionCache;
+import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.client.runtime.cache.Cache;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -59,6 +60,10 @@ import org.slf4j.LoggerFactory;
 public class ClientSession {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientSession.class);
+
+    public static final String WORKBENCH_USER_AGENT = "OpenCMIS-Workbench/"
+            + (ClientVersion.OPENCMIS_VERSION == null ? "?" : ClientVersion.OPENCMIS_VERSION) + " "
+            + ClientVersion.OPENCMIS_USER_AGENT;
 
     public static final String WORKBENCH_PREFIX = "cmis.workbench.";
     public static final String OBJECT_PREFIX = WORKBENCH_PREFIX + "object.";
@@ -151,6 +156,8 @@ public class ClientSession {
         default:
             parameters.setNoAuthentication();
         }
+
+        parameters.setUserAgent(WORKBENCH_USER_AGENT);
 
         parameters.setCompression(compression);
         parameters.setClientCompression(clientCompression);

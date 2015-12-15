@@ -364,7 +364,8 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
         conn.setDoOutput(true);
         conn.setAllowUserInteraction(false);
         conn.setUseCaches(false);
-        conn.setRequestProperty("User-Agent", ClientVersion.OPENCMIS_CLIENT);
+        conn.setRequestProperty("User-Agent",
+                (String) getSession().get(SessionParameter.USER_AGENT, ClientVersion.OPENCMIS_USER_AGENT));
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
         // compile request

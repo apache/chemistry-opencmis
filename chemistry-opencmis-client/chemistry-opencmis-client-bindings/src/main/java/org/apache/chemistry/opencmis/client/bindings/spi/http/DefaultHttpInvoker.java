@@ -96,7 +96,9 @@ public class DefaultHttpInvoker implements HttpInvoker {
             conn.setDoOutput(writer != null);
             conn.setAllowUserInteraction(false);
             conn.setUseCaches(false);
-            conn.setRequestProperty("User-Agent", ClientVersion.OPENCMIS_CLIENT);
+
+            conn.setRequestProperty("User-Agent",
+                    (String) session.get(SessionParameter.USER_AGENT, ClientVersion.OPENCMIS_USER_AGENT));
 
             // timeouts
             int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);

@@ -22,16 +22,22 @@ public final class ClientVersion {
 
     public static final String OPENCMIS_VERSION;
     public static final String OPENCMIS_CLIENT;
+    public static final String OPENCMIS_USER_AGENT;
 
     static {
         Package p = Package.getPackage("org.apache.chemistry.opencmis.client.bindings.impl");
         if (p == null) {
             OPENCMIS_VERSION = "?";
-            OPENCMIS_CLIENT = "Apache Chemistry OpenCMIS";
+            OPENCMIS_CLIENT = "Apache-Chemistry-OpenCMIS";
         } else {
             OPENCMIS_VERSION = p.getImplementationVersion();
-            OPENCMIS_CLIENT = "Apache Chemistry OpenCMIS/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
+            OPENCMIS_CLIENT = "Apache-Chemistry-OpenCMIS/" + (OPENCMIS_VERSION == null ? "?" : OPENCMIS_VERSION);
         }
+
+        String java = "Java " + System.getProperty("java.version");
+        String os = System.getProperty("os.name") + " " + System.getProperty("os.version");
+
+        OPENCMIS_USER_AGENT = OPENCMIS_CLIENT + " (" + java + "; " + os + ")";
     }
 
     private ClientVersion() {

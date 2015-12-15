@@ -602,6 +602,20 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     }
 
     /**
+     * Sets the user agent string.
+     * 
+     * @param userAgent
+     *            the user agent string
+     */
+    public void setUserAgent(String userAgent) {
+        if (userAgent != null) {
+            put(SessionParameter.USER_AGENT, userAgent);
+        } else {
+            remove(SessionParameter.USER_AGENT);
+        }
+    }
+
+    /**
      * Sets whether requests to the server should be compressed or not.
      * 
      * @param compression

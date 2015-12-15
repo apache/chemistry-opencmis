@@ -328,7 +328,8 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
         HttpParams params = new BasicHttpParams();
 
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setUserAgent(params, ClientVersion.OPENCMIS_CLIENT);
+        HttpProtocolParams.setUserAgent(params,
+                (String) session.get(SessionParameter.USER_AGENT, ClientVersion.OPENCMIS_USER_AGENT));
         HttpProtocolParams.setContentCharset(params, IOUtils.UTF8);
         HttpProtocolParams.setUseExpectContinue(params, true);
 

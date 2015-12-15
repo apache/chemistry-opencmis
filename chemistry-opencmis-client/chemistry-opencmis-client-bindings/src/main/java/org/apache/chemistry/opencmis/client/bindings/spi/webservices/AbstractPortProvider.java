@@ -647,7 +647,8 @@ public abstract class AbstractPortProvider {
         }
 
         // CMIS client header
-        httpHeaders.put("X-CMIS-Client", Collections.singletonList(ClientVersion.OPENCMIS_CLIENT));
+        httpHeaders.put("X-CMIS-Client", Collections.singletonList((String) session.get(SessionParameter.USER_AGENT,
+                ClientVersion.OPENCMIS_USER_AGENT)));
 
         // compression
         if (useCompression) {
