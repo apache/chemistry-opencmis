@@ -192,26 +192,32 @@ public class SessionParameterMapTest {
 
         private static final long serialVersionUID = 1L;
 
+        @Override
         public Map<String, List<String>> getHTTPHeaders(String url) {
             return null;
         }
 
+        @Override
         public Element getSOAPHeaders(Object portObject) {
             return null;
         }
 
+        @Override
         public HandlerResolver getHandlerResolver() {
             return null;
         }
 
+        @Override
         public SSLSocketFactory getSSLSocketFactory() {
             return null;
         }
 
+        @Override
         public HostnameVerifier getHostnameVerifier() {
             return null;
         }
 
+        @Override
         public void putResponseHeaders(String url, int statusCode, Map<String, List<String>> headers) {
         }
     }

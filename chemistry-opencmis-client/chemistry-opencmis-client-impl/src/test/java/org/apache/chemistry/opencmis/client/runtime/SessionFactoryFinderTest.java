@@ -85,16 +85,20 @@ public class SessionFactoryFinderTest {
             return null;
         }
 
+        @Override
         public Session createSession(Map<String, String> parameters) {
             return null;
         }
 
+        @Override
         public List<Repository> getRepositories(Map<String, String> parameters) {
             return null;
         }
     }
 
     public static class MockSessionFactory2 extends SessionFactoryImpl {
+
+        private static final long serialVersionUID = 1L;
 
         private MockSessionFactory2() {
         }

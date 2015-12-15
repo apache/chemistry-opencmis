@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.Assert;
-
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
@@ -42,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.commons.spi.ObjectService;
+import org.junit.Assert;
 
 public class ObjectCreator {
 
@@ -183,7 +182,7 @@ public class ObjectCreator {
         properties.add(fFactory.createPropertyStringData(propertyId, propertyValue));
         return properties;
     }
-    
+
     public boolean verifyProperty(String id, String propertyId, String propertyValue) {
         Properties props = fObjSvc.getProperties(fRepositoryId, id, "*", null);
         Map<String, PropertyData<?>> propsMap = props.getProperties();
