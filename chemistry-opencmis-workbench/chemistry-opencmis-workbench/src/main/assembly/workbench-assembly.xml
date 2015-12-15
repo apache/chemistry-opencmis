@@ -83,9 +83,6 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>org.jvnet.mimepull:mimepull</exclude>
-                <exclude>org.apache.axis2:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

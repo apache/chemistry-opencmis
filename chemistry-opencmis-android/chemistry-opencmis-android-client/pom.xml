@@ -69,7 +69,6 @@
                            		<copy todir="${gendir}">
 									<fileset dir="${commons-impl}/${sourcefiles}">
 										<include name="**/*.java" />
-										<exclude name="**/tube/**" />
 										<exclude name="**/jaxb/**" />
 										<exclude name="**/webservices/**" />
 										<exclude name="**/impl/WSConverter.*" />
@@ -144,6 +143,7 @@
                         <phase>package</phase>
                         <configuration>
                             <attach>true</attach>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <descriptors>
                                 <descriptor>
                                   src/main/assembly/assembly.xml

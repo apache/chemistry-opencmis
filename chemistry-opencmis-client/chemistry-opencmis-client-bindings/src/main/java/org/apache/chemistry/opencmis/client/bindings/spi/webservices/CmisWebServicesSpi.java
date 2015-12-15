@@ -90,11 +90,11 @@ public class CmisWebServicesSpi implements CmisSpi {
                     throw new CmisRuntimeException(
                             "JRE JAX-WS implementation not supported anymore. Please use Apache CXF.");
                 } else if (providerPackage.startsWith("com.sun.xml.ws.spi")) {
-                    portProvider = new SunRIPortProvider();
+                    throw new CmisRuntimeException("JAX-WS RI not supported anymore. Please use Apache CXF.");
                 } else if (providerPackage.startsWith("org.apache.cxf.jaxws")) {
                     portProvider = new CXFPortProvider();
                 } else if (providerPackage.startsWith("org.apache.axis2.jaxws.spi")) {
-                    portProvider = new Axis2PortProvider();
+                    throw new CmisRuntimeException("Axis2 not supported anymore. Please use Apache CXF.");
                 } else {
                     throw new CmisRuntimeException("Could not detect JAX-WS implementation! Use session parameter "
                             + SessionParameter.WEBSERVICES_JAXWS_IMPL + " to specify one.");
@@ -103,13 +103,13 @@ public class CmisWebServicesSpi implements CmisSpi {
                 throw new CmisRuntimeException(
                         "JRE JAX-WS implementation not supported anymore. Please use Apache CXF.");
             } else if (JAXWS_IMPL_RI.equals(jaxwsImpl)) {
-                portProvider = new SunRIPortProvider();
+                throw new CmisRuntimeException("JAX-WS RI not supported anymore. Please use Apache CXF.");
             } else if (JAXWS_IMPL_CXF.equals(jaxwsImpl)) {
                 portProvider = new CXFPortProvider();
             } else if (JAXWS_IMPL_WEBSPHERE.equals(jaxwsImpl)) {
                 portProvider = new WebSpherePortProvider();
             } else if (JAXWS_IMPL_AXIS2.equals(jaxwsImpl)) {
-                portProvider = new Axis2PortProvider();
+                throw new CmisRuntimeException("Axis2 not supported anymore. Please use Apache CXF.");
             } else {
                 throw new CmisRuntimeException("Unknown JAX-WS implementation specified!");
             }

@@ -56,11 +56,8 @@
                         <Import-Package>
                             org.slf4j;resolution:=optional,
                             org.slf4j.impl;resolution:=optional,
-                            com.sun.xml.ws.*;version="[2.1.7,3.0)";resolution:=optional,
-                            com.sun.xml.internal.*;resolution:=optional,
                             org.apache.cxf.*;resolution:=optional,
                             org.apache.http.*;resolution:=optional,
-                            org.apache.axis2.*;resolution:=optional,
                             *
                         </Import-Package>
                         <_exportcontents>
@@ -69,7 +66,7 @@
                             org.apache.chemistry.opencmis.client.bindings;version=${project.version},
                             org.apache.chemistry.opencmis.client.bindings.spi.*;version=${project.version},
                             org.apache.chemistry.opencmis.commons.impl.*;version=${project.version};-noimport:=true,
-                            org.apache.chemistry.opencmis.commons.*;version=${project.version};-noimport:=true,
+                            org.apache.chemistry.opencmis.commons.*;version=${project.version};-noimport:=true
                         </_exportcontents>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>
                         <Bundle-Activator>org.apache.chemistry.opencmis.client.osgi.Activator</Bundle-Activator>

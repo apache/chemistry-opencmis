@@ -35,9 +35,23 @@
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>LICENSE</exclude>
+                <exclude>NOTICE</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     <files>
+        <file>
+            <source>src/main/assembly/workbench-assembly-license.txt</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>LICENSE</destName>
+        </file>
+        <file>
+            <source>src/main/assembly/workbench-assembly-notice.txt</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>NOTICE</destName>
+        </file>
         <file>
             <source>target/start/workbench.sh</source>
             <outputDirectory>/Contents/Resources</outputDirectory>
@@ -79,8 +93,6 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.codehaus.woodstox:wstx-asl:*</exclude>
-                <exclude>com.sun.xml.ws:jaxws-rt</exclude>
-                <exclude>org.apache.axis2:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>
