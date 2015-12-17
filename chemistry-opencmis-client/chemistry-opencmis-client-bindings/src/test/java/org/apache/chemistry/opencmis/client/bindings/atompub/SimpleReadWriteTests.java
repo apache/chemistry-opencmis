@@ -24,9 +24,6 @@ import java.util.Set;
 import org.apache.chemistry.opencmis.client.bindings.framework.AbstractSimpleReadWriteTests;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 
-/**
- * @author <a href="mailto:fmueller@opentext.com">Florian M&uuml;ller</a>
- */
 public class SimpleReadWriteTests extends AbstractSimpleReadWriteTests {
 
     private final Set<String> fTests;
