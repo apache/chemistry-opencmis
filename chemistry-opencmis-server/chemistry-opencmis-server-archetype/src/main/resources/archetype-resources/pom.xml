@@ -59,34 +59,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <wtpversion>2.0</wtpversion>
-                    <wtpContextName>\${artifactId}</wtpContextName>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
-                    <linkedResources>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/web.xml</name>
-                            <type>1</type>
-                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/web.xml</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/cmis10</name>
-                            <type>2</type>
-                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/cmis10</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/cmis11</name>
-                            <type>2</type>
-                            <location>PROJECT_LOC/target/\${project.build.finalName}/WEB-INF/cmis11</location>
-                        </linkedResource>
-                    </linkedResources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

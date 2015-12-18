@@ -71,53 +71,6 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <useProjectReferences>true</useProjectReferences>
-                    <wtpversion>2.0</wtpversion>
-                    <wtpContextName>inmemory</wtpContextName>
-                    <linkedResources>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/web.xml</name>
-                            <type>1</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/web.xml</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/wsdl</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/wsdl</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/cmis10</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis10</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/WEB-INF/cmis11</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/WEB-INF/cmis11</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/css</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/css</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/images</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/images</location>
-                        </linkedResource>
-                        <linkedResource>
-                            <name>src/main/webapp/web</name>
-                            <type>2</type>
-                            <location>WORKSPACE_LOC/chemistry-opencmis-server/chemistry-opencmis-server-bindings-war/src/main/webapp/web</location>
-                        </linkedResource>
-                    </linkedResources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
