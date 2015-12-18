@@ -217,7 +217,6 @@ public abstract class XMLWalker<T> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends Enum<E>> E readEnum(final XmlPullParser parser, final Class<E> clazz)
             throws XmlPullParserException {
 

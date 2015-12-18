@@ -25,10 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
-import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Relationship;
@@ -42,7 +40,6 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
-import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 
 public class CmisObjectMock implements CmisObject, Serializable {
 
@@ -57,184 +54,212 @@ public class CmisObjectMock implements CmisObject, Serializable {
         this.id = id;
     }
 
+    @Override
     public Acl addAcl(List<Ace> addAces, AclPropagation aclPropagation) {
         return null;
     }
 
+    @Override
     public Acl applyAcl(List<Ace> addAces, List<Ace> removeAces, AclPropagation aclPropagation) {
         return null;
     }
 
+    @Override
     public Acl setAcl(List<Ace> aces) {
         return null;
     }
 
-    public void applyPolicy(ObjectId policyId) {
-    }
-
+    @Override
     public void delete() {
     }
 
+    @Override
     public void delete(boolean allVersions) {
     }
 
+    @Override
     public Acl getAcl() {
         return null;
     }
 
+    @Override
     public Set<String> getPermissionsForPrincipal(String principalId) {
         return null;
     }
 
+    @Deprecated
+    @Override
     public Set<String> getPermissonsForPrincipal(String principalId) {
         return null;
     }
 
-    public Acl getAcl(boolean onlyBasicPermissions) {
-        return null;
-    }
-
+    @Override
     public AllowableActions getAllowableActions() {
         return null;
     }
 
+    @Override
     public boolean hasAllowableAction(Action action) {
         return false;
     }
 
+    @Override
     public ObjectType getBaseType() {
         return null;
     }
 
+    @Override
     public BaseTypeId getBaseTypeId() {
         return null;
     }
 
+    @Override
     public String getChangeToken() {
         return null;
     }
 
+    @Override
     public String getCreatedBy() {
         return null;
     }
 
+    @Override
     public GregorianCalendar getCreationDate() {
         return null;
     }
 
+    @Override
     public GregorianCalendar getLastModificationDate() {
         return null;
     }
 
+    @Override
     public String getLastModifiedBy() {
         return null;
     }
 
+    @Override
     public String getName() {
         return null;
     }
 
+    @Override
     public String getDescription() {
         return null;
     }
 
+    @Override
     public List<Policy> getPolicies() {
         return null;
     }
 
+    @Override
     public List<Property<?>> getProperties() {
         return null;
     }
 
+    @Override
     public <T> Property<T> getProperty(String id) {
         return null;
     }
 
+    @Override
     public <T> T getPropertyValue(String id) {
         return null;
     }
 
+    @Override
     public long getRefreshTimestamp() {
         return 0;
     }
 
+    @Override
     public List<Relationship> getRelationships() {
         return null;
     }
 
-    public ItemIterable<Relationship> getRelationships(boolean includeSubRelationshipTypes,
-            RelationshipDirection relationshipDirection, ObjectType type, OperationContext context) {
-        return null;
-    }
-
+    @Override
     public List<Rendition> getRenditions() {
         return null;
     }
 
+    @Override
     public ObjectType getType() {
         return null;
     }
 
+    @Override
     public List<SecondaryType> getSecondaryTypes() {
         return null;
     }
 
+    @Override
     public List<ObjectType> findObjectType(String id) {
         return null;
     }
 
+    @Override
     public List<CmisExtensionElement> getExtensions(ExtensionLevel level) {
         return null;
     }
 
+    @Override
     public void refresh() {
 
     }
 
+    @Override
     public void refreshIfOld(long durationInMillis) {
 
     }
 
+    @Override
     public Acl removeAcl(List<Ace> removeAces, AclPropagation aclPropagation) {
         return null;
     }
 
-    public ObjectId updateProperties() {
-        return null;
-    }
-
+    @Override
     public CmisObject updateProperties(Map<String, ?> properties) {
         return null;
     }
 
+    @Override
     public ObjectId updateProperties(Map<String, ?> properties, boolean refresh) {
         return null;
     }
 
+    @Override
     public CmisObject rename(String newName) {
         return null;
     }
 
+    @Override
     public ObjectId rename(String newName, boolean refresh) {
         return null;
     }
 
+    @Override
     public void applyPolicy(ObjectId... policyIds) {
     }
 
+    @Override
     public void applyPolicy(ObjectId policyId, boolean refresh) {
     }
 
+    @Override
     public void removePolicy(ObjectId... policyIds) {
     }
 
+    @Override
     public void removePolicy(ObjectId policyId, boolean refresh) {
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
 
+    @Override
     public <T> T getAdapter(Class<T> adapterInterface) {
         return null;
     }
