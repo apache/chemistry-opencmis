@@ -228,7 +228,7 @@
 
         <woodstox.version>4.4.1</woodstox.version>
         <osgi.version>5.0.0</osgi.version>
-        <felix.plugin.version>3.0.1</felix.plugin.version>
+        <felix.plugin.version>2.5.4</felix.plugin.version>
         <junit.version>4.11</junit.version>
         <surefire.version>2.18.1</surefire.version>
         <failsafe.version>2.18.1</failsafe.version>
