@@ -252,6 +252,7 @@ public final class TypeValidator {
         validateProperties(typeDef, properties, checkMandatory, false);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void validateProperties(TypeDefinition typeDef, Properties properties, boolean checkMandatory,
             boolean cmis11) {
         List<String> propDefsRequired = getMandatoryPropDefs(typeDef.getPropertyDefinitions());
@@ -290,6 +291,7 @@ public final class TypeValidator {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void validateProperties(List<TypeDefinition> typeDefs, Properties properties,
             boolean checkMandatory) {
         if (properties == null) {

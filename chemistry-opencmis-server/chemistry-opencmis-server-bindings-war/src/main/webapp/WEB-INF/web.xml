@@ -28,6 +28,11 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
+<!--
+    <listener>
+        <listener-class>org.apache.chemistry.opencmis.server.async.impl.CmisAsncPoolContextListener</listener-class>
+    </listener>
+ -->
     <listener>
         <listener-class>org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener</listener-class>
     </listener>
@@ -220,6 +225,18 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
     
+        <!-- 
+    <servlet>
+        <servlet-name>cmisbrowser-async</servlet-name>
+        <servlet-class>org.apache.chemistry.opencmis.server.async.impl.browser.AsyncCmisBrowserBindingServlet</servlet-class>
+        <init-param>
+            <param-name>callContextHandler</param-name>
+            <param-value>org.apache.chemistry.opencmis.server.impl.browser.token.TokenCallContextHandler</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    -->
+    
     <servlet>
         <servlet-name>cmisendpoints</servlet-name>
         <servlet-class>org.apache.chemistry.opencmis.server.impl.endpoints.SimpleCmisEndpointsDocumentServlet</servlet-class>
@@ -254,6 +271,13 @@
         <servlet-name>cmisbrowser</servlet-name>
         <url-pattern>/browser/*</url-pattern>
     </servlet-mapping>
+    
+    <!-- 
+    <servlet-mapping>
+        <servlet-name>cmisbrowser-async</servlet-name>
+        <url-pattern>/browser-async/*</url-pattern>
+    </servlet-mapping>
+     -->
     
     <servlet-mapping>
         <servlet-name>cmisendpoints</servlet-name>

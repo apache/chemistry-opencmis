@@ -37,12 +37,12 @@
     <files>
         <file>
             <source>src/main/assembly/client-with-dependencies-assembly-license.txt</source>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <destName>LICENSE</destName>
         </file>
         <file>
             <source>src/main/assembly/client-with-dependencies-assembly-notice.txt</source>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <destName>NOTICE</destName>
         </file>
     </files>
@@ -50,7 +50,7 @@
         <!-- license, readme, etc. calculated at build time -->
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <excludes>
                 <exclude>LICENSE</exclude>
                 <exclude>NOTICE</exclude>

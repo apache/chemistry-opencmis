@@ -18,13 +18,30 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.io.Serializable;
+
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.WriterAppender;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginElement;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 
-public class ClientWriterAppender extends WriterAppender {
+@Plugin(name = "ClientWriterAppender", category = "Core", elementType = "appender")
+public class ClientWriterAppender extends AbstractAppender {
+
+    protected ClientWriterAppender(final String name, final Filter filter, final Layout<? extends Serializable> layout) {
+        super(name, filter, layout);
+    }
+
+    private static final long serialVersionUID = 1L;
 
     private static JTextArea logTextArea = null;
 
@@ -33,18 +50,37 @@ public class ClientWriterAppender extends WriterAppender {
     }
 
     @Override
-    public void append(LoggingEvent loggingEvent) {
+    public void append(LogEvent event) {
         if (logTextArea == null) {
             return;
         }
 
-        final String message = layout.format(loggingEvent);
+        final String message = ((StringLayout) getLayout()).toSerializable(event);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                logTextArea.append(message);
-            }
-        });
+        if (message.length() > 0) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    logTextArea.append(message);
+                }
+            });
+        }
+    }
+
+    @PluginFactory
+    public static ClientWriterAppender createAppender(@PluginAttribute("name") String name,
+            @PluginAttribute("ignoreExceptions") boolean ignoreExceptions, @PluginElement("Layout") Layout<?> layout,
+            @PluginElement("Filters") Filter filter) {
+
+        if (name == null) {
+            LOGGER.error("No name provided for ClientWriterAppender");
+            return null;
+        }
+
+        if (layout == null) {
+            layout = PatternLayout.createDefaultLayout();
+        }
+
+        return new ClientWriterAppender(name, filter, (StringLayout) layout);
     }
 }

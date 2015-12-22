@@ -34,8 +34,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 
 public class LogFrame extends JFrame {
 
@@ -84,11 +86,15 @@ public class LogFrame extends JFrame {
                 Level.OFF.toString() };
 
         final JComboBox<String> levelBox = new JComboBox<String>(levels);
-        levelBox.setSelectedItem(Logger.getRootLogger().getLevel().toString());
+        levelBox.setSelectedItem(LogManager.getRootLogger().getLevel().toString());
         levelBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Logger.getRootLogger().setLevel(Level.toLevel(levelBox.getSelectedItem().toString()));
+                LoggerContext logContext = (LoggerContext) LogManager.getContext(false);
+                Configuration configuration = logContext.getConfiguration();
+                configuration.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(
+                        Level.toLevel(levelBox.getSelectedItem().toString()));
+                logContext.updateLoggers(configuration);
             }
         });
         inputPanel.add(levelBox);

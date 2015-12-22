@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.fit.tck;
 
-import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.*;
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.startup.Tomcat;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
@@ -40,7 +42,9 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public abstract class AbstractTckIT extends AbstractRunner {
@@ -91,6 +95,77 @@ public abstract class AbstractTckIT extends AbstractRunner {
                 System.getProperty(TestParameters.DEFAULT_FOLDER_TYPE, "cmis:folder"));
 
         return parameters;
+    }
+
+    private static Tomcat tomcat;
+    private static File tomcateBaseDir;
+
+    @BeforeClass
+    public static void startTomcat() throws LifecycleException, InterruptedException {
+        File targetDir = new File(System.getProperty("project.build.directory", "./target"));
+
+        File warFile = null;
+        for (File child : targetDir.listFiles()) {
+            if (child.getName().endsWith(".war")) {
+                warFile = child;
+            }
+        }
+
+        if (warFile == null) {
+            throw new RuntimeException("OpenCMIS WAR file not found!");
+        }
+
+        tomcateBaseDir = new File(targetDir, "tomcat.base");
+        if (!tomcateBaseDir.exists()) {
+            tomcateBaseDir.mkdir();
+        }
+
+        // Logger.getLogger("").setLevel(Level.WARNING);
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+
+        tomcat = new Tomcat();
+        tomcat.setBaseDir(tomcateBaseDir.getAbsolutePath());
+        tomcat.setPort(PORT);
+        // tomcat.setSilent(true);
+        tomcat.getHost().setCreateDirs(true);
+        tomcat.getHost().setDeployOnStartup(true);
+        tomcat.getHost().setAutoDeploy(false);
+
+        File appDir = new File(tomcateBaseDir, tomcat.getHost().getAppBase());
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+
+        // Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.WARNING);
+
+        tomcat.addWebapp(null, "/opencmis", warFile.getAbsolutePath());
+        tomcat.init();
+        tomcat.start();
+
+        Thread.sleep(5000);
+    }
+
+    @AfterClass
+    public static void stopTomcat() throws LifecycleException, InterruptedException {
+        tomcat.stop();
+        tomcat.destroy();
+        deleteDirectory(tomcateBaseDir);
+    }
+
+    private static boolean deleteDirectory(File dir) {
+        if (!dir.exists()) {
+            return false;
+        }
+
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                deleteDirectory(file);
+            } else {
+                file.delete();
+            }
+        }
+
+        return dir.delete();
     }
 
     @Before

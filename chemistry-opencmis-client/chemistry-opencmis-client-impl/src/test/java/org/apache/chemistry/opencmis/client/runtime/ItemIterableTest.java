@@ -32,7 +32,6 @@ import java.util.Properties;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher;
 import org.apache.chemistry.opencmis.client.runtime.util.CollectionIterable;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,16 +39,16 @@ import org.slf4j.LoggerFactory;
 public class ItemIterableTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ItemIterableTest.class);
-    static {
-        Properties p = new Properties();
-        try {
-            p.load(ItemIterableTest.class.getResourceAsStream("/log4j.properties"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        PropertyConfigurator.configure(p);
-
-    }
+//    static {
+//        Properties p = new Properties();
+//        try {
+//            p.load(ItemIterableTest.class.getResourceAsStream("/log4j.properties"));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        PropertyConfigurator.configure(p);
+//
+//    }
     private final String[] data10 = { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9" };
     private final String[] data1 = { "A0" };
     private final String[] data0 = {};
@@ -80,8 +79,7 @@ public class ItemIterableTest {
                     page.add(data[i]);
                 }
 
-                Page<String> result = new AbstractPageFetcher.Page<String>(
-                        page, totalItems, hasMoreItems);
+                Page<String> result = new AbstractPageFetcher.Page<String>(page, totalItems, hasMoreItems);
 
                 return result;
             }

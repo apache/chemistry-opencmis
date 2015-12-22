@@ -846,6 +846,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("... testAllowableActions() finished.");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testDefaultPropertiesDocument() {
         log.info("starting testDefaultPropertiesDocument() ...");
@@ -877,6 +878,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("... testDefaultPropertiesDocument() finished.");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testDefaultPropertiesFolder() {
         log.info("starting testDefaultPropertiesFolder() ...");
@@ -933,7 +935,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
         log.info("starting testGetObjectByPath() with specal chars...");
         log.info("  creating object");
 
-        String docID = createDocument("H������nschen", fRootFolderId, false);
+        createDocument("H������nschen", fRootFolderId, false);
         log.info("  getting object by path with special chars");
         try {
             ObjectData res = fObjSvc.getObjectByPath(fRepositoryId, "/H������nschen", "*", false,
@@ -1865,6 +1867,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisDocumentType;
         }
 
+        @SuppressWarnings("serial")
         private static TypeDefinition createDocumentTypeWithDefault() throws InstantiationException,
                 IllegalAccessException {
             MutableTypeDefinition cmisDocumentType;
@@ -1933,6 +1936,7 @@ public class ObjectServiceTest extends AbstractServiceTest {
             return cmisDocumentType;
         }
 
+        @SuppressWarnings("serial")
         private static TypeDefinition createFolderTypeWithDefault() throws InstantiationException,
                 IllegalAccessException {
             MutableFolderTypeDefinition cmisFolderType;
