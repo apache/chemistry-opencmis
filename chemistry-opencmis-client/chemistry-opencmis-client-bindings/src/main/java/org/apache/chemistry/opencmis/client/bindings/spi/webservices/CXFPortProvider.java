@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
@@ -29,10 +31,13 @@ import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
+import org.apache.chemistry.opencmis.client.bindings.spi.BindingSession;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
+import org.apache.cxf.Bus;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.headers.Header;
@@ -47,6 +52,21 @@ import org.w3c.dom.Element;
  */
 public class CXFPortProvider extends AbstractPortProvider {
     private static final Logger LOG = LoggerFactory.getLogger(CXFPortProvider.class);
+
+    private int contentThreshold;
+    private int responseThreshold;
+
+    @Override
+    public void setSession(BindingSession session) {
+        super.setSession(session);
+
+        contentThreshold = session.get(SessionParameter.WEBSERVICES_MEMORY_THRESHOLD, 4 * 1024 * 1024);
+        responseThreshold = session.get(SessionParameter.WEBSERVICES_REPSONSE_MEMORY_THRESHOLD, -1);
+
+        if (responseThreshold > contentThreshold) {
+            contentThreshold = responseThreshold;
+        }
+    }
 
     /**
      * Creates a port object.
@@ -65,6 +85,31 @@ public class CXFPortProvider extends AbstractPortProvider {
             Binding binding = portObject.getBinding();
             ((SOAPBinding) binding).setMTOMEnabled(true);
 
+            Client client = ClientProxy.getClient(portObject);
+            HTTPConduit http = (HTTPConduit) client.getConduit();
+            HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+            httpClientPolicy.setAllowChunking(true);
+
+            // temp files and large stream handlding
+            Bus bus = client.getBus();
+
+            Object tempDir = getSession().get(SessionParameter.WEBSERVICES_TEMP_DIRECTORY);
+            if (tempDir != null) {
+                bus.setProperty("bus.io.CachedOutputStream.OutputDirectory", tempDir.toString());
+            }
+
+            if (serviceHolder.getService().handlesContent()) {
+                bus.setProperty("bus.io.CachedOutputStream.Threshold", String.valueOf(contentThreshold));
+            } else if (responseThreshold > -1) {
+                bus.setProperty("bus.io.CachedOutputStream.Threshold", String.valueOf(responseThreshold));
+            }
+
+            bus.setProperty("bus.io.CachedOutputStream.MaxSize", "-1");
+
+            if (getSession().get(SessionParameter.WEBSERVICES_TEMP_ENCRYPT, false)) {
+                bus.setProperty("bus.io.CachedOutputStream.CipherTransformation", "AES/CTR/PKCS5Padding");
+            }
+
             // add SOAP and HTTP authentication headers
             AuthenticationProvider authProvider = CmisBindingsHelper.getAuthenticationProvider(getSession());
             Map<String, List<String>> httpHeaders = null;
@@ -82,6 +127,20 @@ public class CXFPortProvider extends AbstractPortProvider {
                 String url = (serviceHolder.getEndpointUrl() != null ? serviceHolder.getEndpointUrl().toString()
                         : serviceHolder.getServiceObject().getWSDLDocumentLocation().toString());
                 httpHeaders = authProvider.getHTTPHeaders(url);
+
+                // SSL factory and hostname verifier
+                SSLSocketFactory sslSocketFactory = authProvider.getSSLSocketFactory();
+                HostnameVerifier hostnameVerifier = authProvider.getHostnameVerifier();
+                if (sslSocketFactory != null || hostnameVerifier != null) {
+                    TLSClientParameters tlsCP = new TLSClientParameters();
+                    if (sslSocketFactory != null) {
+                        tlsCP.setSSLSocketFactory(sslSocketFactory);
+                    }
+                    if (hostnameVerifier != null) {
+                        tlsCP.setHostnameVerifier(hostnameVerifier);
+                    }
+                    http.setTlsClientParameters(tlsCP);
+                }
             }
 
             // set HTTP headers
@@ -89,11 +148,6 @@ public class CXFPortProvider extends AbstractPortProvider {
 
             // set endpoint URL
             setEndpointUrl(portObject, serviceHolder.getEndpointUrl());
-
-            Client client = ClientProxy.getClient(portObject);
-            HTTPConduit http = (HTTPConduit) client.getConduit();
-            HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
-            httpClientPolicy.setAllowChunking(true);
 
             // timeouts
             int connectTimeout = getSession().get(SessionParameter.CONNECT_TIMEOUT, -1);

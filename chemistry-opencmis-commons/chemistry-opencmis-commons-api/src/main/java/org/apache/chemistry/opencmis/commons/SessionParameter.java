@@ -181,7 +181,7 @@ package org.apache.chemistry.opencmis.commons;
  * <td>no</td>
  * <td>-</td>
  * </tr>
-  * <tr>
+ * <tr>
  * <td>{@link #USER_AGENT}</td>
  * <td>User agent header</td>
  * <td>AtomPub, Web Services, Browser</td>
@@ -509,6 +509,22 @@ package org.apache.chemistry.opencmis.commons;
  * <td>(JAX-WS implementation default)</td>
  * </tr>
  * <tr>
+ * <td>{@link #WEBSERVICES_TEMP_DIRECTORY}</td>
+ * <td>Sets the path for temp files to an existing directory</td>
+ * <td>Web Services</td>
+ * <td>path to temp directory</td>
+ * <td>no</td>
+ * <td>(JAX-WS implementation default)</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #WEBSERVICES_TEMP_ENCRYPT}</td>
+ * <td>Defines whether temp files should be encrypted or not</td>
+ * <td>Web Services</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
+ * <tr>
  * <td colspan="6"><b>Browser Binding</b></td>
  * </tr>
  * <tr>
@@ -627,6 +643,9 @@ public final class SessionParameter {
 
     public static final String WEBSERVICES_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.memoryThreshold";
     public static final String WEBSERVICES_REPSONSE_MEMORY_THRESHOLD = "org.apache.chemistry.opencmis.binding.webservices.responseMemoryThreshold";
+
+    public static final String WEBSERVICES_TEMP_DIRECTORY = "org.apache.chemistry.opencmis.binding.webservices.tempDirectory";
+    public static final String WEBSERVICES_TEMP_ENCRYPT = "org.apache.chemistry.opencmis.binding.webservices.tempEncrypt";
 
     public static final String WEBSERVICES_PORT_PROVIDER_CLASS = "org.apache.chemistry.opencmis.binding.webservices.portprovider.classname";
 

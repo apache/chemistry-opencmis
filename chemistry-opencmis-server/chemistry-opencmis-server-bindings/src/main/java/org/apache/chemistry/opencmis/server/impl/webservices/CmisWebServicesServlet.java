@@ -264,8 +264,12 @@ public class CmisWebServicesServlet extends CXFServlet {
 
         Bus bus = getBus();
         BusFactory.setDefaultBus(bus);
-        bus.setProperty("bus.io.CachedOutputStream.OutputDirectory", factory.getTempDirectory().getAbsolutePath());
-        bus.setProperty("bus.io.CachedOutputStream.Threshold", String.valueOf(factory.getMemoryThreshold()));
+        if (factory.getTempDirectory() != null) {
+            bus.setProperty("bus.io.CachedOutputStream.OutputDirectory", factory.getTempDirectory().getAbsolutePath());
+        }
+        if (factory.getMemoryThreshold() >= 0) {
+            bus.setProperty("bus.io.CachedOutputStream.Threshold", String.valueOf(factory.getMemoryThreshold()));
+        }
         bus.setProperty("bus.io.CachedOutputStream.MaxSize", "-1");
         if (factory.encryptTempFiles()) {
             bus.setProperty("bus.io.CachedOutputStream.CipherTransformation", "AES/CTR/PKCS5Padding");

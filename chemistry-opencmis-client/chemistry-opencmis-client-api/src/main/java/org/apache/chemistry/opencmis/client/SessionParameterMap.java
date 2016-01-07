@@ -172,6 +172,25 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     }
 
     /**
+     * Sets the Web Service temp directory.
+     * 
+     * @param tempDir
+     *            path of the temp directory
+     * @param encrypt
+     *            {@code true} if temp files should be encrypted, {@code false}
+     *            otherwise
+     */
+    public void setWebServicesMemoryTempDirectory(String tempDir, boolean encrypt) {
+        if (tempDir == null) {
+            remove(SessionParameter.WEBSERVICES_TEMP_DIRECTORY);
+            remove(SessionParameter.WEBSERVICES_TEMP_ENCRYPT);
+        } else {
+            put(SessionParameter.WEBSERVICES_TEMP_DIRECTORY, tempDir);
+            put(SessionParameter.WEBSERVICES_TEMP_ENCRYPT, encrypt);
+        }
+    }
+
+    /**
      * Sets the Browser URL and sets the binding to Browser.
      * 
      * @param url
