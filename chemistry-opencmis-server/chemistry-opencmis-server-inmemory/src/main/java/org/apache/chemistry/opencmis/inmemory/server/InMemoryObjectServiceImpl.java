@@ -769,7 +769,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         if (changeToken != null && changeToken.getValue() != null
                 && Long.valueOf(so.getChangeToken()) > Long.valueOf(changeToken.getValue())) {
-            throw new CmisUpdateConflictException("updateProperties failed: changeToken does not match");
+            throw new CmisUpdateConflictException("appendContentStream failed: changeToken does not match");
         }
 
         if (!(so instanceof Document || so instanceof VersionedDocument || so instanceof DocumentVersion)) {
