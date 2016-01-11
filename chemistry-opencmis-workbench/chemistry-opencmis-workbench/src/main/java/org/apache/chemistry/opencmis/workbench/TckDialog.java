@@ -721,6 +721,10 @@ public class TckDialog {
 
         @Override
         public void done() {
+            if (isCancelled()) {
+                runner.cancel();
+            }
+
             try {
                 SwingReport report = new SwingReport(null, 700, 500);
                 report.createReport(runner.getParameters(), runner.getGroups(), (Writer) null);
