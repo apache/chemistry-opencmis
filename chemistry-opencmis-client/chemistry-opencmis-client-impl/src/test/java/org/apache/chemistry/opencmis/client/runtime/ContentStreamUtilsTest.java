@@ -125,6 +125,21 @@ public class ContentStreamUtilsTest {
     }
 
     @Test
+    public void testByteArrayContentStream() throws IOException {
+        byte[] content = IOUtils.toUTF8Bytes("1234567890");
+
+        MutableContentStream contentStream = ContentStreamUtils.createByteArrayContentStream("array", content, 2, 5,
+                "text/plain");
+
+        assertNotNull(contentStream);
+        assertEquals("array", contentStream.getFileName());
+        assertEquals("text/plain", contentStream.getMimeType());
+        assertEquals(5, contentStream.getLength());
+        assertNotNull(contentStream.getBigLength());
+        assertNotNull(contentStream.getStream());
+    }
+
+    @Test
     public void testFileContentStream() throws IOException {
         File tmpFile = File.createTempFile("test", ".txt");
 

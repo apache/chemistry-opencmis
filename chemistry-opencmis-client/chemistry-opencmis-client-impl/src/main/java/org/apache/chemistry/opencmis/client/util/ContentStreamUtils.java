@@ -120,8 +120,40 @@ public final class ContentStreamUtils {
             return createContentStream(filename, null, mimetype, null);
         }
 
-        return createContentStream(filename, contentBytes.length, mimetype, new AutoCloseInputStream(
-                new ByteArrayInputStream(contentBytes)));
+        return createByteArrayContentStream(filename, contentBytes, 0, contentBytes.length, mimetype);
+    }
+
+    /**
+     * Creates a content stream object from a byte array.
+     * 
+     * @param filename
+     *            name of the content stream
+     * @param contentBytes
+     *            the content bytes
+     * @param offset
+     *            the offset in the content bytes
+     * @param length
+     *            the maximum number of bytes to read from the content bytes
+     * @param mimetype
+     *            content MIME type
+     * 
+     * @return a {@link MutableContentStream} object
+     * 
+     */
+    public static MutableContentStream createByteArrayContentStream(String filename, byte[] contentBytes, int offset,
+            int length, String mimetype) {
+        if (contentBytes == null) {
+            return createContentStream(filename, null, mimetype, null);
+        }
+
+        if (offset < 0 || offset > contentBytes.length) {
+            throw new IndexOutOfBoundsException("Invalid offset!");
+        } else if (length < 0 || (offset + length) > contentBytes.length || (offset + length) < 0) {
+            throw new IndexOutOfBoundsException("Invalid length!");
+        }
+
+        return createContentStream(filename, length, mimetype, new AutoCloseInputStream(new ByteArrayInputStream(
+                contentBytes, offset, length)));
     }
 
     // --- strings ---
@@ -357,8 +389,13 @@ public final class ContentStreamUtils {
         @Override
         public void close() throws IOException {
             if (stream != null) {
-                stream.close();
-                stream = null;
+                try {
+                    stream.close();
+                } catch (final IOException ioe) {
+                    throw ioe;
+                } finally {
+                    stream = null;
+                }
             }
         }
 

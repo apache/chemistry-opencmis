@@ -25,6 +25,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +191,11 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
                         addResult(createResult(UNEXPECTED_EXCEPTION, "Document content couldn't be read! Exception: "
                                 + e.getMessage(), e, true));
                     }
+
+                    // test append stream
+                    testAppendStream(session, testFolder, 16 * 1024);
+                    testAppendStream(session, testFolder, 8);
+                    testAppendStream(session, testFolder, 0);
                 } catch (CmisNotSupportedException e) {
                     addResult(createResult(WARNING, "appendContentStream() is not supported!"));
                 }
@@ -204,6 +210,70 @@ public class SetAndDeleteContentTest extends AbstractSessionTest {
             deleteObject(doc);
         } finally {
             deleteTestFolder();
+        }
+    }
+
+    private void testAppendStream(Session session, Folder testFolder, int bufferSize) {
+        CmisTestResult f;
+
+        // create an empty document
+        Document doc = createDocument(session, testFolder, "appendstreamtest.txt", "");
+        Document workDoc = doc;
+
+        boolean checkedout = false;
+        DocumentTypeDefinition docType = (DocumentTypeDefinition) doc.getType();
+
+        if (Boolean.TRUE.equals(docType.isVersionable())) {
+            workDoc = (Document) session.getObject(doc.checkOut(), SELECT_ALL_NO_CACHE_OC);
+            checkedout = true;
+        }
+
+        try {
+            // create an overwrite OutputStream
+            OutputStream out1 = workDoc.createOverwriteOutputStream("appendstreamtest", "text/plain", bufferSize);
+
+            out1.write(IOUtils.toUTF8Bytes("line 1\n"));
+            out1.write(IOUtils.toUTF8Bytes("line 2\n"));
+            out1.flush();
+
+            out1.write(IOUtils.toUTF8Bytes("line 3\n"));
+            out1.close();
+
+            // check document content
+            workDoc.refresh();
+            String content1 = getStringFromContentStream(workDoc.getContentStream());
+
+            f = createResult(FAILURE, "Overwrite OutputStream: wrong content!");
+            addResult(assertEquals("line 1\nline 2\nline 3\n", content1, null, f));
+
+            // create an append OutputStream
+            OutputStream out2 = workDoc.createAppendOutputStream(bufferSize);
+
+            out2.write(IOUtils.toUTF8Bytes("line 4\n"));
+            out2.write(IOUtils.toUTF8Bytes("line 5\n"));
+            out2.flush();
+
+            out2.write(IOUtils.toUTF8Bytes("line 6\n"));
+            out2.close();
+
+            // check document content
+            workDoc.refresh();
+            String content2 = getStringFromContentStream(workDoc.getContentStream());
+
+            f = createResult(FAILURE, "Overwrite OutputStream: wrong content!");
+            addResult(assertEquals("line 1\nline 2\nline 3\nline 4\nline 5\nline 6\n", content2, null, f));
+
+        } catch (IOException e) {
+            addResult(createResult(UNEXPECTED_EXCEPTION, "Appending content via an OutputStream failed! Exception: "
+                    + e.getMessage(), e, false));
+        } finally {
+            // cancel a possible check out
+            if (checkedout) {
+                workDoc.cancelCheckOut();
+            }
+
+            // remove the document
+            deleteObject(doc);
         }
     }
 

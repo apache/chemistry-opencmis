@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.api;
 
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -260,6 +261,66 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * @cmis 1.0
      */
     ObjectId deleteContentStream(boolean refresh);
+
+    /**
+     * Creates an {@link OutputStream} stream object that can be used to
+     * overwrite the current content of the document.
+     * 
+     * @param filename
+     *            the file name
+     * @param mimeType
+     *            the MIME type
+     * @return the OutputStream object
+     * 
+     * @cmis 1.1
+     */
+    OutputStream createOverwriteOutputStream(String filename, String mimeType);
+
+    /**
+     * Creates an {@link OutputStream} stream object that can be used to
+     * overwrite the current content of the document.
+     * 
+     * @param filename
+     *            the file name
+     * @param mimeType
+     *            the MIME type
+     * @param bufferSize
+     *            buffer size in bytes
+     * @return the OutputStream object
+     * 
+     * @cmis 1.1
+     */
+    OutputStream createOverwriteOutputStream(String filename, String mimeType, int bufferSize);
+
+    /**
+     * Creates an {@link OutputStream} stream object that can be used to append
+     * content the current content of the document.
+     * 
+     * @param filename
+     *            the file name
+     * @param mimeType
+     *            the MIME type
+     * @return the OutputStream object
+     * 
+     * @cmis 1.1
+     */
+    OutputStream createAppendOutputStream();
+
+    /**
+     * Creates an {@link OutputStream} stream object that can be used to append
+     * content the current content of the document.
+     * 
+     * @param filename
+     *            the file name
+     * @param mimeType
+     *            the MIME type
+     * @param bufferSize
+     *            buffer size in bytes
+     * @return the OutputStream object
+     * 
+     * @cmis 1.1
+     */
+    OutputStream createAppendOutputStream(int bufferSize);
 
     // versioning service
 

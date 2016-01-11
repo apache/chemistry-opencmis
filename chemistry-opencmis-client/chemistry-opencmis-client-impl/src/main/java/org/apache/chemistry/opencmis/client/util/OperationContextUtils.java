@@ -54,7 +54,8 @@ public final class OperationContextUtils {
     }
 
     /**
-     * Creates a new OperationContext object with the given parameters.
+     * Creates a new OperationContext object with the given parameters. Caching
+     * is enabled.
      */
     public static OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
             boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
@@ -66,12 +67,27 @@ public final class OperationContextUtils {
 
     /**
      * Creates a new OperationContext object that only selects the bare minimum.
+     * Caching is enabled.
      */
     public static OperationContext createMinimumOperationContext() {
+        return createMinimumOperationContext((String[]) null);
+    }
+
+    /**
+     * Creates a new OperationContext object that only selects the bare minimum
+     * plus the provided properties. Caching is enabled.
+     */
+    public static OperationContext createMinimumOperationContext(String... property) {
         Set<String> filter = new HashSet<String>();
         filter.add(PropertyIds.OBJECT_ID);
         filter.add(PropertyIds.OBJECT_TYPE_ID);
         filter.add(PropertyIds.BASE_TYPE_ID);
+
+        if (property != null) {
+            for (String prop : property) {
+                filter.add(prop);
+            }
+        }
 
         return new OperationContextImpl(filter, false, false, false, IncludeRelationships.NONE,
                 Collections.singleton(RENDITION_NONE), false, null, true, 100);

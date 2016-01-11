@@ -19,10 +19,12 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.client.api.OperationContext;
+import org.apache.chemistry.opencmis.client.util.OperationContextUtils;
 import org.junit.Test;
 
 public class OperationContextTest {
@@ -71,5 +73,37 @@ public class OperationContextTest {
 
         assertEquals(1, filter.size());
         assertTrue(filter.contains("cmis:none"));
+    }
+
+    @Test
+    public void testOperationContextUtils() {
+        OperationContext oc1 = OperationContextUtils.createMinimumOperationContext();
+        assertNotNull(oc1);
+
+        assertEquals(3, oc1.getFilter().size());
+        assertFalse(oc1.isIncludeAllowableActions());
+        assertFalse(oc1.isIncludeAcls());
+        assertFalse(oc1.isIncludePolicies());
+        assertFalse(oc1.isIncludePathSegments());
+
+        OperationContext oc2 = OperationContextUtils.createMinimumOperationContext("abc", "xyz");
+        assertNotNull(oc2);
+
+        assertEquals(5, oc2.getFilter().size());
+        assertTrue(oc2.getFilter().contains("abc"));
+        assertTrue(oc2.getFilter().contains("xyz"));
+        assertFalse(oc2.isIncludeAllowableActions());
+        assertFalse(oc2.isIncludeAcls());
+        assertFalse(oc2.isIncludePolicies());
+        assertFalse(oc2.isIncludePathSegments());
+
+        OperationContext oc3 = OperationContextUtils.createMaximumOperationContext();
+        assertNotNull(oc3);
+
+        assertTrue(oc3.getFilter().contains("*"));
+        assertTrue(oc3.isIncludeAllowableActions());
+        assertTrue(oc3.isIncludeAcls());
+        assertTrue(oc3.isIncludePolicies());
+        assertFalse(oc3.isIncludePathSegments());
     }
 }
