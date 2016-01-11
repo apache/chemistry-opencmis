@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.chemistry.opencmis.client.SessionParameterMap;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
@@ -60,6 +61,7 @@ import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.api.Tree;
+import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -123,6 +125,10 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         SELECT_ALL_NO_CACHE_OC_ORDER_BY_NAME.setOrderBy("cmis:name");
     }
 
+    public static final String TCK_USER_AGENT = "OpenCMIS-TCK/"
+            + (ClientVersion.OPENCMIS_VERSION == null ? "?" : ClientVersion.OPENCMIS_VERSION) + " "
+            + ClientVersion.OPENCMIS_USER_AGENT;
+
     private final SessionFactory factory = SessionFactoryImpl.newInstance();
     private Folder testFolder;
 
@@ -152,9 +158,13 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
     public void run() throws Exception {
         Session session;
 
-        Map<String, String> parameters = getParameters();
+        SessionParameterMap parameters = new SessionParameterMap(getParameters());
+        if (!parameters.containsKey(SessionParameter.USER_AGENT)) {
+            parameters.setUserAgent(TCK_USER_AGENT);
+        }
+
         String repId = parameters.get(SessionParameter.REPOSITORY_ID);
-        if ((repId != null) && (repId.length() > 0)) {
+        if (repId != null && repId.length() > 0) {
             session = factory.createSession(parameters);
         } else {
             session = factory.getRepositories(parameters).get(0).createSession();
