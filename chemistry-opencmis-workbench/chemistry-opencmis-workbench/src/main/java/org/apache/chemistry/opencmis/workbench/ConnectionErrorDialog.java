@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundExcept
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisTooManyRequestsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException;
 import org.xml.sax.SAXParseException;
@@ -149,6 +150,8 @@ public class ConnectionErrorDialog extends JDialog {
             return "The proxy server requires valid credentials.<br>Check the session parameters "
                     + "'org.apache.chemistry.opencmis.binding.proxyuser' and "
                     + "'org.apache.chemistry.opencmis.binding.proxypassword'." + getProxyConfig();
+        } else if (exception instanceof CmisTooManyRequestsException) {
+            return "The server indicated that you made too many request. Wait or contact the server administrator.";
         } else if (exception instanceof CmisRuntimeException) {
             return "Something fatal happend on the client or server side."
                     + "<br>Check your URL, the binding, and your proxy settings."

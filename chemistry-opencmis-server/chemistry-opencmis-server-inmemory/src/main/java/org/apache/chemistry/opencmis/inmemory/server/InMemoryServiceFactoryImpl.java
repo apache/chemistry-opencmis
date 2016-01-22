@@ -51,7 +51,6 @@ import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.AbstractTypeDefinition;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.BindingsObjectFactoryImpl;
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
@@ -61,13 +60,14 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
+import org.apache.chemistry.opencmis.server.async.impl.AbstractAsyncServiceFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
+public class InMemoryServiceFactoryImpl extends AbstractAsyncServiceFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryServiceFactoryImpl.class.getName());
     private static final BigInteger DEFAULT_MAX_ITEMS_OBJECTS = BigInteger.valueOf(1000);
@@ -89,6 +89,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
     public void init(Map<String, String> parameters) {
         LOG.info("Initializing in-memory repository...");
         LOG.debug("Init paramaters: " + parameters);
+
+        super.init(parameters);
 
         String overrideCtxParam = parameters.get(ConfigConstants.OVERRIDE_CALL_CONTEXT);
         if (null != overrideCtxParam) {
@@ -157,7 +159,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         ConformanceCmisServiceWrapper wrapperService;
         InMemoryService inMemoryService = new InMemoryService(storeManager, contextToUse);
         wrapperService = new ConformanceCmisServiceWrapper(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
-        		DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
+                DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
 
         return inMemoryService; // wrapperService;
     }
@@ -188,6 +190,8 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (null != cleanManager) {
             cleanManager.stopCleanRepositoryJob();
         }
+
+        super.destroy();
     }
 
     public StoreManager getStoreManger() {
@@ -501,7 +505,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             } catch (Exception e) {
                 LOG.error("Could not create folder hierarchy with documents. ", e);
             }
-            destroy();
+            svc.close();
         } // if
 
     } // fillRepositoryIfConfigured

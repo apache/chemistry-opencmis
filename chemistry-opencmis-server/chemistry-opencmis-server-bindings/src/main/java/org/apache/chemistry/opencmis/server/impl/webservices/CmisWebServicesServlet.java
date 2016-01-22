@@ -48,6 +48,9 @@ import org.apache.cxf.transport.servlet.CXFServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * CMIS Web Services servlet.
+ */
 public class CmisWebServicesServlet extends CXFServlet {
 
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
@@ -207,8 +210,8 @@ public class CmisWebServicesServlet extends CXFServlet {
         pw.flush();
     }
 
-    private void printError(HttpServletRequest request, HttpServletResponse response, String message)
-            throws ServletException, IOException {
+    protected void printError(HttpServletRequest request, HttpServletResponse response, String message)
+            throws IOException {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.setContentType("text/xml");
         response.setCharacterEncoding(IOUtils.UTF8);

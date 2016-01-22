@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisProxyAuthenticationException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisTooManyRequestsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
@@ -524,6 +525,8 @@ public abstract class AbstractPortProvider {
                 throw new CmisObjectNotFoundException(message, he);
             } else if (he.getStatusCode() == 407) {
                 throw new CmisProxyAuthenticationException(message, he);
+            } else if (he.getStatusCode() == 429) {
+                throw new CmisTooManyRequestsException(message, he);
             } else if (he.getStatusCode() == 301 || he.getStatusCode() == 302 || he.getStatusCode() == 303
                     || he.getStatusCode() == 307) {
                 throw new CmisConnectionException("Redirects are not supported (HTTP status code " + he.getStatusCode()

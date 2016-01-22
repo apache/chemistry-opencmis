@@ -98,6 +98,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisServiceUnavailableException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisTooManyRequestsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
@@ -119,6 +120,9 @@ import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * CMIS Browser binding servlet.
+ */
 public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -467,6 +471,8 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 return 409;
             } else if (ex instanceof CmisVersioningException) {
                 return 409;
+            } else if (ex instanceof CmisTooManyRequestsException) {
+                return 429;
             } else if (ex instanceof CmisServiceUnavailableException) {
                 return 503;
             }

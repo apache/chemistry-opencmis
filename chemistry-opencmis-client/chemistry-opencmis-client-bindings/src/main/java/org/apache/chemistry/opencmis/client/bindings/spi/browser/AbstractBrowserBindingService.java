@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisServiceUnavailableException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisTooManyRequestsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
@@ -331,6 +332,8 @@ public abstract class AbstractBrowserBindingService implements LinkAccess {
             return new CmisProxyAuthenticationException(message, errorContent, t);
         case 409:
             return new CmisConstraintException(message, errorContent, t);
+        case 429:
+            return new CmisTooManyRequestsException(message, errorContent, t);
         case 503:
             return new CmisServiceUnavailableException(message, errorContent, t);
         default:

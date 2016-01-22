@@ -69,6 +69,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisServiceUnavailableException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStorageException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisStreamNotSupportedException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisTooManyRequestsException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
@@ -300,6 +301,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             return 409;
         } else if (ex instanceof CmisVersioningException) {
             return 409;
+        } else if (ex instanceof CmisTooManyRequestsException) {
+            return 429;
         } else if (ex instanceof CmisServiceUnavailableException) {
             return 503;
         }
