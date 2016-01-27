@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.tck.tests.versioning;
 
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
@@ -32,6 +33,9 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Action;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -123,11 +127,29 @@ public class VersionDeleteTest extends AbstractSessionTest {
     private void deleteVersion(Document versionDoc, Document previousDoc, int version) {
         CmisTestResult f;
 
+        // check Allowable Action
+        if (!versionDoc.hasAllowableAction(Action.CAN_DELETE_OBJECT)) {
+            addResult(createResult(WARNING, "Version " + version
+                    + " does not have the Allowable Action 'canDeleteObject'."));
+            return;
+        }
+
         // get version history before delete
         List<Document> versionsBefore = versionDoc.getAllVersions();
 
         // delete and check
-        versionDoc.delete(false);
+        try {
+            versionDoc.delete(false);
+        } catch (CmisInvalidArgumentException iae) {
+            addResult(createResult(WARNING, "Deletion of version " + version
+                    + " failed with an invalidArgument exception. "
+                    + "Removing just one version doesn't seem to be supported."));
+            return;
+        } catch (CmisConstraintException ce) {
+            addResult(createResult(WARNING, "Deletion of version " + version + " failed with an constraint exception. "
+                    + "Removing just one version doesn't seem to be supported."));
+            return;
+        }
 
         f = createResult(FAILURE, "Deleted version " + version + " still exists!");
         addResult(assertIsFalse(exists(versionDoc), null, f));
