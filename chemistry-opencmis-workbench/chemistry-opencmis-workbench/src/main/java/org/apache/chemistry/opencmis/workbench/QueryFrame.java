@@ -91,6 +91,7 @@ public class QueryFrame extends JFrame {
     private final ClientModel model;
 
     private JTextArea queryText;
+    private JFormattedTextField skipCountField;
     private JFormattedTextField maxHitsField;
     private JCheckBox searchAllVersionsCheckBox;
     private ResultTable resultsTable;
@@ -128,6 +129,16 @@ public class QueryFrame extends JFrame {
 
         // buttons
         JPanel buttonPanel = new JPanel();
+
+        skipCountField = new JFormattedTextField(new NumberFormatter());
+        skipCountField.setValue(Integer.valueOf(0));
+        skipCountField.setColumns(5);
+
+        JLabel skipCountLabel = new JLabel("Skip:");
+        skipCountLabel.setLabelFor(skipCountField);
+
+        buttonPanel.add(skipCountLabel);
+        buttonPanel.add(skipCountField);
 
         maxHitsField = new JFormattedTextField(new NumberFormatter());
         maxHitsField.setValue(Integer.valueOf(100));
@@ -273,6 +284,18 @@ public class QueryFrame extends JFrame {
         try {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+            int skipCount = 0;
+            try {
+                skipCountField.commitEdit();
+                skipCount = ((Number) skipCountField.getValue()).intValue();
+                if (skipCount < 0) {
+                    skipCount = 0;
+                    skipCountField.setValue(0);
+                }
+            } catch (Exception e) {
+                ClientHelper.showError(this, e);
+            }
+
             int maxHits = 1000;
             try {
                 maxHitsField.commitEdit();
@@ -293,6 +316,9 @@ public class QueryFrame extends JFrame {
 
             int row = 0;
             ItemIterable<QueryResult> page = results.getPage(maxHits);
+            if (skipCount > 0) {
+                page = page.skipTo(skipCount);
+            }
             for (QueryResult qr : page) {
                 rtm.setColumnCount(Math.max(rtm.getColumnCount(), qr.getProperties().size()));
 
