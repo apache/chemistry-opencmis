@@ -36,10 +36,10 @@
 
     <organization>
         <name>The Apache Software Foundation</name>
-        <url>http://www.apache.org/</url>
+        <url>https://www.apache.org/</url>
     </organization>
 
-    <url>http://chemistry.apache.org/java/</url>
+    <url>https://chemistry.apache.org/java/</url>
 
     <ciManagement>
         <system>Apache Build Server</system>
@@ -53,13 +53,13 @@
     <licenses>
         <license>
             <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/chemistry/opencmis/trunk</connection>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</developerConnection>
         <url>http://svn.apache.org/viewvc/chemistry/opencmis/trunk</url>
     </scm>
@@ -83,7 +83,7 @@
             <unsubscribe>dev-unsubscribe@chemistry.apache.org</unsubscribe>
             <post>dev@chemistry.apache.org</post>
             <archive>
-                http://mail-archives.apache.org/mod_mbox/chemistry-dev/
+                https://mail-archives.apache.org/mod_mbox/chemistry-dev/
             </archive>
         </mailingList>
         <mailingList>
@@ -92,7 +92,7 @@
             <unsubscribe>commits-unsubscribe@chemistry.apache.org</unsubscribe>
             <post>commits@chemistry.apache.org</post>
             <archive>
-                http://mail-archives.apache.org/mod_mbox/chemistry-commits/
+                https://mail-archives.apache.org/mod_mbox/chemistry-commits/
             </archive>
         </mailingList>
     </mailingLists>
@@ -205,7 +205,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
-        <docs.start.url>http://chemistry.apache.org/java/opencmis.html</docs.start.url>
+        <docs.start.url>https://chemistry.apache.org/java/opencmis.html</docs.start.url>
         <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
         <!--
             | Here we configure Maven documentation site (incl. Javadocs) deployment
@@ -214,7 +214,7 @@
             | https://svn.apache.org/repos/asf/chemistry/site/trunk/content/java/${site.label}/maven/
             | where site.label = project.version
 
-            | For details/changes see http://chemistry.apache.org/java/documentation-lifecycle.html
+            | For details/changes see https://chemistry.apache.org/java/documentation-lifecycle.html
             |
             | Note: Site label (or any other property like site.staging.url) can be overriden on the command line to deploy to distinct location during site development
             -->
@@ -588,7 +588,11 @@
                       </group>
                       <group>
                           <title>OpenCMIS Server</title>
-                          <packages>org.apache.chemistry.opencmis.commons.server:org.apache.chemistry.opencmis.commons.impl.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.query:org.apache.chemistry.opencmis.server.filter:org.apache.chemistry.opencmis.server.shared</packages>
+                          <packages>org.apache.chemistry.opencmis.commons.server:org.apache.chemistry.opencmis.commons.impl.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.wrapper:org.apache.chemistry.opencmis.server.support.query:org.apache.chemistry.opencmis.server.filter:org.apache.chemistry.opencmis.server.shared</packages>
+                      </group>
+                      <group>
+                          <title>OpenCMIS Server (async)</title>
+                          <packages>org.apache.chemistry.opencmis.server.async</packages>
                       </group>
                       <group>
                           <title>OpenCMIS Bridge</title>
@@ -607,7 +611,6 @@
                       <exclude>org/apache/chemistry/opencmis/commons/impl/*</exclude>
                       <exclude>org/apache/chemistry/opencmis/commons/impl/dataobjects/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/commons/impl/json/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/tube/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/commons/impl/jaxb/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/commons/impl/server/ObjectInfoImpl*</exclude>
                       <exclude>org/apache/chemistry/opencmis/commons/impl/server/RenditionInfoImpl*</exclude>
@@ -618,11 +621,11 @@
                       <exclude>org/apache/chemistry/opencmis/server/impl/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/server/shared/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/server/support/filter/**</exclude>
+                      <exclude>org/apache/chemistry/opencmis/server/async/impl/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/fit/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/util/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/fileshare/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/inmemory/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/jcr/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/browser/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/workbench/**</exclude>
                       <exclude>org/apache/chemistry/opencmis/commander/**</exclude>

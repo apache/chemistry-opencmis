@@ -77,8 +77,6 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
      * 
      * @param parameters
      *            the parameters provided to bridge service factory
-     * @param lock
-     *            a lock object shared by all service instances
      */
     public void init(Map<String, String> parameters) {
     }

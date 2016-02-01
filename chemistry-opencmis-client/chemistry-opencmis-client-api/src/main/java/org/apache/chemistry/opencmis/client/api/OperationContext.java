@@ -199,7 +199,7 @@ public interface OperationContext extends Serializable {
      * an excerpt (page) of a list, see {@link ItemIterable#getPage(int)}.
      * 
      * @param maxItemsPerPage
-     *            max number of items (must be >0)
+     *            max number of items (must be positive)
      */
     void setMaxItemsPerPage(int maxItemsPerPage);
 

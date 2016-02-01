@@ -30,12 +30,19 @@ public interface DocumentTypeDefinition extends TypeDefinition {
     /**
      * Returns whether objects of this type are versionable or not.
      * 
+     * @return {code true} if the document type is versionable, {code false} if
+     *         is is not versionable, or {code null} if an incompliant
+     *         repository does not provide this value
+     * 
      * @cmis 1.0
      */
     Boolean isVersionable();
 
     /**
      * Returns if a content stream must be set.
+     * 
+     * @return if a content stream must be set or {code null} if an incompliant
+     *         repository does not provide this value
      * 
      * @cmis 1.0
      */

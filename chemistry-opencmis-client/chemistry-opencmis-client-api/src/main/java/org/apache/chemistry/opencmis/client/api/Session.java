@@ -722,6 +722,8 @@ public interface Session extends Serializable {
      *            included or not, {@code true} searches all document versions,
      *            {@code false} only searches latest document versions
      * 
+     * @return an {@link Iterable} to iterate over the query result
+     * 
      * @cmis 1.0
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions);
@@ -739,6 +741,8 @@ public interface Session extends Serializable {
      * @param context
      *            the operation context to use
      * 
+     * @return an {@link Iterable} to iterate over the query result
+     * 
      * @cmis 1.0
      */
     ItemIterable<QueryResult> query(String statement, boolean searchAllVersions, OperationContext context);
@@ -747,7 +751,7 @@ public interface Session extends Serializable {
      * Builds a CMIS query and returns the query results as an iterator of
      * {@link CmisObject} objects.
      * 
-     * @param type
+     * @param typeId
      *            the ID of the object type
      * @param where
      *            the WHERE part of the query
@@ -757,6 +761,8 @@ public interface Session extends Serializable {
      *            {@code false} only searches latest document versions
      * @param context
      *            the operation context to use
+     * 
+     * @return an {@link Iterable} to iterate over the objects
      * 
      * @cmis 1.0
      */

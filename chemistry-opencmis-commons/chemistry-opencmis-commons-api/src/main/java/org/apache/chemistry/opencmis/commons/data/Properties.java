@@ -27,7 +27,7 @@ import java.util.Map;
 public interface Properties extends ExtensionsData {
 
     /**
-     * Returns a map of properties (property ID => property).
+     * Returns a map of properties (property ID =&gt; property).
      * <p>
      * This method should not be used with queries because some repositories
      * don't set property IDs, and because when dealing with queries the proper

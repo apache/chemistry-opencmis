@@ -36,24 +36,24 @@ public interface MutablePropertyData<T> extends PropertyData<T> {
     /**
      * Set the display name.
      * 
-     * @param the
-     *            display name
+     * @param displayName
+     *            the display name
      */
     void setDisplayName(String displayName);
 
     /**
      * Set the local name.
      * 
-     * @param the
-     *            local name
+     * @param localName
+     *            the local name
      */
     void setLocalName(String localName);
 
     /**
      * Set the query name.
      * 
-     * @param the
-     *            query name
+     * @param queryName
+     *            the query name
      */
     void setQueryName(String queryName);
 

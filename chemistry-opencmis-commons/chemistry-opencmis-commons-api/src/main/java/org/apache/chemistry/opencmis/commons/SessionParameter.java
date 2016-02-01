@@ -21,7 +21,7 @@ package org.apache.chemistry.opencmis.commons;
 /**
  * Session parameter constants.
  * 
- * <table border="2" rules="all" cellpadding="4">
+ * <table border="2" rules="all" cellpadding="4" summary="Session Parameters">
  * <tr>
  * <th>Constant</th>
  * <th>Description</th>
@@ -452,7 +452,6 @@ package org.apache.chemistry.opencmis.commons;
  * <td>either {@link #WEBSERVICES_MULTIFILING_SERVICE} or
  * {@link #WEBSERVICES_MULTIFILING_SERVICE_ENDPOINT} must be set</td>
  * <td>-</td>
- * </tr>
  * </tr>
  * <tr>
  * <td>{@link #WEBSERVICES_POLICY_SERVICE}</td>

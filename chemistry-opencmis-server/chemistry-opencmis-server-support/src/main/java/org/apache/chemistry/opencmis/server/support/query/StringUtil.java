@@ -25,8 +25,8 @@ public final class StringUtil {
 
     /**
      * Removes all escape sequences in a string and return unescaped string
-     * escape character is backslash \, so \\ --> \, \' --> ' additional escaped
-     * characters can be allowed in escapedChars.
+     * escape character is backslash \, so \\ --&gt; \, \' --&gt; ' additional
+     * escaped characters can be allowed in escapedChars.
      * 
      * @param literal
      *            String to unescape

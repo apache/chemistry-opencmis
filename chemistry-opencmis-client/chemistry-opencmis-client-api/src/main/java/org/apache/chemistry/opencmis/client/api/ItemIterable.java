@@ -72,7 +72,8 @@ public interface ItemIterable<T> extends Iterable<T> {
      * Returns whether the repository contains additional items beyond the page
      * of items already fetched.
      * 
-     * @return true => further page requests will be made to the repository
+     * @return {@code true} if further page requests will be made to the
+     *         repository
      */
     boolean getHasMoreItems();
 

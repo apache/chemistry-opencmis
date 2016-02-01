@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
  * <pre>
  * SessionFactory factory = SessionFactoryFinder.find();
  * 
- * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * Map&lt;String, String&gt; parameter = new HashMap&lt;String, String&gt;();
  * parameter.put(SessionParameter.USER, "Otto");
  * parameter.put(SessionParameter.PASSWORD, "****");
  * 

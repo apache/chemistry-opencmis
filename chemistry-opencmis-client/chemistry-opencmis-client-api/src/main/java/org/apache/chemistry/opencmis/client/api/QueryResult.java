@@ -122,15 +122,15 @@ public interface QueryResult {
     /**
      * Returns the relationships if they have been requested.
      * 
-     * @returns the relationships if they have been requested, {@code null}
-     *          otherwise
+     * @return the relationships if they have been requested, {@code null}
+     *         otherwise
      */
     List<Relationship> getRelationships();
 
     /**
      * Returns the renditions if they have been requested.
      * 
-     * @eturns the rendition if they have been requested, {@code null} otherwise
+     * @return the rendition if they have been requested, {@code null} otherwise
      */
     List<Rendition> getRenditions();
 }

@@ -83,16 +83,7 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
      * @param policies
      *            <em>(optional)</em> a list of policy IDs that MUST be applied
      *            to the newly created object
-     * @param addAces
-     *            <em>(optional)</em> a list of ACEs that MUST be added to the
-     *            newly created object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
-     * @param removeAces
-     *            <em>(optional)</em> a list of ACEs that MUST be removed from
-     *            the newly created object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     * @return the object ID of the newly created object
      */
     String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, ExtensionsData extension);

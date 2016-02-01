@@ -25,13 +25,13 @@
     <bannerLeft>
         <name>${project.name}</name>
         <src>images/chemistry-logo.png</src>
-        <href>http://chemistry.apache.org/java</href>
+        <href>https://chemistry.apache.org/java/opencmis.html</href>
     </bannerLeft>
 
     <bannerRight>
         <name>The Apache Software Foundation</name>
-        <src>images/apache-logo.gif</src>
-        <href>http://www.apache.org/</href>
+        <src>images/apache-logo.png</src>
+        <href>https://www.apache.org/</href>
 	</bannerRight>
 
 

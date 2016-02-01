@@ -29,11 +29,15 @@ public interface PermissionDefinition extends Serializable, ExtensionsData {
 
     /**
      * Returns the permission ID.
+     * 
+     * @return the permission ID
      */
     String getId();
 
     /**
      * Returns a human readable description of the permission.
+     * 
+     * @return the permission description
      */
     String getDescription();
 }

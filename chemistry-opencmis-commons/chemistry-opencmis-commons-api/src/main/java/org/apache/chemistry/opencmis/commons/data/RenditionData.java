@@ -63,21 +63,21 @@ public interface RenditionData extends ExtensionsData {
     /**
      * Returns the title of the rendition.
      * 
-     * @returns the rendition title, may be {@code null}
+     * @return the rendition title, may be {@code null}
      */
     String getTitle();
 
     /**
      * Returns the height in pixels, if the rendition is an image.
      * 
-     * @returns the height in pixels, may be {@code null}
+     * @return the height in pixels, may be {@code null}
      */
     BigInteger getBigHeight();
 
     /**
      * Returns the width in pixels, if the rendition is an image.
      * 
-     * @returns the width in pixels, may be {@code null}
+     * @return the width in pixels, may be {@code null}
      */
     BigInteger getBigWidth();
 

@@ -296,10 +296,6 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Creates an {@link OutputStream} stream object that can be used to append
      * content the current content of the document.
      * 
-     * @param filename
-     *            the file name
-     * @param mimeType
-     *            the MIME type
      * @return the OutputStream object
      * 
      * @cmis 1.1
@@ -310,10 +306,6 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      * Creates an {@link OutputStream} stream object that can be used to append
      * content the current content of the document.
      * 
-     * @param filename
-     *            the file name
-     * @param mimeType
-     *            the MIME type
      * @param bufferSize
      *            buffer size in bytes
      * @return the OutputStream object

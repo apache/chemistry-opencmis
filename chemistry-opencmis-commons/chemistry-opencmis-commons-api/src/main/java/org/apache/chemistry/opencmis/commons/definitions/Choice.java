@@ -30,14 +30,23 @@ public interface Choice<T> extends Serializable {
 
     /**
      * Return the display name of the choice value.
+     * 
+     * @return the display name
      */
     String getDisplayName();
 
     /**
      * Return the value of the choice value. Single value properties return a
      * list with exactly one value.
+     * 
+     * @return the choice value
      */
     List<T> getValue();
 
+    /**
+     * Returns sub-choice if there is a hierarchy of choices.
+     * 
+     * @return the list of sub-choices
+     */
     List<Choice<T>> getChoice();
 }

@@ -58,11 +58,17 @@ public interface MutableTypeDefinition extends TypeDefinition {
 
     /**
      * Adds or replaces a property definition.
+     * 
+     * @param propertyDefinition
+     *            the property definition to add, not {code null}
      */
     void addPropertyDefinition(PropertyDefinition<?> propertyDefinition);
 
     /**
      * Removes a property definition.
+     * 
+     * @param propertyId
+     *            the ID of the property to delete, not {code null}
      */
     void removePropertyDefinition(String propertyId);
 

@@ -35,7 +35,7 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
  * Folder folder = ...
  * 
  * QueryStatement qs = 
- *   session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? > TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)");
+ *   session.createQueryStatement("SELECT ?, ? FROM ? WHERE ? &gt; TIMESTAMP ? AND IN_FOLDER(?) OR ? IN (?)");
  * 
  * qs.setProperty(1, "cmis:document", "cmis:name");
  * qs.setProperty(2, "cmis:document", "cmis:objectId");
@@ -140,10 +140,62 @@ public interface QueryStatement extends Cloneable {
      * On the second level grammar ", ', - and \ are escaped with a \. See the
      * spec for further details.
      * <p>
-     * Summary (input --> first level escaping --> second level escaping and
-     * output): * --> * --> * ? --> ? --> ? - --> - --> - \ --> \\ --> \\\\ (for
-     * any other character following other than * ? -) \* --> \* --> \\* \? -->
-     * \? --> \\? \- --> \- --> \\- ' --> \' --> \\\' " --> \" --> \\\"
+     * 
+     * Summary:
+     * <table summary="Escaping Summary">
+     * <tr>
+     * <th>input</th>
+     * <th>first level escaping</th>
+     * <th>second level escaping</th>
+     * </tr>
+     * <tr>
+     * <td>*</td>
+     * <td>*</td>
+     * <td>*</td>
+     * </tr>
+     * <tr>
+     * <td>?</td>
+     * <td>?</td>
+     * <td>?</td>
+     * </tr>
+     * <tr>
+     * <td>-</td>
+     * <td>-</td>
+     * <td>-</td>
+     * </tr>
+     * <tr>
+     * <td>\</td>
+     * <td>\\</td>
+     * <td>\\\\<br>
+     * <em>(for any other character following other than * ?
+     * -)</em></td>
+     * </tr>
+     * <tr>
+     * <td>\*</td>
+     * <td>\*</td>
+     * <td>\\*</td>
+     * </tr>
+     * <tr>
+     * <td>\?</td>
+     * <td>\?</td>
+     * <td>\\?</td>
+     * </tr>
+     * <tr>
+     * <td>\-</td>
+     * <td>\-</td>
+     * <td>\\-+</td>
+     * </tr>
+     * <tr>
+     * <td>'</td>
+     * <td>\'</td>
+     * <td>\\\'</td>
+     * </tr>
+     * <tr>
+     * <td>"</td>
+     * <td>\"</td>
+     * <td>\\\"</td>
+     * </tr>
+     * </table>
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
@@ -207,7 +259,7 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
-     * @param cal
+     * @param date
      *            the DateTime value as Date object
      */
     void setDateTime(int parameterIndex, Date... date);
@@ -217,7 +269,7 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
-     * @param cal
+     * @param ms
      *            the DateTime value in milliseconds from midnight, January 1,
      *            1970 UTC.
      */
@@ -240,7 +292,7 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
-     * @param cal
+     * @param date
      *            the DateTime value as Date object
      */
     void setDateTimeTimestamp(int parameterIndex, Date... date);
@@ -251,7 +303,7 @@ public interface QueryStatement extends Cloneable {
      * 
      * @param parameterIndex
      *            the parameter index (one-based)
-     * @param cal
+     * @param ms
      *            the DateTime value in milliseconds from midnight, January 1,
      *            1970 UTC.
      */

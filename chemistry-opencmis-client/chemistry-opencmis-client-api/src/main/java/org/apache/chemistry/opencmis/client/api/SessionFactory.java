@@ -44,7 +44,7 @@ import java.util.Map;
  * <pre>
  * SessionFactory factory = ...
  * 
- * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * Map&lt;String, String&gt; parameter = new HashMap&lt;String, String&gt;();
  * 
  * parameter.put(SessionParameter.USER, "Otto");
  * parameter.put(SessionParameter.PASSWORD, "****");
@@ -87,7 +87,7 @@ public interface SessionFactory {
      *            a map of name/value pairs with parameters for the session, see
      *            {@link org.apache.chemistry.opencmis.commons.SessionParameter}
      *            for parameters supported by OpenCMIS, the parameter
-     *            {@link org.apache.chemistry.opencmis.commons.SessionParameter.REPOSITORY_ID}
+     *            {@link org.apache.chemistry.opencmis.commons.SessionParameter#REPOSITORY_ID}
      *            should not be set
      * 
      * @return a list of all available repositories, never {@code null}

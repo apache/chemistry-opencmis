@@ -33,18 +33,30 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Object
 
     /**
+     * Returns the Content Stream Updates capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
     CapabilityContentStreamUpdates getContentStreamUpdatesCapability();
 
     /**
+     * Returns the Changes capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
     CapabilityChanges getChangesCapability();
 
     /**
+     * Returns Rendition capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
@@ -53,18 +65,30 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Navigation
 
     /**
+     * Returns the Get Descendants capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isGetDescendantsSupported();
 
     /**
+     * Returns Get Folder Tree capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isGetFolderTreeSupported();
 
     /**
+     * Returns the Order By capability.
+     *
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.1
      */
@@ -73,18 +97,30 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Filing
 
     /**
+     * Returns the Multifiling capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isMultifilingSupported();
 
     /**
+     * Returns the Unfiling capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isUnfilingSupported();
 
     /**
+     * Returns the Version Specific Filing capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -93,18 +129,30 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Versioning
 
     /**
+     * Returns the PWC Searchable capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isPwcSearchableSupported();
 
     /**
+     * Returns the PWC Updatable capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
     Boolean isPwcUpdatableSupported();
 
     /**
+     * Returns the All Versions Searchable capability.
+     * 
+     * @return {@code true} if supported, {@code false} if not supported, or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -113,12 +161,20 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Query
 
     /**
+     * Returns the Query capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
     CapabilityQuery getQueryCapability();
 
     /**
+     * Returns the Join capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
@@ -127,6 +183,10 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // ACLs
 
     /**
+     * Returns the ACL capability.
+     * 
+     * @return the capability enum or {code null} if the the repository does not
+     *         provide this value
      * 
      * @cmis 1.0
      */
@@ -135,12 +195,20 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     // Type mutability
 
     /**
+     * Returns the Creatable Property Types capability.
+     * 
+     * @return the creatable property types or {code null} if the the repository
+     *         does not provide this value
      * 
      * @cmis 1.1
      */
     CreatablePropertyTypes getCreatablePropertyTypes();
 
     /**
+     * Returns the New Type Settable Attributes capability.
+     * 
+     * @return the attributes that can be set when a new type is created or
+     *         {code null} if the the repository does not provide this value
      * 
      * @cmis 1.1
      */
