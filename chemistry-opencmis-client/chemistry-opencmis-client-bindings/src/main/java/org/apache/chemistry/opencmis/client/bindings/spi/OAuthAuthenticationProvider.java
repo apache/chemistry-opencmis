@@ -404,7 +404,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             writer.write(IOUtils.encodeURL(clientSecret.toString()));
         }
 
-        writer.flush();
+        writer.close();
 
         // connect
         conn.connect();

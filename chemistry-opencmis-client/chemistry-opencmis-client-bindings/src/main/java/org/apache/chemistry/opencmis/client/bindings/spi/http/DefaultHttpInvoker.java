@@ -201,11 +201,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
                 OutputStream out = new BufferedOutputStream(connOut, BUFFER_SIZE);
                 writer.write(out);
-                out.flush();
-
-                if (connOut instanceof GZIPOutputStream) {
-                    ((GZIPOutputStream) connOut).finish();
-                }
+                out.close();
             }
 
             // connect
