@@ -41,6 +41,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -54,7 +55,9 @@ import javax.swing.table.TableColumn;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.workbench.icons.CheckedOutIcon;
 import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
 import org.apache.chemistry.opencmis.workbench.icons.FolderIcon;
@@ -107,13 +110,80 @@ public class FolderTable extends JTable implements FolderListener {
         setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
 
         final JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem("Copy to clipboard");
-        popup.add(menuItem);
 
-        menuItem.addActionListener(new ActionListener() {
+        // popup menu: clipboard
+        JMenuItem clipboardItem = new JMenuItem("Copy table to clipboard");
+        popup.add(clipboardItem);
+
+        clipboardItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ClientHelper.copyTableToClipboard(FolderTable.this);
+            }
+        });
+
+        popup.addSeparator();
+
+        // popup menu: delete
+        final JMenuItem deleteItem = new JMenuItem("Delete");
+        deleteItem.setEnabled(false);
+        popup.add(deleteItem);
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (model.getCurrentObject() != null) {
+                    int answer = JOptionPane.showConfirmDialog(FolderTable.this, "Do you really want to delete '"
+                            + model.getCurrentObject().getName() + "'?", "Delete", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+
+                    if (answer == JOptionPane.YES_OPTION) {
+                        try {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                            if (model.getCurrentObject() instanceof Folder) {
+                                List<String> ids = ((Folder) model.getCurrentObject()).deleteTree(true,
+                                        UnfileObject.DELETE, true);
+
+                                if (ids != null && !ids.isEmpty()) {
+                                    StringBuilder sb = new StringBuilder(128);
+
+                                    sb.append("Delete tree failed! At least the following objects could not be deleted:\n");
+
+                                    for (String id : ids) {
+                                        sb.append('\n');
+                                        sb.append(id);
+                                    }
+
+                                    JOptionPane.showMessageDialog(FolderTable.this, sb.toString(), "Delete Tree",
+                                            JOptionPane.ERROR_MESSAGE);
+                                }
+                            } else {
+                                model.getCurrentObject().delete();
+                            }
+
+                            model.reloadFolder();
+                        } catch (Exception ex) {
+                            ClientHelper.showError(FolderTable.this, ex);
+                            return;
+                        } finally {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        }
+                    }
+                }
+            }
+        });
+
+        // popup menu: download
+        final JMenuItem downloadItem = new JMenuItem("Download");
+        downloadItem.setEnabled(false);
+        popup.add(downloadItem);
+
+        downloadItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (model.getCurrentObject() != null) {
+                    ClientHelper.download(FolderTable.this, model.getCurrentObject(), null);
+                }
             }
         });
 
@@ -131,6 +201,17 @@ public class FolderTable extends JTable implements FolderListener {
                     try {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         model.loadObject(id);
+
+                        // enable or disable popup menu items
+                        if (model.getCurrentObject() != null && model.getCurrentObject().getAllowableActions() != null) {
+                            CmisObject object = model.getCurrentObject();
+                            deleteItem.setEnabled(object.hasAllowableAction(Action.CAN_DELETE_OBJECT)
+                                    || object.hasAllowableAction(Action.CAN_DELETE_TREE));
+                            downloadItem.setEnabled(object.hasAllowableAction(Action.CAN_GET_CONTENT_STREAM));
+                        } else {
+                            deleteItem.setEnabled(false);
+                            downloadItem.setEnabled(false);
+                        }
                     } catch (Exception ex) {
                         ClientHelper.showError(null, ex);
                         return;
