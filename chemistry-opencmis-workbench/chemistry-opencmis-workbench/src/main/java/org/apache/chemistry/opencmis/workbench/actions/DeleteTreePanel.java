@@ -53,7 +53,7 @@ public class DeleteTreePanel extends ActionPanel {
         addActionComponent(unfileObjectsBox);
 
         continueOnFailureBox = new JCheckBox("continue on failure", true);
-        addActionComponent(allVersionsBox);
+        addActionComponent(continueOnFailureBox);
     }
 
     @Override
