@@ -50,6 +50,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -60,6 +61,7 @@ import javax.imageio.ImageIO;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -401,7 +403,7 @@ public final class ClientHelper {
         return null;
     }
 
-    public static void copyTableToClipboard(JTable table) {
+    public static void copyTableToClipboard(JTable table, boolean onlySelected) {
         final String newline = System.getProperty("line.separator");
 
         final StringBuilder sb = new StringBuilder(1024);
@@ -418,7 +420,17 @@ public final class ClientHelper {
 
         sb.append(newline);
 
+        int[] seletedRows = table.getSelectedRows();
+        Arrays.sort(seletedRows);
+
         for (int row = 0; row < rows; row++) {
+
+            if (onlySelected) {
+                if (Arrays.binarySearch(seletedRows, row) < 0) {
+                    continue;
+                }
+            }
+
             for (int col = 0; col < cols; col++) {
                 if (col > 0) {
                     sb.append(',');
@@ -498,7 +510,7 @@ public final class ClientHelper {
             return sb.toString();
         } else if (value instanceof ObjectId) {
             return formatCSVValue(((ObjectId) value).getId());
-        } else if (value instanceof ImageIcon) {
+        } else if (value instanceof Icon) {
             return "<icon>";
         }
 

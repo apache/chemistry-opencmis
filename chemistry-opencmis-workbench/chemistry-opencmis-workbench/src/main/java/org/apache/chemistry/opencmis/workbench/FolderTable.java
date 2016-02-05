@@ -112,13 +112,23 @@ public class FolderTable extends JTable implements FolderListener {
         final JPopupMenu popup = new JPopupMenu();
 
         // popup menu: clipboard
-        JMenuItem clipboardItem = new JMenuItem("Copy table to clipboard");
-        popup.add(clipboardItem);
+        final JMenuItem clipboardAllItem = new JMenuItem("Copy all rows to clipboard");
+        popup.add(clipboardAllItem);
 
-        clipboardItem.addActionListener(new ActionListener() {
+        clipboardAllItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ClientHelper.copyTableToClipboard(FolderTable.this);
+                ClientHelper.copyTableToClipboard(FolderTable.this, false);
+            }
+        });
+
+        final JMenuItem clipboardSelectedItem = new JMenuItem("Copy selected rows to clipboard");
+        popup.add(clipboardSelectedItem);
+
+        clipboardSelectedItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientHelper.copyTableToClipboard(FolderTable.this, true);
             }
         });
 

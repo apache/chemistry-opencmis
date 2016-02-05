@@ -78,13 +78,24 @@ public abstract class AbstractDetailsTable extends JTable implements ObjectListe
         setFillsViewportHeight(true);
 
         final JPopupMenu popup = new JPopupMenu();
-        final JMenuItem menuItem = new JMenuItem("Copy to clipboard");
-        popup.add(menuItem);
 
-        menuItem.addActionListener(new ActionListener() {
+        final JMenuItem clipboardAllItem = new JMenuItem("Copy all rows to clipboard");
+        popup.add(clipboardAllItem);
+
+        clipboardAllItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ClientHelper.copyTableToClipboard(AbstractDetailsTable.this);
+                ClientHelper.copyTableToClipboard(AbstractDetailsTable.this, false);
+            }
+        });
+
+        final JMenuItem clipboardSelectedItem = new JMenuItem("Copy selected rows to clipboard");
+        popup.add(clipboardSelectedItem);
+
+        clipboardSelectedItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientHelper.copyTableToClipboard(AbstractDetailsTable.this, true);
             }
         });
 

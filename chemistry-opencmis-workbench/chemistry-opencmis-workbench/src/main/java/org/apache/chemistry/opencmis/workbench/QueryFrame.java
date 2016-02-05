@@ -204,13 +204,23 @@ public class QueryFrame extends JFrame {
         resultsTable = new ResultTable();
 
         final JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem("Copy to clipboard");
-        popup.add(menuItem);
+        final JMenuItem clipboardAllItem = new JMenuItem("Copy all rows to clipboard");
+        popup.add(clipboardAllItem);
 
-        menuItem.addActionListener(new ActionListener() {
+        clipboardAllItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ClientHelper.copyTableToClipboard(resultsTable);
+                ClientHelper.copyTableToClipboard(resultsTable, false);
+            }
+        });
+
+        final JMenuItem clipboardSelectedItem = new JMenuItem("Copy selected rows to clipboard");
+        popup.add(clipboardSelectedItem);
+
+        clipboardSelectedItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientHelper.copyTableToClipboard(resultsTable, true);
             }
         });
 

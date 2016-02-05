@@ -132,13 +132,13 @@ public class PropertyDefinitionsSplitPane extends JSplitPane {
             setRowHeight((int) (getFontMetrics(getFont()).getHeight() * 1.1));
 
             final JPopupMenu popup = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Copy to clipboard");
+            JMenuItem menuItem = new JMenuItem("Copy table to clipboard");
             popup.add(menuItem);
 
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ClientHelper.copyTableToClipboard(PropertyDefinitionsTable.this);
+                    ClientHelper.copyTableToClipboard(PropertyDefinitionsTable.this, false);
                 }
             });
 
