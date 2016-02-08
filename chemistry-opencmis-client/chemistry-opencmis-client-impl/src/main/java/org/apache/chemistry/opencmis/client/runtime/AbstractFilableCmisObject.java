@@ -91,13 +91,21 @@ public abstract class AbstractFilableCmisObject extends AbstractCmisObject imple
     public List<String> getPaths() {
         String objectId = getObjectId();
 
+        // determine filter
+        String filter;
+
         ObjectType folderType = getSession().getTypeDefinition(BaseTypeId.CMIS_FOLDER.value());
-        PropertyDefinition<?> propDef = folderType.getPropertyDefinitions().get(PropertyIds.PATH);
-        String pathQueryName = propDef == null ? null : propDef.getQueryName();
+        PropertyDefinition<?> idPropDef = folderType.getPropertyDefinitions().get(PropertyIds.OBJECT_ID);
+        PropertyDefinition<?> pathPropDef = folderType.getPropertyDefinitions().get(PropertyIds.PATH);
+        if (idPropDef != null && pathPropDef != null) {
+            filter = idPropDef.getQueryName() + "," + pathPropDef.getQueryName();
+        } else {
+            filter = "*";
+        }
 
         // get object paths of the parent folders
         List<ObjectParentData> bindingParents = getBinding().getNavigationService().getObjectParents(getRepositoryId(),
-                objectId, pathQueryName, false, IncludeRelationships.NONE, null, true, null);
+                objectId, filter, false, IncludeRelationships.NONE, null, true, null);
 
         List<String> paths = new ArrayList<String>();
 
