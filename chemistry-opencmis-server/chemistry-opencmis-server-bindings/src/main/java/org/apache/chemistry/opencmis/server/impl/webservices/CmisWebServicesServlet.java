@@ -44,14 +44,14 @@ import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.transport.servlet.CXFServlet;
+import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * CMIS Web Services servlet.
  */
-public class CmisWebServicesServlet extends CXFServlet {
+public class CmisWebServicesServlet extends CXFNonSpringServlet {
 
     public static final String PARAM_CMIS_VERSION = "cmisVersion";
     public static final String CMIS_VERSION = "org.apache.chemistry.opencmis.cmisVersion";
@@ -176,10 +176,10 @@ public class CmisWebServicesServlet extends CXFServlet {
 
         String respDoc = doc;
         respDoc = BASE_PATTERN.matcher(respDoc).replaceAll(baseUrl.toString());
-        respDoc = CORE_PATTERN.matcher(respDoc).replaceAll(
-                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("core").toString());
-        respDoc = MSG_PATTERN.matcher(respDoc).replaceAll(
-                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("msg").toString());
+        respDoc = CORE_PATTERN.matcher(respDoc)
+                .replaceAll((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("core").toString());
+        respDoc = MSG_PATTERN.matcher(respDoc)
+                .replaceAll((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("msg").toString());
 
         PrintWriter pw = response.getWriter();
         pw.print(respDoc);
@@ -192,14 +192,12 @@ public class CmisWebServicesServlet extends CXFServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding(IOUtils.UTF8);
 
-        String urlEscaped = StringEscapeUtils.escapeHtml4((new UrlBuilder(baseUrl)).addPath("cmis")
-                .addParameter("wsdl").toString());
+        String urlEscaped = StringEscapeUtils
+                .escapeHtml4((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("wsdl").toString());
 
         PrintWriter pw = response.getWriter();
 
-        pw.print("<html><head><title>Apache Chemistry OpenCMIS - CMIS "
-                + cmisVersion.value()
-                + " Web Services</title>"
+        pw.print("<html><head><title>Apache Chemistry OpenCMIS - CMIS " + cmisVersion.value() + " Web Services</title>"
                 + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
                 + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
                 + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
@@ -256,7 +254,7 @@ public class CmisWebServicesServlet extends CXFServlet {
     }
 
     @Override
-    public void loadBus(ServletConfig servletConfig) {
+    protected void loadBus(ServletConfig servletConfig) {
         super.loadBus(servletConfig);
 
         CmisServiceFactory factory = CmisRepositoryContextListener.getServiceFactory(servletConfig.getServletContext());
@@ -267,6 +265,7 @@ public class CmisWebServicesServlet extends CXFServlet {
 
         Bus bus = getBus();
         BusFactory.setDefaultBus(bus);
+
         if (factory.getTempDirectory() != null) {
             bus.setProperty("bus.io.CachedOutputStream.OutputDirectory", factory.getTempDirectory().getAbsolutePath());
         }
@@ -277,6 +276,8 @@ public class CmisWebServicesServlet extends CXFServlet {
         if (factory.encryptTempFiles()) {
             bus.setProperty("bus.io.CachedOutputStream.CipherTransformation", "AES/CTR/PKCS5Padding");
         }
+
+        configureInterceptors(bus);
 
         if (cmisVersion == CmisVersion.CMIS_1_0) {
             publish("/RepositoryService", new RepositoryService10());
@@ -299,6 +300,16 @@ public class CmisWebServicesServlet extends CXFServlet {
             publish("/ACLService", new AclService());
             publish("/PolicyService", new PolicyService());
         }
+    }
+
+    /**
+     * Adds and configures interceptors for OpenCMIS.
+     * 
+     * Override this method to add more interceptors.
+     */
+    protected void configureInterceptors(Bus bus) {
+        bus.getInInterceptors().add(new SoapActionRemoveInterceptor());
+        bus.getInInterceptors().add(new UsernameTokenInterceptor());
     }
 
     private Endpoint publish(String adress, Object implementor) {
