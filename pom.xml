@@ -234,10 +234,10 @@
         <surefire.version>2.18.1</surefire.version>
         <failsafe.version>2.18.1</failsafe.version>
         <jacoco.version>0.7.5.201505241946</jacoco.version>
-        <slf4j.version>1.7.5</slf4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
         <log4j.version>2.5</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.0.8</cxf.version>
+        <cxf.version>3.0.9</cxf.version>
     </properties>
 
     <build>
