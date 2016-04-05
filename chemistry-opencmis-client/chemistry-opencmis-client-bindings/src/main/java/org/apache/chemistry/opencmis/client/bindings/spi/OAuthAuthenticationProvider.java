@@ -212,7 +212,7 @@ public class OAuthAuthenticationProvider extends StandardAuthenticationProvider 
             headers = new HashMap<String, List<String>>();
         }
 
-        headers.put("Authorization", Collections.singletonList(TOKEN_TYPE_BEARER + " " + getAccessToken()));
+        headers.put("Authorization", Collections.singletonList("Bearer " + getAccessToken()));
 
         return headers;
     }
