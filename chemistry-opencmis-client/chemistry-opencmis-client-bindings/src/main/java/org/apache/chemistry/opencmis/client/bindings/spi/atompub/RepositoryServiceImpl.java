@@ -71,7 +71,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
         if (repositoryInfos.isEmpty()) {
-            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
         }
 
         // find the repository
@@ -85,7 +85,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
             }
         }
 
-        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
     }
 
     @Override
@@ -235,7 +235,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         String parentId = type.getParentTypeId();
         if (parentId == null) {
-            throw new CmisInvalidArgumentException("Type definition has no parent type id!");
+            throw new CmisInvalidArgumentException("Type definition has no parent type ID!");
         }
 
         // find the link
@@ -293,7 +293,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
 
         String typeId = type.getId();
         if (typeId == null) {
-            throw new CmisInvalidArgumentException("Type definition has no type id!");
+            throw new CmisInvalidArgumentException("Type definition has no type ID!");
         }
 
         // find the link
