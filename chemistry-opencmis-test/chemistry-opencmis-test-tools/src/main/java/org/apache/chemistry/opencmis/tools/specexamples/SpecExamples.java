@@ -87,7 +87,7 @@ public class SpecExamples {
     private static final String TOPLEVEL_TYPE = "DocumentTopLevel";
     private static final String VERSIONED_TYPE = "VersionableType";
     private static final String VERSIONED_PROP = "VersionedStringProp";
-    private static final String LOGDIR = "/Users/d058463/temp/cmis"; //System.getProperty("java.io.tmpdir");// +
+    private static final String LOGDIR = System.getProperty("java.io.tmpdir");
     // File.separator;
     private static final String ROOT_URL = "http://localhost:8080/inmemory";
     private static final String ROOT_URL_OASIS = "http://www.example.com:8080/inmemory";
