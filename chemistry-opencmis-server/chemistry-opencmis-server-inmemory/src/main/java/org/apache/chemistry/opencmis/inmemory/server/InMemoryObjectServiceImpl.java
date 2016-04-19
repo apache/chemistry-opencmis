@@ -894,7 +894,12 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         // validate content allowed
         TypeValidator.validateContentAllowed((DocumentTypeDefinition) typeDef, null != contentStream);
 
+        // Check that documents are not created as checked-out as this results in an inconsistent state
         TypeValidator.validateVersionStateForCreate((DocumentTypeDefinition) typeDef, versioningState);
+        if (typeDef instanceof DocumentTypeDefinition && ((DocumentTypeDefinition) typeDef).isVersionable() 
+        		&& null != versioningState && versioningState.equals(VersioningState.CHECKEDOUT)) {
+            throw new CmisConstraintException("Creating of checked-out documents is not supported.");
+        }
 
         // set properties that are not set but have a default:
         Map<String, PropertyData<?>> propMapNew = setDefaultProperties(typeDef, propMap);

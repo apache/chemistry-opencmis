@@ -98,7 +98,12 @@ public class VersioningTest extends AbstractServiceTest {
 
     @Test
     public void testCreateVersionedDocumentCheckedOut() {
-        createVersionedDocument(VersioningState.CHECKEDOUT);
+        try {
+            createVersionedDocument(VersioningState.CHECKEDOUT);
+            fail("creating a document of a versionable type with state VersioningState.CHECKEDOUT should fail.");
+        } catch (Exception e) {
+            assertEquals(CmisConstraintException.class, e.getClass());
+        }
     }
 
     @Test
