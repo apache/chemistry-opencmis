@@ -685,22 +685,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Generates aggregated javadocs -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.3</version>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>generate-docs</id>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!--
                         We want to package up licenses
                         resources in the JARs produced
