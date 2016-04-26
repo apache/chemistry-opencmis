@@ -733,5 +733,17 @@
                 </plugins>
             </build>
         </profile>
+	<!-- Added profile to fix "doclint" (see http://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete). 
+             TODO: This is a temporary solution, until we solve https://issues.apache.org/jira/browse/CMIS-977 
+        -->
+        <profile>
+            <id>disable-java8-doclint</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
     </profiles>
 </project>
