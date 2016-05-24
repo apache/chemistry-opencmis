@@ -44,7 +44,7 @@ public interface RepositoryService {
      * service endpoint.
      * 
      * In contrast to the CMIS specification this method returns repository
-     * infos not only repository ids.
+     * infos not only repository IDs.
      */
     List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 

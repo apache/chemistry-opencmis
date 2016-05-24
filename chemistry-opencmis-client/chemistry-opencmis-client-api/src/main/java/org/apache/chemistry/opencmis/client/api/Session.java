@@ -256,12 +256,13 @@ public interface Session extends Serializable {
      * 
      * @param typeId
      *            the type ID or {@code null} to request the base types
-     * @param includePropertyDefinitions
-     *            indicates whether the property definitions should be included
-     *            or not
      * @param depth
      *            the tree depth, must be greater than 0 or -1 for infinite
      *            depth
+     * @param includePropertyDefinitions
+     *            indicates whether the property definitions should be included
+     *            or not
+     * @return the tree of types
      * 
      * @throws CmisObjectNotFoundException
      *             if a type with the given type ID doesn't exist

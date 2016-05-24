@@ -62,7 +62,7 @@ public interface Rendition extends RenditionData {
     Document getRenditionDocument();
 
     /**
-     * Returns the rendition document using the provides
+     * Returns the rendition document using the provided
      * {@link OperationContext} if the rendition is a stand-alone document.
      * 
      * @return the rendition document or {@code null} if there is no rendition
