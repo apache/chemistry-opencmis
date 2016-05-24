@@ -105,7 +105,8 @@ public abstract class XMLWalker<T> {
         }
 
         if (extensions.size() + 1 > XMLConstraints.MAX_EXTENSIONS_WIDTH) {
-            throw new CmisInvalidArgumentException("Too many extensions!");
+            throw new CmisInvalidArgumentException("Too many extensions! (More than "
+                    + XMLConstraints.MAX_EXTENSIONS_WIDTH + " extensions.)");
         }
 
         extensions.add(handleExtensionLevel(parser, 0));
@@ -144,7 +145,8 @@ public abstract class XMLWalker<T> {
                 }
             } else if (event == XMLStreamConstants.START_ELEMENT) {
                 if (level + 1 > XMLConstraints.MAX_EXTENSIONS_DEPTH) {
-                    throw new CmisInvalidArgumentException("Extensions tree too deep!");
+                    throw new CmisInvalidArgumentException("Extensions tree too deep!  (More than "
+                            + XMLConstraints.MAX_EXTENSIONS_DEPTH + " levels.)");
                 }
 
                 if (children == null) {
@@ -152,7 +154,8 @@ public abstract class XMLWalker<T> {
                 }
 
                 if (children.size() + 1 > XMLConstraints.MAX_EXTENSIONS_WIDTH) {
-                    throw new CmisInvalidArgumentException("Extensions tree too wide!");
+                    throw new CmisInvalidArgumentException("Extensions tree too wide! (More than "
+                            + XMLConstraints.MAX_EXTENSIONS_WIDTH + " extensions on one level.)");
                 }
 
                 children.add(handleExtensionLevel(parser, level + 1));

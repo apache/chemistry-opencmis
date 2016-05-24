@@ -25,6 +25,33 @@ public final class XMLConstraints {
 
     public static final int MAX_STRING_LENGTH = 100 * 1024;
 
-    public static final int MAX_EXTENSIONS_WIDTH = 500;
-    public static final int MAX_EXTENSIONS_DEPTH = 20;
+    public static final int MAX_EXTENSIONS_WIDTH;
+    public static final int MAX_EXTENSIONS_DEPTH;
+
+    public static final String MAX_EXTENSIONS_WIDTH_SYSTEM_PROPERTY = "org.apache.chemistry.opencmis.XMLConstraints.maxExtensionWith";
+    public static final String MAX_EXTENSIONS_DEPTH_SYSTEM_PROPERTY = "org.apache.chemistry.opencmis.XMLConstraints.maxExtensionDepth";
+
+    static {
+        int maxWidth = 1000;
+        try {
+            String maxWidthStr = System.getProperty(MAX_EXTENSIONS_WIDTH_SYSTEM_PROPERTY);
+            if (maxWidthStr != null) {
+                maxWidth = Integer.parseInt(maxWidthStr);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        MAX_EXTENSIONS_WIDTH = maxWidth;
+
+        int maxDepth = 100;
+        try {
+            String maxDepthStr = System.getProperty(MAX_EXTENSIONS_DEPTH_SYSTEM_PROPERTY);
+            if (maxDepthStr != null) {
+                maxDepth = Integer.parseInt(maxDepthStr);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        MAX_EXTENSIONS_DEPTH = maxDepth;
+    }
 }
