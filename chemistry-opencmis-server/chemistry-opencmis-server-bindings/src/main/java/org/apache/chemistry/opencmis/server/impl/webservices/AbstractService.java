@@ -162,6 +162,9 @@ public abstract class AbstractService {
                 MessageContext.SERVLET_RESPONSE);
 
         CsrfManager cm = (CsrfManager) request.getAttribute(CmisWebServicesServlet.CSRF_MANAGER);
+        if (cm == null) {
+            throw new CmisRuntimeException("Cannot get CSRF manager!");
+        }
 
         cm.check(request, response, isRepositoryInfoRequest, false);
     }

@@ -28,26 +28,39 @@ public final class XMLConstraints {
     public static final int MAX_EXTENSIONS_WIDTH;
     public static final int MAX_EXTENSIONS_DEPTH;
 
+    public static final int MAX_EXTENSIONS_WIDTH_DEFAULT = 1000;
+    public static final int MAX_EXTENSIONS_DEPTH_DEFAULT = 100;
+
     public static final String MAX_EXTENSIONS_WIDTH_SYSTEM_PROPERTY = "org.apache.chemistry.opencmis.XMLConstraints.maxExtensionWith";
     public static final String MAX_EXTENSIONS_DEPTH_SYSTEM_PROPERTY = "org.apache.chemistry.opencmis.XMLConstraints.maxExtensionDepth";
 
     static {
-        int maxWidth = 1000;
+        int maxWidth = MAX_EXTENSIONS_WIDTH_DEFAULT;
         try {
             String maxWidthStr = System.getProperty(MAX_EXTENSIONS_WIDTH_SYSTEM_PROPERTY);
             if (maxWidthStr != null) {
                 maxWidth = Integer.parseInt(maxWidthStr);
+
+                // check for sane values
+                if (maxWidth < 1 || maxWidth > 100000) {
+                    maxWidth = MAX_EXTENSIONS_WIDTH_DEFAULT;
+                }
             }
         } catch (Exception e) {
             // ignore
         }
         MAX_EXTENSIONS_WIDTH = maxWidth;
 
-        int maxDepth = 100;
+        int maxDepth = MAX_EXTENSIONS_DEPTH_DEFAULT;
         try {
             String maxDepthStr = System.getProperty(MAX_EXTENSIONS_DEPTH_SYSTEM_PROPERTY);
             if (maxDepthStr != null) {
                 maxDepth = Integer.parseInt(maxDepthStr);
+
+                // check for sane values
+                if (maxDepth < 1 || maxDepth > 10000) {
+                    maxDepth = MAX_EXTENSIONS_DEPTH_DEFAULT;
+                }
             }
         } catch (Exception e) {
             // ignore
