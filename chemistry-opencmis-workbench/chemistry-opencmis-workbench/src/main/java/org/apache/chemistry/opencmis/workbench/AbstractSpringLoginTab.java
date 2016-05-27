@@ -21,8 +21,12 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -30,6 +34,9 @@ import javax.swing.JTextField;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
+
+import org.apache.chemistry.opencmis.workbench.icons.QuestionIcon;
 
 /**
  * Convenience methods for spring layout tabs.
@@ -38,44 +45,91 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
 
     private static final long serialVersionUID = 1L;
 
+    protected static final Icon HELP_ICON = new QuestionIcon(WorkbenchScale.scaleInt(12), WorkbenchScale.scaleInt(12));
+
     protected JTextField createTextField(Container pane, String label) {
+        return createTextField(pane, label, null);
+    }
+
+    protected JTextField createTextField(Container pane, String label, String help) {
         JTextField textField = new JTextField(60);
         JLabel textLabel = new JLabel(label, SwingConstants.TRAILING);
         textLabel.setLabelFor(textField);
 
         pane.add(textLabel);
+        pane.add(createHelp(help));
         pane.add(textField);
 
         return textField;
     }
 
     protected JFormattedTextField createIntegerField(Container pane, String label) {
+        return createIntegerField(pane, label, null);
+    }
+
+    protected JFormattedTextField createIntegerField(Container pane, String label, String help) {
         NumberFormat format = NumberFormat.getIntegerInstance();
         JFormattedTextField intField = new JFormattedTextField(format);
         JLabel intLabel = new JLabel(label, SwingConstants.TRAILING);
         intLabel.setLabelFor(intField);
 
         pane.add(intLabel);
+        pane.add(createHelp(help));
         pane.add(intField);
 
         return intField;
     }
 
     protected JPasswordField createPasswordField(Container pane, String label) {
+        return createPasswordField(pane, label, null);
+    }
+
+    protected JPasswordField createPasswordField(Container pane, String label, String help) {
         JPasswordField textField = new JPasswordField(60);
         JLabel textLabel = new JLabel(label, SwingConstants.TRAILING);
         textLabel.setLabelFor(textField);
 
         pane.add(textLabel);
+        pane.add(createHelp(help));
         pane.add(textField);
 
         return textField;
+    }
+
+    protected JComponent createHelp(String help) {
+        if (help == null) {
+            return new JLabel("");
+        } else {
+            JLabel label = new JLabel(HELP_ICON);
+            label.setToolTipText(help);
+
+            label.addMouseListener(new MouseAdapter() {
+                private final int defaultDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+                private final static int DISMIASS_DELAY = 120 * 1000;
+
+                @Override
+                public void mouseEntered(MouseEvent me) {
+                    ToolTipManager.sharedInstance().setDismissDelay(DISMIASS_DELAY);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent me) {
+                    ToolTipManager.sharedInstance().setDismissDelay(defaultDismissDelay);
+                }
+            });
+
+            return label;
+        }
     }
 
     private SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
         SpringLayout layout = (SpringLayout) parent.getLayout();
         Component c = parent.getComponent(row * cols + col);
         return layout.getConstraints(c);
+    }
+
+    protected void makeCompactGrid(int rows) {
+        makeCompactGrid(this, rows, 3, 5, 10, 5, 5);
     }
 
     protected void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad, int yPad) {

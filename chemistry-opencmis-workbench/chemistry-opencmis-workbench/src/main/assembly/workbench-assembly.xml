@@ -63,6 +63,17 @@
             <outputDirectory></outputDirectory>
             <lineEnding>dos</lineEnding>
         </file>
+        <file>
+            <source>target/start/runscript.sh</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>target/start/runscript.bat</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>dos</lineEnding>
+        </file>
     </files>
     <dependencySets>
         <dependencySet>

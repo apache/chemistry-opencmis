@@ -82,15 +82,16 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private void createGUI() {
         setLayout(new SpringLayout());
 
-        urlField = createTextField(this, "URL:");
+        urlField = createTextField(this, "URL:",
+                "<html>Enter the URL of the CMIS endpoint. It depends on the selected binding. ");
         urlField.setText(System.getProperty(SYSPROP_URL, "").trim());
 
         createBindingButtons(this);
 
-        usernameField = createTextField(this, "Username:");
+        usernameField = createTextField(this, "Username:", "Enter the user name.");
         usernameField.setText(System.getProperty(SYSPROP_USER, ""));
 
-        passwordField = createPasswordField(this, "Password:");
+        passwordField = createPasswordField(this, "Password:", "Enter the users password.");
         passwordField.setText(System.getProperty(SYSPROP_PASSWORD, ""));
 
         createAuthenticationButtons(this);
@@ -101,24 +102,27 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         createCookieButtons(this);
 
-        csrfHeaderField = createTextField(this, "CSRF Header:");
+        csrfHeaderField = createTextField(this, "CSRF Header:", "<html>Enter <b>CSRF header</b> name.<br>"
+                + "If the server needs a CSRF header, enter the name of the header, otherwise leave this field blank.");
         csrfHeaderField.setText(System.getProperty(SYSPROP_CSRF_HEADER, ""));
 
-        connectTimeoutField = createIntegerField(this, "Connect timeout (secs):");
+        connectTimeoutField = createIntegerField(this, "Connect timeout (secs):",
+                "<html>Enter the <b>connect timeout</b> in seconds.<br>This is the time the client waits to connect to the server.");
         try {
             connectTimeoutField.setValue(Long.parseLong(System.getProperty(SYSPROP_CONN_TIMEOUT, "30")));
         } catch (NumberFormatException e) {
             connectTimeoutField.setValue(30);
         }
 
-        readTimeoutField = createIntegerField(this, "Read timeout (secs):");
+        readTimeoutField = createIntegerField(this, "Read timeout (secs):",
+                "<html>Enter the <b>read timeout</b> in seconds.<br>This is the time the client waits for a response from the server.");
         try {
             readTimeoutField.setValue(Long.parseLong(System.getProperty(SYSPROP_READ_TIMEOUT, "600")));
         } catch (NumberFormatException e) {
             readTimeoutField.setValue(600);
         }
 
-        makeCompactGrid(this, 11, 2, 5, 10, 5, 5);
+        makeCompactGrid(11);
     }
 
     private void createBindingButtons(Container pane) {
@@ -143,6 +147,10 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         JLabel bindingLabel = new JLabel("Binding:", SwingConstants.TRAILING);
 
         pane.add(bindingLabel);
+        pane.add(createHelp("<html>Select the CMIS binding.<br>"
+                + "The <b>Browser binding</b> is the fastest binding and should be used for CMIS 1.1 repositories.<br>"
+                + "The <b>AtomPub binding</b> is the second fastest binding and should be used for CMIS 1.0 repositories.<br>"
+                + "The <b>Web Services binding</b> is the last restort and should be avoided, if possible."));
         pane.add(bindingContainer);
     }
 
@@ -173,6 +181,11 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         JLabel authenticatioLabel = new JLabel("Authentication:", SwingConstants.TRAILING);
 
         pane.add(authenticatioLabel);
+        pane.add(createHelp("<html>Select the authentication method.<br>"
+                + "The <b>Standard authentication</b> is Basic Auth and should work with most repositories.<br>"
+                + "The <b>NTLM authentication</b> should be used with caution! It's very likely that some CMIS operations will fail.<br>"
+                + "The <b>OAuth authentication</b> requires a bearer token in the username field. The token will not be refreshed when it expires."
+                + "Use the OAuthAuthenticationProvider for full OAuth support."));
         pane.add(authenticationContainer);
     }
 
@@ -191,6 +204,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         JLabel compressionLabel = new JLabel("Compression:", SwingConstants.TRAILING);
 
         pane.add(compressionLabel);
+        pane.add(createHelp("<html>Turn <b>server compression</b> on or off.<br>"
+                + "It is save to turn server compression always on. The client will still work if the server doesn't support it."));
         pane.add(compressionContainer);
     }
 
@@ -209,6 +224,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         JLabel clientCompressionLabel = new JLabel("Client Compression:", SwingConstants.TRAILING);
 
         pane.add(clientCompressionLabel);
+        pane.add(createHelp("<html>Turn <b>client compression</b> on or off.<br>"
+                + "If the server doesn't support client compression, the communication wil fail."));
         pane.add(clientCompressionContainer);
     }
 
@@ -227,6 +244,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         JLabel cookiesLabel = new JLabel("Cookies:", SwingConstants.TRAILING);
 
         pane.add(cookiesLabel);
+        pane.add(createHelp("<html>Turn <b>cookies</b> on or off.<br>"
+                + "It is recommended to turn cookies always on. Nothing bad happens if the server doesn't need or support cookies."));
         pane.add(cookiesContainer);
     }
 
