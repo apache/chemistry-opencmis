@@ -45,6 +45,7 @@ public class ScriptExecutor {
             // check arguments
             int parameterParametersFile = 0;
             int parameterScriptFile = 1;
+            boolean readUser = false;
             boolean readPassword = false;
 
             if (args.length > 0) {
@@ -52,6 +53,8 @@ public class ScriptExecutor {
                 while (args[i].startsWith("-")) {
                     if (args[i].equals("-p")) {
                         readPassword = true;
+                    } else if (args[i].equals("-u")) {
+                        readUser = true;
                     } else if (args[i].equals("-v")) {
                         verbose = true;
                     } else {
@@ -70,6 +73,7 @@ public class ScriptExecutor {
                 System.out.println("OpenCMIS Script Executor\n");
                 System.out.println("Usage: [-p] [-v] <path-to-session-parameters-file> <path-to-groovy-script-file>\n");
                 System.out.println("Parameters:\n");
+                System.out.println(" -u                                 ask for username");
                 System.out.println(" -p                                 ask for password");
                 System.out.println(" -v                                 verbose output");
                 System.out.println(" <path-to-session-parameters-file>  "
@@ -100,7 +104,17 @@ public class ScriptExecutor {
                 return;
             }
 
-            // create session
+            // read user
+            String username = null;
+            if (readUser) {
+                username = readLine();
+                if (username == null) {
+                    System.err.println("Please enter a username!");
+                    return;
+                }
+            }
+
+            // read password
             char[] password = null;
             if (readPassword) {
                 password = readPassword();
@@ -110,25 +124,38 @@ public class ScriptExecutor {
                 }
             }
 
-            if (verbose) {
-                System.out.println("Connecting...");
-            }
-
-            Session session = createSession(parametersFile, password);
+            // create session
 
             if (verbose) {
-                System.out.println("Connected to " + session.getRepositoryInfo().getName() + " ("
-                        + session.getRepositoryInfo().getId() + ")\n");
+                System.out.println("\nConnecting...");
             }
+
+            Session session = createSession(parametersFile, username, password);
 
             // run script, if we have session
             if (session != null) {
+                if (verbose) {
+                    System.out.println("\nConnected to " + session.getRepositoryInfo().getName() + " ("
+                            + session.getRepositoryInfo().getId() + ")\n");
+                }
+
                 String[] scriptArgs = new String[args.length - (parameterScriptFile + 1)];
                 if (scriptArgs.length > 0) {
                     System.arraycopy(args, parameterScriptFile + 1, scriptArgs, 0, scriptArgs.length);
                 }
 
+                if (verbose) {
+                    System.out.print("Starting: " + scriptFile.getName());
+                    for (String arg : scriptArgs) {
+                        System.out.print(" " + arg);
+                    }
+                    System.out.println('\n');
+                }
+
                 runGroovyScript(session, scriptFile, scriptArgs);
+            } else {
+                System.err.println("Session couldn't be created!");
+                System.exit(1);
             }
 
             System.exit(0);
@@ -144,6 +171,29 @@ public class ScriptExecutor {
     }
 
     /**
+     * Reads a line from the console.
+     */
+    private static String readLine() {
+        Console console = System.console();
+        if (console == null) {
+            try {
+                System.out.print("Username: ");
+
+                char[] line = readFromSystemIn();
+                if (line == null) {
+                    return null;
+                }
+
+                return new String(line);
+            } catch (IOException ioe) {
+                return null;
+            }
+        } else {
+            return console.readLine("Username: ");
+        }
+    }
+
+    /**
      * Reads a password from the console.
      */
     private static char[] readPassword() {
@@ -153,17 +203,7 @@ public class ScriptExecutor {
                 System.out.println("WARNING: Password will be echoed on screen!");
                 System.out.print("Password: ");
 
-                InputStreamReader reader = new InputStreamReader(System.in);
-                char[] buffer = new char[128];
-
-                int l = reader.read(buffer) - 1;
-                if (l > 0) {
-                    char[] result = new char[l];
-                    System.arraycopy(buffer, 0, result, 0, l);
-                    return result;
-                } else {
-                    return null;
-                }
+                return readFromSystemIn();
             } catch (IOException ioe) {
                 return null;
             }
@@ -172,10 +212,24 @@ public class ScriptExecutor {
         }
     }
 
+    private static char[] readFromSystemIn() throws IOException {
+        InputStreamReader reader = new InputStreamReader(System.in);
+        char[] buffer = new char[128];
+
+        int l = reader.read(buffer) - 1;
+        if (l > 0) {
+            char[] result = new char[l];
+            System.arraycopy(buffer, 0, result, 0, l);
+            return result;
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Creates an OpenCMIS session from session parameters in a file.
      */
-    private static Session createSession(File parametersFile, char[] password) {
+    private static Session createSession(File parametersFile, String username, char[] password) {
         SessionParameterMap parameters = new SessionParameterMap();
 
         // read session parameters
@@ -184,6 +238,11 @@ public class ScriptExecutor {
         } catch (IOException ioe) {
             System.err.println("Cannot read session parameters file: " + ioe.toString());
             return null;
+        }
+
+        // set user
+        if (username != null) {
+            parameters.put(SessionParameter.USER, username);
         }
 
         // set password
