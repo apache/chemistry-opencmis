@@ -36,7 +36,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 
-import org.apache.chemistry.opencmis.workbench.icons.QuestionIcon;
+import org.apache.chemistry.opencmis.workbench.icons.HelpIcon;
 
 /**
  * Convenience methods for spring layout tabs.
@@ -45,7 +45,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
 
     private static final long serialVersionUID = 1L;
 
-    protected static final Icon HELP_ICON = new QuestionIcon(WorkbenchScale.scaleInt(12), WorkbenchScale.scaleInt(12));
+    protected static final Icon HELP_ICON = new HelpIcon(WorkbenchScale.scaleInt(12), WorkbenchScale.scaleInt(12));
 
     protected JTextField createTextField(Container pane, String label) {
         return createTextField(pane, label, null);
