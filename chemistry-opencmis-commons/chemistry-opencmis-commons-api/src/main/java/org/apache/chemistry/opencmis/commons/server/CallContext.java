@@ -70,19 +70,26 @@ public interface CallContext {
     String MAX_CONTENT_SIZE = "maxContentSize";
     /** Key: encrypt temp files (values is a Boolean) */
     String ENCRYPT_TEMP_FILE = "encryptTempFiles";
-    /** Key: factory for threshold streams (value is a TempStoreOutputStreamFactory) */
+    /**
+     * Key: factory for threshold streams (value is a
+     * TempStoreOutputStreamFactory)
+     */
     String STREAM_FACTORY = "streamFactory";
-    
+
     /**
      * Returns the binding. Usually it returns
      * {@link CallContext#BINDING_ATOMPUB},
      * {@link CallContext#BINDING_WEBSERVICES},
      * {@link CallContext#BINDING_BROWSER} or {@link CallContext#BINDING_LOCAL}.
+     * 
+     * @return the binding
      */
     String getBinding();
 
     /**
-     * Returns if <code>true</code> object infos can improve the performance.
+     * Returns if {@code true} object infos can improve the performance.
+     * 
+     * @return if object infos are required
      */
     boolean isObjectInfoRequired();
 
@@ -91,62 +98,86 @@ public interface CallContext {
      * 
      * @param key
      *            the key
-     * @return the data if the key is valid, <code>null</code> otherwise
+     * 
+     * @return the data if the key is valid, {@code null} otherwise
      */
     Object get(String key);
 
     /**
      * Returns the CMIS version.
+     * 
+     * @return the CMIS version, not {@code null}
      */
     CmisVersion getCmisVersion();
 
     /**
-     * Returns the repository id.
+     * Returns the repository ID.
+     * 
+     * @return the repository ID or {@code null} if it's a repository info call
      */
     String getRepositoryId();
 
     /**
      * Returns the user name.
+     * 
+     * @return the user name if provided
      */
     String getUsername();
 
     /**
      * Returns the password.
+     * 
+     * @return the password if provided
      */
     String getPassword();
 
     /**
      * Returns the locale.
+     * 
+     * @return the locale if set
      */
     String getLocale();
 
     /**
-     * Returns the content offset if set, <code>null</code> otherwise
+     * Returns the content offset.
+     * 
+     * @return the content offset if set, {@code null} otherwise
      */
     BigInteger getOffset();
 
     /**
-     * Returns the content length if set, <code>null</code> otherwise
+     * Returns the content length.
+     * 
+     * @return the content length if set, {@code null} otherwise
      */
     BigInteger getLength();
 
     /**
      * Returns the temp directory.
+     * 
+     * @return the temp directory
      */
     File getTempDirectory();
 
     /**
      * Returns if temp files should be encrypted.
+     * 
+     * @return {@code true} if temp files should be encrypted, {@code false}
+     *         otherwise
      */
     boolean encryptTempFiles();
 
     /**
      * Returns the memory threshold.
+     * 
+     * @return the memory threshold in bytes
      */
     int getMemoryThreshold();
 
     /**
-     * Returns the may size of content.
+     * Returns the max size of content.
+     * 
+     * @return the max content size in bytes
      */
     long getMaxContentSize();
 }

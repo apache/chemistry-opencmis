@@ -23,10 +23,10 @@ import org.antlr.runtime.tree.Tree;
 /**
  * Base interface for a tree walker of a WHERE clause.
  * <p>
- * COntains only a single method used by the ANTLR query walker to
- * initiate a tree walk for evaluating the query. You can inherit from
- * this interface if you want to have your own walking mechanism
- * <p>
+ * COntains only a single method used by the ANTLR query walker to initiate a
+ * tree walk for evaluating the query. You can inherit from this interface if
+ * you want to have your own walking mechanism
+ * </p>
  */
 public interface PredicateWalkerBase {
 

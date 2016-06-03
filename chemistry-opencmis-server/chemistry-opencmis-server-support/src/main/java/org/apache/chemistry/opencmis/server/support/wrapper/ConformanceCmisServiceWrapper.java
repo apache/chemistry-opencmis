@@ -72,6 +72,9 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     /**
      * Constructor used by {@link CmisServiceWrapperManager}.
+     * 
+     * @param service
+     *            the {@link CmisService} object, not {@code null}
      */
     public ConformanceCmisServiceWrapper(CmisService service) {
         super(service);
@@ -79,6 +82,9 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
 
     /**
      * Alternative constructor.
+     * 
+     * @param service
+     *            the {@link CmisService} object, not {@code null}
      */
     public ConformanceCmisServiceWrapper(CmisService service, BigInteger defaultTypesMaxItems,
             BigInteger defaultTypesDepth, BigInteger defaultMaxItems, BigInteger defaultDepth) {
@@ -346,7 +352,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns <code>true</code> if <code>value</code> is {@code null}.
+     * Returns {@code true} if {@code value} is {@code null}.
      */
     protected Boolean getDefaultTrue(Boolean value) {
         if (value == null) {
@@ -357,7 +363,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns <code>false</code> if <code>value</code> is {@code null}.
+     * Returns {@code false} if {@code value} is {@code null}.
      */
     protected Boolean getDefaultFalse(Boolean value) {
         if (value == null) {
@@ -368,8 +374,8 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>IncludeRelationships.NONE</code> if <code>value</code>
-     * is {@code null}.
+     * Returns {@code IncludeRelationships.NONE} if {@code value} is
+     * {@code null}.
      */
     protected IncludeRelationships getDefault(IncludeRelationships value) {
         if (value == null) {
@@ -380,8 +386,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>UnfileObjects.DELETE</code> if <code>value</code> is
-     * {@code null}.
+     * Returns {@code UnfileObjects.DELETE} if {@code value} is {@code null}.
      */
     protected UnfileObject getDefault(UnfileObject value) {
         if (value == null) {
@@ -392,8 +397,8 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>AclPropagation.REPOSITORYDETERMINED</code> if
-     * <code>value</code> is {@code null}.
+     * Returns the {@code AclPropagation.REPOSITORYDETERMINED} if {@code value}
+     * is {@code null}.
      */
     protected AclPropagation getDefault(AclPropagation value) {
         if (value == null) {
@@ -404,8 +409,8 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>RelationshipDirection.SOURCE</code> if
-     * <code>value</code> is {@code null} .
+     * Returns the {@code RelationshipDirection.SOURCE} if {@code value} is
+     * {@code null} .
      */
     protected RelationshipDirection getDefault(RelationshipDirection value) {
         if (value == null) {
@@ -416,8 +421,7 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the <code>"cmis:none"</code> if <code>value</code> is
-     * {@code null}.
+     * Returns the {@code "cmis:none"} if {@code value} is {@code null}.
      */
     protected String getDefaultRenditionFilter(String value) {
         if ((value == null) || (value.length() == 0)) {
@@ -428,9 +432,9 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the default maxItems if <code>maxItems</code> == {@code null},
-     * throws an exception if <code>maxItems</code> &lt; 0, returns
-     * <code>maxItems</code> otherwise.
+     * Returns the default maxItems if {@code maxItems} == {@code null}, throws
+     * an exception if {@code maxItems} &lt; 0, returns {@code maxItems}
+     * otherwise.
      */
     protected BigInteger getTypesMaxItems(BigInteger maxItems) {
         if (maxItems == null) {
@@ -465,9 +469,9 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns the default maxItems if <code>maxItems</code> == {@code null},
-     * throws an exception if <code>maxItems</code> &lt; 0, returns
-     * <code>maxItems</code> otherwise.
+     * Returns the default maxItems if {@code maxItems} == {@code null}, throws
+     * an exception if {@code maxItems} &lt; 0, returns {@code maxItems}
+     * otherwise.
      */
     protected BigInteger getMaxItems(BigInteger maxItems) {
         if (maxItems == null) {
@@ -482,9 +486,8 @@ public class ConformanceCmisServiceWrapper extends AbstractCmisServiceWrapper {
     }
 
     /**
-     * Returns 0 if <code>skipCount</code> == {@code null}, throws an exception
-     * if <code>skipCount</code> &lt; 0, returns <code>skipCount</code>
-     * otherwise.
+     * Returns 0 if {@code skipCount} == {@code null}, throws an exception if
+     * {@code skipCount} &lt; 0, returns {@code skipCount} otherwise.
      */
     protected BigInteger getSkipCount(BigInteger skipCount) {
         if (skipCount == null) {

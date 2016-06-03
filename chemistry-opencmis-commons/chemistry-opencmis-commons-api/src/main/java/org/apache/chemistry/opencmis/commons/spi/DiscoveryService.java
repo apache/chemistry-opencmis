@@ -38,6 +38,14 @@ public interface DiscoveryService {
 
     /**
      * Executes a CMIS query statement against the contents of the repository.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param statement
+     *            the query statement
+     * @param extension
+     *            extension data
+     * @return the query result
      */
     ObjectList query(String repositoryId, String statement, Boolean searchAllVersions, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, BigInteger maxItems,
@@ -45,6 +53,12 @@ public interface DiscoveryService {
 
     /**
      * Gets a list of content changes.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param extension
+     *            extension data
+     * @return the list of changes
      */
     ObjectList getContentChanges(String repositoryId, Holder<String> changeLogToken, Boolean includeProperties,
             String filter, Boolean includePolicyIds, Boolean includeAcl, BigInteger maxItems, ExtensionsData extension);

@@ -208,6 +208,9 @@ public abstract class CmisBaseException extends RuntimeException {
     /**
      * Returns additional data, if available.
      * 
+     * @param key
+     *            the data key
+     * 
      * @return additional data, can be {@code null}
      */
     public String getAdditionalData(String key) {
@@ -230,6 +233,8 @@ public abstract class CmisBaseException extends RuntimeException {
 
     /**
      * Returns the name of the exception as defined in the CMIS specification.
+     * 
+     * @return the exception name
      */
     public abstract String getExceptionName();
 }

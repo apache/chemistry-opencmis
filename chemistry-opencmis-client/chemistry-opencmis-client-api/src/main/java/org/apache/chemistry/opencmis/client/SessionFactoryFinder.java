@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
  * Finds a {@link SessionFactory} implementation and creates a factory object.
  * <p>
  * Sample code:
- * <p>
+ * </p>
  * 
  * <pre>
  * SessionFactory factory = SessionFactoryFinder.find();

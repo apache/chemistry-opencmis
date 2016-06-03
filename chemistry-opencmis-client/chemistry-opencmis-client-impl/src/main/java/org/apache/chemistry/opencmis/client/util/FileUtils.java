@@ -55,7 +55,9 @@ public final class FileUtils {
      * @param session
      *            the session
      * @return the object
+     * 
      * @throws CmisBaseException
+     *             if something go wrong, for example the object doesn't exist
      */
     public static CmisObject getObject(String pathOrIdOfObject, Session session) {
         if (session == null) {
@@ -83,7 +85,9 @@ public final class FileUtils {
      * @param session
      *            the session
      * @return the folder object
+     * 
      * @throws CmisBaseException
+     *             if something go wrong, for example the object doesn't exist
      */
     public static Folder getFolder(String pathOrIdOfObject, Session session) {
         CmisObject folder = getObject(pathOrIdOfObject, session);
@@ -107,8 +111,11 @@ public final class FileUtils {
      * @param versioningState
      *            the versioning state or <code>null</code>
      * @return the newly created document
+     * 
      * @throws FileNotFoundException
+     *             if the file does not exist
      * @throws CmisBaseException
+     *             if something go wrong, for example the object doesn't exist
      */
     public static Document createDocumentFromFile(String parentIdOrPath, File file, String type,
             VersioningState versioningState, Session session) throws FileNotFoundException {
@@ -182,7 +189,10 @@ public final class FileUtils {
      * @param type
      *            the folder type (defaults to <code>cmis:folder</code>)
      * @return the newly created folder
+     * 
      * @throws CmisBaseException
+     *             if something go wrong, for example the parent folder doesn't
+     *             exist
      */
     public static Folder createFolder(Folder parentFolder, String name, String type) {
         if (type == null) {
@@ -208,7 +218,10 @@ public final class FileUtils {
      * @param session
      *            the session
      * @return the newly created folder
+     * 
      * @throws CmisBaseException
+     *             if something go wrong, for example the parent folder doesn't
+     *             exist
      */
     public static Folder createFolder(String parentIdOrPath, String name, String type, Session session) {
         Folder parentFolder = getFolder(parentIdOrPath, session);
@@ -231,8 +244,11 @@ public final class FileUtils {
      *            the document
      * @param destinationPath
      *            the destination path
+     * 
      * @throws IOException
+     *             if the download fails because of an IO problem
      * @throws CmisBaseException
+     *             if something go wrong, for example the document doesn't exist
      */
     public static void download(Document doc, String destinationPath) throws IOException {
         if (doc == null) {
@@ -262,8 +278,11 @@ public final class FileUtils {
      *            the destination path
      * @param session
      *            the session
+     * 
      * @throws IOException
+     *             if the download fails because of an IO problem
      * @throws CmisBaseException
+     *             if something go wrong, for example the document doesn't exist
      */
     public static void download(String docIdOrPath, String destinationPath, Session session) throws IOException {
         CmisObject doc = getObject(docIdOrPath, session);
@@ -282,7 +301,9 @@ public final class FileUtils {
      *            the id or path of the object
      * @param session
      *            the session
+     * 
      * @throws CmisBaseException
+     *             if something go wrong, for example the object doesn't exist
      */
     public static void delete(String pathOrIdOfObject, Session session) {
         CmisObject object = getObject(pathOrIdOfObject, session);

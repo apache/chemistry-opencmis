@@ -45,6 +45,10 @@ public interface RepositoryService {
      * 
      * In contrast to the CMIS specification this method returns repository
      * infos not only repository IDs.
+     * 
+     * @param extension
+     *            extension data
+     * @return the list of repositories
      */
     List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension);
 
@@ -54,6 +58,9 @@ public interface RepositoryService {
      * 
      * @param repositoryId
      *            the identifier for the repository
+     * @param extension
+     *            extension data
+     * @return the repository info
      */
     RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension);
 
@@ -78,6 +85,9 @@ public interface RepositoryService {
      *            <em>(optional)</em> number of potential results that the
      *            repository MUST skip/page over before returning any results
      *            (default is 0)
+     * @param extension
+     *            extension data
+     * @return the list of type children
      */
     TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
@@ -100,6 +110,9 @@ public interface RepositoryService {
      *            <em>(optional)</em> if <code>true</code> the repository MUST
      *            return the property definitions for each object type returned
      *            (default is <code>false</code>)
+     * @param extension
+     *            extension data
+     * @return the tree of type descendants
      */
     List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
             Boolean includePropertyDefinitions, ExtensionsData extension);
@@ -111,6 +124,9 @@ public interface RepositoryService {
      *            the identifier for the repository
      * @param typeId
      *            typeId of an object type specified in the repository
+     * @param extension
+     *            extension data
+     * @return the type definition
      */
     TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension);
 
@@ -121,6 +137,8 @@ public interface RepositoryService {
      *            the identifier for the repository
      * @param type
      *            the type definition
+     * @param extension
+     *            extension data
      * @return the newly created type
      */
     TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension);
@@ -132,6 +150,8 @@ public interface RepositoryService {
      *            the identifier for the repository
      * @param type
      *            the type definition
+     * @param extension
+     *            extension data
      * @return the updated type
      */
     TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension);
@@ -143,6 +163,8 @@ public interface RepositoryService {
      *            the identifier for the repository
      * @param typeId
      *            typeId of an object type specified in the repository
+     * @param extension
+     *            extension data
      */
     void deleteType(String repositoryId, String typeId, ExtensionsData extension);
 }

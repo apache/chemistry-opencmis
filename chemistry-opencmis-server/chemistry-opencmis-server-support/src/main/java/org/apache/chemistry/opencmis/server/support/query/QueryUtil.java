@@ -64,8 +64,6 @@ public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
      * @param statement
      *            CMISQL statement
      * @return an AntLR tree grammar that can be traversed to evaluate the query
-     * 
-     * @throws RecognitionException
      */
     public static CmisQueryWalker getWalker(String statement) throws RecognitionException {
         CharStream input = new ANTLRStringStream(statement);
@@ -104,9 +102,6 @@ public class QueryUtil extends QueryUtilBase<CmisQueryWalker> {
      * @param pw
      *            predicate walker that evaluates the where clause
      * @return AntLR tree grammar created by this statement
-     * 
-     * @throws IOException
-     * @throws RecognitionException
      */
     public CmisQueryWalker traverseStatement(String statement, QueryObject queryObj, PredicateWalkerBase pw)
             throws IOException, RecognitionException {

@@ -30,11 +30,15 @@ public interface TypeDefinitionContainer extends ExtensionsData {
 
     /**
      * Returns the type definition at this level.
+     * 
+     * @return the type definition
      */
     TypeDefinition getTypeDefinition();
 
     /**
      * Returns direct children of the type definition at this level.
+     * 
+     * @return the children of this type
      */
     List<TypeDefinitionContainer> getChildren();
 }

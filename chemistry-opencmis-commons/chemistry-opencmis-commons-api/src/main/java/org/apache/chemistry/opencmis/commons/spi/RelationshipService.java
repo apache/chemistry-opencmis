@@ -39,6 +39,14 @@ public interface RelationshipService {
     /**
      * Gets all or a subset of relationships associated with an independent
      * object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the object
+     * @param extension
+     *            extension data
+     * @return the list of relationships
      */
     ObjectList getObjectRelationships(String repositoryId, String objectId, Boolean includeSubRelationshipTypes,
             RelationshipDirection relationshipDirection, String typeId, String filter, Boolean includeAllowableActions,

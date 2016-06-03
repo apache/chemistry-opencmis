@@ -39,9 +39,12 @@ public interface ExtendedRepositoryService {
      *            the identifier for the repository
      * @param typeId
      *            typeId of an object type specified in the repository
+     * @param extension
+     *            extension data
      * @param useCache
      *            specifies whether the type definition should be looked up in
      *            the type definition cache first or not
+     * @return the type definition
      */
     TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension, boolean useCache);
 }

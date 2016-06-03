@@ -37,16 +37,47 @@ public interface PolicyService {
 
     /**
      * Applies a specified policy to an object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param policyId
+     *            the policy to add
+     * @param objectId
+     *            the object
+     * @param extension
+     *            extension data
      */
     void applyPolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
     /**
      * Removes a specified policy from an object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param policyId
+     *            the policy to remove
+     * @param objectId
+     *            the object
+     * @param extension
+     *            extension data
      */
     void removePolicy(String repositoryId, String policyId, String objectId, ExtensionsData extension);
 
     /**
      * Gets the list of policies currently applied to the specified object.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the object
+     * @param filter
+     *            <em>(optional)</em> a comma-separated list of query names that
+     *            defines which properties must be returned by the repository
+     *            (default is repository specific)
+     * @param extension
+     *            extension data
+     * 
+     * @return the list of applied policies
      */
     List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter, ExtensionsData extension);
 }

@@ -83,6 +83,8 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
      * @param policies
      *            <em>(optional)</em> a list of policy IDs that MUST be applied
      *            to the newly created object
+     * @param extension
+     *            extension data
      * @return the object ID of the newly created object
      */
     String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
@@ -101,9 +103,11 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
      * @param objectId
      *            the identifier for the object
      * @param allVersions
-     *            <em>(optional)</em> If <code>true</code> then delete all
-     *            versions of the document, otherwise delete only the document
-     *            object specified (default is <code>true</code>)
+     *            <em>(optional)</em> If {@code true} then delete all versions
+     *            of the document, otherwise delete only the document object
+     *            specified (default is {@code true})
+     * @param extension
+     *            extension data
      */
     void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
             ExtensionsData extension);
@@ -124,12 +128,13 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
      * @param aclPropagation
      *            <em>(optional)</em> specifies how ACEs should be handled
      *            (default is {@link AclPropagation#REPOSITORYDETERMINED})
+     * @return new ACL
      */
     Acl applyAcl(String repositoryId, String objectId, Acl aces, AclPropagation aclPropagation);
 
     /**
-     * Returns the {@link ObjectInfo} of the given object id or
-     * <code>null</code> if no object info exists.
+     * Returns the {@link ObjectInfo} of the given object id or {@code null} if
+     * no object info exists.
      * 
      * Only AtomPub requests will require object infos.
      * 
@@ -137,6 +142,7 @@ public interface CmisService extends RepositoryService, NavigationService, Objec
      *            the identifier for the repository
      * @param objectId
      *            the identifier for the object
+     * @return the object info
      */
     ObjectInfo getObjectInfo(String repositoryId, String objectId);
 

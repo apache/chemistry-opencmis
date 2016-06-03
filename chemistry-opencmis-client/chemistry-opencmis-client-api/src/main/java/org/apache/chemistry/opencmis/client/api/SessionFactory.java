@@ -33,13 +33,15 @@ import java.util.Map;
  * {@link org.apache.chemistry.opencmis.commons.SessionParameter} class which is
  * part of the commons package. Parameters specify connection settings (user
  * name, authentication, connection URL, binding type, etc.).
+ * </p>
  * <p>
  * The {@link Session} class which is constructed is either the {@code session}
  * base class which is the default implementation or it can be derived from that
  * implementing special behavior for the session.
+ * </p>
  * <p>
  * Sample code:
- * <p>
+ * </p>
  * 
  * <pre>
  * SessionFactory factory = ...

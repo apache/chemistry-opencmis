@@ -75,13 +75,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created document object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created document object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created document
      */
     String createDocument(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
             VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
@@ -112,13 +115,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created document object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created document object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created document
      */
     String createDocumentFromSource(String repositoryId, String sourceId, Properties properties, String folderId,
             VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
@@ -141,13 +147,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created folder object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created folder object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created folder
      */
     String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension);
@@ -167,13 +176,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created relationship object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created relationship object, either using the ACL
-     *            from <code>folderId</code> if specified, or being ignored if
-     *            no <code>folderId</code> is specified
+     *            from {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created relationship
      */
     String createRelationship(String repositoryId, Properties properties, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension);
@@ -197,13 +209,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created policy object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created policy object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created policy
      */
     String createPolicy(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension);
@@ -227,13 +242,16 @@ public interface ObjectService {
      * @param addAces
      *            <em>(optional)</em> a list of ACEs that must be added to the
      *            newly created policy object, either using the ACL from
-     *            <code>folderId</code> if specified, or being applied if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being applied if no
+     *            {@code folderId} is specified
      * @param removeAces
      *            <em>(optional)</em> a list of ACEs that must be removed from
      *            the newly created policy object, either using the ACL from
-     *            <code>folderId</code> if specified, or being ignored if no
-     *            <code>folderId</code> is specified
+     *            {@code folderId} if specified, or being ignored if no
+     *            {@code folderId} is specified
+     * @param extension
+     *            extension data
+     * @return the ID of the newly created item
      */
     String createItem(String repositoryId, Properties properties, String folderId, List<String> policies, Acl addAces,
             Acl removeAces, ExtensionsData extension);
@@ -245,6 +263,9 @@ public interface ObjectService {
      *            the identifier for the repository
      * @param objectId
      *            the identifier for the object
+     * @param extension
+     *            extension data
+     * @return the allowable actions
      */
     AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension);
 
@@ -260,9 +281,9 @@ public interface ObjectService {
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the allowable actions for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the allowable actions for the object (default is
+     *            {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            object participates must be returned (default is
@@ -272,13 +293,15 @@ public interface ObjectService {
      *            repository must return whose kind matches this filter (default
      *            is <code>"cmis:none"</code>)
      * @param includePolicyIds
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the policy ids for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the policy ids for the object (default is {@code false}
+     *            )
      * @param includeAcl
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the ACL for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the ACL for the object (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return the object
      */
     ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
@@ -295,6 +318,9 @@ public interface ObjectService {
      *            <em>(optional)</em> a comma-separated list of query names that
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
+     * @param extension
+     *            extension data
+     * @return the object properties
      */
     Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension);
 
@@ -317,6 +343,9 @@ public interface ObjectService {
      *            <em>(optional)</em> number of potential results that the
      *            repository must skip/page over before returning any results
      *            (default is 0)
+     * @param extension
+     *            extension data
+     * @return the list of renditions
      */
     List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
             BigInteger maxItems, BigInteger skipCount, ExtensionsData extension);
@@ -333,9 +362,9 @@ public interface ObjectService {
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the allowable actions for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the allowable actions for the object (default is
+     *            {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            object participates must be returned (default is
@@ -345,13 +374,15 @@ public interface ObjectService {
      *            repository must return whose kind matches this filter (default
      *            is <code>"cmis:none"</code>)
      * @param includePolicyIds
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the policy ids for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the policy ids for the object (default is {@code false}
+     *            )
      * @param includeAcl
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the ACL for the object (default is
-     *            <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the ACL for the object (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return the object
      */
     ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
@@ -366,6 +397,9 @@ public interface ObjectService {
      *            the identifier for the repository
      * @param objectId
      *            the identifier for the object
+     * @param extension
+     *            extension data
+     * @return the content stream
      */
     ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
             BigInteger length, ExtensionsData extension);
@@ -381,9 +415,11 @@ public interface ObjectService {
      * @param changeToken
      *            <em>(optional)</em> the last change token of this object that
      *            the client received. The repository might return a new change
-     *            token (default is <code>null</code>)
+     *            token (default is {@code null})
      * @param properties
      *            the updated property values that must be applied to the object
+     * @param extension
+     *            extension data
      */
     void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             Properties properties, ExtensionsData extension);
@@ -401,6 +437,9 @@ public interface ObjectService {
      *            the secondary types to apply
      * @param removeSecondaryTypeIds
      *            the secondary types to remove
+     * @param extension
+     *            extension data
+     * @return the list of updated objects with their change tokens
      */
     List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
             List<BulkUpdateObjectIdAndChangeToken> objectIdsAndChangeTokens, Properties properties,
@@ -418,6 +457,8 @@ public interface ObjectService {
      *            the identifier for the target folder
      * @param sourceFolderId
      *            the identifier for the source folder
+     * @param extension
+     *            extension data
      */
     void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension);
@@ -430,9 +471,11 @@ public interface ObjectService {
      * @param objectId
      *            the identifier for the object
      * @param allVersions
-     *            <em>(optional)</em> If <code>true</code> then delete all
-     *            versions of the document, otherwise delete only the document
-     *            object specified (default is <code>true</code>)
+     *            <em>(optional)</em> If {@code true} then delete all versions
+     *            of the document, otherwise delete only the document object
+     *            specified (default is {@code true})
+     * @param extension
+     *            extension data
      */
     void deleteObject(String repositoryId, String objectId, Boolean allVersions, ExtensionsData extension);
 
@@ -445,18 +488,22 @@ public interface ObjectService {
      * @param folderId
      *            the identifier for the folder
      * @param allVersions
-     *            <em>(optional)</em> If <code>true</code> then delete all
-     *            versions of the document, otherwise delete only the document
-     *            object specified (default is <code>true</code>)
+     *            <em>(optional)</em> If {@code true} then delete all versions
+     *            of the document, otherwise delete only the document object
+     *            specified (default is {@code true})
      * @param unfileObjects
      *            <em>(optional)</em> defines how the repository must process
      *            file-able child- or descendant-objects (default is
      *            {@link UnfileObject#DELETE})
      * @param continueOnFailure
-     *            <em>(optional)</em> If <code>true</code>, then the repository
+     *            <em>(optional)</em> If {@code true}, then the repository
      *            should continue attempting to perform this operation even if
      *            deletion of a child- or descendant-object in the specified
-     *            folder cannot be deleted (default is <code>false</code>)
+     *            folder cannot be deleted (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return a (possibly incomplete) collection of object IDs of objects that
+     *         couldn't be deleted
      */
     FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
             UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension);
@@ -473,18 +520,20 @@ public interface ObjectService {
      *            the identifier for the object. The repository might return a
      *            different/new object id
      * @param overwriteFlag
-     *            <em>(optional)</em> If <code>true</code>, then the repository
-     *            must replace the existing content stream for the object (if
-     *            any) with the input content stream. If If <code>false</code>,
-     *            then the repository must only set the input content stream for
-     *            the object if the object currently does not have a content
-     *            stream (default is <code>true</code>)
+     *            <em>(optional)</em> If {@code true}, then the repository must
+     *            replace the existing content stream for the object (if any)
+     *            with the input content stream. If If {@code false}, then the
+     *            repository must only set the input content stream for the
+     *            object if the object currently does not have a content stream
+     *            (default is {@code true})
      * @param changeToken
      *            <em>(optional)</em> the last change token of this object that
      *            the client received. The repository might return a new change
-     *            token (default is <code>null</code>)
+     *            token (default is {@code null})
      * @param contentStream
      *            the content stream
+     * @param extension
+     *            extension data
      */
     void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension);
@@ -500,7 +549,9 @@ public interface ObjectService {
      * @param changeToken
      *            <em>(optional)</em> the last change token of this object that
      *            the client received. The repository might return a new change
-     *            token (default is <code>null</code>)
+     *            token (default is {@code null})
+     * @param extension
+     *            extension data
      */
     void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ExtensionsData extension);
@@ -516,11 +567,13 @@ public interface ObjectService {
      * @param changeToken
      *            <em>(optional)</em> the last change token of this object that
      *            the client received. The repository might return a new change
-     *            token (default is <code>null</code>)
+     *            token (default is {@code null})
      * @param contentStream
      *            the content stream to append
      * @param isLastChunk
      *            indicates if this content stream is the last chunk
+     * @param extension
+     *            extension data
      */
     void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
             ContentStream contentStream, boolean isLastChunk, ExtensionsData extension);

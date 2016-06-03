@@ -34,12 +34,33 @@ public interface MultiFilingService {
 
     /**
      * Adds an existing fileable non-folder object to a folder.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the object to add
+     * @param folderId
+     *            the folder
+     * @param allVersions
+     *            a flag that indicates if all versions of a document should be
+     *            added to the folder or just this single version
+     * @param extension
+     *            extension data
      */
     void addObjectToFolder(String repositoryId, String objectId, String folderId, Boolean allVersions,
             ExtensionsData extension);
 
     /**
      * Removes an existing fileable non-folder object from a folder.
+     * 
+     * @param repositoryId
+     *            the identifier for the repository
+     * @param objectId
+     *            the object to remove
+     * @param folderId
+     *            the folder
+     * @param extension
+     *            extension data
      */
     void removeObjectFromFolder(String repositoryId, String objectId, String folderId, ExtensionsData extension);
 }

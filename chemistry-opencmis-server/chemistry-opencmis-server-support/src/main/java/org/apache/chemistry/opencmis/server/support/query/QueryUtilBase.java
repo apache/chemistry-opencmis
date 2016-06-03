@@ -53,8 +53,6 @@ public abstract class QueryUtilBase<T extends TreeParser> {
      * parse the statement, check for syntax errors and create an AST
      * 
      * @return the abstract syntax tree of the parsed statement
-     * 
-     * @throws RecognitionException
      */
     public abstract CommonTree parseStatement() throws RecognitionException;
 
@@ -63,16 +61,12 @@ public abstract class QueryUtilBase<T extends TreeParser> {
      * check for semantic errors, fill the query object. Usually a walker will
      * be CmisQueryWalker (or subclass) if the supporting OpenCMIS query classes
      * are used.
-     * 
-     * @throws RecognitionException
      */
     public abstract void walkStatement() throws RecognitionException;
 
     /**
      * Fully process a query by parsing and walking it and setting up the
      * supporting objects
-     * 
-     * @throws RecognitionException
      */
     public void processStatement() throws RecognitionException {
         parseStatement();
@@ -104,18 +98,19 @@ public abstract class QueryUtilBase<T extends TreeParser> {
 
     /**
      * Same as traverseStatement but throws only CMIS Exceptions
-    */
+     */
     public void processStatementUsingCmisExceptions() {
         try {
             processStatement();
         } catch (RecognitionException e) {
             String errorMsg = getErrorMessage(e);
-            throw new CmisInvalidArgumentException("Processing of query statement failed with RecognitionException error: \n   "
-                    + errorMsg, e);
+            throw new CmisInvalidArgumentException(
+                    "Processing of query statement failed with RecognitionException error: \n   " + errorMsg, e);
         } catch (CmisBaseException e) {
             throw e;
         } catch (Exception e) {
-            throw new CmisInvalidArgumentException("Processing of query statement failed with exception: " + e.getMessage(), e);
+            throw new CmisInvalidArgumentException("Processing of query statement failed with exception: "
+                    + e.getMessage(), e);
         }
     }
 

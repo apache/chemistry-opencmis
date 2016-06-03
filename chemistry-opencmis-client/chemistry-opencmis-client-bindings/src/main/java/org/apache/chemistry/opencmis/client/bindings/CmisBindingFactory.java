@@ -63,6 +63,8 @@ public class CmisBindingFactory {
 
     /**
      * Creates a new factory instance.
+     * 
+     * @return a new factory instance
      */
     public static CmisBindingFactory newInstance() {
         return new CmisBindingFactory();
@@ -70,6 +72,8 @@ public class CmisBindingFactory {
 
     /**
      * Returns the default session parameters.
+     * 
+     * @return the default session parameters
      */
     public Map<String, String> getDefaultSessionParameters() {
         return defaults;
@@ -77,6 +81,9 @@ public class CmisBindingFactory {
 
     /**
      * Sets the default session parameters.
+     * 
+     * @param sessionParameters
+     *            the session parameters
      */
     public void setDefaultSessionParameters(Map<String, String> sessionParameters) {
         if (sessionParameters == null) {
@@ -89,6 +96,10 @@ public class CmisBindingFactory {
     /**
      * Creates a CMIS binding instance. A binding class has to be provided in
      * the session parameters.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters) {
         return createCmisBinding(sessionParameters, null, null);
@@ -97,6 +108,10 @@ public class CmisBindingFactory {
     /**
      * Creates a CMIS binding instance. A binding class has to be provided in
      * the session parameters.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisBinding(Map<String, String> sessionParameters,
             AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
@@ -109,6 +124,10 @@ public class CmisBindingFactory {
 
     /**
      * Creates a default CMIS AtomPub binding instance.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters) {
         return createCmisAtomPubBinding(sessionParameters, null, null);
@@ -117,6 +136,10 @@ public class CmisBindingFactory {
     /**
      * Creates a default CMIS AtomPub binding instance with a custom
      * authentication provider.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisAtomPubBinding(Map<String, String> sessionParameters,
             AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
@@ -150,6 +173,10 @@ public class CmisBindingFactory {
 
     /**
      * Creates a default CMIS Web Services binding instance.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters) {
         return createCmisWebServicesBinding(sessionParameters, null, null);
@@ -158,6 +185,10 @@ public class CmisBindingFactory {
     /**
      * Creates a default CMIS Web Services binding instance with a custom
      * authentication provider.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisWebServicesBinding(Map<String, String> sessionParameters,
             AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
@@ -210,6 +241,10 @@ public class CmisBindingFactory {
 
     /**
      * Creates a default CMIS Browser binding instance.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters) {
         return createCmisBrowserBinding(sessionParameters, null, null);
@@ -218,6 +253,10 @@ public class CmisBindingFactory {
     /**
      * Creates a default CMIS Browser binding instance with a custom
      * authentication provider.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisBrowserBinding(Map<String, String> sessionParameters,
             AuthenticationProvider authenticationProvider, TypeDefinitionCache typeDefCache) {
@@ -254,6 +293,10 @@ public class CmisBindingFactory {
 
     /**
      * Creates a default CMIS local binding instance.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisLocalBinding(Map<String, String> sessionParameters) {
         return createCmisLocalBinding(sessionParameters, null);
@@ -261,6 +304,10 @@ public class CmisBindingFactory {
 
     /**
      * Creates a default CMIS local binding instance.
+     * 
+     * @param sessionParameters
+     *            the session parameters
+     * @return the binding object
      */
     public CmisBinding createCmisLocalBinding(Map<String, String> sessionParameters, TypeDefinitionCache typeDefCache) {
         checkSessionParameters(sessionParameters, false);

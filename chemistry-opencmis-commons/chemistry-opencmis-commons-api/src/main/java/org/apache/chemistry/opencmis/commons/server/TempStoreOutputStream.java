@@ -74,6 +74,11 @@ public abstract class TempStoreOutputStream extends OutputStream {
      * 
      * Implementations should clean up all attached resources when this stream
      * is closed.
+     * 
+     * @return the input stream
+     * 
+     * @throws IOException
+     *             if the input stream could not be created
      */
     public abstract InputStream getInputStream() throws IOException;
 

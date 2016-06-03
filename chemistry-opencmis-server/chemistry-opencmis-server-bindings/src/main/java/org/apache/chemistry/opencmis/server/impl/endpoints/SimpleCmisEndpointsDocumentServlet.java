@@ -57,13 +57,16 @@ public class SimpleCmisEndpointsDocumentServlet extends AbstractCmisEndpointsDoc
         }
 
         // load template from file
+        InputStream stream = null;
         try {
-            InputStream stream = config.getServletContext().getResourceAsStream(template);
+            stream = config.getServletContext().getResourceAsStream(template);
             if (stream != null) {
                 endpointsDocument = IOUtils.readAllLines(stream);
             }
         } catch (Exception e) {
             LOG.error("Could not read CMIS Endpoints Document template from {}!", template, e);
+        } finally {
+            IOUtils.closeQuietly(stream);
         }
     }
 

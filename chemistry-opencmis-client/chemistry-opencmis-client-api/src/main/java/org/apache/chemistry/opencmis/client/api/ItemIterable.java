@@ -33,6 +33,7 @@ public interface ItemIterable<T> extends Iterable<T> {
      * Skips to position within CMIS collection.
      * 
      * @param position
+     *            offset where to skip to
      * 
      * @return iterable whose starting point is the specified skip to position.
      *         This iterable <em>may</em> be the same as {@code this}

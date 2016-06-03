@@ -71,6 +71,9 @@ public abstract class AbstractCmisServiceWrapper implements CallContextAwareCmis
 
     /**
      * Initializes the wrapper with a set of parameters.
+     * 
+     * @param params
+     *            an array of parameter objects
      */
     public void initialize(Object[] params) {
     }

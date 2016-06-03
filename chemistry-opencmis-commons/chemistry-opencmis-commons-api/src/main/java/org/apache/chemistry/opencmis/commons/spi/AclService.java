@@ -43,7 +43,9 @@ public interface AclService {
      *            the identifier for the object
      * @param onlyBasicPermissions
      *            <em>(optional)</em> an indicator if only basic permissions
-     *            should be returned (default is <code>true</code>)
+     *            should be returned (default is {@code true})
+     * @param extension
+     *            extension data
      * @return the ACL of the object
      */
     Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension);
@@ -62,6 +64,8 @@ public interface AclService {
      * @param aclPropagation
      *            <em>(optional)</em> specifies how ACEs should be handled
      *            (default is {@link AclPropagation#REPOSITORYDETERMINED})
+     * @param extension
+     *            extension data
      * @return the ACL of the object
      */
     Acl applyAcl(String repositoryId, String objectId, Acl addAces, Acl removeAces, AclPropagation aclPropagation,

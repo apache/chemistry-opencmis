@@ -556,87 +556,92 @@
                 <version>2.7</version>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <version>2.10.3</version>
-              <inherited>false</inherited>
-              <reportSets>
-                <reportSet>
-                  <id>aggregate</id>
-                  <reports>
-                    <report>aggregate</report>
-                  </reports>
-                </reportSet>
-              </reportSets>
-              <configuration>
-                  <doctitle>Apache Chemistry OpenCMIS ${project.version}</doctitle>
-                  <windowtitle>Apache Chemistry OpenCMIS ${project.version}</windowtitle>
-                  <!-- TODO: Update this for new packages -->
-                  <groups>
-                      <group>
-                          <title>OpenCMIS Client API</title>
-                          <packages>org.apache.chemistry.opencmis.client:org.apache.chemistry.opencmis.client.api:org.apache.chemistry.opencmis.client.util</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS Commons API</title>
-                          <packages>org.apache.chemistry.opencmis.commons:org.apache.chemistry.opencmis.commons.*</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS Bindings SPI</title>
-                          <packages>org.apache.chemistry.opencmis.client.bindings</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS Server</title>
-                          <packages>org.apache.chemistry.opencmis.commons.server:org.apache.chemistry.opencmis.commons.impl.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.wrapper:org.apache.chemistry.opencmis.server.support.query:org.apache.chemistry.opencmis.server.filter:org.apache.chemistry.opencmis.server.shared</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS Server (async)</title>
-                          <packages>org.apache.chemistry.opencmis.server.async</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS Bridge</title>
-                          <packages>org.apache.chemistry.opencmis.bridge*</packages>
-                      </group>
-                      <group>
-                          <title>OpenCMIS TCK</title>
-                          <packages>org.apache.chemistry.opencmis.tck*</packages>
-                      </group>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <inherited>false</inherited>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <doctitle>Apache Chemistry OpenCMIS ${project.version}</doctitle>
+                    <windowtitle>Apache Chemistry OpenCMIS ${project.version}</windowtitle>
+
+                    <sourcepath>
+                        ${basedir}/chemistry-opencmis-commons/chemistry-opencmis-commons-api/src/main/java:
+                        ${basedir}/chemistry-opencmis-commons/chemistry-opencmis-commons-impl/src/main/java:
+                        ${basedir}/chemistry-opencmis-client/chemistry-opencmis-client-api/src/main/java:
+                        ${basedir}/chemistry-opencmis-client/chemistry-opencmis-client-bindings/src/main/java:
+                        ${basedir}/chemistry-opencmis-client/chemistry-opencmis-client-impl/src/main/java:
+                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/java:
+                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-support/src/main/java:
+                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-async/src/main/java:
+                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-bridge/src/main/java:
+                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-test-tck/src/main/java
+                    </sourcepath>
+ 
+                    <groups>
+                        <group>
+                            <title>OpenCMIS Client API</title>
+                            <packages>org.apache.chemistry.opencmis.client:org.apache.chemistry.opencmis.client.api:org.apache.chemistry.opencmis.client.util</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS Commons API</title>
+                            <packages>org.apache.chemistry.opencmis.commons:org.apache.chemistry.opencmis.commons.*</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS Bindings SPI</title>
+                            <packages>org.apache.chemistry.opencmis.client.bindings</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS Server</title>
+                            <packages>org.apache.chemistry.opencmis.commons.server:org.apache.chemistry.opencmis.commons.impl.server:org.apache.chemistry.opencmis.server.support:org.apache.chemistry.opencmis.server.support.wrapper:org.apache.chemistry.opencmis.server.support.query:org.apache.chemistry.opencmis.server.filter:org.apache.chemistry.opencmis.server.shared</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS Server (async)</title>
+                            <packages>org.apache.chemistry.opencmis.server.async</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS Bridge</title>
+                            <packages>org.apache.chemistry.opencmis.bridge*</packages>
+                        </group>
+                        <group>
+                            <title>OpenCMIS TCK</title>
+                            <packages>org.apache.chemistry.opencmis.tck*</packages>
+                        </group>
                     </groups>
-                    <!--<excludePackageNames>org.apache.chemistry.opencmis.commons.impl:org.apache.chemistry.opencmis.commons.impl.dataobjects:org.apache.chemistry.opencmis.client.runtime:org.apache.chemistry.opencmis.client.runtime.*:org.apache.chemistry.opencmis.commons.impl.jaxb:org.apache.chemistry.opencmis.client.bindings.impl:org.apache.chemistry.opencmis.client.bindings.cache:org.apache.chemistry.opencmis.client.bindings.spi:org.apache.chemistry.opencmis.server.impl:org.apache.chemistry.opencmis.fit:org.apache.chemistry.opencmis.util.repository:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.inmemory:org.apache.chemistry.opencmis.fileshare:org.apache.chemistry.opencmis.jcr:org.apache.chemistry.opencmis.browser:org.apache.chemistry.opencmis.workbench:org.apache.chemistry.opencmis.commander:org.apache.chemistry.opencmis.client.osgi</excludePackageNames>-->
+
                     <sourceFileExcludes>
-                      <exclude>**/CmisQl*</exclude>
-                      <exclude>**/CmisQueryWalk*</exclude>
-                      <exclude>**/TextSearch*</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/*</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/dataobjects/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/json/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/jaxb/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/server/ObjectInfoImpl*</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commons/impl/server/RenditionInfoImpl*</exclude>
-                      <exclude>org/apache/chemistry/opencmis/client/runtime/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/client/bindings/impl/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/client/bindings/cache/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/client/bindings/spi/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/server/impl/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/server/shared/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/server/support/filter/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/server/async/impl/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/fit/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/util/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/fileshare/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/inmemory/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/browser/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/workbench/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/commander/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/client/osgi/**</exclude>
-                      <exclude>org/apache/chemistry/opencmis/tools/**</exclude>
+                        <exclude>**/CmisQl*</exclude>
+                        <exclude>**/CmisQueryWalk*</exclude>
+                        <exclude>**/TextSearch*</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/*</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/dataobjects/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/json/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/jaxb/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/server/ObjectInfoImpl*</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/server/RenditionInfoImpl*</exclude>
+                        <exclude>org/apache/chemistry/opencmis/commons/impl/server/LinkInfoImp*</exclude>
+                        <exclude>org/apache/chemistry/opencmis/client/runtime/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/client/bindings/impl/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/client/bindings/cache/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/client/bindings/spi/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/server/impl/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/server/shared/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/server/support/filter/**</exclude>
+                        <exclude>org/apache/chemistry/opencmis/server/async/impl/**</exclude>
                     </sourceFileExcludes>
                     <tags>
-                      <tag>
-                        <name>cmis</name>
-                        <placement>a</placement>
-                        <head>CMIS:</head>
-                      </tag>
+                        <tag>
+                            <name>cmis</name>
+                            <placement>a</placement>
+                            <head>CMIS:</head>
+                        </tag>
                     </tags>
                 </configuration>
             </plugin>
@@ -733,16 +738,17 @@
                 </plugins>
             </build>
         </profile>
-	<!-- Added profile to fix "doclint" (see http://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete). 
+        <!-- Added profile to fix "doclint" (see http://stackoverflow.com/questions/15886209/maven-is-not-working-in-java-8-when-javadoc-tags-are-incomplete). 
              TODO: This is a temporary solution, until we solve https://issues.apache.org/jira/browse/CMIS-977 
         -->
+        
         <profile>
             <id>disable-java8-doclint</id>
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
             <properties>
-                <additionalparam>-Xdoclint:none</additionalparam>
+                <additionalparam>-Xdoclint:accessibility -Xdoclint:html -Xdoclint:reference -Xdoclint:syntax</additionalparam>
             </properties>
         </profile>
     </profiles>

@@ -58,9 +58,9 @@ public interface NavigationService {
      *            followed by the ascending modifier "ASC" or the descending
      *            modifier "DESC" (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for each object in the
-     *            result set (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the available actions for each object in the result set
+     *            (default is {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            objects participate must be returned (default is
@@ -68,11 +68,11 @@ public interface NavigationService {
      * @param renditionFilter
      *            <em>(optional)</em> indicates what set of renditions the
      *            repository must return whose kind matches this filter (default
-     *            is <code>"cmis:none"</code>)
+     *            is {@code "cmis:none"})
      * @param includePathSegment
-     *            <em>(optional)</em> if <code>true</code>, returns a path
-     *            segment for each child object for use in constructing that
-     *            object's path (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, returns a path segment
+     *            for each child object for use in constructing that object's
+     *            path (default is {@code false})
      * @param maxItems
      *            <em>(optional)</em> the maximum number of items to return in a
      *            response (default is repository specific)
@@ -80,6 +80,9 @@ public interface NavigationService {
      *            <em>(optional)</em> number of potential results that the
      *            repository MUST skip/page over before returning any results
      *            (default is 0)
+     * @param extension
+     *            extension data
+     * @return the list of children
      */
     ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
@@ -101,9 +104,9 @@ public interface NavigationService {
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for each object in the
-     *            result set (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the available actions for each object in the result set
+     *            (default is {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            objects participate must be returned (default is
@@ -111,11 +114,14 @@ public interface NavigationService {
      * @param renditionFilter
      *            <em>(optional)</em> indicates what set of renditions the
      *            repository must return whose kind matches this filter (default
-     *            is <code>"cmis:none"</code>)
+     *            is {@code "cmis:none"})
      * @param includePathSegment
-     *            <em>(optional)</em> if <code>true</code>, returns a path
-     *            segment for each child object for use in constructing that
-     *            object's path (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, returns a path segment
+     *            for each child object for use in constructing that object's
+     *            path (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return the tree of descendants
      **/
     List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
@@ -137,9 +143,9 @@ public interface NavigationService {
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for each object in the
-     *            result set (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the available actions for each object in the result set
+     *            (default is {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            objects participate must be returned (default is
@@ -147,11 +153,14 @@ public interface NavigationService {
      * @param renditionFilter
      *            <em>(optional)</em> indicates what set of renditions the
      *            repository must return whose kind matches this filter (default
-     *            is <code>"cmis:none"</code>)
+     *            is {@code "cmis:none"})
      * @param includePathSegment
-     *            <em>(optional)</em> if <code>true</code>, returns a path
-     *            segment for each child object for use in constructing that
-     *            object's path (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, returns a path segment
+     *            for each child object for use in constructing that object's
+     *            path (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return the folder tree
      **/
     List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
@@ -169,9 +178,9 @@ public interface NavigationService {
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for each object in the
-     *            result set (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the available actions for each object in the result set
+     *            (default is {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            objects participate must be returned (default is
@@ -179,11 +188,14 @@ public interface NavigationService {
      * @param renditionFilter
      *            <em>(optional)</em> indicates what set of renditions the
      *            repository must return whose kind matches this filter (default
-     *            is <code>"cmis:none"</code>)
+     *            is {@code "cmis:none"})
      * @param includeRelativePathSegment
-     *            <em>(optional)</em> if <code>true</code>, returns a relative
-     *            path segment for each parent object for use in constructing
-     *            that object's path (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, returns a relative path
+     *            segment for each parent object for use in constructing that
+     *            object's path (default is {@code false})
+     * @param extension
+     *            extension data
+     * @return the list of parents
      */
     List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
@@ -200,6 +212,9 @@ public interface NavigationService {
      *            <em>(optional)</em> a comma-separated list of query names that
      *            defines which properties must be returned by the repository
      *            (default is repository specific)
+     * @param extension
+     *            extension data
+     * @return the folder parent
      */
     ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension);
 
@@ -221,9 +236,9 @@ public interface NavigationService {
      *            followed by the ascending modifier "ASC" or the descending
      *            modifier "DESC" (default is repository specific)
      * @param includeAllowableActions
-     *            <em>(optional)</em> if <code>true</code>, then the repository
-     *            must return the available actions for each object in the
-     *            result set (default is <code>false</code>)
+     *            <em>(optional)</em> if {@code true}, then the repository must
+     *            return the available actions for each object in the result set
+     *            (default is {@code false})
      * @param includeRelationships
      *            <em>(optional)</em> indicates what relationships in which the
      *            objects participate must be returned (default is
@@ -231,7 +246,7 @@ public interface NavigationService {
      * @param renditionFilter
      *            <em>(optional)</em> indicates what set of renditions the
      *            repository must return whose kind matches this filter (default
-     *            is <code>"cmis:none"</code>)
+     *            is {@code "cmis:none"})
      * @param maxItems
      *            <em>(optional)</em> the maximum number of items to return in a
      *            response (default is repository specific)
@@ -239,6 +254,9 @@ public interface NavigationService {
      *            <em>(optional)</em> number of potential results that the
      *            repository MUST skip/page over before returning any results
      *            (default is 0)
+     * @param extension
+     *            extension data
+     * @return the list of checked out documents
      */
     ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,

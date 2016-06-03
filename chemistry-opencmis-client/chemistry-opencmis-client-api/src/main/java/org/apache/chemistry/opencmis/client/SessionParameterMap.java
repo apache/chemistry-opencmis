@@ -46,7 +46,7 @@ import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
  * A map with convenience methods to set session parameters.
  * <p>
  * Sample code:
- * <p>
+ * </p>
  * 
  * <pre>
  * SessionFactory factory = ...
@@ -59,6 +59,7 @@ import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
  * ...
  * Session session = factory.createSession(parameter);
  * </pre>
+ * 
  * 
  * @see SessionParameter
  * @see SessionFactory
