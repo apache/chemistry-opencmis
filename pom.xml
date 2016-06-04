@@ -581,8 +581,8 @@
                         ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-bindings/src/main/java:
                         ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-support/src/main/java:
                         ${basedir}/chemistry-opencmis-server/chemistry-opencmis-server-async/src/main/java:
-                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-bridge/src/main/java:
-                        ${basedir}/chemistry-opencmis-server/chemistry-opencmis-test-tck/src/main/java
+                        ${basedir}/chemistry-opencmis-bridge/chemistry-opencmis-bridge/src/main/java:
+                        ${basedir}/chemistry-opencmis-test/chemistry-opencmis-test-tck/src/main/java
                     </sourcepath>
  
                     <groups>
