@@ -643,6 +643,8 @@
                             <head>CMIS:</head>
                         </tag>
                     </tags>
+                    <locale>en</locale>
+                    <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
