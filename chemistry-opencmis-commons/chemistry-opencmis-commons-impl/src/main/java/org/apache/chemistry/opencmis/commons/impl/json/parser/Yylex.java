@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  */
 class Yylex {
 

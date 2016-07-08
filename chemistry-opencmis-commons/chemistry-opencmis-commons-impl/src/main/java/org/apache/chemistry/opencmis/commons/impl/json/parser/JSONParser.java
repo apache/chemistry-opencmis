@@ -26,16 +26,17 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.chemistry.opencmis.commons.impl.JSONConstraints;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 
 /**
  * Parser for JSON text. Please note that JSONParser is NOT thread-safe.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public class JSONParser {
     public static final int S_INIT = 0;
@@ -202,6 +203,9 @@ public class JSONParser {
                         statusStack.removeFirst();
                         String key = (String) valueStack.removeFirst();
                         Map<String, Object> parent = (Map<String, Object>) valueStack.getFirst();
+                        if (parent.size() + 1 > JSONConstraints.MAX_OBJECT_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         parent.put(key, token.value);
                         status = peekStatus(statusStack);
                         break;
@@ -209,6 +213,12 @@ public class JSONParser {
                         statusStack.removeFirst();
                         key = (String) valueStack.removeFirst();
                         parent = (Map<String, Object>) valueStack.getFirst();
+                        if (parent.size() + 1 > JSONConstraints.MAX_OBJECT_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
+                        if (valueStack.size() + 1 > JSONConstraints.MAX_DEPTH) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         List<Object> newArray = createArrayContainer(containerFactory);
                         parent.put(key, newArray);
                         status = S_IN_ARRAY;
@@ -219,6 +229,12 @@ public class JSONParser {
                         statusStack.removeFirst();
                         key = (String) valueStack.removeFirst();
                         parent = (Map<String, Object>) valueStack.getFirst();
+                        if (parent.size() + 1 > JSONConstraints.MAX_OBJECT_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
+                        if (valueStack.size() + 1 > JSONConstraints.MAX_DEPTH) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         Map<String, Object> newObject = createObjectContainer(containerFactory);
                         parent.put(key, newObject);
                         status = S_IN_OBJECT;
@@ -236,6 +252,9 @@ public class JSONParser {
                         break;
                     case Yytoken.TYPE_VALUE:
                         List<Object> val = (List<Object>) valueStack.getFirst();
+                        if (val.size() + 1 > JSONConstraints.MAX_ARRAY_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         val.add(token.value);
                         break;
                     case Yytoken.TYPE_RIGHT_SQUARE:
@@ -249,6 +268,12 @@ public class JSONParser {
                         break;
                     case Yytoken.TYPE_LEFT_BRACE:
                         val = (List<Object>) valueStack.getFirst();
+                        if (val.size() + 1 > JSONConstraints.MAX_ARRAY_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
+                        if (valueStack.size() + 1 > JSONConstraints.MAX_DEPTH) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         Map<String, Object> newObject = createObjectContainer(containerFactory);
                         val.add(newObject);
                         status = S_IN_OBJECT;
@@ -257,6 +282,12 @@ public class JSONParser {
                         break;
                     case Yytoken.TYPE_LEFT_SQUARE:
                         val = (List<Object>) valueStack.getFirst();
+                        if (val.size() + 1 > JSONConstraints.MAX_ARRAY_SIZE) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
+                        if (valueStack.size() + 1 > JSONConstraints.MAX_DEPTH) {
+                            throw new JSONParseException(JSONParseException.ERROR_JSON_TOO_BIG);
+                        }
                         List<Object> newArray = createArrayContainer(containerFactory);
                         val.add(newArray);
                         status = S_IN_ARRAY;

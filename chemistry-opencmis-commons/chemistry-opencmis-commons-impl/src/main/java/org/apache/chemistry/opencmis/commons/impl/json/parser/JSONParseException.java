@@ -21,10 +21,10 @@ package org.apache.chemistry.opencmis.commons.impl.json.parser;
 /**
  * ParseException explains why and where the error occurs in source JSON text.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public class JSONParseException extends Exception {
     private static final long serialVersionUID = -7880698968187728548L;
@@ -33,6 +33,7 @@ public class JSONParseException extends Exception {
     public static final int ERROR_UNEXPECTED_TOKEN = 1;
     public static final int ERROR_UNEXPECTED_EXCEPTION = 2;
     public static final int ERROR_STRING_TOO_LONG = 3;
+    public static final int ERROR_JSON_TOO_BIG = 4;
 
     private int errorType;
     private Object unexpectedObject;
@@ -72,6 +73,9 @@ public class JSONParseException extends Exception {
             break;
         case ERROR_STRING_TOO_LONG:
             sb.append("String too long");
+            break;
+        case ERROR_JSON_TOO_BIG:
+            sb.append("JSON too big");
             break;
         default:
             sb.append("Unkown error at position ").append(position).append('.');
