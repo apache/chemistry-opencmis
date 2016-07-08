@@ -678,13 +678,15 @@ public final class ClientHelper {
             console.getFrame().getRootPane().getJMenuBar().add(cmisMenu);
 
             addConsoleMenu(cmisMenu, "CMIS 1.0 Specification", new URI(
-                    "http://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
+                    "https://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
             addConsoleMenu(cmisMenu, "CMIS 1.1 Specification", new URI(
-                    "http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html"));
-            addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
-                    new URI("http://chemistry.apache.org/java/opencmis.html"));
+                    "https://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Documentation", new URI(
+                    "https://chemistry.apache.org/java/opencmis.html"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Code Samples",
+                    new URI("https://chemistry.apache.org/docs/cmis-samples/"));
             addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc", new URI(
-                    "http://chemistry.apache.org/java/0.13.0/maven/apidocs/"));
+                    "https://chemistry.apache.org/java/0.14.0/maven/apidocs/"));
             cmisMenu.addSeparator();
             JMenuItem menuItem = new JMenuItem("CMIS Session Details");
             menuItem.addActionListener(new ActionListener() {
