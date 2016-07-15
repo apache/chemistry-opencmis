@@ -1,2 +1,3 @@
 #!/bin/sh
-"$(dirname "$0")/../Resources/workbench.sh"
+cd "$(dirname "$0")/../Resources"
+./workbench.sh
