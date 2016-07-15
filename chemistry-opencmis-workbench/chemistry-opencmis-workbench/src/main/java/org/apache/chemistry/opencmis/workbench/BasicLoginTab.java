@@ -225,7 +225,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         pane.add(clientCompressionLabel);
         pane.add(createHelp("<html>Turn <b>client compression</b> on or off.<br>"
-                + "If the server doesn't support client compression, the communication wil fail."));
+                + "If the server doesn't support client compression, the communication will fail."));
         pane.add(clientCompressionContainer);
     }
 
