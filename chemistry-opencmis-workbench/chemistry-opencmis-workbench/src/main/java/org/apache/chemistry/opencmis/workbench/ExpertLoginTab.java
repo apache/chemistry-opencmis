@@ -20,8 +20,12 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
@@ -29,10 +33,17 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.apache.chemistry.opencmis.client.SessionParameterMap;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker;
+import org.apache.chemistry.opencmis.client.bindings.spi.http.OkHttpHttpInvoker;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 
@@ -97,6 +108,79 @@ public class ExpertLoginTab extends AbstractLoginTab {
         sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, sessionParameterTextArea.getFont()
                 .getSize()));
         add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
+
+        final JPopupMenu popup = new JPopupMenu("Session Parameters");
+        popup.add(createMenuGroup("Binding", SessionParameter.BINDING_TYPE, SessionParameter.ATOMPUB_URL,
+                SessionParameter.BROWSER_URL, SessionParameter.BROWSER_SUCCINCT,
+                SessionParameter.BROWSER_DATETIME_FORMAT));
+
+        popup.add(createMenuGroup("Authentictaion", SessionParameter.USER, SessionParameter.PASSWORD,
+                SessionParameter.AUTH_HTTP_BASIC, SessionParameter.AUTH_OAUTH_BEARER,
+                SessionParameter.AUTH_SOAP_USERNAMETOKEN, SessionParameter.AUTHENTICATION_PROVIDER_CLASS));
+
+        popup.add(createMenuGroup("Connection", SessionParameter.COMPRESSION, SessionParameter.CLIENT_COMPRESSION,
+                SessionParameter.COOKIES, SessionParameter.HEADER, SessionParameter.CSRF_HEADER,
+                SessionParameter.USER_AGENT, SessionParameter.PROXY_USER, SessionParameter.PROXY_PASSWORD,
+                SessionParameter.CONNECT_TIMEOUT, SessionParameter.READ_TIMEOUT));
+
+        popup.add(createMenuGroup("OAuth", SessionParameter.OAUTH_CLIENT_ID, SessionParameter.OAUTH_CLIENT_SECRET,
+                SessionParameter.OAUTH_CLIENT_SECRET, SessionParameter.OAUTH_CODE,
+                SessionParameter.OAUTH_TOKEN_ENDPOINT, SessionParameter.OAUTH_REDIRECT_URI));
+
+        popup.add(createMenuGroup("HTTP Invoker",
+                SessionParameter.HTTP_INVOKER_CLASS + "=" + DefaultHttpInvoker.class.getName(),
+                SessionParameter.HTTP_INVOKER_CLASS + "=" + ApacheClientHttpInvoker.class.getName(),
+                SessionParameter.HTTP_INVOKER_CLASS + "=" + OkHttpHttpInvoker.class.getName()));
+
+        sessionParameterTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    private JMenu createMenuGroup(String name, String... subs) {
+        JMenu result = new JMenu(name);
+
+        PopupMenuActionListener listener = new PopupMenuActionListener(sessionParameterTextArea);
+
+        for (String text : subs) {
+            JMenuItem textItem = new JMenuItem(text);
+            textItem.addActionListener(listener);
+
+            result.add(textItem);
+        }
+
+        return result;
+    }
+
+    private static class PopupMenuActionListener implements ActionListener {
+        private final JTextArea textArea;
+
+        public PopupMenuActionListener(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            textArea.insert(((JMenuItem) e.getSource()).getText(), textArea.getCaretPosition());
+        }
     }
 
     public void setSessionParameters(Map<String, String> parameters) {
