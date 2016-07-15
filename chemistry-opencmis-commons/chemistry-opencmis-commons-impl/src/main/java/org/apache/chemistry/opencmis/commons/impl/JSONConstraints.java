@@ -27,7 +27,7 @@ public class JSONConstraints {
     public static final int MAX_ARRAY_SIZE;
     public static final int MAX_DEPTH;
 
-    public static final int MAX_OBJECT_SIZE_DEFAULT = 10000;
+    public static final int MAX_OBJECT_SIZE_DEFAULT = 1000000;
     public static final int MAX_ARRAY_SIZE_DEFAULT = 1000000;
     public static final int MAX_DEPTH_DEFAULT = 200;
 
