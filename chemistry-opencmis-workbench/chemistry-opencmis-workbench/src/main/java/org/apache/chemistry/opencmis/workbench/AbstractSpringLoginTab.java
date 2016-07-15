@@ -105,7 +105,7 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
 
             label.addMouseListener(new MouseAdapter() {
                 private final int defaultDismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
-                private final static int DISMIASS_DELAY = 120 * 1000;
+                private static final int DISMIASS_DELAY = 120 * 1000;
 
                 @Override
                 public void mouseEntered(MouseEvent me) {

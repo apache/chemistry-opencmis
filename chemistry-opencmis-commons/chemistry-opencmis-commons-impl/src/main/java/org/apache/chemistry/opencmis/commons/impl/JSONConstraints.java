@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 
 public class JSONConstraints {
 
-    private JSONConstraints() {
-    }
-
     public static final int MAX_OBJECT_SIZE;
     public static final int MAX_ARRAY_SIZE;
     public static final int MAX_DEPTH;
@@ -47,7 +44,7 @@ public class JSONConstraints {
                     maxObjectSize = MAX_OBJECT_SIZE_DEFAULT;
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
         MAX_OBJECT_SIZE = maxObjectSize;
@@ -63,7 +60,7 @@ public class JSONConstraints {
                     maxArraySize = MAX_ARRAY_SIZE_DEFAULT;
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
         MAX_ARRAY_SIZE = maxArraySize;
@@ -79,9 +76,12 @@ public class JSONConstraints {
                     maxDepth = MAX_DEPTH_DEFAULT;
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
         MAX_DEPTH = maxDepth;
+    }
+
+    private JSONConstraints() {
     }
 }

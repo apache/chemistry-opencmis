@@ -20,9 +20,6 @@ package org.apache.chemistry.opencmis.commons.impl;
 
 public final class XMLConstraints {
 
-    private XMLConstraints() {
-    }
-
     public static final int MAX_STRING_LENGTH = 100 * 1024;
 
     public static final int MAX_EXTENSIONS_WIDTH;
@@ -46,7 +43,7 @@ public final class XMLConstraints {
                     maxWidth = MAX_EXTENSIONS_WIDTH_DEFAULT;
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
         MAX_EXTENSIONS_WIDTH = maxWidth;
@@ -62,9 +59,12 @@ public final class XMLConstraints {
                     maxDepth = MAX_EXTENSIONS_DEPTH_DEFAULT;
                 }
             }
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // ignore
         }
         MAX_EXTENSIONS_DEPTH = maxDepth;
+    }
+
+    private XMLConstraints() {
     }
 }
