@@ -238,6 +238,7 @@
         <log4j.version>2.5</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
         <cxf.version>3.0.9</cxf.version>
+        <okhttp.version>3.4.1</okhttp.version>
     </properties>
 
     <build>

@@ -212,7 +212,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             // get stream, if present
             respCode = conn.getResponseCode();
             InputStream inputStream = null;
-            if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
+            if (respCode == 200 || respCode == 201 || respCode == 203 || respCode == 206) {
                 inputStream = conn.getInputStream();
             }
 

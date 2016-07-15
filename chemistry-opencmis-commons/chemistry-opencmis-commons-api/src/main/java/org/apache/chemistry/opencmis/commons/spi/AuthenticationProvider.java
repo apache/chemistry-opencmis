@@ -41,7 +41,7 @@ public interface AuthenticationProvider extends Serializable {
      * @param url
      *            the URL of the HTTP call
      * 
-     * @return the HTTP headers or <code>null</code> if no additional headers
+     * @return the HTTP headers or {@code null} if no additional headers
      *         should be set
      */
     Map<String, List<String>> getHTTPHeaders(String url);
@@ -52,7 +52,7 @@ public interface AuthenticationProvider extends Serializable {
      * @param portObject
      *            the port object
      * 
-     * @return the SOAP headers or <code>null</code> if no additional headers
+     * @return the SOAP headers or {@code null} if no additional headers
      *         should be set
      */
     Element getSOAPHeaders(Object portObject);
@@ -61,7 +61,7 @@ public interface AuthenticationProvider extends Serializable {
      * Returns a {@link HandlerResolver} object that provides a list of SOAP
      * handlers.
      * 
-     * @return the HandlerResolver or <code>null</code> if no handlers should be
+     * @return the HandlerResolver or {@code null} if no handlers should be
      *         set
      */
     HandlerResolver getHandlerResolver();
@@ -70,14 +70,14 @@ public interface AuthenticationProvider extends Serializable {
      * Returns the SSL Socket Factory to be used when creating sockets for HTTPS
      * connections.
      * 
-     * @return a {@link SSLSocketFactory} or <code>null</code>
+     * @return a {@link SSLSocketFactory} or {@code null}
      */
     SSLSocketFactory getSSLSocketFactory();
 
     /**
      * Returns the Hostname Verifier for HTTPS connections.
      * 
-     * @return a {@link HostnameVerifier} or <code>null</code>
+     * @return a {@link HostnameVerifier} or {@code null}
      */
     HostnameVerifier getHostnameVerifier();
 

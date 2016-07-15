@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.ws.handler.HandlerResolver;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -78,6 +79,15 @@ public abstract class AbstractAuthenticationProvider implements SessionAwareAuth
 
     @Override
     public HostnameVerifier getHostnameVerifier() {
+        return null;
+    }
+
+    /**
+     * Gets the trust manager corresponding to the SSL socket factory.
+     * 
+     * @return a {@link X509TrustManager} or {@code null}
+     */
+    public X509TrustManager getTrustManager() {
         return null;
     }
 

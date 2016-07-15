@@ -276,7 +276,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
             InputStream inputStream = null;
             InputStream errorStream = null;
 
-            if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
+            if (respCode == 200 || respCode == 201 || respCode == 203 || respCode == 206) {
                 if (entity != null) {
                     inputStream = entity.getContent();
                 } else {

@@ -157,7 +157,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             }
 
             // range
-            if ((offset != null) || (length != null)) {
+            if (offset != null || length != null) {
                 StringBuilder sb = new StringBuilder("bytes=");
 
                 if ((offset == null) || (offset.signum() == -1)) {
@@ -167,7 +167,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 sb.append(offset.toString());
                 sb.append('-');
 
-                if ((length != null) && (length.signum() == 1)) {
+                if (length != null && length.signum() == 1) {
                     sb.append(offset.add(length.subtract(BigInteger.ONE)).toString());
                 }
 
@@ -176,7 +176,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // compression
             Object compression = session.get(SessionParameter.COMPRESSION);
-            if ((compression != null) && Boolean.parseBoolean(compression.toString())) {
+            if (compression != null && Boolean.parseBoolean(compression.toString())) {
                 conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             }
 
@@ -210,7 +210,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             // get stream, if present
             respCode = conn.getResponseCode();
             InputStream inputStream = null;
-            if ((respCode == 200) || (respCode == 201) || (respCode == 203) || (respCode == 206)) {
+            if (respCode == 200 || respCode == 201 || respCode == 203 || respCode == 206) {
                 inputStream = conn.getInputStream();
             }
 
