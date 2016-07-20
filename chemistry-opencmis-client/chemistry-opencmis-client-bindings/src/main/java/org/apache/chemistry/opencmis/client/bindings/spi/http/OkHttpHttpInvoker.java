@@ -22,6 +22,7 @@ import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNot
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +121,9 @@ public class OkHttpHttpInvoker implements HttpInvoker {
                     @Override
                     public void writeTo(BufferedSink sink) throws IOException {
                         try {
-                            writer.write(sink.outputStream());
+                            OutputStream out = sink.outputStream();
+                            writer.write(out);
+                            out.flush();
                         } catch (IOException ioe) {
                             throw ioe;
                         } catch (Exception e) {
