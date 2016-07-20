@@ -700,12 +700,6 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         return result;
     }
 
-    @Deprecated
-    @Override
-    public Set<String> getPermissonsForPrincipal(String principalId) {
-        return getPermissionsForPrincipal(principalId);
-    }
-
     // --- policies ---
 
     @Override

@@ -97,12 +97,6 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      */
     Set<String> getPermissionsForPrincipal(String principalId);
 
-    /**
-     * @deprecated use {@link #getPermissionsForPrincipal(String)} instead.
-     */
-    @Deprecated
-    Set<String> getPermissonsForPrincipal(String principalId);
-
     // object service
 
     /**

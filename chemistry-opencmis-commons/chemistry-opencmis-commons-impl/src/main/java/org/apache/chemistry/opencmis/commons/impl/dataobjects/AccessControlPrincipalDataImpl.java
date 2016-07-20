@@ -55,14 +55,6 @@ public class AccessControlPrincipalDataImpl extends AbstractExtensionData implem
         this.principalId = principalId;
     }
 
-    /**
-     * @deprecated use {@link #setId(String)}
-     */
-    @Deprecated
-    public void setPrincipalId(String principalId) {
-        setId(principalId);
-    }
-
     @Override
     public String toString() {
         return "Access Control Principal [principalId=" + principalId + "]" + super.toString();

@@ -87,12 +87,6 @@ public class CmisObjectMock implements CmisObject, Serializable {
         return null;
     }
 
-    @Deprecated
-    @Override
-    public Set<String> getPermissonsForPrincipal(String principalId) {
-        return null;
-    }
-
     @Override
     public AllowableActions getAllowableActions() {
         return null;

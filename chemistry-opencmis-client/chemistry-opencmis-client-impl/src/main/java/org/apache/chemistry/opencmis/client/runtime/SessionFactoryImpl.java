@@ -70,16 +70,6 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
     }
 
     /**
-     * @deprecated Use
-     *             {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache)}
-     */
-    @Deprecated
-    public Session createSession(Map<String, String> parameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
-        return createSession(parameters, objectFactory, authenticationProvider, cache, null);
-    }
-
-    /**
      * Creates a new session. The provided object factory, authentication
      * provider and cache instance override the values in the session parameters
      * if they are not <code>null</code>.
@@ -112,16 +102,6 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
     @Override
     public List<Repository> getRepositories(Map<String, String> parameters) {
         return getRepositories(parameters, null, null, null, null);
-    }
-
-    /**
-     * @deprecated Use
-     *             {@link #getRepositories(Map, ObjectFactory, AuthenticationProvider, Cache, TypeDefinitionCache)}
-     */
-    @Deprecated
-    public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
-            AuthenticationProvider authenticationProvider, Cache cache) {
-        return getRepositories(parameters, objectFactory, authenticationProvider, cache, null);
     }
 
     /**
