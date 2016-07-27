@@ -844,8 +844,16 @@ public final class JSONConverter {
             result = new PropertyDecimalDefinitionImpl();
             ((PropertyDecimalDefinitionImpl) result).setMinValue(getDecimal(json, JSON_PROPERTY_TYPE_MIN_VALUE));
             ((PropertyDecimalDefinitionImpl) result).setMaxValue(getDecimal(json, JSON_PROPERTY_TYPE_MAX_VALUE));
-            ((PropertyDecimalDefinitionImpl) result).setPrecision(getIntEnum(json, JSON_PROPERTY_TYPE_PRECISION,
-                    DecimalPrecision.class));
+
+            String precisionStr = getString(json, JSON_PROPERTY_TYPE_PRECISION);
+            if (precisionStr != null) {
+                if ("32".equals(precisionStr)) {
+                    ((PropertyDecimalDefinitionImpl) result).setPrecision(DecimalPrecision.BITS32);
+                } else if ("64".equals(precisionStr)) {
+                    ((PropertyDecimalDefinitionImpl) result).setPrecision(DecimalPrecision.BITS64);
+                }
+            }
+
             ((PropertyDecimalDefinitionImpl) result).setChoices(convertChoicesDecimal(json
                     .get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
@@ -1636,7 +1644,7 @@ public final class JSONConverter {
                     result);
             DecimalPrecision precision = ((PropertyDecimalDefinition) propertyDefinition).getPrecision();
             if (precision != null) {
-                result.put(JSON_PROPERTY_TYPE_PRECISION, precision.value());
+                result.put(JSON_PROPERTY_TYPE_PRECISION, String.valueOf(precision.value().intValue()));
             }
         } else if (propertyDefinition instanceof PropertyBooleanDefinition) {
             // nothing to do
