@@ -124,8 +124,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
                 SessionParameter.CONNECT_TIMEOUT, SessionParameter.READ_TIMEOUT));
 
         popup.add(createMenuGroup("OAuth", SessionParameter.OAUTH_CLIENT_ID, SessionParameter.OAUTH_CLIENT_SECRET,
-                SessionParameter.OAUTH_CLIENT_SECRET, SessionParameter.OAUTH_CODE,
-                SessionParameter.OAUTH_TOKEN_ENDPOINT, SessionParameter.OAUTH_REDIRECT_URI));
+                SessionParameter.OAUTH_CODE, SessionParameter.OAUTH_TOKEN_ENDPOINT, SessionParameter.OAUTH_REDIRECT_URI));
 
         popup.add(createMenuGroup("HTTP Invoker",
                 SessionParameter.HTTP_INVOKER_CLASS + "=" + DefaultHttpInvoker.class.getName(),
