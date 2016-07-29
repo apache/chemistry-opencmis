@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.client.runtime;
 
 import org.apache.chemistry.opencmis.client.api.Item;
+import org.apache.chemistry.opencmis.client.api.ItemType;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
@@ -32,6 +33,16 @@ public class ItemImpl extends AbstractFilableCmisObject implements Item {
      */
     public ItemImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    public ItemType getItemType() {
+        ObjectType objectType = super.getType();
+        if (objectType instanceof ItemType) {
+            return (ItemType) objectType;
+        } else {
+            throw new ClassCastException("Object type is not an item type.");
+        }
     }
 
 }

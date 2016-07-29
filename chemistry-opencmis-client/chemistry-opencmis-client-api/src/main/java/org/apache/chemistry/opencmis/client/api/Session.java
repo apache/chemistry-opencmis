@@ -544,6 +544,10 @@ public interface Session extends Serializable {
     /**
      * Returns the latest version in a version series.
      * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
+     * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
      * 
@@ -555,6 +559,10 @@ public interface Session extends Serializable {
 
     /**
      * Returns the latest version in a version series.
+     * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
@@ -569,6 +577,14 @@ public interface Session extends Serializable {
 
     /**
      * Returns the latest version in a version series.
+     * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
+     * 
+     * If {@code major} == {@code true} and the version series doesn't contain a
+     * major version, the repository is supposed to throw a
+     * {@link CmisObjectNotFoundException}.
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
@@ -585,7 +601,11 @@ public interface Session extends Serializable {
     Document getLatestDocumentVersion(ObjectId objectId, boolean major, OperationContext context);
 
     /**
-     * /** Returns the latest version in a version series.
+     * Returns the latest version in a version series.
+     * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
@@ -598,6 +618,10 @@ public interface Session extends Serializable {
 
     /**
      * Returns the latest version in a version series.
+     * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series
@@ -612,6 +636,14 @@ public interface Session extends Serializable {
 
     /**
      * Returns the latest version in a version series.
+     * 
+     * Some repositories throw an exception if the document is not versionable;
+     * others just return the unversioned document. To avoid surprises, check
+     * first whether the document is versionable or not.
+     * 
+     * If {@code major} == {@code true} and the version series doesn't contain a
+     * major version, the repository is supposed to throw a
+     * {@link CmisObjectNotFoundException}.
      * 
      * @param objectId
      *            the document ID of an arbitrary version in the version series

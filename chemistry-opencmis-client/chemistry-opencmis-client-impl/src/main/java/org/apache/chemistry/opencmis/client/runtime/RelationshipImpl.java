@@ -23,6 +23,7 @@ import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Relationship;
+import org.apache.chemistry.opencmis.client.api.RelationshipType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -35,6 +36,16 @@ public class RelationshipImpl extends AbstractCmisObject implements Relationship
      */
     public RelationshipImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    public RelationshipType getRelationshipType() {
+        ObjectType objectType = super.getType();
+        if (objectType instanceof RelationshipType) {
+            return (RelationshipType) objectType;
+        } else {
+            throw new ClassCastException("Object type is not a relationship type.");
+        }
     }
 
     @Override

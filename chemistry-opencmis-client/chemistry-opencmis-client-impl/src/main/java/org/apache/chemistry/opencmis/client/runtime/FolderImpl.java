@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.FolderType;
 import org.apache.chemistry.opencmis.client.api.Item;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
@@ -67,6 +68,16 @@ public class FolderImpl extends AbstractFilableCmisObject implements Folder {
      */
     public FolderImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    public FolderType getFolderType() {
+        ObjectType objectType = super.getType();
+        if (objectType instanceof FolderType) {
+            return (FolderType) objectType;
+        } else {
+            throw new ClassCastException("Object type is not a folder type.");
+        }
     }
 
     @Override

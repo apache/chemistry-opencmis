@@ -25,4 +25,16 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Policy extends FileableCmisObject, PolicyProperties {
 
+    /**
+     * Returns the object type as a policy type.
+     * 
+     * @return the policy type
+     * 
+     * @throws ClassCastException
+     *             if the object type is not a policy type
+     * 
+     * @cmis 1.0
+     */
+    PolicyType getPolicyType();
+
 }

@@ -25,4 +25,16 @@ package org.apache.chemistry.opencmis.client.api;
  */
 public interface Item extends FileableCmisObject {
 
+    /**
+     * Returns the object type as an item type.
+     * 
+     * @return the item type
+     * 
+     * @throws ClassCastException
+     *             if the object type is not an item type
+     * 
+     * @cmis 1.1
+     */
+    ItemType getItemType();
+
 }

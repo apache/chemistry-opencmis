@@ -26,26 +26,46 @@ package org.apache.chemistry.opencmis.client.api;
 public interface Relationship extends CmisObject, RelationshipProperties {
 
     /**
-     * Gets the source object. If the source object ID is invalid,
-     * {@code null} will be returned.
+     * Returns the object type as a relationship type.
+     * 
+     * @return the relationship type
+     * 
+     * @throws ClassCastException
+     *             if the object type is not a relationship type
+     * 
+     * @cmis 1.0
+     */
+    RelationshipType getRelationshipType();
+
+    /**
+     * Gets the source object. If the source object ID is invalid, {@code null}
+     * will be returned.
+     * 
+     * @cmis 1.0
      */
     CmisObject getSource();
 
     /**
      * Gets the source object using the given {@link OperationContext}. If the
      * source object ID is invalid, {@code null} will be returned.
+     * 
+     * @cmis 1.0
      */
     CmisObject getSource(OperationContext context);
 
     /**
-     * Gets the target object. If the target object ID is invalid,
-     * {@code null} will be returned.
+     * Gets the target object. If the target object ID is invalid, {@code null}
+     * will be returned.
+     * 
+     * @cmis 1.0
      */
     CmisObject getTarget();
 
     /**
      * Gets the target object using the given {@link OperationContext}. If the
      * target object ID is invalid, {@code null} will be returned.
+     * 
+     * @cmis 1.0
      */
     CmisObject getTarget(OperationContext context);
 }

@@ -33,6 +33,18 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
  */
 public interface Folder extends FileableCmisObject, FolderProperties {
 
+    /**
+     * Returns the object type as a folder type.
+     * 
+     * @return the folder type
+     * 
+     * @throws ClassCastException
+     *             if the object type is not a folder type
+     * 
+     * @cmis 1.0
+     */
+    FolderType getFolderType();
+
     // object service
 
     /**

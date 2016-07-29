@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.client.runtime;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.Policy;
+import org.apache.chemistry.opencmis.client.api.PolicyType;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ObjectData;
 
@@ -36,8 +37,17 @@ public class PolicyImpl extends AbstractFilableCmisObject implements Policy {
     }
 
     @Override
+    public PolicyType getPolicyType() {
+        ObjectType objectType = super.getType();
+        if (objectType instanceof PolicyType) {
+            return (PolicyType) objectType;
+        } else {
+            throw new ClassCastException("Object type is not a policy type.");
+        }
+    }
+
+    @Override
     public String getPolicyText() {
         return getPropertyValue(PropertyIds.POLICY_TEXT);
     }
-
 }

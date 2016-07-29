@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.ObjectType;
@@ -65,6 +66,21 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
      */
     public DocumentImpl(SessionImpl session, ObjectType objectType, ObjectData objectData, OperationContext context) {
         initialize(session, objectType, objectData, context);
+    }
+
+    @Override
+    public DocumentType getDocumentType() {
+        ObjectType objectType = super.getType();
+        if (objectType instanceof DocumentType) {
+            return (DocumentType) objectType;
+        } else {
+            throw new ClassCastException("Object type is not a document type.");
+        }
+    }
+
+    @Override
+    public boolean isVersionable() {
+        return Boolean.TRUE.equals(getDocumentType().isVersionable());
     }
 
     // properties

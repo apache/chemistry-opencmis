@@ -35,6 +35,28 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExists
  */
 public interface Document extends FileableCmisObject, DocumentProperties {
 
+    /**
+     * Returns the object type as a document type.
+     * 
+     * @return the document type
+     * 
+     * @throws ClassCastException
+     *             if the object type is not a document type
+     * 
+     * @cmis 1.0
+     */
+    DocumentType getDocumentType();
+
+    /**
+     * Returns whether the document is versionable or not.
+     * 
+     * @return {@code true} if the document is versionable, {@code false} if the
+     *         document is not versionable or if it's unknown
+     * 
+     * @cmis 1.0
+     */
+    boolean isVersionable();
+
     // object service
 
     /**

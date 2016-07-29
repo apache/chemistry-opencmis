@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.client.api.ChangeEvent;
 import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.DocumentType;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
@@ -646,16 +647,30 @@ public class SessionImpl implements Session {
         // first attempt: if we got a Document object, try getting the version
         // series ID from it
         if (objectId instanceof Document) {
-            versionSeriesId = ((Document) objectId).getVersionSeriesId();
+            Document sourceDoc = (Document) objectId;
+
+            if (!sourceDoc.isVersionable()) {
+                // if it is not versionable, a getObject() is sufficient
+                return (Document) getObject(sourceDoc, context);
+            }
+
+            versionSeriesId = sourceDoc.getVersionSeriesId();
         }
 
         // second attempt: if we have a Document object in the cache, retrieve
         // the version series ID form there
         if (versionSeriesId == null) {
             if (context.isCacheEnabled()) {
-                CmisObject sourceDoc = cache.getById(objectId.getId(), context.getCacheKey());
-                if (sourceDoc instanceof Document) {
-                    versionSeriesId = ((Document) sourceDoc).getVersionSeriesId();
+                CmisObject sourceObj = cache.getById(objectId.getId(), context.getCacheKey());
+                if (sourceObj instanceof Document) {
+                    Document sourceDoc = (Document) sourceObj;
+
+                    if (!sourceDoc.isVersionable()) {
+                        // if it is not versionable, a getObject() is sufficient
+                        return (Document) getObject(sourceDoc, context);
+                    }
+
+                    versionSeriesId = sourceDoc.getVersionSeriesId();
                 }
             }
         }
@@ -670,11 +685,20 @@ public class SessionImpl implements Session {
 
                 // get the document to find the version series ID
                 ObjectData sourceObjectData = binding.getObjectService().getObject(getRepositoryId(), objectId.getId(),
-                        PropertyIds.OBJECT_ID + "," + PropertyIds.VERSION_SERIES_ID, false, IncludeRelationships.NONE,
-                        "cmis:none", false, false, null);
+                        PropertyIds.OBJECT_ID + "," + PropertyIds.OBJECT_TYPE_ID + "," + PropertyIds.VERSION_SERIES_ID,
+                        false, IncludeRelationships.NONE, "cmis:none", false, false, null);
+
+                String objectTypeId = null;
 
                 if (sourceObjectData.getProperties() != null
                         && sourceObjectData.getProperties().getProperties() != null) {
+
+                    PropertyData<?> objectTypeIdProp = sourceObjectData.getProperties().getProperties()
+                            .get(PropertyIds.OBJECT_TYPE_ID);
+                    if (objectTypeIdProp != null && objectTypeIdProp.getFirstValue() instanceof String) {
+                        objectTypeId = (String) objectTypeIdProp.getFirstValue();
+                    }
+
                     PropertyData<?> verionsSeriesIdProp = sourceObjectData.getProperties().getProperties()
                             .get(PropertyIds.VERSION_SERIES_ID);
                     if (verionsSeriesIdProp != null && verionsSeriesIdProp.getFirstValue() instanceof String) {
@@ -682,8 +706,16 @@ public class SessionImpl implements Session {
                     }
                 }
 
-                // the Web Services binding needs the version series ID -> fail
+                // the Web Services binding needs the version series ID
                 if (versionSeriesId == null) {
+
+                    ObjectType type = getTypeDefinition(objectTypeId);
+                    if (type instanceof DocumentType && Boolean.FALSE.equals(((DocumentType) type).isVersionable())) {
+                        // if the document is not versionable, we don't need a
+                        // version series ID
+                        return (Document) getObject(objectId, context);
+                    }
+
                     throw new IllegalArgumentException("Object is not a document or not versionable!");
                 }
             }
