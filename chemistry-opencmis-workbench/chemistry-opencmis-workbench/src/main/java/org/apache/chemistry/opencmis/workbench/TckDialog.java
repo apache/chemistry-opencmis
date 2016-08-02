@@ -36,6 +36,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -84,6 +85,9 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
  */
 public class TckDialog {
 
+    private static final ServiceLoader<AbstractTckRunnerConfigurator> TCK_RUNNER_SERVICE_LOADER = ServiceLoader
+            .load(AbstractTckRunnerConfigurator.class);
+
     private final Frame owner;
     private final ClientModel model;
     private final TckDialogRunner runner;
@@ -108,7 +112,15 @@ public class TckDialog {
         status.put(CmisTestResultStatus.UNEXPECTED_EXCEPTION, 0);
 
         try {
-            runner.loadDefaultTckGroups();
+            boolean configured = false;
+            for (AbstractTckRunnerConfigurator configurator : TCK_RUNNER_SERVICE_LOADER) {
+                configurator.configureRunner(runner);
+                configured = true;
+            }
+
+            if (!configured) {
+                runner.loadDefaultTckGroups();
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(owner, "Error: " + e.getMessage(), "TCK Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -707,6 +719,10 @@ public class TckDialog {
 
         @Override
         public Void doInBackground() {
+            for (AbstractTckRunnerConfigurator configurator : TCK_RUNNER_SERVICE_LOADER) {
+                configurator.beforeRun(runner);
+            }
+
             try {
                 runner.run(new DialogProgressMonitor(runner.getGroups().size()));
             } catch (InterruptedException ie) {
@@ -723,6 +739,10 @@ public class TckDialog {
         public void done() {
             if (isCancelled()) {
                 runner.cancel();
+            }
+
+            for (AbstractTckRunnerConfigurator configurator : TCK_RUNNER_SERVICE_LOADER) {
+                configurator.afterRun(runner);
             }
 
             try {
