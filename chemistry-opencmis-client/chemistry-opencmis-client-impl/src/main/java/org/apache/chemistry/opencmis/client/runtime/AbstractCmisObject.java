@@ -424,6 +424,68 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     }
 
     @Override
+    public CmisObject updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds) {
+        ObjectId objectId = updateProperties(properties, addSecondaryTypeIds, removeSecondaryTypeIds, true);
+        if (objectId == null) {
+            return null;
+        }
+
+        if (!getObjectId().equals(objectId.getId())) {
+            return getSession().getObject(objectId, getCreationContext());
+        }
+
+        return this;
+    }
+
+    @Override
+    public ObjectId updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds, boolean refresh) {
+        if ((addSecondaryTypeIds == null || addSecondaryTypeIds.isEmpty())
+                && (removeSecondaryTypeIds == null || removeSecondaryTypeIds.isEmpty())) {
+            return updateProperties(properties, refresh);
+        }
+
+        List<String> secondaryTypeIds = new ArrayList<String>();
+
+        readLock();
+        try {
+            // check if secondary types have been fetched
+            if (!this.properties.containsKey(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
+                throw new IllegalStateException("Secondary Object Type Ids are not available!");
+            }
+
+            // compile new list of secondary type IDs
+            if (secondaryTypes != null) {
+                for (SecondaryType type : secondaryTypes) {
+                    if (removeSecondaryTypeIds == null || !removeSecondaryTypeIds.contains(type.getId())) {
+                        secondaryTypeIds.add(type.getId());
+                    }
+                }
+            }
+
+            if (addSecondaryTypeIds != null) {
+                for (String addId : addSecondaryTypeIds) {
+                    if (!secondaryTypeIds.contains(addId)) {
+                        secondaryTypeIds.add(addId);
+                    }
+                }
+            }
+        } finally {
+            readUnlock();
+        }
+
+        // set up properties
+        Map<String, Object> newProperties = new HashMap<String, Object>();
+        if (properties != null) {
+            newProperties.putAll(properties);
+        }
+        newProperties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypeIds);
+
+        return updateProperties(newProperties, refresh);
+    }
+
+    @Override
     public CmisObject rename(String newName) {
         if (newName == null || newName.length() == 0) {
             throw new IllegalArgumentException("New name must not be empty!");

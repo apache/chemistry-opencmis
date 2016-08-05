@@ -21,8 +21,7 @@ package org.apache.chemistry.opencmis.tck.tests.types;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -105,24 +104,8 @@ public class SecondaryTypesTest extends AbstractSessionTest {
                 checkedout = true;
             }
 
-            // -- attach secondary type
-            List<String> secondaryTypes = new ArrayList<String>();
-
-            // copy already attached secondary types, if there are any
-            if (workDoc.getSecondaryTypes() != null) {
-                for (SecondaryType secType : workDoc.getSecondaryTypes()) {
-                    secondaryTypes.add(secType.getId());
-                }
-            }
-
-            // add the new secondary type
-            secondaryTypes.add(secondaryTestType.getId());
-
-            Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
-
             // attach secondary type
-            ObjectId newId = workDoc.updateProperties(properties);
+            ObjectId newId = workDoc.updateProperties(null, Collections.singletonList(secondaryTestType.getId()), null);
             Document newDoc = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
             // check if the secondary type is there
@@ -213,19 +196,8 @@ public class SecondaryTypesTest extends AbstractSessionTest {
     private void detachSecondaryType(Session session, Document doc, ObjectType secondaryTestType) {
         CmisTestResult f;
 
-        List<String> secondaryTypesId = new ArrayList<String>();
-
-        for (SecondaryType secType : doc.getSecondaryTypes()) {
-            if (!secondaryTestType.getId().equals(secType.getId())) {
-                secondaryTypesId.add(secType.getId());
-            }
-        }
-
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypesId);
-
         // detach secondary type
-        ObjectId newId = doc.updateProperties(properties);
+        ObjectId newId = doc.updateProperties(null, null, Collections.singletonList(secondaryTestType.getId()));
         Document newDoc = (Document) session.getObject(newId, SELECT_ALL_NO_CACHE_OC);
 
         boolean found = false;

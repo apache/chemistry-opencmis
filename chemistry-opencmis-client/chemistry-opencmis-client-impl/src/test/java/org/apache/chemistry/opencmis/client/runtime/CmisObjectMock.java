@@ -223,6 +223,18 @@ public class CmisObjectMock implements CmisObject, Serializable {
     }
 
     @Override
+    public CmisObject updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds) {
+        return null;
+    }
+
+    @Override
+    public ObjectId updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds, boolean refresh) {
+        return null;
+    }
+
+    @Override
     public CmisObject rename(String newName) {
         return null;
     }

@@ -152,6 +152,57 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
     ObjectId updateProperties(Map<String, ?> properties, boolean refresh);
 
     /**
+     * Updates the provided properties and refreshes this object afterwards. If
+     * the repository created a new object, for example a new version, this new
+     * object is returned. Otherwise the current object is returned.
+     * 
+     * Secondary types must be supported by the repository and must have been
+     * retrieved for this object.
+     * 
+     * @param properties
+     *            the properties to update
+     * @param addSecondaryTypeIds
+     *            list of secondary type IDs that should be added, may be
+     *            {@code null}
+     * @param removeSecondaryTypeIds
+     *            list of secondary type IDs that should be removed, may be
+     *            {@code null}
+     * 
+     * @return the updated object
+     * 
+     * @cmis 1.1
+     */
+    CmisObject updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds);
+
+    /**
+     * Updates the provided properties. If the repository created a new object,
+     * for example a new version, the object ID of the new object is returned.
+     * Otherwise the object ID of the current object is returned.
+     * 
+     * Secondary types must be supported by the repository and must have been
+     * retrieved for this object.
+     * 
+     * @param properties
+     *            the properties to update
+     * @param addSecondaryTypeIds
+     *            list of secondary type IDs that should be added, may be
+     *            {@code null}
+     * @param removeSecondaryTypeIds
+     *            list of secondary type IDs that should be removed, may be
+     *            {@code null}
+     * @param refresh
+     *            {@code true} if this object should be refreshed after the
+     *            update, {@code false} if not
+     * 
+     * @return the object ID of the updated object
+     * 
+     * @cmis 1.1
+     */
+    ObjectId updateProperties(Map<String, ?> properties, List<String> addSecondaryTypeIds,
+            List<String> removeSecondaryTypeIds, boolean refresh);
+
+    /**
      * Renames this object (changes the value of {@code cmis:name}). If the
      * repository created a new object, for example a new version, this new
      * object is returned. Otherwise the current object is returned.
