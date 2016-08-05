@@ -224,7 +224,7 @@ public final class TypeUtils {
             errors.add(new ValidationError("baseId", "Base type id must be set."));
         } else if (!type.getBaseTypeId().value().equals(type.getParentTypeId())) {
             if (type.getParentTypeId() == null || type.getParentTypeId().length() == 0) {
-                errors.add(new ValidationError("parentTypeId", "Parent type id must be set."));
+                errors.add(new ValidationError("parentId", "Parent type id must be set."));
             }
         }
 
