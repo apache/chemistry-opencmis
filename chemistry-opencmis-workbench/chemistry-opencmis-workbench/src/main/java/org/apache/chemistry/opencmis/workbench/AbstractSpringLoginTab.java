@@ -18,17 +18,21 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.Spring;
@@ -94,6 +98,25 @@ public abstract class AbstractSpringLoginTab extends AbstractLoginTab {
         pane.add(textField);
 
         return textField;
+    }
+
+    protected JPanel createCheckBoxPanel(Container pane, String label, String help, JCheckBox... buttons) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JLabel panelLabel = new JLabel(label, SwingConstants.TRAILING);
+        panelLabel.setLabelFor(panel);
+
+        for (JCheckBox button : buttons) {
+            panel.add(button);
+            if (button != buttons[buttons.length - 1]) {
+                panel.add(new JPanel()).setMinimumSize(new Dimension(10, 10));
+            }
+        }
+
+        pane.add(panelLabel);
+        pane.add(createHelp(help));
+        pane.add(panel);
+
+        return panel;
     }
 
     protected JComponent createHelp(String help) {
