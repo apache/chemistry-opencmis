@@ -325,6 +325,26 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
             returnVersion = ReturnVersion.LASTESTMAJOR;
         }
 
+        // workaround for SharePoint - use the version series ID instead of the
+        // object ID
+        if (getSession().get(SessionParameter.LATEST_VERSION_WITH_VERSION_SERIES_ID, false)) {
+            if (versionSeriesId != null) {
+                objectId = versionSeriesId;
+            } else {
+                ObjectData obj = getObjectInternal(repositoryId, IdentifierType.ID, objectId, null,
+                        PropertyIds.OBJECT_ID + "," + PropertyIds.VERSION_SERIES_ID, Boolean.FALSE,
+                        IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
+
+                if (obj.getProperties() != null && obj.getProperties().getProperties() != null) {
+                    PropertyData<?> versionSeriesProp = obj.getProperties().getProperties()
+                            .get(PropertyIds.VERSION_SERIES_ID);
+                    if (versionSeriesProp != null && versionSeriesProp.getFirstValue() instanceof String) {
+                        objectId = (String) versionSeriesProp.getFirstValue();
+                    }
+                }
+            }
+        }
+
         return getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
                 includeAllowableActions, includeRelationships, renditionFilter, includePolicyIds, includeACL, extension);
     }
@@ -332,15 +352,7 @@ public class VersioningServiceImpl extends AbstractAtomPubService implements Ver
     @Override
     public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
             Boolean major, String filter, ExtensionsData extension) {
-
-        ReturnVersion returnVersion = ReturnVersion.LATEST;
-        if ((major != null) && (major.booleanValue())) {
-            returnVersion = ReturnVersion.LASTESTMAJOR;
-        }
-
-        ObjectData object = getObjectInternal(repositoryId, IdentifierType.ID, objectId, returnVersion, filter,
-                Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension);
-
-        return object.getProperties();
+        return getObjectOfLatestVersion(repositoryId, objectId, versionSeriesId, major, filter, Boolean.FALSE,
+                IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, extension).getProperties();
     }
 }

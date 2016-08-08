@@ -594,6 +594,16 @@ package org.apache.chemistry.opencmis.commons;
  * <td>no</td>
  * <td>"false"</td>
  * </tr>
+ * <tr>
+ * <td>{@link #LATEST_VERSION_WITH_VERSION_SERIES_ID}</td>
+ * <td>Defines if getObjectOfLatestVersion should use the version series ID
+ * instead of the object ID<br>
+ * (Workaround for SharePoint 2010 and SharePoint 2013)</td>
+ * <td>AtomPub</td>
+ * <td>"true", "false"</td>
+ * <td>no</td>
+ * <td>"false"</td>
+ * </tr>
  * </table>
  */
 public final class SessionParameter {
@@ -746,6 +756,7 @@ public final class SessionParameter {
     public static final String INCLUDE_OBJECTID_URL_PARAM_ON_MOVE = "org.apache.chemistry.opencmis.workaround.includeObjectIdOnMove";
     public static final String OMIT_CHANGE_TOKENS = "org.apache.chemistry.opencmis.workaround.omitChangeTokens";
     public static final String ADD_NAME_ON_CHECK_IN = "org.apache.chemistry.opencmis.workaround.addNameOnCheckIn";
+    public static final String LATEST_VERSION_WITH_VERSION_SERIES_ID = "org.apache.chemistry.opencmis.workaround.getLatestVersionWithVersionSeriesId";
 
     // utility class
     private SessionParameter() {
