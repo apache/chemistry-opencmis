@@ -225,7 +225,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             try {
                 response.resetBuffer();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.setContentType(AbstractBrowserServiceCall.JSON_MIME_TYPE);
+                response.setContentType("text/html");
                 response.setCharacterEncoding(IOUtils.UTF8);
 
                 PrintWriter pw = response.getWriter();
