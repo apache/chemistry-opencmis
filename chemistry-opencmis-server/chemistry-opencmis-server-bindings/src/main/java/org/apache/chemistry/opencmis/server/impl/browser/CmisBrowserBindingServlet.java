@@ -76,6 +76,7 @@ import static org.apache.chemistry.opencmis.server.shared.Dispatcher.METHOD_POST
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -103,6 +104,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisUnauthorizedExceptio
 import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisVersioningException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
@@ -271,6 +273,24 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             } else {
                 printError(context, e, request, response);
             }
+        } catch (Throwable t) {
+            LOG.error(createLogMessage(t, request), t);
+
+            try {
+                response.resetBuffer();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType(AbstractBrowserServiceCall.JSON_MIME_TYPE);
+                response.setCharacterEncoding(IOUtils.UTF8);
+
+                PrintWriter pw = response.getWriter();
+                pw.print("{\"exception\":\"runtime\",\"message\": \"An error occurred!\"}");
+                pw.flush();
+            } catch (Exception te) {
+                // we tried to send an error message but it failed.
+                // there is nothing we can do...
+            }
+
+            throw t;
         } finally {
             // in any case close the content stream if one has been provided
             if (request instanceof POSTHttpServletRequestWrapper) {

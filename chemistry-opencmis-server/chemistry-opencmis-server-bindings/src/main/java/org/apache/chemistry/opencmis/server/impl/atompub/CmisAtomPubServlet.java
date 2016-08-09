@@ -77,6 +77,7 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
+import org.apache.chemistry.opencmis.server.impl.browser.AbstractBrowserServiceCall;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
@@ -96,6 +97,11 @@ import org.slf4j.LoggerFactory;
 public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(CmisAtomPubServlet.class);
+
+    private static final String OPENCMIS_CSS_STYLE = "<style>"
+            + "<!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
+            + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
+            + "HR {color:#3c78b5;height:1px;}--></style>";
 
     private static final long serialVersionUID = 1L;
 
@@ -212,6 +218,25 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             } else {
                 printError(e, request, response);
             }
+
+        } catch (Throwable t) {
+            LOG.error(createLogMessage(t, request), t);
+
+            try {
+                response.resetBuffer();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType(AbstractBrowserServiceCall.JSON_MIME_TYPE);
+                response.setCharacterEncoding(IOUtils.UTF8);
+
+                PrintWriter pw = response.getWriter();
+                writeHtmlErrorPage(pw, 500, "runtime", "An error occurred!", t);
+                pw.flush();
+            } catch (Exception te) {
+                // we tried to send an error message but it failed.
+                // there is nothing we can do...
+            }
+
+            throw t;
         } finally {
             // we are done.
             try {
@@ -354,39 +379,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             response.setCharacterEncoding(IOUtils.UTF8);
 
             PrintWriter pw = response.getWriter();
-
-            pw.print("<html><head><title>Apache Chemistry OpenCMIS - "
-                    + exceptionName
-                    + " error</title>"
-                    + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
-                    + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
-                    + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
-            pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
-            pw.print("<p><!--message-->");
-            StringEscapeUtils.ESCAPE_HTML4.translate(message, pw);
-            pw.print("<!--/message--></p>");
-
-            String st = ExceptionHelper.getStacktraceAsString(ex);
-            if (st != null) {
-                pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n<!--key-->stacktrace<!--/key><!--value-->"
-                        + st + "<!--/value-->\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
-            }
-
-            if (ex instanceof CmisBaseException) {
-                Map<String, String> additionalData = ((CmisBaseException) ex).getAdditionalData();
-                if (additionalData != null && !additionalData.isEmpty()) {
-                    pw.print("<hr noshade='noshade'/>Additional data:<br><br>");
-                    for (Map.Entry<String, String> e : additionalData.entrySet()) {
-                        pw.print("<!--key-->");
-                        StringEscapeUtils.ESCAPE_HTML4.translate(e.getKey(), pw);
-                        pw.print("<!--/key--> = <!--value-->");
-                        StringEscapeUtils.ESCAPE_HTML4.translate(e.getValue(), pw);
-                        pw.print("<!--/value--><br>");
-                    }
-                }
-            }
-
-            pw.print("</body></html>");
+            writeHtmlErrorPage(pw, statusCode, exceptionName, message, ex);
+            pw.flush();
         } catch (Exception e) {
             LOG.error(createLogMessage(ex, request), e);
             try {
@@ -395,5 +389,37 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 // there is nothing else we can do
             }
         }
+    }
+
+    protected void writeHtmlErrorPage(PrintWriter pw, int statusCode, String exceptionName, String message, Throwable t)
+            throws IOException {
+        pw.print("<html><head><title>Apache Chemistry OpenCMIS - " + exceptionName + " error</title>"
+                + OPENCMIS_CSS_STYLE + "</head><body>");
+        pw.print("<h1>HTTP Status " + statusCode + " - <!--exception-->" + exceptionName + "<!--/exception--></h1>");
+        pw.print("<p><!--message-->");
+        StringEscapeUtils.ESCAPE_HTML4.translate(message, pw);
+        pw.print("<!--/message--></p>");
+
+        String st = ExceptionHelper.getStacktraceAsString(t);
+        if (st != null) {
+            pw.print("<hr noshade='noshade'/><!--stacktrace--><pre>\n<!--key-->stacktrace<!--/key><!--value-->" + st
+                    + "<!--/value-->\n</pre><!--/stacktrace--><hr noshade='noshade'/>");
+        }
+
+        if (t instanceof CmisBaseException) {
+            Map<String, String> additionalData = ((CmisBaseException) t).getAdditionalData();
+            if (additionalData != null && !additionalData.isEmpty()) {
+                pw.print("<hr noshade='noshade'/>Additional data:<br><br>");
+                for (Map.Entry<String, String> e : additionalData.entrySet()) {
+                    pw.print("<!--key-->");
+                    StringEscapeUtils.ESCAPE_HTML4.translate(e.getKey(), pw);
+                    pw.print("<!--/key--> = <!--value-->");
+                    StringEscapeUtils.ESCAPE_HTML4.translate(e.getValue(), pw);
+                    pw.print("<!--/value--><br>");
+                }
+            }
+        }
+
+        pw.print("</body></html>");
     }
 }

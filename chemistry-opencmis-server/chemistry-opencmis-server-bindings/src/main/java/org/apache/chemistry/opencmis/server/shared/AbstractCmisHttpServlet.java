@@ -165,10 +165,10 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         return context;
     }
 
-    protected static String createLogMessage(Exception ex, HttpServletRequest request) {
+    protected static String createLogMessage(Throwable t, HttpServletRequest request) {
         StringBuilder sb = new StringBuilder(256);
 
-        sb.append(ex.getMessage());
+        sb.append(t.getMessage());
 
         sb.append(" (");
         sb.append(request.getMethod());
