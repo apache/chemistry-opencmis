@@ -77,7 +77,6 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
-import org.apache.chemistry.opencmis.server.impl.browser.AbstractBrowserServiceCall;
 import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.chemistry.opencmis.server.shared.ExceptionHelper;
@@ -175,8 +174,9 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-
         CallContext context = null;
+
+        boolean flush = true;
         try {
             // CSRF token check
             if (!METHOD_GET.equals(request.getMethod()) && !METHOD_HEAD.equals(request.getMethod())) {
@@ -209,13 +209,19 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\", charset=\"UTF-8\"");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
             } else if (e instanceof CmisPermissionDeniedException) {
-                if ((context == null) || (context.getUsername() == null)) {
+                if (context == null || (context.getUsername() == null)) {
                     response.setHeader("WWW-Authenticate", "Basic realm=\"CMIS\", charset=\"UTF-8\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization Required");
                 } else {
-                    response.sendError(getErrorCode((CmisPermissionDeniedException) e), e.getMessage());
+                    printError(e, request, response);
                 }
             } else {
+                // an IOException usually indicates that reading the request or
+                // sending the response failed
+                // flushing will probably fail and raise a new exception ->
+                // avoid flushing
+                flush = !(e instanceof IOException);
+
                 printError(e, request, response);
             }
 
@@ -234,15 +240,18 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
             } catch (Exception te) {
                 // we tried to send an error message but it failed.
                 // there is nothing we can do...
+                flush = false;
             }
 
             throw t;
         } finally {
             // we are done.
-            try {
-                response.flushBuffer();
-            } catch (IOException ioe) {
-                LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+            if (flush) {
+                try {
+                    response.flushBuffer();
+                } catch (IOException ioe) {
+                    LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+                }
             }
         }
     }

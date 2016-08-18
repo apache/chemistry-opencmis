@@ -221,6 +221,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             IOException {
         CallContext context = null;
 
+        boolean flush = true;
         try {
             // CSRF token check
             String method = request.getMethod();
@@ -271,6 +272,12 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                     printError(context, e, request, response);
                 }
             } else {
+                // an IOException usually indicates that reading the request or
+                // sending the response failed
+                // flushing will probably fail and raise a new exception ->
+                // avoid flushing
+                flush = !(e instanceof IOException);
+
                 printError(context, e, request, response);
             }
         } catch (Throwable t) {
@@ -288,6 +295,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             } catch (Exception te) {
                 // we tried to send an error message but it failed.
                 // there is nothing we can do...
+                flush = false;
             }
 
             throw t;
@@ -305,10 +313,12 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
             }
 
             // we are done.
-            try {
-                response.flushBuffer();
-            } catch (IOException ioe) {
-                LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+            if (flush) {
+                try {
+                    response.flushBuffer();
+                } catch (IOException ioe) {
+                    LOG.error("Could not flush resposne: {}", ioe.toString(), ioe);
+                }
             }
         }
     }
