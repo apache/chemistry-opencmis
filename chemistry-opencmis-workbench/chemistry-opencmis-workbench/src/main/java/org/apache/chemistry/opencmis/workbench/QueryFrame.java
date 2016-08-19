@@ -325,10 +325,11 @@ public class QueryFrame extends JFrame {
             long startTime = System.currentTimeMillis();
 
             int row = 0;
-            ItemIterable<QueryResult> page = results.getPage(maxHits);
+            ItemIterable<QueryResult> page = results;
             if (skipCount > 0) {
                 page = page.skipTo(skipCount);
             }
+            page = page.getPage(maxHits);
             for (QueryResult qr : page) {
                 rtm.setColumnCount(Math.max(rtm.getColumnCount(), qr.getProperties().size()));
 
