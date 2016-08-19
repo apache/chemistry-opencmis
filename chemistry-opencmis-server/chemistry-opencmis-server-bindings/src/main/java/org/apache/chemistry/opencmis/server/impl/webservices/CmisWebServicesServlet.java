@@ -39,6 +39,8 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CmisServiceFactory;
 import org.apache.chemistry.opencmis.server.impl.CmisRepositoryContextListener;
+import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
+import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.CsrfManager;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -74,6 +76,7 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
 
     private Map<String, String> docs;
 
+    private CallContextHandler callContextHandler;
     private CsrfManager csrfManager;
 
     @Override
@@ -93,6 +96,9 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
             cmisVersion = CmisVersion.CMIS_1_0;
         }
 
+        // initialize the call context handler
+        callContextHandler = AbstractCmisHttpServlet.loadCallContextHandler(config);
+
         // set up WSDL and XSD documents
         docs = new HashMap<String, String>();
 
@@ -106,6 +112,16 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
         csrfManager = new CsrfManager(config);
 
         super.init(config);
+    }
+
+    /**
+     * Returns the {@code CallContextHandler}.
+     * 
+     * @return the {@code CallContextHandler} or {@code null} if it is not
+     *         configured
+     */
+    protected CallContextHandler getCallContextHandler() {
+        return callContextHandler;
     }
 
     private String readFile(ServletConfig config, String path) throws ServletException {
@@ -176,10 +192,10 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
 
         String respDoc = doc;
         respDoc = BASE_PATTERN.matcher(respDoc).replaceAll(baseUrl.toString());
-        respDoc = CORE_PATTERN.matcher(respDoc)
-                .replaceAll((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("core").toString());
-        respDoc = MSG_PATTERN.matcher(respDoc)
-                .replaceAll((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("msg").toString());
+        respDoc = CORE_PATTERN.matcher(respDoc).replaceAll(
+                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("core").toString());
+        respDoc = MSG_PATTERN.matcher(respDoc).replaceAll(
+                (new UrlBuilder(baseUrl)).addPath("cmis").addParameter("msg").toString());
 
         PrintWriter pw = response.getWriter();
         pw.print(respDoc);
@@ -192,12 +208,14 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding(IOUtils.UTF8);
 
-        String urlEscaped = StringEscapeUtils
-                .escapeHtml4((new UrlBuilder(baseUrl)).addPath("cmis").addParameter("wsdl").toString());
+        String urlEscaped = StringEscapeUtils.escapeHtml4((new UrlBuilder(baseUrl)).addPath("cmis")
+                .addParameter("wsdl").toString());
 
         PrintWriter pw = response.getWriter();
 
-        pw.print("<html><head><title>Apache Chemistry OpenCMIS - CMIS " + cmisVersion.value() + " Web Services</title>"
+        pw.print("<html><head><title>Apache Chemistry OpenCMIS - CMIS "
+                + cmisVersion.value()
+                + " Web Services</title>"
                 + "<style><!--H1 {font-size:24px;line-height:normal;font-weight:bold;background-color:#f0f0f0;color:#003366;border-bottom:1px solid #3c78b5;padding:2px;} "
                 + "BODY {font-family:Verdana,arial,sans-serif;color:black;font-size:14px;} "
                 + "HR {color:#3c78b5;height:1px;}--></style></head><body>");
@@ -309,6 +327,7 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
      */
     protected void configureInterceptors(Bus bus) {
         bus.getInInterceptors().add(new SoapActionRemoveInterceptor());
+        bus.getInInterceptors().add(new CallContextHandlerInterceptor(getCallContextHandler()));
         bus.getInInterceptors().add(new UsernameTokenInterceptor());
     }
 

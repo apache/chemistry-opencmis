@@ -31,6 +31,14 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 
 /**
  * Call Context handler that handles basic authentication.
+ * 
+ * This handler assumes that the user credentials have either already checked
+ * (for example by a Servlet filter) or will be checked later in the CMIS
+ * implementation.
+ * 
+ * Checking the credentials before the request reaches the CMIS implementation
+ * is the preferred option because it prevents malicious clients early from
+ * flooding the server with useless data.
  */
 public class BasicAuthCallContextHandler implements CallContextHandler, Serializable {
 

@@ -41,7 +41,9 @@ public class ${projectPrefix}CmisServiceFactory extends AbstractServiceFactory {
 
     @Override
     public CmisService getService(CallContext context) {
-        // authentication can go here
+        // get the user name and password that the CallContextHandler has determined
+        // - if the user is null, this is either an anonymous request or the CallContextHandler configuration is wrong
+        // - the password may be null depending on the authentication method
         String user = context.getUsername();
         String password = context.getPassword();
 

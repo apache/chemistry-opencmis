@@ -18,17 +18,11 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
-import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.cxf.binding.soap.SoapMessage;
-import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.headers.Header;
-import org.apache.cxf.phase.Phase;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -39,10 +33,10 @@ import org.w3c.dom.NodeList;
  * This class emulates the behavior of the OpenCMIS server framework 0.13.0 and
  * earlier.
  */
-public class UsernameTokenInterceptor extends AbstractSoapInterceptor {
+public class UsernameTokenInterceptor extends AbstractCallContextInterceptor {
 
     public UsernameTokenInterceptor() {
-        super(Phase.PRE_INVOKE);
+        super();
     }
 
     protected static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
@@ -54,29 +48,28 @@ public class UsernameTokenInterceptor extends AbstractSoapInterceptor {
 
     @Override
     public void handleMessage(SoapMessage message) {
-        Header securityHeader = message.getHeader(WSSE_SECURITY);
-        if (securityHeader != null) {
-            if (!(securityHeader.getObject() instanceof Node)) {
-                throw new CmisRuntimeException("Cannot read Security header.");
+        // don't extract a user, if there is already one
+        if (getCurrentUser(message) == null) {
+            Header securityHeader = message.getHeader(WSSE_SECURITY);
+            if (securityHeader != null) {
+                if (!(securityHeader.getObject() instanceof Node)) {
+                    throw new CmisRuntimeException("Cannot read Security header.");
+                }
+
+                Node usernameTokenNode = getUsernameTokenNode((Node) securityHeader.getObject());
+                if (usernameTokenNode == null) {
+                    return;
+                }
+
+                String username = getUsername(usernameTokenNode);
+                if (username == null) {
+                    return;
+                }
+
+                String password = getPassword(usernameTokenNode);
+
+                setUserAndPassword(message, username, password);
             }
-
-            Node usernameTokenNode = getUsernameTokenNode((Node) securityHeader.getObject());
-            if (usernameTokenNode == null) {
-                return;
-            }
-
-            String username = getUsername(usernameTokenNode);
-            if (username == null) {
-                return;
-            }
-
-            String password = getPasswordText(usernameTokenNode);
-
-            Map<String, String> callContextMap = new HashMap<String, String>();
-            callContextMap.put(CallContext.USERNAME, username);
-            callContextMap.put(CallContext.PASSWORD, password);
-
-            message.getExchange().getInMessage().put(AbstractService.CALL_CONTEXT_MAP, callContextMap);
         }
     }
 
@@ -94,7 +87,7 @@ public class UsernameTokenInterceptor extends AbstractSoapInterceptor {
         return null;
     }
 
-    protected String getPasswordText(Node usernameTokenNode) {
+    protected String getPassword(Node usernameTokenNode) {
         Node node = findElement(usernameTokenNode, WSSE_NS, WSSE_PASSWORD);
 
         if (node != null) {

@@ -55,16 +55,7 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         super.init(config);
 
         // initialize the call context handler
-        callContextHandler = null;
-        String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
-        if (callContextHandlerClass != null) {
-            try {
-                callContextHandler = (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass)
-                        .newInstance();
-            } catch (Exception e) {
-                throw new ServletException("Could not load call context handler: " + e, e);
-            }
-        }
+        callContextHandler = loadCallContextHandler(config);
 
         // get service factory
         factory = CmisRepositoryContextListener.getServiceFactory(config.getServletContext());
@@ -75,6 +66,23 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
 
         // set up CSRF manager
         csrfManager = new CsrfManager(config);
+    }
+
+    /**
+     * Loads a {@code CallContextHandler} if it is configured in for this
+     * servlet.
+     */
+    public static CallContextHandler loadCallContextHandler(ServletConfig config) throws ServletException {
+        String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
+        if (callContextHandlerClass != null) {
+            try {
+                return (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass).newInstance();
+            } catch (Exception e) {
+                throw new ServletException("Could not load call context handler: " + e, e);
+            }
+        }
+
+        return null;
     }
 
     /**
