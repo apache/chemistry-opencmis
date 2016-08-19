@@ -1,0 +1,6 @@
+FROM cmis:document 
+FROM cmis:folder 
+FROM cmis:relationship 
+FORM cmis:policy 
+FROM cmis:item 
+FROM type1 AS a JOIN type2 AS b ON a.cmis:objectId = b.cmis:objectId 

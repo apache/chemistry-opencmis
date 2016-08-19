@@ -29,6 +29,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +43,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -60,7 +64,7 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.workbench.icons.CopyIcon;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.icons.QueryIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.IdRenderer;
@@ -74,19 +78,6 @@ public class QueryFrame extends JFrame {
 
     private static final String WINDOW_TITLE = "CMIS Query";
     private static final String DEFAULT_QUERY = "SELECT * FROM cmis:document";
-
-    private static final String[] QUERY_SNIPPETS = new String[] { //
-    "SELECT * FROM cmis:document", //
-            "SELECT * FROM cmis:folder", //
-            "SELECT cmis:objectId, cmis:name, SCORE() AS score FROM cmis:document WHERE CONTAINS('?')", //
-            "WHERE cmis:name LIKE '%'", //
-            "WHERE ? IN (?, ?, ?)", //
-            "WHERE IN_FOLDER('?')", //
-            "WHERE IN_TREE('?')", //
-            "WHERE ? = TIMESTAMP 'YYYY-MM-DDThh:mm:ss.sss[Z|+hh:mm|-hh:mm]'", //
-            "WHERE '?' = ANY ?", //
-            "ORDER BY cmis:name", //
-            "ORDER BY cmis:creationDate" };
 
     private final ClientModel model;
 
@@ -167,30 +158,35 @@ public class QueryFrame extends JFrame {
         inputPanel2.add(buttonPanel, BorderLayout.LINE_END);
 
         // snippets
-        final JPopupMenu snippetsPopup = new JPopupMenu();
-        for (final String s : QUERY_SNIPPETS) {
-            JMenuItem menuItem = new JMenuItem(s);
-            menuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    queryText.insert(s, queryText.getCaretPosition());
-                }
-            });
-            snippetsPopup.add(menuItem);
-        }
+        final JPopupMenu queryPopup = new JPopupMenu("Snippets");
+        queryPopup.add(createMenuGroup("Properties", readSnippets("properties.txt")));
+        queryPopup.add(createMenuGroup("Queries", readSnippets("queries.txt")));
+        queryPopup.add(createMenuGroup("SELECT", readSnippets("select.txt")));
+        queryPopup.add(createMenuGroup("FROM", readSnippets("from.txt")));
+        queryPopup.add(createMenuGroup("WHERE", readSnippets("where.txt")));
+        queryPopup.add(createMenuGroup("ORDER BY", readSnippets("orderby.txt")));
 
-        final JButton snippetButton = new JButton("Query Snippets", new CopyIcon(20, 20));
-        snippetButton.setFocusPainted(true);
-        snippetButton.setBorderPainted(false);
-        snippetButton.setContentAreaFilled(false);
-        snippetButton.addActionListener(new ActionListener() {
+        queryText.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                snippetsPopup.show(snippetButton, 0, snippetButton.getHeight());
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    queryPopup.show(e.getComponent(), e.getX(), e.getY());
+                }
             }
         });
-
-        inputPanel2.add(snippetButton, BorderLayout.LINE_START);
 
         // query time label
         queryTimeLabel = new JLabel("");
@@ -283,6 +279,48 @@ public class QueryFrame extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private List<String> readSnippets(String filename) {
+        InputStream stream = null;
+        try {
+            stream = this.getClass().getResourceAsStream("/query/" + filename);
+            if (stream != null) {
+                return IOUtils.readAllLinesAsList(stream);
+            }
+        } catch (IOException e) {
+            IOUtils.closeQuietly(stream);
+        }
+
+        return Collections.emptyList();
+    }
+
+    private JMenu createMenuGroup(String name, List<String> subs) {
+        JMenu result = new JMenu(name);
+
+        PopupMenuActionListener listener = new PopupMenuActionListener(queryText);
+
+        for (String text : subs) {
+            JMenuItem textItem = new JMenuItem(text);
+            textItem.addActionListener(listener);
+
+            result.add(textItem);
+        }
+
+        return result;
+    }
+
+    private static class PopupMenuActionListener implements ActionListener {
+        private final JTextArea textArea;
+
+        public PopupMenuActionListener(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            textArea.insert(((JMenuItem) e.getSource()).getText(), textArea.getCaretPosition());
+        }
     }
 
     private synchronized void doQuery() {

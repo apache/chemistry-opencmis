@@ -1,0 +1,6 @@
+WHERE cmis:name LIKE '%' 
+WHERE ? IN (?, ?, ?) 
+WHERE IN_FOLDER('?') 
+WHERE IN_TREE('?') 
+WHERE ? = TIMESTAMP 'YYYY-MM-DDThh:mm:ss.sss[Z|+hh:mm|-hh:mm]' 
+WHERE '?' = ANY ? 

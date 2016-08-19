@@ -1,0 +1,2 @@
+ORDER BY cmis:name
+ORDER BY cmis:creationDate

@@ -1,0 +1,2 @@
+SELECT * 
+SELECT cmis:objectId, cmis:name 

@@ -1,0 +1,3 @@
+SELECT * FROM cmis:document
+SELECT * FROM cmis:folder
+SELECT cmis:objectId, cmis:name, SCORE() AS score FROM cmis:document WHERE CONTAINS('?')
