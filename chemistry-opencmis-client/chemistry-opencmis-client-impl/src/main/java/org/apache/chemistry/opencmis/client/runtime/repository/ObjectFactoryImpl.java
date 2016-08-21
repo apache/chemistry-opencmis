@@ -262,8 +262,8 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
     @Override
     public ObjectType getTypeFromObjectData(ObjectData objectData) {
-        if ((objectData == null) || (objectData.getProperties() == null)
-                || (objectData.getProperties().getProperties() == null)) {
+        if (objectData == null || objectData.getProperties() == null
+                || objectData.getProperties().getProperties() == null) {
             return null;
         }
 
@@ -285,6 +285,23 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
     @SuppressWarnings("unchecked")
     protected <T> Property<T> convertProperty(ObjectType objectType, Collection<SecondaryType> secondaryTypes,
             PropertyData<T> pd) {
+
+        // handle invalid property IDs
+        if (pd.getId() == null || pd.getId().length() == 0) {
+            StringBuilder sb = null;
+            if (isNotEmpty(secondaryTypes)) {
+                sb = new StringBuilder(128);
+                sb.append(" or a secondary type of the object (");
+                addSecondaryTypeIds(secondaryTypes, sb);
+                sb.append(')');
+            }
+
+            throw new CmisRuntimeException(
+                    "Cannot convert a property because it has no ID! The property is supposed to be part of the type '"
+                            + objectType.getId() + "'" + (sb == null ? "" : sb.toString())
+                            + ". The value of this property is: " + pd.getValues());
+        }
+
         PropertyDefinition<T> definition = (PropertyDefinition<T>) objectType.getPropertyDefinitions().get(pd.getId());
 
         // search secondary types
@@ -322,10 +339,39 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
 
         if (definition == null) {
             // property without definition
-            throw new CmisRuntimeException("Property '" + pd.getId() + "' doesn't exist!");
+
+            StringBuilder sb = null;
+            if (isNotEmpty(secondaryTypes)) {
+                sb = new StringBuilder(128);
+                sb.append(" or any secondary type of the object (");
+                addSecondaryTypeIds(secondaryTypes, sb);
+                sb.append(')');
+            }
+
+            throw new CmisRuntimeException(
+                    "Cannot convert property '"
+                            + pd.getId()
+                            + "' because it does not exist in the object type. The property is supposed to be part of the type '"
+                            + objectType.getId() + "'" + (sb == null ? "" : sb.toString())
+                            + ". The value of this property is: " + pd.getValues());
         }
 
         return createProperty(definition, pd.getValues());
+    }
+
+    private void addSecondaryTypeIds(Collection<SecondaryType> secondaryTypes, StringBuilder sb) {
+        boolean first = true;
+        for (SecondaryType secondaryType : secondaryTypes) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(", ");
+            }
+
+            sb.append('\'');
+            sb.append(secondaryType.getId());
+            sb.append('\'');
+        }
     }
 
     @Override
@@ -340,7 +386,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
             throw new IllegalArgumentException("Object type has no property defintions!");
         }
 
-        if ((properties == null) || (properties.getProperties() == null)) {
+        if (properties == null || properties.getProperties() == null) {
             throw new IllegalArgumentException("Properties must be set!");
         }
 
