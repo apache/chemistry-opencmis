@@ -757,7 +757,8 @@ public class AclPermissionsTest extends AbstractServiceTest {
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, testUserAcl, null, AclPropagation.OBJECTONLY, null);
         switchCallContext("TestUser");
-        fVerSvc.checkOut(fRepositoryId, new Holder<String>(docId), null, new Holder<Boolean>(false));
+        Holder<String> idHolder = new Holder<String>(docId);
+        fVerSvc.checkOut(fRepositoryId, idHolder, null, new Holder<Boolean>(false));
 
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, null, testUserAcl, AclPropagation.OBJECTONLY, null);
@@ -765,7 +766,7 @@ public class AclPermissionsTest extends AbstractServiceTest {
         switchCallContext("TestUser");
         exceptionThrown = false;
         try {
-            fVerSvc.checkIn(fRepositoryId, new Holder<String>(docId), true, null, null, null, null, null, null, null);
+            fVerSvc.checkIn(fRepositoryId, idHolder, true, null, null, null, null, null, null, null);
         } catch (CmisPermissionDeniedException e) {
             exceptionThrown = true;
         }
@@ -775,14 +776,14 @@ public class AclPermissionsTest extends AbstractServiceTest {
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, testUserAcl, null, AclPropagation.OBJECTONLY, null);
         switchCallContext("TestUser");
-        fVerSvc.checkIn(fRepositoryId, new Holder<String>(docId), true, null, null, null, null, null, null, null);
+        fVerSvc.checkIn(fRepositoryId, idHolder, true, null, null, null, null, null, null, null);
 
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, null, testUserAcl, AclPropagation.OBJECTONLY, null);
 
         // writer looses write permission
         switchCallContext("Writer");
-        fVerSvc.checkOut(fRepositoryId, new Holder<String>(docId), null, new Holder<Boolean>(false));
+        fVerSvc.checkOut(fRepositoryId, idHolder, null, new Holder<Boolean>(false));
 
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, null, readWriteAcl, AclPropagation.OBJECTONLY, null);
@@ -790,7 +791,7 @@ public class AclPermissionsTest extends AbstractServiceTest {
         switchCallContext("Writer");
         exceptionThrown = false;
         try {
-            fVerSvc.checkIn(fRepositoryId, new Holder<String>(docId), true, null, null, null, null, null, null, null);
+            fVerSvc.checkIn(fRepositoryId, idHolder, true, null, null, null, null, null, null, null);
         } catch (CmisPermissionDeniedException e) {
             exceptionThrown = true;
         }
@@ -800,7 +801,7 @@ public class AclPermissionsTest extends AbstractServiceTest {
         switchCallContext("TestAdmin");
         fAclSvc.applyAcl(fRepositoryId, docId, readWriteAcl, null, AclPropagation.OBJECTONLY, null);
         switchCallContext("Writer");
-        fVerSvc.checkIn(fRepositoryId, new Holder<String>(docId), true, null, null, null, null, null, null, null);
+        fVerSvc.checkIn(fRepositoryId, idHolder, true, null, null, null, null, null, null, null);
 
         // TestUser has no permission at all
         switchCallContext("TestUser");

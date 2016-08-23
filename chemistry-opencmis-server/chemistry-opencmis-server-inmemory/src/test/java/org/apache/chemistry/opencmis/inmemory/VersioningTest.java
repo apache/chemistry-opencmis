@@ -456,6 +456,39 @@ public class VersioningTest extends AbstractServiceTest {
         assertEquals(3, allVersions.size());
 
     }
+    
+    @Test
+    public void testPwcId() {
+    	String verId = createDocument("PwcidTest", fRootFolderId, VersioningState.MAJOR);
+
+    	ObjectData version = fObjSvc.getObject(fRepositoryId, verId, "*", false, IncludeRelationships.NONE, null,
+    			false, false, null);
+    	String verSeriesId = getVersionSeriesId(verId, version.getProperties().getProperties());
+    	assertTrue(null != verSeriesId && verSeriesId.length() > 0);
+
+    	Holder<Boolean> contentCopied = new Holder<Boolean>();
+    	Holder<String> idHolder = new Holder<String>(verId); 
+    	fVerSvc.checkOut(fRepositoryId, idHolder, null, contentCopied);
+
+    	String checkinComment = "Checkin without content and properties.";
+    	try {
+    		Holder<String> pwcHolder = new Holder<String>(verSeriesId); 
+        	fVerSvc.checkIn(fRepositoryId, pwcHolder, true, null, null, checkinComment, null, null, null, null);
+    		fail("Check-in with version series id should not be possible");
+    	} catch (Exception ex) {
+    		assertTrue(ex instanceof CmisConstraintException);
+    		assert(ex.getMessage().contains("is not a private working copy"));
+    	}
+    	try {
+    		Holder<String> pwcHolder = new Holder<String>(verId); 
+        	fVerSvc.checkIn(fRepositoryId, pwcHolder, true, null, null, checkinComment, null, null, null, null);
+    		fail("Check-in with id of older version should not be possible");
+    	} catch (Exception ex) {
+    		assertTrue(ex instanceof CmisConstraintException);
+    		assert(ex.getMessage().contains("is not a private working copy"));
+    	}
+    	fVerSvc.checkIn(fRepositoryId, idHolder, true, null, null, checkinComment, null, null, null, null);
+    }
 
     private String[] createLevel1Folders() {
         final int num = 2;
@@ -634,7 +667,6 @@ public class VersioningTest extends AbstractServiceTest {
         ContentStream content2 = createContent('a');
         Properties newProps = fCreator.getUpdatePropertyList(VersionTestTypeSystemCreator.PROPERTY_ID,
                 "PropertyFromVersion2");
-        idHolder = new Holder<String>(verIdV1);
         // Test check-in and pass content and properties
         String checkinComment = "Checkin from Unit Test-2.";
         fVerSvc.checkIn(fRepositoryId, idHolder, true, newProps, content2, checkinComment, null, null, null, null);

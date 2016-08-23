@@ -336,7 +336,6 @@ public class QueryTestDataCreator {
         Holder<Boolean> contentCopied = new Holder<Boolean>(false);
         fVerSvc.checkOut(repositoryId, idHolder, null, contentCopied);
 
-        idHolder = new Holder<String>(verIdV1);
         // Test check-in and pass content and properties
         String checkinComment = "Here comes next version.";
         fVerSvc.checkIn(repositoryId, idHolder, true, propsV2, null, checkinComment, null, null, null, null);

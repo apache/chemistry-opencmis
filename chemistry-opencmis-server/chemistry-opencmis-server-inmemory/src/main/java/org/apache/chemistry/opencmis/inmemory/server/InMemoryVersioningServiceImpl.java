@@ -91,6 +91,13 @@ public class InMemoryVersioningServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
         VersionedDocument verDoc = testHasProperCheckedOutStatus(so, user);
+        
+        DocumentVersion pwc = verDoc.getPwc();
+        if (pwc == null || !pwc.getId().equals(objectId.getValue())) {
+            throw new CmisConstraintException("Error: Can't checkin, " + objectId
+            + " is not a private working copy.");        	
+        }
+
 
         // check if the contentStream is a usable object or ignore it otherwise
         // Note Browser binding sets an empty object
