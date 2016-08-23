@@ -39,11 +39,6 @@ public class CollectionPageIterator<T> extends AbstractIterator<T> {
         super(skipCount, pageFetcher);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.Iterator#hasNext()
-     */
     @Override
     public boolean hasNext() {
         Page<T> page = getCurrentPage();
@@ -59,11 +54,6 @@ public class CollectionPageIterator<T> extends AbstractIterator<T> {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.Iterator#next()
-     */
     @Override
     public T next() {
         Page<T> page = getCurrentPage();

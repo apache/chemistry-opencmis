@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.runtime.util;
 
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
 
 /**
  * Iterable for a CMIS Collection Page.
@@ -41,6 +42,11 @@ public class CollectionPageIterable<T> extends AbstractIterable<T> {
      */
     protected CollectionPageIterable(long position, AbstractPageFetcher<T> pageFetcher) {
         super(position, pageFetcher);
+    }
+
+    @Override
+    public ItemIterable<T> skipTo(long position) {
+        return new CollectionPageIterable<T>(position, getPageFetcher());
     }
 
     @Override
