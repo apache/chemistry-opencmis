@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.inmemory.ObjectServiceTest.ObjectTestTypeSystemCreator;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
+import org.apache.chemistry.opencmis.inmemory.content.ObjectGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

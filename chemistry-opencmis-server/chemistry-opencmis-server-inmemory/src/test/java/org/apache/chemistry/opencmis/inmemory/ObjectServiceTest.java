@@ -83,12 +83,12 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.BulkUpdateObjectId
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyIntegerDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
+import org.apache.chemistry.opencmis.inmemory.content.ObjectGenerator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ContentStreamDataImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.RenditionUtil;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
 import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

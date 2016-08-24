@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.commons.server.CmisService;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.ConfigConstants;
 import org.apache.chemistry.opencmis.inmemory.ConfigurationSettings;
+import org.apache.chemistry.opencmis.inmemory.content.ObjectGenerator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerFactory;
@@ -63,7 +64,6 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.StoreManagerImpl;
 import org.apache.chemistry.opencmis.server.async.impl.AbstractAsyncServiceFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.server.support.wrapper.ConformanceCmisServiceWrapper;
-import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
