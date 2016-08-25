@@ -371,7 +371,7 @@ public class LoremIpsumTest {
     @Test
     public void testGenerateLoreIpsumGerman() throws Exception {
         LOG.debug("Generate new Lore Ipsum Ferry Tale: ");
-        InputStream is = this.getClass().getResourceAsStream("/HaenselUndGretel.txt");
+        InputStream is = this.getClass().getResourceAsStream("/Apache-License-2.0.txt");
 
         // read stream into a string
         final char[] buffer = new char[0x10000];
