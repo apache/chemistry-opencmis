@@ -40,12 +40,12 @@
 
     <build>
         <resources>
-          <resource>
+            <resource>
             <directory>${basedir}/src/main/resources</directory>
-          </resource>
-          <resource>
-            <directory>${project.build.directory}/generated-resources</directory>
-          </resource>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
         </resources>
         <pluginManagement>
             <plugins>
@@ -88,41 +88,41 @@
                 </configuration>
             </plugin>
             <plugin>
-                 <artifactId>maven-antrun-plugin</artifactId>
-                 <executions>
-                     <execution>
-                         <phase>generate-resources</phase>
-                         <configuration>
-                             <target>
-                                 <property name="version" value="${maven.version}" />
-                                 <property name="timestamp" value="${timestamp}" />
-                                 <property name="revision" value="${buildNumber}" />
-                                 <property name="basedir" value="${maven.basedir}" />
-                                 <property name="targetdir" value="${project.build.directory}" />
-                                 <property name="workbench.jar" value="${project.artifactId}-${project.version}.${project.packaging}" />
-                                 
-                                 <!-- build timestamp -->
-                                 <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}</echo>
-                                 
-                                 <!-- start scripts -->
-                                 <mkdir dir="${targetdir}/start" />
-                                 <copy todir="${targetdir}/start" overwrite="true">
-                                     <fileset dir="${basedir}/src/main/start" />
-                                 </copy>
-                                 <replace dir="${targetdir}/start">
-                                     <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
-                                     <replacefilter token="@version@" value="Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}" />
-                                     <replacefilter token="@versionnumber@" value="${project.version}" />
-                                 </replace>
-                                 <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <property name="version" value="${maven.version}" />
+                                <property name="timestamp" value="${timestamp}" />
+                                <property name="revision" value="${buildNumber}" />
+                                <property name="basedir" value="${maven.basedir}" />
+                                <property name="targetdir" value="${project.build.directory}" />
+                                <property name="workbench.jar" value="${project.artifactId}-${project.version}.${project.packaging}" />
+
+                                <!-- build timestamp -->
+                                <echo file="${targetdir}/generated-resources/META-INF/build-timestamp.txt">Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}</echo>
+
+                                <!-- start scripts -->
+                                <mkdir dir="${targetdir}/start" />
+                                <copy todir="${targetdir}/start" overwrite="true">
+                                    <fileset dir="${basedir}/src/main/start" />
+                                </copy>
+                                <replace dir="${targetdir}/start">
+                                    <replacefilter token="@workbench.jar@" value="${workbench.jar}" />
+                                    <replacefilter token="@version@" value="Version: ${project.version} / Revision: ${revision} / Build: ${timestamp}" />
+                                    <replacefilter token="@versionnumber@" value="${project.version}" />
+                                </replace>
+                                <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
                              </target>
-                         </configuration>
-                         <goals>
-                             <goal>run</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-            </plugin>                  
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -168,48 +168,8 @@
                                 </descriptor>  
                             </descriptors>
                         </configuration>
-                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo.webstart</groupId>
-                <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jnlp-inline</goal>
-                        </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <libPath>lib</libPath>
-                    <jnlp>
-                        <mainClass>org.apache.chemistry.opencmis.workbench.Workbench</mainClass>
-                    </jnlp>
-                    <pack200>true</pack200>
-                    <gzip>true</gzip>
-
-                    <sign>
-                        <keystore>${project.build.directory}/keystore</keystore>
-                        <keypass>password</keypass>
-                        <storepass>password</storepass>
-                        <alias>webstart</alias>
-
-                        <validity>365</validity>
-                        <dnameCn>OpenCMIS Development Team</dnameCn>
-                        <dnameOu>Apache Chemistry OpenCMIS</dnameOu>
-                        <dnameO>The Apache Software Foundation</dnameO>
-
-                        <verify>true</verify>
-
-                        <keystoreConfig>
-                            <delete>true</delete>
-                            <gen>true</gen>
-                        </keystoreConfig>
-                    </sign>
-
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -280,36 +240,36 @@
         during releases
     -->
     <profiles>
-       <profile>
-           <id>apache-release</id>
-           <activation>
-               <activeByDefault>false</activeByDefault>
-           </activation>
-           <build>
-               <plugins>
-                   <plugin>
-                      <artifactId>maven-assembly-plugin</artifactId>
-                      <inherited>false</inherited>
-                      <executions>
-                          <execution>
-                              <id>pack-workbench</id>
-                              <goals>
-                                  <goal>single</goal>
-                              </goals>
-                              <phase>package</phase>
-                              <configuration>
-                                  <attach>true</attach>
-                                  <descriptors>
-                                      <descriptor>
-                                        src/main/assembly/workbench-assembly.xml
-                                      </descriptor>
-                                  </descriptors>
-                              </configuration>
-                          </execution>
-                      </executions>
-                  </plugin>
-              </plugins>
-           </build>
-       </profile>
-   </profiles>
+        <profile>
+            <id>apache-release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>pack-workbench</id>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <attach>true</attach>
+                                    <descriptors>
+                                        <descriptor>
+                                            src/main/assembly/workbench-assembly.xml
+                                        </descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

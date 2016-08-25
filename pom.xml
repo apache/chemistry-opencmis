@@ -431,22 +431,46 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
+                <version>0.12</version>
                 <configuration>
+                    <licenses>
+                        <license implementation="org.apache.rat.analysis.license.FullTextMatchingLicense">
+                            <licenseFamilyCategory>OASIS</licenseFamilyCategory>
+                            <licenseFamilyName>OASISOpen</licenseFamilyName>
+                            <notes></notes>
+                            <fullText>.*OASIS Open.*</fullText>
+                        </license>
+                    </licenses>
+                    <licenseFamilies>
+                        <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily"/>
+                        <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+                            <familyName>OASISOpen</familyName>
+                        </licenseFamily>
+                    </licenseFamilies>
                     <excludes>
-                        <exclude>.pmd</exclude>
-                        <exclude>**/*.xsd</exclude>
+                        <!-- general -->
                         <exclude>**/*.log</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>/src/main/resources/META-INF/services/**/*</exclude>
+                        <exclude>/src/main/webapp/WEB-INF/classes/META-INF/**/*</exclude>
+                        <!-- client -->
+                        <exclude>/src/main/assembly/client-with-dependencies-assembly-notice.txt</exclude>
+                        <!-- archetype -->
+                        <exclude>/src/main/resources/archetype-resources/**/*</exclude>
+                        <exclude>/src/test/resources/projects/server/*</exclude>
+                        <!-- workbench -->
+                        <exclude>/src/main/resources/META-INF/README-cmis-workbench.txt</exclude>
+                        <exclude>**/info.plist</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
         <extensions>
-             <extension>
-                 <groupId>com.google.code.maven-svn-wagon</groupId>
-                 <artifactId>maven-svn-wagon</artifactId>
-                 <version>1.4</version>
-             </extension>
+            <extension>
+                <groupId>com.google.code.maven-svn-wagon</groupId>
+                <artifactId>maven-svn-wagon</artifactId>
+                <version>1.4</version>
+            </extension>
         </extensions>
     </build>
 
