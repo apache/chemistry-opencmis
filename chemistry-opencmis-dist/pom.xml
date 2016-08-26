@@ -91,13 +91,6 @@
         <!-- Used for server-webapps-assembly.xml -->
 
         <dependency>
-            <artifactId>chemistry-opencmis-test-browser-app</artifactId>
-            <groupId>org.apache.chemistry.opencmis</groupId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
             <artifactId>chemistry-opencmis-server-fileshare</artifactId>
             <groupId>org.apache.chemistry.opencmis</groupId>
             <version>${project.version}</version>
