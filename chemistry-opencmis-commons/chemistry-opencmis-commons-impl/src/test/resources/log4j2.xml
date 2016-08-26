@@ -19,7 +19,7 @@
 -->
 <Configuration status="warn">
 	<Appenders>
-		<RollingFile name="FILE" fileName="test.log" filePattern="test-%i.log" append="false">
+		<RollingFile name="FILE" fileName="target/test.log" filePattern="test-%i.log" append="false">
 			<PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n" />
 			<SizeBasedTriggeringPolicy size="100KB" />
 			<DefaultRolloverStrategy max="1" />

@@ -20,7 +20,7 @@
 <!-- InMemory logs -->
 <Configuration status="warn">
 	<Appenders>
-		<RollingFile name="FILE" fileName="fit-webapp.log" filePattern="fit-webapp-%i.log" append="true">
+		<RollingFile name="FILE" fileName="target/fit-webapp.log" filePattern="fit-webapp-%i.log" append="true">
 			<PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n" />
 			<SizeBasedTriggeringPolicy size="100KB" />
 			<DefaultRolloverStrategy max="10" />
