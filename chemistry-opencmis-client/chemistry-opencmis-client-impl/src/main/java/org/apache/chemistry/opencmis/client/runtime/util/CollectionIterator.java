@@ -30,10 +30,7 @@ import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher.Pag
 public class CollectionIterator<T> extends AbstractIterator<T> {
 
     /**
-     * Construct
-     *
-     * @param skipCount
-     * @param pageFetcher
+     * Constructor.
      */
     public CollectionIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
         super(skipCount, pageFetcher);

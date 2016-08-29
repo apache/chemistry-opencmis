@@ -26,13 +26,12 @@ import java.io.Serializable;
  * <p>
  * Each level of the hierarchy could use a different caching strategy. The cache
  * is initialize by defining the classes that handle the caching for one level.
- * These classes must implement the {@link CacheLevel} interface.<br/>
- * <br/>
+ * These classes must implement the {@link CacheLevel} interface.<br>
+ * <br>
  * Level configuration string format: "
- * <code>&lt;class name&gt; [param1=value1,param2=value2,...]</code>".<br/>
+ * {@code <class name> [param1=value1,param2=value2,...]}".<br>
  * For example:
- * <code>org.apache.opencmis.client.bindings.cache.impl.MapCacheLevelImpl capacity=10</code>
- * <br/>
+ * {@code org.apache.opencmis.client.bindings.cache.impl.MapCacheLevelImpl capacity=10}
  * </p>
  * 
  * @see CacheLevel
@@ -62,8 +61,8 @@ public interface Cache extends Serializable {
      * 
      * @param keys
      *            the keys
-     * @return the object or
-     *         <code>null</code> if the branch or leaf doesn't exist
+     * @return the object or <code>null</code> if the branch or leaf doesn't
+     *         exist
      */
     Object get(String... keys);
 
@@ -79,7 +78,7 @@ public interface Cache extends Serializable {
      * Removes all entries from the cache.
      */
     void removeAll();
-    
+
     /**
      * Checks if a given key is in the cache.
      * 
@@ -87,7 +86,7 @@ public interface Cache extends Serializable {
      *            the keys of the branch or leaf
      * 
      * @return the index of the first key part that is not in the cache or
-     *         <code>keys.length</code> if the object is in the cache
+     *         {@code keys.length} if the object is in the cache
      */
     int check(String... keys);
 

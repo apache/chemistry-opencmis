@@ -39,19 +39,22 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 /**
  * Default implementation of a session factory. Used by unit tests or
  * applications that depend directly on runtime implementation.
- * <p>
- * <code>
+ * 
+ * <pre>
+ * {@code
  * SessionFactory sf = new SessionFactoryImpl();<br>
  * Session s = sf.createSession(...);
- * </code>
+ * }
+ * </pre>
  * <p>
  * Alternative factory lookup methods:
- * <p>
- * <p>
- * <code>
- * Context ctx = new DefaultContext();<br>
+ * 
+ * <pre>
+ * {@code
+ * Context ctx = new DefaultContext();<
  * SessionFactory sf = ctx.lookup(jndi_key);
- * </code>
+ * }
+ * </pre>
  */
 public class SessionFactoryImpl implements SessionFactory, Serializable {
 
@@ -106,9 +109,9 @@ public class SessionFactoryImpl implements SessionFactory, Serializable {
 
     /**
      * Returns all repositories that are available at the endpoint. See
-     * {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache)}
+     * {@link #createSession(Map, ObjectFactory, AuthenticationProvider, Cache, TypeDefinitionCache)}
      * for parameter details. The parameter
-     * {@code SessionParameter.REPOSITORY_ID} should not be set.
+     * {@code SessionParameter#REPOSITORY_ID} should not be set.
      */
     public List<Repository> getRepositories(Map<String, String> parameters, ObjectFactory objectFactory,
             AuthenticationProvider authenticationProvider, Cache cache, TypeDefinitionCache typeDefCache) {

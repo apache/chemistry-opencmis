@@ -38,7 +38,6 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderData;
 import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
-import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionList;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
@@ -219,13 +218,8 @@ public class ObjectGenerator {
     }
 
     /**
-     * retrieve the index-th folder from given level of the hierarchy starting
-     * at rootId
-     * 
-     * @param rootId
-     * @param level
-     * @param index
-     * @return
+     * Retrieves the index-th folder from given level of the hierarchy starting
+     * at rootId.
      */
     public String getFolderId(String rootId, int level, int index) {
         String objectId = rootId;
@@ -244,13 +238,12 @@ public class ObjectGenerator {
     }
 
     /**
-     * retrieve the index-th document from given folder
+     * Retrieves the index-th document from given folder.
      * 
      * @param folderId
      *            folder to retrieve document from
      * @param index
      *            index of document to retrieve from this folder
-     * @return
      */
     public String getDocumentId(String folderId, int index) {
         String docId = null;
@@ -276,25 +269,21 @@ public class ObjectGenerator {
     }
 
     /**
-     * return the total number of documents created
-     * 
-     * @return
+     * Returns the total number of documents created.
      */
     public int getDocumentsInTotal() {
         return fDocumentsInTotalCount;
     }
 
     /**
-     * return the total number of folders created
-     * 
-     * @return
+     * Returns the total number of folders created.
      */
     public int getFoldersInTotal() {
         return fFoldersInTotalCount;
     }
 
     /**
-     * return the total number of objects created
+     * Returns the total number of objects created.
      */
     public int getObjectsInTotal() {
         return fDocumentsInTotalCount + fFoldersInTotalCount;
@@ -363,7 +352,7 @@ public class ObjectGenerator {
             Properties props = createFolderProperties(i, level);
             id = fObjSvc.createFolder(fRepositoryId, props, parentId, null, null, null, null);
             if (level == 0) {
-            	fTopLevelFoldersCreated.add(id);
+                fTopLevelFoldersCreated.add(id);
             }
 
             if (id != null) {
@@ -416,8 +405,8 @@ public class ObjectGenerator {
             }
         }
 
-        id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies,
-        		addACEs, removeACEs, extension);
+        id = fObjSvc.createDocument(fRepositoryId, props, folderId, contentStream, versioningState, policies, addACEs,
+                removeACEs, extension);
 
         if (null == id) {
             LOG.error("createDocument failed.");
@@ -435,12 +424,12 @@ public class ObjectGenerator {
 
         // delete recursively all folders from first level
         for (String id : fTopLevelFoldersCreated) {
-        	fObjSvc.deleteTree(fRepositoryId, id, true, UnfileObject.DELETE, true, null);
+            fObjSvc.deleteTree(fRepositoryId, id, true, UnfileObject.DELETE, true, null);
         }
     }
 
     private void deleteObject(String objectId) {
-    	fObjSvc.deleteObject(fRepositoryId, objectId, true, null);
+        fObjSvc.deleteObject(fRepositoryId, objectId, true, null);
     }
 
     public ContentStream createContentLoremIpsumHtml() {
@@ -659,9 +648,9 @@ public class ObjectGenerator {
     }
 
     public void createTypes(TypeDefinitionList typeDefList) {
-        for (TypeDefinition td : typeDefList.getList()) {
-            // TODO: enable this if available!
-            // fRepSvc.createTypeDefinition(fRepositoryId, td);
-        }
+        // for (TypeDefinition td : typeDefList.getList()) {
+        // TODO: enable this if available!
+        // fRepSvc.createTypeDefinition(fRepositoryId, td);
+        // }
     }
 }

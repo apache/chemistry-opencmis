@@ -73,7 +73,7 @@ public class ContentStreamHashImpl implements ContentStreamHash {
      * 
      * @param algorithm
      *            the algorithm
-     * @param hash
+     * @param hashStr
      *            the hash value
      */
     public ContentStreamHashImpl(String algorithm, String hashStr) {

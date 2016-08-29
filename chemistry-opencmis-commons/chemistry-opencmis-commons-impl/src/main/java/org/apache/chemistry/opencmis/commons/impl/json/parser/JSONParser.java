@@ -77,9 +77,7 @@ public class JSONParser {
      * Reset the parser to the initial state with a new character reader.
      * 
      * @param in
-     *            - The new character reader.
-     * @throws IOException
-     * @throws JSONParseException
+     *            the new character reader
      */
     public void reset(Reader in) {
         lexer.yyreset(in);
@@ -118,14 +116,10 @@ public class JSONParser {
      * 
      * @param in
      * @param containerFactory
-     *            - Use this factory to createyour own JSON object and JSON
+     *            - Use this factory to create your own JSON object and JSON
      *            array containers.
-     * @return Instance of the following: org.json.simple.JSONObject,
-     *         org.json.simple.JSONArray, java.lang.String, java.lang.Number,
-     *         java.lang.Boolean, null
-     * 
-     * @throws IOException
-     * @throws JSONParseException
+     * @return Instance of the following: JSONObject, JSONArray,
+     *         java.lang.String, java.lang.Number, java.lang.Boolean, null
      */
     @SuppressWarnings("unchecked")
     public Object parse(Reader in, ContainerFactory containerFactory) throws IOException, JSONParseException {

@@ -80,14 +80,15 @@ import org.slf4j.LoggerFactory;
  * unlock the state of the repository. It is very important that the caller
  * acquiring the lock enforces an unlock under all circumstances. Typical code
  * is:
- * <p>
  * 
  * <pre>
+ * {@code
  * ObjectStoreImpl os = ... ;
  * try {
  *     os.lock();
  * } finally {
  *     os.unlock();
+ * }
  * }
  * </pre>
  * 
@@ -465,7 +466,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
             if (key.equals(PropertyIds.SECONDARY_OBJECT_TYPE_IDS)) {
                 properties.put(key, value); // preserve it even if it is empty!
-            } else  if (null == value || value.getValues() == null || value.getFirstValue() == null) {
+            } else if (null == value || value.getValues() == null || value.getFirstValue() == null) {
                 // delete property
                 properties.remove(key);
             } else {
@@ -505,12 +506,10 @@ public class ObjectStoreImpl implements ObjectStore {
                     if (so instanceof Relationship && so.getTypeId().equals(typeId)) {
                         Relationship ro = (Relationship) so;
                         if (ro.getSourceObjectId().equals(objectId)
-                                && (RelationshipDirection.EITHER == direction 
-                                    || RelationshipDirection.SOURCE == direction)) {
+                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.SOURCE == direction)) {
                             res.add(so);
                         } else if (ro.getTargetObjectId().equals(objectId)
-                                && (RelationshipDirection.EITHER == direction 
-                                    || RelationshipDirection.TARGET == direction)) {
+                                && (RelationshipDirection.EITHER == direction || RelationshipDirection.TARGET == direction)) {
                             res.add(so);
                         }
                     }
@@ -543,8 +542,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, 
-            String principalId) {
+    public Acl applyAcl(StoredObject so, Acl addAces, Acl removeAces, AclPropagation aclPropagation, String principalId) {
         if (aclPropagation == AclPropagation.OBJECTONLY || !(so instanceof Folder)) {
             return applyAcl(so, addAces, removeAces);
         } else {
@@ -662,8 +660,7 @@ public class ObjectStoreImpl implements ObjectStore {
     }
 
     @Override
-    public ChildrenResult getChildren(Folder folder, int maxItemsParam, int skipCountParam, String user, 
-            boolean usePwc) {
+    public ChildrenResult getChildren(Folder folder, int maxItemsParam, int skipCountParam, String user, boolean usePwc) {
         List<Fileable> children = getChildren(folder, user, usePwc);
         sortFolderList(children);
 
@@ -761,10 +758,10 @@ public class ObjectStoreImpl implements ObjectStore {
                 throw new CmisInvalidArgumentException("Root folder cannot be renamed.");
             }
             if (so.getName().equals(newName)) {
-            	return;
+                return;
             }
             if (so instanceof Fileable) {
-                for (String folderId : ((Fileable)so).getParentIds()) {
+                for (String folderId : ((Fileable) so).getParentIds()) {
                     Folder folder = (Folder) getObjectById(folderId);
                     if (hasChild(folder, newName)) {
                         throw new CmisNameConstraintViolationException("Cannot rename object to " + newName
@@ -1058,7 +1055,7 @@ public class ObjectStoreImpl implements ObjectStore {
             } else if (offset <= 0 && length < 0) {
                 return contentStream;
             } else {
-                return ((ContentStreamDataImpl)contentStream).getCloneWithLimits(offset, length);
+                return ((ContentStreamDataImpl) contentStream).getCloneWithLimits(offset, length);
             }
         } else {
             throw new CmisInvalidArgumentException("Cannot set content, object does not implement interface Content.");
@@ -1075,7 +1072,8 @@ public class ObjectStoreImpl implements ObjectStore {
                 newContent = null;
             } else {
                 boolean useFakeContentStore = so.getTypeId().equals(DefaultTypeSystemCreator.BIG_CONTENT_FAKE_TYPE);
-                newContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB, useFakeContentStore);
+                newContent = new ContentStreamDataImpl(MAX_CONTENT_SIZE_KB == null ? 0 : MAX_CONTENT_SIZE_KB,
+                        useFakeContentStore);
                 String fileName = contentStream.getFileName();
                 if (null == fileName || fileName.length() <= 0) {
                     fileName = so.getName(); // use name of document as fallback
@@ -1120,7 +1118,7 @@ public class ObjectStoreImpl implements ObjectStore {
             throw new CmisInvalidArgumentException("Cannot set content, object does not implement interface Content.");
         }
     }
-    
+
     @Override
     public List<RenditionData> getRenditions(StoredObject so, String renditionFilter, long maxItems, long skipCount) {
 

@@ -137,10 +137,6 @@ public class AtomEntryWriter {
 
     /**
      * Writes the entry to an output stream.
-     * 
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
      */
     public void write(OutputStream out) throws IOException {
         XmlSerializer writer = XMLUtils.createWriter(out);

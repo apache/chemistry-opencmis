@@ -31,11 +31,10 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 
 /**
- * interface to a repository implementation. This interface is the entry point
+ * Interface to a repository implementation. This interface is the entry point
  * to a repository that can persist CMIS objects. Using this interface the type
  * information can be retrieved or set, a repository can be created or for a
  * given repository the store can be retrieved.
- * 
  */
 public interface StoreManager {
 
@@ -96,7 +95,8 @@ public interface StoreManager {
      *            true if for CMIS version 1.1 false if for 1.0
      * @return map with type definition
      */
-    Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions, boolean cmis11);
+    Collection<TypeDefinitionContainer> getTypeDefinitionList(String repositoryId, boolean includePropertyDefinitions,
+            boolean cmis11);
 
     /**
      * Retrieve a type definition for a give repository and type id.
@@ -158,7 +158,7 @@ public interface StoreManager {
     /**
      * Retrieve the repository information for a repository.
      * 
-     * @param CallContext
+     * @param context
      *            call context of the corresponding call
      * @param repositoryId
      *            id of repository
@@ -219,8 +219,8 @@ public interface StoreManager {
      *            items to skip
      * @return list of objects matching the query
      */
-    ObjectList query(CallContext callContext, String user, String repositoryId, String statement, Boolean searchAllVersions,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            BigInteger maxItems, BigInteger skipCount);
+    ObjectList query(CallContext callContext, String user, String repositoryId, String statement,
+            Boolean searchAllVersions, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, BigInteger maxItems, BigInteger skipCount);
 
 }

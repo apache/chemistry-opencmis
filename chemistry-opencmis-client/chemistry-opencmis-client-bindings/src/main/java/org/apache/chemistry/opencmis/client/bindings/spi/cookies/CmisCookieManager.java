@@ -22,7 +22,6 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.cookies;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -70,11 +69,11 @@ public class CmisCookieManager implements Serializable {
     }
 
     /**
-     * Searchs and gets all cookies in the cache by the specified uri in the
+     * Searches and gets all cookies in the cache by the specified URL in the
      * request header.
      * 
-     * @param uri
-     *            the specified uri to search for
+     * @param url
+     *            the specified URL to search for
      * @param requestHeaders
      *            a list of request headers
      * @return a map that record all such cookies, the map is unchangeable
@@ -141,14 +140,12 @@ public class CmisCookieManager implements Serializable {
     }
 
     /**
-     * Sets cookies according to uri and responseHeaders
+     * Sets cookies according to URL and responseHeaders
      * 
-     * @param uri
-     *            the specified uri
+     * @param url
+     *            the specified URL
      * @param responseHeaders
      *            a list of request headers
-     * @throws IOException
-     *             if some error of I/O operation occurs
      */
     public void put(String url, Map<String, List<String>> responseHeaders) {
         if (url == null || responseHeaders == null) {

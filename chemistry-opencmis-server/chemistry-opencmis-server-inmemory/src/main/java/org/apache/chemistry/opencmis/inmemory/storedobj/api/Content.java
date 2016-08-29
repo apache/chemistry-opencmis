@@ -22,32 +22,26 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
 /**
  * Interface to represent a content stream according to the CMIS spec.
- *
  */
 public interface Content {
 
     /**
-     * return true if this object has content or false if there is no content
-     * attached.
+     * Returns {@code true} if this object has content or false if there is no
+     * content attached.
      * 
      * @return true if has content otherwise false
      */
     boolean hasContent();
 
     /**
-     * Retrieve the content of a document.
-     * 
-     * @param offset
-     *            offset in content stream
-     * @param length
-     *            length of content to return
+     * Retrieves the content of a document.
      * 
      * @return object containing mime-type, length and a stream with content
      */
     ContentStream getContent();
 
     /**
-     * Assign content to a document. Existing content gets overwritten. The
+     * Assigns content to a document. Existing content gets overwritten. The
      * document is not yet persisted in the new state.
      * 
      * @param content

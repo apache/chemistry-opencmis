@@ -30,10 +30,10 @@ import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParseException
 import org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser;
 
 /**
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public final class JSONValue {
 
@@ -44,13 +44,12 @@ public final class JSONValue {
      * Parse JSON text into java object from the input source. Please use
      * parseWithException() if you don't want to ignore the exception.
      * 
-     * @see org.json.simple.parser.JSONParser#parse(Reader)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser#parse(Reader)
      * @see #parseWithException(Reader)
      * 
      * @param in
-     * @return Instance of the following: org.json.simple.JSONObject,
-     *         org.json.simple.JSONArray, java.lang.String, java.lang.Number,
-     *         java.lang.Boolean, null
+     * @return Instance of the following: JSONObject, JSONArray,
+     *         java.lang.String, java.lang.Number, java.lang.Boolean, null
      * 
      */
     public static Object parse(Reader in) {
@@ -70,15 +69,11 @@ public final class JSONValue {
     /**
      * Parse JSON text into java object from the input source.
      * 
-     * @see org.json.simple.parser.JSONParser
+     * @see org.apache.chemistry.opencmis.commons.impl.json.parser.JSONParser
      * 
      * @param in
-     * @return Instance of the following: org.json.simple.JSONObject,
-     *         org.json.simple.JSONArray, java.lang.String, java.lang.Number,
-     *         java.lang.Boolean, null
-     * 
-     * @throws IOException
-     * @throws JSONParseException
+     * @return Instance of the following: JSONObject, JSONArray,
+     *         java.lang.String, java.lang.Number, java.lang.Boolean, null
      */
     public static Object parseWithException(Reader in) throws IOException, JSONParseException {
         JSONParser parser = new JSONParser();
@@ -101,11 +96,13 @@ public final class JSONValue {
      * first parameter, use JSONObject.writeJSONString(Map, Writer) or
      * JSONArray.writeJSONString(List, Writer) instead.
      * 
-     * @see org.json.simple.JSONObject#writeJSONString(Map, Writer)
-     * @see org.json.simple.JSONArray#writeJSONString(List, Writer)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONObject#writeJSONString(Map,
+     *      Writer)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONArray#writeJSONString(List,
+     *      Writer)
      * 
      * @param value
-     * @param writer
+     * @param out
      */
     @SuppressWarnings("unchecked")
     public static void writeJSONString(Object value, Writer out) throws IOException {
@@ -187,8 +184,8 @@ public final class JSONValue {
      * both JSONAware and Map or List with "this" as the parameter, use
      * JSONObject.toJSONString(Map) or JSONArray.toJSONString(List) instead.
      * 
-     * @see org.json.simple.JSONObject#toJSONString(Map)
-     * @see org.json.simple.JSONArray#toJSONString(List)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONObject#toJSONString(Map)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONArray#toJSONString(List)
      * 
      * @param value
      * @return JSON text, or "null" if value is null or it's an NaN or an INF

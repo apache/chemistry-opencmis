@@ -26,7 +26,6 @@ import org.apache.chemistry.opencmis.client.api.Session;
 
 /**
  * Implements a session cache providing following capabilities:
- * <p>
  * <ul>
  * <li>access CmisObject by object object ID</li>
  * <li>access CmisObject by object path</li>

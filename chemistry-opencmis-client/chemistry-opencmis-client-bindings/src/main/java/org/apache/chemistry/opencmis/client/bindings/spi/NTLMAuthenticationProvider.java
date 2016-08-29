@@ -28,13 +28,17 @@ import org.w3c.dom.Element;
 /**
  * NTLM authentication provider class. USE WITH CARE!
  * 
+ * <p>
  * This authentication provider sets a {@link java.net.Authenticator} which will
  * replace the current authenticator, if any. It will fail if this authenticator
  * will be replaced by another part of the code.
+ * </p>
  * 
+ * <p>
  * Since {@link java.net.Authenticator} is a system-wide authenticator, it will
  * not reliably work in multi-user environments! To achieve that you have to
  * wrap OpenCMIS into its own class loader.
+ * </p>
  */
 public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
 

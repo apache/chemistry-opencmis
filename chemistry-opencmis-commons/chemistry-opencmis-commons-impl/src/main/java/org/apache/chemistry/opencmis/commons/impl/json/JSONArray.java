@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * A JSON array. JSONObject supports java.util.List interface.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAware, JSONStreamAware {
     private static final long serialVersionUID = 3957988303675231981L;
@@ -39,7 +39,8 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
      * JSONStreamAware or a JSONAware, JSONStreamAware and JSONAware specific
      * behaviours will be ignored at this top level.
      * 
-     * @see org.json.simple.JSONValue#writeJSONString(Object, Writer)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONValue#writeJSONString(Object,
+     *      Writer)
      * 
      * @param list
      * @param out
@@ -80,7 +81,7 @@ public class JSONArray extends ArrayList<Object> implements List<Object>, JSONAw
      * also a JSONAware, JSONAware specific behaviours will be omitted at this
      * top level.
      * 
-     * @see org.json.simple.JSONValue#toJSONString(Object)
+     * @see org.apache.chemistry.opencmis.commons.impl.json.JSONValue#toJSONString(Object)
      * 
      * @param list
      * @return JSON text, or "null" if list is null.

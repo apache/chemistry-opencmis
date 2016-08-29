@@ -137,8 +137,6 @@ public class AtomEntryWriter {
 
     /**
      * Writes the entry to an output stream.
-     * 
-     * @throws XMLStreamException
      */
     public void write(OutputStream out) throws XMLStreamException, IOException {
         XMLStreamWriter writer = XMLUtils.createWriter(out);

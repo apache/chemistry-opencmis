@@ -24,13 +24,13 @@ import java.io.IOException;
  * A simplified and stoppable SAX-like content handler for stream processing of
  * JSON text.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
  * @see org.xml.sax.ContentHandler
  * @see JSONParser#parse(java.io.Reader, ContentHandler, boolean)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public interface ContentHandler {
     /**

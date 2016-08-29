@@ -58,9 +58,10 @@ import org.slf4j.LoggerFactory;
  * Configuration with authorization code:
  * 
  * <pre>
+ * {@code
  * SessionFactory factory = ...
  * 
- * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * Map<String, String> parameter = new HashMap<String, String>();
  * 
  * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
  * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
@@ -76,15 +77,17 @@ import org.slf4j.LoggerFactory;
  * 
  * ...
  * Session session = factory.createSession(parameter);
+ * }
  * </pre>
  * 
  * <p>
  * Configuration with existing bearer token:
  * 
  * <pre>
+ * {@code
  * SessionFactory factory = ...
  * 
- * Map&lt;String, String> parameter = new HashMap&lt;String, String>();
+ * Map<String, String> parameter = new HashMap<String, String>();
  * 
  * parameter.put(SessionParameter.ATOMPUB_URL, "http://localhost/cmis/atom");
  * parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
@@ -102,14 +105,15 @@ import org.slf4j.LoggerFactory;
  * 
  * ...
  * Session session = factory.createSession(parameter);
+ * }
  * </pre>
  * 
  * <p>
  * Getting tokens at runtime:
  * 
  * <pre>
- * OAuthAuthenticationProvider authProvider = (OAuthAuthenticationProvider) session.getBinding()
- *         .getAuthenticationProvider();
+ * {@code
+ * OAuthAuthenticationProvider authProvider = (OAuthAuthenticationProvider) session.getBinding().getAuthenticationProvider();
  * 
  * // get the current token
  * Token token = authProvider.getToken();
@@ -120,27 +124,30 @@ import org.slf4j.LoggerFactory;
  *         // do something with the new token
  *     }
  * });
+ * }
  * </pre>
  * 
  * <p>
  * OAuth errors can be handled like this:
  * 
  * <pre>
- *  try {
+ * {@code
+ * try {
+ *     ...
+ *     // CMIS calls
  *      ...
- *      // CMIS calls
- *      ...
- *  } catch (CmisConnectionException connEx) {
- *      if (connEx.getCause() instanceof CmisOAuthException) {
- *          CmisOAuthException oauthEx = (CmisOAuthException) connEx.getCause();
+ * } catch (CmisConnectionException connEx) {
+ *     if (connEx.getCause() instanceof CmisOAuthException) {
+ *         CmisOAuthException oauthEx = (CmisOAuthException) connEx.getCause();
  * 
- *          if (CmisOAuthException.ERROR_INVALID_GRANT.equals(oauthEx.getError()) ||
- *              CmisOAuthException.ERROR_INVALID_TOKEN.equals(oauthEx.getError())) {
- *              // ask the user to authenticate again
- *          } else {
- *             // a configuration or server problem
- *          }
- *    }
+ *         if (CmisOAuthException.ERROR_INVALID_GRANT.equals(oauthEx.getError()) ||
+ *             CmisOAuthException.ERROR_INVALID_TOKEN.equals(oauthEx.getError())) {
+ *             // ask the user to authenticate again
+ *         } else {
+ *            // a configuration or server problem
+ *         }
+ *     }
+ * }
  * }
  * </pre>
  */

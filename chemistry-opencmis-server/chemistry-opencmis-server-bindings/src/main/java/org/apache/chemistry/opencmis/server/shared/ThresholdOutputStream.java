@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * file.
  * 
  * It it is important to close this OutputStream before
- * {@link #getInputStream()} is called or call {@link #destroy()} if the
- * InputStream isn't required!
+ * {@link #getInputStream()} is called or call {@link #destroy(Throwable)} if
+ * the InputStream isn't required!
  */
 public class ThresholdOutputStream extends TempStoreOutputStream {
 

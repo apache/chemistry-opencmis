@@ -146,14 +146,13 @@ public class FractalGenerator {
     }
 
     /**
-     * Create a fractal image as JPEG in memory and return it
+     * Creates a fractal image as JPEG in memory and return it.
      * 
      * @param rect
      *            rectangle of mandelbrot or julia set
      * @param juliaPoint
      *            point in Julia set or null
      * @return byte array with JPEG stream
-     * @throws IOException
      */
     public ByteArrayOutputStream genFractal(ComplexRectangle rect, ComplexPoint juliaPoint) throws IOException {
 

@@ -19,10 +19,10 @@
 package org.apache.chemistry.opencmis.commons.impl.json.parser;
 
 /**
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public class Yytoken {
     public static final int TYPE_VALUE = 0;// JSON primitive value:

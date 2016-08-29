@@ -464,6 +464,22 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>cmis</name>
+                            <placement>a</placement>
+                            <head>CMIS:</head>
+                        </tag>
+                    </tags>
+                    <locale>en</locale>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
         </plugins>
         <extensions>
             <extension>
@@ -516,7 +532,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
                 <inherited>false</inherited>
                 <reportSets>
                     <reportSet>

@@ -24,12 +24,12 @@ import java.util.Map;
 /**
  * Container factory for creating containers for JSON object and JSON array.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
  * @see JSONParser#parse(java.io.Reader, ContainerFactory)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public interface ContainerFactory {
     /**

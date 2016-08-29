@@ -27,10 +27,10 @@ import java.util.Map;
  * A JSON object. Key value pairs are order by insertion. JSONObject supports
  * java.util.Map interface.
  * 
- * (Taken from JSON.simple <http://code.google.com/p/json-simple/> and modified
- * for OpenCMIS.)
+ * (Taken from JSON.simple &lt;http://code.google.com/p/json-simple/&gt; and
+ * modified for OpenCMIS.)
  * 
- * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public class JSONObject extends LinkedHashMap<String, Object> implements Map<String, Object>, JSONAware,
         JSONStreamAware {
@@ -51,7 +51,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
      * JSONAware or JSONStreamAware, JSONAware or JSONStreamAware specific
      * behaviours will be ignored at this top level.
      * 
-     * @see org.json.simple.JSONValue#writeJSONString(Object, Writer)
+     * @see JSONValue#writeJSONString(Object, Writer)
      * 
      * @param map
      * @param out
@@ -95,7 +95,7 @@ public class JSONObject extends LinkedHashMap<String, Object> implements Map<Str
      * also a JSONAware, JSONAware specific behaviours will be omitted at this
      * top level.
      * 
-     * @see org.json.simple.JSONValue#toJSONString(Object)
+     * @see JSONValue#toJSONString(Object)
      * 
      * @param map
      * @return JSON text, or "null" if map is null.

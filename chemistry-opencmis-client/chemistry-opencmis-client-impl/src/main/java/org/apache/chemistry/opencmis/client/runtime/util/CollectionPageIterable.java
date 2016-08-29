@@ -27,8 +27,6 @@ public class CollectionPageIterable<T> extends AbstractIterable<T> {
 
     /**
      * Constructor.
-     *
-     * @param pageFetcher
      */
     public CollectionPageIterable(AbstractPageFetcher<T> pageFetcher) {
         this(0, pageFetcher);
@@ -36,9 +34,6 @@ public class CollectionPageIterable<T> extends AbstractIterable<T> {
 
     /**
      * Constructor.
-     *
-     * @param position
-     * @param pageFetcher
      */
     protected CollectionPageIterable(long position, AbstractPageFetcher<T> pageFetcher) {
         super(position, pageFetcher);

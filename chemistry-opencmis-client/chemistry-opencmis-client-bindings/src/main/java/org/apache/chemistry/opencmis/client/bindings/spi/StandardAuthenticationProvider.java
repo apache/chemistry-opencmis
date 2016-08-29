@@ -231,7 +231,7 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
     }
 
     /**
-     * Adds the {@link SessionParameter.HEADER} to the fixed headers. This
+     * Adds the {@link SessionParameter#HEADER} to the fixed headers. This
      * method should only be called from the {@link #setSession(BindingSession)}
      * method to avoid threading issues.
      */

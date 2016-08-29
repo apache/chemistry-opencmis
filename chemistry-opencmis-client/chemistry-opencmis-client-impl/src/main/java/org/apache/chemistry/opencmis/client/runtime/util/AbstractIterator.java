@@ -24,9 +24,10 @@ import java.util.List;
 import org.apache.chemistry.opencmis.client.runtime.util.AbstractPageFetcher.Page;
 
 /**
- * Abstract <code>Iterator</code> implementation.
+ * Abstract {@code Iterator} implementation.
  *
- * @param <T> the type returned by the iterator
+ * @param <T>
+ *            the type returned by the iterator
  */
 public abstract class AbstractIterator<T> implements Iterator<T> {
 
@@ -39,10 +40,7 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
     private Boolean hasMoreItems;
 
     /**
-     * Construct
-     *
-     * @param skipCount
-     * @param pageFetcher
+     * Constructor.
      */
     protected AbstractIterator(long skipCount, AbstractPageFetcher<T> pageFetcher) {
         this.skipCount = skipCount;

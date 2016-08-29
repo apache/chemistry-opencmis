@@ -31,7 +31,7 @@ public final class NameValidator {
     }
 
     /**
-     * check whether id contains only valid characters Allowed are 'a'..'z',
+     * Checks whether id contains only valid characters Allowed are 'a'..'z',
      * 'A'..'Z', '0'..'9', '.', '-', ' ', '_'.
      * 
      * @param s
@@ -58,8 +58,9 @@ public final class NameValidator {
     }
 
     /**
-     * check whether id contains only valid characters. Not allowed are '/',
-     * '\\', ':', '\"', '*'. '?', '<','>', '|'"
+     * Checks whether id contains only valid characters.
+     * 
+     * Not allowed are '/', '\\', ':', '\"', '*'. '?', '&lt;','&gt;', '|'"
      * 
      * @param s
      *            string to verify

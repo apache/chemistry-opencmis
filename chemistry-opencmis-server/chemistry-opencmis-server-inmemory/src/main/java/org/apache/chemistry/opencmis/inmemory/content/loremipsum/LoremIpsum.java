@@ -31,9 +31,9 @@ import java.util.Set;
 
 /**
  * A generator of lorem ipsum text ported from the Python implementation at
- * http://code.google.com/p/lorem-ipsum-generator/. Note: original code licensed
- * under the BSD license
+ * http://code.google.com/p/lorem-ipsum-generator/.
  * 
+ * Note: Original code licensed under the BSD license
  */
 public class LoremIpsum {
 
@@ -73,7 +73,6 @@ public class LoremIpsum {
      * Delimiters that end sentences.
      * 
      * @type {Array.<string>}
-     * @private
      */
     private static final String DELIMITERS_SENTENCES[] = { ".", "?", "!" };
 
@@ -81,7 +80,6 @@ public class LoremIpsum {
      * Regular expression for splitting a text into sentences.
      * 
      * @type {RegExp}
-     * @private
      */
     private static final String SENTENCE_SPLIT_REGEX = "[\\.\\?\\!]";
 
@@ -89,15 +87,11 @@ public class LoremIpsum {
      * Delimiters that end words.
      * 
      * @type {Array.<string>}
-     * @private
      */
     private static final String DELIMITERS_WORDS[] = { ".", ",", "?", "!" };
 
     /**
      * Regular expression for splitting text into words.
-     * 
-     * @type {RegExp}
-     * @private
      */
     private static final String WORD_SPLIT_REGEX = "\\s";
 
@@ -106,9 +100,6 @@ public class LoremIpsum {
     /**
      * Words that can be used in the generated output. Maps a word-length to a
      * list of words of that length.
-     * 
-     * @type {goog.structs.Map}
-     * @private
      */
     private Map<Integer, List<String>> words;
 
@@ -116,40 +107,27 @@ public class LoremIpsum {
      * Chains of three words that appear in the sample text Maps a pair of
      * word-lengths to a third word-length and an optional piece of trailing
      * punctuation (for example, a period, comma, etc.).
-     * 
-     * @type {goog.structs.Map}
-     * @private
      */
     private Map<WordLengthPair, List<WordInfo>> chains;
 
     /**
      * Pairs of word-lengths that can appear at the beginning of sentences.
-     * 
-     * @type {Array}
      */
     private List<WordLengthPair> starts;
 
     /**
      * Average sentence length in words.
-     * 
-     * @type {number}
-     * @private
      */
+
     private double sentenceMean;
 
     /**
      * Sigma (sqrt of Objectiance) for the sentence length in words.
-     * 
-     * @type {number}
-     * @private
      */
     private double sentenceSigma;
 
     /**
      * Average paragraph length in sentences.
-     * 
-     * @type {number}
-     * @private
      */
     private double paragraphMean;
 
@@ -157,7 +135,6 @@ public class LoremIpsum {
      * Sigma (sqrt of variance) for the paragraph length in sentences.
      * 
      * @type {number}
-     * @private
      */
     private double paragraphSigma;
 
@@ -178,8 +155,9 @@ public class LoremIpsum {
     /**
      * Picks a random element of the array.
      * 
-     * @param {Array} array The array to pick from.
-     * @return {*} An element from the array.
+     * @param array
+     *            the array to pick from
+     * @return an element from the array
      */
     private WordInfo randomChoice(WordInfo[] array) {
         return array[randomInt(array.length)];
@@ -203,8 +181,6 @@ public class LoremIpsum {
     /**
      * Generates random strings of "lorem ipsum" text, based on the word
      * distribution of a sample text, using the words in a dictionary.
-     * 
-     * @constructor
      */
     public LoremIpsum() {
         generateChains(this.sample);
@@ -243,9 +219,10 @@ public class LoremIpsum {
     /**
      * Generates a single lorem ipsum paragraph, of random length.
      * 
-     * @param {boolean} optStartWithLorem Whether to start the sentence with the
-     *        standard "Lorem ipsum..." first sentence.
-     * @return {string} The generated sentence.
+     * @param optStartWithLorem
+     *            Whether to start the sentence with the standard
+     *            "Lorem ipsum..." first sentence
+     * @return the generated sentence
      */
     public String generateParagraph(boolean optStartWithLorem) {
         // The length of the paragraph is a normally distributed random
@@ -274,9 +251,10 @@ public class LoremIpsum {
     /**
      * Generates a single sentence, of random length.
      * 
-     * @param {boolean} optStartWithLorem Whether to start the setnence with the
-     *        standard "Lorem ipsum..." first sentence.
-     * @return {string} The generated sentence.
+     * @param optStartWithLorem
+     *            Whether to start the sentence with the standard
+     *            "Lorem ipsum..." first sentence.
+     * @return the generated sentence
      */
     public String generateSentence(boolean optStartWithLorem) {
         if (this.chains.size() == 0 || this.starts.size() == 0) {
@@ -463,8 +441,8 @@ public class LoremIpsum {
     /**
      * Generates the chains and starts values required for sentence generation.
      * 
-     * @param {string} sample The same text.
-     * @private
+     * @param sample
+     *            The same text.
      */
     private void generateChains(String sample) {
 
@@ -507,8 +485,8 @@ public class LoremIpsum {
      * Calculates the mean and standard deviation of sentence and paragraph
      * lengths.
      * 
-     * @param {string} sample The same text.
-     * @private
+     * @param sample
+     *            The same text.
      */
     private void generateStatistics(String sample) {
         this.generateSentenceStatistics(sample);
@@ -519,8 +497,8 @@ public class LoremIpsum {
      * Calculates the mean and standard deviation of the lengths of sentences
      * (in words) in a sample text.
      * 
-     * @param {string} sample The same text.
-     * @private
+     * @param sample
+     *            The same text.
      */
     private void generateSentenceStatistics(String sample) {
         List<String> sentences = filterNotEmptyOrWhiteSpace(splitSentences(sample));
@@ -537,8 +515,8 @@ public class LoremIpsum {
      * Calculates the mean and standard deviation of the lengths of paragraphs
      * (in sentences) in a sample text.
      * 
-     * @param {string} sample The same text.
-     * @private
+     * @param sample
+     *            The same text.
      */
     private void generateParagraphStatistics(String sample) {
         List<String> paragraphs = filterNotEmptyOrWhiteSpace(splitParagraphs(sample));
@@ -557,7 +535,8 @@ public class LoremIpsum {
      * Sets the generator to use a given selection of words for generating
      * sentences with.
      * 
-     * @param {string} dictionary The dictionary to use.
+     * @param dictionary
+     *            The dictionary to use.
      */
     private void initializeDictionary(String dictionary) {
         String[] dictionaryWords = splitWords(dictionary);
@@ -586,7 +565,6 @@ public class LoremIpsum {
      * Picks a random starting chain.
      * 
      * @return {string} The starting key.
-     * @private
      */
     private WordLengthPair chooseRandomStart_() {
         Set<WordLengthPair> keys = chains.keySet();
@@ -600,9 +578,9 @@ public class LoremIpsum {
     /**
      * Splits a piece of text into paragraphs.
      * 
-     * @param {string} text The text to split.
-     * @return {Array.<string>} An array of paragraphs.
-     * @private
+     * @param text
+     *            The text to split.
+     * @return An array of paragraphs.
      */
 
     static String[] splitParagraphs(String text) {
@@ -612,9 +590,9 @@ public class LoremIpsum {
     /**
      * Splits a piece of text into sentences.
      * 
-     * @param {string} text The text to split.
-     * @return {Array.<string>} An array of sentences.
-     * @private
+     * @param text
+     *            The text to split.
+     * @return An array of sentences.
      */
     static String[] splitSentences(String text) {
         return filterNotEmptyOrWhiteSpace(text.split(SENTENCE_SPLIT_REGEX)).toArray(new String[0]);
@@ -623,9 +601,9 @@ public class LoremIpsum {
     /**
      * Splits a piece of text into words..
      * 
-     * @param {string} text The text to split.
-     * @return {Array.<string>} An array of words.
-     * @private
+     * @param text
+     *            The text to split.
+     * @return An array of words.
      */
     static String[] splitWords(String text) {
         return filterNotEmptyOrWhiteSpace(text.split(WORD_SPLIT_REGEX)).toArray(new String[0]);
@@ -634,9 +612,11 @@ public class LoremIpsum {
     /**
      * Find the number in the list of values that is closest to the target.
      * 
-     * @param {Array.<number>} values The values.
-     * @param {number} target The target value.
-     * @return {number} The closest value.
+     * @param values
+     *            The values.
+     * @param target
+     *            The target value.
+     * @return The closest value.
      */
     static int chooseClosest(Integer[] values, int target) {
         int closest = values[0];
@@ -652,10 +632,10 @@ public class LoremIpsum {
     /**
      * Gets info about a word used as part of the lorem ipsum algorithm.
      * 
-     * @param {string} word The word to check.
-     * @return {Array} A two element array. The first element is the size of the
-     *         word. The second element is the delimiter used in the word.
-     * @private
+     * @param word
+     *            The word to check.
+     * @return A two element array. The first element is the size of the word.
+     *         The second element is the delimiter used in the word.
      */
     private static WordInfo getWordInfo(String word) {
         WordInfo ret = new WordInfo();
@@ -682,9 +662,6 @@ public class LoremIpsum {
 
     /**
      * Constant used for {@link #randomNormal_}.
-     * 
-     * @type {number}
-     * @private
      */
     private static final double NV_MAGICCONST_ = 4 * Math.exp(-0.5) / Math.sqrt(2.0);
 
@@ -692,9 +669,10 @@ public class LoremIpsum {
      * Generates a random number for a normal distribution with the specified
      * mean and sigma.
      * 
-     * @param {number} mu The mean of the distribution.
-     * @param {number} sigma The sigma of the distribution.
-     * @private
+     * @param mu
+     *            The mean of the distribution.
+     * @param sigma
+     *            The sigma of the distribution.
      */
     private static double randomNormal(double mu, double sigma) {
         double z = 0.0d;
@@ -713,9 +691,9 @@ public class LoremIpsum {
     /**
      * Returns the text if it is not empty or just whitespace.
      * 
-     * @param {string} text the text to check.
-     * @return {boolean} Whether the text is neither empty nor whitespace.
-     * @private
+     * @param text
+     *            the text to check.
+     * @return Whether the text is neither empty nor whitespace.
      */
     private static List<String> filterNotEmptyOrWhiteSpace(String[] arr) {
         List<String> result = new ArrayList<String>();
@@ -803,9 +781,6 @@ public class LoremIpsum {
 
     /**
      * Dictionary of words for lorem ipsum.
-     * 
-     * @type {string}
-     * @private
      */
     private static final String DICT = "a ac accumsan ad adipiscing aenean aliquam aliquet amet ante "
             + "aptent arcu at auctor augue bibendum blandit class commodo "
@@ -832,9 +807,6 @@ public class LoremIpsum {
     /**
      * A sample to use for generating the distribution of word and sentence
      * lengths in lorem ipsum.
-     * 
-     * @type {string}
-     * @private
      */
     private static final String SAMPLE = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean "
             + "commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus "
@@ -992,11 +964,7 @@ public class LoremIpsum {
 
     /**
      * Generates a number of paragraphs, with each paragraph surrounded by HTML
-     * pararaph tags.
-     * 
-     * @param quantity
-     * @param startWithLorem
-     * @return
+     * paragraph tags.
      */
     public String generateParagraphsHtml(int quantity, boolean startWithLorem) {
 
@@ -1007,12 +975,7 @@ public class LoremIpsum {
 
     /**
      * Generates a number of paragraphs, with each paragraph surrounded by HTML
-     * pararaph tags.
-     * 
-     * @param writer
-     * @param quantity
-     * @param startWithLorem
-     * @throws IOException
+     * paragraph tags.
      */
     public void generateParagraphsHtml(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
@@ -1022,11 +985,7 @@ public class LoremIpsum {
     }
 
     /**
-     * Generates one paragraph of HTML, surrounded by HTML pararaph tags.
-     * 
-     * @param quantity
-     * @param startWithLorem
-     * @return
+     * Generates one paragraph of HTML, surrounded by HTML paragraph tags.
      */
     public String generateOneParagraphHtml(int quantity, boolean startWithLorem) {
 
@@ -1038,10 +997,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph surrounded by HTML
      * paragraph tags as a full HTML page.
-     * 
-     * @param quantity
-     * @param startWithLorem
-     * @return
      */
     public String generateParagraphsFullHtml(int quantity, boolean startWithLorem) {
 
@@ -1057,11 +1012,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph surrounded by HTML
      * paragraph tags as a full HTML page.
-     * 
-     * @param writer
-     * @param quantity
-     * @param startWithLorem
-     * @throws IOException
      */
     public void generateParagraphsFullHtml(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
@@ -1077,10 +1027,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph separated by two
      * newlines.
-     * 
-     * @param quantity
-     * @param startWithLorem
-     * @return
      */
     public String generateParagraphsPlainText(int quantity, boolean startWithLorem) {
 
@@ -1090,11 +1036,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph separated by two
      * newlines.
-     * 
-     * @param writer
-     * @param quantity
-     * @param startWithLorem
-     * @throws IOException
      */
     public void generateParagraphsPlainText(Appendable writer, int quantity, boolean startWithLorem) throws IOException {
 
@@ -1104,10 +1045,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph separated by two
      * newlines and no line exceeding maxCols columns
-     * 
-     * @param quantity
-     * @param startWithLorem
-     * @return
      */
     public String generateParagraphsPlainText(int quantity, int maxCols, boolean startWithLorem) {
 
@@ -1123,11 +1060,6 @@ public class LoremIpsum {
     /**
      * Generates a number of paragraphs, with each paragraph separated by two
      * newlines and no line exceeding maxCols columns
-     * 
-     * @param writer
-     * @param quantity
-     * @param startWithLorem
-     * @throws IOException
      */
     public void generateParagraphsPlainText(Appendable writer, int quantity, int maxCols, boolean startWithLorem)
             throws IOException {
