@@ -23,31 +23,52 @@ import java.net.PasswordAuthentication;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
- * NTLM authentication provider class. USE WITH CARE!
+ * NTLM authentication provider class. USE WITH CARE! DO NOT USE IN PRODUCTION!
  * 
  * <p>
- * This authentication provider sets a {@link java.net.Authenticator} which will
- * replace the current authenticator, if any. It will fail if this authenticator
- * will be replaced by another part of the code.
+ * <b>The combination of CMIS and NTLM is not suited for production. Choose a
+ * different authentication method!</b>
  * </p>
  * 
  * <p>
- * Since {@link java.net.Authenticator} is a system-wide authenticator, it will
- * not reliably work in multi-user environments! To achieve that you have to
- * wrap OpenCMIS into its own class loader.
+ * This authentication provider sets a {@link java.net.Authenticator} which
+ * replaces the current authenticator, if any. It will fail if this
+ * authenticator is replaced later by another part of the code.
+ * </p>
+ * 
+ * <p>
+ * Since {@link java.net.Authenticator} is a system-wide authenticator, <b>it
+ * does not reliably work in multi-user environments</b>! To achieve that you
+ * have to wrap OpenCMIS into its own class loader.
+ * </p>
+ * 
+ * <p>
+ * This authenticator only works reliably for read operations (except queries).
+ * Write operations and queries may work for a while but will eventually fail.
+ * </b>!
  * </p>
  */
 public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(NTLMAuthenticationProvider.class);
+
     // java.net.Authenticator is static, so this can be static too
     private static final OpenCMISAuthenticator AUTHENTICATOR = new OpenCMISAuthenticator();
     static {
         Authenticator.setDefault(AUTHENTICATOR);
+    }
+
+    @Override
+    public void setSession(BindingSession session) {
+        super.setSession(session);
+        LOG.warn("Use NTLM only for testing! Choose a different authentication method in production.");
     }
 
     @Override
