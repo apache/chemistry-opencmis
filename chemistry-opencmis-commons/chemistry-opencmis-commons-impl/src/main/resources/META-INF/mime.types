@@ -55,7 +55,7 @@ application/hta hta
 application/hyperstudio stk
 application/inkml+xml ink inkml
 application/ipfix ipfix
-application/java-archive jar war ear 
+application/java-archive jar war ear
 application/java-serialized-object ser
 application/java-vm class
 application/javascript js
@@ -525,7 +525,7 @@ application/x-cdlink vcd
 application/x-cfs-compressed cfs
 application/x-chat chat
 application/x-chess-pgn pgn
-application/x-cocoa cco 
+application/x-cocoa cco
 application/x-compress z
 application/x-compressed tgz z
 application/x-comsol mph
@@ -571,13 +571,13 @@ application/x-internet-signup isp
 application/x-iphone iii
 application/x-iso9660-image iso
 application/x-java-archive-diff jardiff
-application/x-java-jnlp-file jnlp 
+application/x-java-jnlp-file jnlp
 application/x-jmol jmz
 application/x-latex latex
 application/x-lyx lyx
 application/x-lzh-compressed lzh lha
 application/x-lzx lzx
-application/x-makeself run 
+application/x-makeself run
 application/x-md5 md5
 application/x-mie mie
 application/x-mif mif
@@ -593,8 +593,8 @@ application/x-mscardfile crd
 application/x-msclip clp
 application/x-msdownload dll bat exe com
 application/x-msi msi
-application/x-msmediaview mvb m14 m13 
-application/x-msmetafile wmf emf emz wmz 
+application/x-msmediaview mvb m14 m13
+application/x-msmetafile wmf emf emz wmz
 application/x-msmoney mny
 application/x-mspublisher pub
 application/x-msschedule scd
@@ -620,7 +620,7 @@ application/x-qgis qgs shp shx
 application/x-quicktimeplayer qtl
 application/x-rar-compressed rar
 application/x-rdp rdp
-application/x-redhat-package-manager rpm 
+application/x-redhat-package-manager rpm
 application/x-research-info-systems ris
 application/x-ruby rb
 application/x-scilab sce sci
@@ -841,9 +841,10 @@ text/calendar ics ifb
 text/css css
 text/csv csv
 text/h323 323
-text/html html htm stm
+text/html html htm stm htmlx shtml htx
 text/iuls uls
-text/mathml mml 
+text/markdown md markdown
+text/mathml mml
 text/n3 n3
 text/plain txt bas in def text log conf list
 text/prs.lines.tag dsc

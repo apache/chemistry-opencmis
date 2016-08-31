@@ -186,8 +186,11 @@ public final class MimeTypes {
         MIME2EXT.put("image/x-xwindowdump", "xwd");
         MIME2EXT.put("message/rfc822", "mhtml");
         MIME2EXT.put("text/css", "css");
+        MIME2EXT.put("text/csv", "csv");
+        MIME2EXT.put("text/comma-separated-values", "csv");
         MIME2EXT.put("text/html", "html");
         MIME2EXT.put("text/iuls", "uls");
+        MIME2EXT.put("text/markdown", "md");
         MIME2EXT.put("text/plain", "txt");
         MIME2EXT.put("text/richtext", "rtx");
         MIME2EXT.put("text/scriptlet", "sct");
