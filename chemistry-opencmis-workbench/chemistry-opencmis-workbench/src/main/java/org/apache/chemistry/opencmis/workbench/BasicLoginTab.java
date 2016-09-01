@@ -53,6 +53,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     public static final String SYSPROP_USER = ClientSession.WORKBENCH_PREFIX + "user";
     public static final String SYSPROP_PASSWORD = ClientSession.WORKBENCH_PREFIX + "password";
     public static final String SYSPROP_CSRF_HEADER = ClientSession.WORKBENCH_PREFIX + "csrfheader";
+    public static final String SYSPROP_LANGUAGE = ClientSession.WORKBENCH_PREFIX + "language";
 
     private JTextField urlField;
     private JRadioButton bindingAtomButton;
@@ -71,6 +72,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private JRadioButton cookiesOnButton;
     private JRadioButton cookiesOffButton;
     private JTextField csrfHeaderField;
+    private JTextField languageField;
     private JFormattedTextField connectTimeoutField;
     private JFormattedTextField readTimeoutField;
 
@@ -106,6 +108,10 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
                 + "If the server needs a CSRF header, enter the name of the header, otherwise leave this field blank.");
         csrfHeaderField.setText(System.getProperty(SYSPROP_CSRF_HEADER, ""));
 
+        languageField = createTextField(this, "Language:", "<html>Enter a <b>ISO 639 language</b> code.<br>"
+                + "The language code is sent to the server but it may not be used by the server.");
+        languageField.setText(System.getProperty(SYSPROP_LANGUAGE, Locale.getDefault().getLanguage()));
+
         connectTimeoutField = createIntegerField(this, "Connect timeout (secs):",
                 "<html>Enter the <b>connect timeout</b> in seconds.<br>This is the time the client waits to connect to the server.");
         try {
@@ -122,7 +128,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
             readTimeoutField.setValue(600);
         }
 
-        makeCompactGrid(11);
+        makeCompactGrid(12);
     }
 
     private void createBindingButtons(Container pane) {
@@ -277,6 +283,21 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
             authentication = ClientSession.Authentication.OAUTH_BEARER;
         }
 
+        Locale locale = null;
+        String language = languageField.getText().trim();
+        if (language.length() > 1 && language.charAt(0) != '-' && language.charAt(0) != '_') {
+            int sep1 = language.indexOf('-');
+            int sep2 = language.indexOf('_');
+
+            if (sep1 > 0) {
+                locale = new Locale(language.substring(0, sep1), language.substring(sep1 + 1));
+            } else if (sep2 > 0) {
+                locale = new Locale(language.substring(0, sep2), language.substring(sep2 + 1));
+            } else {
+                locale = new Locale(language);
+            }
+        }
+
         long connectTimeout = 0;
         if (connectTimeoutField.getValue() instanceof Number) {
             connectTimeout = ((Number) connectTimeoutField.getValue()).longValue() * 1000;
@@ -297,7 +318,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         return ClientSession.createSessionParameters(url, binding, username, password, authentication,
                 compressionOnButton.isSelected(), clientCompressionOnButton.isSelected(), cookiesOnButton.isSelected(),
-                csrfHeaderField.getText(), connectTimeout, readTimeout);
+                csrfHeaderField.getText(), locale, connectTimeout, readTimeout);
     }
 
     @Override

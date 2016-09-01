@@ -126,7 +126,7 @@ public class ClientSession {
 
     public static SessionParameterMap createSessionParameters(String url, BindingType binding, String username,
             String password, Authentication authentication, boolean compression, boolean clientCompression,
-            boolean cookies, String csrfHeader, long connectionTimeout, long readTimeout) {
+            boolean cookies, String csrfHeader, Locale locale, long connectionTimeout, long readTimeout) {
         SessionParameterMap parameters = new SessionParameterMap();
 
         switch (binding) {
@@ -169,6 +169,10 @@ public class ClientSession {
             if (ch.length() > 0) {
                 parameters.setCsrfHeader(ch);
             }
+        }
+
+        if (locale != null) {
+            parameters.setLocale(locale);
         }
 
         if (connectionTimeout > 0) {

@@ -600,6 +600,13 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     }
 
     /**
+     * Sets the JVM default locale of the session.
+     */
+    public void setDefaultLocale() {
+        setLocale(Locale.getDefault());
+    }
+
+    /**
      * Sets whether cookies should be managed or not.
      * 
      * @param cookies
