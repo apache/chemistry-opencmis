@@ -50,7 +50,6 @@ import org.w3c.dom.Element;
  * <p>
  * This authenticator only works reliably for read operations (except queries).
  * Write operations and queries may work for a while but will eventually fail.
- * </b>!
  * </p>
  */
 public class NTLMAuthenticationProvider extends AbstractAuthenticationProvider {
