@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.chemistry.opencmis.commons.data.Ace;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
+import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -172,6 +173,21 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     }
 
     @Override
+    public TypeDefinition createType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        return getRepositoryService().createType(repositoryId, type, extension);
+    }
+
+    @Override
+    public TypeDefinition updateType(String repositoryId, TypeDefinition type, ExtensionsData extension) {
+        return getRepositoryService().updateType(repositoryId, type, extension);
+    }
+
+    @Override
+    public void deleteType(String repositoryId, String typeId, ExtensionsData extension) {
+        getRepositoryService().deleteType(repositoryId, typeId, extension);
+    }
+
+    @Override
     public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
             Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
             Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
@@ -260,6 +276,13 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     }
 
     @Override
+    public String createItem(String repositoryId, Properties properties, String folderId, List<String> policies,
+            Acl addAces, Acl removeAces, ExtensionsData extension) {
+        return getObjectService().createItem(repositoryId, properties, folderId, policies, addAces, removeAces,
+                extension);
+    }
+
+    @Override
     public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
         return getObjectService().getAllowableActions(repositoryId, objectId, extension);
     }
@@ -305,6 +328,14 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     }
 
     @Override
+    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
+            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
+            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+        return getObjectService().bulkUpdateProperties(repositoryId, objectIdAndChangeToken, properties,
+                addSecondaryTypeIds, removeSecondaryTypeIds, extension);
+    }
+
+    @Override
     public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
             ExtensionsData extension) {
         getObjectService().moveObject(repositoryId, objectId, targetFolderId, sourceFolderId, extension);
@@ -333,6 +364,13 @@ public abstract class FilterCmisService extends AbstractCmisService implements C
     public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
             Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
         getObjectService().setContentStream(repositoryId, objectId, overwriteFlag, changeToken, contentStream,
+                extension);
+    }
+
+    @Override
+    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
+            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
+        getObjectService().appendContentStream(repositoryId, objectId, changeToken, contentStream, isLastChunk,
                 extension);
     }
 
