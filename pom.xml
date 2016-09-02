@@ -32,7 +32,7 @@
     <groupId>org.apache.chemistry.opencmis</groupId>
     <artifactId>chemistry-opencmis</artifactId>
     <name>Apache Chemistry OpenCMIS</name>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -60,9 +60,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/trunk</developerConnection>
-        <url>https://svn.apache.org/viewvc/chemistry/opencmis/trunk</url>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/tags/chemistry-opencmis-1.0.0-RC1</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/chemistry/opencmis/tags/chemistry-opencmis-1.0.0-RC1</developerConnection>
+        <url>https://svn.apache.org/viewvc/chemistry/opencmis/tags/chemistry-opencmis-1.0.0-RC1</url>
     </scm>
 
     <distributionManagement>
@@ -437,12 +437,12 @@
                         <license implementation="org.apache.rat.analysis.license.FullTextMatchingLicense">
                             <licenseFamilyCategory>OASIS</licenseFamilyCategory>
                             <licenseFamilyName>OASISOpen</licenseFamilyName>
-                            <notes></notes>
+                            <notes />
                             <fullText>.*OASIS Open.*</fullText>
                         </license>
                     </licenses>
                     <licenseFamilies>
-                        <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily"/>
+                        <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily" />
                         <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
                             <familyName>OASISOpen</familyName>
                         </licenseFamily>
