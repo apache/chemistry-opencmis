@@ -225,8 +225,8 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 printError(e, request, response);
             }
 
-        } catch (Throwable t) {
-            LOG.error(createLogMessage(t, request), t);
+        } catch (Error err) {
+            LOG.error(createLogMessage(err, request), err);
 
             try {
                 response.resetBuffer();
@@ -235,7 +235,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 response.setCharacterEncoding(IOUtils.UTF8);
 
                 PrintWriter pw = response.getWriter();
-                writeHtmlErrorPage(pw, 500, "runtime", "An error occurred!", t);
+                writeHtmlErrorPage(pw, 500, "runtime", "An error occurred!", err);
                 pw.flush();
             } catch (Exception te) {
                 // we tried to send an error message but it failed.
@@ -243,7 +243,7 @@ public class CmisAtomPubServlet extends AbstractCmisHttpServlet {
                 flush = false;
             }
 
-            throw t;
+            throw err;
         } finally {
             // we are done.
             if (flush) {

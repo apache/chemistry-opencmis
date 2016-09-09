@@ -280,8 +280,8 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
 
                 printError(context, e, request, response);
             }
-        } catch (Throwable t) {
-            LOG.error(createLogMessage(t, request), t);
+        } catch (Error err) {
+            LOG.error(createLogMessage(err, request), err);
 
             try {
                 response.resetBuffer();
@@ -298,7 +298,7 @@ public class CmisBrowserBindingServlet extends AbstractCmisHttpServlet {
                 flush = false;
             }
 
-            throw t;
+            throw err;
         } finally {
             // in any case close the content stream if one has been provided
             if (request instanceof POSTHttpServletRequestWrapper) {
