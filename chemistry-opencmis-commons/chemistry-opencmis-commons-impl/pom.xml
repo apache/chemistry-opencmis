@@ -107,10 +107,11 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>${project.basedir}/src/main/resources/wsdl/cmis11/CMISWS-Service.wsdl</wsdl>
+                                    <wsdlLocation>classpath:/wsdl/cmis11/CMISWS-Service.wsdl</wsdlLocation>
                                     <extraargs>
-                        	            <extraarg>-verbose</extraarg>
-                        	            <extraarg>-p</extraarg>
-                        	            <extraarg>org.apache.chemistry.opencmis.commons.impl.jaxb</extraarg>
+                                        <extraarg>-verbose</extraarg>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>org.apache.chemistry.opencmis.commons.impl.jaxb</extraarg>
                                     </extraargs>
                                 </wsdlOption>
                             </wsdlOptions>
