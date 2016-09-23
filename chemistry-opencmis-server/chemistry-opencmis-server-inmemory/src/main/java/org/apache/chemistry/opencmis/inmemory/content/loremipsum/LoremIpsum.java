@@ -675,10 +675,12 @@ public class LoremIpsum {
      *            The sigma of the distribution.
      */
     private static double randomNormal(double mu, double sigma) {
+        SecureRandom rnd = new SecureRandom();
+
         double z = 0.0d;
         while (true) {
-            double u1 = Math.random();
-            double u2 = 1.0d - Math.random();
+            double u1 = rnd.nextDouble();
+            double u2 = 1.0d - rnd.nextDouble();
             z = NV_MAGICCONST_ * (u1 - 0.5d) / u2;
             double zz = z * z / 4.0d;
             if (zz <= -Math.log(u2)) {

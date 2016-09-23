@@ -137,7 +137,9 @@ public class StandardAuthenticationProvider extends AbstractAuthenticationProvid
         try {
             // cookies
             if (cookieManager != null) {
-                cookieManager.put(url, headers);
+                if (headers != null && headers.size() > 0) {
+                    cookieManager.put(url, headers);
+                }
             }
 
             // CSRF header

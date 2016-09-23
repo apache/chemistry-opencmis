@@ -108,8 +108,8 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
         if (domain == null || host == null) {
             return false;
         }
-        String newDomain = domain.toLowerCase();
-        String newHost = host.toLowerCase();
+        String newDomain = domain.toLowerCase(Locale.ENGLISH);
+        String newHost = host.toLowerCase(Locale.ENGLISH);
 
         return newDomain.equals(newHost)
                 || (isValidDomain(newDomain) && effDomainMatches(newDomain, newHost) && isValidHost(newDomain, newHost));
@@ -253,7 +253,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
                     }
                 }
 
-                Setter setter = cookie.attributeSet.get(attrName.toLowerCase());
+                Setter setter = cookie.attributeSet.get(attrName.toLowerCase(Locale.ENGLISH));
                 if (setter != null && !setter.isSet()) {
                     String attrValue = matcher.group(2);
                     setter.validate(attrValue, cookie);
@@ -607,15 +607,15 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
     /**
      * Answers hash code of this http cookie. The result is calculated as below:
      * 
-     * getName().toLowerCase().hashCode() + getDomain().toLowerCase().hashCode()
-     * + getPath().hashCode()
+     * getName().toLowerCase(Locale.ENGLISH).hashCode() +
+     * getDomain().toLowerCase(Locale.ENGLISH).hashCode() + getPath().hashCode()
      * 
      * @return the hash code of this cookie
      */
     @Override
     public int hashCode() {
-        int hashCode = name.toLowerCase().hashCode();
-        hashCode += domain == null ? 0 : domain.toLowerCase().hashCode();
+        int hashCode = name.toLowerCase(Locale.ENGLISH).hashCode();
+        hashCode += domain == null ? 0 : domain.toLowerCase(Locale.ENGLISH).hashCode();
         hashCode += path == null ? 0 : path.hashCode();
         return hashCode;
     }
@@ -623,7 +623,8 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
     private boolean isValidName(String n) {
         // name cannot be empty or begin with '$' or equals the reserved
         // attributes (case-insensitive)
-        boolean isValid = !(n.length() == 0 || n.charAt(0) == '$' || attributeSet.containsKey(n.toLowerCase()));
+        boolean isValid = !(n.length() == 0 || n.charAt(0) == '$' || attributeSet.containsKey(n
+                .toLowerCase(Locale.ENGLISH)));
         if (isValid) {
             for (int i = 0; i < n.length(); i++) {
                 char nameChar = n.charAt(i);
@@ -680,7 +681,7 @@ public final class CmisHttpCookie implements Cloneable, Serializable {
      *            the domain pattern
      */
     public void setDomain(String pattern) {
-        domain = pattern == null ? null : pattern.toLowerCase();
+        domain = pattern == null ? null : pattern.toLowerCase(Locale.ENGLISH);
     }
 
     /**

@@ -133,14 +133,16 @@ public class FractalGenerator {
     }
 
     private void randomizeRect(ComplexRectangle rect) {
+        SecureRandom rnd = new SecureRandom();
+        
         double jitterFactor = 0.15; // +/- 15%
-        double ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
+        double ran = rnd.nextDouble() * jitterFactor + (1.0 - jitterFactor);
         double width = rect.getWidth() * ran;
-        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
+        ran = rnd.nextDouble() * jitterFactor + (1.0 - jitterFactor);
         double height = rect.getHeight() * ran;
-        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
+        ran = rnd.nextDouble() * jitterFactor + (1.0 - jitterFactor);
         double r1 = (rect.getWidth() - width) * ran + rect.getRMin();
-        ran = Math.random() * jitterFactor + (1.0 - jitterFactor);
+        ran = rnd.nextDouble() * jitterFactor + (1.0 - jitterFactor);
         double i1 = (rect.getHeight() - height) * ran + rect.getIMin();
         rect.set(r1, r1 + width, i1, i1 + height);
     }

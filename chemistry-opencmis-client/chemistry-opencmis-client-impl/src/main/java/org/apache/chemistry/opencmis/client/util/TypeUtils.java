@@ -206,10 +206,16 @@ public final class TypeUtils {
 
         if (type.isControllablePolicy() == null) {
             errors.add(new ValidationError("controllablePolicy", "ControllablePolicy flag must be set."));
+        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY
+                && Boolean.TRUE.equals(type.isControllablePolicy())) {
+            errors.add(new ValidationError("controllablePolicy",
+                    "ControllablePolicy flag must be FALSE for secondary types."));
         }
 
         if (type.isControllableAcl() == null) {
             errors.add(new ValidationError("controllableACL", "ControllableACL flag must be set."));
+        } else if (type.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && Boolean.TRUE.equals(type.isControllableAcl())) {
+            errors.add(new ValidationError("controllableACL", "ControllableACL flag must be FALSE for secondary types."));
         }
 
         if (type.isFulltextIndexed() == null) {

@@ -100,7 +100,7 @@ public class CmisCookieStoreImpl implements Serializable {
             if (cookie.hasExpired()) {
                 iter.remove();
             } else if ((!cookie.getSecure() || isSecure) && cookie.getDomain() != null) {
-                String cookieDomain = cookie.getDomain().toLowerCase();
+                String cookieDomain = cookie.getDomain().toLowerCase(Locale.ENGLISH);
 
                 if (isIPAddress(uriHost) && uriHost.equals(cookieDomain)) {
                     cookies.add(cookie);
